@@ -41,7 +41,8 @@ public class AppServer extends BaseServer {
                     props.getProperty("server.ssl.key.pass"));
         }
 
-        this.channelInitializer = new AppChannelInitializer(sessionsHolder, stats, handlersHolder, sslContext);
+        int appTimeoutSecs = props.getIntProperty("app.socket.idle.timeout", 600);
+        this.channelInitializer = new AppChannelInitializer(sessionsHolder, stats, handlersHolder, sslContext, appTimeoutSecs);
 
         log.info("Application server port {}.", port);
     }

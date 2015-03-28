@@ -20,11 +20,13 @@ final class HardwareChannelInitializer extends ChannelInitializer<SocketChannel>
     private final SessionsHolder sessionsHolder;
     private final GlobalStats stats;
     private final HardwareHandlersHolder handlersHolder;
+    private final int hardTimeoutSecs;
 
-    public HardwareChannelInitializer(SessionsHolder sessionsHolder, GlobalStats stats, HardwareHandlersHolder handlersHolder) {
+    public HardwareChannelInitializer(SessionsHolder sessionsHolder, GlobalStats stats, HardwareHandlersHolder handlersHolder, int hardTimeoutSecs) {
         this.sessionsHolder = sessionsHolder;
         this.stats = stats;
         this.handlersHolder = handlersHolder;
+        this.hardTimeoutSecs = hardTimeoutSecs;
     }
 
     @Override
@@ -33,7 +35,7 @@ final class HardwareChannelInitializer extends ChannelInitializer<SocketChannel>
 
         //non-sharable handlers
         //todo apply from hardware.
-        pipeline.addLast(new ReadTimeoutHandler(15));
+        pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
         pipeline.addLast(new ClientChannelStateHandler(sessionsHolder));
         pipeline.addLast(new ReplayingMessageDecoder(stats));
         pipeline.addLast(new DeviceMessageEncoder());

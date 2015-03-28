@@ -80,6 +80,14 @@ server.properties options:
 
         profile.save.worker.period=60000
 
++ Specifies maximum period of time when application socket could be idle. After which socket will be closed due to non activity. In seconds. Default value 600 if not provided.
+
+        app.socket.idle.timeout=600
+
++ Specifies maximum period of time when hardware socket could be idle. After which socket will be closed due to non activity. In seconds. Default value 15 if not provided.
+
+        hard.socket.idle.timeout=15
+
 ### Behind wifi router
 If you want to run Blynk server behind WiFi-router and want it to be accessible from the Internet, you have to add port-forwarding rule on your router. This is required in order to forward all of the requests that come to the router within the local network to Blynk server.
 

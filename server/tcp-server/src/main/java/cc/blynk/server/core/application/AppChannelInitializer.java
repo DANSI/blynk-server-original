@@ -24,12 +24,14 @@ final class AppChannelInitializer extends ChannelInitializer<SocketChannel> {
     private final GlobalStats stats;
     private final AppHandlersHolder handlersHolder;
     private final SslContext sslCtx;
+    private final int appTimeoutSecs;
 
-    public AppChannelInitializer(SessionsHolder sessionsHolder, GlobalStats stats, AppHandlersHolder handlersHolder, SslContext sslContext) {
+    public AppChannelInitializer(SessionsHolder sessionsHolder, GlobalStats stats, AppHandlersHolder handlersHolder, SslContext sslContext, int appTimeoutSecs) {
         this.sessionsHolder = sessionsHolder;
         this.stats = stats;
         this.handlersHolder = handlersHolder;
         this.sslCtx = sslContext;
+        this.appTimeoutSecs = appTimeoutSecs;
     }
 
     @Override
@@ -37,7 +39,7 @@ final class AppChannelInitializer extends ChannelInitializer<SocketChannel> {
         ChannelPipeline pipeline = ch.pipeline();
 
         //todo apply from
-        pipeline.addLast(new ReadTimeoutHandler(600));
+        pipeline.addLast(new ReadTimeoutHandler(appTimeoutSecs));
 
         if (sslCtx != null) {
             pipeline.addLast(sslCtx.newHandler(ch.alloc()));
