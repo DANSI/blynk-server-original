@@ -182,8 +182,6 @@ List of hardware commands:
     	hardware vr 9
     	You should receive response: vw 9 <values>
 
-Registered users are stored locally in TMP dir of your system in "user.db" file. So, after the restart you won't need to re-register.
-
 
 ## Licensing
 [MIT license](https://github.com/blynkkk/blynk-server/blob/master/license.txt)

@@ -106,7 +106,15 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
      *  so every child overrides it's property.
      */
     public void updateProperties(ServerProperties props) {
-        this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit");
-        this.USER_QUOTA_LIMIT_WARN_PERIOD = props.getIntProperty("user.message.quota.limit.exceeded.warning.period");
+        try {
+            this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit");
+        } catch (RuntimeException e) {
+            //error already logged, so do nothing.
+        }
+        try {
+            this.USER_QUOTA_LIMIT_WARN_PERIOD = props.getIntProperty("user.message.quota.limit.exceeded.warning.period");
+        } catch (RuntimeException e) {
+            //error already logged, so do nothing.
+        }
     }
 }

@@ -27,7 +27,8 @@ public class AppServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public AppServer(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
-        super(props.getIntProperty("server.ssl.port"), props);
+        super(props.getIntProperty("server.ssl.port"),
+              props.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors()));
 
         this.handlersHolder = new AppHandlersHolder(props, fileManager, userRegistry, sessionsHolder);
 

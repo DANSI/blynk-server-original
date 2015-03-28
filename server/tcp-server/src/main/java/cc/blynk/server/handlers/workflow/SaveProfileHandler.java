@@ -68,8 +68,16 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
     @Override
     public void updateProperties(ServerProperties props) {
         super.updateProperties(props);
-        this.DASH_MAX_LIMIT = props.getIntProperty("user.dashboard.max.limit");
-        this.USER_PROFILE_MAX_SIZE = props.getIntProperty("user.profile.max.size") * 1024;
+        try {
+            this.DASH_MAX_LIMIT = props.getIntProperty("user.dashboard.max.limit");
+        } catch (RuntimeException e) {
+            //error already logged, so do nothing.
+        }
+        try {
+            this.USER_PROFILE_MAX_SIZE = props.getIntProperty("user.profile.max.size") * 1024;
+        } catch (RuntimeException e) {
+            //error already logged, so do nothing.
+        }
     }
 
 }

@@ -23,7 +23,8 @@ public class HardwareServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HardwareServer(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
-        super(props.getIntProperty("server.default.port"), props);
+        super(props.getIntProperty("server.default.port"),
+              props.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors()));
 
         this.handlersHolder = new HardwareHandlersHolder(props, fileManager, userRegistry, sessionsHolder);
         this.channelInitializer = new HardwareChannelInitializer(sessionsHolder, stats, handlersHolder);

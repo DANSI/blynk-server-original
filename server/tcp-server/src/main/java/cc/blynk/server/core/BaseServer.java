@@ -1,6 +1,5 @@
 package cc.blynk.server.core;
 
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.handlers.workflow.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.nio.ChannelServer;
@@ -29,9 +28,9 @@ public abstract class BaseServer implements Runnable {
 
     private Channel channel;
 
-    protected BaseServer(int port, ServerProperties props) {
+    protected BaseServer(int port, int workerThreads) {
         this.port = port;
-        this.workerThreads = props.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors());
+        this.workerThreads = workerThreads;
     }
 
     @Override

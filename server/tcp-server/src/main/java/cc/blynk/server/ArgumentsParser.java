@@ -15,7 +15,7 @@ import java.util.Properties;
  * Created by Dmitriy Dumanskiy.
  * Created on 25.03.15.
  */
-public class ArgumentsParser {
+class ArgumentsParser {
 
     private final Options options;
 
