@@ -9,4 +9,6 @@ import cc.blynk.server.model.widgets.Widget;
  */
 public class Graph extends Widget {
 
+    public int frequency;
+
 }

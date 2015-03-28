@@ -13,4 +13,6 @@ public class Digit4Display extends Widget {
 
     public int max;
 
+    public int frequency;
+
 }

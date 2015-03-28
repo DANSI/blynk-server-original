@@ -9,6 +9,8 @@ import cc.blynk.server.model.widgets.Widget;
  */
 public class LED extends Widget {
 
-    int color;
+    public int color;
+
+    public int frequency;
 
 }
