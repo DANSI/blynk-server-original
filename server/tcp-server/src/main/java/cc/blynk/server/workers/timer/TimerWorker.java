@@ -12,9 +12,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * The Blynk Project.
@@ -23,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  *
  * Simplest possible timer implementation.
  *
- * //todo optimize!!!
+ * //todo optimize!!! Could handle only ~10k timers per second.
  */
 public class TimerWorker implements Runnable {
 
@@ -33,29 +30,18 @@ public class TimerWorker implements Runnable {
     private SessionsHolder sessionsHolder;
     private ZoneId UTC = ZoneId.of("UTC");
 
-    private int allTimers;
     private int tickedTimers;
     private int onlineTimers;
-
-    protected TimerWorker() {
-    }
 
     public TimerWorker(UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
     }
 
-    public void start() {
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        //millis we need to wait to start scheduler at the beginning of a second.
-        long startDelay = 1000 - (System.currentTimeMillis() % 1000);
-        scheduler.scheduleAtFixedRate(this, startDelay, 1000, TimeUnit.MILLISECONDS);
-    }
-
     @Override
     public void run() {
         log.debug("Starting timer...");
-        allTimers = 0;
+        int allTimers = 0;
         tickedTimers = 0;
         onlineTimers = 0;
 

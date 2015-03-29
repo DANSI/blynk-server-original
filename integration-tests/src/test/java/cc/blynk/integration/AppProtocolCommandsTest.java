@@ -40,7 +40,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         appServer = new AppServer(properties, fileManager, userRegistry, sessionsHolder, stats);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager, properties.getIntProperty("profile.save.worker.period"), stats);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager, stats);
         new Thread(appServer).start();
         new Thread(profileSaverWorker).start();
 

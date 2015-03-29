@@ -11,9 +11,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 
 
@@ -29,24 +26,16 @@ public class ProfileSaverWorker implements Runnable {
     //1 min
     private final UserRegistry userRegistry;
     private final FileManager fileManager;
-    private final int periodInMillis;
     private final GlobalStats stats;
-    private final ScheduledExecutorService scheduler;
     private final JedisWrapper jedisWrapper;
     private long lastStart;
 
-    public ProfileSaverWorker(JedisWrapper jedisWrapper, UserRegistry userRegistry, FileManager fileManager, int periodInMillis, GlobalStats stats) {
+    public ProfileSaverWorker(JedisWrapper jedisWrapper, UserRegistry userRegistry, FileManager fileManager, GlobalStats stats) {
         this.userRegistry = userRegistry;
         this.fileManager = fileManager;
-        this.periodInMillis = periodInMillis;
         this.stats = stats;
-        this.scheduler = Executors.newScheduledThreadPool(1);
         this.lastStart = System.currentTimeMillis();
         this.jedisWrapper = jedisWrapper;
-    }
-
-    public void start() {
-        scheduler.scheduleAtFixedRate(this, 1000, periodInMillis, TimeUnit.MILLISECONDS);
     }
 
     @Override

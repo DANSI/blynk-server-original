@@ -10,7 +10,7 @@ If you need more information, please follow these links:
 
 # Blynk server
 Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Java server, responsible for forwarding messages between Blynk mobile application and various microcontroller boards (i.e. Arduino, Raspberry Pi. etc).
-Take latest build [here](https://github.com/blynkkk/blynk-server/releases).
+**Take latest build [here](https://github.com/blynkkk/blynk-server/releases).**
 
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
 
@@ -56,7 +56,7 @@ server.properties options:
 
         logs.folder=./logs
 
-+ Maximum allowed number of user dashboards. This value can be changed without restaring the server. ("Reloadable" below).
++ Maximum allowed number of user dashboards. This value can be changed without restarting the server. ("Reloadable" below).
 
         user.dashboard.max.limit=10
 

@@ -18,6 +18,9 @@ import cc.blynk.server.workers.timer.TimerWorker;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Entry point for server launch.
@@ -61,22 +64,30 @@ public class ServerLauncher {
 
         GlobalStats stats = new GlobalStats();
 
-        new TimerWorker(userRegistry, sessionsHolder).start();
-
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager,
-                serverProperties.getIntProperty("profile.save.worker.period"), stats);
-        profileSaverWorker.start();
-
         HardwareServer hardwareServer = new HardwareServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
         AppServer appServer = new AppServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
 
         List<BaseSimpleChannelInboundHandler> baseHandlers = hardwareServer.getBaseHandlers();
         baseHandlers.addAll(appServer.getBaseHandlers());
 
-        new Thread(new PropertiesChangeWatcherWorker(Config.SERVER_PROPERTIES_FILENAME, baseHandlers)).start();
-
+        //start servers
         new Thread(appServer).start();
         new Thread(hardwareServer).start();
+
+
+        //Launching all background jobs.
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
+
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager, stats);
+        scheduler.scheduleAtFixedRate(profileSaverWorker, 1000,
+                serverProperties.getIntProperty("profile.save.worker.period"), TimeUnit.MILLISECONDS);
+
+        //millis we need to wait to start scheduler at the beginning of a second.
+        long startDelay = 1000 - (System.currentTimeMillis() % 1000);
+        scheduler.scheduleAtFixedRate(
+                new TimerWorker(userRegistry, sessionsHolder), startDelay, 1000, TimeUnit.MILLISECONDS);
+
+        new Thread(new PropertiesChangeWatcherWorker(Config.SERVER_PROPERTIES_FILENAME, baseHandlers)).start();
 
         //todo test it works...
         Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(hardwareServer, appServer, profileSaverWorker)));
