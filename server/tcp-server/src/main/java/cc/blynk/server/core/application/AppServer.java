@@ -42,6 +42,7 @@ public class AppServer extends BaseServer {
         }
 
         int appTimeoutSecs = props.getIntProperty("app.socket.idle.timeout", 600);
+        log.debug("app.socket.idle.timeout = {}", appTimeoutSecs);
         this.channelInitializer = new AppChannelInitializer(sessionsHolder, stats, handlersHolder, sslContext, appTimeoutSecs);
 
         log.info("Application server port {}.", port);
