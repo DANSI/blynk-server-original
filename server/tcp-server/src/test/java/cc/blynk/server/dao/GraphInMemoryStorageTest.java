@@ -49,7 +49,7 @@ public class GraphInMemoryStorageTest {
         storage.store(user, 1, body, 1);
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test(expected = IllegalCommandException.class)
     public void testStorePinNotANumber() {
         String body = "aw x".replaceAll(" ", "\0");
         storage.store(user, 1, body, 1);
