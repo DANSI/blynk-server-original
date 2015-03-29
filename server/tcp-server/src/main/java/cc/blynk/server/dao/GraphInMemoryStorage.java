@@ -35,7 +35,14 @@ public class GraphInMemoryStorage implements Storage {
                 throw new IllegalCommandException("Hardware command body too short.", msgId);
             }
             String pinString = split(body);
-            Byte pin = Byte.valueOf(pinString);
+
+            Byte pin;
+            try {
+                pin = Byte.valueOf(pinString);
+            } catch (NumberFormatException e) {
+                throw new IllegalCommandException("Hardware command body incorrect.", msgId);
+            }
+
             if (user.getUserProfile().hasGraphPin(dashId, pin)) {
                 body = attachTS(body);
                 storeValue(user.getName(), dashId, body);
