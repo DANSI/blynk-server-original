@@ -43,6 +43,12 @@ public class GraphInMemoryStorageTest {
         storage.store(user, 1, body, 1);
     }
 
+    @Test(expected = IllegalCommandException.class)
+    public void testWrongStoreCommand2() {
+        String body = "aw 1 1";
+        storage.store(user, 1, body, 1);
+    }
+
     @Test(expected = NumberFormatException.class)
     public void testStorePinNotANumber() {
         String body = "aw x".replaceAll(" ", "\0");
