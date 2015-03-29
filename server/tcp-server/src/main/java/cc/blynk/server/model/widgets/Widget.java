@@ -70,6 +70,8 @@ public abstract class Widget {
 
     public int y;
 
+    public Integer color;
+
     public Integer width;
 
     public Integer height;
