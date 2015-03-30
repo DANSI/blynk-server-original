@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.workflow;
+package cc.blynk.server.handlers.app;
 
 import cc.blynk.common.model.messages.protocol.appllication.ActivateDashboardMessage;
 import cc.blynk.common.utils.ServerProperties;
@@ -6,6 +6,7 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

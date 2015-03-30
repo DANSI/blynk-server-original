@@ -6,7 +6,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.handlers.workflow.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 

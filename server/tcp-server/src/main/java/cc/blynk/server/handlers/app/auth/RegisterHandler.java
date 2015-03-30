@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.auth;
+package cc.blynk.server.handlers.app.auth;
 
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.protocol.appllication.RegisterMessage;

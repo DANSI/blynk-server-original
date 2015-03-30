@@ -1,11 +1,12 @@
-package cc.blynk.server.handlers.workflow;
+package cc.blynk.server.handlers.app;
 
-import cc.blynk.common.model.messages.protocol.appllication.RefreshTokenMessage;
+import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.NotAllowedException;
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -19,14 +20,14 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 @ChannelHandler.Sharable
-public class RefreshTokenHandler extends BaseSimpleChannelInboundHandler<RefreshTokenMessage> {
+public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMessage> {
 
-    public RefreshTokenHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public GetTokenHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         super(props, fileManager, userRegistry, sessionsHolder);
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, RefreshTokenMessage message) throws Exception {
+    protected void messageReceived(ChannelHandlerContext ctx, User user, GetTokenMessage message) throws Exception {
         String dashBoardIdString = message.body;
 
         int dashBoardId;
@@ -38,7 +39,7 @@ public class RefreshTokenHandler extends BaseSimpleChannelInboundHandler<Refresh
 
         user.getUserProfile().validateDashId(dashBoardId, message.id);
 
-        String token = userRegistry.refreshToken(user, dashBoardId);
+        String token = userRegistry.getToken(user, dashBoardId);
 
         ctx.writeAndFlush(produce(message.id, message.command, token));
     }

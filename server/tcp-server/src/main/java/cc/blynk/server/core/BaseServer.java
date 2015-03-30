@@ -1,7 +1,7 @@
 package cc.blynk.server.core;
 
 import cc.blynk.server.core.hardware.HardwareServer;
-import cc.blynk.server.handlers.workflow.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.nio.ChannelServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;

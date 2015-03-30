@@ -1,4 +1,4 @@
-package cc.blynk.common.handlers.decoders;
+package cc.blynk.common.handlers.common.decoders;
 
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.handlers.DefaultExceptionHandler;

@@ -1,4 +1,4 @@
-package cc.blynk.common.handlers.encoders;
+package cc.blynk.common.handlers.common.encoders;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.MessageBase;

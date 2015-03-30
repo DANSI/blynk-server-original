@@ -1,10 +1,11 @@
-package cc.blynk.server.handlers.workflow;
+package cc.blynk.server.handlers.common;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.*;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.exceptions.NoActiveDashboardException;
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.auth.nio.ChannelState;

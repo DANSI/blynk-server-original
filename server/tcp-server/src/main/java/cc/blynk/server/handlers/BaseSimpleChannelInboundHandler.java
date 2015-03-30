@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.workflow;
+package cc.blynk.server.handlers;
 
 import cc.blynk.common.exceptions.BaseServerException;
 import cc.blynk.common.handlers.DefaultExceptionHandler;

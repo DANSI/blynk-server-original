@@ -4,11 +4,11 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.handlers.auth.HardwareLoginHandler;
-import cc.blynk.server.handlers.workflow.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.handlers.workflow.HardwareHandler;
-import cc.blynk.server.handlers.workflow.PingHandler;
-import cc.blynk.server.handlers.workflow.TweetHandler;
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.common.HardwareHandler;
+import cc.blynk.server.handlers.common.PingHandler;
+import cc.blynk.server.handlers.hardware.HardwareLoginHandler;
+import cc.blynk.server.handlers.hardware.TweetHandler;
 import cc.blynk.server.twitter.TwitterWrapper;
 import io.netty.channel.ChannelHandler;
 

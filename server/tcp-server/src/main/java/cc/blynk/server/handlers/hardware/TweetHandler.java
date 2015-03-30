@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.workflow;
+package cc.blynk.server.handlers.hardware;
 
 import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
 import cc.blynk.common.utils.ServerProperties;
@@ -6,6 +6,7 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.TweetBodyInvalidException;
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.twitter.TwitterWrapper;
 import io.netty.channel.ChannelHandler;

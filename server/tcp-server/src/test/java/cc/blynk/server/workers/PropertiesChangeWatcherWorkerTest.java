@@ -1,6 +1,6 @@
 package cc.blynk.server.workers;
 
-import cc.blynk.server.handlers.workflow.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;

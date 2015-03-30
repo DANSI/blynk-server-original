@@ -1,10 +1,10 @@
 package cc.blynk.server.core.application;
 
-import cc.blynk.common.handlers.decoders.ReplayingMessageDecoder;
-import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
+import cc.blynk.common.handlers.common.decoders.ReplayingMessageDecoder;
+import cc.blynk.common.handlers.common.encoders.DeviceMessageEncoder;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.handlers.workflow.ClientChannelStateHandler;
+import cc.blynk.server.handlers.common.ClientChannelStateHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;

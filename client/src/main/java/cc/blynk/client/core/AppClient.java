@@ -1,7 +1,7 @@
 package cc.blynk.client.core;
 
 import cc.blynk.client.handlers.ClientReplayingMessageDecoder;
-import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
+import cc.blynk.common.handlers.common.encoders.DeviceMessageEncoder;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;

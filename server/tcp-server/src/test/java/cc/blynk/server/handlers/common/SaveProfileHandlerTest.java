@@ -1,9 +1,10 @@
-package cc.blynk.server.handlers.workflow;
+package cc.blynk.server.handlers.common;
 
 import cc.blynk.common.model.messages.protocol.appllication.SaveProfileMessage;
 import cc.blynk.server.TestBase;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
+import cc.blynk.server.handlers.app.SaveProfileHandler;
 import org.junit.Test;
 
 import static cc.blynk.common.enums.Command.SAVE_PROFILE;

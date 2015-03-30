@@ -1,8 +1,8 @@
 package cc.blynk.integration.model;
 
 import cc.blynk.client.core.AppClient;
-import cc.blynk.common.handlers.decoders.ReplayingMessageDecoder;
-import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
+import cc.blynk.common.handlers.common.decoders.ReplayingMessageDecoder;
+import cc.blynk.common.handlers.common.encoders.DeviceMessageEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

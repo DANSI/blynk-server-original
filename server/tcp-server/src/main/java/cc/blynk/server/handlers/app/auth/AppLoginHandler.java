@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.auth;
+package cc.blynk.server.handlers.app.auth;
 
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.protocol.appllication.LoginMessage;
@@ -6,7 +6,8 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.exceptions.InvalidTokenException;
+import cc.blynk.server.exceptions.UserNotAuthenticated;
+import cc.blynk.server.exceptions.UserNotRegistered;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.auth.nio.ChannelState;
 import io.netty.channel.ChannelHandler;
@@ -26,13 +27,13 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 @ChannelHandler.Sharable
-public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
+public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
 
     protected final FileManager fileManager;
     protected final UserRegistry userRegistry;
     protected final SessionsHolder sessionsHolder;
 
-    public HardwareLoginHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public AppLoginHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         this.fileManager = fileManager;
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
@@ -42,35 +43,33 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
         String[] messageParts = message.body.split(" ", 2);
 
-        if (messageParts.length != 1) {
-            throw new IllegalCommandException("Wrong income message format.", message.id);
+        if (messageParts.length == 2) {
+            appLogin(ctx, message.id, messageParts[0], messageParts[1]);
+        } else {
+           throw new IllegalCommandException("Wrong income message format.", message.id);
         }
-
-        String token = messageParts[0];
-        User user = userRegistry.getUserByToken(token);
-
-        if (user == null) {
-            throw new InvalidTokenException(String.format("Hardware token is invalid. Token '%s', %s", token, ctx.channel()), message.id);
-        }
-
-        Integer dashId = UserRegistry.getDashIdByToken(user, token);
-
-        ChannelState channelState = (ChannelState) ctx.channel();
-        channelState.dashId = dashId;
-        channelState.isHardwareChannel = true;
-        channelState.user = user;
-
-        sessionsHolder.addChannelToGroup(user, channelState, message.id);
-
-        log.info("Adding hardware channel with id {} to userGroup {}.", ctx.channel(), user.getName());
 
         ctx.writeAndFlush(produce(message.id, OK));
+    }
 
-        //send Pin Mode command in case channel connected to active dashboard with Pin Mode command that
-        //was sent previously
-        if (dashId.equals(user.getUserProfile().getActiveDashId()) && user.getUserProfile().getPinModeMessage() != null) {
-            ctx.writeAndFlush(user.getUserProfile().getPinModeMessage());
+    private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String pass) {
+        String userName = username.toLowerCase();
+        User user = userRegistry.getByName(userName);
+
+        if (user == null) {
+            throw new UserNotRegistered(String.format("User not registered. Username '%s', %s", userName, ctx.channel()), messageId);
         }
+
+        if (!user.getPass().equals(pass)) {
+            throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel()), messageId);
+        }
+
+        ChannelState channelState = (ChannelState) ctx.channel();
+        channelState.user = user;
+
+        sessionsHolder.addChannelToGroup(user, channelState, messageId);
+
+        log.info("Adding app channel with id {} to userGroup {}.", ctx.channel(), user.getName());
     }
 
     @Override

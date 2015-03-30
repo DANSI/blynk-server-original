@@ -2,7 +2,7 @@ package cc.blynk.server.workers;
 
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.handlers.workflow.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

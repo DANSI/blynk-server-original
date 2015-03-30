@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.workflow;
+package cc.blynk.server.handlers.common;
 
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.model.auth.nio.ChannelState;

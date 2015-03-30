@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.workflow;
+package cc.blynk.server.handlers.app;
 
 import cc.blynk.common.model.messages.protocol.appllication.SaveProfileMessage;
 import cc.blynk.common.utils.ServerProperties;
@@ -7,6 +7,7 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;
@@ -37,7 +38,7 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, SaveProfileMessage message) throws Exception {
+    public void messageReceived(ChannelHandlerContext ctx, User user, SaveProfileMessage message) throws Exception {
         String userProfileString = message.body;
 
         //expecting message with 2 parts

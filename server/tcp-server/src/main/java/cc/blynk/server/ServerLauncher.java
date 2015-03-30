@@ -9,7 +9,7 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.handlers.workflow.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.server.workers.PropertiesChangeWatcherWorker;
