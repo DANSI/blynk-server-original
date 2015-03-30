@@ -7,8 +7,9 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.InvalidTokenException;
+import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.auth.nio.ChannelState;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -56,12 +57,12 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         Integer dashId = UserRegistry.getDashIdByToken(user, token);
 
-        ChannelState channelState = (ChannelState) ctx.channel();
-        channelState.dashId = dashId;
-        channelState.isHardwareChannel = true;
-        channelState.user = user;
+        Channel channel = ctx.channel();
+        channel.attr(ChannelState.DASH_ID).set(dashId);
+        channel.attr(ChannelState.IS_HARD_CHANNEL).set(true);
+        channel.attr(ChannelState.USER).set(user);
 
-        sessionsHolder.addChannelToGroup(user, channelState, message.id);
+        sessionsHolder.addChannelToGroup(user, channel, message.id);
 
         log.info("Adding hardware channel with id {} to userGroup {}.", ctx.channel(), user.getName());
 

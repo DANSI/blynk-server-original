@@ -1,9 +1,9 @@
 package cc.blynk.server.handlers.common;
 
 import cc.blynk.server.dao.SessionsHolder;
+import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.auth.nio.ChannelState;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -34,7 +34,7 @@ public class ClientChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        sessionsHolder.removeFromSession((ChannelState) ctx.channel());
+        sessionsHolder.removeFromSession(ctx.channel());
         super.channelInactive(ctx);
     }
 
@@ -42,7 +42,7 @@ public class ClientChannelStateHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (cause instanceof ReadTimeoutException) {
             log.trace("Channel was inactive for a long period. Closing...");
-            User user = ((ChannelState) ctx.channel()).user;
+            User user = ctx.channel().attr(ChannelState.USER).get();
             if (user != null) {
                 Session session = sessionsHolder.userSession.get(user);
                 if (session.appChannels.size() > 0) {

@@ -8,8 +8,9 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.exceptions.UserNotRegistered;
+import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.auth.nio.ChannelState;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -65,10 +66,11 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel()), messageId);
         }
 
-        ChannelState channelState = (ChannelState) ctx.channel();
-        channelState.user = user;
+        Channel channel = ctx.channel();
+        channel.attr(ChannelState.USER).set(user);
+        channel.attr(ChannelState.IS_HARD_CHANNEL).set(false);
 
-        sessionsHolder.addChannelToGroup(user, channelState, messageId);
+        sessionsHolder.addChannelToGroup(user, channel, messageId);
 
         log.info("Adding app channel with id {} to userGroup {}.", ctx.channel(), user.getName());
     }

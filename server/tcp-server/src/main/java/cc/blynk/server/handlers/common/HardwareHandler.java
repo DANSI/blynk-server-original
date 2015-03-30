@@ -6,9 +6,9 @@ import cc.blynk.server.dao.*;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.exceptions.NoActiveDashboardException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.auth.nio.ChannelState;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -36,11 +36,9 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
     protected void messageReceived(ChannelHandlerContext ctx, User user, HardwareMessage message) throws Exception {
         Session session = sessionsHolder.userSession.get(user);
 
-        ChannelState channelState = (ChannelState) ctx.channel();
-
-        if (channelState.isHardwareChannel) {
+        if (ctx.channel().attr(ChannelState.IS_HARD_CHANNEL).get()) {
             //if message from hardware, check if it belongs to graph. so we need save it in that case
-            String body = storage.store(user, channelState.dashId, message.body, message.id);
+            String body = storage.store(user, ctx.channel().attr(ChannelState.DASH_ID).get(), message.body, message.id);
             if (session.appChannels.size() > 0) {
                 session.sendMessageToApp(message.updateMessageBody(body));
             }

@@ -2,7 +2,6 @@ package cc.blynk.server.core;
 
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.model.auth.nio.ChannelServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -10,6 +9,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,7 +40,7 @@ public abstract class BaseServer implements Runnable {
         ServerBootstrap b = new ServerBootstrap();
         try {
             b.group(bossGroup, workerGroup)
-                    .channel(ChannelServer.class)
+                    .channel(NioServerSocketChannel.class)
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childHandler(getChannelInitializer());
 

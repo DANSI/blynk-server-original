@@ -1,8 +1,9 @@
 package cc.blynk.server.dao;
 
+import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.auth.nio.ChannelState;
+import io.netty.channel.Channel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,14 +23,15 @@ public class SessionsHolder {
 
     public final Map<User, Session> userSession = new ConcurrentHashMap<>();
 
-    public void addChannelToGroup(User user, ChannelState channel, int msgId) {
+    public void addChannelToGroup(User user, Channel channel, int msgId) {
         Session session = getSessionByUser(user);
         session.addChannel(channel, msgId);
     }
 
-    public void removeFromSession(ChannelState channel) {
-        if (channel.user != null) {
-            Session session = userSession.get(channel.user);
+    public void removeFromSession(Channel channel) {
+        User user = channel.attr(ChannelState.USER).get();
+        if (user != null) {
+            Session session = userSession.get(user);
             if (session != null) {
                 session.remove(channel);
             }

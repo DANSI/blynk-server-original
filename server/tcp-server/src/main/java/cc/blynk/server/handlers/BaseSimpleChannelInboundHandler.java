@@ -8,8 +8,8 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
+import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.auth.nio.ChannelState;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -53,7 +53,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
             User user = null;
             try {
                 I imsg = (I) msg;
-                user = ((ChannelState) ctx.channel()).user;
+                user = ctx.channel().attr(ChannelState.USER).get();
                 if (user == null) {
                     throw new UserNotAuthenticated("User not logged.", imsg.id);
                 }

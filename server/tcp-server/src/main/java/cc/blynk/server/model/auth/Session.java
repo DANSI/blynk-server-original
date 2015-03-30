@@ -2,7 +2,6 @@ package cc.blynk.server.model.auth;
 
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.server.exceptions.UserAlreadyLoggedIn;
-import cc.blynk.server.model.auth.nio.ChannelState;
 import io.netty.channel.Channel;
 import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
@@ -27,7 +26,7 @@ public class Session {
 
     public void sendMessageToHardware(Integer activeDashId, MessageBase message) {
         for (Channel channel : hardwareChannels) {
-            Integer dashId = ((ChannelState) channel).dashId;
+            Integer dashId = channel.attr(ChannelState.DASH_ID).get();
             if (dashId.equals(activeDashId)) {
                 log.trace("Sending {} to {}", message, channel);
                 channel.writeAndFlush(message);
@@ -35,8 +34,8 @@ public class Session {
         }
     }
 
-    public void addChannel(ChannelState channel, int msgId) {
-        if (channel.isHardwareChannel) {
+    public void addChannel(Channel channel, int msgId) {
+        if (channel.attr(ChannelState.IS_HARD_CHANNEL).get()) {
             addChannel(hardwareChannels, channel, msgId);
         } else {
             addChannel(appChannels, channel, msgId);
@@ -66,11 +65,11 @@ public class Session {
         }
     }
 
-    public void remove(ChannelState channelServer) {
-        if (channelServer.isHardwareChannel) {
-            hardwareChannels.remove(channelServer);
+    public void remove(Channel channel) {
+        if (channel.attr(ChannelState.IS_HARD_CHANNEL).get()) {
+            hardwareChannels.remove(channel);
         } else {
-            appChannels.remove(channelServer);
+            appChannels.remove(channel);
         }
     }
 
