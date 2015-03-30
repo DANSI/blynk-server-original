@@ -67,7 +67,7 @@ public class TimerWorker implements Runnable {
     private void sendMessageIfTicked(User user, long curTime, Long time, String value) {
         if (timerTick(curTime, time)) {
             tickedTimers++;
-            Session session = sessionsHolder.userSession.get(user);
+            Session session = sessionsHolder.getUserSession().get(user);
             if (session != null) {
                 onlineTimers++;
                 if (session.hardwareChannels.size() > 0) {
