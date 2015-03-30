@@ -105,7 +105,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("hardware 1 1");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, "1 1".replaceAll(" ", "\0"))));
 
-        clientPair.hardwareClient.send("hardware 1 1");
+        clientPair.hardwareClient.send("hardware ar 1");
 
         ArgumentCaptor<Message> objectArgumentCaptor = ArgumentCaptor.forClass(Message.class);
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
@@ -114,8 +114,8 @@ public class MainWorkflowTest extends IntegrationBase {
         Message hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
         assertEquals(HARDWARE_COMMAND, hardMessage.command);
-        assertEquals(3, hardMessage.length);
-        assertEquals("1 1".replaceAll(" ", "\0"), hardMessage.body);
+        assertEquals(4, hardMessage.length);
+        assertEquals("ar 1".replaceAll(" ", "\0"), hardMessage.body);
     }
 
     @Test
