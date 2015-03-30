@@ -24,7 +24,8 @@ public class HardwareServer extends BaseServer {
 
     public HardwareServer(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
         super(props.getIntProperty("server.default.port"),
-              props.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors()));
+              props.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors()),
+              props.getBoolProperty("enable.native.epoll.transport"));
 
         this.handlersHolder = new HardwareHandlersHolder(props, fileManager, userRegistry, sessionsHolder);
         int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 15);

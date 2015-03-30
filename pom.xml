@@ -73,6 +73,7 @@
             </activation>
             <properties>
                 <script.extension>.sh</script.extension>
+                <epoll.os>linux-x86_64</epoll.os>
             </properties>
         </profile>
     </profiles>

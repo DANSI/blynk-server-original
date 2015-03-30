@@ -3,10 +3,9 @@ package cc.blynk.server.core;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
+import io.netty.channel.*;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -25,22 +24,43 @@ public abstract class BaseServer implements Runnable {
     protected static final Logger log = LogManager.getLogger(HardwareServer.class);
     protected final int port;
     private final int workerThreads;
+    private final boolean enableNativeEpoll;
 
     private Channel channel;
 
-    protected BaseServer(int port, int workerThreads) {
+    protected BaseServer(int port, int workerThreads, boolean enableNativeEpoll) {
         this.port = port;
         this.workerThreads = workerThreads;
+        this.enableNativeEpoll = enableNativeEpoll;
     }
 
     @Override
     public void run() {
-        NioEventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        NioEventLoopGroup workerGroup = new NioEventLoopGroup(workerThreads);
+        EventLoopGroup bossGroup;
+        EventLoopGroup workerGroup;
+        Class<? extends ServerChannel> channelClass;
+
+        if (enableNativeEpoll) {
+            log.warn("Native epoll transport enabled.");
+            bossGroup = new EpollEventLoopGroup(1);
+            workerGroup = new EpollEventLoopGroup(workerThreads);
+            channelClass = EpollServerSocketChannel.class;
+        } else {
+            bossGroup = new NioEventLoopGroup(1);
+            workerGroup = new NioEventLoopGroup(workerThreads);
+            channelClass = NioServerSocketChannel.class;
+        }
+
+        buildServerAndRun(bossGroup, workerGroup, channelClass);
+    }
+
+    private void buildServerAndRun(EventLoopGroup bossGroup, EventLoopGroup workerGroup,
+                             Class<? extends ServerChannel> channelClass) {
+
         ServerBootstrap b = new ServerBootstrap();
         try {
             b.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
+                    .channel(channelClass)
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childHandler(getChannelInitializer());
 

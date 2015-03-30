@@ -36,6 +36,14 @@
             <version>3.3.2</version>
         </dependency>
 
+        <!-- should be included only for specific builds -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-epoll</artifactId>
+            <version>${netty.version}</version>
+            <classifier>${epoll.os}</classifier>
+        </dependency>
+
 
     </dependencies>
 

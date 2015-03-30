@@ -28,7 +28,8 @@ public class AppServer extends BaseServer {
 
     public AppServer(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
         super(props.getIntProperty("server.ssl.port"),
-              props.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors()));
+              props.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors()),
+              props.getBoolProperty("enable.native.epoll.transport"));
 
         this.handlersHolder = new AppHandlersHolder(props, fileManager, userRegistry, sessionsHolder);
 
