@@ -77,29 +77,34 @@
         </profile>
     </profiles>
 
+    <properties>
+        <netty.version>4.0.26.Final</netty.version>
+        <log4j2.version>2.2</log4j2.version>
+    </properties>
+
     <dependencies>
 
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-common</artifactId>
-            <version>4.0.26.Final</version>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-handler</artifactId>
-            <version>4.0.26.Final</version>
+            <version>${netty.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.1</version>
+            <version>${log4j2.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.1</version>
+            <version>${log4j2.version}</version>
         </dependency>
 
         <dependency>
