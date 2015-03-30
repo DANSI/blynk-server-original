@@ -39,6 +39,10 @@ public class ServerLauncher {
 
     public static void main(String[] args) throws Exception {
         ServerProperties serverProperties = new ServerProperties();
+
+        //required to make all loggers async with LMAX disruptor
+        System.setProperty("Log4jContextSelector", "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
+
         //configurable folder for logs via property.
         System.setProperty("logs.folder", serverProperties.getProperty("logs.folder"));
 

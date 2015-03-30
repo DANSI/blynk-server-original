@@ -68,7 +68,7 @@
         </Logger>
 
         <Root level="debug">
-            <appender-ref ref="Routing"/>
+            <AppenderRef ref="Routing"/>
         </Root>
     </Loggers>
 </Configuration>
