@@ -5,6 +5,7 @@ import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
+import io.netty.channel.ChannelFuture;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -195,7 +196,12 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     //todo more tests for that
     public void testSendPinModeCommandWhenHardwareGoesOnline() throws Exception {
-        clientPair.hardwareClient.stop();
+        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
+        channelFuture.await();
+
+        if (!channelFuture.isDone()) {
+            throw new RuntimeException("Error closing hard cahnnel.");
+        }
 
         String body = "pm 13 in";
         clientPair.appClient.send("hardware " + body);

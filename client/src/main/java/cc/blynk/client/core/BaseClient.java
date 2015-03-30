@@ -5,10 +5,7 @@ import cc.blynk.client.HexConvertor;
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.Message;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ConnectTimeoutException;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -118,7 +115,7 @@ public abstract class BaseClient {
         }
     }
 
-    public void stop() {
-        channel.close().awaitUninterruptibly();
+    public ChannelFuture stop() {
+        return channel.close().awaitUninterruptibly();
     }
 }
