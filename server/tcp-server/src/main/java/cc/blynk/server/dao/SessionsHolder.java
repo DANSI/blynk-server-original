@@ -20,7 +20,7 @@ public class SessionsHolder {
 
     private static final Logger log = LogManager.getLogger(SessionsHolder.class);
 
-    private Map<User, Session> userSession = new ConcurrentHashMap<>();
+    public final Map<User, Session> userSession = new ConcurrentHashMap<>();
 
     public void addChannelToGroup(User user, ChannelState channel, int msgId) {
         Session session = getSessionByUser(user);
@@ -34,10 +34,6 @@ public class SessionsHolder {
                 session.remove(channel);
             }
         }
-    }
-
-    public Map<User, Session> getUserSession() {
-        return userSession;
     }
 
     //threadsafe

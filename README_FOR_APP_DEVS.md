@@ -99,6 +99,7 @@ Response message structure:
     7 - hardware is offline
     8 - no active dashboard. User has to activated dashboard.
     9 - token is invalid
+    10 - hardware channel went offline.
     11 - user is already logged in. Happens in cases when same user tries to login for more than one time.
     12 - tweet exception, exception occurred during posting request to Twitter could be in case messages are the same in a row;
     13 - tweet body invalid exception; body is empty or larger than 140 chars;

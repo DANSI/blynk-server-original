@@ -29,6 +29,7 @@ public class Session {
     public final Set<Channel> appChannels = new ConcurrentSet<>();
     public final Set<Channel> hardwareChannels = new ConcurrentSet<>();
 
+    //todo avoid static.
     public static List<ChannelFuture> sendMessageTo(MessageBase message, Set<Channel> channels) {
         if (channels.size() == 0) {
             throw new DeviceNotInNetworkException("No device in session.", message.id);

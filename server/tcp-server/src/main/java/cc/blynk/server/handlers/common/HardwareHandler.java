@@ -34,7 +34,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, User user, HardwareMessage message) throws Exception {
-        Session session = sessionsHolder.getUserSession().get(user);
+        Session session = sessionsHolder.userSession.get(user);
 
         ChannelState channelState = (ChannelState) ctx.channel();
 

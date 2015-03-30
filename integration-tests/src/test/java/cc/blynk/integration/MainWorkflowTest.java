@@ -67,6 +67,13 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testHardwareDeviceWentOffline() throws Exception {
+        //waiting for channel to become inactive
+        sleep(2000);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(0, DEVICE_WENT_OFFLINE)));
+    }
+
+    @Test
     public void testPingCommandWorks() throws Exception {
         clientPair.appClient.send("ping");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
