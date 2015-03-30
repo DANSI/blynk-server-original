@@ -243,6 +243,29 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, times(0)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
     }
 
+
+    @Test
+    public void test2ClientPairsWorkCorrectly() throws Exception {
+        final int ITERATIONS = 100;
+        ClientPair clientPair2 = initAppAndHardPair("localhost", appPort, hardPort, "dima2@mail.ua 1");
+
+        String body = "ar 1";
+        for (int i = 1; i <= ITERATIONS; i++) {
+            clientPair.appClient.send("hardware " + body);
+            clientPair2.appClient.send("hardware " + body);
+        }
+
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(ITERATIONS)).channelRead(any(), any());
+        verify(clientPair2.hardwareClient.responseMock, timeout(500).times(ITERATIONS)).channelRead(any(), any());
+
+
+        for (int i = 1; i <= ITERATIONS; i++) {
+            verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
+            verify(clientPair2.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
+        }
+    }
+
+
     @Test
     @Ignore("hard to test this case...")
     public void testTryReachQuotaLimitAndWarningExceededLimit() throws Exception {
