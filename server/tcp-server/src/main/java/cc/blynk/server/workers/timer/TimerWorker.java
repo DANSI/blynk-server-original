@@ -39,7 +39,7 @@ public class TimerWorker implements Runnable {
 
     @Override
     public void run() {
-        log.debug("Starting timer...");
+        log.trace("Starting timer...");
         int allTimers = 0;
         tickedTimers = 0;
         onlineTimers = 0;
@@ -57,7 +57,11 @@ public class TimerWorker implements Runnable {
                 }
             }
         }
-        log.debug("Timer finished. Processed {}/{}/{} timers.", onlineTimers, tickedTimers, allTimers);
+
+        //logging only events when timers ticked.
+        if (onlineTimers > 0) {
+            log.info("Timer finished. Processed {}/{}/{} timers.", onlineTimers, tickedTimers, allTimers);
+        }
     }
 
     private void sendMessageIfTicked(User user, long curTime, Long time, String value) {
