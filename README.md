@@ -56,6 +56,10 @@ server.properties options:
 
         logs.folder=./logs
 
++ Log debug level. Possible values: trace|debug|info|error. Defines how precise logging will be. From left to right -> maximum logging to minimum.
+
+        log.level=trace
+
 + Maximum allowed number of user dashboards. This value can be changed without restarting the server. ("Reloadable" below).
 
         user.dashboard.max.limit=10

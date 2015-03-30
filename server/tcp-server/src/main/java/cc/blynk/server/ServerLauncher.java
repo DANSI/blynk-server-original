@@ -15,6 +15,10 @@ import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.server.workers.PropertiesChangeWatcherWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
 
 import java.util.List;
 import java.util.Map;
@@ -46,9 +50,19 @@ public class ServerLauncher {
         //configurable folder for logs via property.
         System.setProperty("logs.folder", serverProperties.getProperty("logs.folder"));
 
+        //takes desired log level from properties
+        changeLogLevel(Level.valueOf(serverProperties.getProperty("log.level")));
+
         new ArgumentsParser().processArguments(args, serverProperties);
 
         launch(serverProperties);
+    }
+
+    private static void changeLogLevel(Level newLevel) {
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration conf = ctx.getConfiguration();
+        conf.getLoggerConfig(LogManager.ROOT_LOGGER_NAME).setLevel(newLevel);
+        ctx.updateLoggers(conf);
     }
 
     public static void launch(ServerProperties serverProperties) throws Exception {
