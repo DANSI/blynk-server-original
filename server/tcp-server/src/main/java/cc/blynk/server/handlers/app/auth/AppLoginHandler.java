@@ -41,6 +41,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
+        //warn: split may be optimized
         String[] messageParts = message.body.split(" ", 2);
 
         if (messageParts.length == 2) {

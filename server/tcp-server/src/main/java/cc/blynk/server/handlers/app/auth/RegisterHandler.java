@@ -40,6 +40,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterMessage message) throws Exception {
+        //warn: split may be optimized
         String[] messageParts = message.body.split(" ", 2);
 
         //expecting message with 2 parts, described above in comment.

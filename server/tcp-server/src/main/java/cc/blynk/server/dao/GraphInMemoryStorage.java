@@ -1,5 +1,6 @@
 package cc.blynk.server.dao;
 
+import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.auth.User;
 
@@ -9,7 +10,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.common.model.messages.protocol.HardwareMessage.attachTS;
-import static cc.blynk.common.utils.StringUtils.split;
 
 /**
  * The Blynk Project.
@@ -30,15 +30,14 @@ public class GraphInMemoryStorage implements Storage {
 
     @Override
     public String store(User user, Integer dashId, String body, int msgId) {
-        if (body.charAt(1) == 'w') {
-            if (body.length() < 4) {
-                throw new IllegalCommandException("Hardware command body too short.", msgId);
-            }
-            String pinString = split(body);
+        if (body.length() < 4) {
+            throw new IllegalCommandException("Hardware command body too short.", msgId);
+        }
 
+        if (body.charAt(1) == 'w') {
             Byte pin;
             try {
-                pin = Byte.valueOf(pinString);
+                pin = Byte.valueOf(StringUtils.fetchPin(body));
             } catch (NumberFormatException e) {
                 throw new IllegalCommandException("Hardware command body incorrect.", msgId);
             }

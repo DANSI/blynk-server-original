@@ -7,52 +7,33 @@ package cc.blynk.common.utils;
  */
 public class StringUtils {
 
+    public static final char SEPARATOR = '\0';
     /**
      * Parses string similar to this : "xw 1 xxxx"
+     * Every hard message has at least 3 starting chars we don't need.
      */
-    private static final int startIndex = 3;
+    private static final int START_INDEX = 3;
 
     /**
-     * Fast split in java. This one is ~25% faster than s.split("\0");
-     * Copied from here https://gist.github.com/banthar/2923321
+     * Efficient split method (instead of String.split).
+     *
+     * Returns pin from hardware body. For instance
+     *
+     * "aw 11 32" - is body. Where 11 is pin Number.
+     *
+     * @throws java.lang.NumberFormatException in case parsed pin not a Number.
      *
      */
-    public static String[] split(String s, char delimeter) {
-        int count = 1;
-
-        for (int i = 0; i < s.length(); i++)
-            if (s.charAt(i) == delimeter)
-                count++;
-
-        String[] array = new String[count];
-
-        int a = -1;
-        int b = 0;
-
-        for (int i = 0; i < count; i++) {
-
-            while (b < s.length() && s.charAt(b) != delimeter)
-                b++;
-
-            array[i] = s.substring(a + 1, b);
-            a = b;
-            b++;
-
-        }
-
-        return array;
-    }
-
-    public static String split(String s) {
-        int i = startIndex;
-        while (i < s.length()) {
-            if (s.charAt(i) == '\0') {
-                return s.substring(startIndex, i);
+    public static String fetchPin(String body) {
+        int i = START_INDEX;
+        while (i < body.length()) {
+            if (body.charAt(i) == SEPARATOR) {
+                return body.substring(START_INDEX, i);
             }
             i++;
         }
 
-        return s.substring(startIndex, i);
+        return body.substring(START_INDEX, i);
     }
 
 }
