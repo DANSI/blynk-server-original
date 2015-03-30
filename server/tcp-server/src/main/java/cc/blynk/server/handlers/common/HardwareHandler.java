@@ -38,12 +38,12 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
 
         ChannelState channelState = (ChannelState) ctx.channel();
 
-        //todo
-        //for hardware command do not wait for hardware response.
         if (channelState.isHardwareChannel) {
             //if message from hardware, check if it belongs to graph. so we need save it in that case
             String body = storage.store(user, channelState.dashId, message.body, message.id);
-            Session.sendMessageTo(message.updateMessageBody(body), session.appChannels);
+            if (session.appChannels.size() > 0) {
+                session.sendMessageToApp(message.updateMessageBody(body));
+            }
         } else {
             if (user.getUserProfile().getActiveDashId() == null) {
                 throw new NoActiveDashboardException("No active dashboard.", message.id);

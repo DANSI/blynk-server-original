@@ -3,7 +3,6 @@ package cc.blynk.server.workers.timer;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Timer;
@@ -67,10 +66,8 @@ public class TimerWorker implements Runnable {
             Session session = sessionsHolder.userSession.get(user);
             if (session != null) {
                 onlineTimers++;
-                try {
+                if (session.hardwareChannels.size() > 0) {
                     session.sendMessageToHardware(new HardwareMessage(7777, value));
-                } catch (DeviceNotInNetworkException e) {
-                    log.warn("Timer send for user {} failed. No Device in Network.", user.getName());
                 }
             }
         }

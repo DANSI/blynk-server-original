@@ -45,7 +45,9 @@ public class ClientChannelStateHandler extends ChannelInboundHandlerAdapter {
             User user = ((ChannelState) ctx.channel()).user;
             if (user != null) {
                 Session session = sessionsHolder.userSession.get(user);
-                Session.sendMessageTo(produce(0, DEVICE_WENT_OFFLINE), session.appChannels);
+                if (session.appChannels.size() > 0) {
+                    session.sendMessageToApp(produce(0, DEVICE_WENT_OFFLINE));
+                }
             }
             //channel is already closed here by ReadTimeoutHandler
         } else {

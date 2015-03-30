@@ -1,17 +1,13 @@
 package cc.blynk.server.model.auth;
 
 import cc.blynk.common.model.messages.MessageBase;
-import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.exceptions.UserAlreadyLoggedIn;
 import cc.blynk.server.model.auth.nio.ChannelState;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -29,29 +25,14 @@ public class Session {
     public final Set<Channel> appChannels = new ConcurrentSet<>();
     public final Set<Channel> hardwareChannels = new ConcurrentSet<>();
 
-    //todo avoid static.
-    public static List<ChannelFuture> sendMessageTo(MessageBase message, Set<Channel> channels) {
-        if (channels.size() == 0) {
-            throw new DeviceNotInNetworkException("No device in session.", message.id);
-        }
-        List<ChannelFuture> futureList = new ArrayList<>();
-        for (Channel channel : channels) {
-            log.trace("Sending {} to {}", message, channel);
-            futureList.add(channel.writeAndFlush(message));
-        }
-        return futureList;
-    }
-
-    public List<ChannelFuture> sendMessageToHardware(Integer activeDashId, MessageBase message) {
-        List<ChannelFuture> futureList = new ArrayList<>();
+    public void sendMessageToHardware(Integer activeDashId, MessageBase message) {
         for (Channel channel : hardwareChannels) {
             Integer dashId = ((ChannelState) channel).dashId;
             if (dashId.equals(activeDashId)) {
                 log.trace("Sending {} to {}", message, channel);
-                futureList.add(channel.writeAndFlush(message));
+                channel.writeAndFlush(message);
             }
         }
-        return futureList;
     }
 
     public void addChannel(ChannelState channel, int msgId) {
@@ -71,8 +52,18 @@ public class Session {
         channelSet.add(channel);
     }
 
-    public List<ChannelFuture> sendMessageToHardware(MessageBase message) {
-        return sendMessageTo(message, hardwareChannels);
+    public void sendMessageToHardware(MessageBase message) {
+        for (Channel channel : hardwareChannels) {
+            log.trace("Sending {} to {}", message, channel);
+            channel.writeAndFlush(message);
+        }
+    }
+
+    public void sendMessageToApp(MessageBase message) {
+        for (Channel channel : appChannels) {
+            log.trace("Sending {} to {}", message, channel);
+            channel.writeAndFlush(message);
+        }
     }
 
     public void remove(ChannelState channelServer) {
