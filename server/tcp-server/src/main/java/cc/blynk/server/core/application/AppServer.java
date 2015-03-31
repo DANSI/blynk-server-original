@@ -40,6 +40,8 @@ public class AppServer extends BaseServer {
             sslContext = initSslContext(props.getProperty("server.ssl.cert"),
                     props.getProperty("server.ssl.key"),
                     props.getProperty("server.ssl.key.pass"));
+        } else {
+            log.warn("SSL is disabled!");
         }
 
         int appTimeoutSecs = props.getIntProperty("app.socket.idle.timeout", 600);
