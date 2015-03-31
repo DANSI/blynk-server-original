@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 
 import javax.net.ssl.SSLException;
+import java.io.IOException;
 
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
@@ -44,9 +45,8 @@ public interface DefaultExceptionHandler {
         } else if (cause instanceof SSLException) {
             log.error("SSL exception. {}.", cause.getMessage());
             ctx.close();
-        } else {
+        } else if (cause instanceof IOException) {
             String errorMessage = cause.getMessage() == null ? "" : cause.getMessage();
-
             //all this are expected when user goes offline without closing socket correctly...
             switch (errorMessage) {
                 case "Connection reset by peer":
@@ -55,9 +55,12 @@ public interface DefaultExceptionHandler {
                     log.debug("Client goes offline. Reason : {}", cause.getMessage());
                     break;
                 default:
-                    log.error("Unexpected error!!!", cause);
+                    log.error("Blynk server IOException. {}", cause.getMessage());
                     break;
             }
+
+        } else {
+            log.error("Unexpected error!!!", cause);
         }
 
     }
