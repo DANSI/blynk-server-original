@@ -76,7 +76,7 @@ public abstract class BaseServer implements Runnable {
 
     public abstract BaseSimpleChannelInboundHandler[] getBaseHandlers();
 
-    public abstract ChannelInitializer<SocketChannel> getChannelInitializer();
+    protected abstract ChannelInitializer<SocketChannel> getChannelInitializer();
 
     public void stop() {
         if (channel != null) {

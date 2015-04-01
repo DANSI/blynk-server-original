@@ -25,9 +25,9 @@ public class TimerWorker implements Runnable {
 
     private static final Logger log = LogManager.getLogger(TimerWorker.class);
 
-    private UserRegistry userRegistry;
-    private SessionsHolder sessionsHolder;
-    private ZoneId UTC = ZoneId.of("UTC");
+    private final UserRegistry userRegistry;
+    private final SessionsHolder sessionsHolder;
+    private final ZoneId UTC = ZoneId.of("UTC");
 
     private int tickedTimers;
     private int onlineTimers;

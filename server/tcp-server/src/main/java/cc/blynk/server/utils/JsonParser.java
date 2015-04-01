@@ -24,7 +24,7 @@ public final class JsonParser {
     private static final Logger log = LogManager.getLogger(JsonParser.class);
 
     //it is threadsafe
-    private static ObjectMapper mapper = init();
+    private static final ObjectMapper mapper = init();
 
     private static ObjectMapper init() {
         return new ObjectMapper()

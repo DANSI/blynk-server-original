@@ -2,7 +2,6 @@ package cc.blynk.server.handlers.app;
 
 import cc.blynk.common.model.messages.protocol.appllication.DeActivateDashboardMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
@@ -22,12 +21,12 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 @ChannelHandler.Sharable
 public class DeActivateDashboardHandler extends BaseSimpleChannelInboundHandler<DeActivateDashboardMessage> {
 
-    public DeActivateDashboardHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(props, fileManager, userRegistry, sessionsHolder);
+    public DeActivateDashboardHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(props, userRegistry, sessionsHolder);
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, DeActivateDashboardMessage message) throws Exception {
+    protected void messageReceived(ChannelHandlerContext ctx, User user, DeActivateDashboardMessage message) {
         user.getUserProfile().setActiveDashId(null);
 
         ctx.writeAndFlush(produce(message.id, OK));

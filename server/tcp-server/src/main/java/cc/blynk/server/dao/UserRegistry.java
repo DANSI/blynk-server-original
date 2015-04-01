@@ -17,7 +17,7 @@ import java.util.UUID;
 public class UserRegistry {
 
     private static final Logger log = LogManager.getLogger(UserRegistry.class);
-    private Map<String, User> users;
+    private final Map<String, User> users;
     //init user DB if possible
 
     public UserRegistry(Map<String, User> users) {
@@ -91,10 +91,9 @@ public class UserRegistry {
         return token;
     }
 
-    public User createNewUser(String userName, String pass) {
+    public void createNewUser(String userName, String pass) {
         User newUser = new User(userName, pass);
         users.put(userName, newUser);
-        return newUser;
     }
 
 }

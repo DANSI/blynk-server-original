@@ -26,7 +26,7 @@ public class JedisWrapper {
 
     private static final Logger log = LogManager.getLogger(JedisWrapper.class);
     private final ServerProperties props;
-    private boolean redisEnabled;
+    private final boolean redisEnabled;
     private Jedis jedis;
 
     public JedisWrapper(ServerProperties props) {

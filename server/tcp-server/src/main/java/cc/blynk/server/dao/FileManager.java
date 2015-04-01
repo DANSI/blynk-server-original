@@ -101,7 +101,7 @@ public class FileManager {
      */
     public Map<String, User> deserialize() {
         log.debug("Starting reading user DB.");
-        Finder finder = new Finder("u_*.user");
+        Finder finder = new Finder();
 
 
         try {

@@ -2,8 +2,6 @@ package cc.blynk.server.handlers.app.auth;
 
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.protocol.appllication.RegisterMessage;
-import cc.blynk.server.dao.FileManager;
-import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.utils.EMailValidator;
 import io.netty.channel.ChannelHandler;
@@ -28,14 +26,10 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 @ChannelHandler.Sharable
 public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage> implements DefaultExceptionHandler {
 
-    protected final FileManager fileManager;
-    protected final UserRegistry userRegistry;
-    protected final SessionsHolder sessionsHolder;
+    private final UserRegistry userRegistry;
 
-    public RegisterHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        this.fileManager = fileManager;
+    public RegisterHandler(UserRegistry userRegistry) {
         this.userRegistry = userRegistry;
-        this.sessionsHolder = sessionsHolder;
     }
 
     @Override

@@ -2,7 +2,6 @@ package cc.blynk.server.handlers.hardware;
 
 import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.TweetBodyInvalidException;
@@ -26,15 +25,15 @@ public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> 
 
     private final TwitterWrapper twitterWrapper;
 
-    public TweetHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, TwitterWrapper twitterWrapper) {
-        super(props, fileManager, userRegistry, sessionsHolder);
+    public TweetHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, TwitterWrapper twitterWrapper) {
+        super(props, userRegistry, sessionsHolder);
         this.twitterWrapper = twitterWrapper;
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, TweetMessage message) throws Exception {
+    protected void messageReceived(ChannelHandlerContext ctx, User user, TweetMessage message) {
         if (message.body == null || message.body.equals("") || message.body.length() > 140) {
-            throw new TweetBodyInvalidException("Tweet message is empty or larger 140 chars", message.id);
+            throw new TweetBodyInvalidException(message.id);
         }
         twitterWrapper.tweet(user.getUserProfile().getTwitter(), message.body, message.id);
         log.debug("Tweet for user {}, with message : '{}', successfully was sent.", user.getName(), message.body);

@@ -1,7 +1,6 @@
 package cc.blynk.server;
 
 import cc.blynk.common.stats.GlobalStats;
-import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.application.AppServer;
@@ -51,7 +50,7 @@ public class ServerLauncher {
     private final BaseServer hardwareServer;
     private final ServerProperties serverProperties;
 
-    public ServerLauncher(ServerProperties serverProperties) throws Exception {
+    private ServerLauncher(ServerProperties serverProperties) {
         this.serverProperties = serverProperties;
         this.fileManager = new FileManager(serverProperties.getProperty("data.folder"));
         this.sessionsHolder = new SessionsHolder();
@@ -61,7 +60,7 @@ public class ServerLauncher {
         this.stats = new GlobalStats();
 
         this.hardwareServer = new HardwareServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
-        this.appServer = new AppServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
+        this.appServer = new AppServer(serverProperties, userRegistry, sessionsHolder, stats);
     }
 
     public static void main(String[] args) throws Exception {
@@ -116,7 +115,7 @@ public class ServerLauncher {
 
         List<BaseSimpleChannelInboundHandler> baseHandlers = new ArrayList<>(Arrays.asList(hardwareServer.getBaseHandlers()));
         baseHandlers.addAll(Arrays.asList(appServer.getBaseHandlers()));
-        new Thread(new PropertiesChangeWatcherWorker(Config.SERVER_PROPERTIES_FILENAME, baseHandlers)).start();
+        new Thread(new PropertiesChangeWatcherWorker(baseHandlers)).start();
 
         //todo test it works...
         Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(hardwareServer, appServer, profileSaverWorker)));

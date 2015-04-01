@@ -2,7 +2,6 @@ package cc.blynk.server.handlers.app;
 
 import cc.blynk.common.model.messages.protocol.appllication.ActivateDashboardMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
@@ -23,12 +22,12 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 @ChannelHandler.Sharable
 public class ActivateDashboardHandler extends BaseSimpleChannelInboundHandler<ActivateDashboardMessage> {
 
-    public ActivateDashboardHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(props, fileManager, userRegistry, sessionsHolder);
+    public ActivateDashboardHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(props, userRegistry, sessionsHolder);
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, ActivateDashboardMessage message) throws Exception {
+    protected void messageReceived(ChannelHandlerContext ctx, User user, ActivateDashboardMessage message) {
         String dashBoardIdString = message.body;
 
         int dashBoardId;

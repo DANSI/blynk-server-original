@@ -2,7 +2,6 @@ package cc.blynk.server.handlers.app;
 
 import cc.blynk.common.model.messages.protocol.appllication.RefreshTokenMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.NotAllowedException;
@@ -22,12 +21,12 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 @ChannelHandler.Sharable
 public class RefreshTokenHandler extends BaseSimpleChannelInboundHandler<RefreshTokenMessage> {
 
-    public RefreshTokenHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(props, fileManager, userRegistry, sessionsHolder);
+    public RefreshTokenHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(props, userRegistry, sessionsHolder);
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, RefreshTokenMessage message) throws Exception {
+    protected void messageReceived(ChannelHandlerContext ctx, User user, RefreshTokenMessage message) {
         String dashBoardIdString = message.body;
 
         int dashBoardId;

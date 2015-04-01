@@ -46,7 +46,7 @@ public class Session {
     private void addChannel(Set<Channel> channelSet, Channel channel, int msgId) {
         //if login from same channel again - do not allow.
         if (channelSet.contains(channel)) {
-            throw new UserAlreadyLoggedIn("User already logged. Client problem. CHECK!", msgId);
+            throw new UserAlreadyLoggedIn(msgId);
         }
         channelSet.add(channel);
     }

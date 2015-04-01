@@ -1,7 +1,6 @@
 package cc.blynk.server.core.application;
 
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
@@ -22,17 +21,17 @@ class AppHandlersHolder {
     private final BaseSimpleChannelInboundHandler[] baseHandlers;
     private final ChannelHandler[] allHandlers;
 
-    public AppHandlersHolder(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        RegisterHandler registerHandler = new RegisterHandler(fileManager, userRegistry, sessionsHolder);
-        AppLoginHandler appLoginHandler = new AppLoginHandler(fileManager, userRegistry, sessionsHolder);
-        GetTokenHandler getTokenHandler = new GetTokenHandler(props, fileManager, userRegistry, sessionsHolder);
-        RefreshTokenHandler refreshTokenHandler = new RefreshTokenHandler(props, fileManager, userRegistry, sessionsHolder);
-        LoadProfileHandler loadProfileHandler = new LoadProfileHandler(props, fileManager, userRegistry, sessionsHolder);
-        SaveProfileHandler saveProfileHandler = new SaveProfileHandler(props, fileManager, userRegistry, sessionsHolder);
-        HardwareHandler hardwareHandler = new HardwareHandler(props, fileManager, userRegistry, sessionsHolder);
-        PingHandler pingHandler = new PingHandler(props, fileManager, userRegistry, sessionsHolder);
-        ActivateDashboardHandler activateDashboardHandler = new ActivateDashboardHandler(props, fileManager, userRegistry, sessionsHolder);
-        DeActivateDashboardHandler deActivateDashboardHandler = new DeActivateDashboardHandler(props, fileManager, userRegistry, sessionsHolder);
+    public AppHandlersHolder(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        RegisterHandler registerHandler = new RegisterHandler(userRegistry);
+        AppLoginHandler appLoginHandler = new AppLoginHandler(userRegistry, sessionsHolder);
+        GetTokenHandler getTokenHandler = new GetTokenHandler(props, userRegistry, sessionsHolder);
+        RefreshTokenHandler refreshTokenHandler = new RefreshTokenHandler(props, userRegistry, sessionsHolder);
+        LoadProfileHandler loadProfileHandler = new LoadProfileHandler(props, userRegistry, sessionsHolder);
+        SaveProfileHandler saveProfileHandler = new SaveProfileHandler(props, userRegistry, sessionsHolder);
+        HardwareHandler hardwareHandler = new HardwareHandler(props, userRegistry, sessionsHolder);
+        PingHandler pingHandler = new PingHandler(props, userRegistry, sessionsHolder);
+        ActivateDashboardHandler activateDashboardHandler = new ActivateDashboardHandler(props, userRegistry, sessionsHolder);
+        DeActivateDashboardHandler deActivateDashboardHandler = new DeActivateDashboardHandler(props, userRegistry, sessionsHolder);
 
         this.baseHandlers = new BaseSimpleChannelInboundHandler[] {
             getTokenHandler,

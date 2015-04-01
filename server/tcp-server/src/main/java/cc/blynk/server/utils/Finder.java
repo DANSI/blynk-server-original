@@ -25,8 +25,8 @@ public class Finder extends SimpleFileVisitor<Path> {
     private final PathMatcher matcher;
     private final List<Path> foundFiles = new ArrayList<>();
 
-    public Finder(String pattern) {
-        matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
+    public Finder() {
+        matcher = FileSystems.getDefault().getPathMatcher("glob:" + "u_*.user");
     }
 
     // Compares the glob pattern against

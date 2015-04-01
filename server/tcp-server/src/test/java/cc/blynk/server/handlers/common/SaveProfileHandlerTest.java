@@ -17,7 +17,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  */
 public class SaveProfileHandlerTest extends TestBase {
 
-    private SaveProfileHandler saveProfileHandler = new SaveProfileHandler(props, null, null, null);
+    private SaveProfileHandler saveProfileHandler = new SaveProfileHandler(props, null, null);
 
     @Test(expected = NotAllowedException.class)
     public void testTooBigUserProfile() throws Exception {

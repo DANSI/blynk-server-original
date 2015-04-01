@@ -10,8 +10,8 @@ import cc.blynk.common.exceptions.BaseServerException;
  */
 public class DeviceNotInNetworkException extends BaseServerException {
 
-    public DeviceNotInNetworkException(String message, int msgId) {
-        super(message, msgId, Response.DEVICE_NOT_IN_NETWORK);
+    public DeviceNotInNetworkException(int msgId) {
+        super("No device in session.", msgId, Response.DEVICE_NOT_IN_NETWORK);
     }
 
 }

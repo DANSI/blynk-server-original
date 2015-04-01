@@ -4,7 +4,6 @@ import cc.blynk.common.exceptions.BaseServerException;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
@@ -17,8 +16,6 @@ import io.netty.util.ReferenceCountUtil;
 import io.netty.util.internal.TypeParameterMatcher;
 import org.apache.logging.log4j.ThreadContext;
 
-import java.util.Properties;
-
 import static cc.blynk.common.enums.Response.TOO_MANY_REQUESTS_EXCEPTION;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
@@ -29,17 +26,13 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  */
 public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
-    protected final Properties props;
-    protected final FileManager fileManager;
     protected final UserRegistry userRegistry;
     protected final SessionsHolder sessionsHolder;
     private final TypeParameterMatcher matcher;
     private volatile int USER_QUOTA_LIMIT;
     private volatile int USER_QUOTA_LIMIT_WARN_PERIOD;
 
-    public BaseSimpleChannelInboundHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        this.props = props;
-        this.fileManager = fileManager;
+    protected BaseSimpleChannelInboundHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
@@ -97,9 +90,8 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
      * @param ctx           the {@link ChannelHandlerContext} which this {@link SimpleChannelInboundHandler}
      *                      belongs to
      * @param msg           the message to handle
-     * @throws Exception    is thrown if an error occurred
      */
-    protected abstract void messageReceived(ChannelHandlerContext ctx, User user, I msg) throws Exception;
+    protected abstract void messageReceived(ChannelHandlerContext ctx, User user, I msg);
 
     /**
      *  When property file changed during server work, to avoid restart,

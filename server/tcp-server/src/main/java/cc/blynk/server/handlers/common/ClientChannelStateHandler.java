@@ -24,7 +24,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 @ChannelHandler.Sharable
 public class ClientChannelStateHandler extends ChannelInboundHandlerAdapter {
 
-    protected static final Logger log = LogManager.getLogger(ClientChannelStateHandler.class);
+    private static final Logger log = LogManager.getLogger(ClientChannelStateHandler.class);
 
     private final SessionsHolder sessionsHolder;
 

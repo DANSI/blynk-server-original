@@ -10,8 +10,8 @@ import cc.blynk.common.exceptions.BaseServerException;
  */
 public class TweetBodyInvalidException extends BaseServerException {
 
-    public TweetBodyInvalidException(String message, int msgId) {
-        super(message, msgId, Response.TWEET_BODY_INVALID_EXCEPTION);
+    public TweetBodyInvalidException(int msgId) {
+        super("Tweet message is empty or larger 140 chars.", msgId, Response.TWEET_BODY_INVALID_EXCEPTION);
     }
 
 }

@@ -10,8 +10,8 @@ import cc.blynk.common.exceptions.BaseServerException;
  */
 public class NoActiveDashboardException extends BaseServerException {
 
-    public NoActiveDashboardException(String message, int msgId) {
-        super(message, msgId, Response.NO_ACTIVE_DASHBOARD);
+    public NoActiveDashboardException(int msgId) {
+        super("No active dashboard.", msgId, Response.NO_ACTIVE_DASHBOARD);
     }
 
 }

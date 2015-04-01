@@ -10,8 +10,8 @@ import cc.blynk.common.exceptions.BaseServerException;
  */
 public class UserAlreadyLoggedIn extends BaseServerException {
 
-    public UserAlreadyLoggedIn(String message, int msgId) {
-        super(message, msgId, Response.USER_ALREADY_LOGGED_IN);
+    public UserAlreadyLoggedIn(int msgId) {
+        super("User already logged. Client problem. CHECK!", msgId, Response.USER_ALREADY_LOGGED_IN);
     }
 
 }

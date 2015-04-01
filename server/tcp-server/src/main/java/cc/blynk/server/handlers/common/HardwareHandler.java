@@ -2,7 +2,10 @@ package cc.blynk.server.handlers.common;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.*;
+import cc.blynk.server.dao.GraphInMemoryStorage;
+import cc.blynk.server.dao.SessionsHolder;
+import cc.blynk.server.dao.Storage;
+import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.exceptions.NoActiveDashboardException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
@@ -23,8 +26,8 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
 
     private final Storage storage;
 
-    public HardwareHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(props, fileManager, userRegistry, sessionsHolder);
+    public HardwareHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(props, userRegistry, sessionsHolder);
         this.storage = new GraphInMemoryStorage(props.getIntProperty("user.in.memory.storage.limit"));
     }
 
@@ -33,7 +36,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, HardwareMessage message) throws Exception {
+    protected void messageReceived(ChannelHandlerContext ctx, User user, HardwareMessage message) {
         Session session = sessionsHolder.userSession.get(user);
 
         if (ctx.channel().attr(ChannelState.IS_HARD_CHANNEL).get()) {
@@ -44,7 +47,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
             }
         } else {
             if (user.getUserProfile().getActiveDashId() == null) {
-                throw new NoActiveDashboardException("No active dashboard.", message.id);
+                throw new NoActiveDashboardException(message.id);
             }
 
             if (session.hardwareChannels.size() == 0) {
@@ -53,7 +56,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
                     user.getUserProfile().setPinModeMessage(message);
                     user.getUserProfile().setJustActivated(false);
                 }
-                throw new DeviceNotInNetworkException("No device in session.", message.id);
+                throw new DeviceNotInNetworkException(message.id);
             }
 
             session.sendMessageToHardware(user.getUserProfile().getActiveDashId(), message);

@@ -2,7 +2,6 @@ package cc.blynk.server.handlers.app;
 
 import cc.blynk.common.model.messages.protocol.appllication.SaveProfileMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
@@ -32,13 +31,13 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
     //I have to use volatile for reloadable props to be sure updated value will be visible by all threads
     private volatile int USER_PROFILE_MAX_SIZE;
 
-    public SaveProfileHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(props, fileManager, userRegistry, sessionsHolder);
+    public SaveProfileHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(props, userRegistry, sessionsHolder);
         updateProperties(props);
     }
 
     @Override
-    public void messageReceived(ChannelHandlerContext ctx, User user, SaveProfileMessage message) throws Exception {
+    public void messageReceived(ChannelHandlerContext ctx, User user, SaveProfileMessage message) {
         String userProfileString = message.body;
 
         //expecting message with 2 parts

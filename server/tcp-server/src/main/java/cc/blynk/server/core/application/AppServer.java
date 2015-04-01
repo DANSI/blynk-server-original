@@ -3,7 +3,6 @@ package cc.blynk.server.core.application;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
@@ -26,12 +25,12 @@ public class AppServer extends BaseServer {
     private final AppHandlersHolder handlersHolder;
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public AppServer(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
+    public AppServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
         super(props.getIntProperty("server.ssl.port"),
               props.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors()),
               props.getBoolProperty("enable.native.epoll.transport"));
 
-        this.handlersHolder = new AppHandlersHolder(props, fileManager, userRegistry, sessionsHolder);
+        this.handlersHolder = new AppHandlersHolder(props, userRegistry, sessionsHolder);
 
         boolean sslEnabled = props.getBoolProperty("app.ssl.enabled");
         SslContext sslContext = null;
@@ -51,7 +50,7 @@ public class AppServer extends BaseServer {
         log.info("Application server port {}.", port);
     }
 
-    public static SslContext initSslContext(String serverCertPath, String serverKeyPath, String keyPass) {
+    private static SslContext initSslContext(String serverCertPath, String serverKeyPath, String keyPass) {
         try {
             File serverCert = resolvePath(serverCertPath);
             File serverKey = resolvePath(serverKeyPath);

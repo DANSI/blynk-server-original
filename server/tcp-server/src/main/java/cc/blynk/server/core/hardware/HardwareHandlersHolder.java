@@ -1,7 +1,6 @@
 package cc.blynk.server.core.hardware;
 
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
@@ -22,11 +21,11 @@ class HardwareHandlersHolder {
     private final BaseSimpleChannelInboundHandler[] baseHandlers;
     private final ChannelHandler[] allHandlers;
 
-    public HardwareHandlersHolder(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(fileManager, userRegistry, sessionsHolder);
-        HardwareHandler hardwareHandler = new HardwareHandler(props, fileManager, userRegistry, sessionsHolder);
-        PingHandler pingHandler = new PingHandler(props, fileManager, userRegistry, sessionsHolder);
-        TweetHandler tweetHandler = new TweetHandler(props, fileManager, userRegistry, sessionsHolder, new TwitterWrapper());
+    public HardwareHandlersHolder(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(userRegistry, sessionsHolder);
+        HardwareHandler hardwareHandler = new HardwareHandler(props, userRegistry, sessionsHolder);
+        PingHandler pingHandler = new PingHandler(props, userRegistry, sessionsHolder);
+        TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, new TwitterWrapper());
 
         this.baseHandlers = new BaseSimpleChannelInboundHandler[] {
                 hardwareHandler,

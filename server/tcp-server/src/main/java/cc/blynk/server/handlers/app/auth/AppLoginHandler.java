@@ -2,7 +2,6 @@ package cc.blynk.server.handlers.app.auth;
 
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.protocol.appllication.LoginMessage;
-import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
@@ -30,12 +29,10 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 @ChannelHandler.Sharable
 public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
 
-    protected final FileManager fileManager;
-    protected final UserRegistry userRegistry;
-    protected final SessionsHolder sessionsHolder;
+    private final UserRegistry userRegistry;
+    private final SessionsHolder sessionsHolder;
 
-    public AppLoginHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        this.fileManager = fileManager;
+    public AppLoginHandler(UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
     }

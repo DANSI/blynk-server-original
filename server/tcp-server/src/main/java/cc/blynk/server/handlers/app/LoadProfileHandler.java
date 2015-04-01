@@ -2,7 +2,6 @@ package cc.blynk.server.handlers.app;
 
 import cc.blynk.common.model.messages.protocol.appllication.LoadProfileMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
@@ -21,12 +20,12 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 @ChannelHandler.Sharable
 public class LoadProfileHandler extends BaseSimpleChannelInboundHandler<LoadProfileMessage> {
 
-    public LoadProfileHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(props, fileManager, userRegistry, sessionsHolder);
+    public LoadProfileHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(props, userRegistry, sessionsHolder);
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, LoadProfileMessage message) throws Exception {
+    protected void messageReceived(ChannelHandlerContext ctx, User user, LoadProfileMessage message) {
         String body = user.getUserProfile().toString();
         ctx.writeAndFlush(produce(message.id, message.command, body));
     }

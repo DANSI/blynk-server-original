@@ -38,7 +38,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
-        appServer = new AppServer(properties, fileManager, userRegistry, sessionsHolder, stats);
+        appServer = new AppServer(properties, userRegistry, sessionsHolder, stats);
 
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager, stats);
         new Thread(appServer).start();

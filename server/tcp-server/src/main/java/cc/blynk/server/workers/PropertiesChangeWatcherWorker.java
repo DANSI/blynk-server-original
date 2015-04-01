@@ -29,8 +29,8 @@ public class PropertiesChangeWatcherWorker implements Runnable {
         this.propsFileFolder = ServerProperties.getCurrentDir();
     }
 
-    public PropertiesChangeWatcherWorker(String fileName, List<BaseSimpleChannelInboundHandler> handlers) {
-        this(fileName, handlers.toArray(new BaseSimpleChannelInboundHandler[handlers.size()]));
+    public PropertiesChangeWatcherWorker(List<BaseSimpleChannelInboundHandler> handlers) {
+        this(Config.SERVER_PROPERTIES_FILENAME, handlers.toArray(new BaseSimpleChannelInboundHandler[handlers.size()]));
     }
 
     @Override

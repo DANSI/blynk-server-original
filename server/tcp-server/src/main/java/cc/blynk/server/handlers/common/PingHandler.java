@@ -2,7 +2,6 @@ package cc.blynk.server.handlers.common;
 
 import cc.blynk.common.model.messages.protocol.PingMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
@@ -22,12 +21,12 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 @ChannelHandler.Sharable
 public class PingHandler extends BaseSimpleChannelInboundHandler<PingMessage> {
 
-    public PingHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(props, fileManager, userRegistry, sessionsHolder);
+    public PingHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(props, userRegistry, sessionsHolder);
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, PingMessage message) throws Exception {
+    protected void messageReceived(ChannelHandlerContext ctx, User user, PingMessage message) {
         ctx.channel().writeAndFlush(produce(message.id, OK));
     }
 
