@@ -14,6 +14,7 @@ import io.netty.handler.ssl.SslContext;
 import javax.net.ssl.SSLException;
 import java.io.File;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -53,15 +54,8 @@ public class AppServer extends BaseServer {
 
     public static SslContext initSslContext(String serverCertPath, String serverKeyPath, String keyPass) {
         try {
-            File serverCert = new File(serverCertPath);
-            if (!serverCert.exists()) {
-                serverCert = new File(AppServer.class.getResource(serverCertPath).toURI());
-            }
-
-            File serverKey = new File(serverKeyPath);
-            if (!serverKey.exists()) {
-                serverKey = new File(AppServer.class.getResource(serverKeyPath).toURI());
-            }
+            File serverCert = resolvePath(serverCertPath);
+            File serverKey = resolvePath(serverKeyPath);
 
             //todo this is self-signed cerf. just to simplify for now for testing.
             return SslContext.newServerContext(serverCert, serverKey, keyPass);
@@ -72,8 +66,24 @@ public class AppServer extends BaseServer {
             log.error("Error initializing ssl context. Reason : {}", e.getMessage());
             System.exit(0);
            //todo throw?
+        } catch (IllegalStateException e) {
+            log.error(e.getMessage());
+            System.exit(0);
         }
         return null;
+    }
+
+    private static File resolvePath(String pathToFile) throws URISyntaxException {
+        File file = new File(pathToFile);
+        if (!file.exists()) {
+            URL url = AppServer.class.getResource(pathToFile);
+            if (url == null) {
+                throw new IllegalStateException(pathToFile + " - not available.");
+            }
+            file = new File(url.toURI());
+        }
+
+        return file;
     }
 
     @Override
