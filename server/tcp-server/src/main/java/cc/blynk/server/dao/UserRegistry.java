@@ -25,6 +25,11 @@ public class UserRegistry {
         this.users = users;
     }
 
+    public UserRegistry(Map<String, User> users, Map<String, User> usersFromAnotherSource) {
+        this.users = users;
+        this.users.putAll(usersFromAnotherSource);
+    }
+
     public static Integer getDashIdByToken(User user, String token) {
         for (Map.Entry<Integer, String> dashToken : user.getDashTokens().entrySet()) {
             if (dashToken.getValue().equals(token)) {

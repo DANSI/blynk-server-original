@@ -3,6 +3,7 @@ package cc.blynk.server;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.dao.FileManager;
@@ -10,7 +11,6 @@ import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.model.auth.User;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.server.workers.PropertiesChangeWatcherWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
@@ -23,7 +23,6 @@ import org.apache.logging.log4j.core.config.Configuration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -43,6 +42,28 @@ import java.util.concurrent.TimeUnit;
  */
 public class ServerLauncher {
 
+    private final FileManager fileManager;
+    private final SessionsHolder sessionsHolder;
+    private final JedisWrapper jedisWrapper;
+    private final UserRegistry userRegistry;
+    private final GlobalStats stats;
+    private final BaseServer appServer;
+    private final BaseServer hardwareServer;
+    private final ServerProperties serverProperties;
+
+    public ServerLauncher(ServerProperties serverProperties) throws Exception {
+        this.serverProperties = serverProperties;
+        this.fileManager = new FileManager(serverProperties.getProperty("data.folder"));
+        this.sessionsHolder = new SessionsHolder();
+        this.jedisWrapper = new JedisWrapper(serverProperties);
+        //todo save all to disk to have latest version locally???
+        this.userRegistry = new UserRegistry(fileManager.deserialize(), jedisWrapper.getAllUsersDB());
+        this.stats = new GlobalStats();
+
+        this.hardwareServer = new HardwareServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
+        this.appServer = new AppServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
+    }
+
     public static void main(String[] args) throws Exception {
         ServerProperties serverProperties = new ServerProperties();
 
@@ -52,50 +73,36 @@ public class ServerLauncher {
         //configurable folder for logs via property.
         System.setProperty("logs.folder", serverProperties.getProperty("logs.folder"));
 
-        //takes desired log level from properties
-        changeLogLevel(Level.valueOf(serverProperties.getProperty("log.level")));
+        changeLogLevel(serverProperties.getProperty("log.level"));
 
         new ArgumentsParser().processArguments(args, serverProperties);
 
-        launch(serverProperties);
+        new ServerLauncher(serverProperties).start();
     }
 
-    private static void changeLogLevel(Level newLevel) {
+    /**
+     * Sets desired log level from properties.
+     *
+     * @param level - desired log level. error|info|debug|trace, etc.
+     */
+    private static void changeLogLevel(String level) {
+        Level newLevel = Level.valueOf(level);
         LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         Configuration conf = ctx.getConfiguration();
         conf.getLoggerConfig(LogManager.ROOT_LOGGER_NAME).setLevel(newLevel);
         ctx.updateLoggers(conf);
     }
 
-    public static void launch(ServerProperties serverProperties) throws Exception {
-        FileManager fileManager = new FileManager(serverProperties.getProperty("data.folder"));
-        SessionsHolder sessionsHolder = new SessionsHolder();
-
-        JedisWrapper jedisWrapper = new JedisWrapper(serverProperties);
-
-        //first reading all data from disk
-        Map<String, User> users = fileManager.deserialize();
-        //after that getting full DB from Redis and adding here.
-        users.putAll(jedisWrapper.getAllUsersDB());
-        //todo save all to disk to have latest version locally???
-
-        UserRegistry userRegistry = new UserRegistry(users);
-
-
-        GlobalStats stats = new GlobalStats();
-
-        HardwareServer hardwareServer = new HardwareServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
-        AppServer appServer = new AppServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
-
-        List<BaseSimpleChannelInboundHandler> baseHandlers = new ArrayList<>(Arrays.asList(hardwareServer.getBaseHandlers()));
-        baseHandlers.addAll(Arrays.asList(appServer.getBaseHandlers()));
-
+    private void start() {
         //start servers
         new Thread(appServer).start();
         new Thread(hardwareServer).start();
 
-
         //Launching all background jobs.
+        startJobs();
+    }
+
+    private void startJobs() {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager, stats);
@@ -107,6 +114,8 @@ public class ServerLauncher {
         scheduler.scheduleAtFixedRate(
                 new TimerWorker(userRegistry, sessionsHolder), startDelay, 1000, TimeUnit.MILLISECONDS);
 
+        List<BaseSimpleChannelInboundHandler> baseHandlers = new ArrayList<>(Arrays.asList(hardwareServer.getBaseHandlers()));
+        baseHandlers.addAll(Arrays.asList(appServer.getBaseHandlers()));
         new Thread(new PropertiesChangeWatcherWorker(Config.SERVER_PROPERTIES_FILENAME, baseHandlers)).start();
 
         //todo test it works...
