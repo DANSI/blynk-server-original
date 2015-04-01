@@ -5,6 +5,7 @@ import cc.blynk.common.handlers.common.encoders.DeviceMessageEncoder;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.handlers.common.ClientChannelStateHandler;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -38,7 +39,6 @@ final class AppChannelInitializer extends ChannelInitializer<SocketChannel> {
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
 
-        //todo apply from
         pipeline.addLast(new ReadTimeoutHandler(appTimeoutSecs));
 
         if (sslCtx != null) {
@@ -51,6 +51,8 @@ final class AppChannelInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new DeviceMessageEncoder());
 
         //sharable business logic handlers initialized previously
-        handlersHolder.getAllHandlers().forEach(pipeline::addLast);
+        for (ChannelHandler handler : handlersHolder.getAllHandlers()) {
+            pipeline.addLast(handler);
+        }
     }
 }

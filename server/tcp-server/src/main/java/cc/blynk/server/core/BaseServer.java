@@ -12,8 +12,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -76,7 +74,7 @@ public abstract class BaseServer implements Runnable {
         }
     }
 
-    public abstract List<BaseSimpleChannelInboundHandler> getBaseHandlers();
+    public abstract BaseSimpleChannelInboundHandler[] getBaseHandlers();
 
     public abstract ChannelInitializer<SocketChannel> getChannelInitializer();
 

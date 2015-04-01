@@ -15,7 +15,6 @@ import javax.net.ssl.SSLException;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.List;
 
 /**
  * The Blynk Project.
@@ -87,7 +86,7 @@ public class AppServer extends BaseServer {
     }
 
     @Override
-    public List<BaseSimpleChannelInboundHandler> getBaseHandlers() {
+    public BaseSimpleChannelInboundHandler[] getBaseHandlers() {
         return handlersHolder.getBaseHandlers();
     }
 

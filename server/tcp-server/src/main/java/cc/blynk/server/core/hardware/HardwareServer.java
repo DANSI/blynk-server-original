@@ -10,8 +10,6 @@ import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 
-import java.util.List;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -36,7 +34,7 @@ public class HardwareServer extends BaseServer {
     }
 
     @Override
-    public List<BaseSimpleChannelInboundHandler> getBaseHandlers() {
+    public BaseSimpleChannelInboundHandler[] getBaseHandlers() {
         return handlersHolder.getBaseHandlers();
     }
 

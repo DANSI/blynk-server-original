@@ -20,6 +20,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -85,8 +87,8 @@ public class ServerLauncher {
         HardwareServer hardwareServer = new HardwareServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
         AppServer appServer = new AppServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
 
-        List<BaseSimpleChannelInboundHandler> baseHandlers = hardwareServer.getBaseHandlers();
-        baseHandlers.addAll(appServer.getBaseHandlers());
+        List<BaseSimpleChannelInboundHandler> baseHandlers = new ArrayList<>(Arrays.asList(hardwareServer.getBaseHandlers()));
+        baseHandlers.addAll(Arrays.asList(appServer.getBaseHandlers()));
 
         //start servers
         new Thread(appServer).start();

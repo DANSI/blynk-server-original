@@ -12,9 +12,6 @@ import cc.blynk.server.handlers.hardware.TweetHandler;
 import cc.blynk.server.twitter.TwitterWrapper;
 import io.netty.channel.ChannelHandler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -22,39 +19,35 @@ import java.util.List;
  */
 class HardwareHandlersHolder {
 
-    //todo cover with tests.
-    //sharable handlers
-    private final HardwareLoginHandler hardwareLoginHandler;
-    private final HardwareHandler hardwareHandler;
-    private final PingHandler pingHandler;
-    private final TweetHandler tweetHandler;
+    private final BaseSimpleChannelInboundHandler[] baseHandlers;
+    private final ChannelHandler[] allHandlers;
 
     public HardwareHandlersHolder(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        this.hardwareLoginHandler = new HardwareLoginHandler(fileManager, userRegistry, sessionsHolder);
-        this.hardwareHandler = new HardwareHandler(props, fileManager, userRegistry, sessionsHolder);
-        this.pingHandler = new PingHandler(props, fileManager, userRegistry, sessionsHolder);
-        this.tweetHandler = new TweetHandler(props, fileManager, userRegistry, sessionsHolder, new TwitterWrapper());
-    }
+        HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(fileManager, userRegistry, sessionsHolder);
+        HardwareHandler hardwareHandler = new HardwareHandler(props, fileManager, userRegistry, sessionsHolder);
+        PingHandler pingHandler = new PingHandler(props, fileManager, userRegistry, sessionsHolder);
+        TweetHandler tweetHandler = new TweetHandler(props, fileManager, userRegistry, sessionsHolder, new TwitterWrapper());
 
-    public List<BaseSimpleChannelInboundHandler> getBaseHandlers() {
-        return new ArrayList<BaseSimpleChannelInboundHandler>() {
-           {
-               add(hardwareHandler);
-               add(pingHandler);
-               add(tweetHandler);
-            }
+        this.baseHandlers = new BaseSimpleChannelInboundHandler[] {
+                hardwareHandler,
+                pingHandler,
+                tweetHandler
+        };
+
+        this.allHandlers = new ChannelHandler[] {
+                hardwareLoginHandler,
+                hardwareHandler,
+                pingHandler,
+                tweetHandler
         };
     }
 
-    public List<ChannelHandler> getAllHandlers() {
-        return new ArrayList<ChannelHandler>() {
-           {
-               add(hardwareLoginHandler);
-               add(hardwareHandler);
-               add(pingHandler);
-               add(tweetHandler);
-            }
-        };
+    public BaseSimpleChannelInboundHandler[] getBaseHandlers() {
+        return baseHandlers;
+    }
+
+    public ChannelHandler[] getAllHandlers() {
+        return allHandlers;
     }
 
 }

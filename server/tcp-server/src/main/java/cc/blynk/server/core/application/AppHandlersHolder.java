@@ -12,9 +12,6 @@ import cc.blynk.server.handlers.common.HardwareHandler;
 import cc.blynk.server.handlers.common.PingHandler;
 import io.netty.channel.ChannelHandler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -22,59 +19,51 @@ import java.util.List;
  */
 class AppHandlersHolder {
 
-    private final RegisterHandler registerHandler;
-    private final AppLoginHandler appLoginHandler;
-    private final GetTokenHandler getTokenHandler;
-    private final RefreshTokenHandler refreshTokenHandler;
-    private final LoadProfileHandler loadProfileHandler;
-    private final SaveProfileHandler saveProfileHandler;
-    private final ActivateDashboardHandler activateDashboardHandler;
-    private final DeActivateDashboardHandler deActivateDashboardHandler;
-    private final HardwareHandler hardwareHandler;
-    private final PingHandler pingHandler;
+    private final BaseSimpleChannelInboundHandler[] baseHandlers;
+    private final ChannelHandler[] allHandlers;
 
     public AppHandlersHolder(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        this.registerHandler = new RegisterHandler(fileManager, userRegistry, sessionsHolder);
-        this.appLoginHandler = new AppLoginHandler(fileManager, userRegistry, sessionsHolder);
-        this.getTokenHandler = new GetTokenHandler(props, fileManager, userRegistry, sessionsHolder);
-        this.refreshTokenHandler = new RefreshTokenHandler(props, fileManager, userRegistry, sessionsHolder);
-        this.loadProfileHandler = new LoadProfileHandler(props, fileManager, userRegistry, sessionsHolder);
-        this.saveProfileHandler = new SaveProfileHandler(props, fileManager, userRegistry, sessionsHolder);
-        this.hardwareHandler = new HardwareHandler(props, fileManager, userRegistry, sessionsHolder);
-        this.pingHandler = new PingHandler(props, fileManager, userRegistry, sessionsHolder);
-        this.activateDashboardHandler = new ActivateDashboardHandler(props, fileManager, userRegistry, sessionsHolder);
-        this.deActivateDashboardHandler = new DeActivateDashboardHandler(props, fileManager, userRegistry, sessionsHolder);
-    }
+        RegisterHandler registerHandler = new RegisterHandler(fileManager, userRegistry, sessionsHolder);
+        AppLoginHandler appLoginHandler = new AppLoginHandler(fileManager, userRegistry, sessionsHolder);
+        GetTokenHandler getTokenHandler = new GetTokenHandler(props, fileManager, userRegistry, sessionsHolder);
+        RefreshTokenHandler refreshTokenHandler = new RefreshTokenHandler(props, fileManager, userRegistry, sessionsHolder);
+        LoadProfileHandler loadProfileHandler = new LoadProfileHandler(props, fileManager, userRegistry, sessionsHolder);
+        SaveProfileHandler saveProfileHandler = new SaveProfileHandler(props, fileManager, userRegistry, sessionsHolder);
+        HardwareHandler hardwareHandler = new HardwareHandler(props, fileManager, userRegistry, sessionsHolder);
+        PingHandler pingHandler = new PingHandler(props, fileManager, userRegistry, sessionsHolder);
+        ActivateDashboardHandler activateDashboardHandler = new ActivateDashboardHandler(props, fileManager, userRegistry, sessionsHolder);
+        DeActivateDashboardHandler deActivateDashboardHandler = new DeActivateDashboardHandler(props, fileManager, userRegistry, sessionsHolder);
 
-    public List<BaseSimpleChannelInboundHandler> getBaseHandlers() {
-        return new ArrayList<BaseSimpleChannelInboundHandler>() {
-           {
-               add(getTokenHandler);
-               add(refreshTokenHandler);
-               add(loadProfileHandler);
-               add(saveProfileHandler);
-               add(hardwareHandler);
-               add(pingHandler);
-               add(activateDashboardHandler);
-               add(deActivateDashboardHandler);
-            }
+        this.baseHandlers = new BaseSimpleChannelInboundHandler[] {
+            getTokenHandler,
+            refreshTokenHandler,
+            loadProfileHandler,
+            saveProfileHandler,
+            hardwareHandler,
+            pingHandler,
+            activateDashboardHandler,
+            deActivateDashboardHandler
+        };
+
+        this.allHandlers = new ChannelHandler[] {
+            registerHandler,
+            appLoginHandler,
+            getTokenHandler,
+            refreshTokenHandler,
+            loadProfileHandler,
+            saveProfileHandler,
+            hardwareHandler,
+            pingHandler,
+            activateDashboardHandler,
+            deActivateDashboardHandler
         };
     }
 
-    public List<ChannelHandler> getAllHandlers() {
-        return new ArrayList<ChannelHandler>() {
-           {
-               add(registerHandler);
-               add(appLoginHandler);
-               add(getTokenHandler);
-               add(refreshTokenHandler);
-               add(loadProfileHandler);
-               add(saveProfileHandler);
-               add(hardwareHandler);
-               add(pingHandler);
-               add(activateDashboardHandler);
-               add(deActivateDashboardHandler);
-            }
-        };
+    public BaseSimpleChannelInboundHandler[] getBaseHandlers() {
+        return baseHandlers;
+    }
+
+    public ChannelHandler[] getAllHandlers() {
+        return allHandlers;
     }
 }
