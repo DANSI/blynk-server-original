@@ -22,9 +22,9 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  */
 public interface DefaultExceptionHandler {
 
-    static final Logger log = LogManager.getLogger(DefaultExceptionHandler.class);
+    Logger log = LogManager.getLogger(DefaultExceptionHandler.class);
 
-    public default void handleGeneralException(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    default void handleGeneralException(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (cause instanceof BaseServerException) {
             handleAppException(ctx, (BaseServerException) cause);
         } else {
@@ -32,7 +32,7 @@ public interface DefaultExceptionHandler {
         }
     }
 
-    public default void handleUnexpectedException(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    default void handleUnexpectedException(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (cause instanceof ReadTimeoutException) {
             log.trace("Channel was inactive for a long period. Closing...");
             //channel is already closed here by ReadTimeoutHandler
@@ -65,7 +65,7 @@ public interface DefaultExceptionHandler {
 
     }
 
-    public default void handleAppException(ChannelHandlerContext ctx, BaseServerException baseServerException) {
+    default void handleAppException(ChannelHandlerContext ctx, BaseServerException baseServerException) {
         //no need for stack trace for known exceptions
         log.error(baseServerException.getMessage());
         try {

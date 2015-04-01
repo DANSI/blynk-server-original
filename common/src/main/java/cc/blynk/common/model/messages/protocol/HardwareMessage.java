@@ -1,6 +1,7 @@
 package cc.blynk.common.model.messages.protocol;
 
 import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.utils.StringUtils;
 
 import static cc.blynk.common.enums.Command.HARDWARE_COMMAND;
 
@@ -16,7 +17,7 @@ public class HardwareMessage extends Message {
     }
 
     public static String attachTS(String body) {
-        return body + '\0' + System.currentTimeMillis();
+        return body + StringUtils.BODY_SEPARATOR + System.currentTimeMillis();
     }
 
     public HardwareMessage updateMessageBody(String newBody) {

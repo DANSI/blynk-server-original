@@ -52,7 +52,6 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> implements D
 
         log.trace("Incoming {}", message);
 
-        stats.mark();
         stats.mark(message.getClass());
 
         out.add(message);

@@ -7,7 +7,7 @@ package cc.blynk.common.utils;
  */
 public class StringUtils {
 
-    public static final char SEPARATOR = '\0';
+    public static final char BODY_SEPARATOR = '\0';
     /**
      * Parses string similar to this : "xw 1 xxxx"
      * Every hard message has at least 3 starting chars we don't need.
@@ -27,7 +27,7 @@ public class StringUtils {
     public static String fetchPin(String body) {
         int i = START_INDEX;
         while (i < body.length()) {
-            if (body.charAt(i) == SEPARATOR) {
+            if (body.charAt(i) == BODY_SEPARATOR) {
                 return body.substring(START_INDEX, i);
             }
             i++;

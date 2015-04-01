@@ -43,11 +43,8 @@ public class GlobalStats {
     }
 
     public void mark(Class<?> clazz) {
-        specificCounters.get(clazz).increment();
-    }
-
-    public void mark() {
         incomeMessages.mark(1);
+        specificCounters.get(clazz).increment();
     }
 
     public void log() {
