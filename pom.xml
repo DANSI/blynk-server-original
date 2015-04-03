@@ -79,7 +79,7 @@
     </profiles>
 
     <properties>
-        <netty.version>4.0.26.Final</netty.version>
+        <netty.version>4.0.27.Final</netty.version>
         <log4j2.version>2.2</log4j2.version>
     </properties>
 
