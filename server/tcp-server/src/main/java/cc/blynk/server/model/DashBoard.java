@@ -1,6 +1,7 @@
 package cc.blynk.server.model;
 
 import cc.blynk.server.model.widgets.Widget;
+import cc.blynk.server.model.widgets.others.Email;
 import cc.blynk.server.model.widgets.others.Timer;
 import cc.blynk.server.model.widgets.outputs.Graph;
 
@@ -43,6 +44,21 @@ public class DashBoard {
         }
 
         return timerWidgets;
+    }
+
+    //expecting only 1 email widget.
+    public Email getEmailWidget() {
+        if (widgets == null || widgets.length == 0) {
+            return null;
+        }
+
+        for (Widget widget : widgets) {
+            if (widget instanceof Email) {
+                return (Email) widget;
+            }
+        }
+
+        return null;
     }
 
     public Set<Byte> getGraphWidgetPins() {

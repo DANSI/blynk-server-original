@@ -35,6 +35,10 @@ public class CommandParser {
                 return REGISTER;
             case "tweet" :
                 return TWEET;
+            case "email" :
+                return EMAIL;
+            case "push" :
+                return PUSH_NOTIFICATION;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

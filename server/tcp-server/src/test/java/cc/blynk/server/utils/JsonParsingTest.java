@@ -96,7 +96,7 @@ public class JsonParsingTest {
 
         assertNotNull(userProfileString);
         assertTrue(userProfileString.contains("dashBoards"));
-        Set<Timer> timers = userProfile.getDashboardTimerWidgets();
+        Set<Timer> timers = userProfile.getActiveDashboardTimerWidgets();
         assertNotNull(timers);
         assertEquals(1, timers.size());
     }

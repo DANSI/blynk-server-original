@@ -35,6 +35,8 @@ public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> 
         if (message.body == null || message.body.equals("") || message.body.length() > 140) {
             throw new TweetBodyInvalidException(message.id);
         }
+
+        //todo move to separate thread
         twitterWrapper.tweet(user.getUserProfile().getTwitter(), message.body, message.id);
         log.debug("Tweet for user {}, with message : '{}', successfully was sent.", user.getName(), message.body);
 

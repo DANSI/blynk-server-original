@@ -2,6 +2,7 @@ package cc.blynk.server.model;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.exceptions.IllegalCommandException;
+import cc.blynk.server.model.widgets.others.Email;
 import cc.blynk.server.model.widgets.others.Timer;
 import cc.blynk.server.utils.JsonParser;
 
@@ -55,20 +56,39 @@ public class UserProfile {
         this.dashBoards = dashBoards;
     }
 
-    public Set<Timer> getDashboardTimerWidgets() {
-        if (dashBoards == null || dashBoards.length == 0) {
+    public Set<Timer> getActiveDashboardTimerWidgets() {
+        if (dashBoards == null || dashBoards.length == 0 || activeDashId == null) {
             return Collections.emptySet();
         }
 
-        Set<Timer> timers = new HashSet<>();
-        for (DashBoard dashBoard : dashBoards) {
-            //processing only timers from active dashboard.
-            if (activeDashId != null && dashBoard.getId() == activeDashId) {
-                timers.addAll(dashBoard.getTimerWidgets());
-            }
+        DashBoard dashBoard = getActiveDashBoard();
+        if (dashBoard == null) {
+            return Collections.emptySet();
         }
 
-        return timers;
+        return dashBoard.getTimerWidgets();
+    }
+
+    public Email getActiveDashboardEmailWidget() {
+        if (dashBoards == null || dashBoards.length == 0 || activeDashId == null) {
+            return null;
+        }
+
+        DashBoard dashBoard = getActiveDashBoard();
+        if (dashBoard == null) {
+            return null;
+        }
+
+        return dashBoard.getEmailWidget();
+    }
+
+    public DashBoard getActiveDashBoard() {
+        for (DashBoard dashBoard : dashBoards) {
+            if (dashBoard.getId() == activeDashId) {
+                return dashBoard;
+            }
+        }
+        return null;
     }
 
     public void calcGraphPins() {

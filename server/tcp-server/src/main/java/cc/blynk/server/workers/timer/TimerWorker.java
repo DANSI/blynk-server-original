@@ -50,7 +50,7 @@ public class TimerWorker implements Runnable {
 
         for (User user : userRegistry.getUsers().values()) {
             if (user.getUserProfile().getDashBoards() != null) {
-                for (Timer timer : user.getUserProfile().getDashboardTimerWidgets()) {
+                for (Timer timer : user.getUserProfile().getActiveDashboardTimerWidgets()) {
                     allTimers++;
                     sendMessageIfTicked(user, curTime, timer.startTime, timer.startValue);
                     sendMessageIfTicked(user, curTime, timer.stopTime, timer.stopValue);

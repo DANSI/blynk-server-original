@@ -4,6 +4,8 @@ import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.model.messages.protocol.PingMessage;
 import cc.blynk.common.model.messages.protocol.appllication.*;
+import cc.blynk.common.model.messages.protocol.hardware.EmailMessage;
+import cc.blynk.common.model.messages.protocol.hardware.PushMessage;
 import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
 import com.codahale.metrics.Meter;
 import org.apache.logging.log4j.LogManager;
@@ -39,6 +41,8 @@ public class GlobalStats {
         specificCounters.put(ActivateDashboardMessage.class, new LongAdder());
         specificCounters.put(DeActivateDashboardMessage.class, new LongAdder());
         specificCounters.put(TweetMessage.class, new LongAdder());
+        specificCounters.put(EmailMessage.class, new LongAdder());
+        specificCounters.put(PushMessage.class, new LongAdder());
         specificCounters.put(ResponseMessage.class, new LongAdder());
     }
 
