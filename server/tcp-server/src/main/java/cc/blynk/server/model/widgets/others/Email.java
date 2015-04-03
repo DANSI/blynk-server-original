@@ -9,4 +9,10 @@ import cc.blynk.server.model.widgets.Widget;
  */
 public class Email extends Widget {
 
+    public String to;
+
+    public String header;
+
+    public String body;
+
 }
