@@ -188,7 +188,7 @@ List of hardware commands:
         hardware vw 9 item1 item2 item3
         hardware vw 9 key1 val1 key2 val2
 
-
+ 
 + Virtual read:
 
     	hardware vr 9
