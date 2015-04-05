@@ -61,7 +61,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         sessionsHolder.addChannelToGroup(user, channel, message.id);
 
-        log.info("Adding hardware channel with id {} to userGroup {}.", ctx.channel(), user.getName());
+        log.info("{} hardware joined.", user.getName());
 
         ctx.writeAndFlush(produce(message.id, OK));
 

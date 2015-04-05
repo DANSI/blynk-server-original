@@ -69,7 +69,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
         sessionsHolder.addChannelToGroup(user, channel, messageId);
 
-        log.info("Adding app channel with id {} to userGroup {}.", ctx.channel(), user.getName());
+        log.info("{} app joined.", user.getName());
     }
 
     @Override
