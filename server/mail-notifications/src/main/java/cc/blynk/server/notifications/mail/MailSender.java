@@ -1,4 +1,4 @@
-package cc.blynk.server.notification;
+package cc.blynk.server.notifications.mail;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -1,6 +1,5 @@
-package cc.blynk.server.notification.mail;
+package cc.blynk.server.notifications.mail;
 
-import cc.blynk.server.notification.MailSender;
 import org.junit.Ignore;
 import org.junit.Test;
 

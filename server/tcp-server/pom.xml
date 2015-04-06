@@ -46,7 +46,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>cc.blynk.server.notification</groupId>
+            <groupId>cc.blynk.server.notifications</groupId>
             <artifactId>mail-notifications</artifactId>
             <version>${project.version}</version>
         </dependency>
