@@ -8,7 +8,7 @@ import cc.blynk.server.handlers.common.HardwareHandler;
 import cc.blynk.server.handlers.common.PingHandler;
 import cc.blynk.server.handlers.hardware.HardwareLoginHandler;
 import cc.blynk.server.handlers.hardware.TweetHandler;
-import cc.blynk.server.twitter.TwitterWrapper;
+import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import io.netty.channel.ChannelHandler;
 
 /**

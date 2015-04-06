@@ -7,7 +7,7 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.TweetBodyInvalidException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.twitter.TwitterWrapper;
+import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 

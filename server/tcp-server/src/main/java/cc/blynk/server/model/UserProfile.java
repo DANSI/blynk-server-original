@@ -4,6 +4,7 @@ import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.widgets.others.Email;
 import cc.blynk.server.model.widgets.others.Timer;
+import cc.blynk.server.notifications.twitter.model.TwitterAccessToken;
 import cc.blynk.server.utils.JsonParser;
 
 import java.util.*;
