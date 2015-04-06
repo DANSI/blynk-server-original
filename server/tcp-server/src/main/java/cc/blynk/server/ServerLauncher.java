@@ -10,6 +10,7 @@ import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.hardware.notifications.NotificationBase;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.server.workers.PropertiesChangeWatcherWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
@@ -22,6 +23,8 @@ import org.apache.logging.log4j.core.config.Configuration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -49,6 +52,8 @@ public class ServerLauncher {
     private final BaseServer appServer;
     private final BaseServer hardwareServer;
     private final ServerProperties serverProperties;
+    private final Queue<NotificationBase> notificationsQueue;
+
 
     private ServerLauncher(ServerProperties serverProperties) {
         this.serverProperties = serverProperties;
@@ -59,8 +64,13 @@ public class ServerLauncher {
         this.userRegistry = new UserRegistry(fileManager.deserialize(), jedisWrapper.getAllUsersDB());
         this.stats = new GlobalStats();
 
-        this.hardwareServer = new HardwareServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
+        this.notificationsQueue = new ArrayBlockingQueue<>(
+                serverProperties.getIntProperty("notifications.queue.limit", 10000)
+        );
+
+        this.hardwareServer = new HardwareServer(serverProperties, userRegistry, sessionsHolder, stats, this.notificationsQueue);
         this.appServer = new AppServer(serverProperties, userRegistry, sessionsHolder, stats);
+
     }
 
     public static void main(String[] args) throws Exception {

@@ -43,7 +43,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
-        hardwareServer = new HardwareServer(properties, fileManager, userRegistry, sessionsHolder, stats);
+        hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsQueue);
         appServer = new AppServer(properties, userRegistry, sessionsHolder, stats);
         new Thread(hardwareServer).start();
         new Thread(appServer).start();

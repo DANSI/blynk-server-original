@@ -10,6 +10,7 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.handlers.hardware.notifications.NotificationBase;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.utils.JsonParser;
 import org.junit.BeforeClass;
@@ -19,6 +20,7 @@ import org.mockito.Mock;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Queue;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -45,6 +47,9 @@ public abstract class IntegrationBase {
 
     @Mock
     public BufferedReader bufferedReader2;
+
+    @Mock
+    public Queue<NotificationBase> notificationsQueue;
 
     public FileManager fileManager;
 
