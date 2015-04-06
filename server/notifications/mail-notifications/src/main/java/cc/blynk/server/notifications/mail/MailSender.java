@@ -50,7 +50,7 @@ public class MailSender {
                 message.setText(body);
 
                 Transport.send(message);
-                log.debug("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
+                log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
             } catch (MessagingException e) {
                 log.error("Error sending mail to {}", to);
             }

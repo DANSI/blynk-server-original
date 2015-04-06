@@ -56,6 +56,7 @@ public class EmailHandler extends BaseSimpleChannelInboundHandler<EmailMessage> 
         String subj = bodyParts[1];
         String body = bodyParts[2];
 
+        log.trace("Sending Mail for user {}, with message : '{}'.", user.getName(), message.body);
         notificationsProcessor.mail(to, subj, body, message.id);
 
         //todo send response immediately?

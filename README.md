@@ -52,15 +52,15 @@ server.properties options:
 
         data.folder=/tmp/blynk
 
-+ Folder for all application logs. Will be created if it doesn't exist.
++ Folder for all application logs. Will be created if it doesn't exist
 
         logs.folder=./logs
 
-+ Log debug level. Possible values: trace|debug|info|error. Defines how precise logging will be. From left to right -> maximum logging to minimum.
++ Log debug level. Possible values: trace|debug|info|error. Defines how precise logging will be. From left to right -> maximum logging to minimum
 
         log.level=trace
 
-+ Maximum allowed number of user dashboards. This value can be changed without restarting the server. ("Reloadable" below).
++ Maximum allowed number of user dashboards. This value can be changed without restarting the server. ("Reloadable" below)
 
         user.dashboard.max.limit=10
 
@@ -79,16 +79,21 @@ server.properties options:
 + In-memory storage limit for storing *read* values from hardware
 
         user.in.memory.storage.limit=1000
+        
++ Maximum allowed number of notification queue. Queue responsible for processing email, pushes, twits sending. Because of performance issue - those queue is processed in separate thread, this is required due to blocking nature of all above operations. Usually limit shouldn't be reached
+        
+        notifications.queue.limit=10000
 
-+ Period for flushing all user DB to disk. In millis.
+
++ Period for flushing all user DB to disk. In millis
 
         profile.save.worker.period=60000
 
-+ Specifies maximum period of time when application socket could be idle. After which socket will be closed due to non activity. In seconds. Default value 600 if not provided.
++ Specifies maximum period of time when application socket could be idle. After which socket will be closed due to non activity. In seconds. Default value 600 if not provided
 
         app.socket.idle.timeout=600
 
-+ Specifies maximum period of time when hardware socket could be idle. After which socket will be closed due to non activity. In seconds. Default value 15 if not provided.
++ Specifies maximum period of time when hardware socket could be idle. After which socket will be closed due to non activity. In seconds. Default value 15 if not provided
 
         hard.socket.idle.timeout=15
 

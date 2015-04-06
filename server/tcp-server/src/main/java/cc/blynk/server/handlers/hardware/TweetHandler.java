@@ -48,6 +48,7 @@ public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> 
             throw new TweetNotAuthorizedException("User has no access token provided.", message.id);
         }
 
+        log.trace("Sending Twit for user {}, with message : '{}'.", user.getName(), message.body);
         notificationsProcessor.twit(twitterAccessToken, message.body, message.id);
 
         //todo send response immediately?
