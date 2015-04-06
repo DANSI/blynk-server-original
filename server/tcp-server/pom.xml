@@ -42,7 +42,7 @@
         <!-- notification modules -->
         <dependency>
             <groupId>cc.blynk.server.notifications</groupId>
-            <artifactId>twitter-notifications</artifactId>
+            <artifactId>twitter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
