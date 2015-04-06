@@ -8,13 +8,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>server</artifactId>
+    <groupId>cc.blynk.server</groupId>
+
     <packaging>pom</packaging>
 
     <modules>
-        <module>mail-notifications</module>
-        <module>push-notifications-android</module>
-        <module>push-notifications-ios</module>
-        <module>twitter</module>
+        <module>notifications</module>
         <module>tcp-server</module>
     </modules>
 
