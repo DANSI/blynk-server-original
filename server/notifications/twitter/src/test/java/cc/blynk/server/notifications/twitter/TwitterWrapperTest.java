@@ -1,6 +1,5 @@
 package cc.blynk.server.notifications.twitter;
 
-import cc.blynk.server.notifications.twitter.exceptions.TweetException;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -16,12 +15,7 @@ public class TwitterWrapperTest {
     public void testTweet() {
         String token = "PUT_YOUR_TOKEN_HERE";
         String tokenSecret = "PUT_YOUR_TOKEN_SECRET_HERE";
-        new TwitterWrapper().tweet(token, tokenSecret, "Hello444", 1);
-    }
-
-    @Test(expected = TweetException.class)
-    public void expectException() {
-        new TwitterWrapper().tweet("", "", "Hello 123", 1);
+        new TwitterWrapper().produceSendTwitTask(token, tokenSecret, "Hello444").run();
     }
 
 }

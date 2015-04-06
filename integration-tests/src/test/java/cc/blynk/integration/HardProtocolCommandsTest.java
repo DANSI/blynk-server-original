@@ -37,7 +37,7 @@ public class HardProtocolCommandsTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
-        hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsQueue);
+        hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsProcessor);
 
         new Thread(hardwareServer).start();
 

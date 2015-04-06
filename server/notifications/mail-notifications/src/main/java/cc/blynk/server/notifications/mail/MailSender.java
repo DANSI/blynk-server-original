@@ -21,7 +21,7 @@ public class MailSender {
     private final Session session;
     private final InternetAddress from;
 
-    public MailSender(Properties mailProperties) throws AddressException {
+    public MailSender(Properties mailProperties) {
         String username = mailProperties.getProperty("mail.smtp.username");
         String password = mailProperties.getProperty("mail.smtp.password");
 
@@ -33,19 +33,28 @@ public class MailSender {
                 return new PasswordAuthentication(username, password);
             }
         });
-        this.from = new InternetAddress(username);
+        try {
+            this.from = new InternetAddress(username);
+        } catch (AddressException e) {
+            throw new RuntimeException("Error initializing MailSender.");
+        }
     }
 
-    public void send(String to, String subj, String body) throws MessagingException {
-        Message message = new MimeMessage(session);
-        message.setFrom();
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-        message.setSubject(subj);
-        message.setText(body);
+    public Runnable produceSendMailTask(String to, String subj, String body) {
+        return () -> {
+            try {
+                Message message = new MimeMessage(session);
+                message.setFrom(from);
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+                message.setSubject(subj);
+                message.setText(body);
 
-        Transport.send(message);
-
-        log.debug("Mail from {} to {} was sent. Subj : {}, body : {}", from, to, subj, body);
+                Transport.send(message);
+                log.debug("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
+            } catch (MessagingException e) {
+                log.error("Error sending mail to {}", to);
+            }
+        };
     }
 
 }

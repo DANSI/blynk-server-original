@@ -11,7 +11,7 @@ import cc.blynk.common.exceptions.BaseServerException;
 public class ServerBusyException extends BaseServerException {
 
     public ServerBusyException(int msgId) {
-        super("Server busy.", msgId, Response.SERVER_BUSY_EXCEPTION);
+        super("Queue is full. Could not process further.", msgId, Response.SERVER_BUSY_EXCEPTION);
     }
 
 }

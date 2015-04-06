@@ -10,6 +10,7 @@
     <artifactId>mail-notifications</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>

@@ -3,6 +3,7 @@ package cc.blynk.server.notifications.mail;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -15,7 +16,7 @@ public class MailSenderTest {
 
     @Test
     @Ignore
-    public void sendMail() throws Exception {
+    public void sendMail() throws IOException {
         Properties properties = new Properties();
         try (InputStream classPath = MailSenderTest.class.getResourceAsStream("/mail.properties")) {
             if (classPath != null) {
@@ -25,7 +26,7 @@ public class MailSenderTest {
 
         String to = "";
         MailSender mailSender = new MailSender(properties);
-        mailSender.send(to, "Hello", "Body!");
+        mailSender.produceSendMailTask(to, "Hello", "Body!").run();
     }
 
 }

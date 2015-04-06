@@ -43,7 +43,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
-        hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsQueue);
+        hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsProcessor);
         appServer = new AppServer(properties, userRegistry, sessionsHolder, stats);
         new Thread(hardwareServer).start();
         new Thread(appServer).start();
@@ -89,16 +89,6 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("ping");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
-    }
-
-
-    @Test
-    public void testTweetException() throws Exception {
-        String userProfile = readTestUserProfile();
-        clientPair.appClient.send("saveProfile " + userProfile);
-        clientPair.hardwareClient.send("tweet 123");
-
-        verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(1, TWEET_EXCEPTION)));
     }
 
     @Test

@@ -4,16 +4,14 @@ import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.exceptions.ServerBusyException;
 import cc.blynk.server.exceptions.TweetBodyInvalidException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.handlers.hardware.notifications.NotificationBase;
-import cc.blynk.server.handlers.hardware.notifications.TweetNotification;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.notifications.twitter.exceptions.TweetNotAuthorizedException;
+import cc.blynk.server.notifications.twitter.model.TwitterAccessToken;
+import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-
-import java.util.Queue;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -27,12 +25,12 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 @ChannelHandler.Sharable
 public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> {
 
-    private final Queue<NotificationBase> notificationsQueue;
+    private final NotificationsProcessor notificationsProcessor;
 
     public TweetHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                        Queue<NotificationBase> notificationsQueue) {
+                        NotificationsProcessor notificationsProcessor) {
         super(props, userRegistry, sessionsHolder);
-        this.notificationsQueue = notificationsQueue;
+        this.notificationsProcessor = notificationsProcessor;
     }
 
     @Override
@@ -42,11 +40,15 @@ public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> 
             throw new TweetBodyInvalidException(message.id);
         }
 
-        try {
-            notificationsQueue.add(new TweetNotification(user.getUserProfile().getTwitter(), message.body, message.id));
-        } catch (IllegalStateException e) {
-            throw new ServerBusyException(message.id);
+        TwitterAccessToken twitterAccessToken = user.getUserProfile().getTwitter();
+
+        if (twitterAccessToken == null ||
+                twitterAccessToken.getToken() == null || twitterAccessToken.getToken().equals("") ||
+                twitterAccessToken.getTokenSecret() == null || twitterAccessToken.getTokenSecret().equals("")) {
+            throw new TweetNotAuthorizedException("User has no access token provided.", message.id);
         }
+
+        notificationsProcessor.twit(twitterAccessToken, message.body, message.id);
 
         //todo send response immediately?
         ctx.channel().writeAndFlush(produce(message.id, OK));

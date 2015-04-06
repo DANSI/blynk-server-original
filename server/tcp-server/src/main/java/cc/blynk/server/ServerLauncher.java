@@ -10,10 +10,10 @@ import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.handlers.hardware.notifications.NotificationBase;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.server.workers.PropertiesChangeWatcherWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
+import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import cc.blynk.server.workers.timer.TimerWorker;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -23,8 +23,6 @@ import org.apache.logging.log4j.core.config.Configuration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -52,8 +50,7 @@ public class ServerLauncher {
     private final BaseServer appServer;
     private final BaseServer hardwareServer;
     private final ServerProperties serverProperties;
-    private final Queue<NotificationBase> notificationsQueue;
-
+    private final NotificationsProcessor notificationsProcessor;
 
     private ServerLauncher(ServerProperties serverProperties) {
         this.serverProperties = serverProperties;
@@ -64,11 +61,11 @@ public class ServerLauncher {
         this.userRegistry = new UserRegistry(fileManager.deserialize(), jedisWrapper.getAllUsersDB());
         this.stats = new GlobalStats();
 
-        this.notificationsQueue = new ArrayBlockingQueue<>(
+        this.notificationsProcessor = new NotificationsProcessor(
                 serverProperties.getIntProperty("notifications.queue.limit", 10000)
         );
 
-        this.hardwareServer = new HardwareServer(serverProperties, userRegistry, sessionsHolder, stats, this.notificationsQueue);
+        this.hardwareServer = new HardwareServer(serverProperties, userRegistry, sessionsHolder, stats, this.notificationsProcessor);
         this.appServer = new AppServer(serverProperties, userRegistry, sessionsHolder, stats);
 
     }
@@ -128,7 +125,7 @@ public class ServerLauncher {
         new Thread(new PropertiesChangeWatcherWorker(baseHandlers)).start();
 
         //todo test it works...
-        Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(hardwareServer, appServer, profileSaverWorker)));
+        Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(hardwareServer, appServer, profileSaverWorker, notificationsProcessor)));
     }
 
 }

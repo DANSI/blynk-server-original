@@ -9,10 +9,8 @@ import cc.blynk.server.handlers.common.PingHandler;
 import cc.blynk.server.handlers.hardware.EmailHandler;
 import cc.blynk.server.handlers.hardware.HardwareLoginHandler;
 import cc.blynk.server.handlers.hardware.TweetHandler;
-import cc.blynk.server.handlers.hardware.notifications.NotificationBase;
+import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
-
-import java.util.Queue;
 
 /**
  * The Blynk Project.
@@ -25,15 +23,15 @@ class HardwareHandlersHolder {
     private final ChannelHandler[] allHandlers;
 
     public HardwareHandlersHolder(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                                 Queue<NotificationBase> notificationsQueue) {
+                                  NotificationsProcessor notificationsProcessor) {
         HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(userRegistry, sessionsHolder);
         HardwareHandler hardwareHandler = new HardwareHandler(props, userRegistry, sessionsHolder);
         PingHandler pingHandler = new PingHandler(props, userRegistry, sessionsHolder);
 
 
         //notification handlers
-        TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsQueue);
-        EmailHandler emailHandler = new EmailHandler(props, userRegistry, sessionsHolder, notificationsQueue);
+        TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
+        EmailHandler emailHandler = new EmailHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
 
         this.baseHandlers = new BaseSimpleChannelInboundHandler[] {
                 hardwareHandler,

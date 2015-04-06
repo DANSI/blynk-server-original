@@ -1,7 +1,5 @@
 package cc.blynk.server.notifications.twitter;
 
-import cc.blynk.server.notifications.twitter.exceptions.TweetException;
-import cc.blynk.server.notifications.twitter.exceptions.TweetNotAuthorizedException;
 import cc.blynk.server.notifications.twitter.model.TwitterAccessToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,24 +20,23 @@ public class TwitterWrapper {
     // The factory instance is re-useable and thread safe.
     private final TwitterFactory factory = new TwitterFactory();
 
-    public void tweet(TwitterAccessToken twitterAccessToken, String message, int msgId) {
-        if (twitterAccessToken == null ||
-                twitterAccessToken.getToken() == null || twitterAccessToken.getToken().equals("") ||
-                twitterAccessToken.getTokenSecret() == null || twitterAccessToken.getTokenSecret().equals("")) {
-            throw new TweetNotAuthorizedException("User has no access token provided.", msgId);
-        }
-        tweet(twitterAccessToken.getToken(), twitterAccessToken.getTokenSecret(), message, msgId);
+    public Runnable produceSendTwitTask(TwitterAccessToken twitterAccessToken, String message) {
+        return produceSendTwitTask(twitterAccessToken.getToken(), twitterAccessToken.getTokenSecret(), message);
     }
 
-    public void tweet(String token, String tokenSecret, String message, int msgId) {
-        AccessToken accessToken = new AccessToken(token, tokenSecret);
-        Twitter twitter = factory.getInstance();
-        twitter.setOAuthAccessToken(accessToken);
-        try {
-            twitter.updateStatus(message);
-        } catch (TwitterException e) {
-            throw new TweetException(e.getMessage(), msgId);
-        }
+    protected Runnable produceSendTwitTask(String token, String tokenSecret, String message) {
+        return () -> {
+            try {
+                AccessToken accessToken = new AccessToken(token, tokenSecret);
+                Twitter twitter = factory.getInstance();
+                twitter.setOAuthAccessToken(accessToken);
+
+                twitter.updateStatus(message);
+            } catch (TwitterException e) {
+                log.error("Error sending twit.");
+            }
+
+        };
     }
 
 }

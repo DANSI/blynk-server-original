@@ -6,16 +6,12 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
-import cc.blynk.server.exceptions.ServerBusyException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.handlers.hardware.notifications.MailNotification;
-import cc.blynk.server.handlers.hardware.notifications.NotificationBase;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Email;
+import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-
-import java.util.Queue;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -29,12 +25,12 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 @ChannelHandler.Sharable
 public class EmailHandler extends BaseSimpleChannelInboundHandler<EmailMessage> {
 
-    private final Queue<NotificationBase> notificationsQueue;
+    private final NotificationsProcessor notificationsProcessor;
 
     public EmailHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                        Queue<NotificationBase> notificationsQueue) {
+                        NotificationsProcessor notificationsProcessor) {
         super(props, userRegistry, sessionsHolder);
-        this.notificationsQueue = notificationsQueue;
+        this.notificationsProcessor = notificationsProcessor;
     }
 
     @Override
@@ -60,11 +56,7 @@ public class EmailHandler extends BaseSimpleChannelInboundHandler<EmailMessage> 
         String subj = bodyParts[1];
         String body = bodyParts[2];
 
-        try {
-            notificationsQueue.add(new MailNotification(to, subj, body, message.id));
-        } catch (IllegalStateException e) {
-            throw new ServerBusyException(message.id);
-        }
+        notificationsProcessor.mail(to, subj, body, message.id);
 
         //todo send response immediately?
         ctx.channel().writeAndFlush(produce(message.id, OK));
