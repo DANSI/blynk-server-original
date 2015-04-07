@@ -23,12 +23,12 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 @ChannelHandler.Sharable
-public class EmailHandler extends BaseSimpleChannelInboundHandler<EmailMessage> {
+public class MailHandler extends BaseSimpleChannelInboundHandler<EmailMessage> {
 
     private final NotificationsProcessor notificationsProcessor;
 
-    public EmailHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                        NotificationsProcessor notificationsProcessor) {
+    public MailHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
+                       NotificationsProcessor notificationsProcessor) {
         super(props, userRegistry, sessionsHolder);
         this.notificationsProcessor = notificationsProcessor;
     }

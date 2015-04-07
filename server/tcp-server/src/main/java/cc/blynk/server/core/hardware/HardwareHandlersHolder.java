@@ -6,8 +6,8 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.HardwareHandler;
 import cc.blynk.server.handlers.common.PingHandler;
-import cc.blynk.server.handlers.hardware.EmailHandler;
 import cc.blynk.server.handlers.hardware.HardwareLoginHandler;
+import cc.blynk.server.handlers.hardware.MailHandler;
 import cc.blynk.server.handlers.hardware.TweetHandler;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
@@ -31,7 +31,7 @@ class HardwareHandlersHolder {
 
         //notification handlers
         TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
-        EmailHandler emailHandler = new EmailHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
+        MailHandler emailHandler = new MailHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
 
         this.baseHandlers = new BaseSimpleChannelInboundHandler[] {
                 hardwareHandler,
