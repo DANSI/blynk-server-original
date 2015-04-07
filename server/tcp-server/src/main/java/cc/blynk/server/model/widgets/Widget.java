@@ -54,7 +54,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         //others
         @JsonSubTypes.Type(value = Terminal.class, name = "TERMINAL"),
         @JsonSubTypes.Type(value = Twitter.class, name = "TWITTER"),
-        @JsonSubTypes.Type(value = Email.class, name = "EMAIL"),
+        @JsonSubTypes.Type(value = Mail.class, name = "EMAIL"),
         @JsonSubTypes.Type(value = Notification.class, name = "NOTIFICATION"),
         @JsonSubTypes.Type(value = SDCard.class, name = "SD_CARD"),
         @JsonSubTypes.Type(value = Eventor.class, name = "EVENTOR"),

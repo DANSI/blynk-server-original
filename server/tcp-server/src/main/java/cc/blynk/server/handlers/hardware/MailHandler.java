@@ -8,7 +8,7 @@ import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.others.Email;
+import cc.blynk.server.model.widgets.others.Mail;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -35,19 +35,19 @@ public class MailHandler extends BaseSimpleChannelInboundHandler<MailMessage> {
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, User user, MailMessage message) {
-        Email email = user.getUserProfile().getActiveDashboardEmailWidget();
+        Mail mail = user.getUserProfile().getActiveDashboardEmailWidget();
 
-        if (email == null) {
-            throw new NotAllowedException("User has no email widget or active dashboard.", message.id);
+        if (mail == null) {
+            throw new NotAllowedException("User has no mail widget or active dashboard.", message.id);
         }
 
-        if (message.body.equals("") && (email.to == null || email.to.equals(""))) {
+        if (message.body.equals("") && (mail.to == null || mail.to.equals(""))) {
             throw new IllegalCommandException("Invalid mail notification body.", message.id);
         }
 
         String[] bodyParts = message.body.split("\0");
 
-        if (bodyParts.length != 3 && (email.to == null || email.to.equals(""))) {
+        if (bodyParts.length != 3 && (mail.to == null || mail.to.equals(""))) {
             throw new IllegalCommandException("Invalid mail notification body.", message.id);
         }
 
@@ -57,12 +57,12 @@ public class MailHandler extends BaseSimpleChannelInboundHandler<MailMessage> {
 
         switch (bodyParts.length) {
             case 1 :
-                to = email.to;
-                subj = email.subj;
-                body = bodyParts[0].equals("") ? email.body : bodyParts[0];
+                to = mail.to;
+                subj = mail.subj;
+                body = bodyParts[0].equals("") ? mail.body : bodyParts[0];
                 break;
             case 2 :
-                to = email.to;
+                to = mail.to;
                 subj = bodyParts[0];
                 body = bodyParts[1];
                 break;

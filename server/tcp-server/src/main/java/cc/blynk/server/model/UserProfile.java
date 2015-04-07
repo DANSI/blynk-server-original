@@ -2,7 +2,7 @@ package cc.blynk.server.model;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.model.widgets.others.Email;
+import cc.blynk.server.model.widgets.others.Mail;
 import cc.blynk.server.model.widgets.others.Timer;
 import cc.blynk.server.notifications.twitter.model.TwitterAccessToken;
 import cc.blynk.server.utils.JsonParser;
@@ -70,7 +70,7 @@ public class UserProfile {
         return dashBoard.getTimerWidgets();
     }
 
-    public Email getActiveDashboardEmailWidget() {
+    public Mail getActiveDashboardEmailWidget() {
         if (dashBoards == null || dashBoards.length == 0 || activeDashId == null) {
             return null;
         }

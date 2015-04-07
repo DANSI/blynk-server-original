@@ -8,7 +8,7 @@ import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.others.Email;
+import cc.blynk.server.model.widgets.others.Mail;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -61,8 +61,8 @@ public class MailHandlerTest extends TestBase {
         MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "".replaceAll(" ", "\0"));
 
         when(user.getUserProfile()).thenReturn(userProfile);
-        Email email = new Email();
-        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(email);
+        Mail mail = new Mail();
+        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(mail);
 
         mailHandler.messageReceived(ctx, user, mailMessage);
     }
@@ -72,7 +72,7 @@ public class MailHandlerTest extends TestBase {
         MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body".replaceAll(" ", "\0"));
 
         when(user.getUserProfile()).thenReturn(userProfile);
-        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(new Email());
+        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(new Mail());
 
         mailHandler.messageReceived(ctx, user, mailMessage);
     }
@@ -82,8 +82,8 @@ public class MailHandlerTest extends TestBase {
         MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "");
 
         when(user.getUserProfile()).thenReturn(userProfile);
-        Email email = new Email("me@example.com", "Yo", "MyBody");
-        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(email);
+        Mail mail = new Mail("me@example.com", "Yo", "MyBody");
+        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(mail);
 
         when(ctx.channel()).thenReturn(channel);
 
@@ -97,8 +97,8 @@ public class MailHandlerTest extends TestBase {
         MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body".replaceAll(" ", "\0"));
 
         when(user.getUserProfile()).thenReturn(userProfile);
-        Email email = new Email("me@example.com", "Yo", "MyBody");
-        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(email);
+        Mail mail = new Mail("me@example.com", "Yo", "MyBody");
+        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(mail);
 
         when(ctx.channel()).thenReturn(channel);
 
@@ -112,8 +112,8 @@ public class MailHandlerTest extends TestBase {
         MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "subj body".replaceAll(" ", "\0"));
 
         when(user.getUserProfile()).thenReturn(userProfile);
-        Email email = new Email("me@example.com", "Yo", "MyBody");
-        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(email);
+        Mail mail = new Mail("me@example.com", "Yo", "MyBody");
+        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(mail);
 
         when(ctx.channel()).thenReturn(channel);
 
@@ -127,8 +127,8 @@ public class MailHandlerTest extends TestBase {
         MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "pupkin@example.com subj body".replaceAll(" ", "\0"));
 
         when(user.getUserProfile()).thenReturn(userProfile);
-        Email email = new Email("me@example.com", "Yo", "MyBody");
-        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(email);
+        Mail mail = new Mail("me@example.com", "Yo", "MyBody");
+        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(mail);
 
         when(ctx.channel()).thenReturn(channel);
 
