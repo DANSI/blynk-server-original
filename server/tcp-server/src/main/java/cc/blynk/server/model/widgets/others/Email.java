@@ -11,8 +11,16 @@ public class Email extends Widget {
 
     public String to;
 
-    public String header;
+    public String subj;
 
     public String body;
 
+    public Email() {
+    }
+
+    public Email(String to, String subj, String body) {
+        this.to = to;
+        this.subj = subj;
+        this.body = body;
+    }
 }

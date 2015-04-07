@@ -9,14 +9,14 @@ import static cc.blynk.common.enums.Command.EMAIL;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class EmailMessage extends Message {
+public class MailMessage extends Message {
 
-    public EmailMessage(int messageId, String body) {
+    public MailMessage(int messageId, String body) {
         super(messageId, EMAIL, body.length(), body);
     }
 
     @Override
     public String toString() {
-        return "EmailMessage{" + super.toString() + "}";
+        return "MailMessage{" + super.toString() + "}";
     }
 }

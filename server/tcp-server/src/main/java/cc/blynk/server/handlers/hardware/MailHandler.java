@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.hardware;
 
-import cc.blynk.common.model.messages.protocol.hardware.EmailMessage;
+import cc.blynk.common.model.messages.protocol.hardware.MailMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -23,7 +23,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 @ChannelHandler.Sharable
-public class MailHandler extends BaseSimpleChannelInboundHandler<EmailMessage> {
+public class MailHandler extends BaseSimpleChannelInboundHandler<MailMessage> {
 
     private final NotificationsProcessor notificationsProcessor;
 
@@ -34,27 +34,47 @@ public class MailHandler extends BaseSimpleChannelInboundHandler<EmailMessage> {
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, EmailMessage message) {
-        if (message.body == null || message.body.equals("")) {
-            throw new IllegalCommandException("Invalid mail notification body.", message.id);
-        }
-
-        //todo finish. for now assume all info is coming from hardware
+    protected void messageReceived(ChannelHandlerContext ctx, User user, MailMessage message) {
         Email email = user.getUserProfile().getActiveDashboardEmailWidget();
 
         if (email == null) {
             throw new NotAllowedException("User has no email widget or active dashboard.", message.id);
         }
 
-        String[] bodyParts = message.body.split("\0");
-
-        if (bodyParts.length != 3) {
+        if (message.body.equals("") && (email.to == null || email.to.equals(""))) {
             throw new IllegalCommandException("Invalid mail notification body.", message.id);
         }
 
-        String to = bodyParts[0];
-        String subj = bodyParts[1];
-        String body = bodyParts[2];
+        String[] bodyParts = message.body.split("\0");
+
+        if (bodyParts.length != 3 && (email.to == null || email.to.equals(""))) {
+            throw new IllegalCommandException("Invalid mail notification body.", message.id);
+        }
+
+        String to;
+        String subj;
+        String body;
+
+        switch (bodyParts.length) {
+            case 1 :
+                to = email.to;
+                subj = email.subj;
+                body = bodyParts[0].equals("") ? email.body : bodyParts[0];
+                break;
+            case 2 :
+                to = email.to;
+                subj = bodyParts[0];
+                body = bodyParts[1];
+                break;
+            case 3 :
+                to = bodyParts[0];
+                subj = bodyParts[1];
+                body = bodyParts[2];
+                break;
+            default :
+                throw new IllegalCommandException("Invalid mail notification body.", message.id);
+
+        }
 
         log.trace("Sending Mail for user {}, with message : '{}'.", user.getName(), message.body);
         notificationsProcessor.mail(to, subj, body, message.id);

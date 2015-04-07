@@ -6,7 +6,7 @@ import cc.blynk.common.exceptions.UnsupportedCommandException;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.model.messages.protocol.PingMessage;
 import cc.blynk.common.model.messages.protocol.appllication.*;
-import cc.blynk.common.model.messages.protocol.hardware.EmailMessage;
+import cc.blynk.common.model.messages.protocol.hardware.MailMessage;
 import cc.blynk.common.model.messages.protocol.hardware.PushMessage;
 import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
 
@@ -42,7 +42,7 @@ public class MessageFactory {
             case TWEET :
                 return new TweetMessage(messageId, body);
             case EMAIL :
-                return new EmailMessage(messageId, body);
+                return new MailMessage(messageId, body);
             case PUSH_NOTIFICATION :
                 return new PushMessage(messageId, body);
             case REGISTER :
