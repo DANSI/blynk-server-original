@@ -54,7 +54,7 @@ public abstract class BaseClient {
         }
 
         String body = input.length == 1 ? "" : input[1];
-        if (command == Command.HARDWARE_COMMAND) {
+        if (command == Command.HARDWARE_COMMAND || command == Command.EMAIL) {
             body = body.replaceAll(" ", "\0");
         }
         return produce(msgId, command, body);

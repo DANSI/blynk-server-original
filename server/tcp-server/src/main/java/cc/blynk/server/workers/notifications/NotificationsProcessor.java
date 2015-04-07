@@ -6,8 +6,6 @@ import cc.blynk.server.exceptions.ServerBusyException;
 import cc.blynk.server.notifications.mail.MailSender;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.notifications.twitter.model.TwitterAccessToken;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -20,8 +18,6 @@ import java.util.concurrent.TimeUnit;
  * Created on 07.04.15.
  */
 public class NotificationsProcessor {
-
-    private static final Logger log = LogManager.getLogger(NotificationsProcessor.class);
 
     private static final int NOTIFICATIONS_PROCESSORS = 10;
 

@@ -43,7 +43,7 @@ public class EmailHandler extends BaseSimpleChannelInboundHandler<EmailMessage> 
         Email email = user.getUserProfile().getActiveDashboardEmailWidget();
 
         if (email == null) {
-            throw new NotAllowedException("User has no email widget on active dashboard.", message.id);
+            throw new NotAllowedException("User has no email widget or active dashboard.", message.id);
         }
 
         String[] bodyParts = message.body.split("\0");

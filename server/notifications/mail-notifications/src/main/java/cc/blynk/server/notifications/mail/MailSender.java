@@ -52,7 +52,7 @@ public class MailSender {
                 Transport.send(message);
                 log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
             } catch (MessagingException e) {
-                log.error("Error sending mail to {}", to);
+                log.error("Error sending mail to {}. Reason : {}", to, e.getMessage());
             }
         };
     }
