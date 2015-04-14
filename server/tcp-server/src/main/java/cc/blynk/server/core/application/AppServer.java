@@ -52,6 +52,11 @@ public class AppServer extends BaseServer {
 
     private static SslContext initSslContext(String serverCertPath, String serverKeyPath, String keyPass) {
         try {
+
+            if ("/server_embedded.crt".equals(serverCertPath) && "/server_embedded.pem".equals(serverKeyPath)) {
+                log.warn("ATTENTION. You using embedded certs. This is not secure. Please replace it with your own certs.");
+            }
+
             File serverCert = resolvePath(serverCertPath);
             File serverKey = resolvePath(serverKeyPath);
 
