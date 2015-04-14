@@ -43,6 +43,12 @@ server.properties options:
 + Application port
 
         server.ssl.port=8443
+        
++ For simplicity Blynk already provides server jar with build-in SSL certificates, so you have working server out of the box via SSL/TLS sockets. But as certificate and it's private key are in public this is totally not secure. So in order to fix that you need to provide your own certificates. And change below properties with path to your cert. and private key and it's password. See how to generate self-signed certificates [here](https://github.com/blynkkk/blynk-server#generate-ssl-certificates)
+
+        server.ssl.cert=/server_embedded.crt
+        server.ssl.key=/server_embedded.pem
+        server.ssl.key.pass=pupkin123
 
 + Hardware port
 
@@ -84,7 +90,6 @@ server.properties options:
         
         notifications.queue.limit=10000
 
-
 + Period for flushing all user DB to disk. In millis
 
         profile.save.worker.period=60000
@@ -96,6 +101,26 @@ server.properties options:
 + Specifies maximum period of time when hardware socket could be idle. After which socket will be closed due to non activity. In seconds. Default value 15 if not provided
 
         hard.socket.idle.timeout=15
+
+### Generate SSL certificates
+
++ Create key
+        
+        openssl genrsa -out server.key 2048
+        
++ Create new cert request
+        
+        openssl req -new -out server.csr -key server.key
+
++ Generate self-signed request
+
+        openssl x509 -req -days 1825 -in server.csr -signkey server.key -out server.crt
+        
++ Convert server.key to PKCS#8 private key file in PEM format
+
+        openssl pkcs8 -topk8 -inform PEM -outform PEM -in server.key -out server.pem
+        
+As output you'll retrieve server.crt and server.pem files that you need to specify in server.ssl proerrties.
 
 ### Behind wifi router
 If you want to run Blynk server behind WiFi-router and want it to be accessible from the Internet, you have to add port-forwarding rule on your router. This is required in order to forward all of the requests that come to the router within the local network to Blynk server.
