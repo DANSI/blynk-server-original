@@ -7,6 +7,8 @@ import java.util.concurrent.atomic.LongAdder;
 import static java.lang.Math.exp;
 
 /**
+ * Class used to restrict user in request rate. Mostly copied from codahale metrics for performance improvement.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 16.03.15.
@@ -27,20 +29,11 @@ public class InstanceLoadMeter {
     }
 
     /**
-     * Mark the occurrence of an event.
+     * Mark the occurrence of a given number of events.
      */
     public void mark() {
-        mark(1);
-    }
-
-    /**
-     * Mark the occurrence of a given number of events.
-     *
-     * @param n the number of events
-     */
-    public void mark(long n) {
         tickIfNecessary();
-        uncounted.add(n);
+        uncounted.add(1);
     }
 
     private void tickIfNecessary() {
