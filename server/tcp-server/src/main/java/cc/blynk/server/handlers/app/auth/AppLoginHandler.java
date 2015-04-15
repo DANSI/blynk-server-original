@@ -56,11 +56,11 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         User user = userRegistry.getByName(userName);
 
         if (user == null) {
-            throw new UserNotRegistered(String.format("User not registered. Username '%s', %s", userName, ctx.channel()), messageId);
+            throw new UserNotRegistered(String.format("User not registered. Username '%s', %s", userName, ctx.channel().remoteAddress()), messageId);
         }
 
         if (!user.getPass().equals(pass)) {
-            throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel()), messageId);
+            throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel().remoteAddress()), messageId);
         }
 
         Channel channel = ctx.channel();

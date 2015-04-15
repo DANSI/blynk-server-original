@@ -49,9 +49,10 @@ public interface DefaultExceptionHandler {
             String errorMessage = cause.getMessage() == null ? "" : cause.getMessage();
             //all this are expected when user goes offline without closing socket correctly...
             switch (errorMessage) {
-                case "Connection reset by peer":
-                case "No route to host":
-                case "Connection timed out":
+                case "Connection reset by peer" :
+                case "No route to host" :
+                case "Connection timed out" :
+                case "syscall:read(...)() failed: Connection reset by peer" : //epoll connection time out, should be fixed on netty
                     log.debug("Client goes offline. Reason : {}", cause.getMessage());
                     break;
                 default:

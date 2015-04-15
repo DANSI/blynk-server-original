@@ -49,7 +49,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         User user = userRegistry.getUserByToken(token);
 
         if (user == null) {
-            throw new InvalidTokenException(String.format("Hardware token is invalid. Token '%s', %s", token, ctx.channel()), message.id);
+            throw new InvalidTokenException(String.format("Hardware token is invalid. Token '%s', %s", token, ctx.channel().remoteAddress()), message.id);
         }
 
         Integer dashId = UserRegistry.getDashIdByToken(user, token);
