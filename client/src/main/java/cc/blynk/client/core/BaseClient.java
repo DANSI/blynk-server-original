@@ -103,13 +103,12 @@ public abstract class BaseClient {
                 continue;
             }
 
-            log.trace("Message hex : {}", HexConvertor.messageToHex(msg));
-
             send(msg);
         }
     }
 
-    protected void send(Message msg) {
+    public void send(Message msg) {
+        log.trace("Message hex : {}", HexConvertor.messageToHex(msg));
         if (channel.isWritable()) {
             channel.writeAndFlush(msg);
         }

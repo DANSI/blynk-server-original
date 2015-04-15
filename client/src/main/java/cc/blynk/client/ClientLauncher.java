@@ -4,6 +4,7 @@ import cc.blynk.client.core.AppClient;
 import cc.blynk.client.core.BaseClient;
 import cc.blynk.client.core.HardwareClient;
 import cc.blynk.client.enums.ClientMode;
+import cc.blynk.common.model.messages.protocol.PingMessage;
 import cc.blynk.common.utils.ParseUtil;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -12,6 +13,8 @@ import org.apache.commons.cli.ParseException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The Blynk Project.
@@ -44,6 +47,13 @@ public class ClientLauncher {
         boolean disableAppSsl = cmd.hasOption("disableAppSsl");
 
         BaseClient baseClient = mode == ClientMode.APP ? new AppClient(host, port, disableAppSsl) : new HardwareClient(host, port);
+
+        //pinging for hardware client to avoid closing from server side for inactivity
+        if (mode == ClientMode.HARDWARE) {
+            Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> {
+                baseClient.send(new PingMessage(777, ""));
+            }, 12, 12, TimeUnit.SECONDS);
+        }
 
         baseClient.start(new BufferedReader(new InputStreamReader(System.in)));
     }
