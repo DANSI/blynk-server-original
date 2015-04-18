@@ -3,7 +3,7 @@
     <Appenders>
 
         <RollingFile name="workersLog" fileName="${sys:logs.folder}/worker.log"
-                     filePattern="${sys:logs.folder}/worker.log.%d{yyyy-MM-dd}">
+                     filePattern="${sys:logs.folder}/archive/worker.log.%d{yyyy-MM-dd}">
             <PatternLayout>
                 <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
             </PatternLayout>
@@ -13,7 +13,7 @@
         </RollingFile>
 
         <RollingFile name="statsLog" fileName="${sys:logs.folder}/stats.log"
-                     filePattern="${sys:logs.folder}/stats.log.%d{yyyy-MM-dd}">
+                     filePattern="${sys:logs.folder}/archive/stats.log.%d{yyyy-MM-dd}">
             <PatternLayout>
                 <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
             </PatternLayout>
@@ -28,7 +28,7 @@
                 <!-- This route is chosen if ThreadContext has no value for key "user". -->
                 <Route key="$${ctx:user}">
                     <RollingFile name="default" fileName="${sys:logs.folder}/blynk.log"
-                                 filePattern="${sys:logs.folder}/blynk.log.%d{yyyy-MM-dd}">
+                                 filePattern="${sys:logs.folder}/archive/blynk.log.%d{yyyy-MM-dd}">
                         <PatternLayout>
                             <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
                         </PatternLayout>
@@ -42,7 +42,7 @@
                 The value dynamically determines the name of the log file. -->
                 <Route>
                     <RollingFile name="${ctx:user}" fileName="${sys:logs.folder}/users/${ctx:user}.log"
-                                 filePattern="${sys:logs.folder}/${ctx:user}.log.%d{yyyy-MM-dd}">
+                                 filePattern="${sys:logs.folder}/users/archive/${ctx:user}.log.%d{yyyy-MM-dd}">
                         <PatternLayout>
                             <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
                         </PatternLayout>
