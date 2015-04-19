@@ -11,6 +11,9 @@ import java.nio.file.*;
 import java.util.List;
 
 /**
+ * Hook that monitors server.properties file for modification.
+ * In case of change - reloads "reloadable" properties in realtime.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/26/2015.

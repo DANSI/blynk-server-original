@@ -5,7 +5,7 @@
         <RollingFile name="workersLog" fileName="${sys:logs.folder}/worker.log"
                      filePattern="${sys:logs.folder}/archive/worker.log.%d{yyyy-MM-dd}">
             <PatternLayout>
-                <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
+                <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern>
             </PatternLayout>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
@@ -15,7 +15,7 @@
         <RollingFile name="statsLog" fileName="${sys:logs.folder}/stats.log"
                      filePattern="${sys:logs.folder}/archive/stats.log.%d{yyyy-MM-dd}">
             <PatternLayout>
-                <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
+                <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern>
             </PatternLayout>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
@@ -63,7 +63,7 @@
         <Logger name="cc.blynk.server.workers.timer.TimerWorker" level="debug" additivity="false">
             <appender-ref ref="workersLog"/>
         </Logger>
-        <Logger name="cc.blynk.common.stats.GlobalStats" level="debug" additivity="false">
+        <Logger name="cc.blynk.server.workers.StatsWorker" level="debug" additivity="false">
             <appender-ref ref="statsLog"/>
         </Logger>
 

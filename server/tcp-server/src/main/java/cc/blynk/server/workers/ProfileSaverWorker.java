@@ -1,6 +1,5 @@
 package cc.blynk.server.workers;
 
-import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.UserRegistry;
@@ -12,9 +11,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 /**
+ * Background thread that once a minute stores all user DB to disk in case profile was changed since last saving.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/12/2015.
@@ -26,14 +25,12 @@ public class ProfileSaverWorker implements Runnable {
     //1 min
     private final UserRegistry userRegistry;
     private final FileManager fileManager;
-    private final GlobalStats stats;
     private final JedisWrapper jedisWrapper;
     private long lastStart;
 
-    public ProfileSaverWorker(JedisWrapper jedisWrapper, UserRegistry userRegistry, FileManager fileManager, GlobalStats stats) {
+    public ProfileSaverWorker(JedisWrapper jedisWrapper, UserRegistry userRegistry, FileManager fileManager) {
         this.userRegistry = userRegistry;
         this.fileManager = fileManager;
-        this.stats = stats;
         this.lastStart = System.currentTimeMillis();
         this.jedisWrapper = jedisWrapper;
     }
@@ -62,7 +59,6 @@ public class ProfileSaverWorker implements Runnable {
 
         lastStart = newStart;
 
-        stats.log();
         log.debug("Saving user db finished. Modified {} users.", count);
     }
 

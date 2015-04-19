@@ -8,8 +8,6 @@ import cc.blynk.common.model.messages.protocol.hardware.MailMessage;
 import cc.blynk.common.model.messages.protocol.hardware.PushMessage;
 import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
 import com.codahale.metrics.Meter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,9 +20,8 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class GlobalStats {
 
-    private static final Logger log = LogManager.getLogger(GlobalStats.class);
-    private Meter incomeMessages;
-    private Map<Class<?>, LongAdder> specificCounters;
+    public Meter incomeMessages;
+    public Map<Class<?>, LongAdder> specificCounters;
 
     public GlobalStats() {
         this.incomeMessages = new Meter();
@@ -51,14 +48,4 @@ public class GlobalStats {
         specificCounters.get(clazz).increment();
     }
 
-    public void log() {
-        //do not log low traffic. it is not interesting =).
-        if (incomeMessages.getOneMinuteRate() > 1) {
-            log.debug("1 min rate : {}", String.format("%.2f", incomeMessages.getOneMinuteRate()));
-            for (Map.Entry<Class<?>, LongAdder> counterEntry : specificCounters.entrySet()) {
-                log.debug("{} : {}", counterEntry.getKey().getSimpleName(), counterEntry.getValue().sum());
-            }
-            log.debug("--------------------------------------------------------------------------------------");
-        }
-    }
 }

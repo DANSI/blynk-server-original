@@ -13,6 +13,7 @@ import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.server.workers.PropertiesChangeWatcherWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
+import cc.blynk.server.workers.StatsWorker;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import cc.blynk.server.workers.timer.TimerWorker;
 import org.apache.logging.log4j.Level;
@@ -109,11 +110,15 @@ public class ServerLauncher {
     }
 
     private void startJobs() {
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager, stats);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager);
         scheduler.scheduleAtFixedRate(profileSaverWorker, 1000,
                 serverProperties.getIntProperty("profile.save.worker.period"), TimeUnit.MILLISECONDS);
+
+        StatsWorker statsWorker = new StatsWorker(stats, sessionsHolder);
+        scheduler.scheduleAtFixedRate(statsWorker, 1000,
+                serverProperties.getIntProperty("stats.print.worker.period"), TimeUnit.MILLISECONDS);
 
         //millis we need to wait to start scheduler at the beginning of a second.
         long startDelay = 1000 - (System.currentTimeMillis() % 1000);

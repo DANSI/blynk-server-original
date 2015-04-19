@@ -38,7 +38,7 @@ public class ProfileSaverWorkerTest {
 
     @Test
     public void testCorrectProfilesAreSaved() throws IOException {
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager, stats);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager);
 
         User user1 = new User("1", "");
         User user2 = new User("2", "");
@@ -59,7 +59,6 @@ public class ProfileSaverWorkerTest {
         verify(fileManager).overrideUserFile(user2);
         verify(fileManager).overrideUserFile(user3);
         verify(fileManager).overrideUserFile(user4);
-        verify(stats).log();
     }
 
     @Test
@@ -77,13 +76,12 @@ public class ProfileSaverWorkerTest {
 
         Thread.sleep(1);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager, stats);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager);
 
         when(userRegistry.getUsers()).thenReturn(userMap);
         profileSaverWorker.run();
 
         verifyNoMoreInteractions(fileManager);
-        verify(stats).log();
     }
 
 }
