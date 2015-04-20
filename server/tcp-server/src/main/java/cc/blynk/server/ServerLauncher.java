@@ -3,6 +3,7 @@ package cc.blynk.server;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.administration.AdminServer;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.dao.FileManager;
@@ -50,6 +51,7 @@ public class ServerLauncher {
     private final GlobalStats stats;
     private final BaseServer appServer;
     private final BaseServer hardwareServer;
+    private final BaseServer adminServer;
     private final ServerProperties serverProperties;
     private final NotificationsProcessor notificationsProcessor;
 
@@ -68,6 +70,7 @@ public class ServerLauncher {
 
         this.hardwareServer = new HardwareServer(serverProperties, userRegistry, sessionsHolder, stats, this.notificationsProcessor);
         this.appServer = new AppServer(serverProperties, userRegistry, sessionsHolder, stats);
+        this.adminServer = new AdminServer(serverProperties, userRegistry, sessionsHolder);
 
     }
 
@@ -104,6 +107,7 @@ public class ServerLauncher {
         //start servers
         new Thread(appServer).start();
         new Thread(hardwareServer).start();
+        new Thread(adminServer).start();
 
         //Launching all background jobs.
         startJobs();
@@ -130,7 +134,7 @@ public class ServerLauncher {
         new Thread(new PropertiesChangeWatcherWorker(baseHandlers)).start();
 
         //todo test it works...
-        Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(hardwareServer, appServer, profileSaverWorker, notificationsProcessor)));
+        Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(profileSaverWorker, notificationsProcessor, hardwareServer, appServer, adminServer)));
     }
 
 }

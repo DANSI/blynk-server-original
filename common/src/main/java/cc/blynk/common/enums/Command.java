@@ -23,12 +23,12 @@ public final class Command {
     public static final short ACTIVATE_DASHBOARD = 7;
     public static final short DEACTIVATE_DASHBOARD = 8;
     public static final short REFRESH_TOKEN = 9;
-    public static final short TWEET = 12;
-    public static final short EMAIL = 13;
-    public static final short PUSH_NOTIFICATION = 14;
     //------------------------------------------
 
     //HARDWARE commands
+    public static final short TWEET = 12;
+    public static final short EMAIL = 13;
+    public static final short PUSH_NOTIFICATION = 14;
     public static final short HARDWARE_COMMAND = 20;
     //------------------------------------------
 

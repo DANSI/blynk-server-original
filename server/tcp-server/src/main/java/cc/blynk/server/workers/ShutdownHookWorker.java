@@ -16,15 +16,13 @@ public class ShutdownHookWorker implements Runnable {
 
     private final static Logger log = LogManager.getLogger(ShutdownHookWorker.class);
 
-    private final BaseServer hardServer;
-    private final BaseServer appServer;
+    private final BaseServer[] servers;
     private final ProfileSaverWorker profileSaverWorker;
     private final NotificationsProcessor notificationsProcessor;
 
-    public ShutdownHookWorker(BaseServer hardServer, BaseServer appServer, ProfileSaverWorker profileSaverWorker,
-                              NotificationsProcessor notificationsProcessor) {
-        this.hardServer = hardServer;
-        this.appServer = appServer;
+    public ShutdownHookWorker(ProfileSaverWorker profileSaverWorker, NotificationsProcessor notificationsProcessor,
+                              BaseServer... servers) {
+        this.servers = servers;
         this.profileSaverWorker = profileSaverWorker;
         this.notificationsProcessor = notificationsProcessor;
     }
@@ -36,12 +34,8 @@ public class ShutdownHookWorker implements Runnable {
         notificationsProcessor.stop();
         profileSaverWorker.run();
 
-        if (hardServer != null) {
-            hardServer.stop();
-        }
-
-        if (appServer != null) {
-            appServer.stop();
+        for (BaseServer server : servers) {
+            server.stop();
         }
     }
 
