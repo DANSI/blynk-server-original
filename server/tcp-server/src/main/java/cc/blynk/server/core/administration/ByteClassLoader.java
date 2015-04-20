@@ -1,6 +1,9 @@
 package cc.blynk.server.core.administration;
 
 /**
+ * Utility class used for creating class instance from byte array.
+ * In other - words admin can execute custom code on server side.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 20.04.15.
