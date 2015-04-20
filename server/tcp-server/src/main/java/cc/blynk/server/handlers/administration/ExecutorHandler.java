@@ -1,9 +1,9 @@
-package cc.blynk.server.core.administration.handlers;
+package cc.blynk.server.handlers.administration;
 
-import cc.blynk.server.core.administration.ByteClassLoader;
 import cc.blynk.server.core.administration.Executable;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.utils.ByteClassLoaderUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -14,19 +14,19 @@ import io.netty.channel.SimpleChannelInboundHandler;
  */
 public class ExecutorHandler extends SimpleChannelInboundHandler<byte[]> {
 
-    private final ByteClassLoader byteClassLoader;
+    private final ByteClassLoaderUtil byteClassLoaderUtil;
     private final SessionsHolder sessionsHolder;
     private final UserRegistry userRegistry;
 
     public ExecutorHandler(UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         this.sessionsHolder = sessionsHolder;
         this.userRegistry = userRegistry;
-        this.byteClassLoader = new ByteClassLoader();
+        this.byteClassLoaderUtil = new ByteClassLoaderUtil();
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, byte[] msg) throws Exception {
-        Executable executable = byteClassLoader.defineClass(msg);
+        Executable executable = byteClassLoaderUtil.defineClass(msg);
 
         String result = executable.execute(userRegistry, sessionsHolder);
 

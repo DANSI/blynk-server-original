@@ -1,4 +1,6 @@
-package cc.blynk.server.core.administration;
+package cc.blynk.server.utils;
+
+import cc.blynk.server.core.administration.Executable;
 
 /**
  * Utility class used for creating class instance from byte array.
@@ -8,7 +10,7 @@ package cc.blynk.server.core.administration;
  * Created by Dmitriy Dumanskiy.
  * Created on 20.04.15.
  */
-public class ByteClassLoader extends ClassLoader {
+public class ByteClassLoaderUtil extends ClassLoader {
 
     public Executable defineClass(byte[] classData) throws Exception {
         return defineClass(classData, classData.length);

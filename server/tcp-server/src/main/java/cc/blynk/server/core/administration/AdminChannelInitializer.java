@@ -1,9 +1,9 @@
 package cc.blynk.server.core.administration;
 
-import cc.blynk.server.core.administration.handlers.AdminReplayingMessageDecoder;
-import cc.blynk.server.core.administration.handlers.ExecutorHandler;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.handlers.administration.AdminReplayingMessageDecoder;
+import cc.blynk.server.handlers.administration.ExecutorHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;

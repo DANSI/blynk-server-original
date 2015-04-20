@@ -1,5 +1,6 @@
 package cc.blynk.server.core.administration;
 
+import cc.blynk.server.utils.ByteClassLoaderUtil;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
@@ -21,8 +22,8 @@ public class ByteClassLoaderTest {
             byte[] bytes = new byte[100 * 1024 * 1024];
             int length = IOUtils.read(is, bytes);
 
-            ByteClassLoader byteClassLoader = new ByteClassLoader();
-            Executable executable = byteClassLoader.defineClass(bytes, length);
+            ByteClassLoaderUtil byteClassLoaderUtil = new ByteClassLoaderUtil();
+            Executable executable = byteClassLoaderUtil.defineClass(bytes, length);
             String res = executable.execute(null, null);
 
             assertEquals("Test success!", res);

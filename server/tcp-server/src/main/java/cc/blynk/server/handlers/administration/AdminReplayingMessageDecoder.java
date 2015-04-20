@@ -1,4 +1,4 @@
-package cc.blynk.server.core.administration.handlers;
+package cc.blynk.server.handlers.administration;
 
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import io.netty.buffer.ByteBuf;
