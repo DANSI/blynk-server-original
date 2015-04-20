@@ -1,4 +1,4 @@
-package cc.blynk.common.stats.metrics;
+package cc.blynk.server.stats.metrics;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;

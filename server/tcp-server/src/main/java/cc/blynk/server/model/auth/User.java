@@ -1,7 +1,7 @@
 package cc.blynk.server.model.auth;
 
-import cc.blynk.common.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.model.UserProfile;
+import cc.blynk.server.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.utils.JsonParser;
 
 import java.io.Serializable;
