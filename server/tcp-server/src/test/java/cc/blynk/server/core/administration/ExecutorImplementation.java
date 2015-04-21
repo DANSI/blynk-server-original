@@ -3,6 +3,9 @@ package cc.blynk.server.core.administration;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -11,7 +14,11 @@ import cc.blynk.server.dao.UserRegistry;
 public class ExecutorImplementation implements Executable {
 
     @Override
-    public String execute(UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        return "Test success!";
+    public List<String> execute(UserRegistry userRegistry, SessionsHolder sessionsHolder, String... params) {
+        return new ArrayList<String>() {
+            {
+                add("Test success!");
+            }
+        };
     }
 }

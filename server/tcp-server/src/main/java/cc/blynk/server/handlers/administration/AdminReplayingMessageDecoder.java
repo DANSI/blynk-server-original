@@ -1,6 +1,7 @@
 package cc.blynk.server.handlers.administration;
 
 import cc.blynk.common.handlers.DefaultExceptionHandler;
+import cc.blynk.common.utils.Config;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
@@ -18,11 +19,24 @@ public class AdminReplayingMessageDecoder extends ReplayingDecoder<Void> impleme
 
     protected static final Logger log = LogManager.getLogger(AdminReplayingMessageDecoder.class);
 
+    private static String[] readParams(ByteBuf in, short paramsNumber) {
+        String[] params = new String[paramsNumber];
+        for (int i = 0; i < paramsNumber; i++) {
+            int paramLength = in.readUnsignedShort();
+            params[i] = in.readSlice(paramLength).toString(Config.DEFAULT_CHARSET);
+        }
+        return params;
+    }
+
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        short paramsNumber = in.readUnsignedByte();
+        String[] params = readParams(in , paramsNumber);
+
         int length = in.readUnsignedShort();
-        byte[] message = in.readSlice(length).array();
-        out.add(message);
+        byte[] classData = new byte[length];
+        in.readBytes(classData);
+        out.add(new AdminMessage(classData, params));
     }
 
     @Override

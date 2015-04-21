@@ -3,6 +3,8 @@ package cc.blynk.server.core.administration;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 
+import java.util.List;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -10,6 +12,6 @@ import cc.blynk.server.dao.UserRegistry;
  */
 public interface Executable {
 
-    public String execute(UserRegistry userRegistry, SessionsHolder sessionsHolder);
+    public List<String> execute(UserRegistry userRegistry, SessionsHolder sessionsHolder, String... params);
 
 }

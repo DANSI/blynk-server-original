@@ -16,6 +16,8 @@ import io.netty.handler.codec.string.StringEncoder;
 */
 final class AdminChannelInitializer extends ChannelInitializer<SocketChannel> {
 
+    private static final StringEncoder ENCODER = new StringEncoder();
+
     private final SessionsHolder sessionsHolder;
     private final UserRegistry userRegistry;
 
@@ -27,9 +29,12 @@ final class AdminChannelInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
+
+        pipeline.addLast(ENCODER);
+
         pipeline.addLast(new AdminReplayingMessageDecoder());
         pipeline.addLast(new ExecutorHandler(userRegistry, sessionsHolder));
 
-        pipeline.addLast(new StringEncoder());
+
     }
 }

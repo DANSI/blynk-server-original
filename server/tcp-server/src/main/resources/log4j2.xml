@@ -2,6 +2,12 @@
 <Configuration>
     <Appenders>
 
+        <File name="admin" fileName="${sys:logs.folder}/admin.log">
+            <PatternLayout>
+                <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern>
+            </PatternLayout>
+        </File>
+
         <RollingFile name="workersLog" fileName="${sys:logs.folder}/worker.log"
                      filePattern="${sys:logs.folder}/archive/worker.log.%d{yyyy-MM-dd}">
             <PatternLayout>
@@ -65,6 +71,9 @@
         </Logger>
         <Logger name="cc.blynk.server.workers.StatsWorker" level="debug" additivity="false">
             <appender-ref ref="statsLog"/>
+        </Logger>
+        <Logger name="cc.blynk.server.administration" level="debug" additivity="false">
+            <appender-ref ref="admin"/>
         </Logger>
 
         <Root level="debug">

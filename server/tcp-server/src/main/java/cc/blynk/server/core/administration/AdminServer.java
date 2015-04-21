@@ -20,7 +20,7 @@ public class AdminServer extends BaseServer {
     public AdminServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         super(props.getIntProperty("server.admin.port"), 1, false);
         this.channelInitializer = new AdminChannelInitializer(userRegistry, sessionsHolder);
-        log.info("Application server port {}.", port);
+        log.info("Administration server port {}.", port);
     }
 
     @Override

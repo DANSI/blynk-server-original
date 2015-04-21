@@ -1,12 +1,12 @@
 package cc.blynk.server.core.administration;
 
 import cc.blynk.server.utils.ByteClassLoaderUtil;
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import java.io.InputStream;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * The Blynk Project.
@@ -17,17 +17,17 @@ public class ByteClassLoaderTest {
 
     @Test
     public void correctClassLoadFromBytes() throws Exception {
-        try (InputStream is = this.getClass().getResourceAsStream("ExecutorImplementation.class")) {
-            //100 kb
-            byte[] bytes = new byte[100 * 1024 * 1024];
-            int length = IOUtils.read(is, bytes);
+        ByteClassLoaderUtil byteClassLoaderUtil = new ByteClassLoaderUtil();
 
-            ByteClassLoaderUtil byteClassLoaderUtil = new ByteClassLoaderUtil();
-            Executable executable = byteClassLoaderUtil.defineClass(bytes, length);
-            String res = executable.execute(null, null);
+        byte[] classBytes = ByteClassLoaderUtil.readClassBytesFromAsResource(this.getClass(), "ExecutorImplementation.class");
 
-            assertEquals("Test success!", res);
-        }
+
+        Executable executable = byteClassLoaderUtil.defineClass(classBytes);
+        List<String> res = executable.execute(null, null);
+
+        assertNotNull(res);
+        assertEquals(1, res.size());
+        assertEquals("Test success!", res.get(0));
     }
 
 }
