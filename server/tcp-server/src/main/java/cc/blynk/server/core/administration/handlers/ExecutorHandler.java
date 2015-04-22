@@ -7,8 +7,6 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.utils.ByteClassLoaderUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -18,8 +16,6 @@ import java.util.List;
  * Created on 20.04.15.
  */
 public class ExecutorHandler extends SimpleChannelInboundHandler<AdminMessage> {
-
-    private final Logger log = LogManager.getLogger(ExecutorHandler.class);
 
     private final ByteClassLoaderUtil byteClassLoaderUtil;
     private final SessionsHolder sessionsHolder;
@@ -36,8 +32,6 @@ public class ExecutorHandler extends SimpleChannelInboundHandler<AdminMessage> {
         Executable executable = byteClassLoaderUtil.defineClass(msg.classBytes);
 
         List<String> result = executable.execute(userRegistry, sessionsHolder, msg.params);
-
-        log.trace("Sending back '{}'.", result);
 
         for (String s : result) {
             ctx.writeAndFlush(s);
