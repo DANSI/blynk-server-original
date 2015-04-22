@@ -52,8 +52,8 @@ public class AdminLauncher {
     }
 
     private static byte[] loadClass(String action) throws IOException {
-        switch (action) {
-            case "resetPassword" :
+        switch (action.toLowerCase()) {
+            case "resetpassword" :
                 return ByteClassLoaderUtil.readClassBytesFromAsResource(AdminLauncher.class, resolvePath(ResetPassword.class));
         }
 
