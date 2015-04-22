@@ -1,6 +1,6 @@
 package сс.blynk.server.administration;
 
-import cc.blynk.server.administration.actions.ResetPassword;
+import cc.blynk.server.core.administration.actions.ResetPassword;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.auth.User;
 import org.junit.Test;

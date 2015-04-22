@@ -1,6 +1,7 @@
-package cc.blynk.server.handlers.administration;
+package cc.blynk.server.core.administration.handlers;
 
 import cc.blynk.server.core.administration.Executable;
+import cc.blynk.server.core.administration.model.AdminMessage;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.utils.ByteClassLoaderUtil;
@@ -36,7 +37,7 @@ public class ExecutorHandler extends SimpleChannelInboundHandler<AdminMessage> {
 
         List<String> result = executable.execute(userRegistry, sessionsHolder, msg.params);
 
-        log.info("Sending back '{}'.", result);
+        log.trace("Sending back '{}'.", result);
 
         for (String s : result) {
             ctx.writeAndFlush(s);

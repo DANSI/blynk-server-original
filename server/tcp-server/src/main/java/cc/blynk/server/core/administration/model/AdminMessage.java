@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.administration;
+package cc.blynk.server.core.administration.model;
 
 /**
  * The Blynk Project.

@@ -1,7 +1,7 @@
-package cc.blynk.server.administration;
+package cc.blynk.server.core.administration;
 
 import cc.blynk.common.utils.Config;
-import cc.blynk.server.administration.actions.ResetPassword;
+import cc.blynk.server.core.administration.actions.ResetPassword;
 import cc.blynk.server.utils.ByteClassLoaderUtil;
 
 import java.io.DataInputStream;

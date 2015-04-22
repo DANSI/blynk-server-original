@@ -1,4 +1,4 @@
-package cc.blynk.server.administration.actions;
+package cc.blynk.server.core.administration.actions;
 
 import cc.blynk.server.core.administration.Executable;
 import cc.blynk.server.dao.SessionsHolder;

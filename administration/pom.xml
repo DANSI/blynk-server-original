@@ -25,7 +25,7 @@
                     <finalName>admin-tools-${project.version}</finalName>
                     <archive>
                         <manifest>
-                            <mainClass>cc.blynk.server.administration.AdminLauncher</mainClass>
+                            <mainClass>cc.blynk.server.core.administration.AdminLauncher</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
