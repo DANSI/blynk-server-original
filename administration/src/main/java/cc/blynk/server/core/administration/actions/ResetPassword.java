@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Utility class for manual user pass changing.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 21.04.15.
@@ -33,11 +35,11 @@ public class ResetPassword implements Executable {
             } else {
                 user.setPass(SHA256Util.makeHash(newPass, userName));
                 user.setLastModifiedTs(System.currentTimeMillis());
-                log.info("Password updated.");
+                log.info("Password updated");
                 result.add("Password updated.\n");
             }
         }
-        log.info("ok.");
+        log.info("ok");
         result.add("ok\n");
         return result;
     }

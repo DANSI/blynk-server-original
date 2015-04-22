@@ -51,6 +51,10 @@ public class InstanceLoadMeter {
         }
     }
 
+    public double getOneMinuteRateNoTick() {
+        return rate * TICK_INTERVAL_DOUBLE;
+    }
+
     public double getOneMinuteRate() {
         tickIfNecessary();
         return rate * TICK_INTERVAL_DOUBLE;

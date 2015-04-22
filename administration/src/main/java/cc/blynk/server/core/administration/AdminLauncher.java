@@ -1,6 +1,7 @@
 package cc.blynk.server.core.administration;
 
 import cc.blynk.common.utils.Config;
+import cc.blynk.server.core.administration.actions.ActivityMonitor;
 import cc.blynk.server.core.administration.actions.ResetPassword;
 import cc.blynk.server.utils.ByteClassLoaderUtil;
 
@@ -39,7 +40,7 @@ public class AdminLauncher {
 
             String responseLine;
             while ((responseLine = in.readLine()) != null) {
-                System.out.println("Server: " + responseLine);
+                System.out.println(responseLine);
                 if (responseLine.contains("ok")) {
                     break;
                 }
@@ -55,6 +56,8 @@ public class AdminLauncher {
         switch (action.toLowerCase()) {
             case "resetpassword" :
                 return ByteClassLoaderUtil.readClassBytesFromAsResource(AdminLauncher.class, resolvePath(ResetPassword.class));
+            case "quotausage" :
+                return ByteClassLoaderUtil.readClassBytesFromAsResource(AdminLauncher.class, resolvePath(ActivityMonitor.class));
         }
 
         throw new RuntimeException("Not supported operation.");
