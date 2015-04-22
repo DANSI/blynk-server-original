@@ -12,6 +12,6 @@ import java.util.List;
  */
 public interface Executable {
 
-    public List<String> execute(UserRegistry userRegistry, SessionsHolder sessionsHolder, String... params);
+    List<String> execute(UserRegistry userRegistry, SessionsHolder sessionsHolder, String... params);
 
 }

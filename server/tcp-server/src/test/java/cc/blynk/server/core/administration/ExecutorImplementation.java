@@ -15,10 +15,8 @@ public class ExecutorImplementation implements Executable {
 
     @Override
     public List<String> execute(UserRegistry userRegistry, SessionsHolder sessionsHolder, String... params) {
-        return new ArrayList<String>() {
-            {
-                add("Test success!");
-            }
-        };
+        List<String> res = new ArrayList<>();
+        res.add("Test success!");
+        return res;
     }
 }

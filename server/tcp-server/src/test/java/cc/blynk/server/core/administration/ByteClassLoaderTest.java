@@ -21,7 +21,6 @@ public class ByteClassLoaderTest {
 
         byte[] classBytes = ByteClassLoaderUtil.readClassBytesFromAsResource(this.getClass(), "ExecutorImplementation.class");
 
-
         Executable executable = byteClassLoaderUtil.defineClass(classBytes);
         List<String> res = executable.execute(null, null);
 
