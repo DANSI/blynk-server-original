@@ -2,6 +2,7 @@ package cc.blynk.client.core;
 
 import cc.blynk.client.CommandParser;
 import cc.blynk.client.HexConvertor;
+import cc.blynk.common.administration.SHA256Util;
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.Message;
 import io.netty.bootstrap.Bootstrap;
@@ -54,6 +55,14 @@ public abstract class BaseClient {
         }
 
         String body = input.length == 1 ? "" : input[1];
+        if (command == Command.REGISTER || command == Command.LOGIN) {
+            String[] userPass = body.split(" ");
+            if (userPass.length == 2) {
+                String username = userPass[0];
+                String pass = userPass[1];
+                body = username + " " + SHA256Util.makeHash(pass, username);
+            }
+        }
         if (command == Command.HARDWARE_COMMAND || command == Command.EMAIL) {
             body = body.replaceAll(" ", "\0");
         }
