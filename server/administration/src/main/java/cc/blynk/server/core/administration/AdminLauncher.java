@@ -5,9 +5,10 @@ import cc.blynk.server.core.administration.actions.ActivityMonitor;
 import cc.blynk.server.core.administration.actions.ResetPassword;
 import cc.blynk.server.utils.ByteClassLoaderUtil;
 
-import java.io.DataInputStream;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 /**
@@ -25,20 +26,13 @@ public class AdminLauncher {
     public static void main(String[] args) throws IOException {
         try (Socket client = new Socket("localhost", 8777);
              DataOutputStream outToServer = new DataOutputStream(client.getOutputStream());
-             DataInputStream in = new DataInputStream(client.getInputStream())) {
+             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()))) {
 
             byte[] classBytes = loadClass(args[0]);
 
-            int paramsNumber = args.length - 1;
-            outToServer.writeByte(paramsNumber);
+            sendParams(args, outToServer);
 
-            if (args.length > 1) {
-                for (int i = 0; i < paramsNumber; i++) {
-                    String param = args[i + 1];
-                    outToServer.writeShort(param.length());
-                    outToServer.write(param.getBytes(Config.DEFAULT_CHARSET));
-                }
-            }
+            //send executable class itself
             outToServer.writeShort(classBytes.length);
             outToServer.write(classBytes);
             outToServer.flush();
@@ -50,11 +44,20 @@ public class AdminLauncher {
                     break;
                 }
             }
-
-
         }
+    }
 
+    private static void sendParams(String[] args, DataOutputStream outToServer) throws IOException {
+        int paramsNumber = args.length - 1;
+        outToServer.writeByte(paramsNumber);
 
+        if (args.length > 1) {
+            for (int i = 0; i < paramsNumber; i++) {
+                String param = args[i + 1];
+                outToServer.writeShort(param.length());
+                outToServer.write(param.getBytes(Config.DEFAULT_CHARSET));
+            }
+        }
     }
 
     /**

@@ -1,4 +1,4 @@
-package сс.blynk.server.administration;
+package сс.blynk.server.core.administration.actions;
 
 import cc.blynk.server.core.administration.actions.ResetPassword;
 import cc.blynk.server.dao.UserRegistry;

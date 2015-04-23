@@ -22,7 +22,7 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <finalName>admin-tools-${project.version}</finalName>
+                    <finalName>admin-${project.version}</finalName>
                     <archive>
                         <manifest>
                             <mainClass>cc.blynk.server.core.administration.AdminLauncher</mainClass>
