@@ -37,12 +37,11 @@ public class UserProfile {
 
 
     public void validateDashId(int dashBoardId, int msgId) {
-        if (dashBoards == null) {
-            throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashBoardId), msgId);
-        }
-        for (DashBoard dashBoard : dashBoards) {
-            if (dashBoard.getId() == dashBoardId) {
-                return;
+        if (dashBoards != null) {
+            for (DashBoard dashBoard : dashBoards) {
+                if (dashBoard.getId() == dashBoardId) {
+                    return;
+                }
             }
         }
 

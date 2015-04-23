@@ -16,6 +16,8 @@ import java.util.List;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
+ * Decodes input byte array into java message.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
