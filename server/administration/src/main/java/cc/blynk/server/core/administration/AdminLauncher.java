@@ -11,6 +11,11 @@ import java.io.IOException;
 import java.net.Socket;
 
 /**
+ * Utility class used for administration purposes.
+ * Opens socket on 8777 port, read bytecode class into array depending on operation required,
+ * read class is sent ot server where is build from bytecode and executed via Executable interface.
+ *
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 21.04.15.
@@ -52,6 +57,12 @@ public class AdminLauncher {
 
     }
 
+    /**
+     * Loads class from jar as byte array.
+     *
+     * @param action type of class to load.
+     * @return class byte array
+     */
     private static byte[] loadClass(String action) throws IOException {
         switch (action.toLowerCase()) {
             case "resetpassword" :
@@ -63,6 +74,9 @@ public class AdminLauncher {
         throw new RuntimeException("Not supported operation.");
     }
 
+    /**
+     * "cc.blynk.MyClass" -> "/cc/blynk/MyClass.class"
+     */
     private static String resolvePath(Class<?> clazz) {
         return "/" + clazz.getCanonicalName().replaceAll("\\.", "/") + ".class";
     }
