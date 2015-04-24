@@ -4,9 +4,9 @@ import cc.blynk.server.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Helper class for holding info regarding registered users and profiles.
@@ -99,7 +99,7 @@ public class UserRegistry {
     }
 
     private Map<String, User> createTokenToUserCache(final Map<String, User> users) {
-        return new ConcurrentHashMap<String, User>() {{
+        return new HashMap<String, User>() {{
             for (User user : users.values()) {
                 for (String userToken : user.getDashTokens().values()) {
                     put(userToken, user);
