@@ -40,7 +40,7 @@ public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> 
             throw new TweetBodyInvalidException(message.id);
         }
 
-        TwitterAccessToken twitterAccessToken = user.getUserProfile().getTwitter();
+        TwitterAccessToken twitterAccessToken = user.getProfile().getTwitter();
 
         if (twitterAccessToken == null ||
                 twitterAccessToken.getToken() == null || twitterAccessToken.getToken().equals("") ||

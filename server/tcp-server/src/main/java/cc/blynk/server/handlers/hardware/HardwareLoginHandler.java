@@ -67,8 +67,8 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         //send Pin Mode command in case channel connected to active dashboard with Pin Mode command that
         //was sent previously
-        if (dashId.equals(user.getUserProfile().getActiveDashId()) && user.getUserProfile().getPinModeMessage() != null) {
-            ctx.writeAndFlush(user.getUserProfile().getPinModeMessage());
+        if (dashId.equals(user.getProfile().getActiveDashId()) && user.getProfile().getPinModeMessage() != null) {
+            ctx.writeAndFlush(user.getProfile().getPinModeMessage());
         }
     }
 

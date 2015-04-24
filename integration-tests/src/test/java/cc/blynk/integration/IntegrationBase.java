@@ -10,7 +10,7 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.model.UserProfile;
+import cc.blynk.server.model.Profile;
 import cc.blynk.server.utils.JsonParser;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import org.junit.BeforeClass;
@@ -79,8 +79,8 @@ public abstract class IntegrationBase {
 
     public static String readTestUserProfile(String fileName) {
         InputStream is = IntegrationBase.class.getResourceAsStream("/json_test/" + fileName);
-        UserProfile userProfile = JsonParser.parseProfile(is);
-        return userProfile.toString();
+        Profile profile = JsonParser.parseProfile(is);
+        return profile.toString();
     }
 
     public static String readTestUserProfile() {

@@ -7,7 +7,7 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.model.UserProfile;
+import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;
 import io.netty.channel.ChannelHandler;
@@ -50,18 +50,18 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
         }
 
         log.debug("Trying to parse user profile : {}", userProfileString);
-        UserProfile userProfile = JsonParser.parseProfile(userProfileString, message.id);
+        Profile profile = JsonParser.parseProfile(userProfileString, message.id);
 
-        if (userProfile.getDashBoards() != null && userProfile.getDashBoards().length > DASH_MAX_LIMIT) {
+        if (profile.getDashBoards() != null && profile.getDashBoards().length > DASH_MAX_LIMIT) {
             throw new NotAllowedException(
                     String.format("Not allowed to create more than %s dashboards.", DASH_MAX_LIMIT), message.id);
         }
 
         log.info("Trying save user profile.");
 
-        userProfile.calcGraphPins();
+        profile.calcGraphPins();
 
-        user.setUserProfile(userProfile);
+        user.setProfile(profile);
         ctx.writeAndFlush(produce(message.id, OK));
     }
 

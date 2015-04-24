@@ -42,7 +42,7 @@ public class GraphInMemoryStorage implements Storage {
                 throw new IllegalCommandException("Hardware command body incorrect.", msgId);
             }
 
-            if (user.getUserProfile().hasGraphPin(dashId, pin)) {
+            if (user.getProfile().hasGraphPin(dashId, pin)) {
                 body = attachTS(body);
                 storeValue(user.getName(), dashId, body);
             }

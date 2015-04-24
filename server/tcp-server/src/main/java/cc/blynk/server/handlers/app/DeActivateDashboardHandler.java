@@ -27,7 +27,7 @@ public class DeActivateDashboardHandler extends BaseSimpleChannelInboundHandler<
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, User user, DeActivateDashboardMessage message) {
-        user.getUserProfile().setActiveDashId(null);
+        user.getProfile().setActiveDashId(null);
 
         ctx.writeAndFlush(produce(message.id, OK));
     }

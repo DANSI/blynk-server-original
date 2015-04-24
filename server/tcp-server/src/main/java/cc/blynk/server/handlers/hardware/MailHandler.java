@@ -35,7 +35,7 @@ public class MailHandler extends BaseSimpleChannelInboundHandler<MailMessage> {
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, User user, MailMessage message) {
-        Mail mail = user.getUserProfile().getActiveDashboardEmailWidget();
+        Mail mail = user.getProfile().getActiveDashboardEmailWidget();
 
         if (mail == null) {
             throw new NotAllowedException("User has no mail widget or active dashboard.", message.id);

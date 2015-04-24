@@ -1,7 +1,7 @@
 package cc.blynk.server.dao;
 
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.model.UserProfile;
+import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +25,7 @@ public class GraphInMemoryStorageTest {
     private User user;
 
     @Mock
-    private UserProfile userProfile;
+    private Profile profile;
 
     @Test
     public void testNoActualStore() {
@@ -57,9 +57,9 @@ public class GraphInMemoryStorageTest {
 
     @Test
     public void testStoreCorrect() {
-        when(user.getUserProfile()).thenReturn(userProfile);
+        when(user.getProfile()).thenReturn(profile);
         when(user.getName()).thenReturn("testUserName");
-        when(userProfile.hasGraphPin(1, (byte) 33)).thenReturn(true);
+        when(profile.hasGraphPin(1, (byte) 33)).thenReturn(true);
 
         String body = "aw 33".replaceAll(" ", "\0");
         String result = storage.store(user, 1, body, 1);

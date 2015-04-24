@@ -15,7 +15,7 @@ import java.util.*;
  * Date: 21.11.13
  * Time: 13:04
  */
-public class UserProfile {
+public class Profile {
 
     private DashBoard[] dashBoards;
 
@@ -160,7 +160,7 @@ public class UserProfile {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UserProfile that = (UserProfile) o;
+        Profile that = (Profile) o;
 
         if (!Arrays.equals(dashBoards, that.dashBoards)) return false;
 

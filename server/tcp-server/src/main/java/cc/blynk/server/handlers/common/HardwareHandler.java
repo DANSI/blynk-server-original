@@ -46,20 +46,20 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
                 session.sendMessageToApp(message.updateMessageBody(body));
             }
         } else {
-            if (user.getUserProfile().getActiveDashId() == null) {
+            if (user.getProfile().getActiveDashId() == null) {
                 throw new NoActiveDashboardException(message.id);
             }
 
             if (session.hardwareChannels.size() == 0) {
-                if (pinModeMessage(message.body) && user.getUserProfile().isJustActivated()) {
+                if (pinModeMessage(message.body) && user.getProfile().isJustActivated()) {
                     log.trace("No device and Pin Mode message catch. Remembering.");
-                    user.getUserProfile().setPinModeMessage(message);
-                    user.getUserProfile().setJustActivated(false);
+                    user.getProfile().setPinModeMessage(message);
+                    user.getProfile().setJustActivated(false);
                 }
                 throw new DeviceNotInNetworkException(message.id);
             }
 
-            session.sendMessageToHardware(user.getUserProfile().getActiveDashId(), message);
+            session.sendMessageToHardware(user.getProfile().getActiveDashId(), message);
         }
 
     }

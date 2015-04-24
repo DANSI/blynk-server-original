@@ -3,7 +3,7 @@ package cc.blynk.server.workers.timer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.UserProfile;
+import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Timer;
@@ -45,7 +45,7 @@ public class TimerWorkerTest {
     private User user;
 
     @Mock
-    private UserProfile userProfile;
+    private Profile profile;
 
     private ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
 
@@ -79,9 +79,9 @@ public class TimerWorkerTest {
 
         when(userRegistry.getUsers()).thenReturn(users);
         when(sessionsHolder.getUserSession()).thenReturn(userSession);
-        when(user.getUserProfile()).thenReturn(userProfile);
-        when(userProfile.getDashBoards()).thenReturn(new DashBoard[] {});
-        when(userProfile.getActiveDashboardTimerWidgets()).thenReturn(timers);
+        when(user.getProfile()).thenReturn(profile);
+        when(profile.getDashBoards()).thenReturn(new DashBoard[] {});
+        when(profile.getActiveDashboardTimerWidgets()).thenReturn(timers);
 
         timerWorker.run();
 

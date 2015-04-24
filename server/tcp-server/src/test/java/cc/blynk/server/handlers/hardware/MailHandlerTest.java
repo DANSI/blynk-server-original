@@ -6,7 +6,7 @@ import cc.blynk.common.model.messages.protocol.hardware.MailMessage;
 import cc.blynk.server.TestBase;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
-import cc.blynk.server.model.UserProfile;
+import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Mail;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
@@ -41,7 +41,7 @@ public class MailHandlerTest extends TestBase {
     private User user;
 
     @Mock
-    private UserProfile userProfile;
+    private Profile profile;
 
     @Mock
     private Channel channel;
@@ -50,8 +50,8 @@ public class MailHandlerTest extends TestBase {
     public void testNoEmailWidget() {
         MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body");
 
-        when(user.getUserProfile()).thenReturn(userProfile);
-        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(null);
+        when(user.getProfile()).thenReturn(profile);
+        when(profile.getActiveDashboardEmailWidget()).thenReturn(null);
 
         mailHandler.messageReceived(ctx, user, mailMessage);
     }
@@ -60,9 +60,9 @@ public class MailHandlerTest extends TestBase {
     public void testNoToBody() {
         MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "".replaceAll(" ", "\0"));
 
-        when(user.getUserProfile()).thenReturn(userProfile);
+        when(user.getProfile()).thenReturn(profile);
         Mail mail = new Mail();
-        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(mail);
+        when(profile.getActiveDashboardEmailWidget()).thenReturn(mail);
 
         mailHandler.messageReceived(ctx, user, mailMessage);
     }
@@ -71,8 +71,8 @@ public class MailHandlerTest extends TestBase {
     public void testNoBody() {
         MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body".replaceAll(" ", "\0"));
 
-        when(user.getUserProfile()).thenReturn(userProfile);
-        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(new Mail());
+        when(user.getProfile()).thenReturn(profile);
+        when(profile.getActiveDashboardEmailWidget()).thenReturn(new Mail());
 
         mailHandler.messageReceived(ctx, user, mailMessage);
     }
@@ -81,9 +81,9 @@ public class MailHandlerTest extends TestBase {
     public void sendEmptyBodyMailYoUseDefaults() {
         MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "");
 
-        when(user.getUserProfile()).thenReturn(userProfile);
+        when(user.getProfile()).thenReturn(profile);
         Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(mail);
+        when(profile.getActiveDashboardEmailWidget()).thenReturn(mail);
 
         when(ctx.channel()).thenReturn(channel);
 
@@ -96,9 +96,9 @@ public class MailHandlerTest extends TestBase {
     public void sendEmptyBodyMailYoUseDefaultsExceptBody() {
         MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body".replaceAll(" ", "\0"));
 
-        when(user.getUserProfile()).thenReturn(userProfile);
+        when(user.getProfile()).thenReturn(profile);
         Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(mail);
+        when(profile.getActiveDashboardEmailWidget()).thenReturn(mail);
 
         when(ctx.channel()).thenReturn(channel);
 
@@ -111,9 +111,9 @@ public class MailHandlerTest extends TestBase {
     public void sendEmptyBodyMailYoUseDefaultsExceptBodyAndSubj() {
         MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "subj body".replaceAll(" ", "\0"));
 
-        when(user.getUserProfile()).thenReturn(userProfile);
+        when(user.getProfile()).thenReturn(profile);
         Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(mail);
+        when(profile.getActiveDashboardEmailWidget()).thenReturn(mail);
 
         when(ctx.channel()).thenReturn(channel);
 
@@ -126,9 +126,9 @@ public class MailHandlerTest extends TestBase {
     public void sendEmptyBodyMailYoNoDefaults() {
         MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "pupkin@example.com subj body".replaceAll(" ", "\0"));
 
-        when(user.getUserProfile()).thenReturn(userProfile);
+        when(user.getProfile()).thenReturn(profile);
         Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-        when(userProfile.getActiveDashboardEmailWidget()).thenReturn(mail);
+        when(profile.getActiveDashboardEmailWidget()).thenReturn(mail);
 
         when(ctx.channel()).thenReturn(channel);
 

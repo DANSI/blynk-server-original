@@ -1,7 +1,7 @@
 package cc.blynk.server.utils;
 
 import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.UserProfile;
+import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.controls.Button;
 import cc.blynk.server.model.widgets.others.Timer;
@@ -26,15 +26,15 @@ public class JsonParsingTest {
     public void testParseUserProfile() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json.txt");
 
-        UserProfile userProfile = JsonParser.parseProfile(is);
-        assertNotNull(userProfile);
-        assertNotNull(userProfile.getDashBoards());
-        assertEquals(userProfile.getDashBoards().length, 1);
+        Profile profile = JsonParser.parseProfile(is);
+        assertNotNull(profile);
+        assertNotNull(profile.getDashBoards());
+        assertEquals(profile.getDashBoards().length, 1);
 
         //this property shoudn't be parsed
-        assertNull(userProfile.getActiveDashId());
+        assertNull(profile.getActiveDashId());
 
-        DashBoard dashBoard = userProfile.getDashBoards()[0];
+        DashBoard dashBoard = profile.getDashBoards()[0];
 
         assertNotNull(dashBoard);
 
@@ -58,8 +58,8 @@ public class JsonParsingTest {
     public void testUserProfileToJson() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json.txt");
 
-        UserProfile userProfile = JsonParser.parseProfile(is);
-        String userProfileString = userProfile.toString();
+        Profile profile = JsonParser.parseProfile(is);
+        String userProfileString = profile.toString();
 
         assertNotNull(userProfileString);
         assertTrue(userProfileString.contains("dashBoards"));
@@ -69,8 +69,8 @@ public class JsonParsingTest {
     public void testUserProfileToJson2() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json_2.txt");
 
-        UserProfile userProfile = JsonParser.parseProfile(is);
-        String userProfileString = userProfile.toString();
+        Profile profile = JsonParser.parseProfile(is);
+        String userProfileString = profile.toString();
 
         assertNotNull(userProfileString);
         assertTrue(userProfileString.contains("dashBoards"));
@@ -80,8 +80,8 @@ public class JsonParsingTest {
     public void testUserProfileToJson3() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json_3.txt");
 
-        UserProfile userProfile = JsonParser.parseProfile(is);
-        String userProfileString = userProfile.toString();
+        Profile profile = JsonParser.parseProfile(is);
+        String userProfileString = profile.toString();
 
         assertNotNull(userProfileString);
         assertTrue(userProfileString.contains("dashBoards"));
@@ -91,13 +91,13 @@ public class JsonParsingTest {
     public void testUserProfileToJsonWithTimer() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_with_timer.txt");
 
-        UserProfile userProfile = JsonParser.parseProfile(is);
-        String userProfileString = userProfile.toString();
-        userProfile.setActiveDashId(1);
+        Profile profile = JsonParser.parseProfile(is);
+        String userProfileString = profile.toString();
+        profile.setActiveDashId(1);
 
         assertNotNull(userProfileString);
         assertTrue(userProfileString.contains("dashBoards"));
-        Set<Timer> timers = userProfile.getActiveDashboardTimerWidgets();
+        Set<Timer> timers = profile.getActiveDashboardTimerWidgets();
         assertNotNull(timers);
         assertEquals(1, timers.size());
     }

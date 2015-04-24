@@ -1,7 +1,7 @@
 package cc.blynk.server.utils;
 
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.model.UserProfile;
+import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -27,10 +27,10 @@ public final class JsonParser {
     public static final ObjectMapper mapper = init();
     private static final Logger log = LogManager.getLogger(JsonParser.class);
     private static final ObjectReader userReader = mapper.reader(User.class);
-    private static final ObjectReader profileReader = mapper.reader(UserProfile.class);
+    private static final ObjectReader profileReader = mapper.reader(Profile.class);
 
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
-    private static final ObjectWriter profileWriter = mapper.writerFor(UserProfile.class);
+    private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
 
     private static ObjectMapper init() {
         return new ObjectMapper()
@@ -51,9 +51,9 @@ public final class JsonParser {
         return "{}";
     }
 
-    public static String toJson(UserProfile userProfile) {
+    public static String toJson(Profile profile) {
         try {
-            return profileWriter.writeValueAsString(userProfile);
+            return profileWriter.writeValueAsString(profile);
         } catch (Exception e) {
             log.error("Error jsoning object.");
             log.error(e);
@@ -67,7 +67,7 @@ public final class JsonParser {
         return user;
     }
 
-    public static UserProfile parseProfile(String reader, int id) {
+    public static Profile parseProfile(String reader, int id) {
         try {
             return profileReader.readValue(reader);
         } catch (IOException e) {
@@ -76,7 +76,7 @@ public final class JsonParser {
     }
 
     //only for tests
-    public static UserProfile parseProfile(InputStream reader) {
+    public static Profile parseProfile(InputStream reader) {
         try {
             return profileReader.readValue(reader);
         } catch (IOException e) {

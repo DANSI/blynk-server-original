@@ -38,8 +38,8 @@ public class ActivateDashboardHandler extends BaseSimpleChannelInboundHandler<Ac
         }
 
         log.debug("Activating dash {} for user {}", dashBoardIdString, user.getName());
-        user.getUserProfile().validateDashId(dashBoardId, message.id);
-        user.getUserProfile().setActiveDashId(dashBoardId);
+        user.getProfile().validateDashId(dashBoardId, message.id);
+        user.getProfile().setActiveDashId(dashBoardId);
 
         ctx.writeAndFlush(produce(message.id, OK));
     }

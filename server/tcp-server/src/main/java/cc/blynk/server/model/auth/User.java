@@ -1,6 +1,6 @@
 package cc.blynk.server.model.auth;
 
-import cc.blynk.server.model.UserProfile;
+import cc.blynk.server.model.Profile;
 import cc.blynk.server.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.utils.JsonParser;
 
@@ -26,7 +26,7 @@ public class User implements Serializable {
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
     private long lastModifiedTs;
 
-    private UserProfile userProfile;
+    private Profile profile;
 
     private Map<Integer, String> dashTokens = new HashMap<>();
 
@@ -40,7 +40,7 @@ public class User implements Serializable {
 
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
-        this.userProfile = new UserProfile();
+        this.profile = new Profile();
     }
 
     public User(String name, String pass) {
@@ -81,14 +81,14 @@ public class User implements Serializable {
         this.pass = pass;
     }
 
-    public UserProfile getUserProfile() {
-        return userProfile;
+    public Profile getProfile() {
+        return profile;
     }
 
-    public void setUserProfile(UserProfile userProfile) {
+    public void setProfile(Profile profile) {
         //do not accept activeDashId from user, it is calculated field.
-        userProfile.setActiveDashId(this.userProfile.getActiveDashId());
-        this.userProfile = userProfile;
+        profile.setActiveDashId(this.profile.getActiveDashId());
+        this.profile = profile;
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
