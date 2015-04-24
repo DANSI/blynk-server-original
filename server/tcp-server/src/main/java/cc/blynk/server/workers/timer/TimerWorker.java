@@ -9,7 +9,7 @@ import cc.blynk.server.model.widgets.others.Timer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 
 /**
@@ -44,7 +44,7 @@ public class TimerWorker implements Runnable {
         tickedTimers = 0;
         onlineTimers = 0;
 
-        LocalDateTime localDateTime = LocalDateTime.now(UTC);
+        LocalTime localDateTime = LocalTime.now(UTC);
 
         long curTime = localDateTime.getSecond() + localDateTime.getMinute() * 60 + localDateTime.getHour() * 3600;
 
