@@ -56,14 +56,14 @@ public class Profile {
         this.dashBoards = dashBoards;
     }
 
-    public Set<Timer> getActiveDashboardTimerWidgets() {
+    public List<Timer> getActiveDashboardTimerWidgets() {
         if (dashBoards == null || dashBoards.length == 0 || activeDashId == null) {
-            return Collections.emptySet();
+            return Collections.emptyList();
         }
 
         DashBoard dashBoard = getActiveDashBoard();
         if (dashBoard == null) {
-            return Collections.emptySet();
+            return Collections.emptyList();
         }
 
         return dashBoard.getTimerWidgets();

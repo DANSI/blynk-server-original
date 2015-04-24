@@ -17,8 +17,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.mockito.Mockito.*;
@@ -51,7 +51,7 @@ public class TimerWorkerTest {
 
     private ConcurrentHashMap<User, Session> userSession = new ConcurrentHashMap<>();
 
-    private Set<Timer> timers = new HashSet<>();
+    private List<Timer> timers = new ArrayList<>();
     private Timer w = new Timer();
 
     @Before

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
 
 import java.io.InputStream;
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -97,7 +97,7 @@ public class JsonParsingTest {
 
         assertNotNull(userProfileString);
         assertTrue(userProfileString.contains("dashBoards"));
-        Set<Timer> timers = profile.getActiveDashboardTimerWidgets();
+        List<Timer> timers = profile.getActiveDashboardTimerWidgets();
         assertNotNull(timers);
         assertEquals(1, timers.size());
     }

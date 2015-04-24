@@ -5,10 +5,7 @@ import cc.blynk.server.model.widgets.others.Mail;
 import cc.blynk.server.model.widgets.others.Timer;
 import cc.blynk.server.model.widgets.outputs.Graph;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * User: ddumanskiy
@@ -27,12 +24,12 @@ public class DashBoard {
 
     private String boardType;
 
-    public Set<Timer> getTimerWidgets() {
+    public List<Timer> getTimerWidgets() {
         if (widgets == null || widgets.length == 0) {
-            return Collections.emptySet();
+            return Collections.emptyList();
         }
 
-        Set<Timer> timerWidgets = new HashSet<>();
+        List<Timer> timerWidgets = new ArrayList<>();
         for (Widget widget : widgets) {
             if (widget instanceof Timer) {
                 Timer timer = (Timer) widget;
