@@ -71,7 +71,7 @@ public class UserRegistry {
         //if token not exists. generate new one
         if (token == null) {
             log.info("Token for user {} and dashId {} not generated yet.", user.getName(), dashboardId);
-            refreshToken(user, dashboardId);
+            token = refreshToken(user, dashboardId);
         } else {
             log.info("Token for user {} and dashId {} generated already. Token {}", user.getName(), dashboardId, token);
         }
