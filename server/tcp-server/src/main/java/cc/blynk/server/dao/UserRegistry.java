@@ -4,6 +4,7 @@ import cc.blynk.server.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -18,16 +19,19 @@ public class UserRegistry {
 
     private static final Logger log = LogManager.getLogger(UserRegistry.class);
     private final Map<String, User> users;
+    private final Map<String, User> tokenToUserCache;
     //init user DB if possible
 
     public UserRegistry(Map<String, User> users) {
         //reading DB to RAM.
         this.users = users;
+        tokenToUserCache = createTokenToUserCache(users);
     }
 
     public UserRegistry(Map<String, User> users, Map<String, User> usersFromAnotherSource) {
         this.users = users;
         this.users.putAll(usersFromAnotherSource);
+        tokenToUserCache = createTokenToUserCache(users);
     }
 
     public static Integer getDashIdByToken(User user, String token) {
@@ -55,16 +59,8 @@ public class UserRegistry {
         return users;
     }
 
-    //todo optimize
     public User getUserByToken(String token) {
-        for (User user : users.values()) {
-            for (String userToken : user.getDashTokens().values()) {
-                if (userToken.equals(token)) {
-                    return user;
-                }
-            }
-        }
-        return null;
+        return tokenToUserCache.get(token);
     }
 
     public String getToken(User user, Integer dashboardId) {
@@ -74,9 +70,7 @@ public class UserRegistry {
         //if token not exists. generate new one
         if (token == null) {
             log.info("Token for user {} and dashId {} not generated yet.", user.getName(), dashboardId);
-            token = generateNewToken();
-            user.putToken(dashboardId, token);
-            log.info("Generated token for user {} and dashId {} is {}.", user.getName(), dashboardId, token);
+            token = refreshToken(user, dashboardId);
         } else {
             log.info("Token for user {} and dashId {} generated already. Token {}", user.getName(), dashboardId, token);
         }
@@ -85,15 +79,32 @@ public class UserRegistry {
     }
 
     public String refreshToken(User user, Integer dashboardId) {
-        String token = generateNewToken();
-        user.putToken(dashboardId, token);
-        log.info("Refreshed token for user {} and dashId {} is {}.", user.getName(), dashboardId, token);
-        return token;
+        // Clean old token from cache if exists.
+        String oldToken = user.getDashTokens().get(dashboardId);
+        if (oldToken != null) tokenToUserCache.remove(oldToken);
+
+        //Create new token
+        String newToken = generateNewToken();
+        user.putToken(dashboardId, newToken);
+        tokenToUserCache.put(newToken, user);
+
+        log.info("Generated newToken for user {} and dashId {} is {}.", user.getName(), dashboardId, newToken);
+        return newToken;
     }
 
     public void createNewUser(String userName, String pass) {
         User newUser = new User(userName, pass);
         users.put(userName, newUser);
+    }
+
+    private Map<String, User> createTokenToUserCache(final Map<String, User> users) {
+        return new HashMap<String, User>() {{
+            for (User user : users.values()) {
+                for (String userToken : user.getDashTokens().values()) {
+                    put(userToken, user);
+                }
+            }
+        }};
     }
 
 }
