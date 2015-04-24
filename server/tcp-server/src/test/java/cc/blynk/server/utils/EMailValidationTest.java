@@ -28,6 +28,8 @@ public class EMailValidationTest {
                 "mmmm@1.com",
                 "mmmm@gmail.com.com",
                 "mmmm+100@gmail.com",
+                "bla@bla.com.ua",
+                "bla@bla.cc",
                 "mmmm-100@yahoo-test.com"
         };
 
@@ -47,7 +49,8 @@ public class EMailValidationTest {
                 "mmmm()*@gmail.com",
                 "mmmm..2002@gmail.com",
                 "mmmm.@gmail.com",
-                "mmmm@mmmm@gmail.com"
+                "mmmm@mmmm@gmail.com",
+                "bla@bla"
         };
 
         for (String email : mailList) {
