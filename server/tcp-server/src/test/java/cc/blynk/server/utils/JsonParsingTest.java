@@ -5,6 +5,7 @@ import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.controls.Button;
 import cc.blynk.server.model.widgets.others.Timer;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -102,7 +103,7 @@ public class JsonParsingTest {
     }
 
     @Test
-    public void correctSerializedObject() {
+    public void correctSerializedObject() throws JsonProcessingException {
         Button button = new Button();
         button.id = 1;
         button.label = "MyButton";
@@ -110,7 +111,7 @@ public class JsonParsingTest {
         button.y = 2;
         button.pushMode = false;
 
-        String result = JsonParser.toJson(button);
+        String result = JsonParser.mapper.writeValueAsString(button);
 
         assertEquals("{\"type\":\"BUTTON\",\"id\":1,\"x\":2,\"y\":2,\"label\":\"MyButton\",\"pushMode\":false}", result);
     }
