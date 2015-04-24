@@ -42,21 +42,18 @@ public final class JsonParser {
     }
 
     public static String toJson(User user) {
-        try {
-            return userWriter.writeValueAsString(user);
-        } catch (Exception e) {
-            log.error("Error jsoning object.");
-            log.error(e);
-        }
-        return "{}";
+        return toJson(userWriter, user);
     }
 
     public static String toJson(Profile profile) {
+        return toJson(profileWriter, profile);
+    }
+
+    private static String toJson(ObjectWriter writer, Object o) {
         try {
-            return profileWriter.writeValueAsString(profile);
+            return writer.writeValueAsString(o);
         } catch (Exception e) {
-            log.error("Error jsoning object.");
-            log.error(e);
+            log.error("Error jsoning object.", e);
         }
         return "{}";
     }

@@ -62,18 +62,10 @@ public class AppServer extends BaseServer {
             }
 
             return SslContext.newServerContext(serverCert, serverKey, keyPass);
-        } catch (CertificateException e) {
-            log.error("Error initializing certs path. Reason : {} ", e.getMessage());
-            System.exit(0);
-        } catch (SSLException e) {
+        } catch (CertificateException | SSLException | IllegalArgumentException e) {
             log.error("Error initializing ssl context. Reason : {}", e.getMessage());
-            System.exit(0);
-           //todo throw?
-        } catch (IllegalStateException e) {
-            log.error(e.getMessage());
-            System.exit(0);
+            throw new RuntimeException(e.getMessage());
         }
-        return null;
     }
 
     @Override
