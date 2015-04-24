@@ -60,7 +60,6 @@ public class UserRegistry {
     }
 
     public User getUserByToken(String token) {
-        if (token == null) return null;
         return tokenToUserCache.get(token);
     }
 
