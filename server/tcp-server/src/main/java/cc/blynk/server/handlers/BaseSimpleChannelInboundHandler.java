@@ -2,10 +2,12 @@ package cc.blynk.server.handlers;
 
 import cc.blynk.common.exceptions.BaseServerException;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.exceptions.QuotaLimitException;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
@@ -27,6 +29,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
     protected final UserRegistry userRegistry;
+	private final long defaultNotificationQuotaLimit;
     protected final SessionsHolder sessionsHolder;
     private final TypeParameterMatcher matcher;
     private volatile int USER_QUOTA_LIMIT;
@@ -36,6 +39,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
+		defaultNotificationQuotaLimit = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
         updateProperties(props);
     }
 
@@ -108,5 +112,14 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
         } catch (RuntimeException e) {
             //error already logged, so do nothing.
         }
+    }
+
+	protected void checkIfNotificationQuotaLimitIsNotReached(User user, Message message) {
+		final long currentTs = System.currentTimeMillis();
+		final long timePassedSinceLastMessage = (currentTs - user.getLasNotificationSentTs());
+		if(timePassedSinceLastMessage < defaultNotificationQuotaLimit) {
+			throw new QuotaLimitException(String.format("Only 1 notification per %s seconds is allowed", defaultNotificationQuotaLimit), message.id);
+		}
+		user.setLastNotificationSentTs(currentTs);
     }
 }

@@ -79,8 +79,8 @@ public class MailHandler extends BaseSimpleChannelInboundHandler<MailMessage> {
         log.trace("Sending Mail for user {}, with message : '{}'.", user.getName(), message.body);
         notificationsProcessor.mail(to, subj, body, message.id);
 
-        //todo send response immediately?
-        ctx.writeAndFlush(produce(message.id, OK));
+		checkIfNotificationQuotaLimitIsNotReached(user, message);
+		ctx.writeAndFlush(produce(message.id, OK));
     }
 
 }
