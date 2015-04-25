@@ -1,6 +1,6 @@
 package cc.blynk.client.handlers;
 
-import cc.blynk.common.handlers.common.decoders.ReplayingMessageDecoder;
+import cc.blynk.common.handlers.common.decoders.MessageDecoder;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.io.IOException;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/20/2015.
  */
-public class ClientReplayingMessageDecoder extends ReplayingMessageDecoder {
+public class ClientReplayingMessageDecoder extends MessageDecoder {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {

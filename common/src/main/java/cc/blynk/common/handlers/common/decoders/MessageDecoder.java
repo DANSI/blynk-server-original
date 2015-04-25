@@ -7,7 +7,7 @@ import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.Config;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ReplayingDecoder;
+import io.netty.handler.codec.ByteToMessageDecoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,23 +22,28 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-//todo could be optimized with checkpoints if needed
-public class ReplayingMessageDecoder extends ReplayingDecoder<Void> implements DefaultExceptionHandler {
+public class MessageDecoder extends ByteToMessageDecoder implements DefaultExceptionHandler {
 
-    protected static final Logger log = LogManager.getLogger(ReplayingMessageDecoder.class);
+    protected static final Logger log = LogManager.getLogger(MessageDecoder.class);
 
     private final GlobalStats stats;
 
-    public ReplayingMessageDecoder() {
+    public MessageDecoder() {
         this.stats = new GlobalStats();
     }
 
-    public ReplayingMessageDecoder(GlobalStats stats) {
+    public MessageDecoder(GlobalStats stats) {
         this.stats = stats;
     }
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        if (in.readableBytes() < 5) {
+            return;
+        }
+
+        in.markReaderIndex();
+
         short command = in.readUnsignedByte();
         int messageId = in.readUnsignedShort();
 
@@ -48,6 +53,12 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> implements D
             message = produce(messageId, responseCode);
         } else {
             int length = in.readUnsignedShort();
+
+            if (in.readableBytes() < length) {
+                in.resetReaderIndex();
+                return;
+            }
+
             String messageBody = in.readSlice(length).toString(Config.DEFAULT_CHARSET);
             message = produce(messageId, command, messageBody);
         }

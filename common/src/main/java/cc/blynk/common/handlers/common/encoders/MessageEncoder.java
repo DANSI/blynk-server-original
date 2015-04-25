@@ -15,7 +15,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class DeviceMessageEncoder extends MessageToByteEncoder<MessageBase> {
+public class MessageEncoder extends MessageToByteEncoder<MessageBase> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, MessageBase message, ByteBuf out) throws Exception {

@@ -1,8 +1,8 @@
 package cc.blynk.integration.model;
 
 import cc.blynk.client.core.AppClient;
-import cc.blynk.common.handlers.common.decoders.ReplayingMessageDecoder;
-import cc.blynk.common.handlers.common.encoders.DeviceMessageEncoder;
+import cc.blynk.common.handlers.common.decoders.MessageDecoder;
+import cc.blynk.common.handlers.common.encoders.MessageEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -70,8 +70,8 @@ public class TestAppClient extends AppClient {
                     pipeline.addLast(sslCtx.newHandler(ch.alloc(), host, port));
                 }
 
-                pipeline.addLast(new ReplayingMessageDecoder());
-                pipeline.addLast(new DeviceMessageEncoder());
+                pipeline.addLast(new MessageDecoder());
+                pipeline.addLast(new MessageEncoder());
                 pipeline.addLast(responseMock);
             }
         };

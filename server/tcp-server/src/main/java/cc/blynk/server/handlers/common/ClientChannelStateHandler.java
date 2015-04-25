@@ -35,7 +35,6 @@ public class ClientChannelStateHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         sessionsHolder.removeFromSession(ctx.channel());
-        super.channelInactive(ctx);
     }
 
     @Override

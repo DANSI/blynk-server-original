@@ -1,7 +1,7 @@
 package cc.blynk.server.core.application;
 
-import cc.blynk.common.handlers.common.decoders.ReplayingMessageDecoder;
-import cc.blynk.common.handlers.common.encoders.DeviceMessageEncoder;
+import cc.blynk.common.handlers.common.decoders.MessageDecoder;
+import cc.blynk.common.handlers.common.encoders.MessageEncoder;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.handlers.common.ClientChannelStateHandler;
@@ -47,8 +47,8 @@ final class AppChannelInitializer extends ChannelInitializer<SocketChannel> {
 
         //non-sharable handlers
         pipeline.addLast(new ClientChannelStateHandler(sessionsHolder));
-        pipeline.addLast(new ReplayingMessageDecoder(stats));
-        pipeline.addLast(new DeviceMessageEncoder());
+        pipeline.addLast(new MessageDecoder(stats));
+        pipeline.addLast(new MessageEncoder());
 
         //sharable business logic handlers initialized previously
         for (ChannelHandler handler : handlersHolder.getAllHandlers()) {

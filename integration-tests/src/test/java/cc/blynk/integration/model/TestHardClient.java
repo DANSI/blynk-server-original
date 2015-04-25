@@ -1,8 +1,8 @@
 package cc.blynk.integration.model;
 
 import cc.blynk.client.core.HardwareClient;
-import cc.blynk.common.handlers.common.decoders.ReplayingMessageDecoder;
-import cc.blynk.common.handlers.common.encoders.DeviceMessageEncoder;
+import cc.blynk.common.handlers.common.decoders.MessageDecoder;
+import cc.blynk.common.handlers.common.encoders.MessageEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -61,8 +61,8 @@ public class TestHardClient extends HardwareClient {
                 ChannelPipeline pipeline = ch.pipeline();
                 TestHardClient.this.pipeline = pipeline;
 
-                pipeline.addLast(new ReplayingMessageDecoder());
-                pipeline.addLast(new DeviceMessageEncoder());
+                pipeline.addLast(new MessageDecoder());
+                pipeline.addLast(new MessageEncoder());
                 pipeline.addLast(responseMock);
             }
         };
