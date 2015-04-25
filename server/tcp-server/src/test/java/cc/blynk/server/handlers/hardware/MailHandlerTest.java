@@ -89,7 +89,7 @@ public class MailHandlerTest extends TestBase {
 
         mailHandler.messageReceived(ctx, user, mailMessage);
         verify(notificationsProcessor).mail(eq("me@example.com"), eq("Yo"), eq("MyBody"), eq(1));
-        verify(ctx).channel();
+        verify(ctx).writeAndFlush(any());
     }
 
     @Test
@@ -104,7 +104,7 @@ public class MailHandlerTest extends TestBase {
 
         mailHandler.messageReceived(ctx, user, mailMessage);
         verify(notificationsProcessor).mail(eq("me@example.com"), eq("Yo"), eq("body"), eq(1));
-        verify(ctx).channel();
+        verify(ctx).writeAndFlush(any());
     }
 
     @Test
@@ -119,7 +119,7 @@ public class MailHandlerTest extends TestBase {
 
         mailHandler.messageReceived(ctx, user, mailMessage);
         verify(notificationsProcessor).mail(eq("me@example.com"), eq("subj"), eq("body"), eq(1));
-        verify(ctx).channel();
+        verify(ctx).writeAndFlush(any());
     }
 
     @Test
@@ -134,7 +134,7 @@ public class MailHandlerTest extends TestBase {
 
         mailHandler.messageReceived(ctx, user, mailMessage);
         verify(notificationsProcessor).mail(eq("pupkin@example.com"), eq("subj"), eq("body"), eq(1));
-        verify(ctx).channel();
+        verify(ctx).writeAndFlush(any());
     }
 
 }
