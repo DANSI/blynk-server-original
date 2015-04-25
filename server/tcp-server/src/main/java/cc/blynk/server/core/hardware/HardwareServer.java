@@ -2,6 +2,7 @@ package cc.blynk.server.core.hardware;
 
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -21,10 +22,8 @@ public class HardwareServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HardwareServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                          GlobalStats stats, NotificationsProcessor notificationsProcessor) {
-        super(props.getIntProperty("server.default.port"),
-              props.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors()),
-              props.getBoolProperty("enable.native.epoll.transport"));
+                          GlobalStats stats, NotificationsProcessor notificationsProcessor, TransportTypeHolder transportType) {
+        super(props.getIntProperty("server.default.port"), transportType);
 
         this.handlersHolder = new HardwareHandlersHolder(props, userRegistry, sessionsHolder, notificationsProcessor);
         int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 15);

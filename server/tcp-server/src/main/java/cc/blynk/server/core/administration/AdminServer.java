@@ -1,6 +1,7 @@
 package cc.blynk.server.core.administration;
 
 import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -17,8 +18,9 @@ public class AdminServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public AdminServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(props.getIntProperty("server.admin.port"), 1, false);
+    public AdminServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
+                       TransportTypeHolder transportType) {
+        super(props.getIntProperty("server.admin.port"), transportType);
         this.channelInitializer = new AdminChannelInitializer(userRegistry, sessionsHolder);
         log.info("Administration server port {}.", port);
     }

@@ -1,14 +1,11 @@
 package cc.blynk.server.core;
 
+import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
-import io.netty.channel.epoll.EpollEventLoopGroup;
-import io.netty.channel.epoll.EpollServerSocketChannel;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,35 +18,25 @@ public abstract class BaseServer implements Runnable {
 
     protected static final Logger log = LogManager.getLogger(HardwareServer.class);
     protected final int port;
-    private final int workerThreads;
-    private final boolean enableNativeEpoll;
+    private final TransportTypeHolder transportTypeHolder;
 
     private Channel channel;
 
-    protected BaseServer(int port, int workerThreads, boolean enableNativeEpoll) {
+    protected BaseServer(int port, TransportTypeHolder transportTypeHolder) {
         this.port = port;
-        this.workerThreads = workerThreads;
-        this.enableNativeEpoll = enableNativeEpoll;
+        this.transportTypeHolder = transportTypeHolder;
     }
 
     @Override
     public void run() {
-        EventLoopGroup bossGroup;
-        EventLoopGroup workerGroup;
-        Class<? extends ServerChannel> channelClass;
-
-        if (enableNativeEpoll) {
+        if (transportTypeHolder.epollEnabled) {
             log.warn("Native epoll transport enabled.");
-            bossGroup = new EpollEventLoopGroup(1);
-            workerGroup = new EpollEventLoopGroup(workerThreads);
-            channelClass = EpollServerSocketChannel.class;
-        } else {
-            bossGroup = new NioEventLoopGroup(1);
-            workerGroup = new NioEventLoopGroup(workerThreads);
-            channelClass = NioServerSocketChannel.class;
         }
-
-        buildServerAndRun(bossGroup, workerGroup, channelClass);
+        buildServerAndRun(
+                transportTypeHolder.bossGroup,
+                transportTypeHolder.workerGroup,
+                transportTypeHolder.channelClass
+        );
     }
 
     private void buildServerAndRun(EventLoopGroup bossGroup, EventLoopGroup workerGroup,

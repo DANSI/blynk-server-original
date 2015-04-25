@@ -3,6 +3,7 @@ package cc.blynk.integration;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
+import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import io.netty.channel.ChannelFuture;
@@ -43,8 +44,8 @@ public class MainWorkflowTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
-        hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsProcessor);
-        appServer = new AppServer(properties, userRegistry, sessionsHolder, stats);
+        hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsProcessor, new TransportTypeHolder(properties));
+        appServer = new AppServer(properties, userRegistry, sessionsHolder, stats, new TransportTypeHolder(properties));
         new Thread(hardwareServer).start();
         new Thread(appServer).start();
 

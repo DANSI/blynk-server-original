@@ -2,6 +2,7 @@ package cc.blynk.server.core.application;
 
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -25,10 +26,9 @@ public class AppServer extends BaseServer {
     private final AppHandlersHolder handlersHolder;
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public AppServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
-        super(props.getIntProperty("server.ssl.port"),
-              props.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors()),
-              props.getBoolProperty("enable.native.epoll.transport"));
+    public AppServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
+                     GlobalStats stats, TransportTypeHolder transportType) {
+        super(props.getIntProperty("server.ssl.port"), transportType);
 
         this.handlersHolder = new AppHandlersHolder(props, userRegistry, sessionsHolder);
 

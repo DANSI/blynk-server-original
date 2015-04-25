@@ -2,6 +2,7 @@ package cc.blynk.integration;
 
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestAppClient;
+import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import org.apache.commons.io.FileUtils;
@@ -38,7 +39,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
-        appServer = new AppServer(properties, userRegistry, sessionsHolder, stats);
+        appServer = new AppServer(properties, userRegistry, sessionsHolder, stats, new TransportTypeHolder(properties));
 
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager);
         new Thread(appServer).start();

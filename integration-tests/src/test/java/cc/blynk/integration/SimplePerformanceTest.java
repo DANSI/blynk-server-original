@@ -47,7 +47,7 @@ public class SimplePerformanceTest extends IntegrationBase {
     @Test
     @Ignore
     public void testConnectAppAndHardware() throws Exception {
-        int clientNumber = 10;
+        int clientNumber = 250;
         ExecutorService executorService = Executors.newFixedThreadPool(4);
 
         ClientPair[] clients = new ClientPair[clientNumber];
@@ -56,7 +56,7 @@ public class SimplePerformanceTest extends IntegrationBase {
         long start = System.currentTimeMillis();
         for (int i = 0; i < clientNumber; i++) {
             Future<ClientPair> future = executorService.submit(
-                    () -> initAppAndHardPair("cloud.blynk.cc", 8443, 8442, "dima" + counter.incrementAndGet() + "@mail.ua 1")
+                    () -> initAppAndHardPair("localhost", 8443, 8442, "dima" + counter.incrementAndGet() + "@mail.ua 1")
             );
             futures.add(future);
         }
@@ -75,7 +75,7 @@ public class SimplePerformanceTest extends IntegrationBase {
         start = System.currentTimeMillis();
         while (true) {
             for (ClientPair clientPair : clients) {
-                clientPair.appClient.send("hardware 1 1");
+                clientPair.appClient.send("hardware aw 10 10");
             }
             sleep(10);
         }

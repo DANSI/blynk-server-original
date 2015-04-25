@@ -68,9 +68,11 @@ public class ServerLauncher {
                 serverProperties.getIntProperty("notifications.queue.limit", 10000)
         );
 
-        this.hardwareServer = new HardwareServer(serverProperties, userRegistry, sessionsHolder, stats, this.notificationsProcessor);
-        this.appServer = new AppServer(serverProperties, userRegistry, sessionsHolder, stats);
-        this.adminServer = new AdminServer(serverProperties, userRegistry, sessionsHolder);
+        TransportTypeHolder transportType = new TransportTypeHolder(serverProperties);
+
+        this.hardwareServer = new HardwareServer(serverProperties, userRegistry, sessionsHolder, stats, notificationsProcessor, transportType);
+        this.appServer = new AppServer(serverProperties, userRegistry, sessionsHolder, stats, transportType);
+        this.adminServer = new AdminServer(serverProperties, userRegistry, sessionsHolder, transportType);
 
     }
 
