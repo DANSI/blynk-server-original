@@ -27,7 +27,7 @@ public class PingHandler extends BaseSimpleChannelInboundHandler<PingMessage> {
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, User user, PingMessage message) {
-        ctx.channel().writeAndFlush(produce(message.id, OK));
+        ctx.writeAndFlush(produce(message.id, OK));
     }
 
 }

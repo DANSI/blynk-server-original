@@ -80,7 +80,7 @@ public class MailHandler extends BaseSimpleChannelInboundHandler<MailMessage> {
         notificationsProcessor.mail(to, subj, body, message.id);
 
         //todo send response immediately?
-        ctx.channel().writeAndFlush(produce(message.id, OK));
+        ctx.writeAndFlush(produce(message.id, OK));
     }
 
 }

@@ -52,7 +52,7 @@ public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> 
         notificationsProcessor.twit(twitterAccessToken, message.body, message.id);
 
         //todo send response immediately?
-        ctx.channel().writeAndFlush(produce(message.id, OK));
+        ctx.writeAndFlush(produce(message.id, OK));
     }
 
 
