@@ -58,7 +58,9 @@ public class StatsWorker implements Runnable {
 
         }
 
-        log.info("Total {}, active {}, apps {}, hards {}",
-                sessionsHolder.getUserSession().size(), activeSessions, appActive, hardActive);
+        if (appActive > 0 || hardActive > 0) {
+            log.info("Total {}, active {}, apps {}, hards {}",
+                    sessionsHolder.getUserSession().size(), activeSessions, appActive, hardActive);
+        }
     }
 }
