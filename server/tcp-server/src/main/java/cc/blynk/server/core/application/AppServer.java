@@ -58,6 +58,10 @@ public class AppServer extends BaseServer {
             File serverCert =  new File(serverCertPath);
             File serverKey = new File(serverKeyPath);
 
+            if (sslProvider == SslProvider.OPENSSL) {
+                log.warn("Using native openSSL provider.");
+            }
+
             if (!serverCert.exists() || !serverKey.exists()) {
                 log.warn("ATTENTION. Certificate path not valid. Using embedded certs. This is not secure. Please replace it with your own certs.");
                 SelfSignedCertificate ssc = new SelfSignedCertificate();
