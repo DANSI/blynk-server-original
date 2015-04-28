@@ -23,10 +23,6 @@ public class User implements Serializable {
 
     private String id;
 
-    // we set it with time in the past to make first email/tweet/push possible.
-
-	private volatile long lastNotificationSentTs = 0;
-
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
     private long lastModifiedTs;
 
@@ -41,6 +37,8 @@ public class User implements Serializable {
     //todo move to session?
     private transient InstanceLoadMeter quotaMeter;
     private transient volatile long lastQuotaExceededTime;
+    // we set it with time in the past to make first email/tweet/push possible.
+    private transient volatile long lastNotificationSentTs;
 
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
