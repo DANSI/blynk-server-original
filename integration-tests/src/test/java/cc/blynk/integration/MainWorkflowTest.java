@@ -224,7 +224,7 @@ public class MainWorkflowTest extends IntegrationBase {
             sleep(9);
         }
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, TOO_MANY_REQUESTS_EXCEPTION)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, QUOTA_LIMIT_EXCEPTION)));
         verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
 
         clientPair.appClient.reset();
@@ -236,7 +236,7 @@ public class MainWorkflowTest extends IntegrationBase {
             sleep(9);
         }
 
-        verify(clientPair.appClient.responseMock, times(0)).channelRead(any(), eq(produce(1, TOO_MANY_REQUESTS_EXCEPTION)));
+        verify(clientPair.appClient.responseMock, times(0)).channelRead(any(), eq(produce(1, QUOTA_LIMIT_EXCEPTION)));
         verify(clientPair.hardwareClient.responseMock, times(0)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
     }
 
@@ -274,7 +274,7 @@ public class MainWorkflowTest extends IntegrationBase {
             sleep(9);
         }
 
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, TOO_MANY_REQUESTS_EXCEPTION)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, QUOTA_LIMIT_EXCEPTION)));
         verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
 
         clientPair.appClient.reset();
@@ -288,7 +288,7 @@ public class MainWorkflowTest extends IntegrationBase {
             sleep(9);
         }
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, TOO_MANY_REQUESTS_EXCEPTION)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, QUOTA_LIMIT_EXCEPTION)));
         verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
 
     }

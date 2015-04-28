@@ -135,7 +135,6 @@ public class TweetHandlerTest extends TestBase {
 		when(user.getProfile()).thenReturn(profile);
 		when(user.getProfile().getTwitter()).thenReturn(new TwitterAccessToken("token", "secret_token"));
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
-		TimeUnit.SECONDS.sleep(1);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
@@ -143,7 +142,7 @@ public class TweetHandlerTest extends TestBase {
 	public void testSendQuotaLimitationIsWorking() throws InterruptedException {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "this is a test tweet");
 		ServerProperties props = new ServerProperties();
-		props.setProperty("notifications.frequency.user.quota.limit", "3");
+		props.setProperty("notifications.frequency.user.quota.limit", "1");
 		final long defaultQuotaTime = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
 		User user = spy(new User());
 		TweetHandler tweetHandler = spy(new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor));

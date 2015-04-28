@@ -12,7 +12,7 @@ import java.util.Map;
 public final class Response {
 
     public static final int OK = 200;
-    public static final int TOO_MANY_REQUESTS_EXCEPTION = 1;
+    public static final int QUOTA_LIMIT_EXCEPTION = 1;
     public static final int ILLEGAL_COMMAND = 2;
     public static final int USER_NOT_REGISTERED = 3;
     public static final int USER_ALREADY_REGISTERED = 4;
@@ -26,7 +26,6 @@ public final class Response {
     public static final int TWEET_BODY_INVALID_EXCEPTION = 13;
     public static final int TWEET_NOT_AUTHORIZED_EXCEPTION = 14;
     public static final int SERVER_BUSY_EXCEPTION = 15;
-    public static final int QUOTA_LIMIT_EXCEPTION = 16;
 
 
     //all this code just to make logging more user-friendly

@@ -18,7 +18,7 @@ import io.netty.util.ReferenceCountUtil;
 import io.netty.util.internal.TypeParameterMatcher;
 import org.apache.logging.log4j.ThreadContext;
 
-import static cc.blynk.common.enums.Response.TOO_MANY_REQUESTS_EXCEPTION;
+import static cc.blynk.common.enums.Response.QUOTA_LIMIT_EXCEPTION;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
@@ -29,8 +29,8 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
     protected final UserRegistry userRegistry;
-	private final long defaultNotificationQuotaLimit;
     protected final SessionsHolder sessionsHolder;
+	private final long defaultNotificationQuotaLimit;
     private final TypeParameterMatcher matcher;
     private volatile int USER_QUOTA_LIMIT;
     private volatile int USER_QUOTA_LIMIT_WARN_PERIOD;
@@ -61,7 +61,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
                     if (user.getLastQuotaExceededTime() + USER_QUOTA_LIMIT_WARN_PERIOD < now) {
                         user.setLastQuotaExceededTime(now);
                         log.warn("User '{}' had exceeded {} rec/sec limit.", user.getName(), USER_QUOTA_LIMIT);
-                        ctx.writeAndFlush(produce(imsg.id, TOO_MANY_REQUESTS_EXCEPTION));
+                        ctx.writeAndFlush(produce(imsg.id, QUOTA_LIMIT_EXCEPTION));
                     }
                     return;
                 }

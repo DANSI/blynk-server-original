@@ -161,14 +161,13 @@ public class MailHandlerTest extends TestBase {
 		Mail mail = new Mail("me@example.com", "Yo", "MyBody");
 		when(profile.getActiveDashboardEmailWidget()).thenReturn(mail);
 		mailHandler.messageReceived(ctx, user, mailMessage1);
-		TimeUnit.SECONDS.sleep(1);
 		mailHandler.messageReceived(ctx, user, mailMessage1);
 	}
 
 	@Test()
 	public void testSendQuotaLimitationIsWorking() throws InterruptedException {
 		MailMessage mailMessage1 = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "pupkin@example.com subj body".replaceAll(" ", "\0"));
-		props.setProperty("notifications.frequency.user.quota.limit", "3");
+		props.setProperty("notifications.frequency.user.quota.limit", "1");
 		final long defaultQuotaTime = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
 		User user = spy(new User());
 		MailHandler mailHandler = spy(new MailHandler(props, userRegistry, sessionsHolder, notificationsProcessor));
