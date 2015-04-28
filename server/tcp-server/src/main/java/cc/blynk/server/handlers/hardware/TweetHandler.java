@@ -52,6 +52,7 @@ public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> 
         notificationsProcessor.twit(twitterAccessToken, message.body, message.id);
 
         //todo send response immediately?
+        checkIfNotificationQuotaLimitIsNotReached(user, message);
         ctx.writeAndFlush(produce(message.id, OK));
     }
 

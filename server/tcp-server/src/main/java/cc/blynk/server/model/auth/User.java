@@ -15,13 +15,17 @@ import java.util.Map;
  */
 public class User implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private String name;
+	private String name;
 
     private String pass;
 
     private String id;
+
+    // we set it with time in the past to make first email/tweet/push possible.
+
+	private volatile long lastNotificationSentTs = 0;
 
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
     private long lastModifiedTs;
@@ -144,10 +148,9 @@ public class User implements Serializable {
 
         User user = (User) o;
 
-        if (name != null ? !name.equals(user.name) : user.name != null) return false;
+		return !(name != null ? !name.equals(user.name) : user.name != null);
 
-        return true;
-    }
+	}
 
     @Override
     public int hashCode() {
@@ -157,5 +160,13 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return JsonParser.toJson(this);
+    }
+
+    public long getLasNotificationSentTs() {
+        return lastNotificationSentTs;
+    }
+
+    public void setLastNotificationSentTs(long lastNotificationSentTs) {
+        this.lastNotificationSentTs = lastNotificationSentTs;
     }
 }
