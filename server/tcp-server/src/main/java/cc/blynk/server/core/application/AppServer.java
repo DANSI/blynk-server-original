@@ -27,6 +27,7 @@ public class AppServer extends BaseServer {
 
     private final AppHandlersHolder handlersHolder;
     private final ChannelInitializer<SocketChannel> channelInitializer;
+    private boolean isMutualSSL;
 
     public AppServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
                      GlobalStats stats, TransportTypeHolder transportType) {
@@ -50,12 +51,12 @@ public class AppServer extends BaseServer {
 
         int appTimeoutSecs = props.getIntProperty("app.socket.idle.timeout", 600);
         log.debug("app.socket.idle.timeout = {}", appTimeoutSecs);
-        this.channelInitializer = new AppChannelInitializer(sessionsHolder, stats, handlersHolder, sslContext, appTimeoutSecs);
+        this.channelInitializer = new AppChannelInitializer(sessionsHolder, stats, handlersHolder, sslContext, appTimeoutSecs, isMutualSSL);
 
         log.info("Application server port {}.", port);
     }
 
-    private static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
+    private SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
                                              String clientCertPath,
                                              SslProvider sslProvider) {
         try {
@@ -70,9 +71,11 @@ public class AppServer extends BaseServer {
             if (!serverCert.exists() || !serverKey.exists() || !clientCert.exists()) {
                 log.warn("ATTENTION. Certificate path not valid. Using embedded certs. This is not secure. Please replace it with your own certs.");
                 SelfSignedCertificate ssc = new SelfSignedCertificate();
+                isMutualSSL = false;
                 return SslContext.newServerContext(sslProvider, ssc.certificate(), ssc.privateKey());
             }
 
+            isMutualSSL = true;
             return SslContext.newServerContext(sslProvider, clientCert, null, serverCert, serverKey, serverPass,
                     null, null, IdentityCipherSuiteFilter.INSTANCE, null, 0 ,0);
         } catch (CertificateException | SSLException | IllegalArgumentException e) {

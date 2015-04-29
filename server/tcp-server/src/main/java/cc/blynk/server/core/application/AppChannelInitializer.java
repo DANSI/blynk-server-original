@@ -29,13 +29,15 @@ final class AppChannelInitializer extends ChannelInitializer<SocketChannel> {
     private final AppHandlersHolder handlersHolder;
     private final SslContext sslCtx;
     private final int appTimeoutSecs;
+    private final boolean isMutualSSL;
 
-    public AppChannelInitializer(SessionsHolder sessionsHolder, GlobalStats stats, AppHandlersHolder handlersHolder, SslContext sslContext, int appTimeoutSecs) {
+    public AppChannelInitializer(SessionsHolder sessionsHolder, GlobalStats stats, AppHandlersHolder handlersHolder, SslContext sslContext, int appTimeoutSecs, boolean isMutualSSL) {
         this.sessionsHolder = sessionsHolder;
         this.stats = stats;
         this.handlersHolder = handlersHolder;
         this.sslCtx = sslContext;
         this.appTimeoutSecs = appTimeoutSecs;
+        this.isMutualSSL = isMutualSSL;
     }
 
     @Override
@@ -46,8 +48,10 @@ final class AppChannelInitializer extends ChannelInitializer<SocketChannel> {
 
         if (sslCtx != null) {
             SSLEngine engine = sslCtx.newEngine(ch.alloc());
-            engine.setUseClientMode(false);
-            engine.setNeedClientAuth(true);
+            if (isMutualSSL) {
+                engine.setUseClientMode(false);
+                engine.setNeedClientAuth(true);
+            }
             pipeline.addLast(new SslHandler(engine));
         }
 

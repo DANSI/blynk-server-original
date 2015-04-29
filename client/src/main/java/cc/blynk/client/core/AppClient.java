@@ -6,6 +6,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 
 import javax.net.ssl.SSLException;
@@ -32,7 +33,12 @@ public class AppClient extends BaseClient {
             //todo think how to simplify with real certs?
             //sslCtx = SslContext.newClientContext(getFileFromResources("/test.crt"));
             try {
-                this.sslCtx = SslContext.newClientContext(InsecureTrustManagerFactory.INSTANCE);
+                this.sslCtx = SslContext.newClientContext(SslProvider.JDK, InsecureTrustManagerFactory.INSTANCE);
+                /*
+                this.sslCtx = SslContext.newClientContext(SslProvider.JDK, new File("/home/doom369/server/certs/server/server.crt"), null,
+                        new File("/home/doom369/server/certs/client/client.crt"), new File("/home/doom369/server/certs/client/client.pem"), "BlynkQATestClient",
+                        null, null, IdentityCipherSuiteFilter.INSTANCE, null, 0, 0);
+                */
             } catch (SSLException e) {
                 log.error("Error initializing SSL context. Reason : {}", e.getMessage());
                 log.debug(e);
