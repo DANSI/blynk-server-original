@@ -39,6 +39,9 @@ public interface DefaultExceptionHandler {
         } else if (cause instanceof DecoderException && cause.getCause() instanceof UnsupportedCommandException) {
             log.error("Input command is invalid. Closing socket.", cause.getMessage());
             ctx.close();
+        } else if (cause instanceof DecoderException && cause.getCause() instanceof SSLException) {
+            log.error("WARNING. Unsecured connection attempt. Channel : {}. Reason : {}", ctx.channel(), cause.getMessage());
+            ctx.close();
         } else if (cause instanceof NotSslRecordException) {
             log.error("Not secure connection attempt detected. {}.", cause.getMessage());
             ctx.close();

@@ -9,6 +9,7 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.ssl.IdentityCipherSuiteFilter;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
@@ -41,6 +42,7 @@ public class AppServer extends BaseServer {
                     props.getProperty("server.ssl.cert"),
                     props.getProperty("server.ssl.key"),
                     props.getProperty("server.ssl.key.pass"),
+                    props.getProperty("client.ssl.cert"),
                     props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK);
         } else {
             log.warn("SSL is disabled!");
@@ -53,22 +55,26 @@ public class AppServer extends BaseServer {
         log.info("Application server port {}.", port);
     }
 
-    private static SslContext initSslContext(String serverCertPath, String serverKeyPath, String keyPass, SslProvider sslProvider) {
+    private static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
+                                             String clientCertPath,
+                                             SslProvider sslProvider) {
         try {
-            File serverCert =  new File(serverCertPath);
-            File serverKey = new File(serverKeyPath);
-
             if (sslProvider == SslProvider.OPENSSL) {
                 log.warn("Using native openSSL provider.");
             }
 
-            if (!serverCert.exists() || !serverKey.exists()) {
+            File serverCert =  new File(serverCertPath);
+            File serverKey = new File(serverKeyPath);
+            File clientCert =  new File(clientCertPath);
+
+            if (!serverCert.exists() || !serverKey.exists() || !clientCert.exists()) {
                 log.warn("ATTENTION. Certificate path not valid. Using embedded certs. This is not secure. Please replace it with your own certs.");
                 SelfSignedCertificate ssc = new SelfSignedCertificate();
                 return SslContext.newServerContext(sslProvider, ssc.certificate(), ssc.privateKey());
             }
 
-            return SslContext.newServerContext(sslProvider, serverCert, serverKey, keyPass);
+            return SslContext.newServerContext(sslProvider, clientCert, null, serverCert, serverKey, serverPass,
+                    null, null, IdentityCipherSuiteFilter.INSTANCE, null, 0 ,0);
         } catch (CertificateException | SSLException | IllegalArgumentException e) {
             log.error("Error initializing ssl context. Reason : {}", e.getMessage());
             throw new RuntimeException(e.getMessage());

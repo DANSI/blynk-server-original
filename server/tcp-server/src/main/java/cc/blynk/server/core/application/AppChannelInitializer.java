@@ -10,7 +10,10 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+
+import javax.net.ssl.SSLEngine;
 
 /**
  * Application processing pipeline initializer.
@@ -42,7 +45,10 @@ final class AppChannelInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new ReadTimeoutHandler(appTimeoutSecs));
 
         if (sslCtx != null) {
-            pipeline.addLast(sslCtx.newHandler(ch.alloc()));
+            SSLEngine engine = sslCtx.newEngine(ch.alloc());
+            engine.setUseClientMode(false);
+            engine.setNeedClientAuth(true);
+            pipeline.addLast(new SslHandler(engine));
         }
 
         //non-sharable handlers
