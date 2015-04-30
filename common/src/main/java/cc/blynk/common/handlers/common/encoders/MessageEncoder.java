@@ -21,10 +21,15 @@ public class MessageEncoder extends MessageToByteEncoder<MessageBase> {
     protected void encode(ChannelHandlerContext ctx, MessageBase message, ByteBuf out) throws Exception {
         out.writeByte(message.command);
         out.writeShort(message.id);
-        out.writeShort(message.length);
 
-        if (message.command != Command.RESPONSE && message.length > 0) {
-            out.writeBytes(((Message) message).body.getBytes(Config.DEFAULT_CHARSET));
+        if (message.command == Command.RESPONSE) {
+            out.writeShort(message.length);
+        } else {
+            byte[] body = ((Message) message).body.getBytes(Config.DEFAULT_CHARSET);
+            out.writeShort(body.length);
+            if (body.length > 0) {
+                out.writeBytes(body);
+            }
         }
     }
 }
