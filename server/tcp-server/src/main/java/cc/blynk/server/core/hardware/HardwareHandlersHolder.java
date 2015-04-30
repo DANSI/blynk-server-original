@@ -4,6 +4,7 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.common.BridgeHandler;
 import cc.blynk.server.handlers.common.HardwareHandler;
 import cc.blynk.server.handlers.common.PingHandler;
 import cc.blynk.server.handlers.hardware.HardwareLoginHandler;
@@ -26,6 +27,7 @@ class HardwareHandlersHolder {
                                   NotificationsProcessor notificationsProcessor) {
         HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(userRegistry, sessionsHolder);
         HardwareHandler hardwareHandler = new HardwareHandler(props, userRegistry, sessionsHolder);
+        BridgeHandler bridgeHandler = new BridgeHandler(props, userRegistry, sessionsHolder);
         PingHandler pingHandler = new PingHandler(props, userRegistry, sessionsHolder);
 
 
@@ -35,6 +37,7 @@ class HardwareHandlersHolder {
 
         this.baseHandlers = new BaseSimpleChannelInboundHandler[] {
                 hardwareHandler,
+                bridgeHandler,
                 pingHandler,
                 tweetHandler,
                 emailHandler
@@ -43,6 +46,7 @@ class HardwareHandlersHolder {
         this.allHandlers = new ChannelHandler[] {
                 hardwareLoginHandler,
                 hardwareHandler,
+                bridgeHandler,
                 pingHandler,
                 tweetHandler,
                 emailHandler

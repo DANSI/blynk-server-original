@@ -39,6 +39,8 @@ public class CommandParser {
                 return EMAIL;
             case "push" :
                 return PUSH_NOTIFICATION;
+            case "bridge" :
+                return BRIDGE;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

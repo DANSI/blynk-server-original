@@ -58,6 +58,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         channel.attr(ChannelState.DASH_ID).set(dashId);
         channel.attr(ChannelState.IS_HARD_CHANNEL).set(true);
         channel.attr(ChannelState.USER).set(user);
+        channel.attr(ChannelState.TOKEN).set(token);
 
         sessionsHolder.addChannelToGroup(user, channel, message.id);
 

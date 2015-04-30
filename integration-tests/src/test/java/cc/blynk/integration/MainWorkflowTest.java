@@ -215,6 +215,7 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    @Ignore
     public void testTryReachQuotaLimit() throws Exception {
         String body = "ar 100 100";
 
