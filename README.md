@@ -42,7 +42,7 @@ server.properties options:
 
 + Application port
 
-        server.ssl.port=8443
+        app.ssl.port=8443
         
 + For simplicity Blynk already provides server jar with build-in SSL certificates, so you have working server out of the box via SSL/TLS sockets. But as certificate and it's private key are in public this is totally not secure. So in order to fix that you need to provide your own certificates. And change below properties with path to your cert. and private key and it's password. See how to generate self-signed certificates [here](https://github.com/blynkkk/blynk-server#generate-ssl-certificates)
 

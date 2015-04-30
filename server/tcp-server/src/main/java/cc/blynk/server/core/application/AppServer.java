@@ -31,23 +31,17 @@ public class AppServer extends BaseServer {
 
     public AppServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
                      GlobalStats stats, TransportTypeHolder transportType) {
-        super(props.getIntProperty("server.ssl.port"), transportType);
+        super(props.getIntProperty("app.ssl.port"), transportType);
 
         this.handlersHolder = new AppHandlersHolder(props, userRegistry, sessionsHolder);
 
-        boolean sslEnabled = props.getBoolProperty("app.ssl.enabled");
-        SslContext sslContext = null;
-        if (sslEnabled) {
-            log.info("SSL for Application enabled.");
-            sslContext = initSslContext(
-                    props.getProperty("server.ssl.cert"),
-                    props.getProperty("server.ssl.key"),
-                    props.getProperty("server.ssl.key.pass"),
-                    props.getProperty("client.ssl.cert"),
-                    props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK);
-        } else {
-            log.warn("SSL is disabled!");
-        }
+        log.info("Enabling SSL for application.");
+        SslContext sslContext = initSslContext(
+                props.getProperty("server.ssl.cert"),
+                props.getProperty("server.ssl.key"),
+                props.getProperty("server.ssl.key.pass"),
+                props.getProperty("client.ssl.cert"),
+                props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK);
 
         int appTimeoutSecs = props.getIntProperty("app.socket.idle.timeout", 600);
         log.debug("app.socket.idle.timeout = {}", appTimeoutSecs);

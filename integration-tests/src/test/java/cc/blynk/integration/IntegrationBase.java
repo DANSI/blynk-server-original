@@ -63,7 +63,7 @@ public abstract class IntegrationBase {
     @BeforeClass
     public static void initBase() {
         properties = new ServerProperties();
-        appPort = properties.getIntProperty("server.ssl.port");
+        appPort = properties.getIntProperty("app.ssl.port");
         hardPort = properties.getIntProperty("server.default.port");
         host = "localhost";
     }

@@ -31,11 +31,11 @@ final class AppChannelInitializer extends ChannelInitializer<SocketChannel> {
     private final int appTimeoutSecs;
     private final boolean isMutualSSL;
 
-    public AppChannelInitializer(SessionsHolder sessionsHolder, GlobalStats stats, AppHandlersHolder handlersHolder, SslContext sslContext, int appTimeoutSecs, boolean isMutualSSL) {
+    public AppChannelInitializer(SessionsHolder sessionsHolder, GlobalStats stats, AppHandlersHolder handlersHolder, SslContext sslCtx, int appTimeoutSecs, boolean isMutualSSL) {
         this.sessionsHolder = sessionsHolder;
         this.stats = stats;
         this.handlersHolder = handlersHolder;
-        this.sslCtx = sslContext;
+        this.sslCtx = sslCtx;
         this.appTimeoutSecs = appTimeoutSecs;
         this.isMutualSSL = isMutualSSL;
     }
@@ -46,14 +46,12 @@ final class AppChannelInitializer extends ChannelInitializer<SocketChannel> {
 
         pipeline.addLast(new ReadTimeoutHandler(appTimeoutSecs));
 
-        if (sslCtx != null) {
-            SSLEngine engine = sslCtx.newEngine(ch.alloc());
-            if (isMutualSSL) {
-                engine.setUseClientMode(false);
-                engine.setNeedClientAuth(true);
-            }
-            pipeline.addLast(new SslHandler(engine));
+        SSLEngine engine = sslCtx.newEngine(ch.alloc());
+        if (isMutualSSL) {
+            engine.setUseClientMode(false);
+            engine.setNeedClientAuth(true);
         }
+        pipeline.addLast(new SslHandler(engine));
 
         //non-sharable handlers
         pipeline.addLast(new ClientChannelStateHandler(sessionsHolder));

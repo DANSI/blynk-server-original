@@ -41,7 +41,7 @@ class ArgumentsParser {
         }
         if (appPort != null) {
             ParseUtil.parseInt(appPort);
-            serverProperties.put("server.ssl.port", appPort);
+            serverProperties.put("app.ssl.port", appPort);
         }
         if (workerThreadsString != null) {
             ParseUtil.parseInt(workerThreadsString);

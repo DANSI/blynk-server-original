@@ -37,12 +37,13 @@ public final class HardwareChannelInitializer extends ChannelInitializer<SocketC
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
 
+        //non-sharable handlers
+        pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
+
         if (sslCtx != null) {
             pipeline.addLast(sslCtx.newHandler(ch.alloc()));
         }
 
-        //non-sharable handlers
-        pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
         pipeline.addLast(new ClientChannelStateHandler(sessionsHolder));
         pipeline.addLast(new MessageDecoder(stats));
         pipeline.addLast(new MessageEncoder());

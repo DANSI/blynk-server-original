@@ -32,7 +32,7 @@ public class HardwareSSLServer extends BaseServer {
 
     public HardwareSSLServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
                              GlobalStats stats, NotificationsProcessor notificationsProcessor, TransportTypeHolder transportType) {
-        super(props.getIntProperty("server.ssl.default.port"), transportType);
+        super(props.getIntProperty("hardware.ssl.port"), transportType);
 
         this.handlersHolder = new HardwareHandlersHolder(props, userRegistry, sessionsHolder, notificationsProcessor);
         int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 15);
