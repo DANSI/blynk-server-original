@@ -37,11 +37,15 @@ public class HardwareSSLServer extends BaseServer {
         this.handlersHolder = new HardwareHandlersHolder(props, userRegistry, sessionsHolder, notificationsProcessor);
         int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 15);
 
+        SslProvider sslProvider = props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK;
+        if (sslProvider == SslProvider.OPENSSL) {
+            log.warn("Using native openSSL provider for hardware SSL.");
+        }
         SslContext sslContext = initSslContext(
                 props.getProperty("server.ssl.cert"),
                 props.getProperty("server.ssl.key"),
                 props.getProperty("server.ssl.key.pass"),
-                props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK);
+                sslProvider);
 
         this.channelInitializer = new HardwareChannelInitializer(sessionsHolder, stats, handlersHolder, hardTimeoutSecs, sslContext);
 
@@ -51,10 +55,6 @@ public class HardwareSSLServer extends BaseServer {
     private SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
                                       SslProvider sslProvider) {
         try {
-            if (sslProvider == SslProvider.OPENSSL) {
-                log.warn("Using native openSSL provider.");
-            }
-
             File serverCert =  new File(serverCertPath);
             File serverKey = new File(serverKeyPath);
 

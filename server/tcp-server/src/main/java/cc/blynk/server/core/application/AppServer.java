@@ -36,12 +36,16 @@ public class AppServer extends BaseServer {
         this.handlersHolder = new AppHandlersHolder(props, userRegistry, sessionsHolder);
 
         log.info("Enabling SSL for application.");
+        SslProvider sslProvider = props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK;
+        if (sslProvider == SslProvider.OPENSSL) {
+            log.warn("Using native openSSL provider for app SSL.");
+        }
         SslContext sslContext = initSslContext(
                 props.getProperty("server.ssl.cert"),
                 props.getProperty("server.ssl.key"),
                 props.getProperty("server.ssl.key.pass"),
                 props.getProperty("client.ssl.cert"),
-                props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK);
+                sslProvider);
 
         int appTimeoutSecs = props.getIntProperty("app.socket.idle.timeout", 600);
         log.debug("app.socket.idle.timeout = {}", appTimeoutSecs);
@@ -54,10 +58,6 @@ public class AppServer extends BaseServer {
                                              String clientCertPath,
                                              SslProvider sslProvider) {
         try {
-            if (sslProvider == SslProvider.OPENSSL) {
-                log.warn("Using native openSSL provider.");
-            }
-
             File serverCert =  new File(serverCertPath);
             File serverKey = new File(serverKeyPath);
             File clientCert =  new File(clientCertPath);
