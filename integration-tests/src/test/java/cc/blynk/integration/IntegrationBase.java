@@ -64,7 +64,7 @@ public abstract class IntegrationBase {
     public static void initBase() {
         properties = new ServerProperties();
         appPort = properties.getIntProperty("app.ssl.port");
-        hardPort = properties.getIntProperty("server.default.port");
+        hardPort = properties.getIntProperty("hardware.default.port");
         host = "localhost";
     }
 

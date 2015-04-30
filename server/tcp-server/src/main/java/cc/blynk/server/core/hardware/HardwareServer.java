@@ -23,7 +23,7 @@ public class HardwareServer extends BaseServer {
 
     public HardwareServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
                           GlobalStats stats, NotificationsProcessor notificationsProcessor, TransportTypeHolder transportType) {
-        super(props.getIntProperty("server.default.port"), transportType);
+        super(props.getIntProperty("hardware.default.port"), transportType);
 
         this.handlersHolder = new HardwareHandlersHolder(props, userRegistry, sessionsHolder, notificationsProcessor);
         int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 15);

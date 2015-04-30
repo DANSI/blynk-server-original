@@ -37,7 +37,7 @@ class ArgumentsParser {
 
         if (hardPort != null) {
             ParseUtil.parseInt(hardPort);
-            serverProperties.put("server.default.port", hardPort);
+            serverProperties.put("hardware.default.port", hardPort);
         }
         if (appPort != null) {
             ParseUtil.parseInt(appPort);
