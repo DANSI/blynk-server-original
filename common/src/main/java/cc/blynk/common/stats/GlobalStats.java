@@ -1,6 +1,7 @@
 package cc.blynk.common.stats;
 
 import cc.blynk.common.model.messages.ResponseMessage;
+import cc.blynk.common.model.messages.protocol.BridgeMessage;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.model.messages.protocol.PingMessage;
 import cc.blynk.common.model.messages.protocol.appllication.*;
@@ -41,6 +42,7 @@ public class GlobalStats {
         specificCounters.put(MailMessage.class, new LongAdder());
         specificCounters.put(PushMessage.class, new LongAdder());
         specificCounters.put(ResponseMessage.class, new LongAdder());
+        specificCounters.put(BridgeMessage.class, new LongAdder());
     }
 
     public void mark(Class<?> clazz) {
