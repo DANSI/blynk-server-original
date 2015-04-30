@@ -11,4 +11,6 @@ public class Graph extends Widget {
 
     public int frequency;
 
+    public boolean isBar;
+
 }
