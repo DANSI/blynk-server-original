@@ -17,7 +17,7 @@ import io.netty.channel.ChannelHandler;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/27/2015.
  */
-class HardwareHandlersHolder {
+public class HardwareHandlersHolder {
 
     private final BaseSimpleChannelInboundHandler[] baseHandlers;
     private final ChannelHandler[] allHandlers;

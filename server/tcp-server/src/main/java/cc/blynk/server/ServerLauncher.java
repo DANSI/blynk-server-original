@@ -6,6 +6,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.administration.AdminServer;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
+import cc.blynk.server.core.hardware.ssl.HardwareSSLServer;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
@@ -51,6 +52,7 @@ public class ServerLauncher {
     private final GlobalStats stats;
     private final BaseServer appServer;
     private final BaseServer hardwareServer;
+    private final BaseServer hardwareSSLServer;
     private final BaseServer adminServer;
     private final ServerProperties serverProperties;
     private final NotificationsProcessor notificationsProcessor;
@@ -71,6 +73,7 @@ public class ServerLauncher {
         TransportTypeHolder transportType = new TransportTypeHolder(serverProperties);
 
         this.hardwareServer = new HardwareServer(serverProperties, userRegistry, sessionsHolder, stats, notificationsProcessor, transportType);
+        this.hardwareSSLServer = new HardwareSSLServer(serverProperties, userRegistry, sessionsHolder, stats, notificationsProcessor, transportType);
         this.appServer = new AppServer(serverProperties, userRegistry, sessionsHolder, stats, transportType);
         this.adminServer = new AdminServer(serverProperties, userRegistry, sessionsHolder, transportType);
 
@@ -109,6 +112,7 @@ public class ServerLauncher {
         //start servers
         new Thread(appServer).start();
         new Thread(hardwareServer).start();
+        new Thread(hardwareSSLServer).start();
         new Thread(adminServer).start();
 
         //Launching all background jobs.
@@ -136,7 +140,8 @@ public class ServerLauncher {
         new Thread(new PropertiesChangeWatcherWorker(baseHandlers)).start();
 
         //todo test it works...
-        Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(profileSaverWorker, notificationsProcessor, hardwareServer, appServer, adminServer)));
+        Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(profileSaverWorker,
+                notificationsProcessor, hardwareServer, appServer, adminServer, hardwareSSLServer)));
     }
 
 }

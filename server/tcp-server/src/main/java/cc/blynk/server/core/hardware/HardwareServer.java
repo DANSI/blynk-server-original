@@ -28,7 +28,7 @@ public class HardwareServer extends BaseServer {
         this.handlersHolder = new HardwareHandlersHolder(props, userRegistry, sessionsHolder, notificationsProcessor);
         int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 15);
         log.debug("hard.socket.idle.timeout = {}", hardTimeoutSecs);
-        this.channelInitializer = new HardwareChannelInitializer(sessionsHolder, stats, handlersHolder, hardTimeoutSecs);
+        this.channelInitializer = new HardwareChannelInitializer(sessionsHolder, stats, handlersHolder, hardTimeoutSecs, null);
 
         log.info("Hardware server port {}.", port);
     }

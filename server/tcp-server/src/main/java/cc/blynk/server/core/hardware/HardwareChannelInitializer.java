@@ -9,6 +9,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
 /**
@@ -16,23 +17,29 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 * Created by Dmitriy Dumanskiy.
 * Created on 11.03.15.
 */
-final class HardwareChannelInitializer extends ChannelInitializer<SocketChannel> {
+public final class HardwareChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     private final SessionsHolder sessionsHolder;
     private final GlobalStats stats;
     private final HardwareHandlersHolder handlersHolder;
     private final int hardTimeoutSecs;
+    private final SslContext sslCtx;
 
-    public HardwareChannelInitializer(SessionsHolder sessionsHolder, GlobalStats stats, HardwareHandlersHolder handlersHolder, int hardTimeoutSecs) {
+    public HardwareChannelInitializer(SessionsHolder sessionsHolder, GlobalStats stats, HardwareHandlersHolder handlersHolder, int hardTimeoutSecs, SslContext sslCtx) {
         this.sessionsHolder = sessionsHolder;
         this.stats = stats;
         this.handlersHolder = handlersHolder;
         this.hardTimeoutSecs = hardTimeoutSecs;
+        this.sslCtx = sslCtx;
     }
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
+
+        if (sslCtx != null) {
+            pipeline.addLast(sslCtx.newHandler(ch.alloc()));
+        }
 
         //non-sharable handlers
         pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
