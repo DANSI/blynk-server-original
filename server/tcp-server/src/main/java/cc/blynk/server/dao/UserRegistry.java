@@ -43,10 +43,6 @@ public class UserRegistry {
         throw new RuntimeException("Error getting dashId for user. FIX/");
     }
 
-    public boolean containsToken(String token) {
-        return getUserByToken(token) != null;
-    }
-
     private static String generateNewToken() {
         return UUID.randomUUID().toString().replace("-", "");
     }

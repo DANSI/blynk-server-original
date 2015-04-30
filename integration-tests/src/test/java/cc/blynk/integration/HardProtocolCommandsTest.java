@@ -1,7 +1,5 @@
 package cc.blynk.integration;
 
-import cc.blynk.common.model.messages.MessageBase;
-import cc.blynk.common.model.messages.protocol.BridgeMessage;
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.TransportTypeHolder;
@@ -62,12 +60,6 @@ public class HardProtocolCommandsTest extends IntegrationBase {
     @Test
     public void testInvalidCommandAppLoginOnHardChannel() throws Exception {
         makeCommands("login dima@dima.ua 1").check(produce(1, ILLEGAL_COMMAND));
-    }
-
-    @Test
-    public void testBridgeInitCommand() throws Exception {
-        BridgeMessage message = new BridgeMessage(1, "i\0test");
-        makeCommands("bridge i test").check(OK);
     }
 
     @Test

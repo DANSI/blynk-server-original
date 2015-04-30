@@ -78,27 +78,34 @@ public abstract class IntegrationBase {
     }
 
     public static String readTestUserProfile(String fileName) {
+        if (fileName == null) {
+            fileName = "user_profile_json.txt";
+        }
         InputStream is = IntegrationBase.class.getResourceAsStream("/json_test/" + fileName);
         Profile profile = JsonParser.parseProfile(is);
         return profile.toString();
     }
 
     public static String readTestUserProfile() {
-        return readTestUserProfile("user_profile_json.txt");
+        return readTestUserProfile(null);
     }
 
     public ClientPair initAppAndHardPair() throws Exception {
-        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1");
+        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null);
     }
 
-    public ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user) throws Exception {
+    public ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
+        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", jsonProfile);
+    }
+
+    public ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile) throws Exception {
         TestAppClient appClient = new TestAppClient(host, appPort);
         TestHardClient hardClient = new TestHardClient(host, hardPort);
 
         appClient.start(null);
         hardClient.start(null);
 
-        String userProfileString = readTestUserProfile();
+        String userProfileString = readTestUserProfile(jsonProfile);
 
         appClient.send("register " + user)
                 .send("login " + user)

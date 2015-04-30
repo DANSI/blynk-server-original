@@ -245,7 +245,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void test2ClientPairsWorkCorrectly() throws Exception {
         final int ITERATIONS = 100;
-        ClientPair clientPair2 = initAppAndHardPair("localhost", appPort, hardPort, "dima2@mail.ua 1");
+        ClientPair clientPair2 = initAppAndHardPair("localhost", appPort, hardPort, "dima2@mail.ua 1", null);
 
         String body = "ar 1";
         for (int i = 1; i <= ITERATIONS; i++) {

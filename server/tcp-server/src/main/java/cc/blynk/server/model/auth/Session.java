@@ -1,15 +1,12 @@
 package cc.blynk.server.model.auth;
 
 import cc.blynk.common.model.messages.MessageBase;
-import cc.blynk.common.model.messages.protocol.BridgeMessage;
 import cc.blynk.server.exceptions.UserAlreadyLoggedIn;
 import io.netty.channel.Channel;
 import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -61,13 +58,6 @@ public class Session {
         }
     }
 
-    public void sendMessageToChannels(List<Channel> channels, BridgeMessage message){
-        for (Channel channel : channels) {
-            log.trace("Sending {} to {}", message, channel);
-            channel.writeAndFlush(message);
-        }
-    }
-
     public void sendMessageToApp(MessageBase message) {
         for (Channel channel : appChannels) {
             log.trace("Sending {} to {}", message, channel);
@@ -81,15 +71,6 @@ public class Session {
         } else {
             appChannels.remove(channel);
         }
-    }
-
-    public List<Channel> getChannelsByToken(String token) {
-        List<Channel> channels = new ArrayList<>();
-        for (Channel channel : hardwareChannels) {
-            if (channel.attr(ChannelState.TOKEN).get().equals(token))
-                channels.add(channel);
-        }
-    return  channels;
     }
 
 }

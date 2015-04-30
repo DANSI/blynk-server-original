@@ -15,12 +15,6 @@ public class BridgeMessage extends Message {
 		super(messageId, BRIDGE, body.length(), body);
 	}
 
-	public BridgeMessage updateMessageBody(String newBody) {
-		this.body = newBody;
-		this.length = newBody.length();
-		return this;
-	}
-
 	@Override
 	public String toString() {
 		return "BridgeMessage{" + super.toString() + "}";

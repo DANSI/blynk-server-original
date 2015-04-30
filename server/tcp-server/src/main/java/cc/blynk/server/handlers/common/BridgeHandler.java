@@ -1,9 +1,11 @@
 package cc.blynk.server.handlers.common;
 
+import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.protocol.BridgeMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.ChannelState;
@@ -12,10 +14,12 @@ import cc.blynk.server.model.auth.User;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
-
-import java.util.List;
 
 @ChannelHandler.Sharable
 public class BridgeHandler extends BaseSimpleChannelInboundHandler<BridgeMessage> {
@@ -26,23 +30,61 @@ public class BridgeHandler extends BaseSimpleChannelInboundHandler<BridgeMessage
     }
 
     private static boolean isInit(String body) {
-        return body != null && body.length() > 0 && body.charAt(0) == 'i';
+        return body.length() > 0 && body.charAt(0) == 'i';
+    }
+
+    //threadsafe
+    private static Map<String, String> getOrInit(ChannelHandlerContext ctx) {
+        Map<String, String> sendToMap = ctx.channel().attr(ChannelState.SEND_TO_TOKEN).get();
+        if (sendToMap == null) {
+            Map<String, String> newMap = new ConcurrentHashMap<>();
+            sendToMap = ctx.channel().attr(ChannelState.SEND_TO_TOKEN).setIfAbsent(newMap);
+            if (sendToMap == null) {
+                return newMap;
+            }
+        }
+        return sendToMap;
     }
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, User user, BridgeMessage message) {
         Session session = sessionsHolder.userSession.get(user);
-        if (isInit(message.body)) {
-            final String token = message.body.split("\0")[1];
-            ctx.channel().attr(ChannelState.TOKEN).set(token);
-            ctx.channel().write(produce(message.id, OK));
+        String[] split = message.body.split("\0");
+        if (split.length < 3) {
+            throw new IllegalCommandException("Wrong bridge body.", message.id);
+        }
+        if (isInit(split[1])) {
+            final String pin = split[0];
+            final String token = split[2];
+
+            Map<String, String> sendToMap = getOrInit(ctx);
+            sendToMap.put(pin, token);
+
+            ctx.writeAndFlush(produce(message.id, OK));
         } else {
-            String token = ctx.channel().attr(ChannelState.TOKEN).get();
-            if (token == null) {
-                throw new NotAllowedException("Bridge token is null", message.id);
+            Map<String, String> sendToMap = ctx.channel().attr(ChannelState.SEND_TO_TOKEN).get();
+            if (sendToMap == null || sendToMap.size() == 0) {
+                throw new NotAllowedException("Bridge not initialized.", message.id);
             }
-            List<Channel> channels = session.getChannelsByToken(token);
-            session.sendMessageToChannels(channels, message);
+
+            final String pin = split[0];
+            final String token = sendToMap.get(pin);
+
+            if (session.hardwareChannels.size() > 1) {
+                boolean messageWasSent = false;
+                message.body = message.body.substring(message.body.indexOf("\0") + 1);
+                for (Channel channel : session.hardwareChannels) {
+                    if (token.equals(channel.attr(ChannelState.TOKEN).get()) && channel != ctx.channel()) {
+                        messageWasSent = true;
+                        channel.writeAndFlush(message);
+                    }
+                }
+                if (!messageWasSent) {
+                    ctx.writeAndFlush(produce(message.id, Response.DEVICE_NOT_IN_NETWORK));
+                }
+            } else {
+                ctx.writeAndFlush(produce(message.id, Response.DEVICE_NOT_IN_NETWORK));
+            }
         }
     }
 }
