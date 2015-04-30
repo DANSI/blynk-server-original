@@ -56,7 +56,7 @@ public class SimplePerformanceTest extends IntegrationBase {
         long start = System.currentTimeMillis();
         for (int i = 0; i < clientNumber; i++) {
             Future<ClientPair> future = executorService.submit(
-                    () -> initAppAndHardPair("localhost", 8443, 8442, "dima" + counter.incrementAndGet() + "@mail.ua 1")
+                    () -> initAppAndHardPair("localhost", 8443, 8442, "dima" + counter.incrementAndGet() + "@mail.ua 1", null)
             );
             futures.add(future);
         }
