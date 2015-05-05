@@ -5,6 +5,7 @@ import cc.blynk.client.HexConvertor;
 import cc.blynk.common.administration.SHA256Util;
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.utils.ServerProperties;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -32,6 +33,7 @@ public abstract class BaseClient {
     protected final String host;
     protected final int port;
     protected final Random random;
+    protected static ServerProperties props = new ServerProperties();
 
     protected Channel channel;
     protected NioEventLoopGroup nioEventLoopGroup;
@@ -40,6 +42,13 @@ public abstract class BaseClient {
         this.host = host;
         this.port = port;
         this.random = messageIdGenerator;
+    }
+
+    BaseClient(String host, int port, Random messageIdGenerator, ServerProperties properties) {
+        this.host = host;
+        this.port = port;
+        this.random = messageIdGenerator;
+        props = properties;
     }
 
     public static Message produceMessageBaseOnUserInput(String line, int msgId) {
@@ -97,7 +106,7 @@ public abstract class BaseClient {
 
     protected abstract ChannelInitializer<SocketChannel> getChannelInitializer();
 
-    protected void readUserInput(BufferedReader commandInputStream) throws IOException {
+    private void readUserInput(BufferedReader commandInputStream) throws IOException {
         String line;
         while ((line = commandInputStream.readLine()) != null) {
             // If user typed the 'quit' command, wait until the server closes the connection.

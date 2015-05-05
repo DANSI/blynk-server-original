@@ -32,7 +32,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
     }
 
     private static boolean pinModeMessage(String body) {
-        return body != null && body.length() > 0 && body.charAt(0) == 'p';
+        return body.length() > 0 && body.charAt(0) == 'p';
     }
 
     @Override
@@ -42,6 +42,11 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
         if (ctx.channel().attr(ChannelState.IS_HARD_CHANNEL).get()) {
             //if message from hardware, check if it belongs to graph. so we need save it in that case
             String body = storage.store(user, ctx.channel().attr(ChannelState.DASH_ID).get(), message.body, message.id);
+
+            if (user.getProfile().getActiveDashId() == null) {
+                throw new NoActiveDashboardException(message.id);
+            }
+
             if (session.appChannels.size() > 0) {
                 session.sendMessageToApp(message.updateMessageBody(body));
             }
@@ -50,12 +55,12 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
                 throw new NoActiveDashboardException(message.id);
             }
 
+            if (pinModeMessage(message.body)) {
+                log.trace("No device and Pin Mode message catch. Remembering.");
+                user.getProfile().setPinModeMessage(message);
+            }
+
             if (session.hardwareChannels.size() == 0) {
-                if (pinModeMessage(message.body) && user.getProfile().isJustActivated()) {
-                    log.trace("No device and Pin Mode message catch. Remembering.");
-                    user.getProfile().setPinModeMessage(message);
-                    user.getProfile().setJustActivated(false);
-                }
                 throw new DeviceNotInNetworkException(message.id);
             }
 

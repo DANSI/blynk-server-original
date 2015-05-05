@@ -60,7 +60,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
                     //once a minute sending user response message in case limit is exceeded constantly
                     if (user.getLastQuotaExceededTime() + USER_QUOTA_LIMIT_WARN_PERIOD < now) {
                         user.setLastQuotaExceededTime(now);
-                        log.warn("User '{}' had exceeded {} rec/sec limit.", user.getName(), USER_QUOTA_LIMIT);
+                        log.warn("User '{}' had exceeded {} rec/sec limit. Ip : {}", user.getName(), USER_QUOTA_LIMIT, ctx.channel().remoteAddress());
                         ctx.writeAndFlush(produce(imsg.id, QUOTA_LIMIT_EXCEPTION));
                     }
                     return;
