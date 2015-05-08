@@ -111,6 +111,18 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testAppNoActiveDashForHard() throws Exception {
+        clientPair.hardwareClient.send("hardware aw 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, "aw 1".replaceAll(" ", "\0"))));
+
+        clientPair.appClient.send("deactivate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+
+        clientPair.hardwareClient.send("hardware aw 1");
+        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(1, NO_ACTIVE_DASHBOARD)));
+    }
+
+    @Test
     public void testAppSendWriteHardCommandNotGraphAndBack() throws Exception {
         clientPair.appClient.send("hardware ar 11");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, "ar 11".replaceAll(" ", "\0"))));
