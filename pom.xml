@@ -11,7 +11,7 @@
 
     <groupId>cc.blynk</groupId>
     <artifactId>blynk</artifactId>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <scm>
@@ -92,7 +92,7 @@
     </profiles>
 
     <properties>
-        <netty.version>4.0.28.Final-SNAPSHOT</netty.version>
+        <netty.version>4.0.28.Final</netty.version>
         <log4j2.version>2.2</log4j2.version>
     </properties>
 
