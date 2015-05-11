@@ -6,7 +6,6 @@ import cc.blynk.common.utils.ServerProperties;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.ssl.IdentityCipherSuiteFilter;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
@@ -46,9 +45,6 @@ public class AppClient extends BaseClient {
                         .sslProvider(SslProvider.JDK)
                         .trustManager(serverCert)
                         .keyManager(clientCert, clientKey, clientPass)
-                        .ciphers(null, IdentityCipherSuiteFilter.INSTANCE)
-                        .sessionTimeout(0)
-                        .sessionCacheSize(0)
                         .build();
             }
         } catch (SSLException e) {
@@ -60,11 +56,11 @@ public class AppClient extends BaseClient {
 
     private File makeCertificateFile(String propertyName) {
         String path = props.getProperty(propertyName);
-        if (path == null || path.isEmpty()){
-            path = "{path not specified}";
+        if (path == null || path.isEmpty()) {
+            path = "";
         }
         File file = new File(path);
-        if (!file.exists() ){
+        if (!file.exists()) {
             log.warn("{} file was not found at {} location", propertyName, path);
         }
         return file;

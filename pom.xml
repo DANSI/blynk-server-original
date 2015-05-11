@@ -28,19 +28,6 @@
         <module>integration-tests</module>
     </modules>
 
-    <repositories>
-        <repository>
-            <id>netty-snapshots</id>
-            <url>http://clinker.netty.io/nexus/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <build>
         <plugins>
             <plugin>

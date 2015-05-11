@@ -8,7 +8,6 @@ import cc.blynk.server.workers.ProfileSaverWorker;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -205,24 +204,6 @@ public class AppProtocolCommandsTest extends IntegrationBase {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
         makeCommands("login dmitriy@mail.ua 1", "ping").check(2, OK);
-    }
-
-    @Test
-    @Ignore("this test works for me when i debug slowly, but when i run it - it fails")
-    public void testNotSslRecordException() throws Exception {
-        TestAppClient appClient = new TestAppClient(host, appPort);
-
-        //todo mock exception response
-        OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
-        ongoingStubbing = ongoingStubbing.thenReturn("register dmitriy@mail.ua 1");
-        ongoingStubbing.thenAnswer(invocation -> {
-            sleep(400);
-            return "quit";
-        });
-
-        appClient.start(bufferedReader);
-
-        verify(appClient.responseMock, times(0)).channelRead(any(), any());
     }
 
     /**
