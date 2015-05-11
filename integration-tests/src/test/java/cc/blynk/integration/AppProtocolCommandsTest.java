@@ -1,5 +1,6 @@
 package cc.blynk.integration;
 
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.server.TransportTypeHolder;
@@ -34,6 +35,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
+        properties = new ServerProperties();
         initServerStructures();
 
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
