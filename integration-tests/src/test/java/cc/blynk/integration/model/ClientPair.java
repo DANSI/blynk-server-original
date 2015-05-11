@@ -9,8 +9,6 @@ public class ClientPair {
 
     public TestAppClient appClient;
 
-    public TestMutualAppClient appMutualClient;
-
     public TestHardClient hardwareClient;
 
     public String token;
@@ -21,19 +19,9 @@ public class ClientPair {
         this.token = token;
     }
 
-    public ClientPair(TestMutualAppClient appClient, TestHardClient hardwareClient, String token) {
-        this.appMutualClient = appClient;
-        this.hardwareClient = hardwareClient;
-        this.token = token;
-    }
-
     public void stop() {
         appClient.stop();
         hardwareClient.stop();
     }
 
-    public void stopMutual() {
-        appMutualClient.stop();
-        hardwareClient.stop();
-    }
 }

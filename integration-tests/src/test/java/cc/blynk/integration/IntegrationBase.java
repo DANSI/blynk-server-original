@@ -37,11 +37,9 @@ import static org.mockito.Mockito.verify;
 public abstract class IntegrationBase {
 
     public static ServerProperties properties;
-    static int appPort;
     public static int hardPort;
     public static String host;
-
-
+    static int appPort;
     @Mock
     public BufferedReader bufferedReader;
 
@@ -105,44 +103,26 @@ public abstract class IntegrationBase {
 
     ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
                                   boolean enableMutual, ServerProperties properties) throws Exception {
-        TestAppClient appClient = null;
-        TestMutualAppClient mutualAppClient = null;
-        if (!enableMutual) {
-            appClient = new TestAppClient(host, appPort, properties);
-        } else {
-            mutualAppClient = new TestMutualAppClient(host, appPort, properties);
-        }
+
+        TestAppClient appClient = enableMutual ?
+                new TestMutualAppClient(host, appPort, properties) :
+                new TestAppClient(host, appPort, properties);
+
         TestHardClient hardClient = new TestHardClient(host, hardPort);
 
-        if (appClient != null) {
-            appClient.start(null);
-        } else {
-            mutualAppClient.start(null);
-        }
+        appClient.start(null);
         hardClient.start(null);
 
         String userProfileString = readTestUserProfile(jsonProfile);
 
-        if (appClient != null){
-            appClient.send("register " + user)
-                    .send("login " + user)
-                    .send("saveProfile " + userProfileString)
-                    .send("activate 1")
-                    .send("getToken 1");
-        } else {
-            mutualAppClient.send("register " + user)
-                    .send("login " + user)
-                    .send("saveProfile " + userProfileString)
-                    .send("activate 1")
-                    .send("getToken 1");
-        }
+        appClient.send("register " + user)
+                 .send("login " + user)
+                 .send("saveProfile " + userProfileString)
+                 .send("activate 1")
+                 .send("getToken 1");
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        if (appClient != null){
-            verify(appClient.responseMock, timeout(2000).times(5)).channelRead(any(), objectArgumentCaptor.capture());
-        } else {
-            verify(mutualAppClient.responseMock, timeout(2000).times(5)).channelRead(any(), objectArgumentCaptor.capture());
-        }
+        verify(appClient.responseMock, timeout(2000).times(5)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Object> arguments = objectArgumentCaptor.getAllValues();
         Message getTokenMessage = (Message) arguments.get(4);
@@ -151,18 +131,10 @@ public abstract class IntegrationBase {
         hardClient.send("login " + token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, OK)));
 
-        if (appClient != null) {
-            appClient.reset();
-        } else {
-            mutualAppClient.reset();
-        }
+        appClient.reset();
         hardClient.reset();
 
-        if (appClient != null) {
-            return new ClientPair(appClient, hardClient, token);
-        } else {
-            return new ClientPair(mutualAppClient, hardClient, token);
-        }
+        return new ClientPair(appClient, hardClient, token);
     }
 
     public void initServerStructures() {

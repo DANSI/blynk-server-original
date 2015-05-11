@@ -9,7 +9,6 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.ssl.IdentityCipherSuiteFilter;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
@@ -29,13 +28,8 @@ import java.util.Random;
 public class TestMutualAppClient extends TestAppClient {
 
     @Mock
-    public final SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
-
-    private SslContext sslCtx;
-    @Mock
     Random random;
-    private int msgId = 0;
-    private ChannelPipeline pipeline;
+    private SslContext sslCtx;
 
     public TestMutualAppClient(String host, int port, ServerProperties props) {
         super(host, port, props);
@@ -45,14 +39,10 @@ public class TestMutualAppClient extends TestAppClient {
                     .sslProvider(SslProvider.JDK)
                     .trustManager(new File(props.getProperty("server.ssl.cert")))
                     .keyManager(new File(props.getProperty("client.ssl.cert")),
-                                new File(props.getProperty("client.ssl.key")),
-                                props.getProperty("server.ssl.key.pass"))
-                    .ciphers(null, IdentityCipherSuiteFilter.INSTANCE)
-                    .sessionCacheSize(0)
-                    .sessionTimeout(0)
+                            new File(props.getProperty("client.ssl.key")),
+                            props.getProperty("server.ssl.key.pass"))
                     .build();
         } catch (SSLException e) {
-
             log.error("Error initializing SSL context. Reason : {}", e.getMessage());
             log.debug(e);
             throw new RuntimeException();
@@ -84,7 +74,6 @@ public class TestMutualAppClient extends TestAppClient {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline pipeline = ch.pipeline();
-                TestMutualAppClient.this.pipeline = pipeline;
                 pipeline.addLast(sslCtx.newHandler(ch.alloc(), host, port));
                 pipeline.addLast(new MessageDecoder());
                 pipeline.addLast(new MessageEncoder());

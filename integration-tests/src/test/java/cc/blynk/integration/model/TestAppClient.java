@@ -23,7 +23,7 @@ import java.util.Random;
 public class TestAppClient extends AppClient {
 
     public final SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
-    private int msgId = 0;
+    protected int msgId = 0;
 
     private ChannelPipeline pipeline;
 
