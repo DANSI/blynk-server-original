@@ -1,5 +1,6 @@
 package cc.blynk.server.dao;
 
+import cc.blynk.server.exceptions.InvalidTokenException;
 import cc.blynk.server.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,13 +35,13 @@ public class UserRegistry {
         tokenToUserCache = createTokenToUserCache(users);
     }
 
-    public static Integer getDashIdByToken(User user, String token) {
+    public static Integer getDashIdByToken(User user, String token, int msgId) {
         for (Map.Entry<Integer, String> dashToken : user.getDashTokens().entrySet()) {
             if (dashToken.getValue().equals(token)) {
                 return dashToken.getKey();
             }
         }
-        throw new RuntimeException("Error getting dashId for user. FIX/");
+        throw new InvalidTokenException("Error getting dashId for user.", msgId);
     }
 
     private static String generateNewToken() {
