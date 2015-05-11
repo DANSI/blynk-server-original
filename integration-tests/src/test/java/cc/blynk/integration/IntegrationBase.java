@@ -13,7 +13,7 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.utils.JsonParser;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
@@ -35,10 +35,10 @@ import static org.mockito.Mockito.verify;
  */
 public abstract class IntegrationBase {
 
-    public static ServerProperties properties;
-    public static int hardPort;
-    public static String host;
     static int appPort;
+    public ServerProperties properties;
+    public int hardPort;
+    public String host;
     @Mock
     public BufferedReader bufferedReader;
 
@@ -57,14 +57,6 @@ public abstract class IntegrationBase {
     public GlobalStats stats;
 
     JedisWrapper jedisWrapper;
-
-    @BeforeClass
-    public static void initBase() {
-        properties = new ServerProperties();
-        appPort = properties.getIntProperty("app.ssl.port");
-        hardPort = properties.getIntProperty("hardware.default.port");
-        host = "localhost";
-    }
 
     public static void sleep(int ms) {
         try {
@@ -86,6 +78,14 @@ public abstract class IntegrationBase {
 
     static String readTestUserProfile() {
         return readTestUserProfile(null);
+    }
+
+    @Before
+    public void initBase() {
+        properties = new ServerProperties();
+        appPort = properties.getIntProperty("app.ssl.port");
+        hardPort = properties.getIntProperty("hardware.default.port");
+        host = "localhost";
     }
 
     ClientPair initAppAndHardPair() throws Exception {
