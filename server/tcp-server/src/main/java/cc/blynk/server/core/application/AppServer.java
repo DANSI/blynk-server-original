@@ -9,7 +9,6 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.ssl.IdentityCipherSuiteFilter;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
@@ -74,11 +73,8 @@ public class AppServer extends BaseServer {
 
             isMutualSSL = true;
             return SslContextBuilder.forServer(serverCert, serverKey, serverPass)
-                    .ciphers(null, IdentityCipherSuiteFilter.INSTANCE)
                     .sslProvider(sslProvider)
                     .trustManager(clientCert)
-                    .sessionTimeout(0)
-                    .sessionCacheSize(0)
                     .build();
         } catch (CertificateException | SSLException | IllegalArgumentException e) {
             log.error("Error initializing ssl context. Reason : {}", e.getMessage());
