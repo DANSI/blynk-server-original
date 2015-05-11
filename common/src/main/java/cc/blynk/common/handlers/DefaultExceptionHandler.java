@@ -65,6 +65,7 @@ public interface DefaultExceptionHandler {
 
         } else {
             log.error("Unexpected error!!!", cause);
+            log.error("Handler class : {}. Name : {}", ctx.handler().getClass(), ctx.name());
         }
 
     }
