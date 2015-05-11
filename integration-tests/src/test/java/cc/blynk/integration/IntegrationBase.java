@@ -6,6 +6,7 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.integration.model.TestHardClient;
+import cc.blynk.integration.model.TestMutualAppClient;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
@@ -36,7 +37,7 @@ import static org.mockito.Mockito.verify;
 public abstract class IntegrationBase {
 
     public static ServerProperties properties;
-    public static int appPort;
+    static int appPort;
     public static int hardPort;
     public static String host;
 
@@ -58,7 +59,7 @@ public abstract class IntegrationBase {
 
     public GlobalStats stats;
 
-    public JedisWrapper jedisWrapper;
+    JedisWrapper jedisWrapper;
 
     @BeforeClass
     public static void initBase() {
@@ -72,12 +73,12 @@ public abstract class IntegrationBase {
         try {
             Thread.sleep(ms);
         } catch (InterruptedException e) {
-
+            //we can ignore it
         }
 
     }
 
-    public static String readTestUserProfile(String fileName) {
+    static String readTestUserProfile(String fileName) {
         if (fileName == null) {
             fileName = "user_profile_json.txt";
         }
@@ -86,35 +87,62 @@ public abstract class IntegrationBase {
         return profile.toString();
     }
 
-    public static String readTestUserProfile() {
+    static String readTestUserProfile() {
         return readTestUserProfile(null);
     }
 
-    public ClientPair initAppAndHardPair() throws Exception {
-        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null);
+    ClientPair initAppAndHardPair() throws Exception {
+        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, false, properties);
+    }
+
+    ClientPair initMutualAppAndHardPair(ServerProperties properties) throws Exception {
+        return initAppAndHardPair("localhost", appPort, hardPort, "andrew@mail.ua 1", null, true, properties);
     }
 
     public ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
-        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", jsonProfile);
+        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", jsonProfile, false, properties);
     }
 
-    public ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile) throws Exception {
-        TestAppClient appClient = new TestAppClient(host, appPort);
+    ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
+                                  boolean enableMutual, ServerProperties properties) throws Exception {
+        TestAppClient appClient = null;
+        TestMutualAppClient mutualAppClient = null;
+        if (!enableMutual) {
+            appClient = new TestAppClient(host, appPort, properties);
+        } else {
+            mutualAppClient = new TestMutualAppClient(host, appPort, properties);
+        }
         TestHardClient hardClient = new TestHardClient(host, hardPort);
 
-        appClient.start(null);
+        if (appClient != null) {
+            appClient.start(null);
+        } else {
+            mutualAppClient.start(null);
+        }
         hardClient.start(null);
 
         String userProfileString = readTestUserProfile(jsonProfile);
 
-        appClient.send("register " + user)
-                .send("login " + user)
-                .send("saveProfile " + userProfileString)
-                .send("activate 1")
-                .send("getToken 1");
+        if (appClient != null){
+            appClient.send("register " + user)
+                    .send("login " + user)
+                    .send("saveProfile " + userProfileString)
+                    .send("activate 1")
+                    .send("getToken 1");
+        } else {
+            mutualAppClient.send("register " + user)
+                    .send("login " + user)
+                    .send("saveProfile " + userProfileString)
+                    .send("activate 1")
+                    .send("getToken 1");
+        }
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(appClient.responseMock, timeout(2000).times(5)).channelRead(any(), objectArgumentCaptor.capture());
+        if (appClient != null){
+            verify(appClient.responseMock, timeout(2000).times(5)).channelRead(any(), objectArgumentCaptor.capture());
+        } else {
+            verify(mutualAppClient.responseMock, timeout(2000).times(5)).channelRead(any(), objectArgumentCaptor.capture());
+        }
 
         List<Object> arguments = objectArgumentCaptor.getAllValues();
         Message getTokenMessage = (Message) arguments.get(4);
@@ -123,10 +151,18 @@ public abstract class IntegrationBase {
         hardClient.send("login " + token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, OK)));
 
-        appClient.reset();
+        if (appClient != null) {
+            appClient.reset();
+        } else {
+            mutualAppClient.reset();
+        }
         hardClient.reset();
 
-        return new ClientPair(appClient, hardClient, token);
+        if (appClient != null) {
+            return new ClientPair(appClient, hardClient, token);
+        } else {
+            return new ClientPair(mutualAppClient, hardClient, token);
+        }
     }
 
     public void initServerStructures() {
@@ -136,6 +172,4 @@ public abstract class IntegrationBase {
         stats = new GlobalStats();
         jedisWrapper = new JedisWrapper(properties);
     }
-
-
 }

@@ -2,14 +2,18 @@ package cc.blynk.client.core;
 
 import cc.blynk.client.handlers.ClientReplayingMessageDecoder;
 import cc.blynk.common.handlers.common.encoders.MessageEncoder;
+import cc.blynk.common.utils.ServerProperties;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.ssl.IdentityCipherSuiteFilter;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 
 import javax.net.ssl.SSLException;
+import java.io.File;
 import java.util.Random;
 
 /**
@@ -21,30 +25,49 @@ public class AppClient extends BaseClient {
 
     protected SslContext sslCtx;
 
-    public AppClient(String host, int port, boolean disableAppSsl) {
-        this(host, port, new Random(), disableAppSsl);
+    public AppClient(String host, int port) {
+        this(host, port, new Random(), props);
     }
 
-    public AppClient(String host, int port, Random msgIdGenerator, boolean disableAppSsl) {
-        super(host, port, msgIdGenerator);
+    protected AppClient(String host, int port, Random msgIdGenerator, ServerProperties properties) {
+        super(host, port, msgIdGenerator, properties);
         log.info("Creating app client. Host {}, sslPort : {}", host, port);
-
-        if (!disableAppSsl) {
-            //todo think how to simplify with real certs?
-            //sslCtx = SslContext.newClientContext(getFileFromResources("/test.crt"));
-            try {
-                this.sslCtx = SslContext.newClientContext(SslProvider.JDK, InsecureTrustManagerFactory.INSTANCE);
-                /*
-                this.sslCtx = SslContext.newClientContext(SslProvider.JDK, new File("/home/doom369/server/certs/server/server.crt"), null,
-                        new File("/home/doom369/server/certs/client/client.crt"), new File("/home/doom369/server/certs/client/client.pem"), "BlynkQATestClient",
-                        null, null, IdentityCipherSuiteFilter.INSTANCE, null, 0, 0);
-                */
-            } catch (SSLException e) {
-                log.error("Error initializing SSL context. Reason : {}", e.getMessage());
-                log.debug(e);
-                throw new RuntimeException();
+        File serverCert = makeCertificateFile("server.ssl.cert");
+        File clientCert = makeCertificateFile("client.ssl.cert");
+        File clientKey = makeCertificateFile("client.ssl.key");
+        try {
+            if (!serverCert.exists() || !clientCert.exists() || !clientKey.exists()) {
+                this.sslCtx = SslContextBuilder.forClient().sslProvider(SslProvider.JDK)
+                        .trustManager(InsecureTrustManagerFactory.INSTANCE)
+                        .build();
+            } else {
+                String clientPass = props.getProperty("server.ssl.key.pass");
+                this.sslCtx = SslContextBuilder.forClient()
+                        .sslProvider(SslProvider.JDK)
+                        .trustManager(serverCert)
+                        .keyManager(clientCert, clientKey, clientPass)
+                        .ciphers(null, IdentityCipherSuiteFilter.INSTANCE)
+                        .sessionTimeout(0)
+                        .sessionCacheSize(0)
+                        .build();
             }
+        } catch (SSLException e) {
+            log.error("Error initializing SSL context. Reason : {}", e.getMessage());
+            log.debug(e);
+            throw new RuntimeException(e);
         }
+    }
+
+    private File makeCertificateFile(String propertyName) {
+        String path = props.getProperty(propertyName);
+        if (path == null || path.isEmpty()){
+            path = "{path not specified}";
+        }
+        File file = new File(path);
+        if (!file.exists() ){
+            log.warn("{} file was not found at {} location", propertyName, path);
+        }
+        return file;
     }
 
     @Override

@@ -11,6 +11,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.IdentityCipherSuiteFilter;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 
@@ -56,7 +57,7 @@ public class AppServer extends BaseServer {
 
     private SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
                                              String clientCertPath,
-                                             SslProvider sslProvider) {
+                                             SslProvider sslProvider){
         try {
             File serverCert =  new File(serverCertPath);
             File serverKey = new File(serverKeyPath);
@@ -66,12 +67,19 @@ public class AppServer extends BaseServer {
                 log.warn("ATTENTION. Certificate path not valid. Using embedded certs. This is not secure. Please replace it with your own certs.");
                 SelfSignedCertificate ssc = new SelfSignedCertificate();
                 isMutualSSL = false;
-                return SslContext.newServerContext(sslProvider, ssc.certificate(), ssc.privateKey());
+                return SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey())
+                                        .sslProvider(sslProvider)
+                                        .build();
             }
 
             isMutualSSL = true;
-            return SslContext.newServerContext(sslProvider, clientCert, null, serverCert, serverKey, serverPass,
-                    null, null, IdentityCipherSuiteFilter.INSTANCE, null, 0 ,0);
+            return SslContextBuilder.forServer(serverCert, serverKey, serverPass)
+                    .ciphers(null, IdentityCipherSuiteFilter.INSTANCE)
+                    .sslProvider(sslProvider)
+                    .trustManager(clientCert)
+                    .sessionTimeout(0)
+                    .sessionCacheSize(0)
+                    .build();
         } catch (CertificateException | SSLException | IllegalArgumentException e) {
             log.error("Error initializing ssl context. Reason : {}", e.getMessage());
             throw new RuntimeException(e.getMessage());

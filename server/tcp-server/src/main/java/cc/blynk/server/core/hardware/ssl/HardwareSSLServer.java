@@ -13,6 +13,7 @@ import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 
@@ -61,10 +62,12 @@ public class HardwareSSLServer extends BaseServer {
             if (!serverCert.exists() || !serverKey.exists()) {
                 log.warn("ATTENTION. Certificate path not valid. Using embedded certs. This is not secure. Please replace it with your own certs.");
                 SelfSignedCertificate ssc = new SelfSignedCertificate();
-                return SslContext.newServerContext(sslProvider, ssc.certificate(), ssc.privateKey());
+                return SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).sslProvider(sslProvider).build();
             }
 
-            return SslContext.newServerContext(sslProvider, serverCert, serverKey, serverPass);
+            return SslContextBuilder.forServer(serverCert, serverKey, serverPass)
+                    .sslProvider(sslProvider)
+                    .build();
         } catch (CertificateException | SSLException | IllegalArgumentException e) {
             log.error("Error initializing ssl context. Reason : {}", e.getMessage());
             throw new RuntimeException(e.getMessage());
