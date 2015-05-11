@@ -6,7 +6,6 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.integration.model.TestHardClient;
-import cc.blynk.integration.model.TestMutualAppClient;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
@@ -90,23 +89,21 @@ public abstract class IntegrationBase {
     }
 
     ClientPair initAppAndHardPair() throws Exception {
-        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, false, properties);
+        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties);
     }
 
     ClientPair initMutualAppAndHardPair(ServerProperties properties) throws Exception {
-        return initAppAndHardPair("localhost", appPort, hardPort, "andrew@mail.ua 1", null, true, properties);
+        return initAppAndHardPair("localhost", appPort, hardPort, "andrew@mail.ua 1", null, properties);
     }
 
     public ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
-        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", jsonProfile, false, properties);
+        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", jsonProfile, properties);
     }
 
     ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
-                                  boolean enableMutual, ServerProperties properties) throws Exception {
+                                  ServerProperties properties) throws Exception {
 
-        TestAppClient appClient = enableMutual ?
-                new TestMutualAppClient(host, appPort, properties) :
-                new TestAppClient(host, appPort, properties);
+        TestAppClient appClient = new TestAppClient(host, appPort, properties);
 
         TestHardClient hardClient = new TestHardClient(host, hardPort);
 

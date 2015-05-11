@@ -36,10 +36,12 @@ public class AppClient extends BaseClient {
         File clientKey = makeCertificateFile("client.ssl.key");
         try {
             if (!serverCert.exists() || !clientCert.exists() || !clientKey.exists()) {
+                log.info("Enabling one-way auth with no certs checks.");
                 this.sslCtx = SslContextBuilder.forClient().sslProvider(SslProvider.JDK)
                         .trustManager(InsecureTrustManagerFactory.INSTANCE)
                         .build();
             } else {
+                log.info("Enabling mutual auth.");
                 String clientPass = props.getProperty("server.ssl.key.pass");
                 this.sslCtx = SslContextBuilder.forClient()
                         .sslProvider(SslProvider.JDK)
