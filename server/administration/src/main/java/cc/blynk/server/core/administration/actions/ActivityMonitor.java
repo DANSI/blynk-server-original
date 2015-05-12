@@ -24,7 +24,7 @@ public class ActivityMonitor implements Executable {
     private static final Logger log = LogManager.getLogger(ActivityMonitor.class);
 
     private static final Comparator<User> quotaComparator = (o1, o2) ->
-            Double.compare(o1.getQuotaMeter().getOneMinuteRateNoTick(), o2.getQuotaMeter().getOneMinuteRateNoTick());
+            Double.compare(o2.getQuotaMeter().getOneMinuteRateNoTick(), o1.getQuotaMeter().getOneMinuteRateNoTick());
 
     @Override
     public List<String> execute(UserRegistry userRegistry, SessionsHolder sessionsHolder, String... params) {
