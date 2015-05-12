@@ -7,6 +7,9 @@ If you need more information, please follow these links:
 * [Blynk community](http://community.blynk.cc)
 * [Facebook](http://www.fb.com/blynkapp)
 * [Twitter](http://twitter.com/blynk_app)
+* [App Store](https://itunes.apple.com/us/app/blynk-control-arduino-raspberry/id808760481?ls=1&mt=8)
+* [Google Play](https://play.google.com/store/apps/details?id=cc.blynk)
+* [Getting Started](http://www.blynk.cc/getting-started)
 
 # Blynk server
 Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Java server, responsible for forwarding messages between Blynk mobile application and various microcontroller boards (i.e. Arduino, Raspberry Pi. etc).
