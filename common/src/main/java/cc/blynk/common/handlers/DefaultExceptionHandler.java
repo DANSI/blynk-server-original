@@ -37,10 +37,10 @@ public interface DefaultExceptionHandler {
             log.trace("Channel was inactive for a long period. Closing...");
             //channel is already closed here by ReadTimeoutHandler
         } else if (cause instanceof DecoderException && cause.getCause() instanceof UnsupportedCommandException) {
-            log.error("Input command is invalid. Closing socket.", cause.getMessage());
+            log.error("Input command is invalid. Closing socket. Reason {}. Address {}", cause.getMessage(), ctx.channel().remoteAddress());
             ctx.close();
         } else if (cause instanceof DecoderException && cause.getCause() instanceof SSLException) {
-            log.error("WARNING. Unsecured connection attempt. Channel : {}. Reason : {}", ctx.channel(), cause.getMessage());
+            log.error("WARNING. Unsecured connection attempt. Channel : {}. Reason : {}", ctx.channel().remoteAddress(), cause.getMessage());
             ctx.close();
         } else if (cause instanceof NotSslRecordException) {
             log.error("Not secure connection attempt detected. {}.", cause.getMessage());
