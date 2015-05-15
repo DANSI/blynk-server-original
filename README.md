@@ -127,6 +127,12 @@ server.properties options:
         
 As output you'll retrieve server.crt and server.pem files that you need to provide for server.ssl properties.
 
+### Install java for Ubuntu
+
+        sudo apt-add-repository ppa:webupd8team/java
+        sudo apt-get update
+        sudo apt-get install oracle-java8-installer
+
 ### Behind wifi router
 If you want to run Blynk server behind WiFi-router and want it to be accessible from the Internet, you have to add port-forwarding rule on your router. This is required in order to forward all of the requests that come to the router within the local network to Blynk server.
 
