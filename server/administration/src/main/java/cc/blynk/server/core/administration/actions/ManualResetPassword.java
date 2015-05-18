@@ -18,9 +18,9 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.04.15.
  */
-public class ResetPassword implements Executable {
+public class ManualResetPassword implements Executable {
 
-    private static final Logger log = LogManager.getLogger(ResetPassword.class);
+    private static final Logger log = LogManager.getLogger(ManualResetPassword.class);
 
     @Override
     public List<String> execute(UserRegistry userRegistry, SessionsHolder sessionsHolder, String... params) {

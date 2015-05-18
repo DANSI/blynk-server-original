@@ -1,6 +1,6 @@
 package сс.blynk.server.core.administration.actions;
 
-import cc.blynk.server.core.administration.actions.ResetPassword;
+import cc.blynk.server.core.administration.actions.ManualResetPassword;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.auth.User;
 import org.junit.Test;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * Created on 22.04.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ResetPasswordTest {
+public class ManualResetPasswordTest {
 
     @Mock
     private UserRegistry userRegistry;
@@ -30,12 +30,12 @@ public class ResetPasswordTest {
 
     @Test
     public void testPassChanged() {
-        ResetPassword resetPassword = new ResetPassword();
+        ManualResetPassword manualResetPassword = new ManualResetPassword();
 
         String username = "dima@dima.ua";
         String pass = "123";
         when(userRegistry.getByName(username)).thenReturn(user);
-        List<String> repsonse = resetPassword.execute(userRegistry, null, username, pass);
+        List<String> repsonse = manualResetPassword.execute(userRegistry, null, username, pass);
 
         verify(user).setPass(eq("UDgMLjFcZ/HDe1jFqejmJIGh8aOc1V7xSLVUKR5hmsk="));
         verify(user).setLastModifiedTs(any(long.class));
@@ -48,12 +48,12 @@ public class ResetPasswordTest {
 
     @Test
     public void testNoUser() {
-        ResetPassword resetPassword = new ResetPassword();
+        ManualResetPassword manualResetPassword = new ManualResetPassword();
 
         String username = "dima@dima.ua";
         String pass = "123";
         when(userRegistry.getByName(username)).thenReturn(null);
-        List<String> repsonse = resetPassword.execute(userRegistry, null, username, pass);
+        List<String> repsonse = manualResetPassword.execute(userRegistry, null, username, pass);
 
         assertNotNull(repsonse);
         assertEquals(1, repsonse.size());

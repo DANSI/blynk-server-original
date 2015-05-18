@@ -2,7 +2,7 @@ package cc.blynk.server.core.administration;
 
 import cc.blynk.common.utils.Config;
 import cc.blynk.server.core.administration.actions.ActivityMonitor;
-import cc.blynk.server.core.administration.actions.ResetPassword;
+import cc.blynk.server.core.administration.actions.ManualResetPassword;
 import cc.blynk.server.utils.ByteClassLoaderUtil;
 
 import java.io.BufferedReader;
@@ -68,8 +68,8 @@ public class AdminLauncher {
      */
     private static byte[] loadClass(String action) throws IOException {
         switch (action.toLowerCase()) {
-            case "resetpassword" :
-                return ByteClassLoaderUtil.readClassBytesFromAsResource(AdminLauncher.class, resolvePath(ResetPassword.class));
+            case "manualresetpassword" :
+                return ByteClassLoaderUtil.readClassBytesFromAsResource(AdminLauncher.class, resolvePath(ManualResetPassword.class));
             case "quotausage" :
                 return ByteClassLoaderUtil.readClassBytesFromAsResource(AdminLauncher.class, resolvePath(ActivityMonitor.class));
         }
