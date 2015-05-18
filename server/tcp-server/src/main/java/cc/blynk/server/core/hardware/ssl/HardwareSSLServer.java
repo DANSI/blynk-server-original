@@ -60,7 +60,8 @@ public class HardwareSSLServer extends BaseServer {
             File serverKey = new File(serverKeyPath);
 
             if (!serverCert.exists() || !serverKey.exists()) {
-                log.warn("ATTENTION. Certificate path not valid. Using embedded certs. This is not secure. Please replace it with your own certs.");
+                log.warn("ATTENTION. Certificate {} and key {} paths not valid. Using embedded certs. This is not secure. Please replace it with your own certs.",
+                        serverCert.getAbsolutePath(), serverKey.getAbsolutePath());
                 SelfSignedCertificate ssc = new SelfSignedCertificate();
                 return SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).sslProvider(sslProvider).build();
             }

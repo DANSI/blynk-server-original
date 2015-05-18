@@ -63,7 +63,8 @@ public class AppServer extends BaseServer {
             File clientCert =  new File(clientCertPath);
 
             if (!serverCert.exists() || !serverKey.exists() || !clientCert.exists()) {
-                log.warn("ATTENTION. Certificate path not valid. Using embedded certs. This is not secure. Please replace it with your own certs.");
+                log.warn("ATTENTION. Certificate {}, key {}, clietn cert {} paths not valid. Using embedded certs. This is not secure. Please replace it with your own certs.",
+                        serverCert.getAbsolutePath(), serverKey.getAbsolutePath(), clientCert.getAbsolutePath());
                 SelfSignedCertificate ssc = new SelfSignedCertificate();
                 isMutualSSL = false;
                 return SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey())
