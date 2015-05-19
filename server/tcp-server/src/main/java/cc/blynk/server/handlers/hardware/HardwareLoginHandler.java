@@ -45,7 +45,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             throw new IllegalCommandException("Wrong income message format.", message.id);
         }
 
-        String token = messageParts[0];
+        String token = messageParts[0].trim();
         User user = userRegistry.getUserByToken(token);
 
         if (user == null) {
