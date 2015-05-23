@@ -41,7 +41,7 @@ public class UserRegistry {
                 return dashToken.getKey();
             }
         }
-        throw new InvalidTokenException("Error getting dashId for user.", msgId);
+        throw new InvalidTokenException(String.format("Error getting dashId for %s.", user.getName()), msgId);
     }
 
     private static String generateNewToken() {

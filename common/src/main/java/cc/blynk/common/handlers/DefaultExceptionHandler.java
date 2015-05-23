@@ -43,7 +43,7 @@ public interface DefaultExceptionHandler {
             log.error("WARNING. Unsecured connection attempt. Channel : {}. Reason : {}", ctx.channel().remoteAddress(), cause.getMessage());
             ctx.close();
         } else if (cause instanceof NotSslRecordException) {
-            log.error("Not secure connection attempt detected. {}.", cause.getMessage());
+            log.error("Not secure connection attempt detected. {}. IP {}", cause.getMessage(), ctx.channel().remoteAddress());
             ctx.close();
         } else if (cause instanceof SSLException) {
             log.error("SSL exception. {}.", cause.getMessage());
