@@ -43,8 +43,8 @@ public class ResetPasswordController {
         URL bodyUrl = Resources.getResource("body/message.html");
         this.body = Resources.toString(bodyUrl, Charsets.UTF_8);
         this.tokensPool = tokensPool;
-        File page = new File(this.getClass().getResource("/html/enterNewPassword.html").toURI());
-        this.pageContent = readFile(page, Charset.forName("UTF-8"));
+        URL pageUrl = Resources.getResource("html/enterNewPassword.html");
+        this.pageContent = Resources.toString(pageUrl, Charsets.UTF_8);
     }
 
     private static String readFile(File file, Charset encoding) throws IOException {

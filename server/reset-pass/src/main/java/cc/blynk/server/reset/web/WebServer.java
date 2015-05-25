@@ -17,6 +17,7 @@ import java.net.URI;
 class WebServer {
 
     public static void main(String[] args) throws Exception {
+        System.setProperty("logs.folder", ".");
         args = (args.length == 0 ? new String[]{"localhost", "8083"} : args);
         String url = String.format("http://%s", args[0] == null ? "localhost" : args[0]);
         int port = ParseUtil.parseInt(args[1] == null ? "80" : args[1]);

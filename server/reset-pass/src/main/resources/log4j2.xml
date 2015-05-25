@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration packages="com.azakordonets">
+<Configuration packages="cc.blynk">
     <Appenders>
         <File name="reset" fileName="./reset.log">
             <PatternLayout>
