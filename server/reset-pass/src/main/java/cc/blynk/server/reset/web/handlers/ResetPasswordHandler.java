@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 
 /**
@@ -78,9 +78,10 @@ public class ResetPasswordHandler {
 
     @GET
     @Path("static/{filename}")
+    @Produces("text/css")
     public Response getStatic(@PathParam("filename") String filename) throws URISyntaxException {
-        File file = new File(this.getClass().getResource("/html/" + filename).toURI());
-        return Response.ok(file).build();
+        InputStream is = ResetPasswordHandler.class.getClassLoader().getResourceAsStream("/html/" + filename);
+        return Response.ok(is).build();
     }
 
 

@@ -49,7 +49,7 @@ public class ResetPasswordController {
         String resetUrl = String.format("%s%s/landing?token=%s", url, (port == 80) ? "" : ":" + port, token);
         String message = body.replace("{RESET_URL}", resetUrl);
         log.info("Sending token to {} address", email);
-        mailSender.sendMail(email, "Password reset request", message, "text/html");
+        mailSender.sendMail(email, "Password reset request for Blynk app.", message, "text/html");
     }
 
     public void invoke(String token, String password, String email) {
