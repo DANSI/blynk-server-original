@@ -25,7 +25,7 @@ public class ResetPassword implements Executable {
     public List<String> execute(UserRegistry userRegistry, SessionsHolder sessionsHolder, String... params) {
         List<String> result = new ArrayList<>();
         if (params != null && params.length == 2) {
-            String userName = params[0];
+            String userName = params[0].toLowerCase();
             String newPass = params[1];
 
             User user = userRegistry.getByName(userName);
