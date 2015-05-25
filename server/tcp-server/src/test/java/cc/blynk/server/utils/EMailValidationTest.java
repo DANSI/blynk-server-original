@@ -1,5 +1,6 @@
 package cc.blynk.server.utils;
 
+import cc.blynk.common.utils.EMailValidator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

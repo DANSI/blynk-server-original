@@ -2,8 +2,8 @@ package cc.blynk.server.handlers.app.auth;
 
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.protocol.appllication.RegisterMessage;
+import cc.blynk.common.utils.EMailValidator;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.utils.EMailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

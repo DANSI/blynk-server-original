@@ -1,4 +1,4 @@
-package cc.blynk.server.utils;
+package cc.blynk.common.utils;
 
 import java.util.regex.Pattern;
 
