@@ -41,20 +41,26 @@ public class MailSender {
     }
 
     public Runnable produceSendMailTask(String to, String subj, String body) {
-        return () -> {
-            try {
-                Message message = new MimeMessage(session);
-                message.setFrom(from);
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-                message.setSubject(subj);
-                message.setText(body);
+        return () -> sendMail(to, subj, body, null);
+    }
 
-                Transport.send(message);
-                log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
-            } catch (MessagingException e) {
-                log.error("Error sending mail to {}. Reason : {}", to, e.getMessage());
+    public void sendMail(String to, String subj, String body, String contentType) {
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(from);
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+            message.setSubject(subj);
+            if (contentType == null) {
+                message.setText(body);
+            } else {
+                message.setContent(body, contentType);
             }
-        };
+
+            Transport.send(message);
+            log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
+        } catch (MessagingException e) {
+            log.error("Error sending mail to {}. Reason : {}", to, e.getMessage());
+        }
     }
 
 }
