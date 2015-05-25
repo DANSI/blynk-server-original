@@ -1,4 +1,4 @@
-package cc.blynk.server.dao;
+package cc.blynk.server.dao.graph;
 
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.exceptions.IllegalCommandException;

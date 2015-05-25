@@ -2,10 +2,10 @@ package cc.blynk.server.handlers.common;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.GraphInMemoryStorage;
 import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.Storage;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.graph.GraphInMemoryStorage;
+import cc.blynk.server.dao.graph.Storage;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.exceptions.NoActiveDashboardException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;

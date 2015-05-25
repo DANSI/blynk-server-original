@@ -1,5 +1,6 @@
 package cc.blynk.server.dao;
 
+import cc.blynk.server.dao.graph.GraphInMemoryStorage;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
