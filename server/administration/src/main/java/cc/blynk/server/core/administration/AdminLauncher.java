@@ -24,28 +24,16 @@ import java.net.Socket;
  */
 public class AdminLauncher {
 
+    private final String host;
+    private final int port;
+
+    public AdminLauncher(String host, int port) {
+        this.host = host;
+        this.port = port;
+    }
+
     public static void main(String[] args) throws IOException {
-        try (Socket client = new Socket("localhost", 8777);
-             DataOutputStream outToServer = new DataOutputStream(client.getOutputStream());
-             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()))) {
-
-            byte[] classBytes = loadClass(args[0]);
-
-            sendParams(args, outToServer);
-
-            //send executable class itself
-            outToServer.writeShort(classBytes.length);
-            outToServer.write(classBytes);
-            outToServer.flush();
-
-            String responseLine;
-            while ((responseLine = in.readLine()) != null) {
-                System.out.println(responseLine);
-                if (responseLine.contains("ok")) {
-                    break;
-                }
-            }
-        }
+        new AdminLauncher("localhost", 8777).connect(args);
     }
 
     private static void sendParams(String[] args, DataOutputStream outToServer) throws IOException {
@@ -85,6 +73,30 @@ public class AdminLauncher {
      */
     private static String resolvePath(Class<?> clazz) {
         return "/" + clazz.getCanonicalName().replaceAll("\\.", "/") + ".class";
+    }
+
+    public void connect(String[] args) throws IOException {
+        try (Socket client = new Socket(host, port);
+             DataOutputStream outToServer = new DataOutputStream(client.getOutputStream());
+             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()))) {
+
+            byte[] classBytes = loadClass(args[0]);
+
+            sendParams(args, outToServer);
+
+            //send executable class itself
+            outToServer.writeShort(classBytes.length);
+            outToServer.write(classBytes);
+            outToServer.flush();
+
+            String responseLine;
+            while ((responseLine = in.readLine()) != null) {
+                System.out.println(responseLine);
+                if (responseLine.contains("ok")) {
+                    break;
+                }
+            }
+        }
     }
 
 }
