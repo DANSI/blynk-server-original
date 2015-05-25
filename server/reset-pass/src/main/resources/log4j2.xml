@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration packages="com.azakordonets">
+    <Appenders>
+        <File name="reset" fileName="./reset.log">
+            <PatternLayout>
+                <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="DEBUG">
+            <AppenderRef ref="reset"/>
+        </Root>
+    </Loggers>
+</Configuration>
