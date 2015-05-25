@@ -10,11 +10,7 @@ import com.google.common.io.Resources;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 
 /**
  * The Blynk project
@@ -47,18 +43,13 @@ public class ResetPasswordController {
         this.pageContent = Resources.toString(pageUrl, Charsets.UTF_8);
     }
 
-    private static String readFile(File file, Charset encoding) throws IOException {
-        byte[] encoded = Files.readAllBytes(file.toPath());
-        return new String(encoded, encoding);
-    }
-
     public void sendResetPasswordEmail(String email, String token) throws Exception {
         TokenUser user = new TokenUser(email);
         tokensPool.addToken(token, user);
-        final String resetUrl = String.format("%s%s/landing?token=%s", url, (port == 80) ? "" : ":" + port, token);
-        final String message = body.replace("{RESET_URL}", resetUrl);
+        String resetUrl = String.format("%s%s/landing?token=%s", url, (port == 80) ? "" : ":" + port, token);
+        String message = body.replace("{RESET_URL}", resetUrl);
         log.info("Sending token to {} address", email);
-        mailSender.produceSendMailTask(email, "Password reset request", message);
+        mailSender.sendMail(email, "Password reset request", message, "text/html");
     }
 
     public void invoke(String token, String password, String email) {
