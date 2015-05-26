@@ -75,7 +75,7 @@ public class AdminLauncher {
         return "/" + clazz.getCanonicalName().replaceAll("\\.", "/") + ".class";
     }
 
-    public void connect(String[] args) throws IOException {
+    public void connect(String... args) throws IOException {
         try (Socket client = new Socket(host, port);
              DataOutputStream outToServer = new DataOutputStream(client.getOutputStream());
              BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()))) {

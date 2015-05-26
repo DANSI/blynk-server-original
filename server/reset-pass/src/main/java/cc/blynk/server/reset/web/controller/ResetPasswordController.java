@@ -2,6 +2,7 @@ package cc.blynk.server.reset.web.controller;
 
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.server.core.administration.AdminLauncher;
 import cc.blynk.server.notifications.mail.MailSender;
 import cc.blynk.server.reset.web.entities.TokenUser;
 import cc.blynk.server.reset.web.entities.TokensPool;
@@ -10,6 +11,7 @@ import com.google.common.io.Resources;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.net.URL;
 
 /**
@@ -52,8 +54,8 @@ public class ResetPasswordController {
         mailSender.sendMail(email, "Password reset request for Blynk app.", message, "text/html");
     }
 
-    public void invoke(String token, String password, String email) {
-
+    public void invoke(String email, String password) throws IOException {
+        new AdminLauncher("cloud.blynk.cc", 8777).connect("resetpassword", email, password);
     }
 
     public String getResetPasswordPage(String email, String token) {

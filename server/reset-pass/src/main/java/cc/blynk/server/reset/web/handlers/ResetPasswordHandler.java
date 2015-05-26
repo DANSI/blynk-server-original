@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
@@ -95,11 +96,18 @@ public class ResetPasswordHandler {
         if (user == null) {
             return notFoundResponse("Invalid token. Please repeat all steps.");
         }
-        //String hashedPassword = SHA256Util.makeHash(password, user.getEmail());
-        resetPasswordController.invoke(token, password, user.getEmail());
-        log.info("{} password was reset.", user.getEmail());
-        tokensPool.removeToken(token);
-        return Response.ok().build();
+
+        try {
+            log.info("Resetting...");
+            resetPasswordController.invoke(user.getEmail(), password);
+            log.info("{} password was reset.", user.getEmail());
+            tokensPool.removeToken(token);
+            return Response.ok().build();
+        } catch (IOException ioe) {
+            log.error("Error resetting pass for {}.", user.getEmail());
+            log.error(ioe);
+            return badRequestResponse("Failed to reset pass.");
+        }
     }
 
     private Response notFoundResponse(String message) {
