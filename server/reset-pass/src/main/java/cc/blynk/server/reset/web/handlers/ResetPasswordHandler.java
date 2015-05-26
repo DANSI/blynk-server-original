@@ -88,7 +88,7 @@ public class ResetPasswordHandler {
 
     @POST
     @Consumes(value = MediaType.APPLICATION_FORM_URLENCODED)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = MediaType.TEXT_PLAIN)
     @Path("updatePassword")
     public Response updatePassword(@FormParam("password") String password,
                                    @FormParam("token") String token) {
@@ -102,7 +102,7 @@ public class ResetPasswordHandler {
             resetPasswordController.invoke(user.getEmail(), password);
             log.info("{} password was reset.", user.getEmail());
             tokensPool.removeToken(token);
-            return Response.ok().build();
+            return Response.ok("Password was successfully reset.").build();
         } catch (IOException ioe) {
             log.error("Error resetting pass for {}.", user.getEmail());
             log.error(ioe);
