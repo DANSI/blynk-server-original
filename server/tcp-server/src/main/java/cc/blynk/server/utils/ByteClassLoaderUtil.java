@@ -19,7 +19,7 @@ public class ByteClassLoaderUtil extends ClassLoader {
     public static byte[] readClassBytesFromAsResource(Class<?> clazz, String className) throws IOException {
         try (InputStream is = clazz.getResourceAsStream(className)) {
             //max 100 kb
-            byte[] bytes = new byte[100 * 1024 * 1024];
+            byte[] bytes = new byte[100 * 1024];
             int length = IOUtils.read(is, bytes);
 
             byte[] res = new byte[length];
