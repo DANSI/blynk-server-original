@@ -28,6 +28,7 @@ import static org.mockito.Mockito.*;
  * Created by Andrew Zakordonets.
  * Created on 03/5/2015.
  */
+@Ignore
 public class MainWorkflowWithMutualSslTest extends IntegrationBase {
 
     private AppServer appServer;
