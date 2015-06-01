@@ -1,10 +1,10 @@
 package cc.blynk.server.reset.web.handlers;
 
-import cc.blynk.common.utils.EMailValidator;
 import cc.blynk.server.reset.web.controller.ResetPasswordController;
 import cc.blynk.server.reset.web.entities.TokenUser;
 import cc.blynk.server.reset.web.entities.TokensPool;
 import fabricator.Fabricator;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,7 +41,7 @@ public class ResetPasswordHandler {
             return badRequestResponse("Email field is empty. Please input your email.");
         }
 
-        if (!EMailValidator.isValid(email)) {
+        if (!EmailValidator.getInstance().isValid(email)) {
             return badRequestResponse(String.format("%s email has not valid format.", email));
         }
 
