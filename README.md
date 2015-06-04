@@ -18,7 +18,7 @@ Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Jav
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
 
 # Requirements
-Java 8 required. (OpenJDK, Oracle)
+Java 8 required. (OpenJDK, Oracle). Installation instructions [here](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu).
 
 # GETTING STARTED
 Right now Blynk server uses 2 ports. 1 port is used for hardware and second one is used for the mobile apps. This is done due to the lack of security mechanism and low resources on microcontroller boards (e.g. Arduino UNO).
