@@ -7,8 +7,8 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.TweetBodyInvalidException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.model.widgets.others.Twitter;
 import cc.blynk.server.notifications.twitter.exceptions.TweetNotAuthorizedException;
-import cc.blynk.server.notifications.twitter.model.TwitterAccessToken;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -40,16 +40,16 @@ public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> 
             throw new TweetBodyInvalidException(message.id);
         }
 
-        TwitterAccessToken twitterAccessToken = user.getProfile().getTwitter();
+        Twitter twitterWidget = user.getProfile().getActiveDashboardTwitterWidget();
 
-        if (twitterAccessToken == null ||
-                twitterAccessToken.getToken() == null || twitterAccessToken.getToken().equals("") ||
-                twitterAccessToken.getTokenSecret() == null || twitterAccessToken.getTokenSecret().equals("")) {
+        if (twitterWidget == null ||
+                twitterWidget.token == null || twitterWidget.token.equals("") ||
+                twitterWidget.secret == null || twitterWidget.secret.equals("")) {
             throw new TweetNotAuthorizedException("User has no access token provided.", message.id);
         }
 
         log.trace("Sending Twit for user {}, with message : '{}'.", user.getName(), message.body);
-        notificationsProcessor.twit(twitterAccessToken, message.body, message.id);
+        notificationsProcessor.twit(twitterWidget.token, twitterWidget.secret, message.body, message.id);
 
         //todo send response immediately?
         checkIfNotificationQuotaLimitIsNotReached(user, message);

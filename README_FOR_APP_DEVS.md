@@ -114,11 +114,7 @@ Response message structure:
 			 "widgets"  : [...], 
 			 "boardType":"UNO"
 			}
-		],
-		"twitter" : {
-		    "token" : "USER_TOKEN",
-		    "tokenSecret" : "USER_SECRET"
-		}
+		]
 	}
 
 ## Widget types

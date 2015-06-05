@@ -4,7 +4,7 @@ import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.widgets.others.Mail;
 import cc.blynk.server.model.widgets.others.Timer;
-import cc.blynk.server.notifications.twitter.model.TwitterAccessToken;
+import cc.blynk.server.model.widgets.others.Twitter;
 import cc.blynk.server.utils.JsonParser;
 
 import java.util.*;
@@ -18,8 +18,6 @@ import java.util.*;
 public class Profile {
 
     private DashBoard[] dashBoards;
-
-    private TwitterAccessToken twitter;
 
     private Map<Integer, Set<Byte>> graphPins;
 
@@ -81,6 +79,19 @@ public class Profile {
         return dashBoard.getEmailWidget();
     }
 
+    public Twitter getActiveDashboardTwitterWidget() {
+        if (dashBoards == null || dashBoards.length == 0 || activeDashId == null) {
+            return null;
+        }
+
+        DashBoard dashBoard = getActiveDashBoard();
+        if (dashBoard == null) {
+            return null;
+        }
+
+        return dashBoard.getTwitterWidget();
+    }
+
     public DashBoard getActiveDashBoard() {
         for (DashBoard dashBoard : dashBoards) {
             if (dashBoard.getId() == activeDashId) {
@@ -114,14 +125,6 @@ public class Profile {
 
     public void setGraphPins(Map<Integer, Set<Byte>> graphPins) {
         this.graphPins = graphPins;
-    }
-
-    public TwitterAccessToken getTwitter() {
-        return twitter;
-    }
-
-    public void setTwitter(TwitterAccessToken twitter) {
-        this.twitter = twitter;
     }
 
     public Integer getActiveDashId() {

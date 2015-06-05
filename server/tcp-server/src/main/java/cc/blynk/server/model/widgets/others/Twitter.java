@@ -9,4 +9,8 @@ import cc.blynk.server.model.widgets.Widget;
  */
 public class Twitter extends Widget {
 
+    public String token;
+
+    public String secret;
+
 }

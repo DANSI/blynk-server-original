@@ -11,8 +11,8 @@ import cc.blynk.server.exceptions.QuotaLimitException;
 import cc.blynk.server.exceptions.TweetBodyInvalidException;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.model.widgets.others.Twitter;
 import cc.blynk.server.notifications.twitter.exceptions.TweetNotAuthorizedException;
-import cc.blynk.server.notifications.twitter.model.TwitterAccessToken;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang.RandomStringUtils;
@@ -58,9 +58,6 @@ public class TweetHandlerTest extends TestBase {
 	@Mock
 	private Profile profile;
 
-	@Mock
-	private TwitterAccessToken twitterAccessToken;
-
 	@Test(expected = TweetBodyInvalidException.class)
 	public void testTweetMessageWithEmptyBody() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "");
@@ -93,7 +90,10 @@ public class TweetHandlerTest extends TestBase {
 		when(user.getProfile()).thenReturn(profile);
 		TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
 		when(user.getProfile()).thenReturn(profile);
-		when(user.getProfile().getTwitter()).thenReturn(new TwitterAccessToken(null, "secret_token"));
+		Twitter twitter = new Twitter();
+		twitter.token = null;
+		twitter.secret = "secret_token";
+		when(user.getProfile().getActiveDashboardTwitterWidget()).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
@@ -103,7 +103,10 @@ public class TweetHandlerTest extends TestBase {
 		when(user.getProfile()).thenReturn(profile);
 		TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
 		when(user.getProfile()).thenReturn(profile);
-		when(user.getProfile().getTwitter()).thenReturn(new TwitterAccessToken("", "secret_token"));
+		Twitter twitter = new Twitter();
+		twitter.token = null;
+		twitter.secret = "secret_token";
+		when(user.getProfile().getActiveDashboardTwitterWidget()).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
@@ -113,7 +116,10 @@ public class TweetHandlerTest extends TestBase {
 		when(user.getProfile()).thenReturn(profile);
 		TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
 		when(user.getProfile()).thenReturn(profile);
-		when(user.getProfile().getTwitter()).thenReturn(new TwitterAccessToken("token", null));
+		Twitter twitter = new Twitter();
+		twitter.token = "token";
+		twitter.secret = null;
+		when(user.getProfile().getActiveDashboardTwitterWidget()).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
@@ -123,7 +129,10 @@ public class TweetHandlerTest extends TestBase {
 		when(user.getProfile()).thenReturn(profile);
 		TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
 		when(user.getProfile()).thenReturn(profile);
-		when(user.getProfile().getTwitter()).thenReturn(new TwitterAccessToken("token", ""));
+		Twitter twitter = new Twitter();
+		twitter.token = "token";
+		twitter.secret = null;
+		when(user.getProfile().getActiveDashboardTwitterWidget()).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
@@ -133,7 +142,10 @@ public class TweetHandlerTest extends TestBase {
 		User user = spy(new User());
 		TweetHandler tweetHandler = spy(new TweetHandler(new ServerProperties(), userRegistry, sessionsHolder, notificationsProcessor));
 		when(user.getProfile()).thenReturn(profile);
-		when(user.getProfile().getTwitter()).thenReturn(new TwitterAccessToken("token", "secret_token"));
+		Twitter twitter = new Twitter();
+		twitter.token = "token";
+		twitter.secret = "secret_token";
+		when(user.getProfile().getActiveDashboardTwitterWidget()).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
@@ -147,7 +159,10 @@ public class TweetHandlerTest extends TestBase {
 		User user = spy(new User());
 		TweetHandler tweetHandler = spy(new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor));
 		when(user.getProfile()).thenReturn(profile);
-		when(user.getProfile().getTwitter()).thenReturn(new TwitterAccessToken("token", "secret_token"));
+		Twitter twitter = new Twitter();
+		twitter.token = "token";
+		twitter.secret = "secret_token";
+		when(user.getProfile().getActiveDashboardTwitterWidget()).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 		TimeUnit.MILLISECONDS.sleep(defaultQuotaTime);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);

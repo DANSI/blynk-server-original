@@ -1,6 +1,5 @@
 package cc.blynk.server.notifications.twitter;
 
-import cc.blynk.server.notifications.twitter.model.TwitterAccessToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import twitter4j.Twitter;
@@ -20,14 +19,10 @@ public class TwitterWrapper {
     // The factory instance is re-useable and thread safe.
     private final TwitterFactory factory = new TwitterFactory();
 
-    public Runnable produceSendTwitTask(TwitterAccessToken twitterAccessToken, String message) {
-        return produceSendTwitTask(twitterAccessToken.getToken(), twitterAccessToken.getTokenSecret(), message);
-    }
-
-    protected Runnable produceSendTwitTask(String token, String tokenSecret, String message) {
+    public Runnable produceSendTwitTask(String token, String secret, String message) {
         return () -> {
             try {
-                AccessToken accessToken = new AccessToken(token, tokenSecret);
+                AccessToken accessToken = new AccessToken(token, secret);
                 Twitter twitter = factory.getInstance();
                 twitter.setOAuthAccessToken(accessToken);
 

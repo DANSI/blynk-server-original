@@ -5,7 +5,6 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.exceptions.ServerBusyException;
 import cc.blynk.server.notifications.mail.MailSender;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
-import cc.blynk.server.notifications.twitter.model.TwitterAccessToken;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -43,9 +42,9 @@ public class NotificationsProcessor {
         }
     }
 
-    public void twit(TwitterAccessToken twitterAccessToken, String body, int msgId) {
+    public void twit(String token, String secret, String body, int msgId) {
         try {
-            executor.execute(twitterWrapper.produceSendTwitTask(twitterAccessToken, body));
+            executor.execute(twitterWrapper.produceSendTwitTask(token, secret, body));
         } catch (RejectedExecutionException e) {
             throw new ServerBusyException(msgId);
         }
