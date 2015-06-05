@@ -28,7 +28,7 @@ public class TwitterWrapper {
 
                 twitter.updateStatus(message);
             } catch (TwitterException e) {
-                log.error("Error sending twit.");
+                log.error("Error sending twit. Reason : {}", e.getMessage());
             }
 
         };
