@@ -170,6 +170,21 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testTweetWorks() throws Exception {
+        String userProfileWithTwit = readTestUserProfile();
+        clientPair.appClient.send("saveProfile " + userProfileWithTwit);
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+
+        clientPair.hardwareClient.send("tweet yo");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+
+        clientPair.hardwareClient.send("tweet yo");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, QUOTA_LIMIT_EXCEPTION)));
+
+    }
+
+    @Test
     public void testAppSendWriteHardCommandForGraphAndBack() throws Exception {
         String userProfileWithGraph = readTestUserProfile();
         clientPair.appClient.send("saveProfile " + userProfileWithGraph);
