@@ -48,11 +48,11 @@ public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> 
             throw new TweetNotAuthorizedException("User has no access token provided.", message.id);
         }
 
+        checkIfNotificationQuotaLimitIsNotReached(user, message);
+
         log.trace("Sending Twit for user {}, with message : '{}'.", user.getName(), message.body);
         notificationsProcessor.twit(twitterWidget.token, twitterWidget.secret, message.body, message.id);
 
-        //todo send response immediately?
-        checkIfNotificationQuotaLimitIsNotReached(user, message);
         ctx.writeAndFlush(produce(message.id, OK));
     }
 
