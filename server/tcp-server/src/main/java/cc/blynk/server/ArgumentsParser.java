@@ -24,7 +24,8 @@ class ArgumentsParser {
         options.addOption("hardPort", true, "Hardware server port.")
                .addOption("appPort", true, "Application server port.")
                .addOption("workerThreads", true, "Server worker threads.")
-               .addOption("disableAppSsl", false, "Disables SSL for app mode.");
+               .addOption("disableAppSsl", false, "Disables SSL for app mode.")
+               .addOption("dataFolder", true, "Folder where user profiles will be stored.");
     }
 
 
@@ -34,6 +35,7 @@ class ArgumentsParser {
         String hardPort = cmd.getOptionValue("hardPort");
         String appPort = cmd.getOptionValue("appPort");
         String workerThreadsString = cmd.getOptionValue("workerThreads");
+        String dataFolder = cmd.getOptionValue("dataFolder");
 
         if (hardPort != null) {
             ParseUtil.parseInt(hardPort);
@@ -46,6 +48,9 @@ class ArgumentsParser {
         if (workerThreadsString != null) {
             ParseUtil.parseInt(workerThreadsString);
             serverProperties.put("server.worker.threads", workerThreadsString);
+        }
+        if (dataFolder != null) {
+            serverProperties.put("data.folder", dataFolder);
         }
     }
 
