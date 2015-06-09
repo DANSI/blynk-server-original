@@ -17,7 +17,7 @@ public final class ParseUtil {
 
     public static long parseLong(String longProperty) {
         try {
-            return Integer.parseInt(longProperty);
+            return Long.parseLong(longProperty);
         } catch (NumberFormatException nfe) {
             throw new RuntimeException(longProperty + " not a number. " + nfe.getMessage());
         }
