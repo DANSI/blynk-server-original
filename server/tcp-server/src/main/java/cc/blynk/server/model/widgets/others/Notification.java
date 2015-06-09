@@ -9,4 +9,6 @@ import cc.blynk.server.model.widgets.Widget;
  */
 public class Notification extends Widget {
 
+    public String token;
+
 }
