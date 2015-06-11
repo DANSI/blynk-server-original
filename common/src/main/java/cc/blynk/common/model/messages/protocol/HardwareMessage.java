@@ -17,7 +17,11 @@ public class HardwareMessage extends Message {
     }
 
     public static String attachTS(String body) {
-        return body + StringUtils.BODY_SEPARATOR + System.currentTimeMillis();
+        if (body.charAt(body.length() - 1) == StringUtils.BODY_SEPARATOR) {
+            return body + System.currentTimeMillis();
+        } else {
+            return body + StringUtils.BODY_SEPARATOR + System.currentTimeMillis();
+        }
     }
 
     public HardwareMessage updateMessageBody(String newBody) {
