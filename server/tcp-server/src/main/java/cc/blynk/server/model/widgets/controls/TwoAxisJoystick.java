@@ -1,5 +1,6 @@
 package cc.blynk.server.model.widgets.controls;
 
+import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.widgets.Widget;
 
 /**
@@ -20,6 +21,8 @@ public class TwoAxisJoystick extends Widget {
     public int min2;
 
     public int max2;
+
+    public PinType pinType2;
 
     public boolean pwmMode2;
 
