@@ -13,4 +13,6 @@ public class Twitter extends Widget {
 
     public String secret;
 
+    public String username;
+
 }
