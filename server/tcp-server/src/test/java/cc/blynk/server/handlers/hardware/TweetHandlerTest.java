@@ -93,7 +93,7 @@ public class TweetHandlerTest extends TestBase {
 		Twitter twitter = new Twitter();
 		twitter.token = null;
 		twitter.secret = "secret_token";
-		when(user.getProfile().getActiveDashboardTwitterWidget()).thenReturn(twitter);
+		when(user.getProfile().getActiveDashboardWidgetByType(Twitter.class)).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
@@ -106,7 +106,7 @@ public class TweetHandlerTest extends TestBase {
 		Twitter twitter = new Twitter();
 		twitter.token = null;
 		twitter.secret = "secret_token";
-		when(user.getProfile().getActiveDashboardTwitterWidget()).thenReturn(twitter);
+		when(user.getProfile().getActiveDashboardWidgetByType(Twitter.class)).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
@@ -119,7 +119,7 @@ public class TweetHandlerTest extends TestBase {
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
 		twitter.secret = null;
-		when(user.getProfile().getActiveDashboardTwitterWidget()).thenReturn(twitter);
+		when(user.getProfile().getActiveDashboardWidgetByType(Twitter.class)).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
@@ -132,7 +132,7 @@ public class TweetHandlerTest extends TestBase {
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
 		twitter.secret = null;
-		when(user.getProfile().getActiveDashboardTwitterWidget()).thenReturn(twitter);
+		when(user.getProfile().getActiveDashboardWidgetByType(Twitter.class)).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
@@ -145,7 +145,7 @@ public class TweetHandlerTest extends TestBase {
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
 		twitter.secret = "secret_token";
-		when(user.getProfile().getActiveDashboardTwitterWidget()).thenReturn(twitter);
+		when(user.getProfile().getActiveDashboardWidgetByType(Twitter.class)).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
@@ -162,7 +162,7 @@ public class TweetHandlerTest extends TestBase {
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
 		twitter.secret = "secret_token";
-		when(user.getProfile().getActiveDashboardTwitterWidget()).thenReturn(twitter);
+		when(user.getProfile().getActiveDashboardWidgetByType(Twitter.class)).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 		TimeUnit.MILLISECONDS.sleep(defaultQuotaTime);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);

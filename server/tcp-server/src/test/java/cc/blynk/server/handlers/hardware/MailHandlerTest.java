@@ -66,7 +66,7 @@ public class MailHandlerTest extends TestBase {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body");
 
         when(user.getProfile()).thenReturn(profile);
-        when(profile.getActiveDashboardEmailWidget()).thenReturn(null);
+        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(null);
 
         mailHandler.messageReceived(ctx, user, mailMessage);
     }
@@ -77,7 +77,7 @@ public class MailHandlerTest extends TestBase {
 
         when(user.getProfile()).thenReturn(profile);
         Mail mail = new Mail();
-        when(profile.getActiveDashboardEmailWidget()).thenReturn(mail);
+        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(mail);
 
         mailHandler.messageReceived(ctx, user, mailMessage);
     }
@@ -87,7 +87,7 @@ public class MailHandlerTest extends TestBase {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body".replaceAll(" ", "\0"));
 
         when(user.getProfile()).thenReturn(profile);
-        when(profile.getActiveDashboardEmailWidget()).thenReturn(new Mail());
+        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(new Mail());
 
         mailHandler.messageReceived(ctx, user, mailMessage);
     }
@@ -98,7 +98,7 @@ public class MailHandlerTest extends TestBase {
 
         when(user.getProfile()).thenReturn(profile);
         Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-        when(profile.getActiveDashboardEmailWidget()).thenReturn(mail);
+        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(mail);
 
         when(ctx.channel()).thenReturn(channel);
 
@@ -113,7 +113,7 @@ public class MailHandlerTest extends TestBase {
 
         when(user.getProfile()).thenReturn(profile);
         Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-        when(profile.getActiveDashboardEmailWidget()).thenReturn(mail);
+        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(mail);
 
         when(ctx.channel()).thenReturn(channel);
 
@@ -128,7 +128,7 @@ public class MailHandlerTest extends TestBase {
 
         when(user.getProfile()).thenReturn(profile);
         Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-        when(profile.getActiveDashboardEmailWidget()).thenReturn(mail);
+        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(mail);
 
         when(ctx.channel()).thenReturn(channel);
 
@@ -143,7 +143,7 @@ public class MailHandlerTest extends TestBase {
 
         when(user.getProfile()).thenReturn(profile);
         Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-        when(profile.getActiveDashboardEmailWidget()).thenReturn(mail);
+        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(mail);
 
         when(ctx.channel()).thenReturn(channel);
 
@@ -159,7 +159,7 @@ public class MailHandlerTest extends TestBase {
 		MailHandler mailHandler = spy(new MailHandler(props, userRegistry, sessionsHolder, notificationsProcessor));
 		when(user.getProfile()).thenReturn(profile);
 		Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-		when(profile.getActiveDashboardEmailWidget()).thenReturn(mail);
+		when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(mail);
 		mailHandler.messageReceived(ctx, user, mailMessage1);
 		mailHandler.messageReceived(ctx, user, mailMessage1);
 	}
@@ -173,7 +173,7 @@ public class MailHandlerTest extends TestBase {
 		MailHandler mailHandler = spy(new MailHandler(props, userRegistry, sessionsHolder, notificationsProcessor));
 		when(user.getProfile()).thenReturn(profile);
 		Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-		when(profile.getActiveDashboardEmailWidget()).thenReturn(mail);
+		when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(mail);
 		mailHandler.messageReceived(ctx, user, mailMessage1);
 		TimeUnit.MILLISECONDS.sleep(defaultQuotaTime);
 		mailHandler.messageReceived(ctx, user, mailMessage1);
