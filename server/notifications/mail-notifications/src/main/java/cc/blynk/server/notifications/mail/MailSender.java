@@ -40,7 +40,7 @@ public class MailSender {
         }
     }
 
-    public Runnable produceSendMailTask(String to, String subj, String body) {
+    public Runnable produce(String to, String subj, String body) {
         return () -> sendMail(to, subj, body, null);
     }
 

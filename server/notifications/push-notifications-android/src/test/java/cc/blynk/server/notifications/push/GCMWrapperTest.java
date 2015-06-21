@@ -18,7 +18,7 @@ public class GCMWrapperTest {
     public void testSendMessage() throws Exception {
         Map<String, String> payload = new HashMap<>();
         payload.put("Hello", "World");
-        new GCMWrapper().sendMessage("534534534534", payload);
+        new GCMWrapper().produce("534534534534", payload).run();
         Thread.sleep(1000);
     }
 

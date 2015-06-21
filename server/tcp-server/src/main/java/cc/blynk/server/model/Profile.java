@@ -2,9 +2,7 @@ package cc.blynk.server.model;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.model.widgets.others.Mail;
 import cc.blynk.server.model.widgets.others.Timer;
-import cc.blynk.server.model.widgets.others.Twitter;
 import cc.blynk.server.utils.JsonParser;
 
 import java.util.*;
@@ -66,7 +64,7 @@ public class Profile {
         return dashBoard.getTimerWidgets();
     }
 
-    public Mail getActiveDashboardEmailWidget() {
+    public <T> T getActiveDashboardWidgetByType(Class<T> clazz) {
         if (dashBoards == null || dashBoards.length == 0 || activeDashId == null) {
             return null;
         }
@@ -76,20 +74,7 @@ public class Profile {
             return null;
         }
 
-        return dashBoard.getEmailWidget();
-    }
-
-    public Twitter getActiveDashboardTwitterWidget() {
-        if (dashBoards == null || dashBoards.length == 0 || activeDashId == null) {
-            return null;
-        }
-
-        DashBoard dashBoard = getActiveDashBoard();
-        if (dashBoard == null) {
-            return null;
-        }
-
-        return dashBoard.getTwitterWidget();
+        return dashBoard.getWidgetByType(clazz);
     }
 
     public DashBoard getActiveDashBoard() {

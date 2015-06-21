@@ -19,7 +19,7 @@ public class TwitterWrapper {
     // The factory instance is re-useable and thread safe.
     private final TwitterFactory factory = new TwitterFactory();
 
-    public Runnable produceSendTwitTask(String token, String secret, String message) {
+    public Runnable produce(String token, String secret, String message) {
         return () -> {
             try {
                 AccessToken accessToken = new AccessToken(token, secret);

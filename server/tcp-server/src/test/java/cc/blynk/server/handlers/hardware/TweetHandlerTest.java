@@ -7,12 +7,12 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.exceptions.QuotaLimitException;
-import cc.blynk.server.exceptions.TweetBodyInvalidException;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Twitter;
-import cc.blynk.server.notifications.twitter.exceptions.TweetNotAuthorizedException;
+import cc.blynk.server.notifications.twitter.exceptions.NotificationNotAuthorizedException;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang.RandomStringUtils;
@@ -58,7 +58,7 @@ public class TweetHandlerTest extends TestBase {
 	@Mock
 	private Profile profile;
 
-	@Test(expected = TweetBodyInvalidException.class)
+	@Test(expected = NotificationBodyInvalidException.class)
 	public void testTweetMessageWithEmptyBody() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "");
 		when(user.getProfile()).thenReturn(profile);
@@ -66,7 +66,7 @@ public class TweetHandlerTest extends TestBase {
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
-	@Test(expected = TweetBodyInvalidException.class)
+	@Test(expected = NotificationBodyInvalidException.class)
 	public void testTweetMessageWithBodyMoreThen140Symbols() {
 		final String longBody = RandomStringUtils.random(150);
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, longBody);
@@ -75,7 +75,7 @@ public class TweetHandlerTest extends TestBase {
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
-	@Test(expected = TweetNotAuthorizedException.class)
+	@Test(expected = NotificationNotAuthorizedException.class)
 	public void testTweetMessageWithNoTwitterAccessToken() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		when(user.getProfile()).thenReturn(profile);
@@ -84,7 +84,7 @@ public class TweetHandlerTest extends TestBase {
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
-	@Test(expected = TweetNotAuthorizedException.class)
+	@Test(expected = NotificationNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterTokenNull() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		when(user.getProfile()).thenReturn(profile);
@@ -97,7 +97,7 @@ public class TweetHandlerTest extends TestBase {
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
-	@Test(expected = TweetNotAuthorizedException.class)
+	@Test(expected = NotificationNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterTokenEmpty() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		when(user.getProfile()).thenReturn(profile);
@@ -110,7 +110,7 @@ public class TweetHandlerTest extends TestBase {
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
-	@Test(expected = TweetNotAuthorizedException.class)
+	@Test(expected = NotificationNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterSecretTokenNull() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		when(user.getProfile()).thenReturn(profile);
@@ -123,7 +123,7 @@ public class TweetHandlerTest extends TestBase {
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
-	@Test(expected = TweetNotAuthorizedException.class)
+	@Test(expected = NotificationNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterSecretTokenEmpty() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		when(user.getProfile()).thenReturn(profile);

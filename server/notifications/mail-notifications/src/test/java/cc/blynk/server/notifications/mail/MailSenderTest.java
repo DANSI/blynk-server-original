@@ -26,7 +26,7 @@ public class MailSenderTest {
 
         String to = "";
         MailSender mailSender = new MailSender(properties);
-        mailSender.produceSendMailTask(to, "Hello", "Body!").run();
+        mailSender.produce(to, "Hello", "Body!").run();
     }
 
 }

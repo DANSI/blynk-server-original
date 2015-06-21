@@ -15,7 +15,7 @@ public class TwitterWrapperTest {
     public void testTweet() {
         String token = "PUT_YOUR_TOKEN_HERE";
         String tokenSecret = "PUT_YOUR_TOKEN_SECRET_HERE";
-        new TwitterWrapper().produceSendTwitTask(token, tokenSecret, "Hello444").run();
+        new TwitterWrapper().produce(token, tokenSecret, "Hello444").run();
     }
 
 }

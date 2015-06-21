@@ -1,13 +1,13 @@
 package cc.blynk.server.handlers.hardware;
 
-import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
+import cc.blynk.common.model.messages.protocol.hardware.PushMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.others.Twitter;
+import cc.blynk.server.model.widgets.others.Notification;
 import cc.blynk.server.notifications.twitter.exceptions.NotificationNotAuthorizedException;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
@@ -23,36 +23,34 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 @ChannelHandler.Sharable
-public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> {
+public class NotificationHandler extends BaseSimpleChannelInboundHandler<PushMessage> {
 
-    private static final int MAX_TWITTER_BODY_SIZE = 140;
+    private static final int MAX_PUSH_BODY_SIZE = 255;
     private final NotificationsProcessor notificationsProcessor;
 
-    public TweetHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                        NotificationsProcessor notificationsProcessor) {
+    public NotificationHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
+                               NotificationsProcessor notificationsProcessor) {
         super(props, userRegistry, sessionsHolder);
         this.notificationsProcessor = notificationsProcessor;
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, TweetMessage message) {
-        //todo add tweet widget check
-        if (message.body == null || message.body.equals("") || message.body.length() > MAX_TWITTER_BODY_SIZE) {
+    protected void messageReceived(ChannelHandlerContext ctx, User user, PushMessage message) {
+        if (message.body == null || message.body.equals("") || message.body.length() > MAX_PUSH_BODY_SIZE) {
             throw new NotificationBodyInvalidException(message.id);
         }
 
-        Twitter twitterWidget = user.getProfile().getActiveDashboardWidgetByType(Twitter.class);
+        Notification widget = user.getProfile().getActiveDashboardWidgetByType(Notification.class);
 
-        if (twitterWidget == null ||
-                twitterWidget.token == null || twitterWidget.token.equals("") ||
-                twitterWidget.secret == null || twitterWidget.secret.equals("")) {
+        if (widget == null ||
+                widget.token == null || widget.token.equals("")) {
             throw new NotificationNotAuthorizedException("User has no access token provided.", message.id);
         }
 
         checkIfNotificationQuotaLimitIsNotReached(user, message);
 
         log.trace("Sending Twit for user {}, with message : '{}'.", user.getName(), message.body);
-        notificationsProcessor.twit(twitterWidget.token, twitterWidget.secret, message.body, message.id);
+        notificationsProcessor.push(widget.token, message.body, message.id);
 
         ctx.writeAndFlush(produce(message.id, OK));
     }

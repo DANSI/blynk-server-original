@@ -18,7 +18,7 @@ public class GCMWrapper {
     private static final Logger log = LogManager.getLogger(GCMSmackCcsClient.class);
 
     private static final String filePropertiesName = "gcm.properties";
-    private GCMSmackCcsClient ccsClient;
+    private final GCMSmackCcsClient ccsClient;
 
     public GCMWrapper() {
         ServerProperties props = new ServerProperties(filePropertiesName);
@@ -32,12 +32,18 @@ public class GCMWrapper {
         }
     }
 
-    public void sendMessage(String toRegId, Map<String, String> payload) throws Exception {
-        final String messageId = GCMSmackCcsClient.generateUniqueMesageId();
-        final long timeToLive = 86400;
+    public Runnable produce(final String toRegId, final Map<String, String> payload) {
+        return () -> {
+            try {
+                String messageId = GCMSmackCcsClient.generateUniqueMesageId();
+                long timeToLive = 86400;
 
-        String message = createRequest(toRegId, messageId, payload, timeToLive, true);
-        ccsClient.sendDownstreamMessage(message);
+                String message = createRequest(toRegId, messageId, payload, timeToLive, true);
+                ccsClient.sendDownstreamMessage(message);
+            } catch (Exception e) {
+                log.error("Error sending push notification.", e);
+            }
+        };
     }
 
 }

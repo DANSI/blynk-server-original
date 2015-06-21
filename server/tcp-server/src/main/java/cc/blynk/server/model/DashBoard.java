@@ -1,9 +1,7 @@
 package cc.blynk.server.model;
 
 import cc.blynk.server.model.widgets.Widget;
-import cc.blynk.server.model.widgets.others.Mail;
 import cc.blynk.server.model.widgets.others.Timer;
-import cc.blynk.server.model.widgets.others.Twitter;
 import cc.blynk.server.model.widgets.outputs.Graph;
 
 import java.util.*;
@@ -44,17 +42,7 @@ public class DashBoard {
         return timerWidgets;
     }
 
-    //expecting only 1 email widget.
-    public Mail getEmailWidget() {
-        return getWidgetByType(Mail.class);
-    }
-
-    //expecting only 1 email widget.
-    public Twitter getTwitterWidget() {
-        return getWidgetByType(Twitter.class);
-    }
-
-    private <T> T getWidgetByType(Class<T> clazz) {
+    public  <T> T getWidgetByType(Class<T> clazz) {
         if (widgets == null || widgets.length == 0) {
             return null;
         }

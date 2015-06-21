@@ -25,9 +25,9 @@ public class ResetPasswordControllerTest {
     @Ignore("Can't make it work ")
     public void testResetPasswordMail() throws Exception {
         ResetPasswordController controller = new ResetPasswordController("http://localhost", 8080, new TokensPool(), mailSender);
-        stub(mailSender.produceSendMailTask("", "", "")).toReturn(runnable);
+        stub(mailSender.produce("", "", "")).toReturn(runnable);
         controller.sendResetPasswordEmail("test@gmail.com", "token");
-        verify(mailSender, times(1)).produceSendMailTask("", "", "").run();
+        verify(mailSender, times(1)).produce("", "", "").run();
 
     }
 

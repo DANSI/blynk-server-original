@@ -92,7 +92,7 @@ public class HardProtocolCommandsTest extends IntegrationBase {
     public void testInvalidTweetBody() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 1", "tweet").check(OK).check(produce(1, TWEET_BODY_INVALID_EXCEPTION));
+        makeCommands("login dmitriy@mail.ua 1", "tweet").check(OK).check(produce(1, NOTIFICATION_BODY_INVALID_EXCEPTION));
     }
 
     /**
