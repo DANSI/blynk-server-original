@@ -11,4 +11,9 @@ public class LCDDisplay extends Widget {
 
     public int frequency;
 
+    public boolean isAdvancedMode;
+
+    public String textFormat;
+
+    public boolean isTextLight;
 }
