@@ -83,6 +83,7 @@
     <properties>
         <netty.version>4.0.28.Final</netty.version>
         <log4j2.version>2.2</log4j2.version>
+        <maven.assembly.plugin.version>2.5.5</maven.assembly.plugin.version>
     </properties>
 
     <dependencies>
