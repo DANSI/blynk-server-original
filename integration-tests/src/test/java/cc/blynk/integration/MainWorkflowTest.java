@@ -230,7 +230,29 @@ public class MainWorkflowTest extends IntegrationBase {
         hardClient.send("login " + clientPair.token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, OK)));
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
+        verify(hardClient.responseMock, times(2)).channelRead(any(), any());
     }
+
+    @Test
+    public void testSendEmptyPinModeCommandWhenHardwareGoesOnline() throws Exception {
+        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
+        channelFuture.await();
+
+        if (!channelFuture.isDone()) {
+            throw new RuntimeException("Error closing hard cahnnel.");
+        }
+
+        String body = "pm";
+        clientPair.appClient.send("hardware " + body);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, DEVICE_NOT_IN_NETWORK)));
+
+        TestHardClient hardClient = new TestHardClient(host, hardPort);
+        hardClient.start(null);
+        hardClient.send("login " + clientPair.token);
+        verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, OK)));
+        verify(hardClient.responseMock, times(1)).channelRead(any(), any());
+    }
+
 
     @Test
     public void testConnectAppAndHardwareAndSendCommands() throws Exception {
