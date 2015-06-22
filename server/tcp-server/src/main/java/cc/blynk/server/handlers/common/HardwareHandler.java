@@ -56,8 +56,11 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
             }
 
             if (pinModeMessage(message.body)) {
-                log.trace("No device and Pin Mode message catch. Remembering.");
-                user.getProfile().setPinModeMessage(message);
+                log.trace("Pin Mode message catch. Remembering.");
+                //check PM command not empty
+                if (message.body.length() > 3) {
+                    user.getProfile().setPinModeMessage(message);
+                }
             }
 
             if (session.hardwareChannels.size() == 0) {
