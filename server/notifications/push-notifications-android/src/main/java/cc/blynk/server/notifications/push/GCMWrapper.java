@@ -1,9 +1,12 @@
 package cc.blynk.server.notifications.push;
 
 import cc.blynk.common.utils.ServerProperties;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jivesoftware.smack.SmackException;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static cc.blynk.server.notifications.push.GCMSmackCcsClient.createRequest;
@@ -32,18 +35,19 @@ public class GCMWrapper {
         }
     }
 
-    public Runnable produce(final String toRegId, final Map<String, String> payload) {
-        return () -> {
-            try {
-                String messageId = GCMSmackCcsClient.generateUniqueMesageId();
-                long timeToLive = 86400;
+    public void send(String toRegId, String payload)
+            throws SmackException.NotConnectedException, JsonProcessingException {
+        String messageId = GCMSmackCcsClient.generateUniqueMesageId();
+        long timeToLive = 86400;
 
-                String message = createRequest(toRegId, messageId, payload, timeToLive, true);
-                ccsClient.sendDownstreamMessage(message);
-            } catch (Exception e) {
-                log.error("Error sending push notification.", e);
+        Map<String, String> data = new HashMap<String, String>() {
+            {
+                put("message", payload);
             }
         };
+
+        String message = createRequest(toRegId, messageId, data, timeToLive, true);
+        ccsClient.sendDownstreamMessage(message);
     }
 
 }

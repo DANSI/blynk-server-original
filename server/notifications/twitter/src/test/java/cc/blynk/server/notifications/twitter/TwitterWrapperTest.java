@@ -12,10 +12,10 @@ public class TwitterWrapperTest {
 
     @Test
     @Ignore
-    public void testTweet() {
+    public void testTweet() throws Exception {
         String token = "PUT_YOUR_TOKEN_HERE";
         String tokenSecret = "PUT_YOUR_TOKEN_SECRET_HERE";
-        new TwitterWrapper().produce(token, tokenSecret, "Hello444").run();
+        new TwitterWrapper().send(token, tokenSecret, "Hello444");
     }
 
 }

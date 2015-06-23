@@ -3,9 +3,6 @@ package cc.blynk.server.notifications.push;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -16,9 +13,7 @@ public class GCMWrapperTest {
     @Test
     @Ignore
     public void testSendMessage() throws Exception {
-        Map<String, String> payload = new HashMap<>();
-        payload.put("Hello", "World");
-        new GCMWrapper().produce("534534534534", payload).run();
+        new GCMWrapper().send("534534534534", "Hello World");
         Thread.sleep(1000);
     }
 

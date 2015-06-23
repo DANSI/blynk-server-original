@@ -14,14 +14,14 @@ import java.util.Properties;
  * Created by Dmitriy Dumanskiy.
  * Created on 06.04.15.
  */
-public class MailSender {
+public class MailWrapper {
 
-    private static final Logger log = LogManager.getLogger(MailSender.class);
+    private static final Logger log = LogManager.getLogger(MailWrapper.class);
 
     private final Session session;
     private final InternetAddress from;
 
-    public MailSender(Properties mailProperties) {
+    public MailWrapper(Properties mailProperties) {
         String username = mailProperties.getProperty("mail.smtp.username");
         String password = mailProperties.getProperty("mail.smtp.password");
 
@@ -36,31 +36,23 @@ public class MailSender {
         try {
             this.from = new InternetAddress(username);
         } catch (AddressException e) {
-            throw new RuntimeException("Error initializing MailSender.");
+            throw new RuntimeException("Error initializing MailWrapper.");
         }
     }
 
-    public Runnable produce(String to, String subj, String body) {
-        return () -> sendMail(to, subj, body, null);
-    }
-
-    public void sendMail(String to, String subj, String body, String contentType) {
-        try {
-            Message message = new MimeMessage(session);
-            message.setFrom(from);
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-            message.setSubject(subj);
-            if (contentType == null) {
-                message.setText(body);
-            } else {
-                message.setContent(body, contentType);
-            }
-
-            Transport.send(message);
-            log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
-        } catch (MessagingException e) {
-            log.error("Error sending mail to {}. Reason : {}", to, e.getMessage());
+    public void send(String to, String subj, String body, String contentType) throws MessagingException {
+        Message message = new MimeMessage(session);
+        message.setFrom(from);
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+        message.setSubject(subj);
+        if (contentType == null) {
+            message.setText(body);
+        } else {
+            message.setContent(body, contentType);
         }
+
+        Transport.send(message);
+        log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
     }
 
 }

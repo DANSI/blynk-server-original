@@ -8,7 +8,7 @@ import cc.blynk.server.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Twitter;
-import cc.blynk.server.notifications.twitter.exceptions.NotificationNotAuthorizedException;
+import cc.blynk.server.notifications.twitter.exceptions.TwitterNotAuthorizedException;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -46,13 +46,13 @@ public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> 
         if (twitterWidget == null ||
                 twitterWidget.token == null || twitterWidget.token.equals("") ||
                 twitterWidget.secret == null || twitterWidget.secret.equals("")) {
-            throw new NotificationNotAuthorizedException("User has no access token provided.", message.id);
+            throw new TwitterNotAuthorizedException("User has no access token provided.", message.id);
         }
 
         checkIfNotificationQuotaLimitIsNotReached(user, message);
 
         log.trace("Sending Twit for user {}, with message : '{}'.", user.getName(), message.body);
-        notificationsProcessor.twit(twitterWidget.token, twitterWidget.secret, message.body, message.id);
+        notificationsProcessor.twit(ctx.channel(), twitterWidget.token, twitterWidget.secret, message.body, message.id);
 
         ctx.writeAndFlush(produce(message.id, OK));
     }
