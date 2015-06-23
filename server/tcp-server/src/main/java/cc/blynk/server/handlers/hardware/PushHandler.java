@@ -13,9 +13,6 @@ import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.common.enums.Response.OK;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -23,13 +20,13 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 @ChannelHandler.Sharable
-public class NotificationHandler extends BaseSimpleChannelInboundHandler<PushMessage> {
+public class PushHandler extends BaseSimpleChannelInboundHandler<PushMessage> {
 
     private static final int MAX_PUSH_BODY_SIZE = 255;
     private final NotificationsProcessor notificationsProcessor;
 
-    public NotificationHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                               NotificationsProcessor notificationsProcessor) {
+    public PushHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
+                       NotificationsProcessor notificationsProcessor) {
         super(props, userRegistry, sessionsHolder);
         this.notificationsProcessor = notificationsProcessor;
     }
@@ -52,7 +49,6 @@ public class NotificationHandler extends BaseSimpleChannelInboundHandler<PushMes
         log.trace("Sending Twit for user {}, with message : '{}'.", user.getName(), message.body);
         notificationsProcessor.push(ctx.channel(), widget.token, message.body, message.id);
 
-        ctx.writeAndFlush(produce(message.id, OK));
     }
 
 

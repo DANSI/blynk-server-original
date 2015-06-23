@@ -24,7 +24,7 @@ public final class Response {
     public static final int DEVICE_WENT_OFFLINE = 10;
     public static final int USER_ALREADY_LOGGED_IN = 11;
 
-    public static final int NOTIFICATION_BODY_INVALID_EXCEPTION = 13;
+    public static final int NOTIFICATION_INVALID_BODY_EXCEPTION = 13;
     public static final int NOTIFICATION_NOT_AUTHORIZED_EXCEPTION = 14;
     public static final int NOTIFICATION_EXCEPTION = 15;
 

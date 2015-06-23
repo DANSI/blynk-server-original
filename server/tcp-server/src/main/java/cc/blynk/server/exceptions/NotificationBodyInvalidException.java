@@ -11,7 +11,7 @@ import cc.blynk.common.exceptions.BaseServerException;
 public class NotificationBodyInvalidException extends BaseServerException {
 
     public NotificationBodyInvalidException(int msgId) {
-        super("Notification message is empty or larger than limit.", msgId, Response.NOTIFICATION_BODY_INVALID_EXCEPTION);
+        super("Notification message is empty or larger than limit.", msgId, Response.NOTIFICATION_INVALID_BODY_EXCEPTION);
     }
 
 }

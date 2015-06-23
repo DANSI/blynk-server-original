@@ -12,6 +12,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static cc.blynk.common.enums.Response.OK;
+import static cc.blynk.common.model.messages.MessageFactory.produce;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -54,6 +57,9 @@ public class NotificationsProcessor {
         executor.execute(() -> {
             try {
                 twitterWrapper.send(token, secret, body);
+                channel.eventLoop().execute(() -> {
+                    channel.writeAndFlush(produce(msgId, OK));
+                });
             } catch (Exception e) {
                 channel.eventLoop().execute(() -> {
                     throw new NotificationException("Error sending tweet. " + e.getMessage(), msgId);
@@ -66,6 +72,9 @@ public class NotificationsProcessor {
         executor.execute(() -> {
             try {
                 gcmWrapper.send(token, body);
+                channel.eventLoop().execute(() -> {
+                    channel.writeAndFlush(produce(msgId, OK));
+                });
             } catch (Exception e) {
                 channel.eventLoop().execute(() -> {
                     throw new NotificationException("Error sending push. " + e.getMessage(), msgId);

@@ -9,7 +9,7 @@ import cc.blynk.server.handlers.common.HardwareHandler;
 import cc.blynk.server.handlers.common.PingHandler;
 import cc.blynk.server.handlers.hardware.HardwareLoginHandler;
 import cc.blynk.server.handlers.hardware.MailHandler;
-import cc.blynk.server.handlers.hardware.NotificationHandler;
+import cc.blynk.server.handlers.hardware.PushHandler;
 import cc.blynk.server.handlers.hardware.TweetHandler;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
@@ -35,7 +35,7 @@ public class HardwareHandlersHolder {
         //notification handlers
         TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
         MailHandler emailHandler = new MailHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
-        NotificationHandler notificationHandler = new NotificationHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
+        PushHandler pushHandler = new PushHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
 
         this.baseHandlers = new BaseSimpleChannelInboundHandler[] {
                 hardwareHandler,
@@ -43,7 +43,7 @@ public class HardwareHandlersHolder {
                 pingHandler,
                 tweetHandler,
                 emailHandler,
-                notificationHandler
+                pushHandler
         };
 
         this.allHandlers = new ChannelHandler[] {
@@ -53,7 +53,7 @@ public class HardwareHandlersHolder {
                 pingHandler,
                 tweetHandler,
                 emailHandler,
-                notificationHandler
+                pushHandler
         };
     }
 

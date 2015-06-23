@@ -170,18 +170,43 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testTweetNotWorks() throws Exception {
+        reset(notificationsProcessor);
+
+        clientPair.hardwareClient.send("tweet");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, NOTIFICATION_INVALID_BODY_EXCEPTION)));
+
+        clientPair.hardwareClient.send("tweet ");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, NOTIFICATION_INVALID_BODY_EXCEPTION)));
+
+        StringBuilder a = new StringBuilder();
+        for (int i = 0; i < 141; i++) {
+            a.append("a");
+        }
+
+        clientPair.hardwareClient.send("tweet " + a);
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, NOTIFICATION_INVALID_BODY_EXCEPTION)));
+
+        clientPair.appClient.send("deactivate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+
+        clientPair.hardwareClient.send("tweet yo");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, NOTIFICATION_NOT_AUTHORIZED_EXCEPTION)));
+    }
+
+    @Test
     public void testTweetWorks() throws Exception {
+        reset(notificationsProcessor);
         String userProfileWithTwit = readTestUserProfile();
         clientPair.appClient.send("saveProfile " + userProfileWithTwit);
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
 
         clientPair.hardwareClient.send("tweet yo");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(notificationsProcessor, timeout(500)).twit(any(), eq("token"), eq("secret"), eq("yo"), eq(1));
 
         clientPair.hardwareClient.send("tweet yo");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, QUOTA_LIMIT_EXCEPTION)));
-
     }
 
     @Test

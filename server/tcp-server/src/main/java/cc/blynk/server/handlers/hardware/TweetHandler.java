@@ -13,9 +13,6 @@ import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.common.enums.Response.OK;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -53,8 +50,6 @@ public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> 
 
         log.trace("Sending Twit for user {}, with message : '{}'.", user.getName(), message.body);
         notificationsProcessor.twit(ctx.channel(), twitterWidget.token, twitterWidget.secret, message.body, message.id);
-
-        ctx.writeAndFlush(produce(message.id, OK));
     }
 
 
