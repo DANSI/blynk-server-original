@@ -46,7 +46,7 @@ public class PushHandler extends BaseSimpleChannelInboundHandler<PushMessage> {
 
         checkIfNotificationQuotaLimitIsNotReached(user, message);
 
-        log.trace("Sending Twit for user {}, with message : '{}'.", user.getName(), message.body);
+        log.trace("Sending push for user {}, with message : '{}'.", user.getName(), message.body);
         notificationsProcessor.push(ctx.channel(), widget.token, message.body, message.id);
 
     }
