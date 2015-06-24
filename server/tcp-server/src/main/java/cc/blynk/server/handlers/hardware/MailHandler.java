@@ -79,7 +79,7 @@ public class MailHandler extends BaseSimpleChannelInboundHandler<MailMessage> {
         log.trace("Sending Mail for user {}, with message : '{}'.", user.getName(), message.body);
         notificationsProcessor.mail(ctx.channel(), to, subj, body, message.id);
 
-		checkIfNotificationQuotaLimitIsNotReached(user, message);
+		user.lastMailSentTs = checkIfNotificationQuotaLimitIsNotReached(user.lastMailSentTs, message.id);
 		ctx.writeAndFlush(produce(message.id, OK));
     }
 

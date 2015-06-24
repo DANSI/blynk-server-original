@@ -18,29 +18,23 @@ import java.util.Map;
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
+    // we set it with time in the past to make first email/tweet/push possible.
+    public transient volatile long lastPushSentTs;
+    public transient volatile long lastTweetSentTs;
+    public transient volatile long lastMailSentTs;
 	private String name;
-
     private String pass;
-
     private String id;
-
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
     private long lastModifiedTs;
-
     private Profile profile;
-
     private Map<Integer, String> dashTokens = new HashMap<>();
-
     //maybe it is bette rto make it transient
     private Stats stats;
-
     //stats related logic
     //todo move to session?
     private transient InstanceLoadMeter quotaMeter;
     private transient volatile long lastQuotaExceededTime;
-    // we set it with time in the past to make first email/tweet/push possible.
-    private transient volatile long lastNotificationSentTs;
 
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
@@ -187,11 +181,4 @@ public class User implements Serializable {
         return JsonParser.toJson(this);
     }
 
-    public long getLasNotificationSentTs() {
-        return lastNotificationSentTs;
-    }
-
-    public void setLastNotificationSentTs(long lastNotificationSentTs) {
-        this.lastNotificationSentTs = lastNotificationSentTs;
-    }
 }

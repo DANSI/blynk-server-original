@@ -2,7 +2,6 @@ package cc.blynk.server.handlers;
 
 import cc.blynk.common.exceptions.BaseServerException;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
-import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
@@ -114,12 +113,12 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
         }
     }
 
-	protected void checkIfNotificationQuotaLimitIsNotReached(User user, Message message) {
-		final long currentTs = System.currentTimeMillis();
-		final long timePassedSinceLastMessage = (currentTs - user.getLasNotificationSentTs());
-		if(timePassedSinceLastMessage < defaultNotificationQuotaLimit) {
-			throw new QuotaLimitException(String.format("Only 1 notification per %s seconds is allowed", defaultNotificationQuotaLimit), message.id);
+	protected long checkIfNotificationQuotaLimitIsNotReached(long lastAccessTime, int msgId) {
+        long currentTs = System.currentTimeMillis();
+        long timePassedSinceLastMessage = (currentTs - lastAccessTime);
+		if (timePassedSinceLastMessage < defaultNotificationQuotaLimit) {
+			throw new QuotaLimitException(String.format("Only 1 notification per %s seconds is allowed", defaultNotificationQuotaLimit), msgId);
 		}
-		user.setLastNotificationSentTs(currentTs);
+		return currentTs;
     }
 }

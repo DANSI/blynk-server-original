@@ -44,11 +44,10 @@ public class PushHandler extends BaseSimpleChannelInboundHandler<PushMessage> {
             throw new TwitterNotAuthorizedException("User has no access token provided.", message.id);
         }
 
-        checkIfNotificationQuotaLimitIsNotReached(user, message);
+        user.lastPushSentTs = checkIfNotificationQuotaLimitIsNotReached(user.lastPushSentTs, message.id);
 
         log.trace("Sending push for user {}, with message : '{}'.", user.getName(), message.body);
         notificationsProcessor.push(ctx.channel(), widget.token, message.body, message.id);
-
     }
 
 
