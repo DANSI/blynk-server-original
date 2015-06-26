@@ -100,11 +100,6 @@
             <artifactId>mail-notifications</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>cc.blynk.server.notifications</groupId>
-            <artifactId>push-notifications-android</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>commons-io</groupId>
