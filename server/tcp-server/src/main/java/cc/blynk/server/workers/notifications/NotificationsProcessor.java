@@ -3,8 +3,8 @@ package cc.blynk.server.workers.notifications;
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.exceptions.NotificationException;
+import cc.blynk.server.notifications.GCMWrapper;
 import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import io.netty.channel.Channel;
 
@@ -45,6 +45,9 @@ public class NotificationsProcessor {
         executor.execute(() -> {
             try {
                 mailWrapper.send(to, subj, body, null);
+                channel.eventLoop().execute(() -> {
+                    channel.writeAndFlush(produce(msgId, OK));
+                });
             } catch (Exception e) {
                 channel.eventLoop().execute(() -> {
                     throw new NotificationException("Error sending email. " + e.getMessage(), msgId);

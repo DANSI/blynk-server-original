@@ -3,6 +3,7 @@ package cc.blynk.server.utils;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.notifications.GCMMessage;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -31,6 +32,7 @@ public final class JsonParser {
 
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
+    private static final ObjectWriter gcmWriter = mapper.writerFor(GCMMessage.class);
 
     private static ObjectMapper init() {
         return new ObjectMapper()
@@ -43,6 +45,10 @@ public final class JsonParser {
 
     public static String toJson(User user) {
         return toJson(userWriter, user);
+    }
+
+    public static String toJson(GCMMessage message) {
+        return toJson(gcmWriter, message);
     }
 
     public static String toJson(Profile profile) {
