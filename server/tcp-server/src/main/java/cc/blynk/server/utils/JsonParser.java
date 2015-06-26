@@ -4,6 +4,7 @@ import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.notifications.GCMMessage;
+import cc.blynk.server.notifications.GCMResponseMessage;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -29,6 +30,7 @@ public final class JsonParser {
     private static final Logger log = LogManager.getLogger(JsonParser.class);
     private static final ObjectReader userReader = mapper.reader(User.class);
     private static final ObjectReader profileReader = mapper.reader(Profile.class);
+    private static final ObjectReader gcmResponseReader = mapper.reader(GCMResponseMessage.class);
 
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
@@ -68,6 +70,10 @@ public final class JsonParser {
         User user = userReader.readValue(reader);
         user.initQuota();
         return user;
+    }
+
+    public static GCMResponseMessage parseGCMResponse(String reader) throws IOException {
+        return gcmResponseReader.readValue(reader);
     }
 
     public static Profile parseProfile(String reader, int id) {

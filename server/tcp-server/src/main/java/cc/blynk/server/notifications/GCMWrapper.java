@@ -1,6 +1,7 @@
 package cc.blynk.server.notifications;
 
 import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.server.utils.JsonParser;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -38,11 +39,20 @@ public class GCMWrapper {
         httpPost.setEntity(new StringEntity(new GCMMessage(to, body).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(httpPost)) {
+            HttpEntity entity = response.getEntity();
+            String errorMsg = EntityUtils.toString(entity);
             if (response.getStatusLine().getStatusCode() != 200) {
-                HttpEntity entity = response.getEntity();
-                String errorMsg = EntityUtils.toString(entity);
                 EntityUtils.consume(entity);
                 throw new Exception(errorMsg);
+            } else {
+                GCMResponseMessage gcmResponseMessage = JsonParser.parseGCMResponse(errorMsg);
+                if (gcmResponseMessage.failure == 1) {
+                    if (gcmResponseMessage.results != null && gcmResponseMessage.results.length > 0) {
+                        throw new Exception("Error sending push. Problem : " + gcmResponseMessage.results[0].error);
+                    } else {
+                        throw new Exception("Error sending push. Token : " + to);
+                    }
+                }
             }
         }
     }
