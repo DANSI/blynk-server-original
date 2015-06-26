@@ -29,7 +29,7 @@ public class NotificationsProcessorTest {
         when(channel.eventLoop()).thenReturn(eventLoop);
         NotificationsProcessor processor = new NotificationsProcessor(5);
         processor.twit(channel, "token", "secret", "body", 1);
-        verify(channel, timeout(1000)).eventLoop();
+        verify(channel, timeout(2000)).eventLoop();
         verify(eventLoop).execute(any());
 
     }

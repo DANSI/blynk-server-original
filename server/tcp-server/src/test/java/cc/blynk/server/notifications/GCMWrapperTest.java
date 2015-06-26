@@ -1,5 +1,6 @@
 package cc.blynk.server.notifications;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -10,9 +11,10 @@ import org.junit.Test;
 public class GCMWrapperTest {
 
     @Test
+    @Ignore
     public void test() throws Exception {
         GCMWrapper gcmWrapper = new GCMWrapper();
-        gcmWrapper.send("d6eWuYmrc6A:APA91bGCH5161vtWlD-BhZ2XrVB58GOe4s4IyMg6eEMSiMi7hdP9PMAXD0xS2JVW-d3EMQvL6gFClWpcvZXTxVjMFMCD293rg4iAPSIfGMNlaL0_uHq9IxpAoHmhRjYTGVkK7tjo4YTO", "yo");
+        gcmWrapper.send("YOUR_TOKEN", "yo");
     }
 
 }
