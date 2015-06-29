@@ -19,7 +19,8 @@ public class Profile {
 
     private Map<Integer, Set<Byte>> graphPins;
 
-    private transient Integer activeDashId;
+    private Integer activeDashId;
+
     /**
      * Specific property used for improving user experience on mobile application.
      * In case user activated dashboard before hardware connected to server, user have to
