@@ -9,7 +9,6 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
-import cc.blynk.server.exceptions.QuotaLimitException;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Mail;
@@ -22,9 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.concurrent.TimeUnit;
-
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 /**
  * The Blynk Project.
@@ -91,92 +88,5 @@ public class MailHandlerTest extends TestBase {
 
         mailHandler.messageReceived(ctx, user, mailMessage);
     }
-
-    @Test
-	public void sendEmptyBodyMailYoUseDefaults() {
-		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "");
-
-        when(user.getProfile()).thenReturn(profile);
-        Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(mail);
-
-        when(ctx.channel()).thenReturn(channel);
-
-        mailHandler.messageReceived(ctx, user, mailMessage);
-        verify(notificationsProcessor).mail(any(), eq("me@example.com"), eq("Yo"), eq("MyBody"), eq(1));
-        verify(ctx).writeAndFlush(any());
-    }
-
-    @Test
-	public void sendEmptyBodyMailYoUseDefaultsExceptBody() {
-		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body".replaceAll(" ", "\0"));
-
-        when(user.getProfile()).thenReturn(profile);
-        Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(mail);
-
-        when(ctx.channel()).thenReturn(channel);
-
-        mailHandler.messageReceived(ctx, user, mailMessage);
-        verify(notificationsProcessor).mail(any(), eq("me@example.com"), eq("Yo"), eq("body"), eq(1));
-        verify(ctx).writeAndFlush(any());
-    }
-
-    @Test
-	public void sendEmptyBodyMailYoUseDefaultsExceptBodyAndSubj() {
-		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "subj body".replaceAll(" ", "\0"));
-
-        when(user.getProfile()).thenReturn(profile);
-        Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(mail);
-
-        when(ctx.channel()).thenReturn(channel);
-
-        mailHandler.messageReceived(ctx, user, mailMessage);
-        verify(notificationsProcessor).mail(any(), eq("me@example.com"), eq("subj"), eq("body"), eq(1));
-        verify(ctx).writeAndFlush(any());
-    }
-
-    @Test
-	public void sendEmptyBodyMailYoNoDefaults() {
-		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "pupkin@example.com subj body".replaceAll(" ", "\0"));
-
-        when(user.getProfile()).thenReturn(profile);
-        Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(mail);
-
-        when(ctx.channel()).thenReturn(channel);
-
-        mailHandler.messageReceived(ctx, user, mailMessage);
-        verify(notificationsProcessor).mail(any(), eq("pupkin@example.com"), eq("subj"), eq("body"), eq(1));
-        verify(ctx).writeAndFlush(any());
-    }
-
-	@Test(expected = QuotaLimitException.class)
-	public void testSendQuotaLimitationException() throws InterruptedException {
-		MailMessage mailMessage1 = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "pupkin@example.com subj body".replaceAll(" ", "\0"));
-		User user = spy(new User());
-		MailHandler mailHandler = spy(new MailHandler(props, userRegistry, sessionsHolder, notificationsProcessor));
-		when(user.getProfile()).thenReturn(profile);
-		Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-		when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(mail);
-		mailHandler.messageReceived(ctx, user, mailMessage1);
-		mailHandler.messageReceived(ctx, user, mailMessage1);
-	}
-
-	@Test()
-	public void testSendQuotaLimitationIsWorking() throws InterruptedException {
-		MailMessage mailMessage1 = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "pupkin@example.com subj body".replaceAll(" ", "\0"));
-		props.setProperty("notifications.frequency.user.quota.limit", "1");
-		final long defaultQuotaTime = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
-		User user = spy(new User());
-		MailHandler mailHandler = spy(new MailHandler(props, userRegistry, sessionsHolder, notificationsProcessor));
-		when(user.getProfile()).thenReturn(profile);
-		Mail mail = new Mail("me@example.com", "Yo", "MyBody");
-		when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(mail);
-		mailHandler.messageReceived(ctx, user, mailMessage1);
-		TimeUnit.MILLISECONDS.sleep(defaultQuotaTime);
-		mailHandler.messageReceived(ctx, user, mailMessage1);
-	}
 
 }

@@ -9,18 +9,4 @@ import cc.blynk.server.model.widgets.Widget;
  */
 public class Mail extends Widget {
 
-    public String to;
-
-    public String subj;
-
-    public String body;
-
-    public Mail() {
-    }
-
-    public Mail(String to, String subj, String body) {
-        this.to = to;
-        this.subj = subj;
-        this.body = body;
-    }
 }

@@ -13,9 +13,6 @@ import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.common.enums.Response.OK;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -41,46 +38,24 @@ public class MailHandler extends BaseSimpleChannelInboundHandler<MailMessage> {
             throw new NotAllowedException("User has no mail widget or active dashboard.", message.id);
         }
 
-        if (message.body.equals("") && (mail.to == null || mail.to.equals(""))) {
+        if (message.body.equals("")) {
             throw new IllegalCommandException("Invalid mail notification body.", message.id);
         }
 
         String[] bodyParts = message.body.split("\0");
 
-        if (bodyParts.length != 3 && (mail.to == null || mail.to.equals(""))) {
+        if (bodyParts.length != 3) {
             throw new IllegalCommandException("Invalid mail notification body.", message.id);
         }
 
-        String to;
-        String subj;
-        String body;
+        String to = bodyParts[0];
+        String subj = bodyParts[1];
+        String body = bodyParts[2];
 
-        switch (bodyParts.length) {
-            case 1 :
-                to = mail.to;
-                subj = mail.subj;
-                body = bodyParts[0].equals("") ? mail.body : bodyParts[0];
-                break;
-            case 2 :
-                to = mail.to;
-                subj = bodyParts[0];
-                body = bodyParts[1];
-                break;
-            case 3 :
-                to = bodyParts[0];
-                subj = bodyParts[1];
-                body = bodyParts[2];
-                break;
-            default :
-                throw new IllegalCommandException("Invalid mail notification body.", message.id);
-
-        }
+        user.lastMailSentTs = checkIfNotificationQuotaLimitIsNotReached(user.lastMailSentTs, message.id);
 
         log.trace("Sending Mail for user {}, with message : '{}'.", user.getName(), message.body);
         notificationsProcessor.mail(ctx.channel(), to, subj, body, message.id);
-
-		user.lastMailSentTs = checkIfNotificationQuotaLimitIsNotReached(user.lastMailSentTs, message.id);
-		ctx.writeAndFlush(produce(message.id, OK));
     }
 
 }
