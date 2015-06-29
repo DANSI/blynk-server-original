@@ -1,12 +1,19 @@
 package cc.blynk.server.workers.notifications;
 
+import cc.blynk.common.enums.Command;
+import cc.blynk.common.enums.Response;
+import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.exceptions.NotificationException;
+import cc.blynk.server.model.auth.ChannelState;
+import cc.blynk.server.model.auth.User;
 import cc.blynk.server.notifications.GCMWrapper;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import io.netty.channel.Channel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -24,11 +31,11 @@ public class NotificationsProcessor {
 
     //todo move to properties
     private static final int NOTIFICATIONS_PROCESSORS = 5;
-
     private final TwitterWrapper twitterWrapper;
     private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
     private final ThreadPoolExecutor executor;
+    private Logger log = LogManager.getLogger(NotificationsProcessor.class);
 
     public NotificationsProcessor(int maxQueueSize) {
         this.twitterWrapper = new TwitterWrapper();
@@ -49,9 +56,7 @@ public class NotificationsProcessor {
                     channel.writeAndFlush(produce(msgId, OK));
                 });
             } catch (Exception e) {
-                channel.eventLoop().execute(() -> {
-                    throw new NotificationException("Error sending email. " + e.getMessage(), msgId);
-                });
+                log(channel, e.getMessage(), msgId);
             }
         });
     }
@@ -64,9 +69,7 @@ public class NotificationsProcessor {
                     channel.writeAndFlush(produce(msgId, OK));
                 });
             } catch (Exception e) {
-                channel.eventLoop().execute(() -> {
-                    throw new NotificationException("Error sending tweet. " + e.getMessage(), msgId);
-                });
+                log(channel, e.getMessage(), msgId);
             }
         });
     }
@@ -79,15 +82,25 @@ public class NotificationsProcessor {
                     channel.writeAndFlush(produce(msgId, OK));
                 });
             } catch (Exception e) {
-                channel.eventLoop().execute(() -> {
-                    throw new NotificationException("Error sending push. " + e.getMessage(), msgId);
-                });
+                log(channel, e.getMessage(), msgId);
             }
         });
     }
 
     public void stop() {
         executor.shutdown();
+    }
+
+    private void log(Channel channel, String errorMessage, int msgId) {
+        User user = channel.attr(ChannelState.USER).get();
+        if (user != null) {
+            ThreadContext.put("user", user.getName());
+            log.error("Error sending notification. {}", errorMessage);
+            ThreadContext.clearMap();
+        }
+        channel.eventLoop().execute(() -> {
+            channel.writeAndFlush(new ResponseMessage(msgId, Command.RESPONSE, Response.NOTIFICATION_EXCEPTION));
+        });
     }
 
 }
