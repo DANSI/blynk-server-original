@@ -9,4 +9,8 @@ import cc.blynk.server.model.widgets.Widget;
  */
 public class Terminal extends Widget {
 
+    public boolean autoScrollOn;
+
+    public boolean terminalInputOn;
+
 }
