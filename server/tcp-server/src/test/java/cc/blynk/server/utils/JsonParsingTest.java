@@ -32,7 +32,7 @@ public class JsonParsingTest {
         assertEquals(profile.getDashBoards().length, 1);
 
         //this property shoudn't be parsed
-        assertNull(profile.getActiveDashId());
+        assertNotNull(profile.getActiveDashId());
 
         DashBoard dashBoard = profile.getDashBoards()[0];
 
