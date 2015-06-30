@@ -30,10 +30,19 @@ public class GCMWrapper {
         ServerProperties props = new ServerProperties(filePropertiesName);
         this.API_KEY = "key=" + props.getProperty("gcm.api.key");
         this.httpclient = HttpClients.createDefault();
-        this.gcmURI = URI.create(props.getProperty("gcm.server"));
+        String server = props.getProperty("gcm.server");
+        if (server == null) {
+            this.gcmURI = null;
+        } else {
+            this.gcmURI = URI.create(server);
+        }
     }
 
     public void send(String to, String body) throws Exception {
+        if (gcmURI == null) {
+            throw new Exception("Error sending push. Google cloud messaging properties not provided.");
+        }
+
         HttpPost httpPost = new HttpPost(gcmURI);
         httpPost.setHeader("Authorization", API_KEY);
         httpPost.setEntity(new StringEntity(new GCMMessage(to, body).toString(), ContentType.APPLICATION_JSON));
