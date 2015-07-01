@@ -42,6 +42,27 @@ By default, mobile application uses 8443 port and is based on SSL/TLS sockets. D
 WARNING : by default Blynk server uses 'tmp' system dir for saving user profiles. Thus it is not guaranteed that profiles will be available after restart, so you have to specify dir to avoid this :
 
         java -jar server-{PUT_LATEST_VERSION_HERE}.jar -dataFolder /full_path_to_folder_for_user_profiles
+        
+## App and sketch changes
+
++ Specify custom server path in your application
+
+![Custom server icon](https://github.com/blynkkk/blynk-server/blob/master/docs/login.png)
+![Server properties menu](https://github.com/blynkkk/blynk-server/blob/master/docs/custom.png)
+
++ Change you sketch
+
+
+        Blynk.begin(auth, "you_host");
+        
+or
+        
+        Blynk.begin(auth, IPAddress(xxx,xxx,xxx,xxx));
+        
+or in case of USB when running blynk-ser.sh
+
+        ./blynk-ser.sh -s server_address
+        
 
 ## Advanced local server setup
 If you need more flexibility, you can extend server with more options by creating server.properties file in same folder as server.jar. Example could be found [here](https://github.com/blynkkk/blynk-server/blob/master/server/tcp-server/src/main/resources/server.properties).
