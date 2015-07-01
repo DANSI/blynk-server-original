@@ -52,14 +52,13 @@ WARNING : by default Blynk server uses 'tmp' system dir for saving user profiles
 
 + Change you sketch
 
-
         Blynk.begin(auth, "you_host");
         
-or
++ or
         
         Blynk.begin(auth, IPAddress(xxx,xxx,xxx,xxx));
         
-or in case of USB when running blynk-ser.sh
++ or in case of USB when running blynk-ser.sh
 
         ./blynk-ser.sh -s server_address
         
