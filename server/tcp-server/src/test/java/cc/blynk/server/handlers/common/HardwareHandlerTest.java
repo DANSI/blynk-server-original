@@ -73,7 +73,7 @@ public class HardwareHandlerTest extends TestBase {
         when(channel.attr(ChannelState.IS_HARD_CHANNEL)).thenReturn(attr);
         when(attr.get()).thenReturn(false);
         when(user.getProfile()).thenReturn(profile);
-        when(profile.getActiveDashId()).thenReturn(null);
+        when(profile.activeDashId).thenReturn(null);
         SessionsHolder sessionsHolder = spy(new SessionsHolder());
         HardwareHandler hardwareHandler = spy(new HardwareHandler(props, userRegistry, sessionsHolder));
         hardwareHandler.messageReceived(ctx, user, message);
@@ -87,7 +87,7 @@ public class HardwareHandlerTest extends TestBase {
         Profile profile = spy(new Profile());
         when(attr.get()).thenReturn(false);
         when(user.getProfile()).thenReturn(profile);
-        when(profile.getActiveDashId()).thenReturn(1);
+        when(profile.activeDashId).thenReturn(1);
         SessionsHolder sessionsHolder = spy(new SessionsHolder());
         final Session session = new Session();
         sessionsHolder.userSession.put(user, session);
@@ -95,7 +95,7 @@ public class HardwareHandlerTest extends TestBase {
         try{
             hardwareHandler.messageReceived(ctx, user, message);
         }catch (DeviceNotInNetworkException e){
-            Assert.assertEquals(message, profile.getPinModeMessage());
+            Assert.assertEquals(message, profile.pinModeMessage);
         }
     }
 }

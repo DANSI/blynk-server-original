@@ -15,12 +15,7 @@ import java.util.*;
  */
 public class Profile {
 
-    private DashBoard[] dashBoards;
-
-    private Map<Integer, Set<Byte>> graphPins;
-
-    private Integer activeDashId;
-
+    public volatile Integer activeDashId;
     /**
      * Specific property used for improving user experience on mobile application.
      * In case user activated dashboard before hardware connected to server, user have to
@@ -29,8 +24,9 @@ public class Profile {
      * is remembered and when hardware goes online - server sends Pin Modes command to hardware
      * without requiring user to activate/deactivate dashboard again.
      */
-    private transient HardwareMessage pinModeMessage;
-
+    public volatile transient HardwareMessage pinModeMessage;
+    private DashBoard[] dashBoards;
+    private Map<Integer, Set<Byte>> graphPins;
 
     public void validateDashId(int dashBoardId, int msgId) {
         if (dashBoards != null) {
@@ -111,22 +107,6 @@ public class Profile {
 
     public void setGraphPins(Map<Integer, Set<Byte>> graphPins) {
         this.graphPins = graphPins;
-    }
-
-    public Integer getActiveDashId() {
-        return activeDashId;
-    }
-
-    public void setActiveDashId(Integer activeDashId) {
-        this.activeDashId = activeDashId;
-    }
-
-    public HardwareMessage getPinModeMessage() {
-        return pinModeMessage;
-    }
-
-    public void setPinModeMessage(HardwareMessage pinModeMessage) {
-        this.pinModeMessage = pinModeMessage;
     }
 
     @Override

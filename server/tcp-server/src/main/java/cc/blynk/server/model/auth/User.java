@@ -27,7 +27,7 @@ public class User implements Serializable {
     private String id;
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
     private long lastModifiedTs;
-    private Profile profile;
+    private volatile Profile profile;
     private Map<Integer, String> dashTokens = new HashMap<>();
     //maybe it is bette rto make it transient
     private Stats stats;
@@ -85,7 +85,7 @@ public class User implements Serializable {
 
     public void setProfile(Profile profile) {
         //do not accept activeDashId from user, it is calculated field.
-        profile.setActiveDashId(this.profile.getActiveDashId());
+        profile.activeDashId = this.profile.activeDashId;
         this.profile = profile;
         this.lastModifiedTs = System.currentTimeMillis();
     }

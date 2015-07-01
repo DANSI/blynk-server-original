@@ -43,7 +43,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
             //if message from hardware, check if it belongs to graph. so we need save it in that case
             String body = storage.store(user, ctx.channel().attr(ChannelState.DASH_ID).get(), message.body, message.id);
 
-            if (user.getProfile().getActiveDashId() == null) {
+            if (user.getProfile().activeDashId == null) {
                 throw new NoActiveDashboardException(message.id);
             }
 
@@ -51,7 +51,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
                 session.sendMessageToApp(message.updateMessageBody(body));
             }
         } else {
-            if (user.getProfile().getActiveDashId() == null) {
+            if (user.getProfile().activeDashId == null) {
                 throw new NoActiveDashboardException(message.id);
             }
 
@@ -59,7 +59,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
                 log.trace("Pin Mode message catch. Remembering.");
                 //check PM command not empty
                 if (message.body.length() > 3) {
-                    user.getProfile().setPinModeMessage(message);
+                    user.getProfile().pinModeMessage = message;
                 }
             }
 
@@ -67,7 +67,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
                 throw new DeviceNotInNetworkException(message.id);
             }
 
-            session.sendMessageToHardware(user.getProfile().getActiveDashId(), message);
+            session.sendMessageToHardware(user.getProfile().activeDashId, message);
         }
 
     }
