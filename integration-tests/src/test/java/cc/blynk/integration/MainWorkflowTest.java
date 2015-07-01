@@ -269,7 +269,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         String body = "pm";
         clientPair.appClient.send("hardware " + body);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, DEVICE_NOT_IN_NETWORK)));
+        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, DEVICE_NOT_IN_NETWORK)));
 
         TestHardClient hardClient = new TestHardClient(host, hardPort);
         hardClient.start(null);
