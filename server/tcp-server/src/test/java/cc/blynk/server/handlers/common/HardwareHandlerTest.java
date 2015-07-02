@@ -6,7 +6,6 @@ import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
-import cc.blynk.server.exceptions.NoActiveDashboardException;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
@@ -66,7 +65,7 @@ public class HardwareHandlerTest extends TestBase {
     @Mock
     private Session session;
 
-    @Test(expected = NoActiveDashboardException.class)
+    @Test
     public void testActiveDashboardIdNull() {
         HardwareMessage message = new HardwareMessage(1, "test");
         when(ctx.channel()).thenReturn(channel);
