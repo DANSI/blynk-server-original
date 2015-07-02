@@ -9,4 +9,16 @@ import cc.blynk.server.model.widgets.Widget;
  */
 public class RGB extends Widget {
 
+    public boolean pwmMode;
+
+    public Byte pin2;
+
+    public boolean pwmMode2;
+
+    public Byte pin3;
+
+    public boolean pwmMode3;
+
+    public boolean splitMode;
+
 }
