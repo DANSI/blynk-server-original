@@ -52,7 +52,8 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
             }
         } else {
             if (user.getProfile().activeDashId == null) {
-                throw new NoActiveDashboardException(message.id);
+                //throw new NoActiveDashboardException(message.id);
+                return;
             }
 
             if (pinModeMessage(message.body)) {
