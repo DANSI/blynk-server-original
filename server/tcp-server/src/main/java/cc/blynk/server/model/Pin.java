@@ -17,4 +17,8 @@ public class Pin {
 
     public String value;
 
+    public int min;
+
+    public int max;
+
 }
