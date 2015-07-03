@@ -11,4 +11,6 @@ public class Notification extends Widget {
 
     public String token;
 
+    public boolean notifyWhenOffline;
+
 }
