@@ -10,8 +10,6 @@ import cc.blynk.server.model.widgets.Widget;
  */
 public class RGB extends Widget {
 
-    public boolean pwmMode;
-
     public boolean splitMode;
 
     public Pin[] pins;
