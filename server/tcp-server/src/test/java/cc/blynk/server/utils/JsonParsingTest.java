@@ -1,9 +1,12 @@
 package cc.blynk.server.utils;
 
 import cc.blynk.server.model.DashBoard;
+import cc.blynk.server.model.Pin;
 import cc.blynk.server.model.Profile;
+import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.controls.Button;
+import cc.blynk.server.model.widgets.controls.RGB;
 import cc.blynk.server.model.widgets.others.Timer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
@@ -63,6 +66,43 @@ public class JsonParsingTest {
 
         assertNotNull(userProfileString);
         assertTrue(userProfileString.contains("dashBoards"));
+    }
+
+    @Test
+    public void testJSONToRGB() {
+        InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json_RGB.txt");
+
+        Profile profile = JsonParser.parseProfile(is);
+
+        assertNotNull(profile);
+        assertNotNull(profile.getDashBoards());
+        assertEquals(1, profile.getDashBoards().length);
+        assertNotNull(profile.getDashBoards()[0]);
+        assertNotNull(profile.getDashBoards()[0].getWidgets());
+        assertEquals(1, profile.getDashBoards()[0].getWidgets().length);
+
+        RGB rgb = (RGB) profile.getDashBoards()[0].getWidgets()[0];
+
+        assertNotNull(rgb.pins);
+        assertEquals(2, rgb.pins.length);
+        Pin pin1 = rgb.pins[0];
+        Pin pin2 = rgb.pins[1];
+
+        assertNotNull(pin1);
+        assertNotNull(pin2);
+
+        assertEquals(1, pin1.pin.byteValue());
+        assertEquals(2, pin2.pin.byteValue());
+
+        assertEquals("1", pin1.value);
+        assertEquals("2", pin2.value);
+
+        assertEquals(PinType.DIGITAL, pin1.pinType);
+        assertEquals(PinType.DIGITAL, pin2.pinType);
+
+        assertFalse(pin1.pwmMode);
+        assertTrue(pin2.pwmMode);
+
     }
 
     @Test
