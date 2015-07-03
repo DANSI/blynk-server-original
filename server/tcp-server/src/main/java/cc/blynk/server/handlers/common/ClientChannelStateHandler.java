@@ -4,6 +4,8 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.model.widgets.others.Notification;
+import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -27,9 +29,16 @@ public class ClientChannelStateHandler extends ChannelInboundHandlerAdapter {
     private static final Logger log = LogManager.getLogger(ClientChannelStateHandler.class);
 
     private final SessionsHolder sessionsHolder;
+    private final NotificationsProcessor notificationsProcessor;
 
     public ClientChannelStateHandler(SessionsHolder sessionsHolder) {
         this.sessionsHolder = sessionsHolder;
+        this.notificationsProcessor = null;
+    }
+
+    public ClientChannelStateHandler(SessionsHolder sessionsHolder, NotificationsProcessor notificationsProcessor) {
+        this.sessionsHolder = sessionsHolder;
+        this.notificationsProcessor = notificationsProcessor;
     }
 
     @Override
@@ -41,12 +50,21 @@ public class ClientChannelStateHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (cause instanceof ReadTimeoutException) {
             log.trace("Channel was inactive for a long period. Closing...");
-            User user = ctx.channel().attr(ChannelState.USER).get();
-            if (user != null) {
-                Session session = sessionsHolder.userSession.get(user);
-                if (session.appChannels.size() > 0) {
-                    session.sendMessageToApp(produce(0, DEVICE_WENT_OFFLINE));
+            if (ctx.channel().attr(ChannelState.IS_HARD_CHANNEL).get()) {
+                User user = ctx.channel().attr(ChannelState.USER).get();
+                if (user != null) {
+                    Notification notification = user.getProfile().getActiveDashboardWidgetByType(Notification.class);
+                    if (notification == null || !notification.notifyWhenOffline) {
+                        Session session = sessionsHolder.userSession.get(user);
+                        if (session.appChannels.size() > 0) {
+                            session.sendMessageToApp(produce(0, DEVICE_WENT_OFFLINE));
+                        }
+                    } else {
+                        String name = user.getProfile().getActiveDashBoard().getName();
+                        notificationsProcessor.push(user, notification.token, "Your device '{}' went offline.".replace("{}", name));
+                    }
                 }
+
             }
             //channel is already closed here by ReadTimeoutHandler
         } else {

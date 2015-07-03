@@ -44,7 +44,7 @@ public final class HardwareChannelInitializer extends ChannelInitializer<SocketC
             pipeline.addLast(sslCtx.newHandler(ch.alloc()));
         }
 
-        pipeline.addLast(new ClientChannelStateHandler(sessionsHolder));
+        pipeline.addLast(new ClientChannelStateHandler(sessionsHolder, handlersHolder.getNotificationsProcessor()));
         pipeline.addLast(new MessageDecoder(stats));
         pipeline.addLast(new MessageEncoder());
 

@@ -23,6 +23,7 @@ public class HardwareHandlersHolder {
 
     private final BaseSimpleChannelInboundHandler[] baseHandlers;
     private final ChannelHandler[] allHandlers;
+    private final NotificationsProcessor notificationsProcessor;
 
     public HardwareHandlersHolder(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
                                   NotificationsProcessor notificationsProcessor) {
@@ -36,6 +37,8 @@ public class HardwareHandlersHolder {
         TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
         MailHandler emailHandler = new MailHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
         PushHandler pushHandler = new PushHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
+
+        this.notificationsProcessor = notificationsProcessor;
 
         this.baseHandlers = new BaseSimpleChannelInboundHandler[] {
                 hardwareHandler,
@@ -65,4 +68,7 @@ public class HardwareHandlersHolder {
         return allHandlers;
     }
 
+    public NotificationsProcessor getNotificationsProcessor() {
+        return notificationsProcessor;
+    }
 }

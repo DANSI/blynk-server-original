@@ -87,6 +87,17 @@ public class NotificationsProcessor {
         });
     }
 
+
+    public void push(User user, String token, String body) {
+        executor.execute(() -> {
+            try {
+                gcmWrapper.send(token, body);
+            } catch (Exception e) {
+                log(user, e.getMessage());
+            }
+        });
+    }
+
     public void stop() {
         executor.shutdown();
     }
@@ -101,6 +112,14 @@ public class NotificationsProcessor {
         channel.eventLoop().execute(() -> {
             channel.writeAndFlush(new ResponseMessage(msgId, Command.RESPONSE, Response.NOTIFICATION_EXCEPTION));
         });
+    }
+
+    private void log(User user, String errorMessage) {
+        if (user != null) {
+            ThreadContext.put("user", user.getName());
+            log.error("Error sending notification. {}", errorMessage);
+            ThreadContext.clearMap();
+        }
     }
 
 }
