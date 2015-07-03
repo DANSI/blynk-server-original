@@ -7,13 +7,15 @@ import cc.blynk.server.model.widgets.Widget;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class LCDDisplay extends Widget {
+public class LCD extends Widget {
 
     public int frequency;
 
-    public boolean isAdvancedMode;
+    public boolean advancedMode;
 
-    public String textFormat;
+    public String textFormatLine1;
 
-    public boolean isTextLight;
+    public String textFormatLine2;
+
+    public boolean textLight;
 }

@@ -41,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = LED.class, name = "LED"),
         @JsonSubTypes.Type(value = Digit4Display.class, name = "DIGIT4_DISPLAY"),
         @JsonSubTypes.Type(value = Gauge.class, name = "GAUGE"),
-        @JsonSubTypes.Type(value = LCDDisplay.class, name = "LCD_DISPLAY"),
+        @JsonSubTypes.Type(value = LCD.class, name = "LCD_DISPLAY"),
         @JsonSubTypes.Type(value = Graph.class, name = "GRAPH"),
         @JsonSubTypes.Type(value = LevelDisplay.class, name = "LEVEL_DISPLAY"),
 
