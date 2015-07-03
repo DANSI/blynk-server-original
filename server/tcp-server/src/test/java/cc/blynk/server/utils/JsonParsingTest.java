@@ -100,7 +100,7 @@ public class JsonParsingTest {
         assertEquals(PinType.DIGITAL, pin1.pinType);
         assertEquals(PinType.DIGITAL, pin2.pinType);
 
-        assertFalse(pin1.pwmMode);
+        assertNull(pin1.pwmMode);
         assertTrue(pin2.pwmMode);
 
     }
