@@ -11,14 +11,14 @@ public class Pin {
 
     public Byte pin;
 
-    public boolean pwmMode;
+    public Boolean pwmMode;
 
     public PinType pinType;
 
     public String value;
 
-    public int min;
+    public Integer min;
 
-    public int max;
+    public Integer max;
 
 }
