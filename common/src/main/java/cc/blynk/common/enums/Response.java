@@ -28,6 +28,9 @@ public final class Response {
     public static final int NOTIFICATION_NOT_AUTHORIZED_EXCEPTION = 14;
     public static final int NOTIFICATION_EXCEPTION = 15;
 
+    //reserved
+    public static final int BLYNK_TIMEOUT_EXCEPTION = 16;
+
 
     //all this code just to make logging more user-friendly
     private static Map<Integer, String> valuesName = ReflectionUtil.generateMapOfValueNameInteger(Response.class);
