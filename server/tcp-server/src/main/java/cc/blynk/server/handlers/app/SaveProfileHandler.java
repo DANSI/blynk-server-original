@@ -59,8 +59,6 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
 
         log.info("Trying save user profile.");
 
-        profile.calcGraphPins();
-
         user.setProfile(profile);
         ctx.writeAndFlush(produce(message.id, OK));
     }
