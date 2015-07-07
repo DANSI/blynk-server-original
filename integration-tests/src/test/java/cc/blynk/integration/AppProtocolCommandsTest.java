@@ -127,20 +127,6 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     }
 
     @Test
-    public void testUserNotAuthenticated() throws Exception {
-        makeCommands("register dmitriy@mail.ua 1").check(OK);
-
-        makeCommands("loadProfile").check(produce(1, USER_NOT_AUTHENTICATED));
-        makeCommands("saveProfile {}").check(produce(1, USER_NOT_AUTHENTICATED));
-        makeCommands("refreshToken").check(produce(1, USER_NOT_AUTHENTICATED));
-        makeCommands("getToken").check(produce(1, USER_NOT_AUTHENTICATED));
-        makeCommands("activate 1").check(produce(1, USER_NOT_AUTHENTICATED));
-        makeCommands("deactivate").check(produce(1, USER_NOT_AUTHENTICATED));
-        makeCommands("hardware 1 1").check(produce(1, USER_NOT_AUTHENTICATED));
-        makeCommands("ping").check(produce(1, USER_NOT_AUTHENTICATED));
-    }
-
-    @Test
     public void testPassNotValid() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 

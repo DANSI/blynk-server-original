@@ -77,16 +77,6 @@ public class HardProtocolCommandsTest extends IntegrationBase {
     }
 
     @Test
-    public void tryTweetWithNoLoggedUser() throws Exception {
-        makeCommands("tweet bla").check(produce(1, USER_NOT_AUTHENTICATED));
-    }
-
-    @Test
-    public void tryHardwareWithNoLoggedUser() throws Exception {
-        makeCommands("hardware 1 1").check(produce(1, USER_NOT_AUTHENTICATED));
-    }
-
-    @Test
     @Ignore
     //todo finish and fix.
     public void testInvalidTweetBody() throws Exception {
