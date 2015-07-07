@@ -5,6 +5,7 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.graph.Storage;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.ChannelState;
@@ -65,6 +66,9 @@ public class HardwareHandlerTest extends TestBase {
     @Mock
     private Session session;
 
+    @Mock
+    private Storage storage;
+
     @Test
     public void testActiveDashboardIdNull() {
         HardwareMessage message = new HardwareMessage(1, "test");
@@ -74,7 +78,7 @@ public class HardwareHandlerTest extends TestBase {
         when(user.getProfile()).thenReturn(profile);
         profile.activeDashId = null;
         SessionsHolder sessionsHolder = spy(new SessionsHolder());
-        HardwareHandler hardwareHandler = spy(new HardwareHandler(props, userRegistry, sessionsHolder));
+        HardwareHandler hardwareHandler = spy(new HardwareHandler(props, userRegistry, sessionsHolder, storage));
         hardwareHandler.messageReceived(ctx, user, message);
     }
 
@@ -90,7 +94,7 @@ public class HardwareHandlerTest extends TestBase {
         SessionsHolder sessionsHolder = spy(new SessionsHolder());
         final Session session = new Session();
         sessionsHolder.userSession.put(user, session);
-        HardwareHandler hardwareHandler = spy(new HardwareHandler(props, userRegistry, sessionsHolder));
+        HardwareHandler hardwareHandler = spy(new HardwareHandler(props, userRegistry, sessionsHolder, storage));
         try{
             hardwareHandler.messageReceived(ctx, user, message);
         }catch (DeviceNotInNetworkException e){

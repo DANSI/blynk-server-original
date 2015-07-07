@@ -29,7 +29,7 @@ public class Profile {
     //todo avoid volatile
     public volatile transient HardwareMessage pinModeMessage;
     private DashBoard[] dashBoards;
-    private Set<GraphKey> graphPins;
+    private transient Set<GraphKey> graphPins;
 
     public void validateDashId(int dashBoardId, int msgId) {
         if (dashBoards != null) {

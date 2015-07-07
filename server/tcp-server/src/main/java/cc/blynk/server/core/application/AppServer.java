@@ -6,6 +6,7 @@ import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.graph.Storage;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -30,10 +31,10 @@ public class AppServer extends BaseServer {
     private boolean isMutualSSL;
 
     public AppServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                     GlobalStats stats, TransportTypeHolder transportType) {
+                     GlobalStats stats, TransportTypeHolder transportType, Storage storage) {
         super(props.getIntProperty("app.ssl.port"), transportType);
 
-        this.handlersHolder = new AppHandlersHolder(props, userRegistry, sessionsHolder);
+        this.handlersHolder = new AppHandlersHolder(props, userRegistry, sessionsHolder, storage);
 
         log.info("Enabling SSL for application.");
         SslProvider sslProvider = props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK;

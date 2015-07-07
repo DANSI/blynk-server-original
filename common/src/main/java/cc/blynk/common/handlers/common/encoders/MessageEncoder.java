@@ -3,7 +3,6 @@ package cc.blynk.common.handlers.common.encoders;
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.MessageBase;
-import cc.blynk.common.utils.Config;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -25,7 +24,7 @@ public class MessageEncoder extends MessageToByteEncoder<MessageBase> {
         if (message.command == Command.RESPONSE) {
             out.writeShort(message.length);
         } else {
-            byte[] body = ((Message) message).body.getBytes(Config.DEFAULT_CHARSET);
+            byte[] body = ((Message) message).getBytes();
             out.writeShort(body.length);
             if (body.length > 0) {
                 out.writeBytes(body);

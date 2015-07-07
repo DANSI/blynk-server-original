@@ -89,7 +89,9 @@ public final class JsonParser {
     //only for tests
     public static Profile parseProfile(InputStream reader) {
         try {
-            return profileReader.readValue(reader);
+            Profile profile = profileReader.readValue(reader);
+            profile.calcGraphPins();
+            return profile;
         } catch (IOException e) {
             throw new IllegalCommandException("Error parsing user profile. Reason : " + e.getMessage(), 1);
         }

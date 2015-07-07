@@ -4,7 +4,6 @@ import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.dao.graph.GraphInMemoryStorage;
 import cc.blynk.server.dao.graph.Storage;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.exceptions.NoActiveDashboardException;
@@ -26,9 +25,9 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
 
     private final Storage storage;
 
-    public HardwareHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public HardwareHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, Storage storage) {
         super(props, userRegistry, sessionsHolder);
-        this.storage = new GraphInMemoryStorage(props.getIntProperty("user.in.memory.storage.limit"));
+        this.storage = storage;
     }
 
     private static boolean pinModeMessage(String body) {

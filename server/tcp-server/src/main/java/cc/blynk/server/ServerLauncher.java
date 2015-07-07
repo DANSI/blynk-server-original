@@ -11,6 +11,8 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.graph.GraphInMemoryStorage;
+import cc.blynk.server.dao.graph.Storage;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.server.workers.PropertiesChangeWatcherWorker;
@@ -56,6 +58,7 @@ public class ServerLauncher {
     private final BaseServer adminServer;
     private final ServerProperties serverProperties;
     private final NotificationsProcessor notificationsProcessor;
+    private final Storage storage;
 
     private ServerLauncher(ServerProperties serverProperties) {
         this.serverProperties = serverProperties;
@@ -65,6 +68,7 @@ public class ServerLauncher {
         //todo save all to disk to have latest version locally???
         this.userRegistry = new UserRegistry(fileManager.deserialize(), jedisWrapper.getAllUsersDB());
         this.stats = new GlobalStats();
+        this.storage = new GraphInMemoryStorage(serverProperties.getIntProperty("user.in.memory.storage.limit"));
 
         this.notificationsProcessor = new NotificationsProcessor(
                 serverProperties.getIntProperty("notifications.queue.limit", 10000)
@@ -72,9 +76,9 @@ public class ServerLauncher {
 
         TransportTypeHolder transportType = new TransportTypeHolder(serverProperties);
 
-        this.hardwareServer = new HardwareServer(serverProperties, userRegistry, sessionsHolder, stats, notificationsProcessor, transportType);
-        this.hardwareSSLServer = new HardwareSSLServer(serverProperties, userRegistry, sessionsHolder, stats, notificationsProcessor, transportType);
-        this.appServer = new AppServer(serverProperties, userRegistry, sessionsHolder, stats, transportType);
+        this.hardwareServer = new HardwareServer(serverProperties, userRegistry, sessionsHolder, stats, notificationsProcessor, transportType, storage);
+        this.hardwareSSLServer = new HardwareSSLServer(serverProperties, userRegistry, sessionsHolder, stats, notificationsProcessor, transportType, storage);
+        this.appServer = new AppServer(serverProperties, userRegistry, sessionsHolder, stats, transportType, storage);
         this.adminServer = new AdminServer(serverProperties, userRegistry, sessionsHolder, transportType);
 
     }

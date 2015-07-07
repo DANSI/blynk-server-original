@@ -3,6 +3,7 @@ package cc.blynk.common.handlers.common.decoders;
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.Config;
 import io.netty.buffer.ByteBuf;
@@ -59,8 +60,14 @@ public class MessageDecoder extends ByteToMessageDecoder implements DefaultExcep
                 return;
             }
 
-            String messageBody = in.readSlice(length).toString(Config.DEFAULT_CHARSET);
-            message = produce(messageId, command, messageBody);
+            ByteBuf buf = in.readSlice(length);
+            if (command == Command.GET_GRAPH_DATA_RESPONSE) {
+                byte[] bytes = new byte[buf.readableBytes()];
+                buf.readBytes(bytes);
+                message = new GetGraphDataResponseMessage(messageId, bytes);
+            } else {
+                message = produce(messageId, command, buf.toString(Config.DEFAULT_CHARSET));
+            }
         }
 
         log.trace("Incoming {}", message);

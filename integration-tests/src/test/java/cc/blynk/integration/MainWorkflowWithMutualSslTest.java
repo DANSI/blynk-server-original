@@ -41,8 +41,8 @@ public class MainWorkflowWithMutualSslTest extends IntegrationBase {
         properties = new ServerProperties("mutual.server.properties");
         setMutualCertsAbsolutePath();
 
-        hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsProcessor, new TransportTypeHolder(properties));
-        appServer = new AppServer(properties, userRegistry, sessionsHolder, stats, new TransportTypeHolder(properties));
+        hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsProcessor, new TransportTypeHolder(properties), storage);
+        appServer = new AppServer(properties, userRegistry, sessionsHolder, stats, new TransportTypeHolder(properties), storage);
 
         new Thread(hardwareServer).start();
         new Thread(appServer).start();

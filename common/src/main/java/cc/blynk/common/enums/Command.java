@@ -24,6 +24,7 @@ public final class Command {
     public static final short DEACTIVATE_DASHBOARD = 8;
     public static final short REFRESH_TOKEN = 9;
     public static final short GET_GRAPH_DATA = 10;
+    public static final short GET_GRAPH_DATA_RESPONSE = 11;
     //------------------------------------------
 
     //HARDWARE commands

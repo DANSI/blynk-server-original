@@ -27,7 +27,7 @@ public class CommandParser {
                 return REFRESH_TOKEN;
             case "login" :
                 return LOGIN;
-            case "getGraphData" :
+            case "getgraphdata" :
                 return GET_GRAPH_DATA;
             case "activate" :
                 return ACTIVATE_DASHBOARD;

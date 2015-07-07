@@ -3,6 +3,7 @@ package cc.blynk.server.core.hardware;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.graph.Storage;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.BridgeHandler;
 import cc.blynk.server.handlers.common.HardwareHandler;
@@ -26,9 +27,9 @@ public class HardwareHandlersHolder {
     private final NotificationsProcessor notificationsProcessor;
 
     public HardwareHandlersHolder(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                                  NotificationsProcessor notificationsProcessor) {
+                                  NotificationsProcessor notificationsProcessor, Storage storage) {
         HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(userRegistry, sessionsHolder);
-        HardwareHandler hardwareHandler = new HardwareHandler(props, userRegistry, sessionsHolder);
+        HardwareHandler hardwareHandler = new HardwareHandler(props, userRegistry, sessionsHolder, storage);
         BridgeHandler bridgeHandler = new BridgeHandler(props, userRegistry, sessionsHolder);
         PingHandler pingHandler = new PingHandler(props, userRegistry, sessionsHolder);
 

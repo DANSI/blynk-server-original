@@ -1,6 +1,7 @@
 package cc.blynk.integration;
 
 import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.TransportTypeHolder;
@@ -16,7 +17,12 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.zip.InflaterInputStream;
 
 import static cc.blynk.common.enums.Command.HARDWARE_COMMAND;
 import static cc.blynk.common.enums.Response.*;
@@ -38,14 +44,30 @@ public class MainWorkflowTest extends IntegrationBase {
     private HardwareServer hardwareServer;
     private ClientPair clientPair;
 
+    private static String decompress(byte[] bytes) throws IOException {
+        InputStream in = new InflaterInputStream(new ByteArrayInputStream(bytes));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            byte[] buffer = new byte[4096];
+            int len;
+            while((len = in.read(buffer)) > 0) {
+                baos.write(buffer, 0, len);
+            }
+            return new String(baos.toByteArray());
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+
+    }
+
     @Before
     public void init() throws Exception {
         initServerStructures();
 
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
-        hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsProcessor, new TransportTypeHolder(properties));
-        appServer = new AppServer(properties, userRegistry, sessionsHolder, stats, new TransportTypeHolder(properties));
+        hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsProcessor, new TransportTypeHolder(properties), storage);
+        appServer = new AppServer(properties, userRegistry, sessionsHolder, stats, new TransportTypeHolder(properties), storage);
         new Thread(hardwareServer).start();
         new Thread(appServer).start();
 
@@ -90,6 +112,35 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("ping");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+    }
+
+    @Test
+    public void testGetAllGraphData() throws Exception {
+        for (int i = 0; i < 1000; i++) {
+            clientPair.hardwareClient.send("hardware aw 8 " + i);
+        }
+
+        verify(clientPair.appClient.responseMock, timeout(1000).times(1000)).channelRead(any(), any());
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getgraphdata 1 8");
+
+        ArgumentCaptor<GetGraphDataResponseMessage> objectArgumentCaptor = ArgumentCaptor.forClass(GetGraphDataResponseMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+
+        List<GetGraphDataResponseMessage> arguments = objectArgumentCaptor.getAllValues();
+        GetGraphDataResponseMessage graphMessage = arguments.get(0);
+        assertEquals(1, graphMessage.id);
+
+        String result = decompress(graphMessage.data);
+        String[] splitted = result.split("\0");
+        assertEquals(4000, splitted.length);
+
+        for (int i = 0; i < 1000; i++) {
+            assertEquals("aw", splitted[i * 4]);
+            assertEquals("8", splitted[i * 4 + 1]);
+            assertEquals(String.valueOf(i), splitted[i * 4 + 2]);
+        }
     }
 
     @Test
