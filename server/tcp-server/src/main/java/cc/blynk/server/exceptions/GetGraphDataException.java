@@ -8,10 +8,10 @@ import cc.blynk.common.exceptions.BaseServerException;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/3/2015.
  */
-public class ServerException extends BaseServerException {
+public class GetGraphDataException extends BaseServerException {
 
-    public ServerException(int msgId) {
-        super("Server exception!", msgId, Response.SERVER_EXCEPTION);
+    public GetGraphDataException(int msgId) {
+        super("Server exception!", msgId, Response.GET_GRAPH_DATA_EXCEPTION);
     }
 
 }

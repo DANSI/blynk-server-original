@@ -8,8 +8,8 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.dao.graph.Storage;
+import cc.blynk.server.exceptions.GetGraphDataException;
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.exceptions.ServerException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandler;
@@ -54,7 +54,7 @@ public class GetGraphDataHandler extends BaseSimpleChannelInboundHandler<GetGrap
             }
             out.close();
         } catch (Exception ioe) {
-            throw new ServerException(msgId);
+            throw new GetGraphDataException(msgId);
         }
         return baos.toByteArray();
     }
