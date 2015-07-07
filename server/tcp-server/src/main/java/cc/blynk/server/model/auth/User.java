@@ -27,6 +27,7 @@ public class User implements Serializable {
     private String id;
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
     private long lastModifiedTs;
+    //todo avoid volatile
     private volatile Profile profile;
     private Map<Integer, String> dashTokens = new HashMap<>();
     //maybe it is bette rto make it transient

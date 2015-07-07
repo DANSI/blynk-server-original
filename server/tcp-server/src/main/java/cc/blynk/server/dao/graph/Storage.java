@@ -1,6 +1,8 @@
 package cc.blynk.server.dao.graph;
 
-import cc.blynk.server.model.auth.User;
+import cc.blynk.server.model.Profile;
+
+import java.util.Queue;
 
 /**
  * The Blynk Project.
@@ -9,6 +11,8 @@ import cc.blynk.server.model.auth.User;
  */
 public interface Storage {
 
-    String store(User user, Integer dashId, String body, int msgId);
+    String store(Profile profile, Integer dashId, String body, int msgId);
+
+    Queue<String> getAll(GraphKey key);
 
 }

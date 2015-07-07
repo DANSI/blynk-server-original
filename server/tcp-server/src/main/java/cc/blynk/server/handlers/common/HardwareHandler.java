@@ -41,7 +41,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
 
         if (ctx.channel().attr(ChannelState.IS_HARD_CHANNEL).get()) {
             //if message from hardware, check if it belongs to graph. so we need save it in that case
-            String body = storage.store(user, ctx.channel().attr(ChannelState.DASH_ID).get(), message.body, message.id);
+            String body = storage.store(user.getProfile(), ctx.channel().attr(ChannelState.DASH_ID).get(), message.body, message.id);
 
             if (user.getProfile().activeDashId == null) {
                 throw new NoActiveDashboardException(message.id);

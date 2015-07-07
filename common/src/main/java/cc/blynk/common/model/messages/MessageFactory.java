@@ -38,6 +38,8 @@ public class MessageFactory {
                 return new GetTokenMessage(messageId, body);
             case REFRESH_TOKEN :
                 return new RefreshTokenMessage(messageId, body);
+            case GET_GRAPH_DATA :
+                return new GetGraphDataMessage(messageId, body);
             case LOGIN :
                 return new LoginMessage(messageId, body);
             case TWEET :

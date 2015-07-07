@@ -1,6 +1,7 @@
 package cc.blynk.server.model;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
+import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.widgets.others.Timer;
 import cc.blynk.server.utils.JsonParser;
@@ -15,6 +16,7 @@ import java.util.*;
  */
 public class Profile {
 
+    //todo avoid volatile
     public volatile Integer activeDashId;
     /**
      * Specific property used for improving user experience on mobile application.
@@ -24,9 +26,10 @@ public class Profile {
      * is remembered and when hardware goes online - server sends Pin Modes command to hardware
      * without requiring user to activate/deactivate dashboard again.
      */
+    //todo avoid volatile
     public volatile transient HardwareMessage pinModeMessage;
     private DashBoard[] dashBoards;
-    private Map<Integer, Set<Byte>> graphPins;
+    private Set<GraphKey> graphPins;
 
     public void validateDashId(int dashBoardId, int msgId) {
         if (dashBoards != null) {
@@ -85,28 +88,22 @@ public class Profile {
 
     public void calcGraphPins() {
         if (dashBoards == null || dashBoards.length == 0) {
-            graphPins = Collections.emptyMap();
+            graphPins = Collections.emptySet();
             return;
         }
 
-        graphPins = new HashMap<>();
+        graphPins = new HashSet<>();
 
         for (DashBoard dashBoard : dashBoards) {
-            graphPins.put(dashBoard.getId(), dashBoard.getGraphWidgetPins());
+            Set<Byte> graphPinsInDash = dashBoard.getGraphWidgetPins();
+            for (Byte pin : graphPinsInDash) {
+                graphPins.add(new GraphKey(dashBoard.getId(), pin));
+            }
         }
     }
 
-    public boolean hasGraphPin(Integer dashId, Byte pin) {
-        Set<Byte> pins = graphPins.get(dashId);
-        return pins != null && pins.contains(pin);
-    }
-
-    public Map<Integer, Set<Byte>> getGraphPins() {
-        return graphPins;
-    }
-
-    public void setGraphPins(Map<Integer, Set<Byte>> graphPins) {
-        this.graphPins = graphPins;
+    public boolean hasGraphPin(GraphKey key) {
+        return graphPins.contains(key);
     }
 
     @Override

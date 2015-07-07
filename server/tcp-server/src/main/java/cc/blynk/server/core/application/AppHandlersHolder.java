@@ -25,6 +25,7 @@ class AppHandlersHolder {
         RegisterHandler registerHandler = new RegisterHandler(userRegistry);
         AppLoginHandler appLoginHandler = new AppLoginHandler(userRegistry, sessionsHolder);
         GetTokenHandler getTokenHandler = new GetTokenHandler(props, userRegistry, sessionsHolder);
+        GetGraphDataHandler getGraphDataHandler = new GetGraphDataHandler(props, userRegistry, sessionsHolder);
         RefreshTokenHandler refreshTokenHandler = new RefreshTokenHandler(props, userRegistry, sessionsHolder);
         LoadProfileHandler loadProfileHandler = new LoadProfileHandler(props, userRegistry, sessionsHolder);
         SaveProfileHandler saveProfileHandler = new SaveProfileHandler(props, userRegistry, sessionsHolder);
@@ -41,7 +42,8 @@ class AppHandlersHolder {
             hardwareHandler,
             pingHandler,
             activateDashboardHandler,
-            deActivateDashboardHandler
+            deActivateDashboardHandler,
+            getGraphDataHandler
         };
 
         this.allHandlers = new ChannelHandler[] {
@@ -54,7 +56,8 @@ class AppHandlersHolder {
             hardwareHandler,
             pingHandler,
             activateDashboardHandler,
-            deActivateDashboardHandler
+            deActivateDashboardHandler,
+            getGraphDataHandler
         };
     }
 

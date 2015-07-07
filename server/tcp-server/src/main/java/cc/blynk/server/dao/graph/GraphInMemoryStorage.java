@@ -2,14 +2,14 @@ package cc.blynk.server.dao.graph;
 
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.model.auth.User;
+import cc.blynk.server.model.Profile;
 
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static cc.blynk.common.model.messages.protocol.HardwareMessage.attachTS;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * The Blynk Project.
@@ -20,16 +20,24 @@ import static cc.blynk.common.model.messages.protocol.HardwareMessage.attachTS;
  */
 public class GraphInMemoryStorage implements Storage {
 
-    private final Map<String, Queue<String>> userValues;
-    private final int sizeLimit;
+    private final BlockingQueue<QueueMessage> storeQueue = new LinkedBlockingDeque<>();
+    private final Map<GraphKey, Queue<String>> userValues;
 
     public GraphInMemoryStorage(int sizeLimit) {
         this.userValues = new ConcurrentHashMap<>();
-        this.sizeLimit = sizeLimit;
+        new StoreProcessor(sizeLimit).start();
+    }
+
+    private static String attachTS(String body, long ts) {
+        if (body.charAt(body.length() - 1) == StringUtils.BODY_SEPARATOR) {
+            return body + ts;
+        } else {
+            return body + StringUtils.BODY_SEPARATOR + ts;
+        }
     }
 
     @Override
-    public String store(User user, Integer dashId, String body, int msgId) {
+    public String store(Profile profile, Integer dashId, String body, int msgId) {
         if (body.length() < 4) {
             throw new IllegalCommandException("Hardware command body too short.", msgId);
         }
@@ -42,27 +50,49 @@ public class GraphInMemoryStorage implements Storage {
                 throw new IllegalCommandException("Hardware command body incorrect.", msgId);
             }
 
-            if (user.getProfile().hasGraphPin(dashId, pin)) {
-                body = attachTS(body);
-                storeValue(user.getName(), dashId, body);
+            GraphKey key = new GraphKey(dashId, pin);
+            if (profile.hasGraphPin(key)) {
+                long ts = System.currentTimeMillis();
+                body = attachTS(body, ts);
+                storeQueue.offer(new QueueMessage(key, body));
             }
         }
         return body;
     }
 
-    private void storeValue(String userName, Integer dashId, String body) {
-        //expecting same user always in same thread, so no concurrency
-        String key = userName + dashId;
-        Queue<String> bodies = userValues.get(key);
-        if (bodies == null) {
-            bodies = new LinkedList<>();
-            userValues.put(key, bodies);
+    @Override
+    public Queue<String> getAll(GraphKey key) {
+        return userValues.get(key);
+    }
+
+    private class StoreProcessor extends Thread {
+
+        private final int sizeLimit;
+
+        StoreProcessor(int sizeLimit) {
+            this.sizeLimit = sizeLimit;
         }
 
-        if (bodies.size() == sizeLimit) {
-            bodies.poll();
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    QueueMessage message = storeQueue.take();
+                    Queue<String> values = userValues.get(message.key);
+                    if (values == null) {
+                        values = new LinkedList<>();
+                        userValues.put(message.key, values);
+                    }
+
+                    if (values.size() == sizeLimit) {
+                        values.remove();
+                    }
+                    values.add(message.body);
+                } catch (InterruptedException e) {
+                }
+            }
         }
-        bodies.add(body);
+
     }
 
 }

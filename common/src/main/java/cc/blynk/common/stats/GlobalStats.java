@@ -38,6 +38,7 @@ public class GlobalStats {
         specificCounters.put(SaveProfileMessage.class, new LongAdder());
         specificCounters.put(ActivateDashboardMessage.class, new LongAdder());
         specificCounters.put(DeActivateDashboardMessage.class, new LongAdder());
+        specificCounters.put(GetGraphDataMessage.class, new LongAdder());
         specificCounters.put(TweetMessage.class, new LongAdder());
         specificCounters.put(MailMessage.class, new LongAdder());
         specificCounters.put(PushMessage.class, new LongAdder());
