@@ -7,7 +7,6 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.QuotaLimitException;
-import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
@@ -51,7 +50,9 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
                 I imsg = (I) msg;
                 user = ctx.channel().attr(ChannelState.USER).get();
                 if (user == null) {
-                    throw new UserNotAuthenticated("User not logged.", imsg.id);
+                    log.error("User not logged. {}. Closing.", ctx.channel().remoteAddress());
+                    ctx.close();
+                    return;
                 }
 
                 if (user.getQuotaMeter().getOneMinuteRate() > USER_QUOTA_LIMIT) {
