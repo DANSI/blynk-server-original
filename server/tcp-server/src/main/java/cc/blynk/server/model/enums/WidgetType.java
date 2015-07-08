@@ -11,6 +11,7 @@ public enum WidgetType {
     BUTTON,
     SLIDER,
     SLIDER_LARGE,
+    VERTICAL_SLIDER,
     KNOB,
     ROTARY_KNOB,
     RGB,
