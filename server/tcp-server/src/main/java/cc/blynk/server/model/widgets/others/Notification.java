@@ -11,6 +11,8 @@ public class Notification extends Widget {
 
     public String token;
 
+    public String iOSToken;
+
     public boolean notifyWhenOffline;
 
 }
