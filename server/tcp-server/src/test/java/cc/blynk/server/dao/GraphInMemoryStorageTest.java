@@ -60,7 +60,7 @@ public class GraphInMemoryStorageTest {
     }
 
     @Test
-    public void testStoreCorrect() {
+    public void testStoreCorrect() throws InterruptedException {
         when(user.getProfile()).thenReturn(profile);
         GraphKey key = new GraphKey(1, (byte) 33);
         when(profile.hasGraphPin(key)).thenReturn(true);
@@ -70,8 +70,11 @@ public class GraphInMemoryStorageTest {
             storage.store(profile, 1, body.replace("x", String.valueOf(i)), 1);
         }
 
-        Queue<String> queue = storage.getAll(key);
-        assertNotNull(queue);
+        Queue<String> queue;
+        while ((queue = storage.getAll(key)).size() < 1000) {
+            Thread.sleep(10);
+        }
+
         assertEquals(1000, queue.size());
 
         int i = 0;
@@ -82,7 +85,7 @@ public class GraphInMemoryStorageTest {
     }
 
     @Test
-    public void testStoreCorrect2() {
+    public void testStoreCorrect2() throws InterruptedException  {
         when(user.getProfile()).thenReturn(profile);
         GraphKey key = new GraphKey(1, (byte) 33);
         when(profile.hasGraphPin(key)).thenReturn(true);
@@ -92,8 +95,11 @@ public class GraphInMemoryStorageTest {
             storage.store(profile, 1, body.replace("x", String.valueOf(i)), 1);
         }
 
-        Queue<String> queue = storage.getAll(key);
-        assertNotNull(queue);
+        Queue<String> queue;
+        while ((queue = storage.getAll(key)).size() < 1000) {
+            Thread.sleep(10);
+        }
+
         assertEquals(1000, queue.size());
 
         int i = 1000;
