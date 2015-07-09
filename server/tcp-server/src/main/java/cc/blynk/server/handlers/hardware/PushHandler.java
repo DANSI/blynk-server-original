@@ -40,14 +40,20 @@ public class PushHandler extends BaseSimpleChannelInboundHandler<PushMessage> {
         Notification widget = user.getProfile().getActiveDashboardWidgetByType(Notification.class);
 
         if (widget == null ||
-                widget.token == null || widget.token.equals("")) {
+                ((widget.token == null || widget.token.equals("")) &&
+                 (widget.iOSToken == null || widget.iOSToken.equals("")))) {
             throw new TwitterNotAuthorizedException("User has no access token provided.", message.id);
         }
 
         user.lastPushSentTs = checkIfNotificationQuotaLimitIsNotReached(user.lastPushSentTs, message.id);
 
         log.trace("Sending push for user {}, with message : '{}'.", user.getName(), message.body);
-        notificationsProcessor.push(ctx.channel(), widget.token, message.body, message.id);
+        if (widget.token != null && !widget.token.equals("")) {
+            notificationsProcessor.push(ctx.channel(), widget.token, message.body, message.id);
+        }
+        if (widget.iOSToken != null && !widget.iOSToken.equals("")) {
+            notificationsProcessor.push(ctx.channel(), widget.iOSToken, message.body, message.id);
+        }
     }
 
 
