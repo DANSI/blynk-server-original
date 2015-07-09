@@ -213,7 +213,21 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("hardware aw 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, HARDWARE_COMMAND, "aw 1".replaceAll(" ", "\0"))));
+    }
 
+    @Test
+    public void testPushWhenHardwareOffline() throws Exception {
+        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
+        channelFuture.await();
+
+        verify(notificationsProcessor, timeout(500)).push(any(), any(), eq("Your device 'My Dashboard' went offline."));
+    }
+
+    @Test
+    public void testPushHandler() throws Exception {
+        clientPair.hardwareClient.send("push Yo!");
+
+        verify(notificationsProcessor, timeout(500)).push(any(), any(), eq("Yo!"), eq(1));
     }
 
     @Test

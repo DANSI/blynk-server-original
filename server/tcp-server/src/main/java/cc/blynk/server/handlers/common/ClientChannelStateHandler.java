@@ -6,6 +6,7 @@ import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Notification;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -44,31 +45,35 @@ public class ClientChannelStateHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         sessionsHolder.removeFromSession(ctx.channel());
+        sentOfflineMessage(ctx.channel());
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (cause instanceof ReadTimeoutException) {
-            log.trace("Channel was inactive for a long period. Closing...");
-            if (ctx.channel().attr(ChannelState.IS_HARD_CHANNEL).get()) {
-                User user = ctx.channel().attr(ChannelState.USER).get();
-                if (user != null) {
-                    Notification notification = user.getProfile().getActiveDashboardWidgetByType(Notification.class);
-                    if (notification == null || !notification.notifyWhenOffline) {
-                        Session session = sessionsHolder.userSession.get(user);
-                        if (session.appChannels.size() > 0) {
-                            session.sendMessageToApp(produce(0, DEVICE_WENT_OFFLINE));
-                        }
-                    } else {
-                        String name = user.getProfile().getActiveDashBoard().getName();
-                        notificationsProcessor.push(user, notification.token, "Your device '{}' went offline.".replace("{}", name));
-                    }
-                }
-
-            }
             //channel is already closed here by ReadTimeoutHandler
         } else {
             super.exceptionCaught(ctx, cause);
+        }
+    }
+
+    private void sentOfflineMessage(Channel channel) {
+        log.trace("Channel was inactive for a long period.");
+        if (channel.attr(ChannelState.IS_HARD_CHANNEL).get()) {
+            User user = channel.attr(ChannelState.USER).get();
+            if (user != null) {
+                Notification notification = user.getProfile().getActiveDashboardWidgetByType(Notification.class);
+                if (notification == null || !notification.notifyWhenOffline) {
+                    Session session = sessionsHolder.userSession.get(user);
+                    if (session.appChannels.size() > 0) {
+                        session.sendMessageToApp(produce(0, DEVICE_WENT_OFFLINE));
+                    }
+                } else {
+                    String dashName = user.getProfile().getActiveDashBoard().getName();
+                    notificationsProcessor.push(user, notification, "Your device '{}' went offline.".replace("{}", dashName));
+                }
+            }
+
         }
     }
 

@@ -7,6 +7,7 @@ import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.model.widgets.others.Notification;
 import cc.blynk.server.notifications.GCMWrapper;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
@@ -74,7 +75,16 @@ public class NotificationsProcessor {
         });
     }
 
-    public void push(Channel channel, String token, String body, int msgId) {
+    public void push(Channel channel, Notification widget, String body, int msgId) {
+        if (widget.token != null && !widget.token.equals("")) {
+            push(channel, widget.token, body, msgId);
+        }
+        if (widget.iOSToken != null && !widget.iOSToken.equals("")) {
+            push(channel, widget.iOSToken, body, msgId);
+        }
+    }
+
+    private void push(Channel channel, String token, String body, int msgId) {
         executor.execute(() -> {
             try {
                 gcmWrapper.send(token, body);
@@ -87,8 +97,16 @@ public class NotificationsProcessor {
         });
     }
 
+    public void push(User user, Notification widget, String body) {
+        if (widget.token != null && !widget.token.equals("")) {
+            push(user, widget.token, body);
+        }
+        if (widget.iOSToken != null && !widget.iOSToken.equals("")) {
+            push(user, widget.iOSToken, body);
+        }
+    }
 
-    public void push(User user, String token, String body) {
+    private void push(User user, String token, String body) {
         executor.execute(() -> {
             try {
                 gcmWrapper.send(token, body);

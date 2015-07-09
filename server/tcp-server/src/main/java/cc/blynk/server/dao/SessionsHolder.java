@@ -33,7 +33,6 @@ public class SessionsHolder {
         if (user != null) {
             Session session = userSession.get(user);
             if (session != null) {
-                log.trace("Channel inactive. Removing user '{}' from session.", user.getName());
                 session.remove(channel);
             }
         }

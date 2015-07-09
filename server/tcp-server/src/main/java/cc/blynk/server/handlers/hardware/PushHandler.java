@@ -48,12 +48,7 @@ public class PushHandler extends BaseSimpleChannelInboundHandler<PushMessage> {
         user.lastPushSentTs = checkIfNotificationQuotaLimitIsNotReached(user.lastPushSentTs, message.id);
 
         log.trace("Sending push for user {}, with message : '{}'.", user.getName(), message.body);
-        if (widget.token != null && !widget.token.equals("")) {
-            notificationsProcessor.push(ctx.channel(), widget.token, message.body, message.id);
-        }
-        if (widget.iOSToken != null && !widget.iOSToken.equals("")) {
-            notificationsProcessor.push(ctx.channel(), widget.iOSToken, message.body, message.id);
-        }
+        notificationsProcessor.push(ctx.channel(), widget, message.body, message.id);
     }
 
 
