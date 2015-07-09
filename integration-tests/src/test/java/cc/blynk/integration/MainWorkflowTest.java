@@ -225,7 +225,7 @@ public class MainWorkflowTest extends IntegrationBase {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
 
-        verify(notificationsProcessor, timeout(500)).push(any(), any(), eq("Your device 'My Dashboard' went offline."));
+        verify(notificationsProcessor, timeout(500)).push(any(), any(), eq("Your UNO went offline. \"My Dashboard\" project is disconnected."));
     }
 
     @Test

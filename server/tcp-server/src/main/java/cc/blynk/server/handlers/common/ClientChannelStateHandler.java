@@ -59,7 +59,8 @@ public class ClientChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     private void sentOfflineMessage(Channel channel) {
         log.trace("Channel was inactive for a long period.");
-        if (channel.attr(ChannelState.IS_HARD_CHANNEL).get()) {
+        Boolean isHard = channel.attr(ChannelState.IS_HARD_CHANNEL).get();
+        if (isHard != null && isHard) {
             User user = channel.attr(ChannelState.USER).get();
             if (user != null) {
                 Notification notification = user.getProfile().getActiveDashboardWidgetByType(Notification.class);
@@ -69,8 +70,10 @@ public class ClientChannelStateHandler extends ChannelInboundHandlerAdapter {
                         session.sendMessageToApp(produce(0, DEVICE_WENT_OFFLINE));
                     }
                 } else {
+                    String boardType = user.getProfile().getActiveDashBoard().getBoardType();
                     String dashName = user.getProfile().getActiveDashBoard().getName();
-                    notificationsProcessor.push(user, notification, "Your device '{}' went offline.".replace("{}", dashName));
+                    notificationsProcessor.push(user, notification,
+                            String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName));
                 }
             }
 
