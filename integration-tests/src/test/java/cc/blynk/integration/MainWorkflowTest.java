@@ -91,8 +91,13 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardwareDeviceWentOffline() throws Exception {
-        //waiting for channel to become inactive
-        sleep(2000);
+        String newProfile = readTestUserProfile("user_profile_json_3_dashes.txt");
+        clientPair.appClient.send("saveProfile " + newProfile);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+
+        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
+        channelFuture.await();
+
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(0, DEVICE_WENT_OFFLINE)));
     }
 
