@@ -1,11 +1,13 @@
 package cc.blynk.server.handlers.hardware;
 
+import cc.blynk.common.enums.Command;
+import cc.blynk.common.enums.Response;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
+import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.model.messages.protocol.appllication.LoginMessage;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.exceptions.InvalidTokenException;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.Channel;
@@ -49,7 +51,9 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         User user = userRegistry.getUserByToken(token);
 
         if (user == null) {
-            throw new InvalidTokenException(String.format("Hardware token is invalid. Token '%s', %s", token, ctx.channel().remoteAddress()), message.id);
+            log.debug("Hardware token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
+            ctx.writeAndFlush(new ResponseMessage(message.id, Command.RESPONSE, Response.INVALID_TOKEN));
+            return;
         }
 
         Integer dashId = UserRegistry.getDashIdByToken(user, token, message.id);
