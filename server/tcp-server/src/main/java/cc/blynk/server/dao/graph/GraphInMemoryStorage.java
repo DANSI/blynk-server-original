@@ -43,9 +43,9 @@ public class GraphInMemoryStorage implements Storage {
         }
 
         if (body.charAt(1) == 'w') {
-            Byte pin;
+            byte pin;
             try {
-                pin = Byte.valueOf(StringUtils.fetchPin(body));
+                pin = Byte.parseByte(StringUtils.fetchPin(body));
             } catch (NumberFormatException e) {
                 throw new IllegalCommandException("Hardware command body incorrect.", msgId);
             }

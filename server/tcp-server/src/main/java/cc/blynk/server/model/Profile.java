@@ -29,7 +29,7 @@ public class Profile {
     //todo avoid volatile
     public volatile transient HardwareMessage pinModeMessage;
     private DashBoard[] dashBoards;
-    private transient Set<GraphKey> graphPins;
+    private transient Set<GraphKey> graphPins = new HashSet<>();
 
     public void validateDashId(int dashBoardId, int msgId) {
         if (dashBoards != null) {
@@ -88,11 +88,8 @@ public class Profile {
 
     public void calcGraphPins() {
         if (dashBoards == null || dashBoards.length == 0) {
-            graphPins = Collections.emptySet();
             return;
         }
-
-        graphPins = new HashSet<>();
 
         for (DashBoard dashBoard : dashBoards) {
             Set<Byte> graphPinsInDash = dashBoard.getGraphWidgetPins();
@@ -105,7 +102,7 @@ public class Profile {
     }
 
     public boolean hasGraphPin(GraphKey key) {
-        return graphPins.contains(key);
+        return graphPins != null && key != null && graphPins.contains(key);
     }
 
     @Override
