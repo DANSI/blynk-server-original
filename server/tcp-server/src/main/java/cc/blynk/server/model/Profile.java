@@ -97,7 +97,9 @@ public class Profile {
         for (DashBoard dashBoard : dashBoards) {
             Set<Byte> graphPinsInDash = dashBoard.getGraphWidgetPins();
             for (Byte pin : graphPinsInDash) {
-                graphPins.add(new GraphKey(dashBoard.getId(), pin));
+                if (pin != null) {
+                    graphPins.add(new GraphKey(dashBoard.getId(), pin));
+                }
             }
         }
     }
