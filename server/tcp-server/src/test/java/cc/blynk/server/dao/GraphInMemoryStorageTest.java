@@ -71,7 +71,7 @@ public class GraphInMemoryStorageTest {
         }
 
         Queue<String> queue;
-        while ((queue = storage.getAll(key)).size() < 1000) {
+        while ((queue = storage.getAll(key)) == null || queue.size() < 1000) {
             Thread.sleep(10);
         }
 
@@ -96,7 +96,7 @@ public class GraphInMemoryStorageTest {
         }
 
         Queue<String> queue;
-        while ((queue = storage.getAll(key)).size() < 1000) {
+        while ((queue = storage.getAll(key)) == null || queue.size() < 1000) {
             Thread.sleep(10);
         }
 
