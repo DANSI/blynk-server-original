@@ -60,7 +60,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = SDCard.class, name = "SD_CARD"),
         @JsonSubTypes.Type(value = Eventor.class, name = "EVENTOR"),
         @JsonSubTypes.Type(value = RCT.class, name = "RCT"),
-        @JsonSubTypes.Type(value = Timer.class, name = "TIMER")
+        @JsonSubTypes.Type(value = Timer.class, name = "TIMER"),
+        @JsonSubTypes.Type(value = Bridge.class, name = "BRIDGE")
 
 })
 public abstract class Widget {
