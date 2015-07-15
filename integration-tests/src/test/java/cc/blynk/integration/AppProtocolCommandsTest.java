@@ -93,7 +93,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     public void testLogin2Times() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 1", "login dmitriy@mail.ua 1").check(OK).check(produce(1, USER_ALREADY_LOGGED_IN));
+        makeCommands("login dmitriy@mail.ua 1", "login dmitriy@mail.ua 1").check(2, OK);
     }
 
     @Test

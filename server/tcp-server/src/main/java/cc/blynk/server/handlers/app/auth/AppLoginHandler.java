@@ -67,7 +67,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         channel.attr(ChannelState.USER).set(user);
         channel.attr(ChannelState.IS_HARD_CHANNEL).set(false);
 
-        sessionsHolder.addChannelToGroup(user, channel, messageId);
+        sessionsHolder.addChannelToGroup(user, channel);
 
         log.info("{} app joined.", user.getName());
     }

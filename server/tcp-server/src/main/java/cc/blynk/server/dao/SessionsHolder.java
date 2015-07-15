@@ -23,9 +23,9 @@ public class SessionsHolder {
 
     public final Map<User, Session> userSession = new ConcurrentHashMap<>();
 
-    public void addChannelToGroup(User user, Channel channel, int msgId) {
+    public void addChannelToGroup(User user, Channel channel) {
         Session session = getSessionByUser(user);
-        session.addChannel(channel, msgId);
+        session.addChannel(channel);
     }
 
     public void removeFromSession(Channel channel) {

@@ -1,7 +1,6 @@
 package cc.blynk.server.model.auth;
 
 import cc.blynk.common.model.messages.MessageBase;
-import cc.blynk.server.exceptions.UserAlreadyLoggedIn;
 import io.netty.channel.Channel;
 import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
@@ -34,21 +33,13 @@ public class Session {
         }
     }
 
-    public void addChannel(Channel channel, int msgId) {
+    public void addChannel(Channel channel) {
         if (channel.attr(ChannelState.IS_HARD_CHANNEL).get()) {
-            addChannel(hardwareChannels, channel, msgId);
+            //if login from same channel again - ignore
+            hardwareChannels.add(channel);
         } else {
-            addChannel(appChannels, channel, msgId);
+            appChannels.add(channel);
         }
-    }
-
-    //todo not sure, but netty processes same channel in same thread, so no sync
-    private void addChannel(Set<Channel> channelSet, Channel channel, int msgId) {
-        //if login from same channel again - do not allow.
-        if (channelSet.contains(channel)) {
-            throw new UserAlreadyLoggedIn(msgId);
-        }
-        channelSet.add(channel);
     }
 
     public void sendMessageToHardware(MessageBase message) {
