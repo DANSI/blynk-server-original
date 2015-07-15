@@ -118,7 +118,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
         long currentTs = System.currentTimeMillis();
         long timePassedSinceLastMessage = (currentTs - lastAccessTime);
 		if (timePassedSinceLastMessage < defaultNotificationQuotaLimit) {
-			throw new QuotaLimitException(String.format("Only 1 notification per %s seconds is allowed", defaultNotificationQuotaLimit), msgId);
+			throw new QuotaLimitException(String.format("Only 1 notification per %s miliseconds is allowed", defaultNotificationQuotaLimit), msgId);
 		}
 		return currentTs;
     }
