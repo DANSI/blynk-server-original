@@ -44,6 +44,7 @@ public enum WidgetType {
     SD_CARD,
     EVENTOR,
     RCT,
-    TIMER
+    TIMER,
+    BRIDGE
 
 }
