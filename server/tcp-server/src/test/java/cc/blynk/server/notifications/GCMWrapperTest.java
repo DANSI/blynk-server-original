@@ -14,7 +14,7 @@ public class GCMWrapperTest {
     @Ignore
     public void test() throws Exception {
         GCMWrapper gcmWrapper = new GCMWrapper();
-        gcmWrapper.send("YOUR_TOKEN", "yo");
+        gcmWrapper.send(new IOSGCMMessage("", "yo!!!"));
     }
 
 }

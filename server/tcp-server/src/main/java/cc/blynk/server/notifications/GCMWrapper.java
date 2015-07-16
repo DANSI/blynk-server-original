@@ -38,14 +38,14 @@ public class GCMWrapper {
         }
     }
 
-    public void send(String to, String body) throws Exception {
+    public void send(GCMMessage messageBase) throws Exception {
         if (gcmURI == null) {
             throw new Exception("Error sending push. Google cloud messaging properties not provided.");
         }
 
         HttpPost httpPost = new HttpPost(gcmURI);
         httpPost.setHeader("Authorization", API_KEY);
-        httpPost.setEntity(new StringEntity(new GCMMessage(to, body).toString(), ContentType.APPLICATION_JSON));
+        httpPost.setEntity(new StringEntity(messageBase.toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(httpPost)) {
             HttpEntity entity = response.getEntity();
@@ -59,7 +59,7 @@ public class GCMWrapper {
                     if (gcmResponseMessage.results != null && gcmResponseMessage.results.length > 0) {
                         throw new Exception("Error sending push. Problem : " + gcmResponseMessage.results[0].error);
                     } else {
-                        throw new Exception("Error sending push. Token : " + to);
+                        throw new Exception("Error sending push. Token : " + messageBase.getToken());
                     }
                 }
             }

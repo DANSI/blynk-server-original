@@ -8,7 +8,10 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Notification;
+import cc.blynk.server.notifications.AndroidGCMMessage;
+import cc.blynk.server.notifications.GCMMessage;
 import cc.blynk.server.notifications.GCMWrapper;
+import cc.blynk.server.notifications.IOSGCMMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import io.netty.channel.Channel;
@@ -77,17 +80,17 @@ public class NotificationsProcessor {
 
     public void push(Channel channel, Notification widget, String body, int msgId) {
         if (widget.token != null && !widget.token.equals("")) {
-            push(channel, widget.token, body, msgId);
+            push(channel, new AndroidGCMMessage(widget.token, body), msgId);
         }
         if (widget.iOSToken != null && !widget.iOSToken.equals("")) {
-            push(channel, widget.iOSToken, body, msgId);
+            push(channel, new IOSGCMMessage(widget.iOSToken, body), msgId);
         }
     }
 
-    private void push(Channel channel, String token, String body, int msgId) {
+    private void push(Channel channel, GCMMessage message, int msgId) {
         executor.execute(() -> {
             try {
-                gcmWrapper.send(token, body);
+                gcmWrapper.send(message);
                 channel.eventLoop().execute(() -> {
                     channel.writeAndFlush(produce(msgId, OK));
                 });
@@ -99,17 +102,17 @@ public class NotificationsProcessor {
 
     public void push(User user, Notification widget, String body) {
         if (widget.token != null && !widget.token.equals("")) {
-            push(user, widget.token, body);
+            push(user, new AndroidGCMMessage(widget.token, body));
         }
         if (widget.iOSToken != null && !widget.iOSToken.equals("")) {
-            push(user, widget.iOSToken, body);
+            push(user, new IOSGCMMessage(widget.iOSToken, body));
         }
     }
 
-    private void push(User user, String token, String body) {
+    private void push(User user, GCMMessage message) {
         executor.execute(() -> {
             try {
-                gcmWrapper.send(token, body);
+                gcmWrapper.send(message);
             } catch (Exception e) {
                 log(user, e.getMessage());
             }
