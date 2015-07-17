@@ -1,5 +1,6 @@
 package cc.blynk.server.utils;
 
+import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
@@ -89,7 +90,7 @@ public final class JsonParser {
             profile.calcGraphPins();
             return profile;
         } catch (IOException e) {
-            throw new IllegalCommandException("Error parsing user profile. Reason : " + e.getMessage(), id);
+            throw new IllegalCommandBodyException("Error parsing user profile. Reason : " + e.getMessage(), id);
         }
     }
 
