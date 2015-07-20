@@ -7,6 +7,7 @@ import cc.blynk.server.model.auth.User;
 import cc.blynk.server.notifications.AndroidGCMMessage;
 import cc.blynk.server.notifications.GCMResponseMessage;
 import cc.blynk.server.notifications.IOSGCMMessage;
+import cc.blynk.server.workers.Stat;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -38,6 +39,7 @@ public final class JsonParser {
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
     private static final ObjectWriter gcmWriter = mapper.writerFor(AndroidGCMMessage.class);
     private static final ObjectWriter iOSGCMWriter = mapper.writerFor(IOSGCMMessage.class);
+    private static final ObjectWriter statWriter = init().writerWithDefaultPrettyPrinter().forType(Stat.class);
 
     private static ObjectMapper init() {
         return new ObjectMapper()
@@ -60,9 +62,12 @@ public final class JsonParser {
         return toJson(iOSGCMWriter, message);
     }
 
-
     public static String toJson(Profile profile) {
         return toJson(profileWriter, profile);
+    }
+
+    public static String toJson(Stat stat) {
+        return toJson(statWriter, stat);
     }
 
     private static String toJson(ObjectWriter writer, Object o) {

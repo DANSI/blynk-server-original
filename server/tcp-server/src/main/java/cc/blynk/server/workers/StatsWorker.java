@@ -32,13 +32,13 @@ public class StatsWorker implements Runnable {
 
     @Override
     public void run() {
-        //do not log low traffic. it is not interesting =).
-        if (stats.incomeMessages.getOneMinuteRate() > 1) {
-            log.info("1 min rate : {}", String.format("%.2f", stats.incomeMessages.getOneMinuteRate()));
-            for (Map.Entry<Class<?>, LongAdder> counterEntry : stats.specificCounters.entrySet()) {
-                log.info("{} : {}", counterEntry.getKey().getSimpleName(), counterEntry.getValue().sum());
-            }
-            log.info("--------------------------------------------------------------------------------------");
+        Stat stat = new Stat();
+        stat.oneMinRate = (long) stats.incomeMessages.getOneMinuteRate();
+
+        //yeap, some stats updates may be lost (because if sumThenReset()),
+        //but I don't care, cause this is just for general monitoring
+        for (Map.Entry<Class<?>, LongAdder> counterEntry : stats.specificCounters.entrySet()) {
+            stat.messages.put(counterEntry.getKey().getSimpleName(), counterEntry.getValue().sumThenReset());
         }
 
         int activeSessions = 0;
@@ -58,9 +58,14 @@ public class StatsWorker implements Runnable {
 
         }
 
-        if (appActive > 0 || hardActive > 0) {
-            log.info("Total {}, active {}, apps {}, hards {}",
-                    sessionsHolder.getUserSession().size(), activeSessions, appActive, hardActive);
-        }
+        stat.connected = activeSessions;
+        stat.onlineApps = appActive;
+        stat.onlineHards = hardActive;
+        stat.active = sessionsHolder.getUserSession().size();
+        stat.total = 0;
+
+        log.info(stat.toString());
     }
+
 }
+
