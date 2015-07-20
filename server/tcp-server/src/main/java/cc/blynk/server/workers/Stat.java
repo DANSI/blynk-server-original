@@ -2,6 +2,7 @@ package cc.blynk.server.workers;
 
 import cc.blynk.server.utils.JsonParser;
 
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +13,8 @@ import java.util.Map;
  */
 public class Stat {
 
-    long ts = System.currentTimeMillis();
+    //2015-07-20T20:15:03.954+03:00
+    String ts = OffsetDateTime.now().toString();
     long oneMinRate;
     long total;
     long active;
