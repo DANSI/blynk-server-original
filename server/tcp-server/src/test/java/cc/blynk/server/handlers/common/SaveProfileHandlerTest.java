@@ -2,7 +2,7 @@ package cc.blynk.server.handlers.common;
 
 import cc.blynk.common.model.messages.protocol.appllication.SaveProfileMessage;
 import cc.blynk.server.TestBase;
-import cc.blynk.server.exceptions.IllegalCommandException;
+import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.handlers.app.SaveProfileHandler;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class SaveProfileHandlerTest extends TestBase {
         saveProfileHandler.messageReceived(null, null, msg);
     }
 
-    @Test(expected = IllegalCommandException.class)
+    @Test(expected = IllegalCommandBodyException.class)
     public void testIllegalProfile() throws Exception {
         StringBuilder tmp = new StringBuilder();
         for (int i = 0; i < props.getIntProperty("user.profile.max.size") * 1024; i++) {
