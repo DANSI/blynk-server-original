@@ -75,7 +75,7 @@ public class NotificationsProcessorTest {
         NotificationsProcessor processor = new NotificationsProcessor(5);
         processor.twit(channel, "token", "secret", "body", 1);
         verify(channel, timeout(2000)).eventLoop();
-        verify(eventLoop).execute(any());
+        verify(eventLoop, timeout(2000)).execute(any());
 
     }
 
