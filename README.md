@@ -50,17 +50,25 @@ WARNING : by default Blynk server uses 'tmp' system dir for saving user profiles
 ![Custom server icon](https://github.com/blynkkk/blynk-server/blob/master/docs/login.png)
 ![Server properties menu](https://github.com/blynkkk/blynk-server/blob/master/docs/custom.png)
 
-+ Change you sketch
++ Change your ethernet sketch from
 
-        Blynk.begin(auth, "you_host");
-        
-+ or
-        
+        Blynk.begin(auth);
+        to
+        Blynk.begin(auth, "your_host");
+        or to 
         Blynk.begin(auth, IPAddress(xxx,xxx,xxx,xxx));
         
-+ or in case of USB when running blynk-ser.sh
++ Change your WIFI sketch from
+        
+        Blynk.begin(auth, SSID, pass));
+        to
+        Blynk.begin(auth, SSID, pass, "your_host");
+        or to
+        Blynk.begin(auth, SSID, pass, IPAddress(XXX,XXX,XXX,XXX));
+        
++ or in case of USB when running blynk-ser.sh provide '-s' option with address of your local server
 
-        ./blynk-ser.sh -s server_address
+        ./blynk-ser.sh -s you_host_or_IP
         
 
 ## Advanced local server setup
