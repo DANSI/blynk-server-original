@@ -29,6 +29,7 @@ public class IOSGCMMessage implements GCMMessage {
     }
 
     private class IOSBody {
+        final String title = "Blynk Notification";
         String body;
 
         public IOSBody(String body) {
