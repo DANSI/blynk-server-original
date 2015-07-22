@@ -1,6 +1,7 @@
 package cc.blynk.server.handlers.app;
 
 import cc.blynk.server.TestBase;
+import cc.blynk.server.dao.graph.StoreMessage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -42,14 +43,14 @@ public class GetGraphDataHandlerTest extends TestBase {
 
     @Test
     public void testCompressAndDecompress() throws IOException {
-        Queue<String> queue = new LinkedList<>();
+        Queue<StoreMessage> queue = new LinkedList<>();
 
         int dataLength = 0;
         for (int i = 0; i < 1000; i++) {
             long ts = System.currentTimeMillis();
-            String body = ("aw 1 x " + ts).replace("x", String.valueOf(i)).replace(" ", "\0");
-            queue.offer(body);
-            dataLength += body.length();
+            StoreMessage mes = new StoreMessage(null, "aw 1 x ".replace("x", String.valueOf(i)).replace(" ", "\0"), ts);
+            queue.offer(mes);
+            dataLength += mes.toString().length();
         }
 
         System.out.println("Size before compression : " + dataLength);

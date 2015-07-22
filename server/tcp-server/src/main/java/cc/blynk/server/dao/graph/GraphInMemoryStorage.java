@@ -3,7 +3,6 @@ package cc.blynk.server.dao.graph;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.Profile;
-import cc.blynk.server.storage.Storage;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -19,50 +18,35 @@ import java.util.concurrent.LinkedBlockingDeque;
  *
  * todo redesign. right now it is not efficient at all
  */
-public class GraphInMemoryStorage implements Storage {
+public class GraphInMemoryStorage {
 
-    private final BlockingQueue<QueueMessage> storeQueue = new LinkedBlockingDeque<>();
-    private final Map<GraphKey, Queue<String>> userValues;
+    private final BlockingQueue<StoreMessage> storeQueue = new LinkedBlockingDeque<>();
+    private final Map<GraphKey, Queue<StoreMessage>> userValues;
 
     public GraphInMemoryStorage(int sizeLimit) {
         this.userValues = new ConcurrentHashMap<>();
         new StoreProcessor(sizeLimit).start();
     }
 
-    private static String attachTS(String body, long ts) {
-        if (body.charAt(body.length() - 1) == StringUtils.BODY_SEPARATOR) {
-            return body + ts;
-        } else {
-            return body + StringUtils.BODY_SEPARATOR + ts;
+    public StoreMessage store(Profile profile, Integer dashId, String body, int msgId) {
+        byte pin;
+        try {
+            pin = Byte.parseByte(StringUtils.fetchPin(body));
+        } catch (NumberFormatException e) {
+            throw new IllegalCommandException("Hardware command body incorrect.", msgId);
         }
+
+        GraphKey key = new GraphKey(dashId, pin);
+        if (profile.hasGraphPin(key)) {
+            StoreMessage storeMessage = new StoreMessage(key, body, System.currentTimeMillis());
+            storeQueue.offer(storeMessage);
+            return storeMessage;
+        }
+
+        return null;
     }
 
-    @Override
-    public String store(Profile profile, Integer dashId, String body, int msgId) {
-        if (body.length() < 4) {
-            throw new IllegalCommandException("Hardware command body too short.", msgId);
-        }
-
-        if (body.charAt(1) == 'w') {
-            byte pin;
-            try {
-                pin = Byte.parseByte(StringUtils.fetchPin(body));
-            } catch (NumberFormatException e) {
-                throw new IllegalCommandException("Hardware command body incorrect.", msgId);
-            }
-
-            GraphKey key = new GraphKey(dashId, pin);
-            if (profile.hasGraphPin(key)) {
-                long ts = System.currentTimeMillis();
-                body = attachTS(body, ts);
-                storeQueue.offer(new QueueMessage(key, body));
-            }
-        }
-        return body;
-    }
-
-    @Override
-    public Queue<String> getAll(GraphKey key) {
+    public Queue<StoreMessage> getAll(GraphKey key) {
         return userValues.get(key);
     }
 
@@ -78,8 +62,8 @@ public class GraphInMemoryStorage implements Storage {
         public void run() {
             while (true) {
                 try {
-                    QueueMessage message = storeQueue.take();
-                    Queue<String> values = userValues.get(message.key);
+                    StoreMessage message = storeQueue.take();
+                    Queue<StoreMessage> values = userValues.get(message.key);
                     if (values == null) {
                         values = new LinkedList<>();
                         userValues.put(message.key, values);
@@ -88,7 +72,7 @@ public class GraphInMemoryStorage implements Storage {
                     if (values.size() == sizeLimit) {
                         values.remove();
                     }
-                    values.add(message.body);
+                    values.add(message);
                 } catch (InterruptedException e) {
                 }
             }

@@ -10,7 +10,7 @@ import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.storage.Storage;
+import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -67,7 +67,7 @@ public class HardwareHandlerTest extends TestBase {
     private Session session;
 
     @Mock
-    private Storage storage;
+    private StorageDao storageDao;
 
     @Test
     public void testActiveDashboardIdNull() {
@@ -78,7 +78,7 @@ public class HardwareHandlerTest extends TestBase {
         when(user.getProfile()).thenReturn(profile);
         profile.activeDashId = null;
         SessionsHolder sessionsHolder = spy(new SessionsHolder());
-        HardwareHandler hardwareHandler = spy(new HardwareHandler(props, userRegistry, sessionsHolder, storage));
+        HardwareHandler hardwareHandler = spy(new HardwareHandler(props, userRegistry, sessionsHolder, storageDao));
         hardwareHandler.messageReceived(ctx, user, message);
     }
 
@@ -94,7 +94,7 @@ public class HardwareHandlerTest extends TestBase {
         SessionsHolder sessionsHolder = spy(new SessionsHolder());
         final Session session = new Session();
         sessionsHolder.userSession.put(user, session);
-        HardwareHandler hardwareHandler = spy(new HardwareHandler(props, userRegistry, sessionsHolder, storage));
+        HardwareHandler hardwareHandler = spy(new HardwareHandler(props, userRegistry, sessionsHolder, storageDao));
         try{
             hardwareHandler.messageReceived(ctx, user, message);
         }catch (DeviceNotInNetworkException e){

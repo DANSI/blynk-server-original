@@ -9,7 +9,7 @@ import cc.blynk.server.handlers.app.auth.AppLoginHandler;
 import cc.blynk.server.handlers.app.auth.RegisterHandler;
 import cc.blynk.server.handlers.common.HardwareHandler;
 import cc.blynk.server.handlers.common.PingHandler;
-import cc.blynk.server.storage.Storage;
+import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandler;
 
 /**
@@ -22,15 +22,15 @@ class AppHandlersHolder {
     private final BaseSimpleChannelInboundHandler[] baseHandlers;
     private final ChannelHandler[] allHandlers;
 
-    public AppHandlersHolder(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, Storage storage) {
+    public AppHandlersHolder(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao) {
         RegisterHandler registerHandler = new RegisterHandler(userRegistry);
         AppLoginHandler appLoginHandler = new AppLoginHandler(userRegistry, sessionsHolder);
         GetTokenHandler getTokenHandler = new GetTokenHandler(props, userRegistry, sessionsHolder);
-        GetGraphDataHandler getGraphDataHandler = new GetGraphDataHandler(props, userRegistry, sessionsHolder, storage);
+        GetGraphDataHandler getGraphDataHandler = new GetGraphDataHandler(props, userRegistry, sessionsHolder, storageDao);
         RefreshTokenHandler refreshTokenHandler = new RefreshTokenHandler(props, userRegistry, sessionsHolder);
         LoadProfileHandler loadProfileHandler = new LoadProfileHandler(props, userRegistry, sessionsHolder);
         SaveProfileHandler saveProfileHandler = new SaveProfileHandler(props, userRegistry, sessionsHolder);
-        HardwareHandler hardwareHandler = new HardwareHandler(props, userRegistry, sessionsHolder, storage);
+        HardwareHandler hardwareHandler = new HardwareHandler(props, userRegistry, sessionsHolder, storageDao);
         PingHandler pingHandler = new PingHandler(props, userRegistry, sessionsHolder);
         ActivateDashboardHandler activateDashboardHandler = new ActivateDashboardHandler(props, userRegistry, sessionsHolder);
         DeActivateDashboardHandler deActivateDashboardHandler = new DeActivateDashboardHandler(props, userRegistry, sessionsHolder);

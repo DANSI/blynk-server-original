@@ -10,9 +10,8 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.dao.graph.GraphInMemoryStorage;
 import cc.blynk.server.model.Profile;
-import cc.blynk.server.storage.Storage;
+import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.utils.JsonParser;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import org.junit.Before;
@@ -50,7 +49,7 @@ public abstract class IntegrationBase {
     @Mock
     public NotificationsProcessor notificationsProcessor;
 
-    public Storage storage;
+    public StorageDao storageDao;
 
     public FileManager fileManager;
 
@@ -144,6 +143,6 @@ public abstract class IntegrationBase {
         userRegistry = new UserRegistry(fileManager.deserialize());
         stats = new GlobalStats();
         jedisWrapper = new JedisWrapper(properties);
-        storage = new GraphInMemoryStorage(properties.getIntProperty("user.in.memory.storage.limit"));
+        storageDao = new StorageDao(properties.getIntProperty("user.in.memory.storage.limit"));
     }
 }

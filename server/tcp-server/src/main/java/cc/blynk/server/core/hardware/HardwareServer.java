@@ -7,7 +7,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.storage.Storage;
+import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -23,10 +23,10 @@ public class HardwareServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HardwareServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                          GlobalStats stats, NotificationsProcessor notificationsProcessor, TransportTypeHolder transportType, Storage storage) {
+                          GlobalStats stats, NotificationsProcessor notificationsProcessor, TransportTypeHolder transportType, StorageDao storageDao) {
         super(props.getIntProperty("hardware.default.port"), transportType);
 
-        this.handlersHolder = new HardwareHandlersHolder(props, userRegistry, sessionsHolder, notificationsProcessor, storage);
+        this.handlersHolder = new HardwareHandlersHolder(props, userRegistry, sessionsHolder, notificationsProcessor, storageDao);
         int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 15);
         log.debug("hard.socket.idle.timeout = {}", hardTimeoutSecs);
         this.channelInitializer = new HardwareChannelInitializer(sessionsHolder, stats, handlersHolder, hardTimeoutSecs, null);

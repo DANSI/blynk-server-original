@@ -11,7 +11,7 @@ import cc.blynk.server.handlers.hardware.HardwareLoginHandler;
 import cc.blynk.server.handlers.hardware.MailHandler;
 import cc.blynk.server.handlers.hardware.PushHandler;
 import cc.blynk.server.handlers.hardware.TweetHandler;
-import cc.blynk.server.storage.Storage;
+import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
 
@@ -27,9 +27,9 @@ public class HardwareHandlersHolder {
     private final NotificationsProcessor notificationsProcessor;
 
     public HardwareHandlersHolder(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                                  NotificationsProcessor notificationsProcessor, Storage storage) {
+                                  NotificationsProcessor notificationsProcessor, StorageDao storageDao) {
         HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(userRegistry, sessionsHolder);
-        HardwareHandler hardwareHandler = new HardwareHandler(props, userRegistry, sessionsHolder, storage);
+        HardwareHandler hardwareHandler = new HardwareHandler(props, userRegistry, sessionsHolder, storageDao);
         BridgeHandler bridgeHandler = new BridgeHandler(props, userRegistry, sessionsHolder);
         PingHandler pingHandler = new PingHandler(props, userRegistry, sessionsHolder);
 

@@ -7,11 +7,12 @@ import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.dao.graph.GraphKey;
+import cc.blynk.server.dao.graph.StoreMessage;
 import cc.blynk.server.exceptions.GetGraphDataException;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.storage.Storage;
+import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -30,14 +31,14 @@ import java.util.zip.DeflaterOutputStream;
 public class GetGraphDataHandler extends BaseSimpleChannelInboundHandler<GetGraphDataMessage> {
 
     private final static byte[] EMPTY_RESPONSE = {};
-    private final Storage storage;
+    private final StorageDao storageDao;
 
-    public GetGraphDataHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, Storage storage) {
+    public GetGraphDataHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao) {
         super(props, userRegistry, sessionsHolder);
-        this.storage = storage;
+        this.storageDao = storageDao;
     }
 
-    public static byte[] compress(Queue<String> values, int msgId) {
+    public static byte[] compress(Queue<StoreMessage> values, int msgId) {
         //todo define size
         ByteArrayOutputStream baos = new ByteArrayOutputStream(values.size() * 20);
 
@@ -45,9 +46,9 @@ public class GetGraphDataHandler extends BaseSimpleChannelInboundHandler<GetGrap
             OutputStream out = new DeflaterOutputStream(baos);
             int counter = 0;
             int length = values.size();
-            for (String s : values) {
+            for (StoreMessage s : values) {
                 counter++;
-                out.write(s.getBytes());
+                out.write(s.toString().getBytes());
                 if (counter < length) {
                     out.write(StringUtils.BODY_SEPARATOR);
                 }
@@ -83,7 +84,7 @@ public class GetGraphDataHandler extends BaseSimpleChannelInboundHandler<GetGrap
 
         user.getProfile().validateDashId(dashBoardId, message.id);
 
-        Queue<String> allValues = storage.getAll(new GraphKey(dashBoardId, pin));
+        Queue<StoreMessage> allValues = storageDao.getAllFromMemmory(new GraphKey(dashBoardId, pin));
         GetGraphDataResponseMessage response;
         if (allValues == null || allValues.size() == 0) {
             response = new GetGraphDataResponseMessage(message.id, EMPTY_RESPONSE);

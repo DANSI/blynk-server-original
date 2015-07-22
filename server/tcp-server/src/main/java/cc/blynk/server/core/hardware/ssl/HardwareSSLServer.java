@@ -9,7 +9,7 @@ import cc.blynk.server.core.hardware.HardwareHandlersHolder;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.storage.Storage;
+import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -33,10 +33,10 @@ public class HardwareSSLServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HardwareSSLServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                             GlobalStats stats, NotificationsProcessor notificationsProcessor, TransportTypeHolder transportType, Storage storage) {
+                             GlobalStats stats, NotificationsProcessor notificationsProcessor, TransportTypeHolder transportType, StorageDao storageDao) {
         super(props.getIntProperty("hardware.ssl.port"), transportType);
 
-        this.handlersHolder = new HardwareHandlersHolder(props, userRegistry, sessionsHolder, notificationsProcessor, storage);
+        this.handlersHolder = new HardwareHandlersHolder(props, userRegistry, sessionsHolder, notificationsProcessor, storageDao);
         int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 15);
 
         SslProvider sslProvider = props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK;
