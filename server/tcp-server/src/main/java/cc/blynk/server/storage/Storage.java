@@ -1,5 +1,6 @@
-package cc.blynk.server.dao.graph;
+package cc.blynk.server.storage;
 
+import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.model.Profile;
 
 import java.util.Queue;

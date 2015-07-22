@@ -7,11 +7,11 @@ import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.dao.graph.GraphKey;
-import cc.blynk.server.dao.graph.Storage;
 import cc.blynk.server.exceptions.GetGraphDataException;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.storage.Storage;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 

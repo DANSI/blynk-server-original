@@ -3,13 +3,13 @@ package cc.blynk.server.core.application;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.dao.graph.Storage;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.app.*;
 import cc.blynk.server.handlers.app.auth.AppLoginHandler;
 import cc.blynk.server.handlers.app.auth.RegisterHandler;
 import cc.blynk.server.handlers.common.HardwareHandler;
 import cc.blynk.server.handlers.common.PingHandler;
+import cc.blynk.server.storage.Storage;
 import io.netty.channel.ChannelHandler;
 
 /**

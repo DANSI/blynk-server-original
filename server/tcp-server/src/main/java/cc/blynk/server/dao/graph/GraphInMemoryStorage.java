@@ -3,6 +3,7 @@ package cc.blynk.server.dao.graph;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.Profile;
+import cc.blynk.server.storage.Storage;
 
 import java.util.LinkedList;
 import java.util.Map;
