@@ -29,4 +29,8 @@ public class StoreMessage {
             return body + StringUtils.BODY_SEPARATOR + ts;
         }
     }
+
+    public String toCSV() {
+        return key.dashId + "," + key.pin + "," + body.substring(body.lastIndexOf(StringUtils.BODY_SEPARATOR) + 1) + "," + ts;
+    }
 }

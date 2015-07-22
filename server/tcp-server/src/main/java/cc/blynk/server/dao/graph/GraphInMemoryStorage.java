@@ -37,13 +37,12 @@ public class GraphInMemoryStorage {
         }
 
         GraphKey key = new GraphKey(dashId, pin);
+        StoreMessage storeMessage = new StoreMessage(key, body, System.currentTimeMillis());
         if (profile.hasGraphPin(key)) {
-            StoreMessage storeMessage = new StoreMessage(key, body, System.currentTimeMillis());
             storeQueue.offer(storeMessage);
-            return storeMessage;
         }
 
-        return null;
+        return storeMessage;
     }
 
     public Queue<StoreMessage> getAll(GraphKey key) {

@@ -60,6 +60,38 @@
             </Routes>
         </Routing>
 
+        <Routing name="data_storage">
+            <Routes pattern="$${ctx:user}">
+
+                <!-- This route is chosen if ThreadContext has no value for key "user". -->
+                <Route key="$${ctx:user}">
+                    <RollingFile name="default" fileName="${sys:logs.folder}/data/data.log"
+                                 filePattern="${sys:logs.folder}/archive/data-%d{yyyy-MM-dd}.log.gz">
+                        <PatternLayout>
+                            <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
+                        </PatternLayout>
+                        <Policies>
+                            <TimeBasedTriggeringPolicy/>
+                        </Policies>
+                    </RollingFile>
+                </Route>
+
+                <!-- This route is chosen if ThreadContext has a value for "user"
+                The value dynamically determines the name of the log file. -->
+                <Route>
+                    <RollingFile name="${ctx:user}" fileName="${sys:logs.folder}/data/${ctx:user}/${ctx:user}.log"
+                                 filePattern="${sys:logs.folder}/data/${ctx:user}/${ctx:user}-%d{yyyy-MM-dd}.log.gz">
+                        <PatternLayout>
+                            <pattern>%msg%n</pattern>
+                        </PatternLayout>
+                        <Policies>
+                            <TimeBasedTriggeringPolicy/>
+                        </Policies>
+                    </RollingFile>
+                </Route>
+            </Routes>
+        </Routing>
+
     </Appenders>
     <Loggers>
 
@@ -74,6 +106,9 @@
         </Logger>
         <Logger name="cc.blynk.server.core.administration" level="debug" additivity="false">
             <appender-ref ref="admin"/>
+        </Logger>
+        <Logger name="cc.blynk.server.storage.StorageDao" level="info">
+            <appender-ref ref="data_storage"/>
         </Logger>
 
         <Root level="debug">
