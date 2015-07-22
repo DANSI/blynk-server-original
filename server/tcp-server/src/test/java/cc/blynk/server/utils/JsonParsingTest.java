@@ -69,6 +69,22 @@ public class JsonParsingTest {
     }
 
     @Test
+    public void testParseIOSProfile() {
+        InputStream is = this.getClass().getResourceAsStream("/json_test/user_ios_profile_json.txt");
+
+        Profile profile = JsonParser.parseProfile(is);
+
+        assertNotNull(profile);
+        assertNotNull(profile.getDashBoards());
+        assertEquals(1, profile.getDashBoards().length);
+        assertNotNull(profile.getDashBoards()[0].getWidgets());
+        assertNotNull(profile.getDashBoards()[0].getWidgets()[0]);
+        assertNotNull(profile.getDashBoards()[0].getWidgets()[1]);
+        assertTrue(((Button) profile.getDashBoards()[0].getWidgets()[0]).pushMode);
+        assertFalse(((Button) profile.getDashBoards()[0].getWidgets()[1]).pushMode);
+    }
+
+    @Test
     public void testJSONToRGB() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json_RGB.txt");
 
