@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
  * Created on 29.04.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HardwareHandlerTest extends TestBase {
+public class HardwareHardHandlerTest extends TestBase {
 
     @Mock
     private NotificationsProcessor notificationsProcessor;
@@ -68,19 +68,6 @@ public class HardwareHandlerTest extends TestBase {
 
     @Mock
     private StorageDao storageDao;
-
-    @Test
-    public void testActiveDashboardIdNull() {
-        HardwareMessage message = new HardwareMessage(1, "test");
-        when(ctx.channel()).thenReturn(channel);
-        when(channel.attr(ChannelState.IS_HARD_CHANNEL)).thenReturn(attr);
-        when(attr.get()).thenReturn(false);
-        when(user.getProfile()).thenReturn(profile);
-        profile.activeDashId = null;
-        SessionsHolder sessionsHolder = spy(new SessionsHolder());
-        HardwareHardHandler hardwareHandler = spy(new HardwareHardHandler(props, userRegistry, sessionsHolder, storageDao));
-        hardwareHandler.messageReceived(ctx, user, message);
-    }
 
     @Test
     public void testNoDeviceAndPinModeMessage() {

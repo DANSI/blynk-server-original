@@ -32,10 +32,6 @@ public class HardwareHardHandler extends BaseSimpleChannelInboundHandler<Hardwar
         updateProperties(props);
     }
 
-    private static boolean pinModeMessage(String body) {
-        return body.length() > 0 && body.charAt(0) == 'p';
-    }
-
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, User user, HardwareMessage message) {
         Session session = sessionsHolder.userSession.get(user);
