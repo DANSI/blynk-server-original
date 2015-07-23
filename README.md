@@ -138,6 +138,20 @@ server.properties options:
 + Specifies maximum period of time when hardware socket could be idle. After which socket will be closed due to non activity. In seconds. Default value 15 if not provided
 
         hard.socket.idle.timeout=15
+        
+### Enabling mail on Local server
+In order to enable mail notifications on Local server you need to provide own mail credentials. To do that you need to create file "mail.properties" within same folder where server.jar is.
+Mail properties :
+
+        mail.smtp.auth=true
+        mail.smtp.starttls.enable=true
+        mail.smtp.host=smtp.gmail.com
+        mail.smtp.port=587
+        mail.smtp.username=YOUR_EMAIL_HERE
+        mail.smtp.password=YOUR_EMAIL_PASS_HERE
+        
+See example [here](https://github.com/blynkkk/blynk-server/blob/master/server/notifications/mail-notifications/src/main/resources/mail.properties).
+
 
 ### Generate SSL certificates
 
