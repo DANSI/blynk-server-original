@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.common;
+package cc.blynk.server.handlers.hardware;
 
 import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.protocol.BridgeMessage;

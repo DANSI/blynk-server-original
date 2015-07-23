@@ -4,7 +4,6 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.handlers.common.BridgeHandler;
 import cc.blynk.server.handlers.common.PingHandler;
 import cc.blynk.server.handlers.hardware.*;
 import cc.blynk.server.storage.StorageDao;
