@@ -1,9 +1,5 @@
 package cc.blynk.server.dao.graph;
 
-import cc.blynk.common.utils.StringUtils;
-import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.model.Profile;
-
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
@@ -28,21 +24,8 @@ public class GraphInMemoryStorage {
         new StoreProcessor(sizeLimit).start();
     }
 
-    public StoreMessage store(Profile profile, Integer dashId, String body, int msgId) {
-        byte pin;
-        try {
-            pin = Byte.parseByte(StringUtils.fetchPin(body));
-        } catch (NumberFormatException e) {
-            throw new IllegalCommandException("Hardware command body incorrect.", msgId);
-        }
-
-        GraphKey key = new GraphKey(dashId, pin);
-        StoreMessage storeMessage = new StoreMessage(key, body, System.currentTimeMillis());
-        if (profile.hasGraphPin(key)) {
-            storeQueue.offer(storeMessage);
-        }
-
-        return storeMessage;
+    public void store(StoreMessage storeMessage) {
+        storeQueue.offer(storeMessage);
     }
 
     public Queue<StoreMessage> getAll(GraphKey key) {

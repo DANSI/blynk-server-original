@@ -182,20 +182,20 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testAppNoActiveDashForHard() throws Exception {
-        clientPair.hardwareClient.send("hardware aw 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, "aw 1".replaceAll(" ", "\0"))));
+        clientPair.hardwareClient.send("hardware aw 1 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, "aw 1 1".replaceAll(" ", "\0"))));
 
         clientPair.appClient.send("deactivate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
 
-        clientPair.hardwareClient.send("hardware aw 1");
+        clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(2, NO_ACTIVE_DASHBOARD)));
     }
 
     @Test
     public void testAppChangeActiveDash() throws Exception {
-        clientPair.hardwareClient.send("hardware aw 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, "aw 1".replaceAll(" ", "\0"))));
+        clientPair.hardwareClient.send("hardware aw 1 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, "aw 1 1".replaceAll(" ", "\0"))));
 
         clientPair.appClient.send("deactivate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
@@ -204,20 +204,20 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("saveProfile " + newProfile);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, OK)));
 
-        clientPair.hardwareClient.send("hardware aw 1");
+        clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(2, NO_ACTIVE_DASHBOARD)));
 
         clientPair.appClient.send("activate 2");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, OK)));
 
-        clientPair.hardwareClient.send("hardware aw 1");
+        clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(3, NO_ACTIVE_DASHBOARD)));
 
         clientPair.appClient.send("activate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, OK)));
 
-        clientPair.hardwareClient.send("hardware aw 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, HARDWARE_COMMAND, "aw 1".replaceAll(" ", "\0"))));
+        clientPair.hardwareClient.send("hardware aw 1 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, HARDWARE_COMMAND, "aw 1 1".replaceAll(" ", "\0"))));
     }
 
     @Test

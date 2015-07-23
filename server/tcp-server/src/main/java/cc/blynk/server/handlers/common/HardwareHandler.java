@@ -15,8 +15,6 @@ import cc.blynk.server.model.auth.User;
 import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * The Blynk Project.
@@ -27,9 +25,7 @@ import org.apache.logging.log4j.Logger;
 @ChannelHandler.Sharable
 public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMessage> {
 
-    private static final Logger log = LogManager.getLogger(StorageDao.class);
     private final StorageDao storageDao;
-    private volatile boolean ENABLE_RAW_DATA_STORE;
 
     public HardwareHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao) {
         super(props, userRegistry, sessionsHolder);
@@ -54,9 +50,6 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
             StoreMessage storeMessage = null;
             if (message.body.charAt(1) == 'w') {
                 storeMessage = storageDao.process(user.getProfile(), ctx.channel().attr(ChannelState.DASH_ID).get(), message.body, message.id);
-                if (ENABLE_RAW_DATA_STORE) {
-                    log.info(storeMessage.toCSV());
-                }
             }
 
             if (user.getProfile().activeDashId == null) {
@@ -96,10 +89,8 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
     @Override
     public void updateProperties(ServerProperties props) {
         super.updateProperties(props);
-        try {
-            this.ENABLE_RAW_DATA_STORE = props.getBoolProperty("enable.raw.data.store");
-        } catch (RuntimeException e) {
-            //error already logged, so do nothing.
+        if (storageDao != null) {
+            storageDao.updateProperties(props);
         }
     }
 }
