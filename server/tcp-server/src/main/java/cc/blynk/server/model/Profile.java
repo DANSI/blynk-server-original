@@ -3,7 +3,9 @@ package cc.blynk.server.model;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.exceptions.IllegalCommandException;
+import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.others.Timer;
+import cc.blynk.server.model.widgets.outputs.Graph;
 import cc.blynk.server.utils.JsonParser;
 
 import java.util.*;
@@ -92,10 +94,15 @@ public class Profile {
         }
 
         for (DashBoard dashBoard : dashBoards) {
-            Set<Byte> graphPinsInDash = dashBoard.getGraphWidgetPins();
-            for (Byte pin : graphPinsInDash) {
-                if (pin != null) {
-                    graphPins.add(new GraphKey(dashBoard.getId(), pin));
+            if (dashBoard.getWidgets() == null || dashBoard.getWidgets().length == 0) {
+                continue;
+            }
+
+            for (Widget widget : dashBoard.getWidgets()) {
+                if (widget instanceof Graph) {
+                    if (widget.pin != null) {
+                        graphPins.add(new GraphKey(dashBoard.getId(), widget.pin, widget.pinType));
+                    }
                 }
             }
         }

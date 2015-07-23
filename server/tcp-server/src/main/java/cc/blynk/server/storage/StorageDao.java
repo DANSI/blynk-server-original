@@ -7,6 +7,7 @@ import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.dao.graph.StoreMessage;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.Profile;
+import cc.blynk.server.model.enums.PinType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,7 +38,7 @@ public class StorageDao {
             throw new IllegalCommandException("Hardware command body incorrect.", msgId);
         }
 
-        GraphKey key = new GraphKey(dashId, pin);
+        GraphKey key = new GraphKey(dashId, pin, PinType.getPingType(body.charAt(0)));
         StoreMessage storeMessage = new StoreMessage(key, body, System.currentTimeMillis());
 
         if (ENABLE_RAW_DATA_STORE) {

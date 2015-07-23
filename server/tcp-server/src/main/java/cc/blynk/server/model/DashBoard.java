@@ -2,9 +2,11 @@ package cc.blynk.server.model;
 
 import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.others.Timer;
-import cc.blynk.server.model.widgets.outputs.Graph;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * User: ddumanskiy
@@ -54,21 +56,6 @@ public class DashBoard {
         }
 
         return null;
-    }
-
-    public Set<Byte> getGraphWidgetPins() {
-        if (widgets == null || widgets.length == 0) {
-            return Collections.emptySet();
-        }
-
-        Set<Byte> graphPins = new HashSet<>();
-        for (Widget widget : widgets) {
-            if (widget instanceof Graph) {
-                graphPins.add(widget.pin);
-            }
-        }
-
-        return graphPins;
     }
 
     public int getId() {

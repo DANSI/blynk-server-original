@@ -5,6 +5,7 @@ import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.dao.graph.StoreMessage;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.model.enums.PinType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -34,12 +35,12 @@ public class GraphInMemoryStorageDaoTest {
     @Test
     public void testStoreCorrect() throws InterruptedException {
         when(user.getProfile()).thenReturn(profile);
-        GraphKey key = new GraphKey(1, (byte) 33);
+        GraphKey key = new GraphKey(1, (byte) 33, PinType.ANALOG);
         when(profile.hasGraphPin(key)).thenReturn(true);
 
         String body = "aw 33 x".replaceAll(" ", "\0");
         for (int i = 0; i < 1000; i++) {
-            storage.store(new StoreMessage(new GraphKey(1, (byte) 33), body.replace("x", String.valueOf(i)), System.currentTimeMillis()));
+            storage.store(new StoreMessage(new GraphKey(1, (byte) 33, PinType.ANALOG), body.replace("x", String.valueOf(i)), System.currentTimeMillis()));
         }
 
         Queue<StoreMessage> queue;
@@ -59,12 +60,12 @@ public class GraphInMemoryStorageDaoTest {
     @Test
     public void testStoreCorrect2() throws InterruptedException {
         when(user.getProfile()).thenReturn(profile);
-        GraphKey key = new GraphKey(1, (byte) 33);
+        GraphKey key = new GraphKey(1, (byte) 33, PinType.ANALOG);
         when(profile.hasGraphPin(key)).thenReturn(true);
 
         String body = "aw 33 x".replaceAll(" ", "\0");
         for (int i = 0; i < 2000; i++) {
-            storage.store(new StoreMessage(new GraphKey(1, (byte) 33), body.replace("x", String.valueOf(i)), System.currentTimeMillis()));
+            storage.store(new StoreMessage(new GraphKey(1, (byte) 33, PinType.ANALOG), body.replace("x", String.valueOf(i)), System.currentTimeMillis()));
         }
 
         Queue<StoreMessage> queue;
@@ -87,16 +88,16 @@ public class GraphInMemoryStorageDaoTest {
     @Test
     public void testStoreCorrect3() throws InterruptedException {
         when(user.getProfile()).thenReturn(profile);
-        GraphKey key = new GraphKey(1, (byte) 33);
-        GraphKey key2 = new GraphKey(1, (byte) 34);
+        GraphKey key = new GraphKey(1, (byte) 33, PinType.ANALOG);
+        GraphKey key2 = new GraphKey(1, (byte) 34, PinType.ANALOG);
         when(profile.hasGraphPin(key)).thenReturn(true);
         when(profile.hasGraphPin(key2)).thenReturn(true);
 
         String body = "aw 33 x".replaceAll(" ", "\0");
         String body2 = "aw 34 x".replaceAll(" ", "\0");
         for (int i = 0; i < 1000; i++) {
-            storage.store(new StoreMessage(new GraphKey(1, (byte) 33), body.replace("x", String.valueOf(i)), System.currentTimeMillis()));
-            storage.store(new StoreMessage(new GraphKey(1, (byte) 34), body2.replace("x", String.valueOf(i)), System.currentTimeMillis()));
+            storage.store(new StoreMessage(new GraphKey(1, (byte) 33, PinType.ANALOG), body.replace("x", String.valueOf(i)), System.currentTimeMillis()));
+            storage.store(new StoreMessage(new GraphKey(1, (byte) 34, PinType.ANALOG), body2.replace("x", String.valueOf(i)), System.currentTimeMillis()));
         }
 
 

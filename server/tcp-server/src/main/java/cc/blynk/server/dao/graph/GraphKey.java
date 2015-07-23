@@ -1,5 +1,7 @@
 package cc.blynk.server.dao.graph;
 
+import cc.blynk.server.model.enums.PinType;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -11,9 +13,12 @@ public class GraphKey {
 
     public byte pin;
 
-    public GraphKey(int dashId, byte pin) {
+    public PinType pinType;
+
+    public GraphKey(int dashId, byte pin, PinType pinType) {
         this.dashId = dashId;
         this.pin = pin;
+        this.pinType = pinType;
     }
 
     @Override
@@ -21,10 +26,11 @@ public class GraphKey {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        GraphKey graphKey = (GraphKey) o;
+        GraphKey key = (GraphKey) o;
 
-        if (dashId != graphKey.dashId) return false;
-        return pin == graphKey.pin;
+        if (dashId != key.dashId) return false;
+        if (pin != key.pin) return false;
+        return pinType == key.pinType;
 
     }
 
@@ -32,6 +38,7 @@ public class GraphKey {
     public int hashCode() {
         int result = dashId;
         result = 31 * result + (int) pin;
+        result = 31 * result + (pinType != null ? pinType.hashCode() : 0);
         return result;
     }
 }

@@ -12,6 +12,7 @@ import cc.blynk.server.exceptions.GetGraphDataException;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -63,20 +64,23 @@ public class GetGraphDataHandler extends BaseSimpleChannelInboundHandler<GetGrap
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, User user, GetGraphDataMessage message) {
         //warn: split may be optimized
-        String[] messageParts = message.body.split(" ", 2);
+        String[] messageParts = message.body.split(" ", 3);
 
-        if (messageParts.length != 2) {
+        if (messageParts.length != 3) {
             throw new IllegalCommandException("Wrong income message format.", message.id);
         }
 
         String dashBoardIdString = messageParts[0];
-        String pinString = messageParts[1];
+        String pinTypeChar = messageParts[1];
+        String pinString = messageParts[2];
 
         int dashBoardId;
+        PinType pinType;
         byte pin;
 
         try {
             dashBoardId = Integer.parseInt(dashBoardIdString);
+            pinType = PinType.getPingType(pinTypeChar.charAt(0));
             pin = Byte.parseByte(pinString);
         } catch (NumberFormatException e) {
             throw new IllegalCommandException("Hardware command body incorrect.", message.id);
@@ -84,7 +88,7 @@ public class GetGraphDataHandler extends BaseSimpleChannelInboundHandler<GetGrap
 
         user.getProfile().validateDashId(dashBoardId, message.id);
 
-        Queue<StoreMessage> allValues = storageDao.getAllFromMemmory(new GraphKey(dashBoardId, pin));
+        Queue<StoreMessage> allValues = storageDao.getAllFromMemmory(new GraphKey(dashBoardId, pin, pinType));
         GetGraphDataResponseMessage response;
         if (allValues == null || allValues.size() == 0) {
             response = new GetGraphDataResponseMessage(message.id, EMPTY_RESPONSE);

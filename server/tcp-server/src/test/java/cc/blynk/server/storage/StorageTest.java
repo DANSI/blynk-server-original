@@ -2,6 +2,7 @@ package cc.blynk.server.storage;
 
 import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.dao.graph.StoreMessage;
+import cc.blynk.server.model.enums.PinType;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -22,7 +23,7 @@ public class StorageTest {
     @Ignore
     public void generateLogFile() throws IOException {
         Path path = Paths.get("/home/doom369/test-data2.log");
-        GraphKey key = new GraphKey(100000, (byte) 10);
+        GraphKey key = new GraphKey(100000, (byte) 10, PinType.ANALOG);
         long ts  = System.currentTimeMillis();
         String body = "aw 100 x";
         int i = 0;

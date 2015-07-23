@@ -1,6 +1,7 @@
 package cc.blynk.server.model;
 
 import cc.blynk.server.dao.graph.GraphKey;
+import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.utils.JsonParser;
 import org.junit.Test;
 
@@ -27,7 +28,7 @@ public class ProfileCalcGraphPinsTest {
 
         profile.calcGraphPins();
 
-        assertTrue(profile.hasGraphPin(new GraphKey(1, (byte) 8)));
+        assertTrue(profile.hasGraphPin(new GraphKey(1, (byte) 8, PinType.DIGITAL)));
     }
 
     @Test
@@ -42,7 +43,7 @@ public class ProfileCalcGraphPinsTest {
 
         profile.calcGraphPins();
 
-        assertFalse(profile.hasGraphPin(new GraphKey(1, (byte) 8)));
+        assertFalse(profile.hasGraphPin(new GraphKey(1, (byte) 8, PinType.ANALOG)));
     }
 
     @Test
@@ -57,13 +58,13 @@ public class ProfileCalcGraphPinsTest {
 
         profile.calcGraphPins();
 
-        assertTrue(profile.hasGraphPin(new GraphKey(1, (byte) 8)));
-        assertTrue(profile.hasGraphPin(new GraphKey(1, (byte) 9)));
+        assertTrue(profile.hasGraphPin(new GraphKey(1, (byte) 8, PinType.DIGITAL)));
+        assertTrue(profile.hasGraphPin(new GraphKey(1, (byte) 9, PinType.DIGITAL)));
 
 
-        assertFalse(profile.hasGraphPin(new GraphKey(2, (byte) 9)));
-        assertTrue(profile.hasGraphPin(new GraphKey(2, (byte) 8)));
-        assertTrue(profile.hasGraphPin(new GraphKey(2, (byte) 2)));
+        assertFalse(profile.hasGraphPin(new GraphKey(2, (byte) 9, PinType.DIGITAL)));
+        assertTrue(profile.hasGraphPin(new GraphKey(2, (byte) 8, PinType.DIGITAL)));
+        assertTrue(profile.hasGraphPin(new GraphKey(2, (byte) 2, PinType.DIGITAL)));
     }
 
 }
