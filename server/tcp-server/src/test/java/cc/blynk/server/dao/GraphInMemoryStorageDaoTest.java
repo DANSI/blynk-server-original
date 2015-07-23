@@ -13,7 +13,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Queue;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 /**
@@ -38,9 +39,8 @@ public class GraphInMemoryStorageDaoTest {
         GraphKey key = new GraphKey(1, (byte) 33, PinType.ANALOG);
         when(profile.hasGraphPin(key)).thenReturn(true);
 
-        String body = "aw 33 x".replaceAll(" ", "\0");
         for (int i = 0; i < 1000; i++) {
-            storage.store(new StoreMessage(new GraphKey(1, (byte) 33, PinType.ANALOG), body.replace("x", String.valueOf(i)), System.currentTimeMillis()));
+            storage.store(new StoreMessage(new GraphKey(1, (byte) 33, PinType.ANALOG), String.valueOf(i), System.currentTimeMillis()));
         }
 
         Queue<StoreMessage> queue;
@@ -52,8 +52,8 @@ public class GraphInMemoryStorageDaoTest {
 
         int i = 0;
         for (StoreMessage value : queue) {
-            String expectedBody = body.replace("x", String.valueOf(i++));
-            assertTrue(value.body.startsWith(expectedBody));
+            String expectedBody = String.valueOf(i++);
+            assertEquals(expectedBody, value.value);
         }
     }
 
@@ -63,9 +63,8 @@ public class GraphInMemoryStorageDaoTest {
         GraphKey key = new GraphKey(1, (byte) 33, PinType.ANALOG);
         when(profile.hasGraphPin(key)).thenReturn(true);
 
-        String body = "aw 33 x".replaceAll(" ", "\0");
         for (int i = 0; i < 2000; i++) {
-            storage.store(new StoreMessage(new GraphKey(1, (byte) 33, PinType.ANALOG), body.replace("x", String.valueOf(i)), System.currentTimeMillis()));
+            storage.store(new StoreMessage(new GraphKey(1, (byte) 33, PinType.ANALOG), String.valueOf(i), System.currentTimeMillis()));
         }
 
         Queue<StoreMessage> queue;
@@ -93,11 +92,9 @@ public class GraphInMemoryStorageDaoTest {
         when(profile.hasGraphPin(key)).thenReturn(true);
         when(profile.hasGraphPin(key2)).thenReturn(true);
 
-        String body = "aw 33 x".replaceAll(" ", "\0");
-        String body2 = "aw 34 x".replaceAll(" ", "\0");
         for (int i = 0; i < 1000; i++) {
-            storage.store(new StoreMessage(new GraphKey(1, (byte) 33, PinType.ANALOG), body.replace("x", String.valueOf(i)), System.currentTimeMillis()));
-            storage.store(new StoreMessage(new GraphKey(1, (byte) 34, PinType.ANALOG), body2.replace("x", String.valueOf(i)), System.currentTimeMillis()));
+            storage.store(new StoreMessage(new GraphKey(1, (byte) 33, PinType.ANALOG), String.valueOf(i), System.currentTimeMillis()));
+            storage.store(new StoreMessage(new GraphKey(1, (byte) 34, PinType.ANALOG), String.valueOf(i), System.currentTimeMillis()));
         }
 
 
@@ -117,14 +114,14 @@ public class GraphInMemoryStorageDaoTest {
 
         int i = 0;
         for (StoreMessage value : queue) {
-            String expectedBody = body.replace("x", String.valueOf(i++));
-            assertTrue(value.body.startsWith(expectedBody));
+            String expectedBody = String.valueOf(i++);
+            assertEquals(expectedBody, value.value);
         }
 
         i = 0;
         for (StoreMessage value : queue2) {
-            String expectedBody = body.replace("x", String.valueOf(i++));
-            assertTrue(value.body.startsWith(expectedBody));
+            String expectedBody = String.valueOf(i++);
+            assertEquals(expectedBody, value.value);
         }
 
     }

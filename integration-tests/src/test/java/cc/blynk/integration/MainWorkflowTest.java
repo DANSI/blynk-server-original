@@ -153,12 +153,10 @@ public class MainWorkflowTest extends IntegrationBase {
 
         String result = decompress(graphMessage.data);
         String[] splitted = result.split("\0");
-        assertEquals(4000, splitted.length);
+        assertEquals(2000, splitted.length);
 
         for (int i = 0; i < 1000; i++) {
-            assertEquals("aw", splitted[i * 4]);
-            assertEquals("8", splitted[i * 4 + 1]);
-            assertEquals(String.valueOf(i), splitted[i * 4 + 2]);
+            assertEquals(String.valueOf(i), splitted[i * 2]);
         }
     }
 

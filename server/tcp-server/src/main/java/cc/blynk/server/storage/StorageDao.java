@@ -31,15 +31,19 @@ public class StorageDao {
     }
 
     public StoreMessage process(Profile profile, Integer dashId, String body, int msgId) {
+        PinType pinType = PinType.getPingType(body.charAt(0));
+
+        String[] bodyParts = body.split(StringUtils.BODY_SEPARATOR_STRING);
+
         byte pin;
         try {
-            pin = Byte.parseByte(StringUtils.fetchPin(body));
+            pin = Byte.parseByte(bodyParts[1]);
         } catch (NumberFormatException e) {
             throw new IllegalCommandException("Hardware command body incorrect.", msgId);
         }
 
-        GraphKey key = new GraphKey(dashId, pin, PinType.getPingType(body.charAt(0)));
-        StoreMessage storeMessage = new StoreMessage(key, body, System.currentTimeMillis());
+        GraphKey key = new GraphKey(dashId, pin, pinType);
+        StoreMessage storeMessage = new StoreMessage(key, bodyParts[2], System.currentTimeMillis());
 
         if (ENABLE_RAW_DATA_STORE) {
             log.info(storeMessage.toCSV());

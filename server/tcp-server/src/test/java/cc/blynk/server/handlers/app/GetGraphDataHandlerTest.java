@@ -1,7 +1,9 @@
 package cc.blynk.server.handlers.app;
 
 import cc.blynk.server.TestBase;
+import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.dao.graph.StoreMessage;
+import cc.blynk.server.model.enums.PinType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -48,7 +50,7 @@ public class GetGraphDataHandlerTest extends TestBase {
         int dataLength = 0;
         for (int i = 0; i < 1000; i++) {
             long ts = System.currentTimeMillis();
-            StoreMessage mes = new StoreMessage(null, "aw 1 x ".replace("x", String.valueOf(i)).replace(" ", "\0"), ts);
+            StoreMessage mes = new StoreMessage(new GraphKey(1, (byte) 1, PinType.ANALOG), String.valueOf(i), ts);
             queue.offer(mes);
             dataLength += mes.toString().length();
         }
@@ -59,12 +61,10 @@ public class GetGraphDataHandlerTest extends TestBase {
         assertNotNull(compressedData);
         String result = decompress(compressedData);
         String[] splitted = result.split("\0");
-        assertEquals(4000, splitted.length);
+        assertEquals(2000, splitted.length);
 
         for (int i = 0; i < 1000; i++) {
-            assertEquals("aw", splitted[i * 4]);
-            assertEquals("1", splitted[i * 4 + 1]);
-            assertEquals(String.valueOf(i), splitted[i * 4 + 2]);
+            assertEquals(String.valueOf(i), splitted[i * 2]);
         }
 
         //System.out.println(result);

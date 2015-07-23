@@ -2,6 +2,7 @@ package cc.blynk.server.handlers.hardware;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.dao.graph.StoreMessage;
@@ -54,7 +55,7 @@ public class HardwareHardHandler extends BaseSimpleChannelInboundHandler<Hardwar
             if (storeMessage == null) {
                 session.sendMessageToApp(message);
             } else {
-                session.sendMessageToApp(message.updateMessageBody(storeMessage.toString()));
+                session.sendMessageToApp(message.updateMessageBody(message.body + StringUtils.BODY_SEPARATOR_STRING + storeMessage.ts));
             }
 
         }
