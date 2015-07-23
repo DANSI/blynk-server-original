@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.common;
+package cc.blynk.server.handlers.hardware;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;
@@ -37,7 +37,7 @@ public class HardwareHandlerTest extends TestBase {
     private NotificationsProcessor notificationsProcessor;
 
     @InjectMocks
-    private HardwareHandler hardwareHandler;
+    private HardwareHardHandler hardwareHandler;
 
     @Mock
     private ChannelHandlerContext ctx;
@@ -78,7 +78,7 @@ public class HardwareHandlerTest extends TestBase {
         when(user.getProfile()).thenReturn(profile);
         profile.activeDashId = null;
         SessionsHolder sessionsHolder = spy(new SessionsHolder());
-        HardwareHandler hardwareHandler = spy(new HardwareHandler(props, userRegistry, sessionsHolder, storageDao));
+        HardwareHardHandler hardwareHandler = spy(new HardwareHardHandler(props, userRegistry, sessionsHolder, storageDao));
         hardwareHandler.messageReceived(ctx, user, message);
     }
 
@@ -94,7 +94,7 @@ public class HardwareHandlerTest extends TestBase {
         SessionsHolder sessionsHolder = spy(new SessionsHolder());
         final Session session = new Session();
         sessionsHolder.userSession.put(user, session);
-        HardwareHandler hardwareHandler = spy(new HardwareHandler(props, userRegistry, sessionsHolder, storageDao));
+        HardwareHardHandler hardwareHandler = spy(new HardwareHardHandler(props, userRegistry, sessionsHolder, storageDao));
         try{
             hardwareHandler.messageReceived(ctx, user, message);
         }catch (DeviceNotInNetworkException e){

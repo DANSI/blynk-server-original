@@ -5,12 +5,8 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.BridgeHandler;
-import cc.blynk.server.handlers.common.HardwareHandler;
 import cc.blynk.server.handlers.common.PingHandler;
-import cc.blynk.server.handlers.hardware.HardwareLoginHandler;
-import cc.blynk.server.handlers.hardware.MailHandler;
-import cc.blynk.server.handlers.hardware.PushHandler;
-import cc.blynk.server.handlers.hardware.TweetHandler;
+import cc.blynk.server.handlers.hardware.*;
 import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
@@ -29,7 +25,7 @@ public class HardwareHandlersHolder {
     public HardwareHandlersHolder(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
                                   NotificationsProcessor notificationsProcessor, StorageDao storageDao) {
         HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(userRegistry, sessionsHolder);
-        HardwareHandler hardwareHandler = new HardwareHandler(props, userRegistry, sessionsHolder, storageDao);
+        HardwareHardHandler hardwareHandler = new HardwareHardHandler(props, userRegistry, sessionsHolder, storageDao);
         BridgeHandler bridgeHandler = new BridgeHandler(props, userRegistry, sessionsHolder);
         PingHandler pingHandler = new PingHandler(props, userRegistry, sessionsHolder);
 
