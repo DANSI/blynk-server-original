@@ -22,15 +22,14 @@ public class StorageTest {
     @Test
     @Ignore
     public void generateLogFile() throws IOException {
-        Path path = Paths.get("/home/doom369/test-data2.log");
+        Path path = Paths.get("/home/doom369/test-data.log");
         GraphKey key = new GraphKey(100000, (byte) 10, PinType.ANALOG);
         long ts  = System.currentTimeMillis();
-        String body = "aw 100 x";
         int i = 0;
         try (BufferedWriter bw = Files.newBufferedWriter(path)) {
             //200 req/sec current load.
-            for (int j = 0; j < 200 ; j++) {
-                StoreMessage storeMessage = new StoreMessage(key, body.replace("x", String.valueOf(i++)).replace(" ", "\0"), ts++);
+            for (int j = 0; j < 24 * 3600; j++) {
+                StoreMessage storeMessage = new StoreMessage(key, String.valueOf(i++), ts++);
                 bw.write(storeMessage.toCSV());
                 bw.write("\n");
             }

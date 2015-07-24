@@ -28,7 +28,7 @@
             </Policies>
         </RollingFile>
 
-        <Routing name="Routing">
+        <Routing name="userLog">
             <Routes pattern="$${ctx:user}">
 
                 <!-- This route is chosen if ThreadContext has no value for key "user". -->
@@ -60,27 +60,24 @@
             </Routes>
         </Routing>
 
-        <Routing name="data_storage">
+        <Routing name="dataStorage">
             <Routes pattern="$${ctx:user}">
 
                 <!-- This route is chosen if ThreadContext has no value for key "user". -->
                 <Route key="$${ctx:user}">
-                    <RollingFile name="default" fileName="${sys:logs.folder}/data/data.log"
-                                 filePattern="${sys:logs.folder}/archive/data-%d{yyyy-MM-dd}.log.gz">
+                    <RollingFile name="default" fileName="${sys:data.folder}/data/data.csv"
+                                 filePattern="${sys:data.folder}/data/data-%d{yyyy-MM-dd}.csv.gz">
                         <PatternLayout>
-                            <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
+                            <pattern>%msg%n</pattern>
                         </PatternLayout>
-                        <Policies>
-                            <TimeBasedTriggeringPolicy/>
-                        </Policies>
                     </RollingFile>
                 </Route>
 
                 <!-- This route is chosen if ThreadContext has a value for "user"
                 The value dynamically determines the name of the log file. -->
                 <Route>
-                    <RollingFile name="${ctx:user}" fileName="${sys:logs.folder}/data/${ctx:user}/${ctx:user}.log"
-                                 filePattern="${sys:logs.folder}/data/${ctx:user}/${ctx:user}-%d{yyyy-MM-dd}.log.gz">
+                    <RollingFile name="${ctx:user}" fileName="${sys:data.folder}/data/${ctx:user}/${ctx:dashId}_${ctx:pin}.csv"
+                                 filePattern="${sys:data.folder}/data/${ctx:user}/${ctx:dashId}_${ctx:pin}-%d{yyyy-MM-dd}.csv.gz">
                         <PatternLayout>
                             <pattern>%msg%n</pattern>
                         </PatternLayout>
@@ -108,11 +105,11 @@
             <appender-ref ref="admin"/>
         </Logger>
         <Logger name="cc.blynk.server.storage.StorageDao" level="info">
-            <appender-ref ref="data_storage"/>
+            <appender-ref ref="dataStorage"/>
         </Logger>
 
         <Root level="debug">
-            <AppenderRef ref="Routing"/>
+            <AppenderRef ref="userLog"/>
         </Root>
     </Loggers>
 </Configuration>

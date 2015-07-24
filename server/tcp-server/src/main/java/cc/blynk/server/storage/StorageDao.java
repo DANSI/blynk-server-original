@@ -10,6 +10,7 @@ import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.enums.PinType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 
 import java.util.Queue;
 
@@ -46,6 +47,8 @@ public class StorageDao {
         StoreMessage storeMessage = new StoreMessage(key, bodyParts[2], System.currentTimeMillis());
 
         if (ENABLE_RAW_DATA_STORE) {
+            ThreadContext.put("dashId", String.valueOf(dashId));
+            ThreadContext.put("pin", String.valueOf(body.charAt(0)) + pin);
             log.info(storeMessage.toCSV());
         }
 

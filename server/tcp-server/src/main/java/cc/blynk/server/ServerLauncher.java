@@ -95,6 +95,8 @@ public class ServerLauncher {
 
         new ArgumentsParser().processArguments(args, serverProperties);
 
+        System.setProperty("data.folder", serverProperties.getProperty("data.folder"));
+
         new ServerLauncher(serverProperties).start();
     }
 
