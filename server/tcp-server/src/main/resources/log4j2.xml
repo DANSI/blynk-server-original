@@ -61,22 +61,12 @@
         </Routing>
 
         <Routing name="dataStorage">
-            <Routes pattern="$${ctx:user}">
-
-                <!-- This route is chosen if ThreadContext has no value for key "user". -->
-                <Route key="$${ctx:user}">
-                    <RollingFile name="default" fileName="${sys:data.folder}/data/data.csv"
-                                 filePattern="${sys:data.folder}/data/data-%d{yyyy-MM-dd}.csv.gz">
-                        <PatternLayout>
-                            <pattern>%msg%n</pattern>
-                        </PatternLayout>
-                    </RollingFile>
-                </Route>
+            <Routes pattern="$${ctx:user}_$${ctx:dashId}_$${ctx:pin}">
 
                 <!-- This route is chosen if ThreadContext has a value for "user"
                 The value dynamically determines the name of the log file. -->
                 <Route>
-                    <RollingFile name="${ctx:user}" fileName="${sys:data.folder}/data/${ctx:user}/${ctx:dashId}_${ctx:pin}.csv"
+                    <RollingFile name="$${ctx:user}_$${ctx:dashId}_$${ctx:pin}" fileName="${sys:data.folder}/data/${ctx:user}/${ctx:dashId}_${ctx:pin}.csv"
                                  filePattern="${sys:data.folder}/data/${ctx:user}/${ctx:dashId}_${ctx:pin}-%d{yyyy-MM-dd}.csv.gz">
                         <PatternLayout>
                             <pattern>%msg%n</pattern>
@@ -104,7 +94,7 @@
         <Logger name="cc.blynk.server.core.administration" level="debug" additivity="false">
             <appender-ref ref="admin"/>
         </Logger>
-        <Logger name="cc.blynk.server.storage.StorageDao" level="info">
+        <Logger name="cc.blynk.server.storage.StorageDao" level="info" additivity="false">
             <appender-ref ref="dataStorage"/>
         </Logger>
 
