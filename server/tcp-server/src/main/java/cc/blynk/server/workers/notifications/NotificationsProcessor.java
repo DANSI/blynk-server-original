@@ -39,7 +39,7 @@ public class NotificationsProcessor {
     private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
     private final ThreadPoolExecutor executor;
-    private Logger log = LogManager.getLogger(NotificationsProcessor.class);
+    private final Logger log = LogManager.getLogger(NotificationsProcessor.class);
 
     public NotificationsProcessor(int maxQueueSize) {
         this.twitterWrapper = new TwitterWrapper();

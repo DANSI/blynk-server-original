@@ -9,11 +9,11 @@ import cc.blynk.common.utils.StringUtils;
  */
 public class StoreMessage {
 
-    public GraphKey key;
+    public final GraphKey key;
 
-    public String value;
+    public final String value;
 
-    public long ts;
+    public final long ts;
 
     public StoreMessage(GraphKey key, String value, long ts) {
         this.key = key;

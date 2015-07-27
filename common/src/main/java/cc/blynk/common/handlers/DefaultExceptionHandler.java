@@ -32,7 +32,7 @@ public interface DefaultExceptionHandler {
         }
     }
 
-    default void handleUnexpectedException(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    default void handleUnexpectedException(ChannelHandlerContext ctx, Throwable cause) {
         if (cause instanceof ReadTimeoutException) {
             log.trace("Channel was inactive for a long period. Closing...");
             //channel is already closed here by ReadTimeoutHandler

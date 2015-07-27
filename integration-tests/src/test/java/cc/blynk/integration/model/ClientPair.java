@@ -7,11 +7,11 @@ package cc.blynk.integration.model;
  */
 public class ClientPair {
 
-    public TestAppClient appClient;
+    public final TestAppClient appClient;
 
-    public TestHardClient hardwareClient;
+    public final TestHardClient hardwareClient;
 
-    public String token;
+    public final String token;
 
     public ClientPair(TestAppClient appClient, TestHardClient hardwareClient, String token) {
         this.appClient = appClient;

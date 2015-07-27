@@ -43,7 +43,7 @@ public class MainWorkflowTest extends IntegrationBase {
     private HardwareServer hardwareServer;
     private ClientPair clientPair;
 
-    private static String decompress(byte[] bytes) throws IOException {
+    private static String decompress(byte[] bytes) {
         InputStream in = new InflaterInputStream(new ByteArrayInputStream(bytes));
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {

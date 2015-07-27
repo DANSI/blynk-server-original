@@ -34,7 +34,7 @@ public final class Response {
 
 
     //all this code just to make logging more user-friendly
-    private static Map<Integer, String> valuesName = ReflectionUtil.generateMapOfValueNameInteger(Response.class);
+    private final static Map<Integer, String> valuesName = ReflectionUtil.generateMapOfValueNameInteger(Response.class);
 
     public static String getNameByValue(int val) {
         return valuesName.get(val);

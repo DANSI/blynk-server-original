@@ -9,9 +9,9 @@ import cc.blynk.server.utils.JsonParser;
  */
 public class IOSGCMMessage implements GCMMessage {
 
-    String to;
+    private final String to;
 
-    IOSBody notification;
+    private final IOSBody notification;
 
     public IOSGCMMessage(String to, String message) {
         this.to = to;
@@ -29,8 +29,8 @@ public class IOSGCMMessage implements GCMMessage {
     }
 
     private class IOSBody {
-        final String title = "Blynk Notification";
-        String body;
+        private final String title = "Blynk Notification";
+        private final String body;
 
         public IOSBody(String body) {
             this.body = body;

@@ -21,8 +21,8 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class GlobalStats {
 
-    public Meter incomeMessages;
-    public Map<Class<?>, LongAdder> specificCounters;
+    public final Meter incomeMessages;
+    public final Map<Class<?>, LongAdder> specificCounters;
 
     public GlobalStats() {
         this.incomeMessages = new Meter();

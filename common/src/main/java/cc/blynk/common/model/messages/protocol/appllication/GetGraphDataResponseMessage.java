@@ -11,7 +11,7 @@ import static cc.blynk.common.enums.Command.GET_GRAPH_DATA_RESPONSE;
  */
 public class GetGraphDataResponseMessage extends Message {
 
-    public byte[] data;
+    public final byte[] data;
 
     public GetGraphDataResponseMessage(int messageId, byte[] data) {
         super(messageId, GET_GRAPH_DATA_RESPONSE, data.length, null);

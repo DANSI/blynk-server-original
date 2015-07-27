@@ -9,11 +9,11 @@ import cc.blynk.server.model.enums.PinType;
  */
 public class GraphKey {
 
-    public int dashId;
+    public final int dashId;
 
-    public byte pin;
+    public final byte pin;
 
-    public PinType pinType;
+    public final PinType pinType;
 
     public GraphKey(int dashId, byte pin, PinType pinType) {
         this.dashId = dashId;

@@ -17,9 +17,9 @@ public abstract class MessageBase {
     //1 + 2 + 2
     public static final int HEADER_LENGTH = 5;
 
-    public short command;
+    public final short command;
 
-    public int id;
+    public final int id;
 
     public int length;
 

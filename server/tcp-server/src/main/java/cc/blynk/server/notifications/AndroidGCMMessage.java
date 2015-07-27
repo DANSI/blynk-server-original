@@ -9,9 +9,9 @@ import cc.blynk.server.utils.JsonParser;
  */
 public class AndroidGCMMessage implements GCMMessage {
 
-    String to;
+    private final String to;
 
-    GCMData data;
+    private final GCMData data;
 
     public AndroidGCMMessage(String to, String message) {
         this.to = to;
@@ -29,7 +29,7 @@ public class AndroidGCMMessage implements GCMMessage {
     }
 
     private class GCMData {
-        String message;
+        private final String message;
 
         public GCMData(String message) {
             this.message = message;

@@ -57,7 +57,6 @@ public class ServerLauncher {
     private final BaseServer adminServer;
     private final ServerProperties serverProperties;
     private final NotificationsProcessor notificationsProcessor;
-    private final StorageDao storageDao;
 
     private ServerLauncher(ServerProperties serverProperties) {
         this.serverProperties = serverProperties;
@@ -67,7 +66,7 @@ public class ServerLauncher {
         //todo save all to disk to have latest version locally???
         this.userRegistry = new UserRegistry(fileManager.deserialize(), jedisWrapper.getAllUsersDB());
         this.stats = new GlobalStats();
-        this.storageDao = new StorageDao(serverProperties.getIntProperty("user.in.memory.storage.limit"));
+        StorageDao storageDao = new StorageDao(serverProperties.getIntProperty("user.in.memory.storage.limit"));
 
         this.notificationsProcessor = new NotificationsProcessor(
                 serverProperties.getIntProperty("notifications.queue.limit", 10000)

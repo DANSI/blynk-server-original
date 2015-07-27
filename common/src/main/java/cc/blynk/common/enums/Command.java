@@ -36,7 +36,7 @@ public final class Command {
     //------------------------------------------
 
     //all this code just to make logging more user-friendly
-    private static Map<Short, String> valuesName = ReflectionUtil.generateMapOfValueNameShort(Command.class);
+    private static final Map<Short, String> valuesName = ReflectionUtil.generateMapOfValueNameShort(Command.class);
 
     public static String getNameByValue(short val) {
         return valuesName.get(val);
