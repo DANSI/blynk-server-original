@@ -139,6 +139,10 @@ server.properties options:
 
         hard.socket.idle.timeout=15
         
++ Mostly required for local servers setup in case user want to log raw data in CSV format. See [raw data] (https://github.com/blynkkk/blynk-server#raw-data-storage) section for more info.
+        
+        enable.raw.data.store=true
+        
 ### Enabling mail on Local server
 In order to enable mail notifications on Local server you need to provide own mail credentials. To do that you need to create file "mail.properties" within same folder where server.jar is.
 Mail properties :
@@ -152,6 +156,34 @@ Mail properties :
         
 See example [here](https://github.com/blynkkk/blynk-server/blob/master/server/notifications/mail-notifications/src/main/resources/mail.properties).
 
+
+### Raw data storage
+By default raw data storage is enabled. So any write (Blynk.virtualWrite) command will stored on disk. 
+The default path is "data" folder within [data.folder] (https://github.com/blynkkk/blynk-server#advanced-local-server-setup) property of server properties.
+
+File name format is 
+        
+        dashBoardId_pin.svc
+
+For instance
+ 
+        1_v5.csv
+        
+Which means in 1_v5.csv file stored raw data for virtual pin 5 of dashboard with id 1.
+
+Data format is
+
+        value,timestamp
+        
+For instance
+
+        10,1438022081332
+        
+Where 10 - value of pin, and 1438022081332 - the difference, measured in milliseconds, between the current time and midnight, January 1, 1970 UTC.
+
+Raw data files are rotated every day and gzipped.
+
+WARNING : this will changed in near future. 
 
 ### Generate SSL certificates
 
