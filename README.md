@@ -163,11 +163,11 @@ The default path is "data" folder within [data.folder] (https://github.com/blynk
 
 File name format is 
         
-        dashBoardId_pin.svc
+        dashBoardId_pin.csv
 
 For instance
  
-        1_v5.csv
+        data/1_v5.csv
         
 Which means in 1_v5.csv file stored raw data for virtual pin 5 of dashboard with id 1.
 
