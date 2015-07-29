@@ -1,15 +1,13 @@
-package cc.blynk.server.handlers.app;
+package cc.blynk.server.handlers.app.logic;
 
-import cc.blynk.common.model.messages.protocol.HardwareMessage;
-import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The Blynk Project.
@@ -17,18 +15,21 @@ import io.netty.channel.ChannelHandlerContext;
  * Created on 2/1/2015.
  *
  */
-@ChannelHandler.Sharable
-public class HardwareAppHandler extends BaseSimpleChannelInboundHandler<HardwareMessage> {
-    public HardwareAppHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(props, userRegistry, sessionsHolder);
+public class HardwareAppLogic {
+
+    private static final Logger log = LogManager.getLogger(HardwareAppLogic.class);
+
+    private final SessionsHolder sessionsHolder;
+
+    public HardwareAppLogic(SessionsHolder sessionsHolder) {
+        this.sessionsHolder = sessionsHolder;
     }
 
     private static boolean pinModeMessage(String body) {
         return body.length() > 0 && body.charAt(0) == 'p';
     }
 
-    @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, HardwareMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
         Session session = sessionsHolder.userSession.get(user);
 
         if (user.getProfile().activeDashId == null) {

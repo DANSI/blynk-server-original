@@ -1,17 +1,15 @@
-package cc.blynk.server.handlers.app;
+package cc.blynk.server.handlers.app.logic;
 
-import cc.blynk.common.model.messages.protocol.appllication.SaveProfileMessage;
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -22,8 +20,9 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
-@ChannelHandler.Sharable
-public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProfileMessage> {
+public class SaveProfileLogic {
+
+    private static final Logger log = LogManager.getLogger(SaveProfileLogic.class);
 
     //I have to use volatile for reloadable props to be sure updated value will be visible by all threads
     private volatile int DASH_MAX_LIMIT;
@@ -31,13 +30,11 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
     //I have to use volatile for reloadable props to be sure updated value will be visible by all threads
     private volatile int USER_PROFILE_MAX_SIZE;
 
-    public SaveProfileHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(props, userRegistry, sessionsHolder);
+    public SaveProfileLogic(ServerProperties props) {
         updateProperties(props);
     }
 
-    @Override
-    public void messageReceived(ChannelHandlerContext ctx, User user, SaveProfileMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
         String userProfileString = message.body;
 
         //expecting message with 2 parts
@@ -63,9 +60,7 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
         ctx.writeAndFlush(produce(message.id, OK));
     }
 
-    @Override
     public void updateProperties(ServerProperties props) {
-        super.updateProperties(props);
         try {
             this.DASH_MAX_LIMIT = props.getIntProperty("user.dashboard.max.limit");
         } catch (RuntimeException e) {

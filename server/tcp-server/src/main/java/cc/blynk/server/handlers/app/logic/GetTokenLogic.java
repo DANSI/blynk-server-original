@@ -1,13 +1,9 @@
-package cc.blynk.server.handlers.app;
+package cc.blynk.server.handlers.app.logic;
 
-import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
-import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.SessionsHolder;
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.NotAllowedException;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -18,15 +14,15 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
-@ChannelHandler.Sharable
-public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMessage> {
+public class GetTokenLogic {
 
-    public GetTokenHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(props, userRegistry, sessionsHolder);
+    private final UserRegistry userRegistry;
+
+    public GetTokenLogic( UserRegistry userRegistry) {
+        this.userRegistry = userRegistry;
     }
 
-    @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, GetTokenMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
         String dashBoardIdString = message.body;
 
         int dashBoardId;

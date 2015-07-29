@@ -3,6 +3,7 @@ package cc.blynk.server.handlers.app;
 import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.dao.graph.StoreMessage;
+import cc.blynk.server.handlers.app.logic.GetGraphDataLogic;
 import cc.blynk.server.model.enums.PinType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,7 +57,7 @@ public class GetGraphDataHandlerTest extends TestBase {
         }
 
         System.out.println("Size before compression : " + dataLength);
-        byte[] compressedData = GetGraphDataHandler.compress(queue, 1);
+        byte[] compressedData = GetGraphDataLogic.compress(queue, 1);
         System.out.println("Size after compression : " + compressedData.length + ". Compress rate " + ((double) dataLength / compressedData.length));
         assertNotNull(compressedData);
         String result = decompress(compressedData);

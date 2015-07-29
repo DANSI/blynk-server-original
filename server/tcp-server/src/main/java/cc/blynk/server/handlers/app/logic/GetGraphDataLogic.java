@@ -1,20 +1,15 @@
-package cc.blynk.server.handlers.app;
+package cc.blynk.server.handlers.app.logic;
 
-import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataMessage;
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.common.utils.StringUtils;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.dao.graph.StoreMessage;
 import cc.blynk.server.exceptions.GetGraphDataException;
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.storage.StorageDao;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.io.ByteArrayOutputStream;
@@ -28,14 +23,12 @@ import java.util.zip.DeflaterOutputStream;
  * Created on 2/1/2015.
  *
  */
-@ChannelHandler.Sharable
-public class GetGraphDataHandler extends BaseSimpleChannelInboundHandler<GetGraphDataMessage> {
+public class GetGraphDataLogic {
 
     private final static byte[] EMPTY_RESPONSE = {};
     private final StorageDao storageDao;
 
-    public GetGraphDataHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao) {
-        super(props, userRegistry, sessionsHolder);
+    public GetGraphDataLogic(StorageDao storageDao) {
         this.storageDao = storageDao;
     }
 
@@ -61,8 +54,7 @@ public class GetGraphDataHandler extends BaseSimpleChannelInboundHandler<GetGrap
         return baos.toByteArray();
     }
 
-    @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, GetGraphDataMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
         //warn: split may be optimized
         String[] messageParts = message.body.split(" ", 3);
 

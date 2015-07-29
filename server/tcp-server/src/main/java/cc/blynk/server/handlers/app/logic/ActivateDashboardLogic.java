@@ -1,14 +1,11 @@
-package cc.blynk.server.handlers.app;
+package cc.blynk.server.handlers.app.logic;
 
-import cc.blynk.common.model.messages.protocol.appllication.ActivateDashboardMessage;
-import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -19,15 +16,11 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
-@ChannelHandler.Sharable
-public class ActivateDashboardHandler extends BaseSimpleChannelInboundHandler<ActivateDashboardMessage> {
+public class ActivateDashboardLogic {
 
-    public ActivateDashboardHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(props, userRegistry, sessionsHolder);
-    }
+    private static final Logger log = LogManager.getLogger(ActivateDashboardLogic.class);
 
-    @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, ActivateDashboardMessage message) {
+    public static void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
         String dashBoardIdString = message.body;
 
         int dashBoardId;

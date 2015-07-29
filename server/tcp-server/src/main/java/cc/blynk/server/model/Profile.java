@@ -1,6 +1,6 @@
 package cc.blynk.server.model;
 
-import cc.blynk.common.model.messages.protocol.HardwareMessage;
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.widgets.Widget;
@@ -30,7 +30,7 @@ public class Profile {
      * without requiring user to activate/deactivate dashboard again.
      */
     //todo avoid volatile
-    public volatile transient HardwareMessage pinModeMessage;
+    public volatile transient Message pinModeMessage;
     private DashBoard[] dashBoards;
 
     public void validateDashId(int dashBoardId, int msgId) {

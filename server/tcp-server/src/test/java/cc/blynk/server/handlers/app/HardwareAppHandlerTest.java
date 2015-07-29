@@ -5,6 +5,7 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.handlers.app.logic.HardwareAppLogic;
 import cc.blynk.server.handlers.hardware.logic.HardwareLogic;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.Session;
@@ -74,7 +75,7 @@ public class HardwareAppHandlerTest extends TestBase {
         when(user.getProfile()).thenReturn(profile);
         profile.activeDashId = null;
         SessionsHolder sessionsHolder = spy(new SessionsHolder());
-        HardwareAppHandler hardwareHandler = spy(new HardwareAppHandler(props, userRegistry, sessionsHolder));
+        HardwareAppLogic hardwareHandler = spy(new HardwareAppLogic(sessionsHolder));
         hardwareHandler.messageReceived(ctx, user, message);
     }
 
