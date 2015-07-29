@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.hardware.logic;
 
 import cc.blynk.common.enums.Response;
-import cc.blynk.common.model.messages.protocol.BridgeMessage;
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
@@ -42,7 +42,7 @@ public class BridgeLogic {
         return sendToMap;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, BridgeMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
         Session session = sessionsHolder.userSession.get(user);
         String[] split = message.body.split("\0");
         if (split.length < 3) {

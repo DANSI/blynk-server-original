@@ -1,5 +1,6 @@
 package cc.blynk.server.handlers.hardware.logic;
 
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.common.utils.StringUtils;
@@ -30,7 +31,7 @@ public class HardwareLogic {
         updateProperties(props);
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, HardwareMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
         Session session = sessionsHolder.userSession.get(user);
 
         //if message from hardware, check if it belongs to graph. so we need save it in that case
@@ -51,7 +52,7 @@ public class HardwareLogic {
             if (storeMessage == null) {
                 session.sendMessageToApp(message);
             } else {
-                session.sendMessageToApp(message.updateMessageBody(message.body + StringUtils.BODY_SEPARATOR_STRING + storeMessage.ts));
+                session.sendMessageToApp(((HardwareMessage) message).updateMessageBody(message.body + StringUtils.BODY_SEPARATOR_STRING + storeMessage.ts));
             }
 
         }

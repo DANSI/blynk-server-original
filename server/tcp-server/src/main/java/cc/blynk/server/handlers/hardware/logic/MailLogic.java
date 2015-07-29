@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.hardware.logic;
 
-import cc.blynk.common.model.messages.protocol.hardware.MailMessage;
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.model.auth.User;
@@ -26,7 +26,7 @@ public class MailLogic extends NotificationBase {
         this.notificationsProcessor = notificationsProcessor;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, MailMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
         cc.blynk.server.model.widgets.others.Mail mail = user.getProfile().getActiveDashboardWidgetByType(cc.blynk.server.model.widgets.others.Mail.class);
 
         if (mail == null) {

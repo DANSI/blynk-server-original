@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.hardware.logic;
 
-import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Twitter;
@@ -28,7 +28,7 @@ public class TweetLogic extends NotificationBase {
         this.notificationsProcessor = notificationsProcessor;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, TweetMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
         if (message.body == null || message.body.equals("") || message.body.length() > MAX_TWITTER_BODY_SIZE) {
             throw new NotificationBodyInvalidException(message.id);
         }

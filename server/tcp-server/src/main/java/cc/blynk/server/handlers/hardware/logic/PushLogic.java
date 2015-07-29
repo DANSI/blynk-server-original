@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.hardware.logic;
 
-import cc.blynk.common.model.messages.protocol.hardware.PushMessage;
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Notification;
@@ -28,7 +28,7 @@ public class PushLogic extends NotificationBase {
         this.notificationsProcessor = notificationsProcessor;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, PushMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
         if (message.body == null || message.body.equals("") || message.body.length() > MAX_PUSH_BODY_SIZE) {
             throw new NotificationBodyInvalidException(message.id);
         }
