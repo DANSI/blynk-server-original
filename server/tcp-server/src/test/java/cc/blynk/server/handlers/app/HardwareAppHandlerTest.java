@@ -5,7 +5,7 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.handlers.hardware.HardwareHardHandler;
+import cc.blynk.server.handlers.hardware.logic.HardwareLogic;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
@@ -35,7 +35,7 @@ public class HardwareAppHandlerTest extends TestBase {
     private NotificationsProcessor notificationsProcessor;
 
     @InjectMocks
-    private HardwareHardHandler hardwareHandler;
+    private HardwareLogic hardwareHandler;
 
     @Mock
     private ChannelHandlerContext ctx;

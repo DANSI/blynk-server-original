@@ -7,7 +7,7 @@ import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.app.*;
 import cc.blynk.server.handlers.app.auth.AppLoginHandler;
 import cc.blynk.server.handlers.app.auth.RegisterHandler;
-import cc.blynk.server.handlers.common.PingHandler;
+import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandler;
 
@@ -30,7 +30,7 @@ class AppHandlersHolder {
         LoadProfileHandler loadProfileHandler = new LoadProfileHandler(props, userRegistry, sessionsHolder);
         SaveProfileHandler saveProfileHandler = new SaveProfileHandler(props, userRegistry, sessionsHolder);
         HardwareAppHandler hardwareHandler = new HardwareAppHandler(props, userRegistry, sessionsHolder);
-        PingHandler pingHandler = new PingHandler(props, userRegistry, sessionsHolder);
+        PingLogic pingHandler = new PingLogic(props, userRegistry, sessionsHolder);
         ActivateDashboardHandler activateDashboardHandler = new ActivateDashboardHandler(props, userRegistry, sessionsHolder);
         DeActivateDashboardHandler deActivateDashboardHandler = new DeActivateDashboardHandler(props, userRegistry, sessionsHolder);
 

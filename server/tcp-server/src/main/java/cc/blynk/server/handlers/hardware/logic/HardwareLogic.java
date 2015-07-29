@@ -1,19 +1,16 @@
-package cc.blynk.server.handlers.hardware;
+package cc.blynk.server.handlers.hardware.logic;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.dao.graph.StoreMessage;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NoActiveDashboardException;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.storage.StorageDao;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
@@ -22,24 +19,23 @@ import io.netty.channel.ChannelHandlerContext;
  * Created on 2/1/2015.
  *
  */
-@ChannelHandler.Sharable
-public class HardwareHardHandler extends BaseSimpleChannelInboundHandler<HardwareMessage> {
+public class HardwareLogic {
 
     private final StorageDao storageDao;
+    private final SessionsHolder sessionsHolder;
 
-    public HardwareHardHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao) {
-        super(props, userRegistry, sessionsHolder);
+    public HardwareLogic(ServerProperties props, SessionsHolder sessionsHolder, StorageDao storageDao) {
+        this.sessionsHolder = sessionsHolder;
         this.storageDao = storageDao;
         updateProperties(props);
     }
 
-    @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, HardwareMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, HardwareMessage message) {
         Session session = sessionsHolder.userSession.get(user);
 
         //if message from hardware, check if it belongs to graph. so we need save it in that case
         if (message.body.length() < 4) {
-            throw new IllegalCommandException("Hardware command body too short.", message.id);
+            throw new IllegalCommandException("HardwareLogic command body too short.", message.id);
         }
 
         StoreMessage storeMessage = null;
@@ -61,9 +57,7 @@ public class HardwareHardHandler extends BaseSimpleChannelInboundHandler<Hardwar
         }
     }
 
-    @Override
     public void updateProperties(ServerProperties props) {
-        super.updateProperties(props);
         if (storageDao != null) {
             storageDao.updateProperties(props);
         }

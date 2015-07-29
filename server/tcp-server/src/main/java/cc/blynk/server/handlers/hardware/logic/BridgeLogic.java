@@ -1,18 +1,14 @@
-package cc.blynk.server.handlers.hardware;
+package cc.blynk.server.handlers.hardware.logic;
 
 import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.protocol.BridgeMessage;
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Map;
@@ -21,12 +17,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
-@ChannelHandler.Sharable
-public class BridgeHandler extends BaseSimpleChannelInboundHandler<BridgeMessage> {
+public class BridgeLogic {
 
-    public BridgeHandler(ServerProperties props, UserRegistry userRegistry,
-                         SessionsHolder sessionsHolder) {
-        super(props, userRegistry, sessionsHolder);
+    private final SessionsHolder sessionsHolder;
+
+    public BridgeLogic(SessionsHolder sessionsHolder) {
+        this.sessionsHolder = sessionsHolder;
     }
 
     private static boolean isInit(String body) {
@@ -46,8 +42,7 @@ public class BridgeHandler extends BaseSimpleChannelInboundHandler<BridgeMessage
         return sendToMap;
     }
 
-    @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, BridgeMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, BridgeMessage message) {
         Session session = sessionsHolder.userSession.get(user);
         String[] split = message.body.split("\0");
         if (split.length < 3) {

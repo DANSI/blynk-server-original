@@ -9,9 +9,9 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
+import cc.blynk.server.handlers.hardware.logic.MailLogic;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.others.Mail;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -35,7 +35,7 @@ public class MailHandlerTest extends TestBase {
     private NotificationsProcessor notificationsProcessor;
 
     @InjectMocks
-    private MailHandler mailHandler;
+    private MailLogic mailHandler;
 
 	@Mock
 	private ChannelHandlerContext ctx;
@@ -63,7 +63,7 @@ public class MailHandlerTest extends TestBase {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body");
 
         when(user.getProfile()).thenReturn(profile);
-        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(null);
+        when(profile.getActiveDashboardWidgetByType(cc.blynk.server.model.widgets.others.Mail.class)).thenReturn(null);
 
         mailHandler.messageReceived(ctx, user, mailMessage);
     }
@@ -73,8 +73,8 @@ public class MailHandlerTest extends TestBase {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "".replaceAll(" ", "\0"));
 
         when(user.getProfile()).thenReturn(profile);
-        Mail mail = new Mail();
-        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(mail);
+        cc.blynk.server.model.widgets.others.Mail mail = new cc.blynk.server.model.widgets.others.Mail();
+        when(profile.getActiveDashboardWidgetByType(cc.blynk.server.model.widgets.others.Mail.class)).thenReturn(mail);
 
         mailHandler.messageReceived(ctx, user, mailMessage);
     }
@@ -84,7 +84,7 @@ public class MailHandlerTest extends TestBase {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body".replaceAll(" ", "\0"));
 
         when(user.getProfile()).thenReturn(profile);
-        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(new Mail());
+        when(profile.getActiveDashboardWidgetByType(cc.blynk.server.model.widgets.others.Mail.class)).thenReturn(new cc.blynk.server.model.widgets.others.Mail());
 
         mailHandler.messageReceived(ctx, user, mailMessage);
     }

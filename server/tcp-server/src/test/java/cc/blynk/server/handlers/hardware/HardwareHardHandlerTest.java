@@ -6,6 +6,7 @@ import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
+import cc.blynk.server.handlers.hardware.logic.HardwareLogic;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
@@ -37,7 +38,7 @@ public class HardwareHardHandlerTest extends TestBase {
     private NotificationsProcessor notificationsProcessor;
 
     @InjectMocks
-    private HardwareHardHandler hardwareHandler;
+    private HardwareLogic hardwareHandler;
 
     @Mock
     private ChannelHandlerContext ctx;
@@ -81,7 +82,7 @@ public class HardwareHardHandlerTest extends TestBase {
         SessionsHolder sessionsHolder = spy(new SessionsHolder());
         final Session session = new Session();
         sessionsHolder.userSession.put(user, session);
-        HardwareHardHandler hardwareHandler = spy(new HardwareHardHandler(props, userRegistry, sessionsHolder, storageDao));
+        HardwareLogic hardwareHandler = spy(new HardwareLogic(props, userRegistry, sessionsHolder, storageDao));
         try{
             hardwareHandler.messageReceived(ctx, user, message);
         }catch (DeviceNotInNetworkException e){

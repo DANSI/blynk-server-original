@@ -1,17 +1,13 @@
-package cc.blynk.server.handlers.hardware;
+package cc.blynk.server.handlers.hardware.logic;
 
 import cc.blynk.common.model.messages.protocol.hardware.MailMessage;
-import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.others.Mail;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The Blynk Project.
@@ -19,20 +15,19 @@ import io.netty.channel.ChannelHandlerContext;
  * Created on 2/1/2015.
  *
  */
-@ChannelHandler.Sharable
-public class MailHandler extends BaseSimpleChannelInboundHandler<MailMessage> {
+public class MailLogic extends NotificationBase {
+
+    private static final Logger log = LogManager.getLogger(MailLogic.class);
 
     private final NotificationsProcessor notificationsProcessor;
 
-    public MailHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                       NotificationsProcessor notificationsProcessor) {
-        super(props, userRegistry, sessionsHolder);
+    public MailLogic(NotificationsProcessor notificationsProcessor, long notificationQuotaLimit) {
+        super(notificationQuotaLimit);
         this.notificationsProcessor = notificationsProcessor;
     }
 
-    @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, MailMessage message) {
-        Mail mail = user.getProfile().getActiveDashboardWidgetByType(Mail.class);
+    public void messageReceived(ChannelHandlerContext ctx, User user, MailMessage message) {
+        cc.blynk.server.model.widgets.others.Mail mail = user.getProfile().getActiveDashboardWidgetByType(cc.blynk.server.model.widgets.others.Mail.class);
 
         if (mail == null) {
             throw new NotAllowedException("User has no mail widget or active dashboard.", message.id);

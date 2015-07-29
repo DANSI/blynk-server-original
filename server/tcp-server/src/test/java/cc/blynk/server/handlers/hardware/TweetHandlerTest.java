@@ -9,6 +9,7 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.exceptions.QuotaLimitException;
+import cc.blynk.server.handlers.hardware.logic.TweetLogic;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Twitter;
@@ -50,7 +51,7 @@ public class TweetHandlerTest extends TestBase {
 	private SessionsHolder sessionsHolder;
 
 	@Mock
-	private TweetHandler tweetHandler;
+	private TweetLogic tweetHandler;
 
 	@Mock
 	private User user;
@@ -62,7 +63,7 @@ public class TweetHandlerTest extends TestBase {
 	public void testTweetMessageWithEmptyBody() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "");
 		when(user.getProfile()).thenReturn(profile);
-		TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
+		TweetLogic tweetHandler = new TweetLogic(props, userRegistry, sessionsHolder, notificationsProcessor);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
@@ -71,7 +72,7 @@ public class TweetHandlerTest extends TestBase {
 		final String longBody = RandomStringUtils.random(150);
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, longBody);
 		when(user.getProfile()).thenReturn(profile);
-		TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
+		TweetLogic tweetHandler = new TweetLogic(props, userRegistry, sessionsHolder, notificationsProcessor);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
 
@@ -79,7 +80,7 @@ public class TweetHandlerTest extends TestBase {
 	public void testTweetMessageWithNoTwitterAccessToken() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		when(user.getProfile()).thenReturn(profile);
-		TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
+		TweetLogic tweetHandler = new TweetLogic(props, userRegistry, sessionsHolder, notificationsProcessor);
 		when(user.getProfile()).thenReturn(profile);
 		tweetHandler.messageReceived(ctx, user, tweetMessage);
 	}
@@ -88,7 +89,7 @@ public class TweetHandlerTest extends TestBase {
 	public void testTweetMessageWithTwitterTokenNull() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		when(user.getProfile()).thenReturn(profile);
-		TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
+		TweetLogic tweetHandler = new TweetLogic(props, userRegistry, sessionsHolder, notificationsProcessor);
 		when(user.getProfile()).thenReturn(profile);
 		Twitter twitter = new Twitter();
 		twitter.token = null;
@@ -101,7 +102,7 @@ public class TweetHandlerTest extends TestBase {
 	public void testTweetMessageWithTwitterTokenEmpty() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		when(user.getProfile()).thenReturn(profile);
-		TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
+		TweetLogic tweetHandler = new TweetLogic(props, userRegistry, sessionsHolder, notificationsProcessor);
 		when(user.getProfile()).thenReturn(profile);
 		Twitter twitter = new Twitter();
 		twitter.token = null;
@@ -114,7 +115,7 @@ public class TweetHandlerTest extends TestBase {
 	public void testTweetMessageWithTwitterSecretTokenNull() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		when(user.getProfile()).thenReturn(profile);
-		TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
+		TweetLogic tweetHandler = new TweetLogic(props, userRegistry, sessionsHolder, notificationsProcessor);
 		when(user.getProfile()).thenReturn(profile);
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
@@ -127,7 +128,7 @@ public class TweetHandlerTest extends TestBase {
 	public void testTweetMessageWithTwitterSecretTokenEmpty() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		when(user.getProfile()).thenReturn(profile);
-		TweetHandler tweetHandler = new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor);
+		TweetLogic tweetHandler = new TweetLogic(props, userRegistry, sessionsHolder, notificationsProcessor);
 		when(user.getProfile()).thenReturn(profile);
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
@@ -140,7 +141,7 @@ public class TweetHandlerTest extends TestBase {
 	public void testSendQuotaLimitationException() throws InterruptedException {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "this is a test tweet");
 		User user = spy(new User());
-		TweetHandler tweetHandler = spy(new TweetHandler(new ServerProperties(), userRegistry, sessionsHolder, notificationsProcessor));
+		TweetLogic tweetHandler = spy(new TweetLogic(new ServerProperties(), userRegistry, sessionsHolder, notificationsProcessor));
 		when(user.getProfile()).thenReturn(profile);
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
@@ -157,7 +158,7 @@ public class TweetHandlerTest extends TestBase {
 		props.setProperty("notifications.frequency.user.quota.limit", "1");
 		final long defaultQuotaTime = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
 		User user = spy(new User());
-		TweetHandler tweetHandler = spy(new TweetHandler(props, userRegistry, sessionsHolder, notificationsProcessor));
+		TweetLogic tweetHandler = spy(new TweetLogic(props, userRegistry, sessionsHolder, notificationsProcessor));
 		when(user.getProfile()).thenReturn(profile);
 		Twitter twitter = new Twitter();
 		twitter.token = "token";

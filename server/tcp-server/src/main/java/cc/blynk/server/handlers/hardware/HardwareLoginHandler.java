@@ -51,7 +51,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         User user = userRegistry.getUserByToken(token);
 
         if (user == null) {
-            log.debug("Hardware token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
+            log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
             ctx.writeAndFlush(new ResponseMessage(message.id, Command.RESPONSE, Response.INVALID_TOKEN));
             return;
         }

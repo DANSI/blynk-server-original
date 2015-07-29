@@ -6,7 +6,6 @@ import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.exceptions.QuotaLimitException;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
@@ -28,7 +27,6 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
 
     protected final UserRegistry userRegistry;
     protected final SessionsHolder sessionsHolder;
-	private final long defaultNotificationQuotaLimit;
     private final TypeParameterMatcher matcher;
     private volatile int USER_QUOTA_LIMIT;
     private volatile int USER_QUOTA_LIMIT_WARN_PERIOD;
@@ -37,7 +35,6 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
-		defaultNotificationQuotaLimit = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
         updateProperties(props);
     }
 
@@ -114,12 +111,4 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
         }
     }
 
-	protected long checkIfNotificationQuotaLimitIsNotReached(long lastAccessTime, int msgId) {
-        long currentTs = System.currentTimeMillis();
-        long timePassedSinceLastMessage = (currentTs - lastAccessTime);
-		if (timePassedSinceLastMessage < defaultNotificationQuotaLimit) {
-			throw new QuotaLimitException(String.format("Only 1 notification per %s miliseconds is allowed", defaultNotificationQuotaLimit), msgId);
-		}
-		return currentTs;
-    }
 }

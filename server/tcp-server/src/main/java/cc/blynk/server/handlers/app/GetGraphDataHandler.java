@@ -83,7 +83,7 @@ public class GetGraphDataHandler extends BaseSimpleChannelInboundHandler<GetGrap
             pinType = PinType.getPingType(pinTypeChar.charAt(0));
             pin = Byte.parseByte(pinString);
         } catch (NumberFormatException e) {
-            throw new IllegalCommandException("Hardware command body incorrect.", message.id);
+            throw new IllegalCommandException("HardwareLogic command body incorrect.", message.id);
         }
 
         user.getProfile().validateDashId(dashBoardId, message.id);

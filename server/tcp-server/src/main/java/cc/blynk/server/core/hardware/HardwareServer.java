@@ -31,7 +31,7 @@ public class HardwareServer extends BaseServer {
         log.debug("hard.socket.idle.timeout = {}", hardTimeoutSecs);
         this.channelInitializer = new HardwareChannelInitializer(sessionsHolder, stats, handlersHolder, hardTimeoutSecs, null);
 
-        log.info("Hardware server port {}.", port);
+        log.info("HardwareLogic server port {}.", port);
     }
 
     @Override

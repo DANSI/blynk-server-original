@@ -1,17 +1,14 @@
-package cc.blynk.server.handlers.hardware;
+package cc.blynk.server.handlers.hardware.logic;
 
 import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
-import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.NotificationBodyInvalidException;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Twitter;
 import cc.blynk.server.notifications.twitter.exceptions.TwitterNotAuthorizedException;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The Blynk Project.
@@ -19,21 +16,19 @@ import io.netty.channel.ChannelHandlerContext;
  * Created on 2/1/2015.
  *
  */
-@ChannelHandler.Sharable
-public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> {
+public class TweetLogic extends NotificationBase {
+
+    private static final Logger log = LogManager.getLogger(TweetLogic.class);
 
     private static final int MAX_TWITTER_BODY_SIZE = 140;
     private final NotificationsProcessor notificationsProcessor;
 
-    public TweetHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                        NotificationsProcessor notificationsProcessor) {
-        super(props, userRegistry, sessionsHolder);
+    public TweetLogic(NotificationsProcessor notificationsProcessor, long notificationQuotaLimit) {
+        super(notificationQuotaLimit);
         this.notificationsProcessor = notificationsProcessor;
     }
 
-    @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, TweetMessage message) {
-        //todo add tweet widget check
+    public void messageReceived(ChannelHandlerContext ctx, User user, TweetMessage message) {
         if (message.body == null || message.body.equals("") || message.body.length() > MAX_TWITTER_BODY_SIZE) {
             throw new NotificationBodyInvalidException(message.id);
         }
@@ -51,6 +46,5 @@ public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> 
         log.trace("Sending Twit for user {}, with message : '{}'.", user.getName(), message.body);
         notificationsProcessor.twit(ctx.channel(), twitterWidget.token, twitterWidget.secret, message.body, message.id);
     }
-
 
 }

@@ -40,7 +40,7 @@ public class StorageDao {
         try {
             pin = Byte.parseByte(bodyParts[1]);
         } catch (NumberFormatException e) {
-            throw new IllegalCommandException("Hardware command body incorrect.", msgId);
+            throw new IllegalCommandException("HardwareLogic command body incorrect.", msgId);
         }
 
         GraphKey key = new GraphKey(dashId, pin, pinType);
