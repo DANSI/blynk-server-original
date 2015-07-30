@@ -4,6 +4,7 @@ import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.model.widgets.others.Mail;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -27,7 +28,7 @@ public class MailLogic extends NotificationBase {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
-        cc.blynk.server.model.widgets.others.Mail mail = user.getProfile().getActiveDashboardWidgetByType(cc.blynk.server.model.widgets.others.Mail.class);
+        Mail mail = user.getProfile().getActiveDashboardWidgetByType(Mail.class);
 
         if (mail == null) {
             throw new NotAllowedException("User has no mail widget or active dashboard.", message.id);

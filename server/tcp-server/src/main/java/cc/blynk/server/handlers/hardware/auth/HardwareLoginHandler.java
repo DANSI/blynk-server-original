@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.hardware;
+package cc.blynk.server.handlers.hardware.auth;
 
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.enums.Response;
