@@ -65,5 +65,9 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<Message> {
         }
     }
 
-
+    @Override
+    public void updateProperties(ServerProperties props) {
+        super.updateProperties(props);
+        hardware.updateProperties(props);
+    }
 }

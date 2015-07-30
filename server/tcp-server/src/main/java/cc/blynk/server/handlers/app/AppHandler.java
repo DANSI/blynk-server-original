@@ -47,14 +47,14 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
             case SAVE_PROFILE :
                 saveProfile.messageReceived(ctx, user, msg);
                 break;
-            case LOAD_PROFILE :
-                LoadProfileLogic.messageReceived(ctx, user, msg);
-                break;
             case ACTIVATE_DASHBOARD :
                 ActivateDashboardLogic.messageReceived(ctx, user, msg);
                 break;
             case DEACTIVATE_DASHBOARD :
                 DeActivateDashboardLogic.messageReceived(ctx, user, msg);
+                break;
+            case LOAD_PROFILE :
+                LoadProfileLogic.messageReceived(ctx, user, msg);
                 break;
             case GET_TOKEN :
                 token.messageReceived(ctx, user, msg);
@@ -71,4 +71,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
         }
     }
 
+    @Override
+    public void updateProperties(ServerProperties props) {
+        super.updateProperties(props);
+        saveProfile.updateProperties(props);
+    }
 }
