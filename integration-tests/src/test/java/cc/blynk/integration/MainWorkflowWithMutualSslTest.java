@@ -16,7 +16,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 
-import static cc.blynk.common.enums.Command.HARDWARE_COMMAND;
+import static cc.blynk.common.enums.Command.HARDWARE;
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
@@ -104,7 +104,7 @@ public class MainWorkflowWithMutualSslTest extends IntegrationBase {
     @Test
     public void testAppSendAnyHardCommandAndBack() throws Exception {
         clientPair.appClient.send("hardware 1 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, "1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "1 1".replaceAll(" ", "\0"))));
 
         clientPair.hardwareClient.send("hardware ar 1");
 
@@ -114,7 +114,7 @@ public class MainWorkflowWithMutualSslTest extends IntegrationBase {
         List<Message> arguments = objectArgumentCaptor.getAllValues();
         Message hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
-        assertEquals(HARDWARE_COMMAND, hardMessage.command);
+        assertEquals(HARDWARE, hardMessage.command);
         assertEquals(4, hardMessage.length);
         assertEquals("ar 1".replaceAll(" ", "\0"), hardMessage.body);
     }
@@ -122,7 +122,7 @@ public class MainWorkflowWithMutualSslTest extends IntegrationBase {
     @Test
     public void testAppSendWriteHardCommandNotGraphAndBack() throws Exception {
         clientPair.appClient.send("hardware ar 11");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, "ar 11".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "ar 11".replaceAll(" ", "\0"))));
 
         String body = "aw 11 333";
         clientPair.hardwareClient.send("hardware " + body);
@@ -133,7 +133,7 @@ public class MainWorkflowWithMutualSslTest extends IntegrationBase {
         List<Message> arguments = objectArgumentCaptor.getAllValues();
         Message hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
-        assertEquals(HARDWARE_COMMAND, hardMessage.command);
+        assertEquals(HARDWARE, hardMessage.command);
         assertEquals(body.length(), hardMessage.length);
         assertTrue(hardMessage.body.startsWith(body.replaceAll(" ", "\0")));
     }
@@ -154,7 +154,7 @@ public class MainWorkflowWithMutualSslTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, OK)));
 
         clientPair.appClient.send("hardware ar 1 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE_COMMAND, "ar 1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, "ar 1 1".replaceAll(" ", "\0"))));
 
         String userProfileWithGraph = readTestUserProfile();
 
@@ -163,7 +163,7 @@ public class MainWorkflowWithMutualSslTest extends IntegrationBase {
 
 
         clientPair.appClient.send("hardware ar 1 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, HARDWARE_COMMAND, "ar 1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, HARDWARE, "ar 1 1".replaceAll(" ", "\0"))));
     }
 
     @Test
@@ -176,7 +176,7 @@ public class MainWorkflowWithMutualSslTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("hardware ar 8");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, "ar 8".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "ar 8".replaceAll(" ", "\0"))));
 
         String body = "aw 8 333";
         clientPair.hardwareClient.send("hardware " + body);
@@ -187,7 +187,7 @@ public class MainWorkflowWithMutualSslTest extends IntegrationBase {
         List<Message> arguments = objectArgumentCaptor.getAllValues();
         Message hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
-        assertEquals(HARDWARE_COMMAND, hardMessage.command);
+        assertEquals(HARDWARE, hardMessage.command);
         //"aw 11 333".length + ts.length + separator
         assertEquals(body.length() + 14, hardMessage.length);
         assertTrue(hardMessage.body.startsWith(body.replaceAll(" ", "\0")));
@@ -211,7 +211,7 @@ public class MainWorkflowWithMutualSslTest extends IntegrationBase {
         hardClient.start(null);
         hardClient.send("login " + clientPair.token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, OK)));
-        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
+        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
     }
 
     @Test
@@ -235,7 +235,7 @@ public class MainWorkflowWithMutualSslTest extends IntegrationBase {
         }
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, QUOTA_LIMIT_EXCEPTION)));
-        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
 
         clientPair.appClient.reset();
         clientPair.hardwareClient.reset();
@@ -247,7 +247,7 @@ public class MainWorkflowWithMutualSslTest extends IntegrationBase {
         }
 
         verify(clientPair.appClient.responseMock, times(0)).channelRead(any(), eq(produce(1, QUOTA_LIMIT_EXCEPTION)));
-        verify(clientPair.hardwareClient.responseMock, times(0)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, times(0)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
     }
 
 
@@ -267,8 +267,8 @@ public class MainWorkflowWithMutualSslTest extends IntegrationBase {
 
 
         for (int i = 1; i <= ITERATIONS; i++) {
-            verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
-            verify(clientPair2.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
+            verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE, body.replaceAll(" ", "\0"))));
+            verify(clientPair2.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE, body.replaceAll(" ", "\0"))));
         }
     }
 
@@ -285,7 +285,7 @@ public class MainWorkflowWithMutualSslTest extends IntegrationBase {
         }
 
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, QUOTA_LIMIT_EXCEPTION)));
-        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
 
         clientPair.appClient.reset();
         clientPair.hardwareClient.reset();
@@ -299,7 +299,7 @@ public class MainWorkflowWithMutualSslTest extends IntegrationBase {
         }
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, QUOTA_LIMIT_EXCEPTION)));
-        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
 
     }
 

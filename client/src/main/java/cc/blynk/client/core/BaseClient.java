@@ -29,12 +29,10 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 public abstract class BaseClient {
 
     protected static final Logger log = LogManager.getLogger(BaseClient.class);
-
+    protected static ServerProperties props = new ServerProperties();
     protected final String host;
     protected final int port;
     protected final Random random;
-    protected static ServerProperties props = new ServerProperties();
-
     protected Channel channel;
     protected NioEventLoopGroup nioEventLoopGroup;
 
@@ -72,7 +70,7 @@ public abstract class BaseClient {
                 body = username + " " + SHA256Util.makeHash(pass, username);
             }
         }
-        if (command == Command.HARDWARE_COMMAND || command == Command.BRIDGE || command == Command.EMAIL) {
+        if (command == Command.HARDWARE || command == Command.BRIDGE || command == Command.EMAIL) {
             body = body.replaceAll(" ", "\0");
         }
         return produce(msgId, command, body);

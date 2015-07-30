@@ -22,7 +22,7 @@ public class MessageFactory {
 
     public static Message produce(int messageId, short command, String body) {
         switch (command) {
-            case HARDWARE_COMMAND :
+            case HARDWARE:
                 return new HardwareMessage(messageId, body);
             case PING :
                 return new PingMessage(messageId, body);

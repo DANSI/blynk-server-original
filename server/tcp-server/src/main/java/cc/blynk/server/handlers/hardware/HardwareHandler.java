@@ -44,7 +44,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<Message> {
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, User user, Message msg) {
         switch (msg.command) {
-            case HARDWARE_COMMAND :
+            case HARDWARE:
                 hardware.messageReceived(ctx, user, msg);
                 break;
             case PING :

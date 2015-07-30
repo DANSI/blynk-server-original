@@ -14,7 +14,7 @@ public class CommandParser {
     public static Short parseCommand(String stringCommand) {
         switch (stringCommand.toLowerCase()) {
             case "hardware" :
-                return HARDWARE_COMMAND;
+                return HARDWARE;
             case "ping" :
                 return PING;
             case "loadprofile" :

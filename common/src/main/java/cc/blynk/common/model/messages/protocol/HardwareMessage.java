@@ -2,7 +2,7 @@ package cc.blynk.common.model.messages.protocol;
 
 import cc.blynk.common.model.messages.Message;
 
-import static cc.blynk.common.enums.Command.HARDWARE_COMMAND;
+import static cc.blynk.common.enums.Command.HARDWARE;
 
 /**
  * The Blynk Project.
@@ -12,7 +12,7 @@ import static cc.blynk.common.enums.Command.HARDWARE_COMMAND;
 public class HardwareMessage extends Message {
 
     public HardwareMessage(int messageId, String body) {
-        super(messageId, HARDWARE_COMMAND, body.length(), body);
+        super(messageId, HARDWARE, body.length(), body);
     }
 
     public HardwareMessage updateMessageBody(String newBody) {
