@@ -1,5 +1,7 @@
 package cc.blynk.server.core.application;
 
+import cc.blynk.common.handlers.common.decoders.MessageDecoder;
+import cc.blynk.common.handlers.common.encoders.MessageEncoder;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.TransportTypeHolder;
@@ -7,14 +9,22 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.app.AppHandler;
+import cc.blynk.server.handlers.app.auth.AppLoginHandler;
+import cc.blynk.server.handlers.app.auth.RegisterHandler;
+import cc.blynk.server.handlers.common.ClientChannelStateHandler;
 import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 
+import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLException;
 import java.io.File;
 import java.security.cert.CertificateException;
@@ -26,7 +36,7 @@ import java.security.cert.CertificateException;
  */
 public class AppServer extends BaseServer {
 
-    private final AppHandlersHolder handlersHolder;
+    private final AppHandler appHandler;
     private final ChannelInitializer<SocketChannel> channelInitializer;
     private boolean isMutualSSL;
 
@@ -34,25 +44,57 @@ public class AppServer extends BaseServer {
                      GlobalStats stats, TransportTypeHolder transportType, StorageDao storageDao) {
         super(props.getIntProperty("app.ssl.port"), transportType);
 
-        this.handlersHolder = new AppHandlersHolder(props, userRegistry, sessionsHolder, storageDao);
+        RegisterHandler registerHandler = new RegisterHandler(userRegistry);
+        AppLoginHandler appLoginHandler = new AppLoginHandler(userRegistry, sessionsHolder);
 
+        this.appHandler = new AppHandler(props, userRegistry, sessionsHolder, storageDao);
+
+        SslContext sslCtx = initSslContext(props);
+
+        int appTimeoutSecs = props.getIntProperty("app.socket.idle.timeout", 600);
+        log.debug("app.socket.idle.timeout = {}", appTimeoutSecs);
+
+        this.channelInitializer = new ChannelInitializer<SocketChannel>() {
+            @Override
+            protected void initChannel(SocketChannel ch) throws Exception {
+                ChannelPipeline pipeline = ch.pipeline();
+
+                pipeline.addLast(new ReadTimeoutHandler(appTimeoutSecs));
+
+                SSLEngine engine = sslCtx.newEngine(ch.alloc());
+                if (isMutualSSL) {
+                    engine.setUseClientMode(false);
+                    engine.setNeedClientAuth(true);
+                }
+                pipeline.addLast(new SslHandler(engine));
+
+                //non-sharable handlers
+                pipeline.addLast(new ClientChannelStateHandler(sessionsHolder));
+                pipeline.addLast(new MessageDecoder(stats));
+                pipeline.addLast(new MessageEncoder());
+
+                //sharable business logic handlers initialized previously
+                pipeline.addLast(registerHandler);
+                pipeline.addLast(appLoginHandler);
+                pipeline.addLast(appHandler);
+            }
+        };
+
+        log.info("Application server port {}.", port);
+    }
+
+    private SslContext initSslContext(ServerProperties props) {
         log.info("Enabling SSL for application.");
         SslProvider sslProvider = props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK;
         if (sslProvider == SslProvider.OPENSSL) {
             log.warn("Using native openSSL provider for app SSL.");
         }
-        SslContext sslContext = initSslContext(
+        return initSslContext(
                 props.getProperty("server.ssl.cert"),
                 props.getProperty("server.ssl.key"),
                 props.getProperty("server.ssl.key.pass"),
                 props.getProperty("client.ssl.cert"),
                 sslProvider);
-
-        int appTimeoutSecs = props.getIntProperty("app.socket.idle.timeout", 600);
-        log.debug("app.socket.idle.timeout = {}", appTimeoutSecs);
-        this.channelInitializer = new AppChannelInitializer(sessionsHolder, stats, handlersHolder, sslContext, appTimeoutSecs, isMutualSSL);
-
-        log.info("Application server port {}.", port);
     }
 
     private SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
@@ -86,7 +128,7 @@ public class AppServer extends BaseServer {
 
     @Override
     public BaseSimpleChannelInboundHandler getBaseHandler() {
-        return handlersHolder.getBaseHandler();
+        return appHandler;
     }
 
     @Override
