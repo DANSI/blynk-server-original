@@ -74,6 +74,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
     @Override
     public void updateProperties(ServerProperties props) {
         super.updateProperties(props);
-        saveProfile.updateProperties(props);
+        if (saveProfile != null) {
+            saveProfile.updateProperties(props);
+        }
     }
 }
