@@ -48,8 +48,8 @@ public class PropertiesChangeWatcherWorker implements Runnable {
                     Path changedFile = propsFileFolder.resolve(changed.toString());
                     if (changed.getFileName().toString().endsWith(fileName) && Files.exists(changedFile)) {
                         log.info("Props file '{}' changed. Updating handler properties.", changedFile);
+                        ServerProperties changedProps = new ServerProperties(changed);
                         for (BaseSimpleChannelInboundHandler<?> handler : handlers) {
-                            ServerProperties changedProps = new ServerProperties(changed);
                             handler.updateProperties(changedProps);
                         }
                     }
