@@ -11,6 +11,12 @@ If you need more information, please follow these links:
 * [Google Play](https://play.google.com/store/apps/details?id=cc.blynk)
 * [Getting Started](http://www.blynk.cc/getting-started)
 
+![Dashboard settings](https://github.com/blynkkk/blynk-server/blob/master/docs/dash_settings.png)
+![Widgets Box](https://github.com/blynkkk/blynk-server/blob/master/docs/widgets_box.png)
+![Button edit](https://github.com/blynkkk/blynk-server/blob/master/docs/button_edit.png)
+![terminal edit](https://github.com/blynkkk/blynk-server/blob/master/docs/terminal_edit.png)
+![Dashboard](https://github.com/blynkkk/blynk-server/blob/master/docs/dash.png)
+
 # Blynk server
 Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Java server, responsible for forwarding messages between Blynk mobile application and various microcontroller boards (i.e. Arduino, Raspberry Pi. etc).
 **Take latest build [here](https://github.com/blynkkk/blynk-server/releases).**
