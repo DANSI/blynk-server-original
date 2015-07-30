@@ -3,7 +3,6 @@ package cc.blynk.server.handlers.hardware;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.handlers.hardware.logic.*;
@@ -29,9 +28,9 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<Message> {
     private final PushLogic push;
     private final TweetLogic tweet;
 
-    public HardwareHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao,
+    public HardwareHandler(ServerProperties props, SessionsHolder sessionsHolder, StorageDao storageDao,
                            NotificationsProcessor notificationsProcessor) {
-        super(props, userRegistry, sessionsHolder);
+        super(props);
         this.hardware = new HardwareLogic(props, sessionsHolder, storageDao);
         this.bridge = new BridgeLogic(sessionsHolder);
 

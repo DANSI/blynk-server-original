@@ -24,7 +24,7 @@ public class HardwareHandlersHolder {
     public HardwareHandlersHolder(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
                                   NotificationsProcessor notificationsProcessor, StorageDao storageDao) {
         HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(userRegistry, sessionsHolder);
-        HardwareHandler hardwareHandler = new HardwareHandler(props, userRegistry, sessionsHolder, storageDao, notificationsProcessor);
+        HardwareHandler hardwareHandler = new HardwareHandler(props, sessionsHolder, storageDao, notificationsProcessor);
 
         this.notificationsProcessor = notificationsProcessor;
 

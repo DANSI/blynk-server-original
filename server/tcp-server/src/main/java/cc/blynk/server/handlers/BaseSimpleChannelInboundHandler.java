@@ -4,8 +4,6 @@ import cc.blynk.common.exceptions.BaseServerException;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
@@ -25,15 +23,11 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  */
 public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
-    protected final UserRegistry userRegistry;
-    protected final SessionsHolder sessionsHolder;
     private final TypeParameterMatcher matcher;
     private volatile int USER_QUOTA_LIMIT;
     private volatile int USER_QUOTA_LIMIT_WARN_PERIOD;
 
-    protected BaseSimpleChannelInboundHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        this.userRegistry = userRegistry;
-        this.sessionsHolder = sessionsHolder;
+    protected BaseSimpleChannelInboundHandler(ServerProperties props) {
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
         updateProperties(props);
     }

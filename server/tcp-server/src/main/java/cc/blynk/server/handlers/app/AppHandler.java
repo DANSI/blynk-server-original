@@ -30,7 +30,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
     private final GetGraphDataLogic graphData;
 
     public AppHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao) {
-        super(props, userRegistry, sessionsHolder);
+        super(props);
         this.saveProfile = new SaveProfileLogic(props);
         this.token = new GetTokenLogic(userRegistry);
         this.hardwareApp = new HardwareAppLogic(sessionsHolder);
