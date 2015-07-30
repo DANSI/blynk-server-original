@@ -26,7 +26,7 @@ public class AdminServer extends BaseServer {
     }
 
     @Override
-    public BaseSimpleChannelInboundHandler[] getBaseHandlers() {
+    public BaseSimpleChannelInboundHandler getBaseHandler() {
         return null;
     }
 

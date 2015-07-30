@@ -1,22 +1,27 @@
 package cc.blynk.server.core.hardware.ssl;
 
+import cc.blynk.common.handlers.common.decoders.MessageDecoder;
+import cc.blynk.common.handlers.common.encoders.MessageEncoder;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.hardware.HardwareChannelInitializer;
-import cc.blynk.server.core.hardware.HardwareHandlersHolder;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.common.ClientChannelStateHandler;
+import cc.blynk.server.handlers.hardware.HardwareHandler;
+import cc.blynk.server.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 
 import javax.net.ssl.SSLException;
 import java.io.File;
@@ -29,29 +34,50 @@ import java.security.cert.CertificateException;
  */
 public class HardwareSSLServer extends BaseServer {
 
-    private final HardwareHandlersHolder handlersHolder;
     private final ChannelInitializer<SocketChannel> channelInitializer;
+    private final HardwareHandler hardwareHandler;
 
     public HardwareSSLServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
                              GlobalStats stats, NotificationsProcessor notificationsProcessor, TransportTypeHolder transportType, StorageDao storageDao) {
         super(props.getIntProperty("hardware.ssl.port"), transportType);
 
-        this.handlersHolder = new HardwareHandlersHolder(props, userRegistry, sessionsHolder, notificationsProcessor, storageDao);
-        int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 15);
+        HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(userRegistry, sessionsHolder);
+        this.hardwareHandler = new HardwareHandler(props, sessionsHolder, storageDao, notificationsProcessor);
 
+        SslContext sslCtx = initSslContext(props);
+
+        this.channelInitializer = new ChannelInitializer<SocketChannel>() {
+            @Override
+            protected void initChannel(SocketChannel ch) throws Exception {
+                ChannelPipeline pipeline = ch.pipeline();
+                //non-sharable handlers
+                pipeline.addLast(new ReadTimeoutHandler(props.getIntProperty("hard.socket.idle.timeout", 15)));
+
+                pipeline.addLast(sslCtx.newHandler(ch.alloc()));
+
+                pipeline.addLast(new ClientChannelStateHandler(sessionsHolder, notificationsProcessor));
+                pipeline.addLast(new MessageDecoder(stats));
+                pipeline.addLast(new MessageEncoder());
+
+                //sharable business logic handlers
+                pipeline.addLast(hardwareLoginHandler);
+                pipeline.addLast(hardwareHandler);
+            }
+        };
+
+        log.info("SSL hardware port {}.", port);
+    }
+
+    private SslContext initSslContext(ServerProperties props) {
         SslProvider sslProvider = props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK;
         if (sslProvider == SslProvider.OPENSSL) {
             log.warn("Using native openSSL provider for hardware SSL.");
         }
-        SslContext sslContext = initSslContext(
-                props.getProperty("server.ssl.cert"),
+
+        return initSslContext(props.getProperty("server.ssl.cert"),
                 props.getProperty("server.ssl.key"),
                 props.getProperty("server.ssl.key.pass"),
                 sslProvider);
-
-        this.channelInitializer = new HardwareChannelInitializer(sessionsHolder, stats, handlersHolder, hardTimeoutSecs, sslContext);
-
-        log.info("SSL hardware port {}.", port);
     }
 
     private SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
@@ -77,8 +103,8 @@ public class HardwareSSLServer extends BaseServer {
     }
 
     @Override
-    public BaseSimpleChannelInboundHandler[] getBaseHandlers() {
-        return handlersHolder.getBaseHandlers();
+    public BaseSimpleChannelInboundHandler getBaseHandler() {
+        return hardwareHandler;
     }
 
     @Override

@@ -25,7 +25,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -139,8 +139,8 @@ public class ServerLauncher {
         scheduler.scheduleAtFixedRate(
                 new TimerWorker(userRegistry, sessionsHolder), startDelay, 1000, TimeUnit.MILLISECONDS);
 
-        List<BaseSimpleChannelInboundHandler> baseHandlers = new ArrayList<>(Arrays.asList(hardwareServer.getBaseHandlers()));
-        baseHandlers.addAll(Arrays.asList(appServer.getBaseHandlers()));
+        List<BaseSimpleChannelInboundHandler> baseHandlers = new ArrayList<>(Collections.singletonList(hardwareServer.getBaseHandler()));
+        baseHandlers.addAll(Collections.singletonList(appServer.getBaseHandler()));
         new Thread(new PropertiesChangeWatcherWorker(baseHandlers)).start();
 
         //todo test it works...

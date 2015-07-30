@@ -17,7 +17,7 @@ import io.netty.channel.ChannelHandler;
  */
 class AppHandlersHolder {
 
-    private final BaseSimpleChannelInboundHandler[] baseHandlers;
+    private final BaseSimpleChannelInboundHandler baseHandler;
     private final ChannelHandler[] allHandlers;
 
     public AppHandlersHolder(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao) {
@@ -25,9 +25,7 @@ class AppHandlersHolder {
         AppLoginHandler appLoginHandler = new AppLoginHandler(userRegistry, sessionsHolder);
         AppHandler appHandler = new AppHandler(props, userRegistry, sessionsHolder, storageDao);
 
-        this.baseHandlers = new BaseSimpleChannelInboundHandler[] {
-            appHandler
-        };
+        this.baseHandler = appHandler;
 
         this.allHandlers = new ChannelHandler[] {
             registerHandler,
@@ -36,8 +34,8 @@ class AppHandlersHolder {
         };
     }
 
-    public BaseSimpleChannelInboundHandler[] getBaseHandlers() {
-        return baseHandlers;
+    public BaseSimpleChannelInboundHandler getBaseHandler() {
+        return baseHandler;
     }
 
     public ChannelHandler[] getAllHandlers() {

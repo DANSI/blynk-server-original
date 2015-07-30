@@ -61,7 +61,7 @@ public abstract class BaseServer implements Runnable {
         }
     }
 
-    public abstract BaseSimpleChannelInboundHandler[] getBaseHandlers();
+    public abstract BaseSimpleChannelInboundHandler getBaseHandler();
 
     protected abstract ChannelInitializer<SocketChannel> getChannelInitializer();
 

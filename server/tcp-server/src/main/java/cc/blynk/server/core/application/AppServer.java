@@ -85,8 +85,8 @@ public class AppServer extends BaseServer {
     }
 
     @Override
-    public BaseSimpleChannelInboundHandler[] getBaseHandlers() {
-        return handlersHolder.getBaseHandlers();
+    public BaseSimpleChannelInboundHandler getBaseHandler() {
+        return handlersHolder.getBaseHandler();
     }
 
     @Override
