@@ -27,7 +27,6 @@ Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Jav
 Java 8 required. (OpenJDK, Oracle). Installation instructions [here](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu).
 
 # GETTING STARTED
-Right now Blynk server uses 2 ports. 1 port is used for hardware and second one is used for the mobile apps. This is done due to the lack of security mechanism and low resources on microcontroller boards (e.g. Arduino UNO).
 By default, mobile application uses 8443 port and is based on SSL/TLS sockets. Default hardware port is 8442 and is based on plain TCP/IP sockets.
 
 ## Quick local server setup
