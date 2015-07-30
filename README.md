@@ -38,14 +38,10 @@ By default, mobile application uses 8443 port and is based on SSL/TLS sockets. D
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-{PUT_LATEST_VERSION_HERE}.jar
+        java -jar server-{PUT_LATEST_VERSION_HERE}.jar -dataFolder /path
         
 That's it! You will see no output cause all logging is done within same folder in ./logs/blynk.log file.
-        
-WARNING : by default Blynk server uses 'tmp' system dir for saving user profiles. Thus it is not guaranteed that profiles will be available after restart, so you have to specify dir to avoid this :
-
-        java -jar server-{PUT_LATEST_VERSION_HERE}.jar -dataFolder /full_path_to_folder_for_user_profiles
-        
+                
 ## App and sketch changes
 
 + Specify custom server path in your application
