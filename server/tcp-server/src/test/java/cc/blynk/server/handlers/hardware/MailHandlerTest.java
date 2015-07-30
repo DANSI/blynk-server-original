@@ -12,12 +12,12 @@ import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.handlers.hardware.logic.MailLogic;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.model.widgets.others.Mail;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -34,8 +34,7 @@ public class MailHandlerTest extends TestBase {
     @Mock
     private NotificationsProcessor notificationsProcessor;
 
-    @InjectMocks
-    private MailLogic mailHandler;
+    private MailLogic mailHandler = new MailLogic(notificationsProcessor, 1);
 
 	@Mock
 	private ChannelHandlerContext ctx;
@@ -63,7 +62,7 @@ public class MailHandlerTest extends TestBase {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body");
 
         when(user.getProfile()).thenReturn(profile);
-        when(profile.getActiveDashboardWidgetByType(cc.blynk.server.model.widgets.others.Mail.class)).thenReturn(null);
+        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(null);
 
         mailHandler.messageReceived(ctx, user, mailMessage);
     }
