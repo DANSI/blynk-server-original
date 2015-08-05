@@ -56,7 +56,7 @@ public class HardwareServer extends BaseServer {
 
         log.debug("hard.socket.idle.timeout = {}", hardTimeoutSecs);
 
-        log.info("HardwareLogic server port {}.", port);
+        log.info("Plain tcp/ip hardware server port {}.", port);
     }
 
     @Override
