@@ -9,10 +9,10 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.app.AppChannelStateHandler;
 import cc.blynk.server.handlers.app.AppHandler;
 import cc.blynk.server.handlers.app.auth.AppLoginHandler;
 import cc.blynk.server.handlers.app.auth.RegisterHandler;
-import cc.blynk.server.handlers.common.ClientChannelStateHandler;
 import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -46,6 +46,7 @@ public class AppServer extends BaseServer {
 
         RegisterHandler registerHandler = new RegisterHandler(userRegistry);
         AppLoginHandler appLoginHandler = new AppLoginHandler(userRegistry, sessionsHolder);
+        AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(sessionsHolder);
 
         this.appHandler = new AppHandler(props, userRegistry, sessionsHolder, storageDao);
 
@@ -69,7 +70,7 @@ public class AppServer extends BaseServer {
                 pipeline.addLast(new SslHandler(engine));
 
                 //non-sharable handlers
-                pipeline.addLast(new ClientChannelStateHandler(sessionsHolder));
+                pipeline.addLast(appChannelStateHandler);
                 pipeline.addLast(new MessageDecoder(stats));
                 pipeline.addLast(new MessageEncoder());
 

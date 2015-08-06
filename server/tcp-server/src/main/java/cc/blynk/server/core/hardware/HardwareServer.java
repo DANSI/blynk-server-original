@@ -9,7 +9,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.handlers.common.ClientChannelStateHandler;
+import cc.blynk.server.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.storage.StorageDao;
@@ -34,6 +34,7 @@ public class HardwareServer extends BaseServer {
         super(props.getIntProperty("hardware.default.port"), transportType);
 
         HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(userRegistry, sessionsHolder);
+        HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(sessionsHolder, notificationsProcessor);
         this.hardwareHandler = new HardwareHandler(props, sessionsHolder, storageDao, notificationsProcessor);
 
         int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 15);
@@ -44,7 +45,7 @@ public class HardwareServer extends BaseServer {
                 ChannelPipeline pipeline = ch.pipeline();
                 //non-sharable handlers
                 pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
-                pipeline.addLast(new ClientChannelStateHandler(sessionsHolder, notificationsProcessor));
+                pipeline.addLast(hardwareChannelStateHandler);
                 pipeline.addLast(new MessageDecoder(stats));
                 pipeline.addLast(new MessageEncoder());
 

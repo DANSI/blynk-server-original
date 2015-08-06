@@ -9,7 +9,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.handlers.common.ClientChannelStateHandler;
+import cc.blynk.server.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.storage.StorageDao;
@@ -42,6 +42,7 @@ public class HardwareSSLServer extends BaseServer {
         super(props.getIntProperty("hardware.ssl.port"), transportType);
 
         HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(userRegistry, sessionsHolder);
+        HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(sessionsHolder, notificationsProcessor);
         this.hardwareHandler = new HardwareHandler(props, sessionsHolder, storageDao, notificationsProcessor);
 
         SslContext sslCtx = initSslContext(props);
@@ -55,7 +56,7 @@ public class HardwareSSLServer extends BaseServer {
 
                 pipeline.addLast(sslCtx.newHandler(ch.alloc()));
 
-                pipeline.addLast(new ClientChannelStateHandler(sessionsHolder, notificationsProcessor));
+                pipeline.addLast(hardwareChannelStateHandler);
                 pipeline.addLast(new MessageDecoder(stats));
                 pipeline.addLast(new MessageEncoder());
 

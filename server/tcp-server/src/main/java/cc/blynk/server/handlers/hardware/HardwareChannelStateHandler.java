@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.common;
+package cc.blynk.server.handlers.hardware;
 
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.model.auth.ChannelState;
@@ -25,19 +25,14 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Removes channel from session in case it became inactive (closed from client side).
  */
 @ChannelHandler.Sharable
-public class ClientChannelStateHandler extends ChannelInboundHandlerAdapter {
+public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger log = LogManager.getLogger(ClientChannelStateHandler.class);
+    private static final Logger log = LogManager.getLogger(HardwareChannelStateHandler.class);
 
     private final SessionsHolder sessionsHolder;
     private final NotificationsProcessor notificationsProcessor;
 
-    public ClientChannelStateHandler(SessionsHolder sessionsHolder) {
-        this.sessionsHolder = sessionsHolder;
-        this.notificationsProcessor = null;
-    }
-
-    public ClientChannelStateHandler(SessionsHolder sessionsHolder, NotificationsProcessor notificationsProcessor) {
+    public HardwareChannelStateHandler(SessionsHolder sessionsHolder, NotificationsProcessor notificationsProcessor) {
         this.sessionsHolder = sessionsHolder;
         this.notificationsProcessor = notificationsProcessor;
     }
@@ -45,38 +40,34 @@ public class ClientChannelStateHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         sessionsHolder.removeFromSession(ctx.channel());
+        log.trace("Hardware channel disconnect.");
         sentOfflineMessage(ctx.channel());
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (cause instanceof ReadTimeoutException) {
-            //channel is already closed here by ReadTimeoutHandler
+            log.trace("Hardware timeout disconnect.");
         } else {
             super.exceptionCaught(ctx, cause);
         }
     }
 
     private void sentOfflineMessage(Channel channel) {
-        log.trace("Channel was inactive for a long period.");
-        Boolean isHard = channel.attr(ChannelState.IS_HARD_CHANNEL).get();
-        if (isHard != null && isHard) {
-            User user = channel.attr(ChannelState.USER).get();
-            if (user != null) {
-                Notification notification = user.getProfile().getActiveDashboardWidgetByType(Notification.class);
-                if (notification == null || !notification.notifyWhenOffline) {
-                    Session session = sessionsHolder.userSession.get(user);
-                    if (session.appChannels.size() > 0) {
-                        session.sendMessageToApp(produce(0, DEVICE_WENT_OFFLINE));
-                    }
-                } else {
-                    String boardType = user.getProfile().getActiveDashBoard().getBoardType();
-                    String dashName = user.getProfile().getActiveDashBoard().getName();
-                    notificationsProcessor.push(user, notification,
-                            String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName));
+        User user = channel.attr(ChannelState.USER).get();
+        if (user != null) {
+            Notification notification = user.getProfile().getActiveDashboardWidgetByType(Notification.class);
+            if (notification == null || !notification.notifyWhenOffline) {
+                Session session = sessionsHolder.userSession.get(user);
+                if (session.appChannels.size() > 0) {
+                    session.sendMessageToApp(produce(0, DEVICE_WENT_OFFLINE));
                 }
+            } else {
+                String boardType = user.getProfile().getActiveDashBoard().getBoardType();
+                String dashName = user.getProfile().getActiveDashBoard().getName();
+                notificationsProcessor.push(user, notification,
+                        String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName));
             }
-
         }
     }
 
