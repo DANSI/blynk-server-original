@@ -142,6 +142,10 @@ server.properties options:
         
         enable.raw.data.store=true
         
++ Comma separated list of users allowed to create accounts. Leave it empty if no restriction required.
+        
+        allowed.users.list=allowed1@gmail.com,allowed2@gmail.com
+        
 ### Enabling mail on Local server
 In order to enable mail notifications on Local server you need to provide own mail credentials. To do that you need to create file "mail.properties" within same folder where server.jar is.
 Mail properties :

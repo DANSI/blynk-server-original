@@ -44,7 +44,7 @@ public class AppServer extends BaseServer {
                      GlobalStats stats, TransportTypeHolder transportType, StorageDao storageDao) {
         super(props.getIntProperty("app.ssl.port"), transportType);
 
-        RegisterHandler registerHandler = new RegisterHandler(userRegistry);
+        RegisterHandler registerHandler = new RegisterHandler(userRegistry, props.getProperty("allowed.users.list"));
         AppLoginHandler appLoginHandler = new AppLoginHandler(userRegistry, sessionsHolder);
         AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(sessionsHolder);
 

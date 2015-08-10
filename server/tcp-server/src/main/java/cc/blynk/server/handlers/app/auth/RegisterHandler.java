@@ -8,6 +8,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.commons.validator.routines.EmailValidator;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
@@ -27,9 +31,18 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage> implements DefaultExceptionHandler {
 
     private final UserRegistry userRegistry;
+    private final Set<String> allowedUsers;
 
-    public RegisterHandler(UserRegistry userRegistry) {
+    public RegisterHandler(UserRegistry userRegistry, String allowedUsersString) {
         this.userRegistry = userRegistry;
+        String[] allowedUsersArray = allowedUsersString == null ? null : allowedUsersString.toLowerCase().split(",");
+        if (allowedUsersArray != null && allowedUsersArray.length > 0 &&
+                allowedUsersArray[0] != null && !"".equals(allowedUsersArray[0])) {
+            allowedUsers = new HashSet<>(Arrays.asList(allowedUsersArray));
+            log.debug("Created allowed user list : {}", allowedUsersString);
+        } else {
+            allowedUsers = null;
+        }
     }
 
     @Override
@@ -57,6 +70,12 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         if (userRegistry.isUserExists(userName)) {
             log.warn("User with name {} already exists.", userName);
             ctx.writeAndFlush(produce(message.id, USER_ALREADY_REGISTERED));
+            return;
+        }
+
+        if (allowedUsers != null && !allowedUsers.contains(userName)) {
+            log.warn("User with name {} not allowed to register.", userName);
+            ctx.writeAndFlush(produce(message.id, NOT_ALLOWED));
             return;
         }
 
