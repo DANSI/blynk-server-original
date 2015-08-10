@@ -5,7 +5,6 @@ import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.graph.GraphInMemoryStorage;
 import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.dao.graph.StoreMessage;
-import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.enums.PinType;
 import org.apache.logging.log4j.LogManager;
@@ -31,23 +30,18 @@ public class StorageDao {
         this.graphInMemoryStorage = new GraphInMemoryStorage(inMemoryStorageLimit);
     }
 
-    public StoreMessage process(Profile profile, Integer dashId, String body, int msgId) {
+    public StoreMessage process(Profile profile, int dashId, String body) {
         PinType pinType = PinType.getPingType(body.charAt(0));
 
         String[] bodyParts = body.split(StringUtils.BODY_SEPARATOR_STRING);
 
-        byte pin;
-        try {
-            pin = Byte.parseByte(bodyParts[1]);
-        } catch (NumberFormatException e) {
-            throw new IllegalCommandException("HardwareLogic command body incorrect.", msgId);
-        }
+        byte pin = Byte.parseByte(bodyParts[1]);
 
         GraphKey key = new GraphKey(dashId, pin, pinType);
         StoreMessage storeMessage = new StoreMessage(key, bodyParts[2], System.currentTimeMillis());
 
         if (ENABLE_RAW_DATA_STORE) {
-            ThreadContext.put("dashId", String.valueOf(dashId));
+            ThreadContext.put("dashId", Integer.toString(dashId));
             ThreadContext.put("pin", String.valueOf(body.charAt(0)) + pin);
             log.info(storeMessage.toCSV());
         }

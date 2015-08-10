@@ -41,7 +41,11 @@ public class HardwareLogic {
 
         StoreMessage storeMessage = null;
         if (message.body.charAt(1) == 'w') {
-            storeMessage = storageDao.process(user.getProfile(), ctx.channel().attr(ChannelState.DASH_ID).get(), message.body, message.id);
+            try {
+                storeMessage = storageDao.process(user.getProfile(), ctx.channel().attr(ChannelState.DASH_ID).get(), message.body);
+            } catch (NumberFormatException e) {
+                throw new IllegalCommandException("HardwareLogic command body incorrect.", message.id);
+            }
         }
 
         if (user.getProfile().activeDashId == null) {
