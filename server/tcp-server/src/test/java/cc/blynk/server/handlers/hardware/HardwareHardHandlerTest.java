@@ -62,7 +62,7 @@ public class HardwareHardHandlerTest extends TestBase {
     private Channel channel;
 
     @Mock
-    private Attribute<java.lang.Boolean> attr;
+    private Attribute<Integer> attr;
 
     @Mock
     private Session session;
@@ -74,9 +74,9 @@ public class HardwareHardHandlerTest extends TestBase {
     public void testNoDeviceAndPinModeMessage() {
         HardwareMessage message = new HardwareMessage(1, "p test");
         when(ctx.channel()).thenReturn(channel);
-        when(channel.attr(ChannelState.IS_HARD_CHANNEL)).thenReturn(attr);
+        when(channel.attr(ChannelState.DASH_ID)).thenReturn(attr);
         Profile profile = spy(new Profile());
-        when(attr.get()).thenReturn(false);
+        when(attr.get()).thenReturn(1);
         when(user.getProfile()).thenReturn(profile);
         profile.activeDashId = 1;
         SessionsHolder sessionsHolder = spy(new SessionsHolder());
