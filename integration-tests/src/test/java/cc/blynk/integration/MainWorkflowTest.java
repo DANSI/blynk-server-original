@@ -392,6 +392,39 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(hardClient.responseMock, times(1)).channelRead(any(), any());
     }
 
+    @Test
+    public void testSendHardwareCommandToNotActiveDashboard() throws Exception {
+        clientPair = initAppAndHardPair("user_profile_json_3_dashes.txt");
+
+        clientPair.appClient.send("getToken 2");
+
+        //getting token for second hardware
+        ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
+        verify(clientPair.appClient.responseMock, timeout(2000).times(1)).channelRead(any(), objectArgumentCaptor.capture());
+        List<Object> arguments = objectArgumentCaptor.getAllValues();
+        Message getTokenMessage = (Message) arguments.get(0);
+        String token = getTokenMessage.body;
+
+        clientPair.appClient.reset();
+
+        //connecting separate hardware to non active dashboard
+        TestHardClient nonActiveDashHardClient = new TestHardClient(host, hardPort);
+        nonActiveDashHardClient.start(null);
+        nonActiveDashHardClient.send("login " + token);
+        verify(nonActiveDashHardClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, OK)));
+        nonActiveDashHardClient.reset();
+
+
+        //sending hardware command from hardware that has no active dashboard
+        nonActiveDashHardClient.send("hardware aw 1 1");
+        verify(nonActiveDashHardClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NO_ACTIVE_DASHBOARD)));
+        verify(clientPair.appClient.responseMock, timeout(1000).times(0)).channelRead(any(), any());
+
+        clientPair.hardwareClient.send("hardware aw 1 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(1000).times(0)).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, "aw 1 1".replaceAll(" ", "\0"))));
+
+    }
 
     @Test
     public void testConnectAppAndHardwareAndSendCommands() throws Exception {

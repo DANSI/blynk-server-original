@@ -48,7 +48,7 @@ public class HardwareLogic {
             }
         }
 
-        if (user.getProfile().activeDashId == null) {
+        if (user.getProfile().activeDashId == null || !user.getProfile().activeDashId.equals(ctx.channel().attr(ChannelState.DASH_ID).get())) {
             throw new NoActiveDashboardException(message.id);
         }
 
