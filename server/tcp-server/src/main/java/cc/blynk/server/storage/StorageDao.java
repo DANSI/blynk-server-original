@@ -7,6 +7,7 @@ import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.dao.graph.StoreMessage;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.enums.PinType;
+import cc.blynk.server.storage.average.AverageAggregator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -22,12 +23,14 @@ public class StorageDao {
 
     private static final Logger log = LogManager.getLogger(StorageDao.class);
 
-    private GraphInMemoryStorage graphInMemoryStorage;
+    private final GraphInMemoryStorage graphInMemoryStorage;
+    private final AverageAggregator averageAggregator;
 
     private volatile boolean ENABLE_RAW_DATA_STORE;
 
-    public StorageDao(int inMemoryStorageLimit) {
+    public StorageDao(int inMemoryStorageLimit, AverageAggregator averageAggregator) {
         this.graphInMemoryStorage = new GraphInMemoryStorage(inMemoryStorageLimit);
+        this.averageAggregator = averageAggregator;
     }
 
     public StoreMessage process(Profile profile, int dashId, String body) {
@@ -45,6 +48,8 @@ public class StorageDao {
             ThreadContext.put("pin", String.valueOf(body.charAt(0)) + pin);
             log.info(storeMessage.toCSV());
         }
+
+        averageAggregator.collect(ThreadContext.get("user"), dashId, pinType, pin, storeMessage.ts, storeMessage.value);
 
         if (profile.hasGraphPin(key)) {
             graphInMemoryStorage.store(storeMessage);

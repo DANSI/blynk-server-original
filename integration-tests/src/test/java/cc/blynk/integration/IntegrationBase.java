@@ -12,6 +12,7 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.storage.StorageDao;
+import cc.blynk.server.storage.average.AverageAggregator;
 import cc.blynk.server.utils.JsonParser;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import org.junit.Before;
@@ -48,6 +49,9 @@ public abstract class IntegrationBase {
 
     @Mock
     public NotificationsProcessor notificationsProcessor;
+
+    @Mock
+    public AverageAggregator averageAggregator;
 
     public StorageDao storageDao;
 
@@ -143,6 +147,6 @@ public abstract class IntegrationBase {
         userRegistry = new UserRegistry(fileManager.deserialize());
         stats = new GlobalStats();
         jedisWrapper = new JedisWrapper(properties);
-        storageDao = new StorageDao(properties.getIntProperty("user.in.memory.storage.limit"));
+        storageDao = new StorageDao(properties.getIntProperty("user.in.memory.storage.limit"), averageAggregator);
     }
 }

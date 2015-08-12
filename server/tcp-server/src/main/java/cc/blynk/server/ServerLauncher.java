@@ -13,10 +13,8 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.storage.StorageDao;
-import cc.blynk.server.workers.ProfileSaverWorker;
-import cc.blynk.server.workers.PropertiesChangeWatcherWorker;
-import cc.blynk.server.workers.ShutdownHookWorker;
-import cc.blynk.server.workers.StatsWorker;
+import cc.blynk.server.storage.average.AverageAggregator;
+import cc.blynk.server.workers.*;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import cc.blynk.server.workers.timer.TimerWorker;
 import org.apache.logging.log4j.Level;
@@ -57,6 +55,7 @@ public class ServerLauncher {
     private final BaseServer adminServer;
     private final ServerProperties serverProperties;
     private final NotificationsProcessor notificationsProcessor;
+    private final AverageAggregator averageAggregator;
 
     private ServerLauncher(ServerProperties serverProperties) {
         this.serverProperties = serverProperties;
@@ -66,7 +65,8 @@ public class ServerLauncher {
         //todo save all to disk to have latest version locally???
         this.userRegistry = new UserRegistry(fileManager.deserialize(), jedisWrapper.getAllUsersDB());
         this.stats = new GlobalStats();
-        StorageDao storageDao = new StorageDao(serverProperties.getIntProperty("user.in.memory.storage.limit"));
+        this.averageAggregator = new AverageAggregator();
+        StorageDao storageDao = new StorageDao(serverProperties.getIntProperty("user.in.memory.storage.limit"), averageAggregator);
 
         this.notificationsProcessor = new NotificationsProcessor(
                 serverProperties.getIntProperty("notifications.queue.limit", 10000)
@@ -124,7 +124,10 @@ public class ServerLauncher {
     }
 
     private void startJobs() {
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, serverProperties.getProperty("data.folder"));
+        scheduler.scheduleAtFixedRate(storageWorker, 1000, 60, TimeUnit.MINUTES);
 
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager);
         scheduler.scheduleAtFixedRate(profileSaverWorker, 1000,
@@ -136,7 +139,8 @@ public class ServerLauncher {
 
         //millis we need to wait to start scheduler at the beginning of a second.
         long startDelay = 1000 - (System.currentTimeMillis() % 1000);
-        scheduler.scheduleAtFixedRate(
+        //separate thread for timer.
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(
                 new TimerWorker(userRegistry, sessionsHolder), startDelay, 1000, TimeUnit.MILLISECONDS);
 
         List<BaseSimpleChannelInboundHandler> baseHandlers = new ArrayList<>(Collections.singletonList(hardwareServer.getBaseHandler()));
