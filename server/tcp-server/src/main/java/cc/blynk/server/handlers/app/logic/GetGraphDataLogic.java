@@ -33,11 +33,13 @@ public class GetGraphDataLogic {
     }
 
     public static byte[] compress(Queue<StoreMessage> values, int msgId) {
+        if (values == null || values.size() == 0) {
+            return EMPTY_RESPONSE;
+        }
         //todo define size
         ByteArrayOutputStream baos = new ByteArrayOutputStream(values.size() * 20);
 
-        try {
-            OutputStream out = new DeflaterOutputStream(baos);
+        try (OutputStream out = new DeflaterOutputStream(baos)) {
             int counter = 0;
             int length = values.size();
             for (StoreMessage s : values) {
@@ -47,7 +49,6 @@ public class GetGraphDataLogic {
                     out.write(StringUtils.BODY_SEPARATOR);
                 }
             }
-            out.close();
         } catch (Exception ioe) {
             throw new GetGraphDataException(msgId);
         }
@@ -58,7 +59,7 @@ public class GetGraphDataLogic {
         //warn: split may be optimized
         String[] messageParts = message.body.split(" ", 3);
 
-        if (messageParts.length != 3) {
+        if (messageParts.length < 3) {
             throw new IllegalCommandException("Wrong income message format.", message.id);
         }
 
@@ -81,14 +82,10 @@ public class GetGraphDataLogic {
         user.getProfile().validateDashId(dashBoardId, message.id);
 
         Queue<StoreMessage> allValues = storageDao.getAllFromMemmory(new GraphKey(dashBoardId, pin, pinType));
-        GetGraphDataResponseMessage response;
-        if (allValues == null || allValues.size() == 0) {
-            response = new GetGraphDataResponseMessage(message.id, EMPTY_RESPONSE);
-        } else {
-            byte[] compressed = compress(allValues, message.id);
-            response = new GetGraphDataResponseMessage(message.id, compressed);
-        }
-        ctx.writeAndFlush(response);
+
+        byte[] compressed = compress(allValues, message.id);
+
+        ctx.writeAndFlush(new GetGraphDataResponseMessage(message.id, compressed));
     }
 
 }
