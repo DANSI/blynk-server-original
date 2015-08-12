@@ -45,6 +45,8 @@ public class HardwareSSLServer extends BaseServer {
         HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(sessionsHolder, notificationsProcessor);
         this.hardwareHandler = new HardwareHandler(props, sessionsHolder, storageDao, notificationsProcessor);
 
+        int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 0);
+
         SslContext sslCtx = initSslContext(props);
 
         this.channelInitializer = new ChannelInitializer<SocketChannel>() {
@@ -52,8 +54,9 @@ public class HardwareSSLServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline pipeline = ch.pipeline();
                 //non-sharable handlers
-                pipeline.addLast(new ReadTimeoutHandler(props.getIntProperty("hard.socket.idle.timeout", 15)));
-
+                if (hardTimeoutSecs > 0) {
+                    pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
+                }
                 pipeline.addLast(sslCtx.newHandler(ch.alloc()));
 
                 pipeline.addLast(hardwareChannelStateHandler);

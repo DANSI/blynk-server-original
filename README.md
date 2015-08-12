@@ -130,11 +130,11 @@ server.properties options:
 
         profile.save.worker.period=60000
 
-+ Specifies maximum period of time when application socket could be idle. After which socket will be closed due to non activity. In seconds. Default value 600 if not provided
++ Specifies maximum period of time when application socket could be idle. After which socket will be closed due to non activity. In seconds. Leave it empty for infinity timeout
 
         app.socket.idle.timeout=600
 
-+ Specifies maximum period of time when hardware socket could be idle. After which socket will be closed due to non activity. In seconds. Default value 15 if not provided
++ Specifies maximum period of time when hardware socket could be idle. After which socket will be closed due to non activity. In seconds. Leave it empty for infinity timeout
 
         hard.socket.idle.timeout=15
         

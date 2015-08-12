@@ -37,14 +37,17 @@ public class HardwareServer extends BaseServer {
         HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(sessionsHolder, notificationsProcessor);
         this.hardwareHandler = new HardwareHandler(props, sessionsHolder, storageDao, notificationsProcessor);
 
-        int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 15);
+        int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 0);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline pipeline = ch.pipeline();
+
                 //non-sharable handlers
-                pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
+                if (hardTimeoutSecs > 0) {
+                    pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
+                }
                 pipeline.addLast(hardwareChannelStateHandler);
                 pipeline.addLast(new MessageDecoder(stats));
                 pipeline.addLast(new MessageEncoder());
