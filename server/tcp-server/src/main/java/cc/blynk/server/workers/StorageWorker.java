@@ -13,10 +13,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static cc.blynk.server.storage.StorageDao.generateFilename;
 
 /**
  * The Blynk Project.
@@ -26,14 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class StorageWorker implements Runnable {
 
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
-    public static final String REPORTING_FILE_NAME = "reporting.csv";
     private static final Logger log = LogManager.getLogger(StorageWorker.class);
-    private static final Comparator<AggregationKey> AGGREGATION_KEY_COMPARATOR = new Comparator<AggregationKey>() {
-        @Override
-        public int compare(AggregationKey o1, AggregationKey o2) {
-            return (int) (o1.ts - o2.ts);
-        }
-    };
+    private static final Comparator<AggregationKey> AGGREGATION_KEY_COMPARATOR = (o1, o2) -> (int) (o1.ts - o2.ts);
     private final AverageAggregator averageAggregator;
     private final Path dataFolder;
 
@@ -41,26 +38,6 @@ public class StorageWorker implements Runnable {
         this.averageAggregator = averageAggregator;
         //data is hardcoded - move to properties. don't forget about log4j.
         this.dataFolder = Paths.get(dataFolder, "data");
-    }
-
-    public static void main(String[] args) {
-        System.out.println(getTS());
-    }
-
-    private static long getTS() {
-        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss");
-        String dateInString = "Aug 10, 2015 12:10:56";
-
-        try {
-
-            Date date = formatter.parse(dateInString);
-            System.out.println(date);
-            return date.getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return 0;
     }
 
     @Override
@@ -90,7 +67,9 @@ public class StorageWorker implements Runnable {
                 double average = value.calcAverage();
                 long eventTS = key.ts * AverageAggregator.HOURS;
 
-                Path reportingPath = Paths.get(userPath.toString(), REPORTING_FILE_NAME);
+                String fileName = generateFilename(key.dashId, key.pinType, key.pin);
+
+                Path reportingPath = Paths.get(userPath.toString(), fileName);
                 try (BufferedWriter writer = Files.newBufferedWriter(reportingPath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
                     writer.write(average + "," + eventTS + LINE_SEPARATOR);
                 } catch (IOException e) {

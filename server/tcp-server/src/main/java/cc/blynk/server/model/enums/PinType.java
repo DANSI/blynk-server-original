@@ -7,10 +7,16 @@ package cc.blynk.server.model.enums;
  */
 public enum PinType {
 
-    NONE,
-    DIGITAL,
-    VIRTUAL,
-    ANALOG;
+    NONE('x'),
+    DIGITAL('d'),
+    VIRTUAL('v'),
+    ANALOG('a');
+
+    public char pintTypeChar;
+
+    PinType(char pinType) {
+        this.pintTypeChar = pinType;
+    }
 
     public static PinType getPingType(char pinTypeChar) {
         switch (pinTypeChar) {
@@ -23,7 +29,6 @@ public enum PinType {
             default:
                 return NONE;
         }
-
     }
 
 }

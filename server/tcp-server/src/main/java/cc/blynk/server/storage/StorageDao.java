@@ -12,7 +12,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 
-import java.util.Queue;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The Blynk Project.
@@ -21,16 +30,22 @@ import java.util.Queue;
  */
 public class StorageDao {
 
+    public static final String REPORTING_FILE_NAME = "history_%s_%s.csv";
     private static final Logger log = LogManager.getLogger(StorageDao.class);
-
     private final GraphInMemoryStorage graphInMemoryStorage;
     private final AverageAggregator averageAggregator;
+    private final String dataFolder;
 
     private volatile boolean ENABLE_RAW_DATA_STORE;
 
-    public StorageDao(int inMemoryStorageLimit, AverageAggregator averageAggregator) {
+    public StorageDao(int inMemoryStorageLimit, AverageAggregator averageAggregator, String dataFolder) {
         this.graphInMemoryStorage = new GraphInMemoryStorage(inMemoryStorageLimit);
         this.averageAggregator = averageAggregator;
+        this.dataFolder = Paths.get(dataFolder, "data").toString();
+    }
+
+    public static String generateFilename(int dashId, PinType pinType, byte pin) {
+        return String.format(REPORTING_FILE_NAME, dashId, String.valueOf(pinType.pintTypeChar) + pin);
     }
 
     public StoreMessage process(Profile profile, int dashId, String body) {
@@ -59,8 +74,35 @@ public class StorageDao {
         return null;
     }
 
-    public Queue<StoreMessage> getAllFromMemmory(GraphKey key) {
-        return graphInMemoryStorage.getAll(key);
+    public Collection<StoreMessage> getAllFromMemmory(int dashId, PinType pinType, byte pin) {
+        return graphInMemoryStorage.getAll(new GraphKey(dashId, pin, pinType));
+    }
+
+    public Collection<?> getAllFromDisk(String username, int dashId, PinType pinType, byte pin, int periodInDays) {
+        Path userDataFile = Paths.get(dataFolder, username, generateFilename(dashId, pinType, pin));
+        if (Files.notExists(userDataFile)) {
+            return Collections.emptyList();
+        }
+
+        //todo increase buffer size?
+        try (BufferedReader reader = Files.newBufferedReader(userDataFile, StandardCharsets.UTF_8)) {
+            List<String> result = new ArrayList<>();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                result.add(line.replace(",", StringUtils.BODY_SEPARATOR_STRING));
+            }
+
+            int recordsCount = periodInDays * 24;
+            if (result.size() > recordsCount) {
+                return result.subList(result.size() - recordsCount, result.size());
+            }
+
+            return result;
+        } catch (IOException e) {
+            log.error(e);
+        }
+
+        return Collections.emptyList();
     }
 
     public void updateProperties(ServerProperties props) {
@@ -70,5 +112,4 @@ public class StorageDao {
             //error already logged, so do nothing.
         }
     }
-
 }
