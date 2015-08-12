@@ -13,6 +13,7 @@ public enum WidgetType {
     SLIDER_LARGE,
     VERTICAL_SLIDER,
     KNOB,
+    TIMER,
     ROTARY_KNOB,
     RGB,
     TWO_WAY_ARROW,
@@ -29,6 +30,7 @@ public enum WidgetType {
     LCD_DISPLAY,
     GRAPH,
     LEVEL_DISPLAY,
+    TERMINAL,
 
     //inputs
     MICROPHONE,
@@ -36,15 +38,16 @@ public enum WidgetType {
     ACCELEROMETER,
     GPS,
 
-    //other
-    TERMINAL,
+    //notifications
     TWITTER,
     EMAIL,
     NOTIFICATION,
+
+    //other
+    LOGGER,
     SD_CARD,
     EVENTOR,
     RCT,
-    TIMER,
     BRIDGE
 
 }
