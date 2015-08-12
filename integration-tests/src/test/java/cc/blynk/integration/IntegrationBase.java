@@ -147,6 +147,6 @@ public abstract class IntegrationBase {
         userRegistry = new UserRegistry(fileManager.deserialize());
         stats = new GlobalStats();
         jedisWrapper = new JedisWrapper(properties);
-        storageDao = new StorageDao(properties.getIntProperty("user.in.memory.storage.limit"), averageAggregator);
+        storageDao = new StorageDao(properties.getIntProperty("user.in.memory.storage.limit"), averageAggregator, System.getProperty("java.io.tmpdir"));
     }
 }
