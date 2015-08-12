@@ -37,6 +37,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = TwoAxisJoystick.class, name = "TWO_AXIS_JOYSTICK"),
         @JsonSubTypes.Type(value = Gamepad.class, name = "GAMEPAD"),
         @JsonSubTypes.Type(value = Keypad.class, name = "KEYPAD"),
+        @JsonSubTypes.Type(value = Terminal.class, name = "TERMINAL"),
 
         //outputs
         @JsonSubTypes.Type(value = LED.class, name = "LED"),
@@ -52,16 +53,18 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Accelerometer.class, name = "ACCELEROMETER"),
         @JsonSubTypes.Type(value = GPS.class, name = "GPS"),
 
-        //others
-        @JsonSubTypes.Type(value = Terminal.class, name = "TERMINAL"),
+        //notifications
         @JsonSubTypes.Type(value = Twitter.class, name = "TWITTER"),
         @JsonSubTypes.Type(value = Mail.class, name = "EMAIL"),
         @JsonSubTypes.Type(value = Notification.class, name = "NOTIFICATION"),
+
+        //others
         @JsonSubTypes.Type(value = SDCard.class, name = "SD_CARD"),
         @JsonSubTypes.Type(value = Eventor.class, name = "EVENTOR"),
         @JsonSubTypes.Type(value = RCT.class, name = "RCT"),
         @JsonSubTypes.Type(value = Timer.class, name = "TIMER"),
-        @JsonSubTypes.Type(value = Bridge.class, name = "BRIDGE")
+        @JsonSubTypes.Type(value = Bridge.class, name = "BRIDGE"),
+        @JsonSubTypes.Type(value = Logger.class, name = "LOGGER")
 
 })
 public abstract class Widget {
