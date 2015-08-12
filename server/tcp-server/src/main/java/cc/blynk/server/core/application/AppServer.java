@@ -52,7 +52,7 @@ public class AppServer extends BaseServer {
 
         SslContext sslCtx = initSslContext(props);
 
-        int appTimeoutSecs = props.getIntProperty("app.socket.idle.timeout", 600);
+        int appTimeoutSecs = props.getIntProperty("app.socket.idle.timeout", 0);
         log.debug("app.socket.idle.timeout = {}", appTimeoutSecs);
 
         this.channelInitializer = new ChannelInitializer<SocketChannel>() {
@@ -60,7 +60,9 @@ public class AppServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline pipeline = ch.pipeline();
 
-                pipeline.addLast(new ReadTimeoutHandler(appTimeoutSecs));
+                if (appTimeoutSecs > 0) {
+                    pipeline.addLast(new ReadTimeoutHandler(appTimeoutSecs));
+                }
 
                 SSLEngine engine = sslCtx.newEngine(ch.alloc());
                 if (isMutualSSL) {
