@@ -78,7 +78,7 @@ public class StorageDao {
         return graphInMemoryStorage.getAll(new GraphKey(dashId, pin, pinType));
     }
 
-    public Collection<?> getAllFromDisk(String username, int dashId, PinType pinType, byte pin, int periodInDays) {
+    public Collection<?> getAllFromDisk(String username, int dashId, PinType pinType, byte pin, int periodInHours) {
         Path userDataFile = Paths.get(dataFolder, username, generateFilename(dashId, pinType, pin));
         if (Files.notExists(userDataFile)) {
             return Collections.emptyList();
@@ -92,9 +92,8 @@ public class StorageDao {
                 result.add(line.replace(",", StringUtils.BODY_SEPARATOR_STRING));
             }
 
-            int recordsCount = periodInDays * 24;
-            if (result.size() > recordsCount) {
-                return result.subList(result.size() - recordsCount, result.size());
+            if (result.size() > periodInHours) {
+                return result.subList(result.size() - periodInHours, result.size());
             }
 
             return result;
