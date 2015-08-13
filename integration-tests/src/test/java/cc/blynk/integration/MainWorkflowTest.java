@@ -27,7 +27,8 @@ import java.util.zip.InflaterInputStream;
 import static cc.blynk.common.enums.Command.HARDWARE;
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 /**
@@ -122,14 +123,7 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testGetGraphEmptyData() throws Exception {
         clientPair.appClient.send("getgraphdata 1 d 8");
 
-        ArgumentCaptor<GetGraphDataResponseMessage> objectArgumentCaptor = ArgumentCaptor.forClass(GetGraphDataResponseMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-
-        List<GetGraphDataResponseMessage> arguments = objectArgumentCaptor.getAllValues();
-        GetGraphDataResponseMessage graphMessage = arguments.get(0);
-        assertNotNull(graphMessage);
-        assertEquals(1, graphMessage.id);
-        assertEquals(0, graphMessage.length);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NO_DATA_EXCEPTION)));
     }
 
 
