@@ -5,6 +5,7 @@ import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponse
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.exceptions.GetGraphDataException;
 import cc.blynk.server.exceptions.IllegalCommandException;
+import cc.blynk.server.exceptions.NoDataException;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.storage.StorageDao;
@@ -23,7 +24,6 @@ import java.util.zip.DeflaterOutputStream;
  */
 public class GetGraphDataLogic {
 
-    private final static byte[] EMPTY_RESPONSE = {};
     private final StorageDao storageDao;
 
     public GetGraphDataLogic(StorageDao storageDao) {
@@ -31,9 +31,6 @@ public class GetGraphDataLogic {
     }
 
     public static byte[] compress(Collection<?> values, int msgId) {
-        if (values == null || values.size() == 0) {
-            return EMPTY_RESPONSE;
-        }
         //todo define size
         ByteArrayOutputStream baos = new ByteArrayOutputStream(values.size() * 20);
 
@@ -55,7 +52,7 @@ public class GetGraphDataLogic {
 
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
         //warn: split may be optimized
-        String[] messageParts = message.body.split(" ", 3);
+        String[] messageParts = message.body.split(" ");
 
         if (messageParts.length < 3) {
             throw new IllegalCommandException("Wrong income message format.", message.id);
@@ -88,6 +85,10 @@ public class GetGraphDataLogic {
         } else {
             values = storageDao.getAllFromDisk(user.getName(), dashBoardId, pinType, pin, period);
 
+        }
+
+        if (values == null || values.size() == 0) {
+            throw new NoDataException(message.id);
         }
 
         compressed = compress(values, message.id);
