@@ -10,7 +10,6 @@ public enum WidgetType {
     //controls
     BUTTON,
     SLIDER,
-    SLIDER_LARGE,
     VERTICAL_SLIDER,
     KNOB,
     TIMER,

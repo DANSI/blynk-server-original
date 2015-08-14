@@ -123,7 +123,6 @@ Response message structure:
     BUTTON,
     TOGGLE_BUTTON,
     SLIDER,
-    SLIDER_LARGE,
     KNOB,
     ROTARY_KNOB,
     RGB,
