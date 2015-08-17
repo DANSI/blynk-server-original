@@ -34,7 +34,7 @@ public class Profile {
     private DashBoard[] dashBoards;
 
     //defines which server user users Blynk or own local server.
-    private boolean isLocal;
+    private Boolean isLocal;
     private String connectionType;
 
     public void validateDashId(int dashBoardId, int msgId) {
