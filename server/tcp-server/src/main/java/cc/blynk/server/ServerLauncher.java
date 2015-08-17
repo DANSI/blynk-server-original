@@ -86,6 +86,8 @@ public class ServerLauncher {
 
         //required to make all loggers async with LMAX disruptor
         System.setProperty("Log4jContextSelector", "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
+        System.setProperty("AsyncLogger.RingBufferSize",
+                serverProperties.getProperty("async.logger.ring.buffer.size", String.valueOf(8 * 1024)));
 
         //configurable folder for logs via property.
         System.setProperty("logs.folder", serverProperties.getProperty("logs.folder"));
