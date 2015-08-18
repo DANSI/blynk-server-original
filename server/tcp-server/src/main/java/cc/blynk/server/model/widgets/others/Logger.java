@@ -1,6 +1,7 @@
 package cc.blynk.server.model.widgets.others;
 
 import cc.blynk.server.model.Pin;
+import cc.blynk.server.model.enums.GraphPeriod;
 import cc.blynk.server.model.widgets.Widget;
 
 /**
@@ -11,6 +12,8 @@ import cc.blynk.server.model.widgets.Widget;
 public class Logger extends Widget {
 
     public Pin[] pins;
+
+    public GraphPeriod period;
 
     public boolean showLegends;
 
