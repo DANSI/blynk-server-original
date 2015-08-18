@@ -1,5 +1,6 @@
 package cc.blynk.server.model.widgets.others;
 
+import cc.blynk.server.model.Pin;
 import cc.blynk.server.model.widgets.Widget;
 
 /**
@@ -8,5 +9,9 @@ import cc.blynk.server.model.widgets.Widget;
  * Created on 12.08.15.
  */
 public class Logger extends Widget {
+
+    public Pin[] pins;
+
+    public boolean showLegends;
 
 }
