@@ -121,7 +121,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testGetGraphEmptyData() throws Exception {
-        clientPair.appClient.send("getgraphdata 1 d 8");
+        clientPair.appClient.send("getgraphdata 1 d 8 0");
 
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NO_DATA_EXCEPTION)));
     }
@@ -136,7 +136,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(1000).times(1000)).channelRead(any(), any());
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getgraphdata 1 a 8");
+        clientPair.appClient.send("getgraphdata 1 a 8 0");
 
         ArgumentCaptor<GetGraphDataResponseMessage> objectArgumentCaptor = ArgumentCaptor.forClass(GetGraphDataResponseMessage.class);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
@@ -146,7 +146,7 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals(1, graphMessage.id);
 
         String result = decompress(graphMessage.data);
-        String[] splitted = result.split("\0");
+        String[] splitted = result.split(" ");
         assertEquals(2000, splitted.length);
 
         for (int i = 0; i < 1000; i++) {

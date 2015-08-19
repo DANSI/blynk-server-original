@@ -33,6 +33,9 @@ public class Profile {
     public volatile transient Message pinModeMessage;
     private DashBoard[] dashBoards;
 
+    /**
+     * Check if dashboardId is real and exists in user profile.
+     */
     public void validateDashId(int dashBoardId, int msgId) {
         if (dashBoards != null) {
             for (DashBoard dashBoard : dashBoards) {

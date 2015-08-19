@@ -12,6 +12,7 @@ import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.zip.DeflaterOutputStream;
@@ -30,17 +31,14 @@ public class GetGraphDataLogic {
         this.storageDao = storageDao;
     }
 
-    public static byte[] compress(Collection<?> values, int msgId) {
-        //todo define size
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(values.size() * 20);
+    public static byte[] compress(Collection[] values, int msgId) {
+        //todo calculate size
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
 
         try (OutputStream out = new DeflaterOutputStream(baos)) {
-            int counter = 0;
-            int length = values.size();
-            for (Object s : values) {
-                counter++;
-                out.write(s.toString().getBytes());
-                if (counter < length) {
+            for (int i = 0; i < values.length; i++) {
+                writeOnePin(out, values[i]);
+                if (i != values.length - 1) {
                     out.write(StringUtils.BODY_SEPARATOR);
                 }
             }
@@ -48,6 +46,18 @@ public class GetGraphDataLogic {
             throw new GetGraphDataException(msgId);
         }
         return baos.toByteArray();
+    }
+
+    private static void writeOnePin(OutputStream out, Collection<?> values) throws IOException {
+        int counter = 0;
+        int length = values.size();
+        for (Object s : values) {
+            counter++;
+            out.write(s.toString().getBytes());
+            if (counter < length) {
+                out.write(' ');
+            }
+        }
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
@@ -58,42 +68,60 @@ public class GetGraphDataLogic {
             throw new IllegalCommandException("Wrong income message format.", message.id);
         }
 
-        int dashBoardId;
-        PinType pinType;
-        byte pin;
-        int period = 0;
+        int numberOfPins = messageParts.length / 4;
 
-        try {
-            dashBoardId = Integer.parseInt(messageParts[0]);
-            pinType = PinType.getPingType(messageParts[1].charAt(0));
-            pin = Byte.parseByte(messageParts[2]);
-            if (messageParts.length == 4) {
-                period = Integer.parseInt(messageParts[3]);
+        GraphPinRequestData[] requestedPins = new GraphPinRequestData[numberOfPins];
+
+        for (int i = 0; i < numberOfPins; i++) {
+            try {
+                requestedPins[i] = new GraphPinRequestData(messageParts, i);
+                user.getProfile().validateDashId(requestedPins[i].dashBoardId, message.id);
+            } catch (NumberFormatException e) {
+                throw new IllegalCommandException("HardwareLogic command body incorrect.", message.id);
             }
-
-        } catch (NumberFormatException e) {
-            throw new IllegalCommandException("HardwareLogic command body incorrect.", message.id);
         }
 
-        user.getProfile().validateDashId(dashBoardId, message.id);
-
-        byte[] compressed;
-
-        Collection<?> values;
-        if (period == 0) {
-            values = storageDao.getAllFromMemmory(dashBoardId, pinType, pin);
+        boolean noData = true;
+        Collection[] values = new Collection[numberOfPins];
+        //special case message.
+        if (requestedPins[0].period == 0) {
+            values[0] = storageDao.getAllFromMemmory(requestedPins[0].dashBoardId, requestedPins[0].pinType, requestedPins[0].pin);
+            noData = values[0] == null || values[0].size() == 0;
         } else {
-            values = storageDao.getAllFromDisk(user.getName(), dashBoardId, pinType, pin, period);
+            for (int i = 0; i < numberOfPins; i++) {
+                values[i] = storageDao.getAllFromDisk(user.getName(),
+                        requestedPins[i].dashBoardId, requestedPins[i].pinType,
+                        requestedPins[i].pin, requestedPins[i].period);
 
+                noData = noData && values[i].size() == 0;
+            }
         }
 
-        if (values == null || values.size() == 0) {
+        if (noData) {
             throw new NoDataException(message.id);
         }
 
-        compressed = compress(values, message.id);
+        byte[] compressed = compress(values, message.id);
 
         ctx.writeAndFlush(new GetGraphDataResponseMessage(message.id, compressed));
+    }
+
+    private class GraphPinRequestData {
+
+        int dashBoardId;
+
+        PinType pinType;
+
+        byte pin;
+
+        int period;
+
+        public GraphPinRequestData(String[] messageParts, final int pinIndex) {
+            dashBoardId = Integer.parseInt(messageParts[pinIndex * 4]);
+            pinType = PinType.getPingType(messageParts[pinIndex * 4 + 1].charAt(0));
+            pin = Byte.parseByte(messageParts[pinIndex * 4 + 2]);
+            period = Integer.parseInt(messageParts[pinIndex * 4 + 3]);
+        }
     }
 
 }

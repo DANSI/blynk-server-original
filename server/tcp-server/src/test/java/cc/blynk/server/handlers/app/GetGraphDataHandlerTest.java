@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.zip.InflaterInputStream;
@@ -57,11 +58,11 @@ public class GetGraphDataHandlerTest extends TestBase {
         }
 
         System.out.println("Size before compression : " + dataLength);
-        byte[] compressedData = GetGraphDataLogic.compress(queue, 1);
+        byte[] compressedData = GetGraphDataLogic.compress(new Collection[] {queue}, 1);
         System.out.println("Size after compression : " + compressedData.length + ". Compress rate " + ((double) dataLength / compressedData.length));
         assertNotNull(compressedData);
         String result = decompress(compressedData);
-        String[] splitted = result.split("\0");
+        String[] splitted = result.split(" ");
         assertEquals(2000, splitted.length);
 
         for (int i = 0; i < 1000; i++) {
