@@ -1,7 +1,7 @@
 package cc.blynk.integration.model;
 
 import cc.blynk.client.core.HardwareClient;
-import cc.blynk.common.handlers.common.decoders.MessageDecoder;
+import cc.blynk.client.handlers.decoders.ClientMessageDecoder;
 import cc.blynk.common.handlers.common.encoders.MessageEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -61,7 +61,7 @@ public class TestHardClient extends HardwareClient {
                 ChannelPipeline pipeline = ch.pipeline();
                 TestHardClient.this.pipeline = pipeline;
 
-                pipeline.addLast(new MessageDecoder());
+                pipeline.addLast(new ClientMessageDecoder());
                 pipeline.addLast(new MessageEncoder());
                 pipeline.addLast(responseMock);
             }
