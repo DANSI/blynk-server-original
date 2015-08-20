@@ -1,9 +1,9 @@
-package cc.blynk.common.handlers.common.decoders;
+package cc.blynk.client.handlers.decoders;
 
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
-import cc.blynk.common.stats.GlobalStats;
+import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
 import cc.blynk.common.utils.Config;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,15 +22,9 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class MessageDecoder extends ByteToMessageDecoder implements DefaultExceptionHandler {
+public class ClientMessageDecoder extends ByteToMessageDecoder implements DefaultExceptionHandler {
 
-    protected static final Logger log = LogManager.getLogger(MessageDecoder.class);
-
-    private final GlobalStats stats;
-
-    public MessageDecoder(GlobalStats stats) {
-        this.stats = stats;
-    }
+    protected static final Logger log = LogManager.getLogger(ClientMessageDecoder.class);
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
@@ -55,12 +49,17 @@ public class MessageDecoder extends ByteToMessageDecoder implements DefaultExcep
                 return;
             }
 
-            message = produce(messageId, command, in.readSlice(length).toString(Config.DEFAULT_CHARSET));
+            ByteBuf buf = in.readSlice(length);
+            if (command == Command.GET_GRAPH_DATA_RESPONSE) {
+                byte[] bytes = new byte[buf.readableBytes()];
+                buf.readBytes(bytes);
+                message = new GetGraphDataResponseMessage(messageId, bytes);
+            } else {
+                message = produce(messageId, command, buf.toString(Config.DEFAULT_CHARSET));
+            }
         }
 
         log.trace("Incoming {}", message);
-
-        stats.mark(message.getClass());
 
         out.add(message);
     }

@@ -39,7 +39,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        sessionsHolder.removeFromSession(ctx.channel());
+        sessionsHolder.removeHardFromSession(ctx.channel());
         log.trace("Hardware channel disconnect.");
         sentOfflineMessage(ctx.channel());
     }

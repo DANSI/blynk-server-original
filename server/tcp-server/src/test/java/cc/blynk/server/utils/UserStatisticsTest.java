@@ -9,8 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * User: ddumanskiy
@@ -73,13 +72,44 @@ public class UserStatisticsTest extends TestBase {
                     }
                 }
             } else {
-                System.out.println(JsonParser.toJson(user));
+                //System.out.println(JsonParser.toJson(user));
             }
         }
 
         for (Map.Entry<String, Integer> entry : boards.entrySet()) {
             System.out.println(entry.getKey() + " : " + entry.getValue());
         }
+    }
+
+    @Test
+    public void printDashFilling() {
+        System.out.println();
+        System.out.println("Dashboard Space Usage :");
+
+        List<Integer> all = new ArrayList<>();
+        for (User user : users.values()) {
+            if (user.getProfile().getDashBoards() != null) {
+                for (DashBoard dashBoard : user.getProfile().getDashBoards()) {
+                    if (dashBoard.getWidgets() != null && dashBoard.getWidgets().length > 3) {
+                        int sum = 0;
+                        for (Widget widget : dashBoard.getWidgets()) {
+                           sum += widget.height * widget.width;
+                        }
+                        all.add(sum);
+                    }
+                }
+            }
+        }
+
+        Collections.sort(all);
+
+        System.out.println(all.get(all.size() / 2));
+        System.out.println(all.get(all.size() / 2) * 100 / 72 + "%");
+        //System.out.println(usersCounter);
+        //System.out.println(dashes);
+        //System.out.println("Average filled square per dash : " + (sum / dashes));
+        //System.out.println("Percentage : " + (int)((sum / dashes) * 100 / 72));
+
     }
 
 }
