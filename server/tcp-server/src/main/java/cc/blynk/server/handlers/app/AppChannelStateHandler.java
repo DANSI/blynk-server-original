@@ -28,7 +28,7 @@ public class AppChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        sessionsHolder.removeFromSession(ctx.channel());
+        sessionsHolder.removeAppFromSession(ctx.channel());
         log.trace("Application channel disconnect.");
     }
 

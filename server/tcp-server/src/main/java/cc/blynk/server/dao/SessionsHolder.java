@@ -23,17 +23,32 @@ public class SessionsHolder {
 
     public final Map<User, Session> userSession = new ConcurrentHashMap<>();
 
-    public void addChannelToGroup(User user, Channel channel) {
+    public void addHardwareChannel(User user, Channel channel) {
         Session session = getSessionByUser(user);
-        session.addChannel(channel);
+        session.hardwareChannels.add(channel);
     }
 
-    public void removeFromSession(Channel channel) {
+    public void addAppChannel(User user, Channel channel) {
+        Session session = getSessionByUser(user);
+        session.appChannels.add(channel);
+    }
+
+    public void removeAppFromSession(Channel channel) {
         User user = channel.attr(ChannelState.USER).get();
         if (user != null) {
             Session session = userSession.get(user);
             if (session != null) {
-                session.remove(channel);
+                session.appChannels.remove(channel);
+            }
+        }
+    }
+
+    public void removeHardFromSession(Channel channel) {
+        User user = channel.attr(ChannelState.USER).get();
+        if (user != null) {
+            Session session = userSession.get(user);
+            if (session != null) {
+                session.hardwareChannels.remove(channel);
             }
         }
     }

@@ -33,15 +33,6 @@ public class Session {
         }
     }
 
-    public void addChannel(Channel channel) {
-        if (channel.attr(ChannelState.IS_HARD_CHANNEL).get()) {
-            //if login from same channel again - ignore
-            hardwareChannels.add(channel);
-        } else {
-            appChannels.add(channel);
-        }
-    }
-
     public void sendMessageToHardware(MessageBase message) {
         for (Channel channel : hardwareChannels) {
             log.trace("Sending {} to {}", message, channel);
@@ -53,14 +44,6 @@ public class Session {
         for (Channel channel : appChannels) {
             log.trace("Sending {} to {}", message, channel);
             channel.writeAndFlush(message);
-        }
-    }
-
-    public void remove(Channel channel) {
-        if (channel.attr(ChannelState.IS_HARD_CHANNEL).get()) {
-            hardwareChannels.remove(channel);
-        } else {
-            appChannels.remove(channel);
         }
     }
 
