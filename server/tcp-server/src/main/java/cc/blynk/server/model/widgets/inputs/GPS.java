@@ -9,4 +9,15 @@ import cc.blynk.server.model.widgets.Widget;
  */
 public class GPS extends Widget {
 
+    public boolean stream;
+
+    public boolean triggerOnEnter;
+
+    public float triggerLat;
+
+    public float triggerLon;
+
+    public int triggerRadius;
+
+    public int accuracy;
 }
