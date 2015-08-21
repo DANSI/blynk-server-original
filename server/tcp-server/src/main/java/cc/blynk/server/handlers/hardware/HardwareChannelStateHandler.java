@@ -65,6 +65,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             } else {
                 String boardType = user.getProfile().getActiveDashBoard().getBoardType();
                 String dashName = user.getProfile().getActiveDashBoard().getName();
+                dashName = dashName == null ? "" : dashName;
                 notificationsProcessor.push(user, notification,
                         String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName));
             }
