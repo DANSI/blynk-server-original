@@ -28,11 +28,15 @@ public class AverageAggregator {
     private void aggregate(AggregationKey key, double value) {
         AggregationValue aggregationValue = map.get(key);
         if (aggregationValue == null) {
-            aggregationValue = new AggregationValue(value);
-            map.put(key, aggregationValue);
-        } else {
-            aggregationValue.update(value);
+            final AggregationValue aggregationValueTmp = new AggregationValue(value);
+            aggregationValue = map.putIfAbsent(key, aggregationValueTmp);
+            if (aggregationValue == null) {
+                aggregationValue = aggregationValueTmp;
+            }
         }
+
+        //todo not threadsafe
+        aggregationValue.update(value);
     }
 
     public ConcurrentHashMap<AggregationKey, AggregationValue> getMap() {

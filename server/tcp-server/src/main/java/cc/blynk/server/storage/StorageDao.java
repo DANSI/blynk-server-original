@@ -89,7 +89,7 @@ public class StorageDao {
             List<String> result = new ArrayList<>();
             String line;
             while ((line = reader.readLine()) != null) {
-                result.add(line.replace(",", " "));
+                result.add(line);
             }
 
             if (result.size() > periodInHours) {
