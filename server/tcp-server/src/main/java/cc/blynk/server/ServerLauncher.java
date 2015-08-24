@@ -128,8 +128,12 @@ public class ServerLauncher {
     private void startJobs() {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
+        long startDelay;
+
         StorageWorker storageWorker = new StorageWorker(averageAggregator, serverProperties.getProperty("data.folder"));
-        scheduler.scheduleAtFixedRate(storageWorker, 1000, 60, TimeUnit.MINUTES);
+        //to start at the beggining of an hour
+        startDelay = AverageAggregator.HOURS - (System.currentTimeMillis() % AverageAggregator.HOURS);
+        scheduler.scheduleAtFixedRate(storageWorker, startDelay, 60, TimeUnit.MINUTES);
 
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager);
         scheduler.scheduleAtFixedRate(profileSaverWorker, 1000,
@@ -140,7 +144,7 @@ public class ServerLauncher {
                 serverProperties.getIntProperty("stats.print.worker.period"), TimeUnit.MILLISECONDS);
 
         //millis we need to wait to start scheduler at the beginning of a second.
-        long startDelay = 1000 - (System.currentTimeMillis() % 1000);
+        startDelay = 1000 - (System.currentTimeMillis() % 1000);
         //separate thread for timer.
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(
                 new TimerWorker(userRegistry, sessionsHolder), startDelay, 1000, TimeUnit.MILLISECONDS);

@@ -1,5 +1,6 @@
 package cc.blynk.server.workers;
 
+import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.storage.average.AggregationKey;
 import cc.blynk.server.storage.average.AggregationValue;
 import cc.blynk.server.storage.average.AverageAggregator;
@@ -13,11 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
 
 import static cc.blynk.server.storage.StorageDao.generateFilename;
 
@@ -42,9 +39,12 @@ public class StorageWorker implements Runnable {
 
     @Override
     public void run() {
-        long nowTruncatedToHours = System.currentTimeMillis() / AverageAggregator.HOURS;
+        process(averageAggregator.getHourly(), GraphType.HOURLY);
+        process(averageAggregator.getDaily(), GraphType.DAILY);
+    }
 
-        ConcurrentHashMap<AggregationKey, AggregationValue> map = averageAggregator.getMap();
+    private void process(Map<AggregationKey, AggregationValue> map, GraphType type) {
+        long nowTruncatedToHours = System.currentTimeMillis() / type.period;
 
         List<AggregationKey> keys = new ArrayList<>(map.keySet());
         Collections.sort(keys, AGGREGATION_KEY_COMPARATOR);
@@ -55,19 +55,11 @@ public class StorageWorker implements Runnable {
             if (key.ts < nowTruncatedToHours) {
                 AggregationValue value = map.get(key);
                 Path userPath = Paths.get(dataFolder.toString(), key.username);
-                if (Files.notExists(userPath)) {
-                    try {
-                        Files.createDirectories(userPath);
-                    } catch (IOException e) {
-                        log.error("Error creating user data reporting folder.", e);
-                        continue;
-                    }
-                }
 
                 double average = value.calcAverage();
-                long eventTS = key.ts * AverageAggregator.HOURS;
+                long eventTS = key.ts * type.period;
 
-                String fileName = generateFilename(key.dashId, key.pinType, key.pin);
+                String fileName = generateFilename(key.dashId, key.pinType, key.pin, type);
 
                 Path reportingPath = Paths.get(userPath.toString(), fileName);
                 try (BufferedWriter writer = Files.newBufferedWriter(reportingPath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {

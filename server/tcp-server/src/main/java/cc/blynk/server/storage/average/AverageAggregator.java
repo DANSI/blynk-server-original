@@ -2,6 +2,7 @@ package cc.blynk.server.storage.average;
 
 import cc.blynk.server.model.enums.PinType;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -12,20 +13,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AverageAggregator {
 
     public static final long HOURS = 1000 * 60 * 60;
+    public static final long DAY = 24 * HOURS;
 
-    private final ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<AggregationKey, AggregationValue> hourly = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<AggregationKey, AggregationValue> daily = new ConcurrentHashMap<>();
 
-    public void collect(String username, int dashId, PinType pinType, byte pin, long ts, String value) {
-        double val = Double.parseDouble(value);
-
-        aggregateByHour(username, dashId, pinType, pin, ts, val);
-    }
-
-    private void aggregateByHour(String username, int dashId, PinType pinType, byte pin, long ts, double val) {
-        aggregate(new AggregationKey(username, dashId, pinType, pin, ts / HOURS), val);
-    }
-
-    private void aggregate(AggregationKey key, double value) {
+    private static void aggregate(Map<AggregationKey, AggregationValue> map, AggregationKey key, double value) {
         AggregationValue aggregationValue = map.get(key);
         if (aggregationValue == null) {
             final AggregationValue aggregationValueTmp = new AggregationValue(value);
@@ -39,7 +32,26 @@ public class AverageAggregator {
         aggregationValue.update(value);
     }
 
-    public ConcurrentHashMap<AggregationKey, AggregationValue> getMap() {
-        return map;
+    public void collect(String username, int dashId, PinType pinType, byte pin, long ts, String value) {
+        double val = Double.parseDouble(value);
+
+        aggregateByHour(username, dashId, pinType, pin, ts, val);
+        aggregateByDay(username, dashId, pinType, pin, ts, val);
+    }
+
+    private void aggregateByHour(String username, int dashId, PinType pinType, byte pin, long ts, double val) {
+        aggregate(hourly, new AggregationKey(username, dashId, pinType, pin, ts / HOURS), val);
+    }
+
+    private void aggregateByDay(String username, int dashId, PinType pinType, byte pin, long ts, double val) {
+        aggregate(daily, new AggregationKey(username, dashId, pinType, pin, ts / DAY), val);
+    }
+
+    public ConcurrentHashMap<AggregationKey, AggregationValue> getHourly() {
+        return hourly;
+    }
+
+    public ConcurrentHashMap<AggregationKey, AggregationValue> getDaily() {
+        return daily;
     }
 }

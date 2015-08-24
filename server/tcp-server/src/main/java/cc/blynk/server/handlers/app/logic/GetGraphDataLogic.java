@@ -7,6 +7,7 @@ import cc.blynk.server.exceptions.GetGraphDataException;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NoDataException;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandlerContext;
@@ -25,6 +26,7 @@ import java.util.zip.DeflaterOutputStream;
  */
 public class GetGraphDataLogic {
 
+    private static int VALUES_PER_PIN = 5;
     private final StorageDao storageDao;
 
     public GetGraphDataLogic(StorageDao storageDao) {
@@ -68,7 +70,7 @@ public class GetGraphDataLogic {
             throw new IllegalCommandException("Wrong income message format.", message.id);
         }
 
-        int numberOfPins = messageParts.length / 4;
+        int numberOfPins = messageParts.length / VALUES_PER_PIN;
 
         GraphPinRequestData[] requestedPins = new GraphPinRequestData[numberOfPins];
 
@@ -84,14 +86,14 @@ public class GetGraphDataLogic {
         boolean noData = true;
         Collection[] values = new Collection[numberOfPins];
         //special case message.
-        if (requestedPins[0].period == 0) {
+        if (requestedPins[0].count == 0) {
             values[0] = storageDao.getAllFromMemmory(requestedPins[0].dashBoardId, requestedPins[0].pinType, requestedPins[0].pin);
             noData = values[0] == null || values[0].size() == 0;
         } else {
             for (int i = 0; i < numberOfPins; i++) {
                 values[i] = storageDao.getAllFromDisk(user.getName(),
                         requestedPins[i].dashBoardId, requestedPins[i].pinType,
-                        requestedPins[i].pin, requestedPins[i].period);
+                        requestedPins[i].pin, requestedPins[i].count, requestedPins[i].type);
 
                 noData = noData && values[i].size() == 0;
             }
@@ -114,13 +116,16 @@ public class GetGraphDataLogic {
 
         byte pin;
 
-        int period;
+        int count;
+
+        GraphType type;
 
         public GraphPinRequestData(String[] messageParts, final int pinIndex) {
-            dashBoardId = Integer.parseInt(messageParts[pinIndex * 4]);
-            pinType = PinType.getPingType(messageParts[pinIndex * 4 + 1].charAt(0));
-            pin = Byte.parseByte(messageParts[pinIndex * 4 + 2]);
-            period = Integer.parseInt(messageParts[pinIndex * 4 + 3]);
+            dashBoardId = Integer.parseInt(messageParts[pinIndex * VALUES_PER_PIN]);
+            pinType = PinType.getPingType(messageParts[pinIndex * VALUES_PER_PIN + 1].charAt(0));
+            pin = Byte.parseByte(messageParts[pinIndex * VALUES_PER_PIN + 2]);
+            count = Integer.parseInt(messageParts[pinIndex * VALUES_PER_PIN + 3]);
+            type = GraphType.getPeriodByType(messageParts[pinIndex * VALUES_PER_PIN + 4].charAt(0));
         }
     }
 

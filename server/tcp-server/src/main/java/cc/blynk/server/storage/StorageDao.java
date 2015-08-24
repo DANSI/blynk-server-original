@@ -6,6 +6,7 @@ import cc.blynk.server.dao.graph.GraphInMemoryStorage;
 import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.dao.graph.StoreMessage;
 import cc.blynk.server.model.Profile;
+import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.storage.average.AverageAggregator;
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +31,8 @@ import java.util.List;
  */
 public class StorageDao {
 
-    public static final String REPORTING_FILE_NAME = "history_%s_%s.csv";
+    public static final String REPORTING_HOURLY_FILE_NAME = "history_%s_%s_hourly.csv";
+    public static final String REPORTING_DAILY_FILE_NAME = "history_%s_%s_daily.csv";
     private static final Logger log = LogManager.getLogger(StorageDao.class);
     private final GraphInMemoryStorage graphInMemoryStorage;
     private final AverageAggregator averageAggregator;
@@ -44,8 +46,11 @@ public class StorageDao {
         this.dataFolder = Paths.get(dataFolder, "data").toString();
     }
 
-    public static String generateFilename(int dashId, PinType pinType, byte pin) {
-        return String.format(REPORTING_FILE_NAME, dashId, String.valueOf(pinType.pintTypeChar) + pin);
+    public static String generateFilename(int dashId, PinType pinType, byte pin, GraphType type) {
+        if (type == GraphType.HOURLY) {
+            return String.format(REPORTING_HOURLY_FILE_NAME, dashId, String.valueOf(pinType.pintTypeChar) + pin);
+        }
+        return String.format(REPORTING_DAILY_FILE_NAME, dashId, String.valueOf(pinType.pintTypeChar) + pin);
     }
 
     public StoreMessage process(Profile profile, int dashId, String body) {
@@ -78,8 +83,8 @@ public class StorageDao {
         return graphInMemoryStorage.getAll(new GraphKey(dashId, pin, pinType));
     }
 
-    public Collection<?> getAllFromDisk(String username, int dashId, PinType pinType, byte pin, int periodInHours) {
-        Path userDataFile = Paths.get(dataFolder, username, generateFilename(dashId, pinType, pin));
+    public Collection<?> getAllFromDisk(String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
+        Path userDataFile = Paths.get(dataFolder, username, generateFilename(dashId, pinType, pin, type));
         if (Files.notExists(userDataFile)) {
             return Collections.emptyList();
         }
@@ -92,8 +97,8 @@ public class StorageDao {
                 result.add(line);
             }
 
-            if (result.size() > periodInHours) {
-                return result.subList(result.size() - periodInHours, result.size());
+            if (result.size() > count) {
+                return result.subList(result.size() - count, result.size());
             }
 
             return result;

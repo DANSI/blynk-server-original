@@ -1,5 +1,6 @@
 package cc.blynk.server.workers;
 
+import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.storage.average.AggregationKey;
 import cc.blynk.server.storage.average.AggregationValue;
@@ -71,25 +72,40 @@ public class StorageWorkerTest {
         map.put(aggregationKey2, aggregationValue2);
         map.put(aggregationKey3, aggregationValue3);
 
-        when(averageAggregator.getMap()).thenReturn(map);
+        when(averageAggregator.getHourly()).thenReturn(map);
+        when(averageAggregator.getDaily()).thenReturn(new ConcurrentHashMap<>());
+
+        createFolders("test");
+        createFolders("test2");
 
         storageWorker.run();
 
-        assertTrue(Files.exists(Paths.get(dataFolder, "data", "test", generateFilename(1, PinType.ANALOG, (byte) 1))));
-        assertTrue(Files.exists(Paths.get(dataFolder, "data", "test2", generateFilename(2, PinType.ANALOG, (byte) 2))));
+        assertTrue(Files.exists(Paths.get(dataFolder, "data", "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(dataFolder, "data", "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
 
-        List<String> lines = Files.readAllLines(Paths.get(dataFolder, "data", "test", generateFilename(1, PinType.ANALOG, (byte) 1)));
+        List<String> lines = Files.readAllLines(Paths.get(dataFolder, "data", "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY)));
         assertNotNull(lines);
         assertEquals(2, lines.size());
         assertEquals(150.54 + "," + (ts - 1) * AverageAggregator.HOURS, lines.get(0));
         assertEquals(100.0 + "," + ts * AverageAggregator.HOURS, lines.get(1));
 
-        lines = Files.readAllLines(Paths.get(dataFolder, "data", "test2", generateFilename(2, PinType.ANALOG, (byte) 2)));
+        lines = Files.readAllLines(Paths.get(dataFolder, "data", "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY)));
         assertNotNull(lines);
         assertEquals(1, lines.size());
         assertEquals(200.0 + "," + ts * AverageAggregator.HOURS, lines.get(0));
     }
 
+    private void createFolders(String username) {
+        Path userPath = Paths.get(Paths.get(dataFolder, "data").toString(), username);
+        if (Files.notExists(userPath)) {
+            try {
+                Files.createDirectories(userPath);
+            } catch (IOException e) {
+                System.out.println("Error creating user data reporting folder.");
+                System.out.println(e);
+            }
+        }
+    }
 
     private long getTS() {
         SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss");

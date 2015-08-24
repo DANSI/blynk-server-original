@@ -19,4 +19,13 @@ public enum GraphPeriod {
         this.periodInHours = hours;
     }
 
+    public static GraphPeriod getPeriodByHoursCount(int period) {
+        for (GraphPeriod graphPeriod : values()) {
+            if (period == graphPeriod.periodInHours) {
+                return graphPeriod;
+            }
+        }
+        return null;
+    }
+
 }
