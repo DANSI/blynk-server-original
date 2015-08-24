@@ -133,13 +133,13 @@ public class MainWorkflowTest extends IntegrationBase {
             clientPair.hardwareClient.send("hardware aw 8 " + i);
         }
 
-        verify(clientPair.appClient.responseMock, timeout(1000).times(1000)).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, timeout(2000).times(1000)).channelRead(any(), any());
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getgraphdata 1 a 8 0 h");
 
         ArgumentCaptor<GetGraphDataResponseMessage> objectArgumentCaptor = ArgumentCaptor.forClass(GetGraphDataResponseMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<GetGraphDataResponseMessage> arguments = objectArgumentCaptor.getAllValues();
         GetGraphDataResponseMessage graphMessage = arguments.get(0);
