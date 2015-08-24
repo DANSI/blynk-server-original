@@ -1,7 +1,5 @@
 package cc.blynk.server.dao.graph;
 
-import cc.blynk.common.utils.StringUtils;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -23,7 +21,7 @@ public class StoreMessage {
 
     @Override
     public String toString() {
-        return value + StringUtils.BODY_SEPARATOR + ts;
+        return value + " " + ts;
     }
 
     public String toCSV() {

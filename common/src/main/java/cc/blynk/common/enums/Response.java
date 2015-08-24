@@ -24,6 +24,7 @@ public final class Response {
     public static final int DEVICE_WENT_OFFLINE = 10;
     public static final int ILLEGAL_COMMAND_BODY = 11;
     public static final int GET_GRAPH_DATA_EXCEPTION = 12;
+    public static final int NO_DATA_EXCEPTION = 17;
 
     public static final int NOTIFICATION_INVALID_BODY_EXCEPTION = 13;
     public static final int NOTIFICATION_NOT_AUTHORIZED_EXCEPTION = 14;

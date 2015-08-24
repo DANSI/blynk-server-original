@@ -27,7 +27,8 @@ import java.util.zip.InflaterInputStream;
 import static cc.blynk.common.enums.Command.HARDWARE;
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 /**
@@ -120,16 +121,9 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testGetGraphEmptyData() throws Exception {
-        clientPair.appClient.send("getgraphdata 1 d 8");
+        clientPair.appClient.send("getgraphdata 1 d 8 0 h");
 
-        ArgumentCaptor<GetGraphDataResponseMessage> objectArgumentCaptor = ArgumentCaptor.forClass(GetGraphDataResponseMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-
-        List<GetGraphDataResponseMessage> arguments = objectArgumentCaptor.getAllValues();
-        GetGraphDataResponseMessage graphMessage = arguments.get(0);
-        assertNotNull(graphMessage);
-        assertEquals(1, graphMessage.id);
-        assertEquals(0, graphMessage.length);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NO_DATA_EXCEPTION)));
     }
 
 
@@ -139,20 +133,20 @@ public class MainWorkflowTest extends IntegrationBase {
             clientPair.hardwareClient.send("hardware aw 8 " + i);
         }
 
-        verify(clientPair.appClient.responseMock, timeout(1000).times(1000)).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, timeout(2000).times(1000)).channelRead(any(), any());
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getgraphdata 1 a 8");
+        clientPair.appClient.send("getgraphdata 1 a 8 0 h");
 
         ArgumentCaptor<GetGraphDataResponseMessage> objectArgumentCaptor = ArgumentCaptor.forClass(GetGraphDataResponseMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<GetGraphDataResponseMessage> arguments = objectArgumentCaptor.getAllValues();
         GetGraphDataResponseMessage graphMessage = arguments.get(0);
         assertEquals(1, graphMessage.id);
 
         String result = decompress(graphMessage.data);
-        String[] splitted = result.split("\0");
+        String[] splitted = result.split(" ");
         assertEquals(2000, splitted.length);
 
         for (int i = 0; i < 1000; i++) {

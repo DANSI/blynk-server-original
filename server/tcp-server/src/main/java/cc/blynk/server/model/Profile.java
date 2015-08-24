@@ -36,7 +36,10 @@ public class Profile {
     //defines which server user users Blynk or own local server.
     private Boolean isLocal;
     private String connectionType;
-
+    
+    /**
+     * Check if dashboardId is real and exists in user profile.
+     */
     public void validateDashId(int dashBoardId, int msgId) {
         if (dashBoards != null) {
             for (DashBoard dashBoard : dashBoards) {
