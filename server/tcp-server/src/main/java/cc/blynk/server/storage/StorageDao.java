@@ -97,6 +97,7 @@ public class StorageDao {
                 result.add(line);
             }
 
+            //todo filter outdated records?
             if (result.size() > count) {
                 return result.subList(result.size() - count, result.size());
             }
