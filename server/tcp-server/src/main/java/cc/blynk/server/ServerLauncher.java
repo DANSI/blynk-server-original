@@ -8,7 +8,6 @@ import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.core.hardware.ssl.HardwareSSLServer;
 import cc.blynk.server.dao.FileManager;
-import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
@@ -46,7 +45,6 @@ public class ServerLauncher {
 
     private final FileManager fileManager;
     private final SessionsHolder sessionsHolder;
-    private final JedisWrapper jedisWrapper;
     private final UserRegistry userRegistry;
     private final GlobalStats stats;
     private final BaseServer appServer;
@@ -61,9 +59,8 @@ public class ServerLauncher {
         this.serverProperties = serverProperties;
         this.fileManager = new FileManager(serverProperties.getProperty("data.folder"));
         this.sessionsHolder = new SessionsHolder();
-        this.jedisWrapper = new JedisWrapper(serverProperties);
         //todo save all to disk to have latest version locally???
-        this.userRegistry = new UserRegistry(fileManager.deserialize(), jedisWrapper.getAllUsersDB());
+        this.userRegistry = new UserRegistry(fileManager.deserialize());
         this.stats = new GlobalStats();
         this.averageAggregator = new AverageAggregator();
         StorageDao storageDao = new StorageDao(serverProperties.getIntProperty("user.in.memory.storage.limit"), averageAggregator, serverProperties.getProperty("data.folder"));
@@ -135,7 +132,7 @@ public class ServerLauncher {
         startDelay = AverageAggregator.HOURS - (System.currentTimeMillis() % AverageAggregator.HOURS);
         scheduler.scheduleAtFixedRate(storageWorker, startDelay, 60, TimeUnit.MINUTES);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userRegistry, fileManager);
         scheduler.scheduleAtFixedRate(profileSaverWorker, 1000,
                 serverProperties.getIntProperty("profile.save.worker.period"), TimeUnit.MILLISECONDS);
 

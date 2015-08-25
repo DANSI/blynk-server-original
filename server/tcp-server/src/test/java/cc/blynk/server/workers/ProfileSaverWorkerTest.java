@@ -2,7 +2,6 @@ package cc.blynk.server.workers;
 
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.FileManager;
-import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.auth.User;
 import org.junit.Test;
@@ -31,14 +30,11 @@ public class ProfileSaverWorkerTest {
     private FileManager fileManager;
 
     @Mock
-    private JedisWrapper jedisWrapper;
-
-    @Mock
     private GlobalStats stats;
 
     @Test
     public void testCorrectProfilesAreSaved() throws IOException {
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userRegistry, fileManager);
 
         User user1 = new User("1", "");
         User user2 = new User("2", "");
@@ -76,7 +72,7 @@ public class ProfileSaverWorkerTest {
 
         Thread.sleep(1);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userRegistry, fileManager);
 
         when(userRegistry.getUsers()).thenReturn(userMap);
         profileSaverWorker.run();

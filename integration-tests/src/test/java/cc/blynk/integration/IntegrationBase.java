@@ -7,7 +7,6 @@ import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.dao.FileManager;
-import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.Profile;
@@ -62,8 +61,6 @@ public abstract class IntegrationBase {
     public UserRegistry userRegistry;
 
     public GlobalStats stats;
-
-    JedisWrapper jedisWrapper;
 
     public static void sleep(int ms) {
         try {
@@ -146,7 +143,6 @@ public abstract class IntegrationBase {
         sessionsHolder = new SessionsHolder();
         userRegistry = new UserRegistry(fileManager.deserialize());
         stats = new GlobalStats();
-        jedisWrapper = new JedisWrapper(properties);
         storageDao = new StorageDao(properties.getIntProperty("user.in.memory.storage.limit"), averageAggregator, System.getProperty("java.io.tmpdir"));
     }
 }
