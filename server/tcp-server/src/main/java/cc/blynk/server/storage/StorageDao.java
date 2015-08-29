@@ -8,7 +8,7 @@ import cc.blynk.server.dao.graph.StoreMessage;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
-import cc.blynk.server.storage.average.AverageAggregator;
+import cc.blynk.server.storage.reporting.average.AverageAggregator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;

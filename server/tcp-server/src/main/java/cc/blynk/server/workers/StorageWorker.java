@@ -1,9 +1,9 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.server.model.enums.GraphType;
-import cc.blynk.server.storage.average.AggregationKey;
-import cc.blynk.server.storage.average.AggregationValue;
-import cc.blynk.server.storage.average.AverageAggregator;
+import cc.blynk.server.storage.reporting.average.AggregationKey;
+import cc.blynk.server.storage.reporting.average.AggregationValue;
+import cc.blynk.server.storage.reporting.average.AverageAggregator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

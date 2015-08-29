@@ -2,9 +2,9 @@ package cc.blynk.server.workers;
 
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
-import cc.blynk.server.storage.average.AggregationKey;
-import cc.blynk.server.storage.average.AggregationValue;
-import cc.blynk.server.storage.average.AverageAggregator;
+import cc.blynk.server.storage.reporting.average.AggregationKey;
+import cc.blynk.server.storage.reporting.average.AggregationValue;
+import cc.blynk.server.storage.reporting.average.AverageAggregator;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;

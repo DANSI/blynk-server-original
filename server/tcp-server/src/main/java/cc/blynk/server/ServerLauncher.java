@@ -12,7 +12,7 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.storage.StorageDao;
-import cc.blynk.server.storage.average.AverageAggregator;
+import cc.blynk.server.storage.reporting.average.AverageAggregator;
 import cc.blynk.server.workers.*;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import cc.blynk.server.workers.timer.TimerWorker;

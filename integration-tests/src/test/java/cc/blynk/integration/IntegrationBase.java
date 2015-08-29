@@ -11,7 +11,7 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.storage.StorageDao;
-import cc.blynk.server.storage.average.AverageAggregator;
+import cc.blynk.server.storage.reporting.average.AverageAggregator;
 import cc.blynk.server.utils.JsonParser;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import org.junit.Before;

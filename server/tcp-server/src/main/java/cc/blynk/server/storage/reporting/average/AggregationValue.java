@@ -1,4 +1,4 @@
-package cc.blynk.server.storage.average;
+package cc.blynk.server.storage.reporting.average;
 
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.concurrent.atomic.LongAdder;
