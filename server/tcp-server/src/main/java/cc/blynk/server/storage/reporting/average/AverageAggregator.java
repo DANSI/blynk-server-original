@@ -21,7 +21,7 @@ public class AverageAggregator {
     private static void aggregate(Map<AggregationKey, AggregationValue> map, AggregationKey key, double value) {
         AggregationValue aggregationValue = map.get(key);
         if (aggregationValue == null) {
-            final AggregationValue aggregationValueTmp = new AggregationValue(value);
+            final AggregationValue aggregationValueTmp = new AggregationValue();
             aggregationValue = map.putIfAbsent(key, aggregationValueTmp);
             if (aggregationValue == null) {
                 aggregationValue = aggregationValueTmp;

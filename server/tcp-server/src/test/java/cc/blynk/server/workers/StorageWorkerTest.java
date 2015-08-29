@@ -62,11 +62,14 @@ public class StorageWorkerTest {
         long ts = getTS() / AverageAggregator.HOURS;
 
         AggregationKey aggregationKey = new AggregationKey("test", 1, PinType.ANALOG, (byte) 1, ts);
-        AggregationValue aggregationValue = new AggregationValue(100);
+        AggregationValue aggregationValue = new AggregationValue();
+        aggregationValue.update(100);
         AggregationKey aggregationKey2 = new AggregationKey("test", 1, PinType.ANALOG, (byte) 1, ts - 1);
-        AggregationValue aggregationValue2 = new AggregationValue(150.54);
+        AggregationValue aggregationValue2 = new AggregationValue();
+        aggregationValue2.update(150.54);
         AggregationKey aggregationKey3 = new AggregationKey("test2", 2, PinType.ANALOG, (byte) 2, ts);
-        AggregationValue aggregationValue3 = new AggregationValue(200);
+        AggregationValue aggregationValue3 = new AggregationValue();
+        aggregationValue3.update(200);
 
         map.put(aggregationKey, aggregationValue);
         map.put(aggregationKey2, aggregationValue2);
