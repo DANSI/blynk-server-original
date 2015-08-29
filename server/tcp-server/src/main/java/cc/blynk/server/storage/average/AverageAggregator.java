@@ -28,7 +28,6 @@ public class AverageAggregator {
             }
         }
 
-        //todo not threadsafe
         aggregationValue.update(value);
     }
 

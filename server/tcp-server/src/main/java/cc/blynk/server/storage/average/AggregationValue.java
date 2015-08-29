@@ -1,5 +1,8 @@
 package cc.blynk.server.storage.average;
 
+import java.util.concurrent.atomic.DoubleAdder;
+import java.util.concurrent.atomic.LongAdder;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -7,20 +10,20 @@ package cc.blynk.server.storage.average;
  */
 public class AggregationValue {
 
-    double sum;
-    int count;
+    private final DoubleAdder values = new DoubleAdder();
+    private final LongAdder count = new LongAdder();
 
     public AggregationValue(double val) {
-        this.sum = val;
-        this.count = 1;
+       values.add(val);
+       count.add(1);
     }
 
     public void update(double val) {
-        this.sum += val;
-        count++;
+        values.add(val);
+        count.increment();
     }
 
     public double calcAverage() {
-        return sum / count;
+        return values.sum() / count.sum();
     }
 }
