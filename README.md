@@ -159,6 +159,8 @@ Mail properties :
         
 See example [here](https://github.com/blynkkk/blynk-server/blob/master/server/notifications/mail-notifications/src/main/resources/mail.properties).
 
+NOTE : you'll need to setup Gmail to allow less secured applications. Go [here](https://www.google.com/settings/security/lesssecureapps) and then click "Allow less secure apps".
+
 
 ### Raw data storage
 By default raw data storage is enabled. So any write (Blynk.virtualWrite) command will stored on disk. 
