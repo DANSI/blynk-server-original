@@ -130,7 +130,7 @@ public class ServerLauncher {
         StorageWorker storageWorker = new StorageWorker(averageAggregator, serverProperties.getProperty("data.folder"));
         //to start at the beggining of an hour
         startDelay = AverageAggregator.HOURS - (System.currentTimeMillis() % AverageAggregator.HOURS);
-        scheduler.scheduleAtFixedRate(storageWorker, startDelay, 60, TimeUnit.MINUTES);
+        scheduler.scheduleAtFixedRate(storageWorker, startDelay, AverageAggregator.HOURS, TimeUnit.MILLISECONDS);
 
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userRegistry, fileManager);
         scheduler.scheduleAtFixedRate(profileSaverWorker, 1000,
