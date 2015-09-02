@@ -11,6 +11,8 @@ import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -25,6 +27,8 @@ import java.util.zip.DeflaterOutputStream;
  *
  */
 public class GetGraphDataLogic {
+
+    private static final Logger log = LogManager.getLogger(GetGraphDataLogic.class);
 
     private static int VALUES_PER_PIN = 5;
     private final StorageDao storageDao;
@@ -104,6 +108,8 @@ public class GetGraphDataLogic {
         }
 
         byte[] compressed = compress(values, message.id);
+
+        log.trace("Sending getGraph response. ");
 
         ctx.writeAndFlush(new GetGraphDataResponseMessage(message.id, compressed));
     }
