@@ -33,10 +33,6 @@ public class Profile {
     public volatile transient Message pinModeMessage;
     private DashBoard[] dashBoards;
 
-    //defines which server user users Blynk or own local server.
-    private Boolean isLocal;
-    private String connectionType;
-    
     /**
      * Check if dashboardId is real and exists in user profile.
      */

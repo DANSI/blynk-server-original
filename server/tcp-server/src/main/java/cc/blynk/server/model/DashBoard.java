@@ -25,6 +25,8 @@ public class DashBoard {
 
     private String boardType;
 
+    private boolean keepScreenOn;
+
     public List<Timer> getTimerWidgets() {
         if (widgets == null || widgets.length == 0) {
             return Collections.emptyList();
