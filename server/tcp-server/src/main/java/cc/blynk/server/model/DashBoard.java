@@ -100,6 +100,14 @@ public class DashBoard {
         this.timestamp = timestamp;
     }
 
+    public boolean isKeepScreenOn() {
+        return keepScreenOn;
+    }
+
+    public void setKeepScreenOn(boolean keepScreenOn) {
+        this.keepScreenOn = keepScreenOn;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
