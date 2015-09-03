@@ -61,6 +61,10 @@ That's it! You will see no output cause all logging is done within same folder i
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
         java -jar server-0.7.4.jar -dataFolder /home/pi/Blynk        
+        
++ To enable server auto restart find /etc/init.d/rc.local file and add :
+
+        java -jar /home/pi/server-0.7.4.jar -dataFolder /home/pi/Blynk &
 
                 
 ## App and sketch changes
