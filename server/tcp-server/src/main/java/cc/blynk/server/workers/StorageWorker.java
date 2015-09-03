@@ -29,12 +29,12 @@ public class StorageWorker implements Runnable {
     private static final Logger log = LogManager.getLogger(StorageWorker.class);
     private static final Comparator<AggregationKey> AGGREGATION_KEY_COMPARATOR = (o1, o2) -> (int) (o1.ts - o2.ts);
     private final AverageAggregator averageAggregator;
-    private final Path dataFolder;
+    private final String dataFolder;
 
     public StorageWorker(AverageAggregator averageAggregator, String dataFolder) {
         this.averageAggregator = averageAggregator;
         //data is hardcoded - move to properties. don't forget about log4j.
-        this.dataFolder = Paths.get(dataFolder, "data");
+        this.dataFolder = Paths.get(dataFolder, "data").toString();
     }
 
     @Override
@@ -54,14 +54,13 @@ public class StorageWorker implements Runnable {
             //if prev hour
             if (key.ts < nowTruncatedToHours) {
                 AggregationValue value = map.get(key);
-                Path userPath = Paths.get(dataFolder.toString(), key.username);
 
                 double average = value.calcAverage();
                 long eventTS = key.ts * type.period;
 
                 String fileName = generateFilename(key.dashId, key.pinType, key.pin, type);
 
-                Path reportingPath = Paths.get(userPath.toString(), fileName);
+                Path reportingPath = Paths.get(dataFolder, key.username, fileName);
                 try (BufferedWriter writer = Files.newBufferedWriter(reportingPath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
                     writer.write(average + "," + eventTS + LINE_SEPARATOR);
                 } catch (IOException e) {
