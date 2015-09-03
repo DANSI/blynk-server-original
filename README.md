@@ -41,6 +41,27 @@ By default, mobile application uses 8443 port and is based on SSL/TLS sockets. D
         java -jar server-{PUT_LATEST_VERSION_HERE}.jar -dataFolder /path
         
 That's it! You will see no output cause all logging is done within same folder in ./logs/blynk.log file.
+
+## Quick local server setup on Raspberry PI
+
++ Login to Raspberry Pi via ssh;
++ Install java 8 : 
+        
+        sudo apt-get install oracle-java8-jdk
+        
++ Make sure you are using Java 8
+
+        java -version
+        Output: java version "1.8.0_40"
+        
++ In console type : 
+   
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.7.4/server-0.7.4.jar"
+
++ Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
+
+        java -jar server-0.7.4.jar -dataFolder /home/pi/Blynk        
+
                 
 ## App and sketch changes
 
