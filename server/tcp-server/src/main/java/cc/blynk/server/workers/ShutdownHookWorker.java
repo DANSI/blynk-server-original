@@ -1,6 +1,7 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.storage.reporting.average.AverageAggregator;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,12 +17,14 @@ public class ShutdownHookWorker implements Runnable {
 
     private final static Logger log = LogManager.getLogger(ShutdownHookWorker.class);
 
+    private final AverageAggregator averageAggregator;
     private final BaseServer[] servers;
     private final ProfileSaverWorker profileSaverWorker;
     private final NotificationsProcessor notificationsProcessor;
 
-    public ShutdownHookWorker(ProfileSaverWorker profileSaverWorker, NotificationsProcessor notificationsProcessor,
+    public ShutdownHookWorker(AverageAggregator averageAggregator, ProfileSaverWorker profileSaverWorker, NotificationsProcessor notificationsProcessor,
                               BaseServer... servers) {
+        this.averageAggregator = averageAggregator;
         this.servers = servers;
         this.profileSaverWorker = profileSaverWorker;
         this.notificationsProcessor = notificationsProcessor;
@@ -37,6 +40,8 @@ public class ShutdownHookWorker implements Runnable {
         for (BaseServer server : servers) {
             server.stop();
         }
+
+        averageAggregator.close();
     }
 
 }

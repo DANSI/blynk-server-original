@@ -4,7 +4,6 @@ import cc.blynk.server.model.enums.PinType;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 
 import static cc.blynk.server.storage.reporting.average.AverageAggregator.DAY;
@@ -18,8 +17,6 @@ import static org.junit.Assert.assertEquals;
  */
 public class AverageAggregatorTest {
 
-    private static ZoneId zoneId = ZoneId.of("America/Los_Angeles");
-
     private static long getMillis(int year, int month, int dayOfMonth, int hour, int minute) {
         LocalDateTime dateTime = LocalDateTime.of(year, month, dayOfMonth, hour, minute);
         return dateTime.toInstant(ZoneOffset.ofTotalSeconds(0)).toEpochMilli();
@@ -27,7 +24,7 @@ public class AverageAggregatorTest {
 
     @Test
     public void testAverageWorksOkForOnePin() {
-        AverageAggregator averageAggregator = new AverageAggregator();
+        AverageAggregator averageAggregator = new AverageAggregator("");
         String username = "test";
         PinType pinType = PinType.VIRTUAL;
         int dashId = 1;
@@ -53,7 +50,7 @@ public class AverageAggregatorTest {
 
     @Test
     public void testAverageWorksForOneDay() {
-        AverageAggregator averageAggregator = new AverageAggregator();
+        AverageAggregator averageAggregator = new AverageAggregator("");
         String username = "test";
         PinType pinType = PinType.VIRTUAL;
         int dashId = 1;

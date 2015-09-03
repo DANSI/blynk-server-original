@@ -2,12 +2,14 @@ package cc.blynk.server.storage.reporting.average;
 
 import cc.blynk.server.model.enums.PinType;
 
+import java.io.Serializable;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 10.08.15.
  */
-public class AggregationKey {
+public class AggregationKey implements Serializable {
 
     public String username;
     public int dashId;

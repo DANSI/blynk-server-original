@@ -21,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -62,7 +63,7 @@ public class ServerLauncher {
         //todo save all to disk to have latest version locally???
         this.userRegistry = new UserRegistry(fileManager.deserialize());
         this.stats = new GlobalStats();
-        this.averageAggregator = new AverageAggregator();
+        this.averageAggregator = new AverageAggregator(getReportingFolder(serverProperties.getProperty("data.folder")));
         StorageDao storageDao = new StorageDao(serverProperties.getIntProperty("user.in.memory.storage.limit"), averageAggregator, serverProperties.getProperty("data.folder"));
 
         this.notificationsProcessor = new NotificationsProcessor(
@@ -111,6 +112,10 @@ public class ServerLauncher {
         ctx.updateLoggers(conf);
     }
 
+    private static String getReportingFolder(String dataFolder) {
+        return Paths.get(dataFolder, "data").toString();
+    }
+
     private void start() {
         //start servers
         new Thread(appServer).start();
@@ -127,7 +132,7 @@ public class ServerLauncher {
 
         long startDelay;
 
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, serverProperties.getProperty("data.folder"));
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, getReportingFolder(serverProperties.getProperty("data.folder")));
         //to start at the beggining of an hour
         startDelay = AverageAggregator.HOURS - (System.currentTimeMillis() % AverageAggregator.HOURS);
         scheduler.scheduleAtFixedRate(storageWorker, startDelay, AverageAggregator.HOURS, TimeUnit.MILLISECONDS);
@@ -151,7 +156,7 @@ public class ServerLauncher {
         new Thread(new PropertiesChangeWatcherWorker(baseHandlers)).start();
 
         //todo test it works...
-        Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(profileSaverWorker,
+        Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(averageAggregator, profileSaverWorker,
                 notificationsProcessor, hardwareServer, appServer, adminServer, hardwareSSLServer)));
     }
 

@@ -28,13 +28,13 @@ public class StorageWorker implements Runnable {
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private static final Logger log = LogManager.getLogger(StorageWorker.class);
     private static final Comparator<AggregationKey> AGGREGATION_KEY_COMPARATOR = (o1, o2) -> (int) (o1.ts - o2.ts);
+
     private final AverageAggregator averageAggregator;
     private final String dataFolder;
 
     public StorageWorker(AverageAggregator averageAggregator, String dataFolder) {
         this.averageAggregator = averageAggregator;
-        //data is hardcoded - move to properties. don't forget about log4j.
-        this.dataFolder = Paths.get(dataFolder, "data").toString();
+        this.dataFolder = dataFolder;
     }
 
     @Override
