@@ -54,7 +54,7 @@ That's it! You will see no output cause all logging is done within same folder i
         java -version
         Output: java version "1.8.0_40"
         
-+ In console type : 
++ Download Blynk server jar file (or manually copy it to raspberry via ssh and scp command) : 
    
         wget "https://github.com/blynkkk/blynk-server/releases/download/v0.7.4/server-0.7.4.jar"
 
