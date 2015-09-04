@@ -52,10 +52,13 @@ public class AverageAggregator {
     }
 
     public void collect(String username, int dashId, PinType pinType, byte pin, long ts, String value) {
-        double val = Double.parseDouble(value);
-
-        aggregateByHour(username, dashId, pinType, pin, ts, val);
-        aggregateByDay(username, dashId, pinType, pin, ts, val);
+        try {
+            double val = Double.parseDouble(value);
+            aggregateByHour(username, dashId, pinType, pin, ts, val);
+            aggregateByDay(username, dashId, pinType, pin, ts, val);
+        } catch (NumberFormatException e) {
+            //value not a number so ignore. no way to make everage aggregation
+        }
     }
 
     private void aggregateByHour(String username, int dashId, PinType pinType, byte pin, long ts, double val) {
