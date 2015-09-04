@@ -21,13 +21,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static cc.blynk.server.utils.ReportingUtil.getReportingFolder;
 
 /**
  * Entry point for server launch.
@@ -110,10 +111,6 @@ public class ServerLauncher {
         Configuration conf = ctx.getConfiguration();
         conf.getLoggerConfig(LogManager.ROOT_LOGGER_NAME).setLevel(newLevel);
         ctx.updateLoggers(conf);
-    }
-
-    private static String getReportingFolder(String dataFolder) {
-        return Paths.get(dataFolder, "data").toString();
     }
 
     private void start() {

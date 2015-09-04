@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.server.storage.StorageDao.generateFilename;
+import static cc.blynk.server.utils.ReportingUtil.getReportingFolder;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
@@ -34,19 +35,20 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class StorageWorkerTest {
 
-    private final String dataFolder = System.getProperty("java.io.tmpdir");
+    private final String dataFolder = getReportingFolder(System.getProperty("java.io.tmpdir"));
+
     @Mock
     public AverageAggregator averageAggregator;
 
     @Before
     public void cleanup() {
-        Path dataFolder1 = Paths.get(dataFolder, "data", "test");
+        Path dataFolder1 = Paths.get(dataFolder, "test");
         try {
             FileUtils.deleteDirectory(dataFolder1.toFile());
         } catch (IOException e) {
         }
 
-        Path dataFolder2 = Paths.get(dataFolder, "data", "test2");
+        Path dataFolder2 = Paths.get(dataFolder, "test2");
         try {
             FileUtils.deleteDirectory(dataFolder2.toFile());
         } catch (IOException e){
@@ -83,23 +85,23 @@ public class StorageWorkerTest {
 
         storageWorker.run();
 
-        assertTrue(Files.exists(Paths.get(dataFolder, "data", "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
-        assertTrue(Files.exists(Paths.get(dataFolder, "data", "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(dataFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
 
-        List<String> lines = Files.readAllLines(Paths.get(dataFolder, "data", "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY)));
+        List<String> lines = Files.readAllLines(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY)));
         assertNotNull(lines);
         assertEquals(2, lines.size());
         assertEquals(150.54 + "," + (ts - 1) * AverageAggregator.HOURS, lines.get(0));
         assertEquals(100.0 + "," + ts * AverageAggregator.HOURS, lines.get(1));
 
-        lines = Files.readAllLines(Paths.get(dataFolder, "data", "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY)));
+        lines = Files.readAllLines(Paths.get(dataFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY)));
         assertNotNull(lines);
         assertEquals(1, lines.size());
         assertEquals(200.0 + "," + ts * AverageAggregator.HOURS, lines.get(0));
     }
 
     private void createFolders(String username) {
-        Path userPath = Paths.get(Paths.get(dataFolder, "data").toString(), username);
+        Path userPath = Paths.get(dataFolder, username);
         if (Files.notExists(userPath)) {
             try {
                 Files.createDirectories(userPath);
