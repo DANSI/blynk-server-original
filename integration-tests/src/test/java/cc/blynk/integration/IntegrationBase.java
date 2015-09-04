@@ -13,6 +13,7 @@ import cc.blynk.server.model.Profile;
 import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.storage.reporting.average.AverageAggregator;
 import cc.blynk.server.utils.JsonParser;
+import cc.blynk.server.utils.ReportingUtil;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import org.junit.Before;
 import org.mockito.ArgumentCaptor;
@@ -49,7 +50,6 @@ public abstract class IntegrationBase {
     @Mock
     public NotificationsProcessor notificationsProcessor;
 
-    @Mock
     public AverageAggregator averageAggregator;
 
     public StorageDao storageDao;
@@ -139,10 +139,12 @@ public abstract class IntegrationBase {
     }
 
     public void initServerStructures() {
-        fileManager = new FileManager(properties.getProperty("data.folder"));
+        String dataFolder = properties.getProperty("data.folder");
+        fileManager = new FileManager(dataFolder);
         sessionsHolder = new SessionsHolder();
         userRegistry = new UserRegistry(fileManager.deserialize());
         stats = new GlobalStats();
+        averageAggregator = new AverageAggregator(ReportingUtil.getReportingFolder(dataFolder));
         storageDao = new StorageDao(properties.getIntProperty("user.in.memory.storage.limit"), averageAggregator, System.getProperty("java.io.tmpdir"));
     }
 }

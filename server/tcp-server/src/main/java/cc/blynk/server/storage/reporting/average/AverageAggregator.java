@@ -57,7 +57,7 @@ public class AverageAggregator {
             aggregateByHour(username, dashId, pinType, pin, ts, val);
             aggregateByDay(username, dashId, pinType, pin, ts, val);
         } catch (NumberFormatException e) {
-            //value not a number so ignore. no way to make everage aggregation
+            //value not a number so ignore. no way to make average aggregation
         }
     }
 

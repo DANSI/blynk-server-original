@@ -316,6 +316,12 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testWrongCommandForAggregation() throws Exception {
+        clientPair.hardwareClient.send("hardware vw 10 aaaa");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "vw 10 aaaa".replaceAll(" ", "\0"))));
+    }
+
+    @Test
     public void testAppSendWriteHardCommandForGraphAndBack() throws Exception {
         String userProfileWithGraph = readTestUserProfile();
         clientPair.appClient.send("saveProfile " + userProfileWithGraph);
