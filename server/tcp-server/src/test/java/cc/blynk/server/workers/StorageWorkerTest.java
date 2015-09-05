@@ -108,6 +108,63 @@ public class StorageWorkerTest {
         assertEquals(ts * AverageAggregator.HOURS, byteBuffer.getLong());
     }
 
+    @Test
+    public void testStore2() throws IOException {
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, dataFolder);
+
+        ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
+
+        long ts = getTS() / AverageAggregator.HOURS;
+
+        AggregationKey aggregationKey = new AggregationKey("test", 1, PinType.ANALOG, (byte) 1, ts);
+        AggregationValue aggregationValue = new AggregationValue();
+        aggregationValue.update(100);
+        AggregationKey aggregationKey2 = new AggregationKey("test", 1, PinType.ANALOG, (byte) 1, ts - 1);
+        AggregationValue aggregationValue2 = new AggregationValue();
+        aggregationValue2.update(150.54);
+        AggregationKey aggregationKey3 = new AggregationKey("test", 1, PinType.ANALOG, (byte) 1, ts - 2);
+        AggregationValue aggregationValue3 = new AggregationValue();
+        aggregationValue3.update(200);
+
+        map.put(aggregationKey, aggregationValue);
+        map.put(aggregationKey2, aggregationValue2);
+        map.put(aggregationKey3, aggregationValue3);
+
+        when(averageAggregator.getHourly()).thenReturn(map);
+        when(averageAggregator.getDaily()).thenReturn(new ConcurrentHashMap<>());
+
+        createFolders("test");
+
+        storageWorker.run();
+
+        assertTrue(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
+
+        //take less
+        byte[] data = StorageDao.getAllFromDisk(dataFolder, "test", 1, PinType.ANALOG, (byte) 1, 1, GraphType.HOURLY);
+        ByteBuffer byteBuffer = ByteBuffer.wrap(data);
+        assertNotNull(data);
+        assertEquals(16, data.length);
+
+        assertEquals(100.0, byteBuffer.getDouble(), 0.001);
+        assertEquals(ts * AverageAggregator.HOURS, byteBuffer.getLong());
+
+
+        //take more
+        data = StorageDao.getAllFromDisk(dataFolder, "test", 1, PinType.ANALOG, (byte) 1, 24, GraphType.HOURLY);
+        byteBuffer = ByteBuffer.wrap(data);
+        assertNotNull(data);
+        assertEquals(48, data.length);
+
+        assertEquals(200.0, byteBuffer.getDouble(), 0.001);
+        assertEquals((ts - 2) * AverageAggregator.HOURS, byteBuffer.getLong());
+
+        assertEquals(150.54, byteBuffer.getDouble(), 0.001);
+        assertEquals((ts - 1) * AverageAggregator.HOURS, byteBuffer.getLong());
+
+        assertEquals(100.0, byteBuffer.getDouble(), 0.001);
+        assertEquals(ts * AverageAggregator.HOURS, byteBuffer.getLong());
+    }
+
     private void createFolders(String username) {
         Path userPath = Paths.get(dataFolder, username);
         if (Files.notExists(userPath)) {
