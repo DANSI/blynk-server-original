@@ -121,13 +121,14 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testGetGraphEmptyData() throws Exception {
-        clientPair.appClient.send("getgraphdata 1 d 8 0 h");
+        clientPair.appClient.send("getgraphdata 1 d 8 24 h");
 
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NO_DATA_EXCEPTION)));
     }
 
 
     @Test
+    @Ignore("not used yet")
     public void testGetAllGraphData() throws Exception {
         for (int i = 0; i < 1000; i++) {
             clientPair.hardwareClient.send("hardware aw 8 " + i);

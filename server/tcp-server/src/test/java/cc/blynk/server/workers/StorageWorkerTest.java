@@ -2,6 +2,7 @@ package cc.blynk.server.workers;
 
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
+import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.storage.reporting.average.AggregationKey;
 import cc.blynk.server.storage.reporting.average.AggregationValue;
 import cc.blynk.server.storage.reporting.average.AverageAggregator;
@@ -13,13 +14,13 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.server.storage.StorageDao.generateFilename;
@@ -88,16 +89,23 @@ public class StorageWorkerTest {
         assertTrue(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
         assertTrue(Files.exists(Paths.get(dataFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
 
-        List<String> lines = Files.readAllLines(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY)));
-        assertNotNull(lines);
-        assertEquals(2, lines.size());
-        assertEquals(150.54 + "," + (ts - 1) * AverageAggregator.HOURS, lines.get(0));
-        assertEquals(100.0 + "," + ts * AverageAggregator.HOURS, lines.get(1));
+        byte[] data = StorageDao.getAllFromDisk(dataFolder, "test", 1, PinType.ANALOG, (byte) 1, 2, GraphType.HOURLY);
+        ByteBuffer byteBuffer = ByteBuffer.wrap(data);
+        assertNotNull(data);
+        assertEquals(32, data.length);
 
-        lines = Files.readAllLines(Paths.get(dataFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY)));
-        assertNotNull(lines);
-        assertEquals(1, lines.size());
-        assertEquals(200.0 + "," + ts * AverageAggregator.HOURS, lines.get(0));
+        assertEquals(150.54, byteBuffer.getDouble(), 0.001);
+        assertEquals((ts - 1) * AverageAggregator.HOURS, byteBuffer.getLong());
+
+        assertEquals(100.0, byteBuffer.getDouble(), 0.001);
+        assertEquals(ts * AverageAggregator.HOURS, byteBuffer.getLong());
+
+        data = StorageDao.getAllFromDisk(dataFolder, "test2", 2, PinType.ANALOG, (byte) 2, 1, GraphType.HOURLY);
+        byteBuffer = ByteBuffer.wrap(data);
+        assertNotNull(data);
+        assertEquals(16, data.length);
+        assertEquals(200.0, byteBuffer.getDouble(), 0.001);
+        assertEquals(ts * AverageAggregator.HOURS, byteBuffer.getLong());
     }
 
     private void createFolders(String username) {

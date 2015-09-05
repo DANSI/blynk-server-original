@@ -13,9 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.nio.ByteBuffer;
 import java.util.zip.InflaterInputStream;
 
 import static org.junit.Assert.assertEquals;
@@ -29,7 +27,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(MockitoJUnitRunner.class)
 public class GetGraphDataHandlerTest extends TestBase {
 
-    private static String decompress(byte[] bytes) {
+    private static byte[] decompress(byte[] bytes) {
         InputStream in = new InflaterInputStream(new ByteArrayInputStream(bytes));
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
@@ -38,35 +36,49 @@ public class GetGraphDataHandlerTest extends TestBase {
             while((len = in.read(buffer)) > 0) {
                 baos.write(buffer, 0, len);
             }
-            return new String(baos.toByteArray());
+            return baos.toByteArray();
         } catch (IOException e) {
             throw new AssertionError(e);
         }
 
     }
 
+    private static byte[] toByteArray(StoreMessage storeMessage) {
+        ByteBuffer bb = ByteBuffer.allocate(16);
+        bb.putDouble(Double.valueOf(storeMessage.value));
+        bb.putLong(storeMessage.ts);
+        return bb.array();
+    }
+
     @Test
     public void testCompressAndDecompress() throws IOException {
-        Queue<StoreMessage> queue = new LinkedList<>();
+        ByteBuffer bb = ByteBuffer.allocate(1000 * 16);
 
         int dataLength = 0;
         for (int i = 0; i < 1000; i++) {
             long ts = System.currentTimeMillis();
             StoreMessage mes = new StoreMessage(new GraphKey(1, (byte) 1, PinType.ANALOG), String.valueOf(i), ts);
-            queue.offer(mes);
-            dataLength += mes.toString().length();
+            bb.put(toByteArray(mes));
+            dataLength += 16;
         }
 
         System.out.println("Size before compression : " + dataLength);
-        byte[] compressedData = GetGraphDataLogic.compress(new Collection[] {queue}, 1);
+        byte[][] data = new byte[1][];
+        data[0] = bb.array();
+
+        byte[] compressedData = GetGraphDataLogic.compress(data, 1);
         System.out.println("Size after compression : " + compressedData.length + ". Compress rate " + ((double) dataLength / compressedData.length));
         assertNotNull(compressedData);
-        String result = decompress(compressedData);
-        String[] splitted = result.split(" ");
-        assertEquals(2000, splitted.length);
+        ByteBuffer result = ByteBuffer.wrap(decompress(compressedData));
+
+        assertEquals(1000 * 16 + 4, result.capacity());
+
+        int size = result.getInt();
+        assertEquals(1000, size);
 
         for (int i = 0; i < 1000; i++) {
-            assertEquals(String.valueOf(i), splitted[i * 2]);
+            assertEquals((double) i, result.getDouble(), 0.001);
+            result.getLong();
         }
 
         //System.out.println(result);

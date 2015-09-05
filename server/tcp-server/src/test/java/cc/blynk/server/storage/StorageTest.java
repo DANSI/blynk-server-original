@@ -4,6 +4,7 @@ import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.dao.graph.StoreMessage;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.storage.reporting.average.AverageAggregator;
+import cc.blynk.server.workers.StorageWorker;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -40,14 +41,11 @@ public class StorageTest {
     @Test
     @Ignore
     public void generateDailyHistoryData() throws IOException {
-        Path path = Paths.get("/home/doom369/blynk/data/dmitriy@blynk.cc/daily_data.csv");
+        Path path = Paths.get("/home/doom369/blynk/data/dmitriy@blynk.cc/daily_data.bin");
         //now - 365 days.
         long ts  = (System.currentTimeMillis() / AverageAggregator.DAY - 365);
-        try (BufferedWriter bw = Files.newBufferedWriter(path)) {
-            for (int i = 0; i < 365; i++ ) {
-                bw.write(i + "," + (ts + i) * AverageAggregator.DAY);
-                bw.newLine();
-            }
+        for (int i = 0; i < 365; i++ ) {
+            StorageWorker.write(path, i, (ts + i) * AverageAggregator.DAY);
         }
     }
 
@@ -55,14 +53,11 @@ public class StorageTest {
     @Ignore
     public void generateHourlyHistoryData() throws IOException {
         int count = 7 * 24;
-        Path path = Paths.get("/home/doom369/blynk/data/dmitriy@blynk.cc/hourly_data.csv");
+        Path path = Paths.get("/home/doom369/blynk/data/dmitriy@blynk.cc/hourly_data.bin");
         //now - 1 week.
         long ts  = (System.currentTimeMillis() / AverageAggregator.HOURS - count);
-        try (BufferedWriter bw = Files.newBufferedWriter(path)) {
-            for (int i = 0; i < count; i++ ) {
-                bw.write(i + "," + (ts + i) * AverageAggregator.HOURS);
-                bw.newLine();
-            }
+        for (int i = 0; i < count; i++ ) {
+            StorageWorker.write(path, i, (ts + i) * AverageAggregator.HOURS);
         }
     }
 

@@ -13,16 +13,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.nio.file.StandardOpenOption;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+
+import static cc.blynk.server.utils.ReportingUtil.EMPTY_ARRAY;
 
 /**
  * The Blynk Project.
@@ -31,8 +31,8 @@ import java.util.List;
  */
 public class StorageDao {
 
-    public static final String REPORTING_HOURLY_FILE_NAME = "history_%s_%s_hourly.csv";
-    public static final String REPORTING_DAILY_FILE_NAME = "history_%s_%s_daily.csv";
+    public static final String REPORTING_HOURLY_FILE_NAME = "history_%s_%s_hourly.bin";
+    public static final String REPORTING_DAILY_FILE_NAME = "history_%s_%s_daily.bin";
     private static final Logger log = LogManager.getLogger(StorageDao.class);
     private final GraphInMemoryStorage graphInMemoryStorage;
     private final AverageAggregator averageAggregator;
@@ -51,6 +51,31 @@ public class StorageDao {
             return String.format(REPORTING_HOURLY_FILE_NAME, dashId, String.valueOf(pinType.pintTypeChar) + pin);
         }
         return String.format(REPORTING_DAILY_FILE_NAME, dashId, String.valueOf(pinType.pintTypeChar) + pin);
+    }
+
+    public static byte[] getAllFromDisk(String dataFolder, String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
+        Path userDataFile = Paths.get(dataFolder, username, generateFilename(dashId, pinType, pin, type));
+        if (Files.notExists(userDataFile)) {
+            return EMPTY_ARRAY;
+        }
+
+        try (SeekableByteChannel channel = Files.newByteChannel(userDataFile, StandardOpenOption.READ)) {
+            final int size = (int) Files.size(userDataFile);
+            final int dataSize = count * 16;
+            final int readDataSize = Math.min(dataSize, size);
+
+            ByteBuffer buf = ByteBuffer.allocate(readDataSize);
+            channel.position(Math.max(0, size - dataSize));
+            channel.read(buf);
+
+            //todo filter outdated records?
+
+            return buf.array();
+        } catch (IOException e) {
+            log.error(e);
+        }
+
+        return EMPTY_ARRAY;
     }
 
     public StoreMessage process(Profile profile, int dashId, String body) {
@@ -83,31 +108,8 @@ public class StorageDao {
         return graphInMemoryStorage.getAll(new GraphKey(dashId, pin, pinType));
     }
 
-    public Collection<?> getAllFromDisk(String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
-        Path userDataFile = Paths.get(dataFolder, username, generateFilename(dashId, pinType, pin, type));
-        if (Files.notExists(userDataFile)) {
-            return Collections.emptyList();
-        }
-
-        //todo increase buffer size?
-        try (BufferedReader reader = Files.newBufferedReader(userDataFile, StandardCharsets.UTF_8)) {
-            List<String> result = new ArrayList<>();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                result.add(line);
-            }
-
-            //todo filter outdated records?
-            if (result.size() > count) {
-                return result.subList(result.size() - count, result.size());
-            }
-
-            return result;
-        } catch (IOException e) {
-            log.error(e);
-        }
-
-        return Collections.emptyList();
+    public byte[] getAllFromDisk(String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
+        return getAllFromDisk(dataFolder, username, dashId, pinType, pin, count, type);
     }
 
     public void updateProperties(ServerProperties props) {

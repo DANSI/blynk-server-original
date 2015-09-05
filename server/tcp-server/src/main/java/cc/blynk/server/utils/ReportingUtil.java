@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ReportingUtil {
 
+    public static final byte[] EMPTY_ARRAY = {};
     private final static Logger log = LogManager.getLogger(ReportingUtil.class);
 
     public static String getReportingFolder(String dataFolder) {

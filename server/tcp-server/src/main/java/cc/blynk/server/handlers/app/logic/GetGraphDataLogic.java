@@ -2,7 +2,6 @@ package cc.blynk.server.handlers.app.logic;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
-import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.exceptions.GetGraphDataException;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NoDataException;
@@ -15,9 +14,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collection;
+import java.nio.ByteBuffer;
 import java.util.zip.DeflaterOutputStream;
 
 /**
@@ -37,33 +35,21 @@ public class GetGraphDataLogic {
         this.storageDao = storageDao;
     }
 
-    public static byte[] compress(Collection[] values, int msgId) {
+    public static byte[] compress(byte[][] values, int msgId) {
         //todo calculate size
         ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
 
         try (OutputStream out = new DeflaterOutputStream(baos)) {
-            for (int i = 0; i < values.length; i++) {
-                writeOnePin(out, values[i]);
-                if (i != values.length - 1) {
-                    out.write(StringUtils.BODY_SEPARATOR);
-                }
+            for (byte[] data : values) {
+                ByteBuffer bb = ByteBuffer.allocate(4);
+                bb.putInt(data.length / 16);
+                out.write(bb.array());
+                out.write(data);
             }
         } catch (Exception ioe) {
             throw new GetGraphDataException(msgId);
         }
         return baos.toByteArray();
-    }
-
-    private static void writeOnePin(OutputStream out, Collection<?> values) throws IOException {
-        int counter = 0;
-        int length = values.size();
-        for (Object s : values) {
-            counter++;
-            out.write(s.toString().getBytes());
-            if (counter < length) {
-                out.write(' ');
-            }
-        }
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
@@ -88,19 +74,14 @@ public class GetGraphDataLogic {
         }
 
         boolean noData = true;
-        Collection[] values = new Collection[numberOfPins];
-        //special case message.
-        if (requestedPins[0].count == 0) {
-            values[0] = storageDao.getAllFromMemmory(requestedPins[0].dashBoardId, requestedPins[0].pinType, requestedPins[0].pin);
-            noData = values[0] == null || values[0].size() == 0;
-        } else {
-            for (int i = 0; i < numberOfPins; i++) {
-                values[i] = storageDao.getAllFromDisk(user.getName(),
-                        requestedPins[i].dashBoardId, requestedPins[i].pinType,
-                        requestedPins[i].pin, requestedPins[i].count, requestedPins[i].type);
+        byte[][] values = new byte[numberOfPins][];
 
-                noData = noData && values[i].size() == 0;
-            }
+        for (int i = 0; i < numberOfPins; i++) {
+            values[i] = storageDao.getAllFromDisk(user.getName(),
+                    requestedPins[i].dashBoardId, requestedPins[i].pinType,
+                    requestedPins[i].pin, requestedPins[i].count, requestedPins[i].type);
+
+            noData = noData && values[i].length == 0;
         }
 
         if (noData) {

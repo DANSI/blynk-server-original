@@ -7,9 +7,8 @@ import cc.blynk.server.storage.reporting.average.AverageAggregator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,7 +24,6 @@ import static cc.blynk.server.storage.StorageDao.generateFilename;
  */
 public class StorageWorker implements Runnable {
 
-    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private static final Logger log = LogManager.getLogger(StorageWorker.class);
     private static final Comparator<AggregationKey> AGGREGATION_KEY_COMPARATOR = (o1, o2) -> (int) (o1.ts - o2.ts);
 
@@ -35,6 +33,17 @@ public class StorageWorker implements Runnable {
     public StorageWorker(AverageAggregator averageAggregator, String dataFolder) {
         this.averageAggregator = averageAggregator;
         this.dataFolder = dataFolder;
+    }
+
+    public static void write(Path reportingPath, double value, long ts) {
+        try (DataOutputStream dos = new DataOutputStream(
+                Files.newOutputStream(reportingPath, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
+            dos.writeDouble(value);
+            dos.writeLong(ts);
+            dos.flush();
+        } catch (IOException e) {
+            log.error("Error open user data reporting file.", e);
+        }
     }
 
     @Override
@@ -61,11 +70,7 @@ public class StorageWorker implements Runnable {
                 String fileName = generateFilename(key.dashId, key.pinType, key.pin, type);
 
                 Path reportingPath = Paths.get(dataFolder, key.username, fileName);
-                try (BufferedWriter writer = Files.newBufferedWriter(reportingPath, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
-                    writer.write(average + "," + eventTS + LINE_SEPARATOR);
-                } catch (IOException e) {
-                    log.error("Error open user data reporting file.", e);
-                }
+                write(reportingPath, average, eventTS);
                 map.remove(key);
             }
         }
