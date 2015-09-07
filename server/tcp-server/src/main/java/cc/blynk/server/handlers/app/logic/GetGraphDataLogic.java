@@ -53,8 +53,9 @@ public class GetGraphDataLogic {
 
         //special case for delete command
         if (messageParts.length == 4) {
-            deleteGraphData(messageParts, user.getName());
-            ctx.writeAndFlush(produce(message.id, OK));
+            if (deleteGraphData(messageParts, user.getName(), message.id)) {
+                ctx.writeAndFlush(produce(message.id, OK));
+            }
         } else {
             byte[][] data = process(messageParts, user, message.id);
 
@@ -89,14 +90,20 @@ public class GetGraphDataLogic {
         return values;
     }
 
-    private void deleteGraphData(String[] messageParts, String username) {
-        int dashBoardId = Integer.parseInt(messageParts[0]);
-        PinType pinType = PinType.getPingType(messageParts[1].charAt(0));
-        byte pin = Byte.parseByte(messageParts[2]);
-        String cmd = messageParts[3];
-        if ("del".equals(cmd)) {
-            storageDao.delete(username, dashBoardId, pinType, pin);
+    private boolean deleteGraphData(String[] messageParts, String username, int msgId) {
+        try {
+            int dashBoardId = Integer.parseInt(messageParts[0]);
+            PinType pinType = PinType.getPingType(messageParts[1].charAt(0));
+            byte pin = Byte.parseByte(messageParts[2]);
+            String cmd = messageParts[3];
+            if ("del".equals(cmd)) {
+                storageDao.delete(username, dashBoardId, pinType, pin);
+                return true;
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalCommandException("HardwareLogic command body incorrect.", msgId);
         }
+        return false;
     }
 
     private class GraphPinRequestData {

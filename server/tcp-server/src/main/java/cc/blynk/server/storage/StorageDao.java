@@ -82,6 +82,7 @@ public class StorageDao {
     }
 
     public void delete(String username, int dashId, PinType pinType, byte pin) {
+        log.debug("Removing {}{} pin data for dashId {}.", pinType.pintTypeChar, pin, dashId);
         Path userDataHourlyFile = Paths.get(dataFolder, username, format(REPORTING_HOURLY_FILE_NAME, dashId, pinType.pintTypeChar, pin));
         Path userDataDailyFile = Paths.get(dataFolder, username, format(REPORTING_DAILY_FILE_NAME, dashId, pinType.pintTypeChar, pin));
         FileUtils.deleteQuietly(userDataHourlyFile.toFile());

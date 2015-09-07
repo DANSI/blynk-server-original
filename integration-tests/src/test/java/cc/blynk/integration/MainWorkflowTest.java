@@ -126,6 +126,13 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NO_DATA_EXCEPTION)));
     }
 
+    @Test
+    public void testDeleteGraphCommandWorks() throws Exception {
+        clientPair.appClient.send("getgraphdata 1 d 8 del");
+
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, OK)));
+    }
+
 
     @Test
     @Ignore("not used yet")
