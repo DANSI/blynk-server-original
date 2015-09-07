@@ -41,7 +41,7 @@ public class TweetLogic extends NotificationBase {
             throw new TwitterNotAuthorizedException("User has no access token provided.", message.id);
         }
 
-        user.lastTweetSentTs = checkIfNotificationQuotaLimitIsNotReached(user.lastTweetSentTs, message.id);
+        checkIfNotificationQuotaLimitIsNotReached(message.id);
 
         log.trace("Sending Twit for user {}, with message : '{}'.", user.getName(), message.body);
         notificationsProcessor.twit(ctx.channel(), twitterWidget.token, twitterWidget.secret, message.body, message.id);

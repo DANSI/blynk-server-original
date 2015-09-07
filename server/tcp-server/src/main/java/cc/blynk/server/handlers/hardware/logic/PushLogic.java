@@ -41,7 +41,7 @@ public class PushLogic extends NotificationBase {
             throw new TwitterNotAuthorizedException("User has no access token provided.", message.id);
         }
 
-        user.lastPushSentTs = checkIfNotificationQuotaLimitIsNotReached(user.lastPushSentTs, message.id);
+        checkIfNotificationQuotaLimitIsNotReached(message.id);
 
         log.trace("Sending push for user {}, with message : '{}'.", user.getName(), message.body);
         notificationsProcessor.push(ctx.channel(), widget, message.body, message.id);

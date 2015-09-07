@@ -48,7 +48,7 @@ public class MailLogic extends NotificationBase {
         String subj = bodyParts[1];
         String body = bodyParts[2];
 
-        user.lastMailSentTs = checkIfNotificationQuotaLimitIsNotReached(user.lastMailSentTs, message.id);
+        checkIfNotificationQuotaLimitIsNotReached(message.id);
 
         log.trace("Sending Mail for user {}, with message : '{}'.", user.getName(), message.body);
         notificationsProcessor.mail(ctx.channel(), to, subj, body, message.id);

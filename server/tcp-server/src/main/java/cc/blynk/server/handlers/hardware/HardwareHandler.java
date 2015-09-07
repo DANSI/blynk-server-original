@@ -9,7 +9,6 @@ import cc.blynk.server.handlers.hardware.logic.*;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.common.enums.Command.*;
@@ -19,7 +18,6 @@ import static cc.blynk.common.enums.Command.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 29.07.15.
  */
-@ChannelHandler.Sharable
 public class HardwareHandler extends BaseSimpleChannelInboundHandler<Message> {
 
     private final HardwareLogic hardware;

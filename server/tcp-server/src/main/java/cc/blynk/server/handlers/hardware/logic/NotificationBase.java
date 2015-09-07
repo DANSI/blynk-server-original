@@ -9,19 +9,20 @@ import cc.blynk.server.exceptions.QuotaLimitException;
  */
 public abstract class NotificationBase {
 
-    private final long defaultNotificationQuotaLimit;
+    private final long NOTIFICATION_QUOTA_LIMIT;
+    volatile long lastSentTs;
 
     NotificationBase(long defaultNotificationQuotaLimit) {
-        this.defaultNotificationQuotaLimit = defaultNotificationQuotaLimit;
+        this.NOTIFICATION_QUOTA_LIMIT = defaultNotificationQuotaLimit;
     }
 
-    long checkIfNotificationQuotaLimitIsNotReached(long lastAccessTime, int msgId) {
+    void checkIfNotificationQuotaLimitIsNotReached(int msgId) {
         long currentTs = System.currentTimeMillis();
-        long timePassedSinceLastMessage = (currentTs - lastAccessTime);
-        if (timePassedSinceLastMessage < defaultNotificationQuotaLimit) {
-            throw new QuotaLimitException(String.format("Only 1 notification per %s miliseconds is allowed", defaultNotificationQuotaLimit), msgId);
+        long timePassedSinceLastMessage = (currentTs - lastSentTs);
+        if (timePassedSinceLastMessage < NOTIFICATION_QUOTA_LIMIT) {
+            throw new QuotaLimitException(String.format("Only 1 notification per %s miliseconds is allowed", NOTIFICATION_QUOTA_LIMIT), msgId);
         }
-        return currentTs;
+        this.lastSentTs = currentTs;
     }
 
 }

@@ -18,10 +18,7 @@ import java.util.Map;
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-    // we set it with time in the past to make first email/tweet/push possible.
-    public transient volatile long lastPushSentTs;
-    public transient volatile long lastTweetSentTs;
-    public transient volatile long lastMailSentTs;
+
 	private String name;
     private String pass;
     private String id;

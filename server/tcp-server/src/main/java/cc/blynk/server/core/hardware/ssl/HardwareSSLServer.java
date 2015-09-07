@@ -34,7 +34,6 @@ import java.security.cert.CertificateException;
 public class HardwareSSLServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
-    private final HardwareHandler hardwareHandler;
 
     public HardwareSSLServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
                              GlobalStats stats, NotificationsProcessor notificationsProcessor, TransportTypeHolder transportType, StorageDao storageDao) {
@@ -42,7 +41,6 @@ public class HardwareSSLServer extends BaseServer {
 
         HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(userRegistry, sessionsHolder);
         HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(sessionsHolder, notificationsProcessor);
-        this.hardwareHandler = new HardwareHandler(props, sessionsHolder, storageDao, notificationsProcessor);
 
         int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 0);
 
@@ -64,7 +62,7 @@ public class HardwareSSLServer extends BaseServer {
 
                 //sharable business logic handlers
                 pipeline.addLast(hardwareLoginHandler);
-                pipeline.addLast(hardwareHandler);
+                pipeline.addLast(new HardwareHandler(props, sessionsHolder, storageDao, notificationsProcessor));
             }
         };
 

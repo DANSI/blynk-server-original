@@ -26,7 +26,6 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 public class HardwareServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
-    private final HardwareHandler hardwareHandler;
 
     public HardwareServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
                           GlobalStats stats, NotificationsProcessor notificationsProcessor, TransportTypeHolder transportType, StorageDao storageDao) {
@@ -34,7 +33,6 @@ public class HardwareServer extends BaseServer {
 
         HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(userRegistry, sessionsHolder);
         HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(sessionsHolder, notificationsProcessor);
-        this.hardwareHandler = new HardwareHandler(props, sessionsHolder, storageDao, notificationsProcessor);
 
         int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 0);
 
@@ -53,7 +51,7 @@ public class HardwareServer extends BaseServer {
 
                 //sharable business logic handlers
                 pipeline.addLast(hardwareLoginHandler);
-                pipeline.addLast(hardwareHandler);
+                pipeline.addLast(new HardwareHandler(props, sessionsHolder, storageDao, notificationsProcessor));
             }
         };
 
