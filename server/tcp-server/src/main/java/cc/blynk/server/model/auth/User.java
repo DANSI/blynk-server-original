@@ -30,8 +30,7 @@ public class User implements Serializable {
     //todo avoid volatile
     private volatile Profile profile;
     private Map<Integer, String> dashTokens = new HashMap<>();
-    //maybe it is bette rto make it transient
-    private Stats stats;
+
     //stats related logic
     //todo move to session?
     private transient InstanceLoadMeter quotaMeter;
@@ -46,7 +45,6 @@ public class User implements Serializable {
         this();
         this.name = name;
         this.pass = pass;
-        this.stats = new Stats();
         initQuota();
     }
 
@@ -54,13 +52,11 @@ public class User implements Serializable {
         this.quotaMeter = new InstanceLoadMeter();
     }
 
-    public void incrStat(short cmd) {
-        stats.incr(cmd);
+    public void incrStat() {
         quotaMeter.mark();
     }
 
-    public void incrException(int exceptionCode) {
-        stats.incrException(exceptionCode);
+    public void incrException() {
         quotaMeter.mark();
     }
 
@@ -135,10 +131,6 @@ public class User implements Serializable {
 
     public void setDashTokens(Map<Integer, String> dashTokens) {
         this.dashTokens = dashTokens;
-    }
-
-    public Stats getStats() {
-        return stats;
     }
 
     public InstanceLoadMeter getQuotaMeter() {

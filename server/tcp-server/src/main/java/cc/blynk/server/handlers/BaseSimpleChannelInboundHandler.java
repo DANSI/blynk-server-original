@@ -56,14 +56,14 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
                     }
                     return;
                 }
-                user.incrStat(imsg.command);
+                user.incrStat();
 
                 ThreadContext.put("user", user.getName());
                 messageReceived(ctx, user, imsg);
                 ThreadContext.clearMap();
             } catch (BaseServerException cause) {
                 if (user != null) {
-                    user.incrException(cause.errorCode);
+                    user.incrException();
                 }
                 handleAppException(ctx, cause);
             } catch (Exception e) {

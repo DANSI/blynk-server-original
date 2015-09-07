@@ -1,6 +1,5 @@
 package сс.blynk.server.core.administration.actions;
 
-import cc.blynk.common.enums.Command;
 import cc.blynk.server.core.administration.actions.ActivityMonitor;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.auth.User;
@@ -46,7 +45,7 @@ public class ActivityMonitorTest {
                 add(new User("2", "2"));
             }
         };
-        usersList.get(0).incrStat(Command.GET_TOKEN);
+        usersList.get(0).incrStat();
 
         when(userRegistry.getUsers()).thenReturn(users);
         when(users.size()).thenReturn(2);
