@@ -8,7 +8,6 @@ import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareLoginHandler;
@@ -61,11 +60,6 @@ public class HardwareServer extends BaseServer {
         log.debug("hard.socket.idle.timeout = {}", hardTimeoutSecs);
 
         log.info("Plain tcp/ip hardware server port {}.", port);
-    }
-
-    @Override
-    public BaseSimpleChannelInboundHandler getBaseHandler() {
-        return hardwareHandler;
     }
 
     @Override

@@ -24,12 +24,13 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
     private final TypeParameterMatcher matcher;
-    private volatile int USER_QUOTA_LIMIT;
-    private volatile int USER_QUOTA_LIMIT_WARN_PERIOD;
+    private final int USER_QUOTA_LIMIT;
+    private final int USER_QUOTA_LIMIT_WARN_PERIOD;
 
     protected BaseSimpleChannelInboundHandler(ServerProperties props) {
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
-        updateProperties(props);
+        this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit");
+        this.USER_QUOTA_LIMIT_WARN_PERIOD = props.getIntProperty("user.message.quota.limit.exceeded.warning.period");
     }
 
     @Override
@@ -87,22 +88,5 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
      * @param msg           the message to handle
      */
     protected abstract void messageReceived(ChannelHandlerContext ctx, User user, I msg);
-
-    /**
-     *  When property file changed during server work, to avoid restart,
-     *  so every child overrides it's property.
-     */
-    public void updateProperties(ServerProperties props) {
-        try {
-            this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit");
-        } catch (RuntimeException e) {
-            //error already logged, so do nothing.
-        }
-        try {
-            this.USER_QUOTA_LIMIT_WARN_PERIOD = props.getIntProperty("user.message.quota.limit.exceeded.warning.period");
-        } catch (RuntimeException e) {
-            //error already logged, so do nothing.
-        }
-    }
 
 }

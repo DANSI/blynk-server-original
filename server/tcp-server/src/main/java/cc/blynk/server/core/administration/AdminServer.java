@@ -5,7 +5,6 @@ import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 
@@ -23,11 +22,6 @@ public class AdminServer extends BaseServer {
         super(props.getIntProperty("server.admin.port"), transportType);
         this.channelInitializer = new AdminChannelInitializer(userRegistry, sessionsHolder);
         log.info("Administration server port {}.", port);
-    }
-
-    @Override
-    public BaseSimpleChannelInboundHandler getBaseHandler() {
-        return null;
     }
 
     @Override

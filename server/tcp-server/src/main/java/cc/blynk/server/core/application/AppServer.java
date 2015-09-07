@@ -8,7 +8,6 @@ import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.app.AppChannelStateHandler;
 import cc.blynk.server.handlers.app.AppHandler;
 import cc.blynk.server.handlers.app.auth.AppLoginHandler;
@@ -127,11 +126,6 @@ public class AppServer extends BaseServer {
             log.error("Error initializing ssl context. Reason : {}", e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
-    }
-
-    @Override
-    public BaseSimpleChannelInboundHandler getBaseHandler() {
-        return appHandler;
     }
 
     @Override

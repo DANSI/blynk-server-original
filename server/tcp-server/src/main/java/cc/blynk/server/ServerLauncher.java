@@ -10,10 +10,12 @@ import cc.blynk.server.core.hardware.ssl.HardwareSSLServer;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.storage.reporting.average.AverageAggregator;
-import cc.blynk.server.workers.*;
+import cc.blynk.server.workers.ProfileSaverWorker;
+import cc.blynk.server.workers.ShutdownHookWorker;
+import cc.blynk.server.workers.StatsWorker;
+import cc.blynk.server.workers.StorageWorker;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import cc.blynk.server.workers.timer.TimerWorker;
 import org.apache.logging.log4j.Level;
@@ -21,9 +23,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -147,10 +146,6 @@ public class ServerLauncher {
         //separate thread for timer.
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(
                 new TimerWorker(userRegistry, sessionsHolder), startDelay, 1000, TimeUnit.MILLISECONDS);
-
-        List<BaseSimpleChannelInboundHandler> baseHandlers = new ArrayList<>(Collections.singletonList(hardwareServer.getBaseHandler()));
-        baseHandlers.addAll(Collections.singletonList(appServer.getBaseHandler()));
-        new Thread(new PropertiesChangeWatcherWorker(baseHandlers)).start();
 
         //todo test it works...
         Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(averageAggregator, profileSaverWorker,

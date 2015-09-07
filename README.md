@@ -127,19 +127,19 @@ server.properties options:
 
         log.level=trace
 
-+ Maximum allowed number of user dashboards. This value can be changed without restarting the server. ("Reloadable" below)
++ Maximum allowed number of user dashboards.
 
         user.dashboard.max.limit=10
 
-+ 100 Req/sec rate limit per user. Reloadable
++ 100 Req/sec rate limit per user.
 
         user.message.quota.limit=100
 
-+ In case user exceeds quota limit - response error returned only once in specified period (in Millis). Reloadable
++ In case user exceeds quota limit - response error returned only once in specified period (in Millis).
 
         user.message.quota.limit.exceeded.warning.period=60000
 
-+ Maximum allowed user profile size. In Kb's. Reloadable
++ Maximum allowed user profile size. In Kb's.
 
         user.profile.max.size=128
 

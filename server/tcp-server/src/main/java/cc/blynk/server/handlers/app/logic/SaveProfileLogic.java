@@ -24,14 +24,12 @@ public class SaveProfileLogic {
 
     private static final Logger log = LogManager.getLogger(SaveProfileLogic.class);
 
-    //I have to use volatile for reloadable props to be sure updated value will be visible by all threads
-    private volatile int DASH_MAX_LIMIT;
-
-    //I have to use volatile for reloadable props to be sure updated value will be visible by all threads
-    private volatile int USER_PROFILE_MAX_SIZE;
+    private final int DASH_MAX_LIMIT;
+    private final int USER_PROFILE_MAX_SIZE;
 
     public SaveProfileLogic(ServerProperties props) {
-        updateProperties(props);
+        this.DASH_MAX_LIMIT = props.getIntProperty("user.dashboard.max.limit");
+        this.USER_PROFILE_MAX_SIZE = props.getIntProperty("user.profile.max.size") * 1024;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
@@ -58,19 +56,6 @@ public class SaveProfileLogic {
 
         user.setProfile(profile);
         ctx.writeAndFlush(produce(message.id, OK));
-    }
-
-    public void updateProperties(ServerProperties props) {
-        try {
-            this.DASH_MAX_LIMIT = props.getIntProperty("user.dashboard.max.limit");
-        } catch (RuntimeException e) {
-            //error already logged, so do nothing.
-        }
-        try {
-            this.USER_PROFILE_MAX_SIZE = props.getIntProperty("user.profile.max.size") * 1024;
-        } catch (RuntimeException e) {
-            //error already logged, so do nothing.
-        }
     }
 
 }

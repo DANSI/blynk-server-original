@@ -2,7 +2,6 @@ package cc.blynk.server.core;
 
 import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.hardware.HardwareServer;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
@@ -60,8 +59,6 @@ public abstract class BaseServer implements Runnable {
             workerGroup.shutdownGracefully();
         }
     }
-
-    public abstract BaseSimpleChannelInboundHandler getBaseHandler();
 
     protected abstract ChannelInitializer<SocketChannel> getChannelInitializer();
 
