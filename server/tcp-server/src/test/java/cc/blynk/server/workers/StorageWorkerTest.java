@@ -165,6 +165,44 @@ public class StorageWorkerTest {
         assertEquals(ts * AverageAggregator.HOURS, byteBuffer.getLong());
     }
 
+
+    @Test
+    public void testDeleteCommand() throws IOException {
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, dataFolder);
+
+        ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
+
+        long ts = getTS() / AverageAggregator.HOURS;
+
+        AggregationKey aggregationKey = new AggregationKey("test", 1, PinType.ANALOG, (byte) 1, ts);
+        AggregationValue aggregationValue = new AggregationValue();
+        aggregationValue.update(100);
+        AggregationKey aggregationKey2 = new AggregationKey("test", 1, PinType.ANALOG, (byte) 1, ts - 1);
+        AggregationValue aggregationValue2 = new AggregationValue();
+        aggregationValue2.update(150.54);
+        AggregationKey aggregationKey3 = new AggregationKey("test2", 2, PinType.ANALOG, (byte) 2, ts);
+        AggregationValue aggregationValue3 = new AggregationValue();
+        aggregationValue3.update(200);
+
+        map.put(aggregationKey, aggregationValue);
+        map.put(aggregationKey2, aggregationValue2);
+        map.put(aggregationKey3, aggregationValue3);
+
+        when(averageAggregator.getHourly()).thenReturn(map);
+        when(averageAggregator.getDaily()).thenReturn(new ConcurrentHashMap<>());
+
+        createFolders("test");
+        createFolders("test2");
+
+        storageWorker.run();
+
+        assertTrue(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(dataFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
+
+        new StorageDao(0, null, System.getProperty("java.io.tmpdir")).delete("test", 1, PinType.ANALOG, (byte) 1);
+        assertFalse(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
+    }
+
     private void createFolders(String username) {
         Path userPath = Paths.get(dataFolder, username);
         if (Files.notExists(userPath)) {

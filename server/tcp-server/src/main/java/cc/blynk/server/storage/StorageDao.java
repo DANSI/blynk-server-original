@@ -9,6 +9,8 @@ import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.storage.reporting.average.AverageAggregator;
+import cc.blynk.server.utils.ReportingUtil;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -23,6 +25,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 
 import static cc.blynk.server.utils.ReportingUtil.EMPTY_ARRAY;
+import static java.lang.String.format;
 
 /**
  * The Blynk Project.
@@ -31,8 +34,8 @@ import static cc.blynk.server.utils.ReportingUtil.EMPTY_ARRAY;
  */
 public class StorageDao {
 
-    public static final String REPORTING_HOURLY_FILE_NAME = "history_%s_%s_hourly.bin";
-    public static final String REPORTING_DAILY_FILE_NAME = "history_%s_%s_daily.bin";
+    public static final String REPORTING_HOURLY_FILE_NAME = "history_%s_%c%d_hourly.bin";
+    public static final String REPORTING_DAILY_FILE_NAME = "history_%s_%c%d_daily.bin";
     private static final Logger log = LogManager.getLogger(StorageDao.class);
     private final GraphInMemoryStorage graphInMemoryStorage;
     private final AverageAggregator averageAggregator;
@@ -43,14 +46,14 @@ public class StorageDao {
     public StorageDao(int inMemoryStorageLimit, AverageAggregator averageAggregator, String dataFolder) {
         this.graphInMemoryStorage = new GraphInMemoryStorage(inMemoryStorageLimit);
         this.averageAggregator = averageAggregator;
-        this.dataFolder = Paths.get(dataFolder, "data").toString();
+        this.dataFolder = ReportingUtil.getReportingFolder(dataFolder);
     }
 
     public static String generateFilename(int dashId, PinType pinType, byte pin, GraphType type) {
         if (type == GraphType.HOURLY) {
-            return String.format(REPORTING_HOURLY_FILE_NAME, dashId, String.valueOf(pinType.pintTypeChar) + pin);
+            return format(REPORTING_HOURLY_FILE_NAME, dashId, pinType.pintTypeChar, pin);
         }
-        return String.format(REPORTING_DAILY_FILE_NAME, dashId, String.valueOf(pinType.pintTypeChar) + pin);
+        return format(REPORTING_DAILY_FILE_NAME, dashId, pinType.pintTypeChar, pin);
     }
 
     public static byte[] getAllFromDisk(String dataFolder, String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
@@ -76,6 +79,13 @@ public class StorageDao {
         }
 
         return EMPTY_ARRAY;
+    }
+
+    public void delete(String username, int dashId, PinType pinType, byte pin) {
+        Path userDataHourlyFile = Paths.get(dataFolder, username, format(REPORTING_HOURLY_FILE_NAME, dashId, pinType.pintTypeChar, pin));
+        Path userDataDailyFile = Paths.get(dataFolder, username, format(REPORTING_DAILY_FILE_NAME, dashId, pinType.pintTypeChar, pin));
+        FileUtils.deleteQuietly(userDataHourlyFile.toFile());
+        FileUtils.deleteQuietly(userDataDailyFile.toFile());
     }
 
     public StoreMessage process(Profile profile, int dashId, String body) {

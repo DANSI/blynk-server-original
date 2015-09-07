@@ -2,7 +2,6 @@ package cc.blynk.server.handlers.app.logic;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
-import cc.blynk.server.exceptions.GetGraphDataException;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NoDataException;
 import cc.blynk.server.model.auth.User;
@@ -13,10 +12,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.zip.DeflaterOutputStream;
+import static cc.blynk.common.enums.Response.OK;
+import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.server.utils.ByteUtils.compress;
 
 /**
  * The Blynk Project.
@@ -35,21 +33,14 @@ public class GetGraphDataLogic {
         this.storageDao = storageDao;
     }
 
-    public static byte[] compress(byte[][] values, int msgId) {
-        //todo calculate size
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
+    private static boolean checkNoData(byte[][] data) {
+        boolean noData = true;
 
-        try (OutputStream out = new DeflaterOutputStream(baos)) {
-            for (byte[] data : values) {
-                ByteBuffer bb = ByteBuffer.allocate(4);
-                bb.putInt(data.length / 16);
-                out.write(bb.array());
-                out.write(data);
-            }
-        } catch (Exception ioe) {
-            throw new GetGraphDataException(msgId);
+        for (byte[] pinData : data) {
+            noData = noData && pinData.length == 0;
         }
-        return baos.toByteArray();
+
+        return noData;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
@@ -60,39 +51,52 @@ public class GetGraphDataLogic {
             throw new IllegalCommandException("Wrong income message format.", message.id);
         }
 
+        //special case for delete command
+        if (messageParts.length == 4) {
+            deleteGraphData(messageParts, user.getName());
+            ctx.writeAndFlush(produce(message.id, OK));
+        } else {
+            byte[][] data = process(messageParts, user, message.id);
+
+            if (checkNoData(data)) {
+                throw new NoDataException(message.id);
+            }
+
+            log.trace("Sending getGraph response. ");
+            byte[] compressed = compress(data, message.id);
+            ctx.writeAndFlush(new GetGraphDataResponseMessage(message.id, compressed));
+        }
+    }
+
+    private byte[][] process(String[] messageParts, User user, int msgId) {
         int numberOfPins = messageParts.length / VALUES_PER_PIN;
 
         GraphPinRequestData[] requestedPins = new GraphPinRequestData[numberOfPins];
 
         for (int i = 0; i < numberOfPins; i++) {
-            try {
-                requestedPins[i] = new GraphPinRequestData(messageParts, i);
-                user.getProfile().validateDashId(requestedPins[i].dashBoardId, message.id);
-            } catch (NumberFormatException e) {
-                throw new IllegalCommandException("HardwareLogic command body incorrect.", message.id);
-            }
+            requestedPins[i] = new GraphPinRequestData(messageParts, i, msgId);
+            user.getProfile().validateDashId(requestedPins[i].dashBoardId, msgId);
         }
 
-        boolean noData = true;
         byte[][] values = new byte[numberOfPins][];
 
         for (int i = 0; i < numberOfPins; i++) {
             values[i] = storageDao.getAllFromDisk(user.getName(),
                     requestedPins[i].dashBoardId, requestedPins[i].pinType,
                     requestedPins[i].pin, requestedPins[i].count, requestedPins[i].type);
-
-            noData = noData && values[i].length == 0;
         }
 
-        if (noData) {
-            throw new NoDataException(message.id);
+        return values;
+    }
+
+    private void deleteGraphData(String[] messageParts, String username) {
+        int dashBoardId = Integer.parseInt(messageParts[0]);
+        PinType pinType = PinType.getPingType(messageParts[1].charAt(0));
+        byte pin = Byte.parseByte(messageParts[2]);
+        String cmd = messageParts[3];
+        if ("del".equals(cmd)) {
+            storageDao.delete(username, dashBoardId, pinType, pin);
         }
-
-        byte[] compressed = compress(values, message.id);
-
-        log.trace("Sending getGraph response. ");
-
-        ctx.writeAndFlush(new GetGraphDataResponseMessage(message.id, compressed));
     }
 
     private class GraphPinRequestData {
@@ -107,12 +111,16 @@ public class GetGraphDataLogic {
 
         GraphType type;
 
-        public GraphPinRequestData(String[] messageParts, final int pinIndex) {
-            dashBoardId = Integer.parseInt(messageParts[pinIndex * VALUES_PER_PIN]);
-            pinType = PinType.getPingType(messageParts[pinIndex * VALUES_PER_PIN + 1].charAt(0));
-            pin = Byte.parseByte(messageParts[pinIndex * VALUES_PER_PIN + 2]);
-            count = Integer.parseInt(messageParts[pinIndex * VALUES_PER_PIN + 3]);
-            type = GraphType.getPeriodByType(messageParts[pinIndex * VALUES_PER_PIN + 4].charAt(0));
+        public GraphPinRequestData(String[] messageParts, final int pinIndex, int msgId) {
+            try {
+                dashBoardId = Integer.parseInt(messageParts[pinIndex * VALUES_PER_PIN]);
+                pinType = PinType.getPingType(messageParts[pinIndex * VALUES_PER_PIN + 1].charAt(0));
+                pin = Byte.parseByte(messageParts[pinIndex * VALUES_PER_PIN + 2]);
+                count = Integer.parseInt(messageParts[pinIndex * VALUES_PER_PIN + 3]);
+                type = GraphType.getPeriodByType(messageParts[pinIndex * VALUES_PER_PIN + 4].charAt(0));
+            } catch (NumberFormatException e) {
+                throw new IllegalCommandException("HardwareLogic command body incorrect.", msgId);
+            }
         }
     }
 

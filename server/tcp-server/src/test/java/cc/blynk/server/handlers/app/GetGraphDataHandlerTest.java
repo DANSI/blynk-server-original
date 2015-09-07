@@ -3,8 +3,8 @@ package cc.blynk.server.handlers.app;
 import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.dao.graph.StoreMessage;
-import cc.blynk.server.handlers.app.logic.GetGraphDataLogic;
 import cc.blynk.server.model.enums.PinType;
+import cc.blynk.server.utils.ByteUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.zip.InflaterInputStream;
 
+import static cc.blynk.server.utils.ByteUtils.REPORTING_RECORD_SIZE_BYTES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -44,7 +45,7 @@ public class GetGraphDataHandlerTest extends TestBase {
     }
 
     private static byte[] toByteArray(StoreMessage storeMessage) {
-        ByteBuffer bb = ByteBuffer.allocate(16);
+        ByteBuffer bb = ByteBuffer.allocate(REPORTING_RECORD_SIZE_BYTES);
         bb.putDouble(Double.valueOf(storeMessage.value));
         bb.putLong(storeMessage.ts);
         return bb.array();
@@ -52,26 +53,26 @@ public class GetGraphDataHandlerTest extends TestBase {
 
     @Test
     public void testCompressAndDecompress() throws IOException {
-        ByteBuffer bb = ByteBuffer.allocate(1000 * 16);
+        ByteBuffer bb = ByteBuffer.allocate(1000 * REPORTING_RECORD_SIZE_BYTES);
 
         int dataLength = 0;
         for (int i = 0; i < 1000; i++) {
             long ts = System.currentTimeMillis();
             StoreMessage mes = new StoreMessage(new GraphKey(1, (byte) 1, PinType.ANALOG), String.valueOf(i), ts);
             bb.put(toByteArray(mes));
-            dataLength += 16;
+            dataLength += REPORTING_RECORD_SIZE_BYTES;
         }
 
         System.out.println("Size before compression : " + dataLength);
         byte[][] data = new byte[1][];
         data[0] = bb.array();
 
-        byte[] compressedData = GetGraphDataLogic.compress(data, 1);
+        byte[] compressedData = ByteUtils.compress(data, 1);
         System.out.println("Size after compression : " + compressedData.length + ". Compress rate " + ((double) dataLength / compressedData.length));
         assertNotNull(compressedData);
         ByteBuffer result = ByteBuffer.wrap(decompress(compressedData));
 
-        assertEquals(1000 * 16 + 4, result.capacity());
+        assertEquals(1000 * REPORTING_RECORD_SIZE_BYTES + 4, result.capacity());
 
         int size = result.getInt();
         assertEquals(1000, size);
