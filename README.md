@@ -62,6 +62,8 @@ That's it! You will see no output cause all logging is done within same folder i
 
         java -jar server-0.8.0.jar -dataFolder /home/pi/Blynk        
         
+That's it! You will see no output cause all logging is done within same folder in ./logs/blynk.log file.
+        
 + To enable server auto restart find /etc/init.d/rc.local file and add :
 
         java -jar /home/pi/server-0.8.0.jar -dataFolder /home/pi/Blynk &
