@@ -25,8 +25,9 @@ public class UserStatisticsTest extends TestBase {
     @BeforeClass
     public static void init() {
         fileManager = new FileManager("/home/doom369/test/root/data");
+        long start = System.currentTimeMillis();
         users = fileManager.deserialize();
-
+        System.out.println("time : " + (System.currentTimeMillis() - start));
         System.out.println(users.size());
     }
 
