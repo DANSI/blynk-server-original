@@ -53,7 +53,7 @@ public class StorageWorker implements Runnable {
     }
 
     private void process(Map<AggregationKey, AggregationValue> map, GraphType type) {
-        long nowTruncatedToHours = System.currentTimeMillis() / type.period;
+        long nowTruncatedToPeriod = System.currentTimeMillis() / type.period;
 
         List<AggregationKey> keys = new ArrayList<>(map.keySet());
         Collections.sort(keys, AGGREGATION_KEY_COMPARATOR);
@@ -61,7 +61,7 @@ public class StorageWorker implements Runnable {
 
         for (AggregationKey key : keys) {
             //if prev hour
-            if (key.ts < nowTruncatedToHours) {
+            if (key.ts < nowTruncatedToPeriod) {
                 AggregationValue value = map.get(key);
 
                 double average = value.calcAverage();
