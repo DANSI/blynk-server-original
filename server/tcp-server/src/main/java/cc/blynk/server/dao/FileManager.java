@@ -7,7 +7,6 @@ import cc.blynk.server.utils.JsonParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -62,16 +61,9 @@ public class FileManager {
 
     private static User readUserFromFile(Path path) {
         try {
-            if (Files.size(path) > 0) {
-                try (BufferedReader reader = Files.newBufferedReader(path, Config.DEFAULT_CHARSET)) {
-                    String userString = reader.readLine();
-                    return JsonParser.parseUser(userString);
-                } catch (Exception ioe) {
-                    log.error("Error reading user file '{}'.", path, ioe);
-                }
-            }
+            return JsonParser.parseUserFromFile(path.toFile());
         } catch (IOException ioe) {
-            log.error("Error getting file size '{}'.", path);
+            log.error("Error parsing file '{}'.", path);
         }
 
         return null;

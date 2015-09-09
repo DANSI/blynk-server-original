@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -79,8 +80,8 @@ public final class JsonParser {
         return "{}";
     }
 
-    public static User parseUser(String reader) throws IOException {
-        User user = userReader.readValue(reader);
+    public static User parseUserFromFile(File userFile) throws IOException {
+        User user = userReader.readValue(userFile);
         user.initQuota();
         return user;
     }
