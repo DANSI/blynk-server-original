@@ -2,7 +2,6 @@ package cc.blynk.server.storage;
 
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.common.utils.StringUtils;
-import cc.blynk.server.dao.graph.GraphInMemoryStorage;
 import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.dao.graph.StoreMessage;
 import cc.blynk.server.model.Profile;
@@ -22,7 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Collection;
 
 import static cc.blynk.server.utils.ReportingUtil.EMPTY_ARRAY;
 import static java.lang.String.format;
@@ -37,14 +35,12 @@ public class StorageDao {
     public static final String REPORTING_HOURLY_FILE_NAME = "history_%s_%c%d_hourly.bin";
     public static final String REPORTING_DAILY_FILE_NAME = "history_%s_%c%d_daily.bin";
     private static final Logger log = LogManager.getLogger(StorageDao.class);
-    private final GraphInMemoryStorage graphInMemoryStorage;
     private final AverageAggregator averageAggregator;
     private final String dataFolder;
 
     private volatile boolean ENABLE_RAW_DATA_STORE;
 
-    public StorageDao(int inMemoryStorageLimit, AverageAggregator averageAggregator, String dataFolder) {
-        this.graphInMemoryStorage = new GraphInMemoryStorage(inMemoryStorageLimit);
+    public StorageDao(AverageAggregator averageAggregator, String dataFolder) {
         this.averageAggregator = averageAggregator;
         this.dataFolder = ReportingUtil.getReportingFolder(dataFolder);
     }
@@ -96,6 +92,11 @@ public class StorageDao {
 
         byte pin = Byte.parseByte(bodyParts[1]);
 
+        //should never happen
+        if (pin < 0) {
+            return null;
+        }
+
         GraphKey key = new GraphKey(dashId, pin, pinType);
         StoreMessage storeMessage = new StoreMessage(key, bodyParts[2], System.currentTimeMillis());
 
@@ -108,15 +109,10 @@ public class StorageDao {
         averageAggregator.collect(ThreadContext.get("user"), dashId, pinType, pin, storeMessage.ts, storeMessage.value);
 
         if (profile.hasGraphPin(key)) {
-            graphInMemoryStorage.store(storeMessage);
             return storeMessage;
         }
 
         return null;
-    }
-
-    public Collection<StoreMessage> getAllFromMemmory(int dashId, PinType pinType, byte pin) {
-        return graphInMemoryStorage.getAll(new GraphKey(dashId, pin, pinType));
     }
 
     public byte[] getAllFromDisk(String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {

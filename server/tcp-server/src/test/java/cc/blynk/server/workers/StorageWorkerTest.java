@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -54,6 +54,39 @@ public class StorageWorkerTest {
             FileUtils.deleteDirectory(dataFolder2.toFile());
         } catch (IOException e){
         }
+    }
+
+    @Test
+    public void caca() {
+        B b = new B();
+        b.b = 100;
+        b.a = 111;
+        try
+        {
+            FileOutputStream fileOut =
+                    new FileOutputStream("/home/doom369/test.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(b);
+            out.close();
+            fileOut.close();
+        }catch(IOException i) {
+            i.printStackTrace();
+        }
+
+        b = null;
+        try
+        {
+            FileInputStream fileIn = new FileInputStream("/home/doom369/test.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            b = (B) in.readObject();
+            in.close();
+            fileIn.close();
+        }catch(Exception i) {
+            i.printStackTrace();
+        }
+
+        System.out.println(b.b);
+        System.out.println(b.a);
     }
 
     @Test
@@ -199,7 +232,7 @@ public class StorageWorkerTest {
         assertTrue(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
         assertTrue(Files.exists(Paths.get(dataFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
 
-        new StorageDao(0, null, System.getProperty("java.io.tmpdir")).delete("test", 1, PinType.ANALOG, (byte) 1);
+        new StorageDao(null, System.getProperty("java.io.tmpdir")).delete("test", 1, PinType.ANALOG, (byte) 1);
         assertFalse(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
     }
 

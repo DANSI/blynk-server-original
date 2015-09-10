@@ -64,7 +64,7 @@ public class ServerLauncher {
         this.userRegistry = new UserRegistry(fileManager.deserialize());
         this.stats = new GlobalStats();
         this.averageAggregator = new AverageAggregator(getReportingFolder(serverProperties.getProperty("data.folder")));
-        StorageDao storageDao = new StorageDao(serverProperties.getIntProperty("user.in.memory.storage.limit"), averageAggregator, serverProperties.getProperty("data.folder"));
+        StorageDao storageDao = new StorageDao(averageAggregator, serverProperties.getProperty("data.folder"));
 
         this.notificationsProcessor = new NotificationsProcessor(
                 serverProperties.getIntProperty("notifications.queue.limit", 10000)

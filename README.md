@@ -145,10 +145,6 @@ server.properties options:
 
         user.profile.max.size=128
 
-+ In-memory storage limit for storing *read* values from hardware
-
-        user.in.memory.storage.limit=1000
-        
 + Maximum allowed number of notification queue. Queue responsible for processing email, pushes, twits sending. Because of performance issue - those queue is processed in separate thread, this is required due to blocking nature of all above operations. Usually limit shouldn't be reached
         
         notifications.queue.limit=10000

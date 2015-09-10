@@ -145,6 +145,6 @@ public abstract class IntegrationBase {
         userRegistry = new UserRegistry(fileManager.deserialize());
         stats = new GlobalStats();
         averageAggregator = new AverageAggregator(ReportingUtil.getReportingFolder(dataFolder));
-        storageDao = new StorageDao(properties.getIntProperty("user.in.memory.storage.limit"), averageAggregator, System.getProperty("java.io.tmpdir"));
+        storageDao = new StorageDao(averageAggregator, System.getProperty("java.io.tmpdir"));
     }
 }
