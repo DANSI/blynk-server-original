@@ -29,10 +29,6 @@ public class ServerProperties extends Properties {
         return Paths.get(System.getProperty("user.dir"), filename);
     }
 
-    public static Path getCurrentDir() {
-        return Paths.get(System.getProperty("user.dir"));
-    }
-
     /**
      * First loads properties file from class path after that from current folder.
      * So properties file in current folder is always overrides properties in classpath.
