@@ -12,9 +12,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.function.Function.identity;
+
 
 /**
  * Class responsible for saving/reading user data to/from disk.
@@ -82,30 +88,31 @@ public class FileManager {
      *
      * @return mapping between username and it's profile.
      */
-    public Map<String, User> deserialize() {
+    public ConcurrentMap<String, User> deserialize() {
         log.debug("Starting reading user DB.");
 
         File userDBFolder = dataDir.toFile();
         File[] files = userDBFolder.listFiles();
 
-        Map<String, User> users = new ConcurrentHashMap<>();
-
         if (files != null) {
-            Stream.of(files).parallel().forEach(file -> {
-                if (file.isFile()) {
-                    try {
-                        User user = JsonParser.parseUserFromFile(file);
-                        users.put(user.getName(), user);
-                    } catch (IOException ioe) {
-                        log.error("Error parsing file '{}'.", file);
-                    }
-                }
-            });
+            Map<String, User> tempUsers = Arrays.stream(files).parallel()
+                    .filter(File::isFile)
+                    .flatMap(file -> {
+                        try {
+                            return Stream.of(JsonParser.parseUserFromFile(file));
+                        } catch (IOException ioe) {
+                            log.error("Error parsing file '{}'.", file);
+                        }
+                        return Stream.empty();
+                    })
+                    .collect(Collectors.toMap(User::getName, identity(), (user1, user2) -> user2));
+
+            log.debug("Reading user DB finished.");
+            return new ConcurrentHashMap<>(tempUsers);
         }
 
         log.debug("Reading user DB finished.");
-
-        return users;
+        return new ConcurrentHashMap<>();
     }
 
 }

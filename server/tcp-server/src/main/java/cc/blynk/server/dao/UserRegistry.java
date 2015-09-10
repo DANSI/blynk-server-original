@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Helper class for holding info regarding registered users and profiles.
@@ -19,17 +20,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UserRegistry {
 
     private static final Logger log = LogManager.getLogger(UserRegistry.class);
-    private final Map<String, User> users;
-    private final Map<String, User> tokenToUserCache;
+    private final ConcurrentMap<String, User> users;
+    private final ConcurrentMap<String, User> tokenToUserCache;
     //init user DB if possible
 
-    public UserRegistry(Map<String, User> users) {
+    public UserRegistry(ConcurrentMap<String, User> users) {
         //reading DB to RAM.
         this.users = users;
         tokenToUserCache = createTokenToUserCache(users);
     }
 
-    public UserRegistry(Map<String, User> users, Map<String, User> usersFromAnotherSource) {
+    public UserRegistry(ConcurrentMap<String, User> users, ConcurrentMap<String, User> usersFromAnotherSource) {
         this.users = users;
         this.users.putAll(usersFromAnotherSource);
         tokenToUserCache = createTokenToUserCache(users);
@@ -98,7 +99,7 @@ public class UserRegistry {
         users.put(userName, newUser);
     }
 
-    private Map<String, User> createTokenToUserCache(final Map<String, User> users) {
+    private ConcurrentMap<String, User> createTokenToUserCache(final Map<String, User> users) {
         return new ConcurrentHashMap<String, User>() {{
             for (User user : users.values()) {
                 for (String userToken : user.getDashTokens().values()) {

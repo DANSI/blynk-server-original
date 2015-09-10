@@ -6,7 +6,6 @@ import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.Widget;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.*;
@@ -16,7 +15,7 @@ import java.util.*;
  * Date: 09.12.13
  * Time: 8:07
  */
-@Ignore
+//@Ignore
 public class UserStatisticsTest extends TestBase {
 
     static FileManager fileManager;
@@ -29,6 +28,11 @@ public class UserStatisticsTest extends TestBase {
         users = fileManager.deserialize();
         System.out.println("time : " + (System.currentTimeMillis() - start));
         System.out.println(users.size());
+    }
+
+    @Test
+    public void read() {
+
     }
 
     @Test
