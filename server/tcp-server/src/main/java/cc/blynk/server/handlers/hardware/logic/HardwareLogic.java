@@ -2,7 +2,6 @@ package cc.blynk.server.handlers.hardware.logic;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.graph.StoreMessage;
@@ -25,10 +24,9 @@ public class HardwareLogic {
     private final StorageDao storageDao;
     private final SessionsHolder sessionsHolder;
 
-    public HardwareLogic(ServerProperties props, SessionsHolder sessionsHolder, StorageDao storageDao) {
+    public HardwareLogic(SessionsHolder sessionsHolder, StorageDao storageDao) {
         this.sessionsHolder = sessionsHolder;
         this.storageDao = storageDao;
-        updateProperties(props);
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
@@ -59,9 +57,4 @@ public class HardwareLogic {
         }
     }
 
-    public void updateProperties(ServerProperties props) {
-        if (storageDao != null) {
-            storageDao.updateProperties(props);
-        }
-    }
 }

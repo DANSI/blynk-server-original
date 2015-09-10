@@ -96,11 +96,13 @@ public class FileManager {
         Finder finder = new Finder();
 
 
+        log.debug("Start user DB traversal.");
         try {
             Files.walkFileTree(dataDir, finder);
         } catch (IOException e) {
             log.error("Error reading tmp files.", e);
         }
+        log.debug("Stop user DB traversal.");
 
         Map<String, User> users = new ConcurrentHashMap<>();
         for (Path path : finder.getFoundFiles()) {

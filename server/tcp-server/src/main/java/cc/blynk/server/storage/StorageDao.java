@@ -38,11 +38,12 @@ public class StorageDao {
     private final AverageAggregator averageAggregator;
     private final String dataFolder;
 
-    private volatile boolean ENABLE_RAW_DATA_STORE;
+    private final boolean ENABLE_RAW_DATA_STORE;
 
-    public StorageDao(AverageAggregator averageAggregator, String dataFolder) {
+    public StorageDao(AverageAggregator averageAggregator, ServerProperties serverProperties) {
         this.averageAggregator = averageAggregator;
-        this.dataFolder = ReportingUtil.getReportingFolder(dataFolder);
+        this.dataFolder = ReportingUtil.getReportingFolder(serverProperties.getProperty("data.folder"));
+        this.ENABLE_RAW_DATA_STORE = serverProperties.getBoolProperty("enable.raw.data.store");
     }
 
     public static String generateFilename(int dashId, PinType pinType, byte pin, GraphType type) {
@@ -119,11 +120,4 @@ public class StorageDao {
         return getAllFromDisk(dataFolder, username, dashId, pinType, pin, count, type);
     }
 
-    public void updateProperties(ServerProperties props) {
-        try {
-            this.ENABLE_RAW_DATA_STORE = props.getBoolProperty("enable.raw.data.store");
-        } catch (RuntimeException e) {
-            //error already logged, so do nothing.
-        }
-    }
 }

@@ -82,7 +82,7 @@ public class HardwareHardHandlerTest extends TestBase {
         SessionsHolder sessionsHolder = spy(new SessionsHolder());
         final Session session = new Session();
         sessionsHolder.userSession.put(user, session);
-        HardwareLogic hardwareHandler = spy(new HardwareLogic(props, sessionsHolder, storageDao));
+        HardwareLogic hardwareHandler = spy(new HardwareLogic(sessionsHolder, storageDao));
         try{
             hardwareHandler.messageReceived(ctx, user, message);
         }catch (DeviceNotInNetworkException e){

@@ -29,7 +29,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<Message> {
     public HardwareHandler(ServerProperties props, SessionsHolder sessionsHolder, StorageDao storageDao,
                            NotificationsProcessor notificationsProcessor) {
         super(props);
-        this.hardware = new HardwareLogic(props, sessionsHolder, storageDao);
+        this.hardware = new HardwareLogic(sessionsHolder, storageDao);
         this.bridge = new BridgeLogic(sessionsHolder);
 
         long defaultNotificationQuotaLimit = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;

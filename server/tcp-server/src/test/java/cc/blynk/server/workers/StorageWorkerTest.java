@@ -1,5 +1,6 @@
 package cc.blynk.server.workers;
 
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.storage.StorageDao;
@@ -40,6 +41,9 @@ public class StorageWorkerTest {
 
     @Mock
     public AverageAggregator averageAggregator;
+
+    @Mock
+    public ServerProperties properties;
 
     @Before
     public void cleanup() {
@@ -190,6 +194,7 @@ public class StorageWorkerTest {
 
         when(averageAggregator.getHourly()).thenReturn(map);
         when(averageAggregator.getDaily()).thenReturn(new ConcurrentHashMap<>());
+        when(properties.getProperty("data.folder")).thenReturn(System.getProperty("java.io.tmpdir"));
 
         createFolders("test");
         createFolders("test2");
@@ -199,7 +204,7 @@ public class StorageWorkerTest {
         assertTrue(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
         assertTrue(Files.exists(Paths.get(dataFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
 
-        new StorageDao(null, System.getProperty("java.io.tmpdir")).delete("test", 1, PinType.ANALOG, (byte) 1);
+        new StorageDao(null, properties).delete("test", 1, PinType.ANALOG, (byte) 1);
         assertFalse(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
     }
 
