@@ -13,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -95,7 +94,7 @@ public class FileManager {
         File[] files = userDBFolder.listFiles();
 
         if (files != null) {
-            Map<String, User> tempUsers = Arrays.stream(files).parallel()
+            ConcurrentMap<String, User> tempUsers = Arrays.stream(files).parallel()
                     .filter(File::isFile)
                     .flatMap(file -> {
                         try {
@@ -105,10 +104,10 @@ public class FileManager {
                         }
                         return Stream.empty();
                     })
-                    .collect(Collectors.toMap(User::getName, identity(), (user1, user2) -> user2));
+                    .collect(Collectors.toConcurrentMap(User::getName, identity(), (user1, user2) -> user2));
 
             log.debug("Reading user DB finished.");
-            return new ConcurrentHashMap<>(tempUsers);
+            return tempUsers;
         }
 
         log.debug("Reading user DB finished.");
