@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -54,39 +54,6 @@ public class StorageWorkerTest {
             FileUtils.deleteDirectory(dataFolder2.toFile());
         } catch (IOException e){
         }
-    }
-
-    @Test
-    public void caca() {
-        B b = new B();
-        b.b = 100;
-        b.a = 111;
-        try
-        {
-            FileOutputStream fileOut =
-                    new FileOutputStream("/home/doom369/test.ser");
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(b);
-            out.close();
-            fileOut.close();
-        }catch(IOException i) {
-            i.printStackTrace();
-        }
-
-        b = null;
-        try
-        {
-            FileInputStream fileIn = new FileInputStream("/home/doom369/test.ser");
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            b = (B) in.readObject();
-            in.close();
-            fileIn.close();
-        }catch(Exception i) {
-            i.printStackTrace();
-        }
-
-        System.out.println(b.b);
-        System.out.println(b.a);
     }
 
     @Test
