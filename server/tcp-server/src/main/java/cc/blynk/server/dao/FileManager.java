@@ -2,18 +2,19 @@ package cc.blynk.server.dao;
 
 import cc.blynk.common.utils.Config;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.utils.Finder;
 import cc.blynk.server.utils.JsonParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 /**
  * Class responsible for saving/reading user data to/from disk.
@@ -59,16 +60,6 @@ public class FileManager {
         return dataDir;
     }
 
-    private static User readUserFromFile(Path path) {
-        try {
-            return JsonParser.parseUserFromFile(path.toFile());
-        } catch (IOException ioe) {
-            log.error("Error parsing file '{}'.", path);
-        }
-
-        return null;
-    }
-
     public Path getDataDir() {
         return dataDir;
     }
@@ -93,25 +84,24 @@ public class FileManager {
      */
     public Map<String, User> deserialize() {
         log.debug("Starting reading user DB.");
-        Finder finder = new Finder();
 
-
-        log.debug("Start user DB traversal.");
-        try {
-            Files.walkFileTree(dataDir, finder);
-        } catch (IOException e) {
-            log.error("Error reading tmp files.", e);
-        }
-        log.debug("Stop user DB traversal.");
+        File userDBFolder = dataDir.toFile();
+        File[] files = userDBFolder.listFiles();
 
         Map<String, User> users = new ConcurrentHashMap<>();
 
-        finder.getFoundFiles().parallelStream().forEach(path -> {
-            User user = readUserFromFile(path);
-            if (user != null) {
-                users.put(user.getName(), user);
-            }
-        });
+        if (files != null) {
+            Stream.of(files).parallel().forEach(file -> {
+                if (file.isFile()) {
+                    try {
+                        User user = JsonParser.parseUserFromFile(file);
+                        users.put(user.getName(), user);
+                    } catch (IOException ioe) {
+                        log.error("Error parsing file '{}'.", file);
+                    }
+                }
+            });
+        }
 
         log.debug("Reading user DB finished.");
 
