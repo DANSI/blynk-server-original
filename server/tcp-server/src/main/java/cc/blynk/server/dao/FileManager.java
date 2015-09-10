@@ -105,12 +105,13 @@ public class FileManager {
         log.debug("Stop user DB traversal.");
 
         Map<String, User> users = new ConcurrentHashMap<>();
-        for (Path path : finder.getFoundFiles()) {
+
+        finder.getFoundFiles().parallelStream().forEach(path -> {
             User user = readUserFromFile(path);
             if (user != null) {
-                users.putIfAbsent(user.getName(), user);
+                users.put(user.getName(), user);
             }
-        }
+        });
 
         log.debug("Reading user DB finished.");
 
