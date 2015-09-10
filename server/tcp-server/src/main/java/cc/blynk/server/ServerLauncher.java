@@ -137,7 +137,7 @@ public class ServerLauncher {
         scheduler.scheduleAtFixedRate(profileSaverWorker, 1000,
                 serverProperties.getIntProperty("profile.save.worker.period"), TimeUnit.MILLISECONDS);
 
-        StatsWorker statsWorker = new StatsWorker(stats, sessionsHolder);
+        StatsWorker statsWorker = new StatsWorker(stats, sessionsHolder, userRegistry);
         scheduler.scheduleAtFixedRate(statsWorker, 1000,
                 serverProperties.getIntProperty("stats.print.worker.period"), TimeUnit.MILLISECONDS);
 

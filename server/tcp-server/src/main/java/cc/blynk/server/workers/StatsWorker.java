@@ -2,6 +2,7 @@ package cc.blynk.server.workers;
 
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.SessionsHolder;
+import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import org.apache.logging.log4j.LogManager;
@@ -24,10 +25,12 @@ public class StatsWorker implements Runnable {
 
     private final GlobalStats stats;
     private final SessionsHolder sessionsHolder;
+    private final UserRegistry userRegistry;
 
-    public StatsWorker(GlobalStats stats, SessionsHolder sessionsHolder) {
+    public StatsWorker(GlobalStats stats, SessionsHolder sessionsHolder, UserRegistry userRegistry) {
         this.stats = stats;
         this.sessionsHolder = sessionsHolder;
+        this.userRegistry = userRegistry;
     }
 
     @Override
@@ -62,7 +65,7 @@ public class StatsWorker implements Runnable {
         stat.onlineApps = appActive;
         stat.onlineHards = hardActive;
         stat.active = sessionsHolder.getUserSession().size();
-        stat.total = 0;
+        stat.total = userRegistry.getUsers().size();
 
         log.info(stat.toString());
     }
