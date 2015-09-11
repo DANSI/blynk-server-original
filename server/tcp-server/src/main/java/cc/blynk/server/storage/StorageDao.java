@@ -1,10 +1,7 @@
 package cc.blynk.server.storage;
 
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.graph.GraphKey;
-import cc.blynk.server.dao.graph.StoreMessage;
-import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.storage.reporting.average.AverageAggregator;
@@ -86,34 +83,14 @@ public class StorageDao {
         FileUtils.deleteQuietly(userDataDailyFile.toFile());
     }
 
-    public StoreMessage process(Profile profile, int dashId, String body) {
-        PinType pinType = PinType.getPingType(body.charAt(0));
-
-        String[] bodyParts = body.split(StringUtils.BODY_SEPARATOR_STRING);
-
-        byte pin = Byte.parseByte(bodyParts[1]);
-
-        //should never happen
-        if (pin < 0) {
-            return null;
-        }
-
-        GraphKey key = new GraphKey(dashId, pin, pinType);
-        StoreMessage storeMessage = new StoreMessage(key, bodyParts[2], System.currentTimeMillis());
-
+    public void process(GraphKey key) {
         if (ENABLE_RAW_DATA_STORE) {
-            ThreadContext.put("dashId", Integer.toString(dashId));
-            ThreadContext.put("pin", String.valueOf(body.charAt(0)) + pin);
-            log.info(storeMessage.toCSV());
+            ThreadContext.put("dashId", Integer.toString(key.dashId));
+            ThreadContext.put("pin", String.valueOf(key.pinType.pintTypeChar) + key.pin);
+            log.info(key.toCSV());
         }
 
-        averageAggregator.collect(ThreadContext.get("user"), dashId, pinType, pin, storeMessage.ts, storeMessage.value);
-
-        if (profile.hasGraphPin(key)) {
-            return storeMessage;
-        }
-
-        return null;
+        averageAggregator.collect(ThreadContext.get("user"), key.dashId, key.pinType, key.pin, key.ts, key.value);
     }
 
     public byte[] getAllFromDisk(String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {

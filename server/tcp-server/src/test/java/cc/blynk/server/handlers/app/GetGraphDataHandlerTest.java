@@ -1,9 +1,8 @@
 package cc.blynk.server.handlers.app;
 
+import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.graph.GraphKey;
-import cc.blynk.server.dao.graph.StoreMessage;
-import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.utils.ByteUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +43,7 @@ public class GetGraphDataHandlerTest extends TestBase {
 
     }
 
-    private static byte[] toByteArray(StoreMessage storeMessage) {
+    private static byte[] toByteArray(GraphKey storeMessage) {
         ByteBuffer bb = ByteBuffer.allocate(REPORTING_RECORD_SIZE_BYTES);
         bb.putDouble(Double.valueOf(storeMessage.value));
         bb.putLong(storeMessage.ts);
@@ -58,7 +57,7 @@ public class GetGraphDataHandlerTest extends TestBase {
         int dataLength = 0;
         for (int i = 0; i < 1000; i++) {
             long ts = System.currentTimeMillis();
-            StoreMessage mes = new StoreMessage(new GraphKey(1, (byte) 1, PinType.ANALOG), String.valueOf(i), ts);
+            GraphKey mes = new GraphKey(1, ("aw 1 " + i).replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), ts);
             bb.put(toByteArray(mes));
             dataLength += REPORTING_RECORD_SIZE_BYTES;
         }

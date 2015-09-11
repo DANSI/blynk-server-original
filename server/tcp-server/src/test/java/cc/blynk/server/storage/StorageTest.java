@@ -1,8 +1,6 @@
 package cc.blynk.server.storage;
 
 import cc.blynk.server.dao.graph.GraphKey;
-import cc.blynk.server.dao.graph.StoreMessage;
-import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.storage.reporting.average.AverageAggregator;
 import cc.blynk.server.workers.StorageWorker;
 import org.junit.Ignore;
@@ -25,13 +23,12 @@ public class StorageTest {
     @Ignore
     public void generateLogFile() throws IOException {
         Path path = Paths.get("/home/doom369/test-data.log");
-        GraphKey key = new GraphKey(100000, (byte) 10, PinType.ANALOG);
         long ts  = System.currentTimeMillis();
         int i = 0;
         try (BufferedWriter bw = Files.newBufferedWriter(path)) {
             //200 req/sec current load.
             for (int j = 0; j < 24 * 3600; j++) {
-                StoreMessage storeMessage = new StoreMessage(key, String.valueOf(i++), ts++);
+                GraphKey storeMessage = new GraphKey(100000, "aw 10 " + i++, ts++);
                 bw.write(storeMessage.toCSV());
                 bw.write("\n");
             }

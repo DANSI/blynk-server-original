@@ -1,5 +1,6 @@
 package cc.blynk.server.dao.graph;
 
+import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.model.enums.PinType;
 
 /**
@@ -15,10 +16,29 @@ public class GraphKey {
 
     public final PinType pinType;
 
+    public final String value;
+
+    public final long ts;
+
     public GraphKey(int dashId, byte pin, PinType pinType) {
         this.dashId = dashId;
         this.pin = pin;
         this.pinType = pinType;
+        this.value = null;
+        this.ts = 0;
+    }
+
+    public GraphKey(int dashId, String body, long ts) {
+        String[] bodyParts = body.split(StringUtils.BODY_SEPARATOR_STRING);
+        this.dashId = dashId;
+        this.pin = Byte.parseByte(bodyParts[1]);
+        this.pinType = PinType.getPingType(body.charAt(0));
+        this.value = bodyParts[2];
+        this.ts = ts;
+    }
+
+    public String toCSV() {
+        return value + "," + ts;
     }
 
     @Override
