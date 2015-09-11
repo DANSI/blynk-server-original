@@ -25,10 +25,11 @@ public final class Command {
     public static final short REFRESH_TOKEN = 9;
     public static final short GET_GRAPH_DATA = 10;
     public static final short GET_GRAPH_DATA_RESPONSE = 11;
+
     //sharing commands
     public static final short GET_SHARE_TOKEN = 30;
     public static final short REFRESH_SHARE_TOKEN = 31;
-
+    public static final short SHARE_LOGIN = 32;
     //------------------------------------------
 
     //HARDWARE commands

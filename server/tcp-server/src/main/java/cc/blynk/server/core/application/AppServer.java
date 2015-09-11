@@ -11,6 +11,7 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.app.AppChannelStateHandler;
 import cc.blynk.server.handlers.app.AppHandler;
 import cc.blynk.server.handlers.app.auth.AppLoginHandler;
+import cc.blynk.server.handlers.app.auth.AppShareLoginHandler;
 import cc.blynk.server.handlers.app.auth.RegisterHandler;
 import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelInitializer;
@@ -45,6 +46,7 @@ public class AppServer extends BaseServer {
 
         RegisterHandler registerHandler = new RegisterHandler(userRegistry, props.getProperty("allowed.users.list"));
         AppLoginHandler appLoginHandler = new AppLoginHandler(userRegistry, sessionsHolder);
+        AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(userRegistry, sessionsHolder);
         AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(sessionsHolder);
 
         this.appHandler = new AppHandler(props, userRegistry, sessionsHolder, storageDao);
@@ -78,6 +80,7 @@ public class AppServer extends BaseServer {
                 //sharable business logic handlers initialized previously
                 pipeline.addLast(registerHandler);
                 pipeline.addLast(appLoginHandler);
+                pipeline.addLast(appShareLoginHandler);
                 pipeline.addLast(appHandler);
             }
         };

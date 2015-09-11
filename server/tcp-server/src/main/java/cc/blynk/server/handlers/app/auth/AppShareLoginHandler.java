@@ -1,25 +1,26 @@
 package cc.blynk.server.handlers.app.auth;
 
-import cc.blynk.common.handlers.DefaultExceptionHandler;
-import cc.blynk.common.model.messages.protocol.appllication.LoginMessage;
+import cc.blynk.common.enums.Command;
+import cc.blynk.common.enums.Response;
+import cc.blynk.common.model.messages.ResponseMessage;
+import cc.blynk.common.model.messages.protocol.appllication.ShareLoginMessage;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.exceptions.UserNotAuthenticated;
-import cc.blynk.server.exceptions.UserNotRegistered;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
- * Handler responsible for managing apps login messages.
- * Initializes netty channel with a state tied with user.
+ * Handler responsible for managing apps sharing login messages.
  *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -27,18 +28,20 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 @ChannelHandler.Sharable
-public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
+public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLoginMessage> {
+
+    private static final Logger log = LogManager.getLogger(AppShareLoginHandler.class);
 
     private final UserRegistry userRegistry;
     private final SessionsHolder sessionsHolder;
 
-    public AppLoginHandler(UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public AppShareLoginHandler(UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, ShareLoginMessage message) throws Exception {
         //warn: split may be optimized
         String[] messageParts = message.body.split(" ", 2);
 
@@ -51,16 +54,15 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         ctx.writeAndFlush(produce(message.id, OK));
     }
 
-    private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String pass) {
+    private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String token) {
         String userName = username.toLowerCase();
-        User user = userRegistry.getByName(userName);
 
-        if (user == null) {
-            throw new UserNotRegistered(String.format("User not registered. Username '%s', %s", userName, ctx.channel().remoteAddress()), messageId);
-        }
+        User user = userRegistry.getUserByToken(token);
 
-        if (!user.getPass().equals(pass)) {
-            throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel().remoteAddress()), messageId);
+        if (user == null || !user.getName().equals(userName)) {
+            log.debug("Share token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
+            ctx.writeAndFlush(new ResponseMessage(messageId, Command.RESPONSE, Response.INVALID_TOKEN));
+            return;
         }
 
         Channel channel = ctx.channel();
@@ -68,11 +70,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
         sessionsHolder.addAppChannel(user, channel);
 
-        log.info("{} app joined.", user.getName());
+        log.info("Shared {} app joined.", user.getName());
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-       handleGeneralException(ctx, cause);
-    }
 }
