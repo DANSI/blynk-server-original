@@ -27,6 +27,8 @@ public class DashBoard {
 
     private boolean keepScreenOn;
 
+    private volatile String sharingToken;
+
     public List<Timer> getTimerWidgets() {
         if (widgets == null || widgets.length == 0) {
             return Collections.emptyList();
@@ -106,6 +108,14 @@ public class DashBoard {
 
     public void setKeepScreenOn(boolean keepScreenOn) {
         this.keepScreenOn = keepScreenOn;
+    }
+
+    public String getSharingToken() {
+        return sharingToken;
+    }
+
+    public void setSharingToken(String sharingToken) {
+        this.sharingToken = sharingToken;
     }
 
     @Override

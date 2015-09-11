@@ -28,6 +28,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
     private final HardwareAppLogic hardwareApp;
     private final RefreshTokenLogic refreshToken;
     private final GetGraphDataLogic graphData;
+    private final GetShareTokenLogic getShareTokenLogic;
+    private final RefreshShareTokenLogic refreshShareTokenLogic;
 
     public AppHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao) {
         super(props);
@@ -36,6 +38,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
         this.hardwareApp = new HardwareAppLogic(sessionsHolder);
         this.refreshToken = new RefreshTokenLogic(userRegistry);
         this.graphData = new GetGraphDataLogic(storageDao);
+        this.getShareTokenLogic = new GetShareTokenLogic(userRegistry);
+        this.refreshShareTokenLogic = new RefreshShareTokenLogic(userRegistry);
     }
 
     @Override
@@ -67,6 +71,12 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);
+                break;
+            case GET_SHARE_TOKEN :
+                getShareTokenLogic.messageReceived(ctx, user, msg);
+                break;
+            case REFRESH_SHARE_TOKEN :
+                refreshShareTokenLogic.messageReceived(ctx, user, msg);
                 break;
         }
     }

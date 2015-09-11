@@ -27,6 +27,7 @@ public class User implements Serializable {
     //todo avoid volatile
     private volatile Profile profile;
     private Map<Integer, String> dashTokens = new HashMap<>();
+    private Map<Integer, String> dashShareTokens = new HashMap<>();
 
     //stats related logic
     //todo move to session?
@@ -84,14 +85,14 @@ public class User implements Serializable {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    public void putToken(Integer dashId, String token) {
-        cleanTokensForNonExistentDashes();
-        this.dashTokens.put(dashId, token);
+    public void putToken(Integer dashId, String token, Map<Integer, String> tokens) {
+        cleanTokensForNonExistentDashes(tokens);
+        tokens.put(dashId, token);
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    private void cleanTokensForNonExistentDashes() {
-        Iterator<Integer> iterator = this.dashTokens.keySet().iterator();
+    private void cleanTokensForNonExistentDashes(Map<Integer, String> tokens) {
+        Iterator<Integer> iterator = tokens.keySet().iterator();
         while (iterator.hasNext()) {
             if (!exists(iterator.next())) {
                 iterator.remove();
@@ -148,6 +149,10 @@ public class User implements Serializable {
 
     public void setLastQuotaExceededTime(long lastQuotaExceededTime) {
         this.lastQuotaExceededTime = lastQuotaExceededTime;
+    }
+
+    public Map<Integer, String> getDashShareTokens() {
+        return dashShareTokens;
     }
 
     @Override

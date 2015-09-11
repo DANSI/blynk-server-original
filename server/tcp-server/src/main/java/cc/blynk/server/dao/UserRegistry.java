@@ -65,14 +65,13 @@ public class UserRegistry {
         return tokenToUserCache.get(token);
     }
 
-    public String getToken(User user, Integer dashboardId) {
-        Map<Integer, String> dashTokens = user.getDashTokens();
+    public String getToken(User user, Integer dashboardId, Map<Integer, String> dashTokens) {
         String token = dashTokens.get(dashboardId);
 
         //if token not exists. generate new one
         if (token == null) {
             log.info("Token for user {} and dashId {} not generated yet.", user.getName(), dashboardId);
-            token = refreshToken(user, dashboardId);
+            token = refreshToken(user, dashboardId, dashTokens);
         } else {
             log.info("Token for user {} and dashId {} generated already. Token {}", user.getName(), dashboardId, token);
         }
@@ -80,14 +79,14 @@ public class UserRegistry {
         return token;
     }
 
-    public String refreshToken(User user, Integer dashboardId) {
+    public String refreshToken(User user, Integer dashboardId, Map<Integer, String> dashTokens) {
         // Clean old token from cache if exists.
-        String oldToken = user.getDashTokens().get(dashboardId);
+        String oldToken = dashTokens.get(dashboardId);
         if (oldToken != null) tokenToUserCache.remove(oldToken);
 
         //Create new token
         String newToken = generateNewToken();
-        user.putToken(dashboardId, newToken);
+        user.putToken(dashboardId, newToken, dashTokens);
         tokenToUserCache.put(newToken, user);
 
         log.info("Generated newToken for user {} and dashId {} is {}.", user.getName(), dashboardId, newToken);
@@ -99,11 +98,14 @@ public class UserRegistry {
         users.put(userName, newUser);
     }
 
-    private ConcurrentMap<String, User> createTokenToUserCache(final Map<String, User> users) {
+    private ConcurrentMap<String, User> createTokenToUserCache(Map<String, User> users) {
         return new ConcurrentHashMap<String, User>() {{
             for (User user : users.values()) {
                 for (String userToken : user.getDashTokens().values()) {
                     put(userToken, user);
+                }
+                for (String shareToken : user.getDashShareTokens().values()) {
+                    put(shareToken, user);
                 }
             }
         }};

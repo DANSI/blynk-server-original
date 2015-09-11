@@ -14,11 +14,11 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
-public class RefreshTokenLogic {
+public class RefreshShareTokenLogic {
 
     private final UserRegistry userRegistry;
 
-    public RefreshTokenLogic(UserRegistry userRegistry) {
+    public RefreshShareTokenLogic(UserRegistry userRegistry) {
         this.userRegistry = userRegistry;
     }
 
@@ -34,7 +34,7 @@ public class RefreshTokenLogic {
 
         user.getProfile().validateDashId(dashBoardId, message.id);
 
-        String token = userRegistry.refreshToken(user, dashBoardId, user.getDashTokens());
+        String token = userRegistry.refreshToken(user, dashBoardId, user.getDashShareTokens());
 
         ctx.writeAndFlush(produce(message.id, message.command, token));
     }
