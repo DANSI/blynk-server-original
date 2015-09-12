@@ -45,6 +45,9 @@ public class GlobalStats {
         specificCounters.put(PushMessage.class, new LongAdder());
         specificCounters.put(ResponseMessage.class, new LongAdder());
         specificCounters.put(BridgeMessage.class, new LongAdder());
+        specificCounters.put(ShareLoginMessage.class, new LongAdder());
+        specificCounters.put(RefreshTokenMessage.class, new LongAdder());
+        specificCounters.put(GetShareTokenMessage.class, new LongAdder());
     }
 
     public void mark(Class<?> clazz) {
