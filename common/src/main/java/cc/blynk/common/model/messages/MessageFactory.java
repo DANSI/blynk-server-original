@@ -52,6 +52,12 @@ public class MessageFactory {
                 return new RegisterMessage(messageId, body);
             case BRIDGE :
                 return new BridgeMessage(messageId, body);
+            case SHARE_LOGIN :
+                return new ShareLoginMessage(messageId, body);
+            case GET_SHARE_TOKEN :
+                return new GetShareTokenMessage(messageId, body);
+            case REFRESH_SHARE_TOKEN :
+                return new RefreshShareTokenMessage(messageId, body);
 
             default: throw new UnsupportedCommandException(String.format("Command with code %d not supported message.", command), messageId);
         }
