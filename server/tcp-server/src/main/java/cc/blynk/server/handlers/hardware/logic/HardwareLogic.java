@@ -33,6 +33,10 @@ public class HardwareLogic {
         return body + StringUtils.BODY_SEPARATOR_STRING + ts;
     }
 
+    private static String attachDashId(String body, int dashId) {
+        return dashId + StringUtils.BODY_SEPARATOR_STRING + body;
+    }
+
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
         Session session = sessionsHolder.userSession.get(user);
 
@@ -44,9 +48,9 @@ public class HardwareLogic {
         String body = message.body;
         long ts = System.currentTimeMillis();
 
-        if (body.charAt(1) == 'w') {
-            Integer dashId = ctx.channel().attr(ChannelState.DASH_ID).get();
+        int dashId = ctx.channel().attr(ChannelState.DASH_ID).get();
 
+        if (body.charAt(1) == 'w') {
             GraphKey key = new GraphKey(dashId, body, ts);
 
             //storing to DB and aggregating
@@ -63,7 +67,7 @@ public class HardwareLogic {
         }
 
         if (session.appChannels.size() > 0) {
-            session.sendMessageToApp(((HardwareMessage) message).updateMessageBody(body));
+            session.sendMessageToApp(((HardwareMessage) message).updateMessageBody(attachDashId(body, dashId)));
         }
     }
 
