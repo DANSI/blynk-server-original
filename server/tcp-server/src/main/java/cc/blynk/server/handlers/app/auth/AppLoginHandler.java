@@ -9,6 +9,7 @@ import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.exceptions.UserNotRegistered;
 import cc.blynk.server.handlers.app.AppHandler;
+import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.storage.StorageDao;
@@ -69,8 +70,9 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel().remoteAddress()), messageId);
         }
 
-        ctx.pipeline().removeLast();
         ctx.pipeline().remove(this);
+        ctx.pipeline().remove(UserNotLoggerHandler.class);
+        ctx.pipeline().remove(RegisterHandler.class);
         ctx.pipeline().addLast(new AppHandler(props, userRegistry, sessionsHolder, storageDao, new HandlerState(user)));
 
         sessionsHolder.addAppChannel(user, ctx.channel());

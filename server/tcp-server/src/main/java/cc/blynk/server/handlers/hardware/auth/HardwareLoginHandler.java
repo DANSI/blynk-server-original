@@ -9,6 +9,7 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
+import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.storage.StorageDao;
@@ -70,8 +71,8 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         log.info("{} hardware joined.", user.getName());
 
-        ctx.pipeline().removeLast();
         ctx.pipeline().remove(this);
+        ctx.pipeline().remove(UserNotLoggerHandler.class);
         ctx.pipeline().addLast(new HardwareHandler(props, sessionsHolder, storageDao, notificationsProcessor, new HandlerState(dashId, user, token)));
 
         ctx.writeAndFlush(produce(message.id, OK));
