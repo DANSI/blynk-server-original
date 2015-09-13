@@ -125,11 +125,9 @@ public class NotificationsProcessor {
 
     private void log(Channel channel, String errorMessage, int msgId) {
         User user = getState(channel).user;
-        if (user != null) {
-            ThreadContext.put("user", user.getName());
-            log.error("Error sending notification. {}", errorMessage);
-            ThreadContext.clearMap();
-        }
+
+        log(user, errorMessage);
+
         channel.eventLoop().execute(() -> {
             channel.writeAndFlush(new ResponseMessage(msgId, Command.RESPONSE, Response.NOTIFICATION_EXCEPTION));
         });
