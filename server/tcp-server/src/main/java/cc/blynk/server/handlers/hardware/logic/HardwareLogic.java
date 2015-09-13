@@ -47,7 +47,7 @@ public class HardwareLogic {
         String body = message.body;
         long ts = System.currentTimeMillis();
 
-        int dashId = ctx.channel().attr(ChannelState.DASH_ID).get();
+        final int dashId = state.dashId;
 
         if (body.charAt(1) == 'w') {
             GraphKey key = new GraphKey(dashId, body, ts);
@@ -56,7 +56,7 @@ public class HardwareLogic {
             storageDao.process(key);
 
             //in case message is for graph - attaching ts.
-            if (user.getProfile().hasGraphPin(key)) {
+            if (state.user.getProfile().hasGraphPin(key)) {
                 body = attachTS(body, ts);
             }
         }

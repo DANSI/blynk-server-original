@@ -45,7 +45,7 @@ public class AppServer extends BaseServer {
 
         RegisterHandler registerHandler = new RegisterHandler(userRegistry, props.getProperty("allowed.users.list"));
         AppLoginHandler appLoginHandler = new AppLoginHandler(props, userRegistry, sessionsHolder, storageDao);
-        AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(userRegistry, sessionsHolder);
+        AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(props, userRegistry, sessionsHolder, storageDao);
         AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(sessionsHolder);
 
         SslContext sslCtx = initSslContext(props);
@@ -77,6 +77,7 @@ public class AppServer extends BaseServer {
                 //sharable business logic handlers initialized previously
                 pipeline.addLast(registerHandler);
                 pipeline.addLast(appLoginHandler);
+                pipeline.addLast(appShareLoginHandler);
                 pipeline.addLast(new UserNotLoggerHandler());
             }
         };

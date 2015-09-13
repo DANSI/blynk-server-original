@@ -4,14 +4,18 @@ import cc.blynk.common.enums.Command;
 import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.model.messages.protocol.appllication.ShareLoginMessage;
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.model.auth.ChannelState;
+import cc.blynk.server.handlers.app.AppHandler;
+import cc.blynk.server.handlers.common.UserNotLoggerHandler;
+import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.User;
-import io.netty.channel.Channel;
+import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,12 +36,16 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
     private static final Logger log = LogManager.getLogger(AppShareLoginHandler.class);
 
+    private final ServerProperties props;
     private final UserRegistry userRegistry;
     private final SessionsHolder sessionsHolder;
+    private final StorageDao storageDao;
 
-    public AppShareLoginHandler(UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public AppShareLoginHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao) {
+        this.props = props;
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
+        this.storageDao = storageDao;
     }
 
     @Override
@@ -65,12 +73,19 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
             return;
         }
 
-        Channel channel = ctx.channel();
-        channel.attr(ChannelState.USER).set(user);
+        cleanPipeline(ctx.pipeline());
+        ctx.pipeline().addLast(new AppHandler(props, userRegistry, sessionsHolder, storageDao, new HandlerState(user)));
 
-        sessionsHolder.addAppChannel(user, channel);
+        sessionsHolder.addAppChannel(user, ctx.channel());
 
         log.info("Shared {} app joined.", user.getName());
+    }
+
+    private void cleanPipeline(ChannelPipeline pipeline) {
+        pipeline.remove(this);
+        pipeline.remove(UserNotLoggerHandler.class);
+        pipeline.remove(RegisterHandler.class);
+        pipeline.remove(AppLoginHandler.class);
     }
 
 }

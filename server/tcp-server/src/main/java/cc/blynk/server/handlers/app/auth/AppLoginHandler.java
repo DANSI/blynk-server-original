@@ -15,6 +15,7 @@ import cc.blynk.server.model.auth.User;
 import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import static cc.blynk.common.enums.Response.OK;
@@ -70,14 +71,19 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel().remoteAddress()), messageId);
         }
 
-        ctx.pipeline().remove(this);
-        ctx.pipeline().remove(UserNotLoggerHandler.class);
-        ctx.pipeline().remove(RegisterHandler.class);
+        cleanPipeline(ctx.pipeline());
         ctx.pipeline().addLast(new AppHandler(props, userRegistry, sessionsHolder, storageDao, new HandlerState(user)));
 
         sessionsHolder.addAppChannel(user, ctx.channel());
 
         log.info("{} app joined.", user.getName());
+    }
+
+    private void cleanPipeline(ChannelPipeline pipeline) {
+        pipeline.remove(this);
+        pipeline.remove(UserNotLoggerHandler.class);
+        pipeline.remove(RegisterHandler.class);
+        pipeline.remove(AppShareLoginHandler.class);
     }
 
     @Override

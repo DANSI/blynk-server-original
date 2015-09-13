@@ -73,10 +73,10 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
             case GET_SHARE_TOKEN :
-                getShareTokenLogic.messageReceived(ctx, user, msg);
+                getShareTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
             case REFRESH_SHARE_TOKEN :
-                refreshShareTokenLogic.messageReceived(ctx, user, msg);
+                refreshShareTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }
