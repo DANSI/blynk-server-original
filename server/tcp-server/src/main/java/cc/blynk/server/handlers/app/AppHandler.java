@@ -9,7 +9,6 @@ import cc.blynk.server.handlers.app.logic.*;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.storage.StorageDao;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.common.enums.Command.*;
@@ -20,7 +19,6 @@ import static cc.blynk.common.enums.Command.*;
  * Created on 2/1/2015.
  *
  */
-@ChannelHandler.Sharable
 public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
 
     private final SaveProfileLogic saveProfile;
