@@ -4,7 +4,7 @@ import cc.blynk.common.exceptions.BaseServerException;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.model.auth.ChannelState;
+import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -26,26 +26,22 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
     private final TypeParameterMatcher matcher;
     private final int USER_QUOTA_LIMIT;
     private final int USER_QUOTA_LIMIT_WARN_PERIOD;
+    private final HandlerState handlerState;
 
-    protected BaseSimpleChannelInboundHandler(ServerProperties props) {
+    protected BaseSimpleChannelInboundHandler(ServerProperties props, HandlerState handlerState) {
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
         this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit");
         this.USER_QUOTA_LIMIT_WARN_PERIOD = props.getIntProperty("user.message.quota.limit.exceeded.warning.period");
+        this.handlerState = handlerState;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (matcher.match(msg)) {
-            User user = null;
+            User user = handlerState.user;
             try {
                 I imsg = (I) msg;
-                user = ctx.channel().attr(ChannelState.USER).get();
-                if (user == null) {
-                    log.error("User not logged. {}. Closing.", ctx.channel().remoteAddress());
-                    ctx.close();
-                    return;
-                }
 
                 if (user.getQuotaMeter().getOneMinuteRate() > USER_QUOTA_LIMIT) {
                     long now = System.currentTimeMillis();
@@ -60,7 +56,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
                 user.incrStat();
 
                 ThreadContext.put("user", user.getName());
-                messageReceived(ctx, user, imsg);
+                messageReceived(ctx, handlerState, imsg);
                 ThreadContext.clearMap();
             } catch (BaseServerException cause) {
                 if (user != null) {
@@ -87,6 +83,9 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
      *                      belongs to
      * @param msg           the message to handle
      */
-    protected abstract void messageReceived(ChannelHandlerContext ctx, User user, I msg);
+    protected abstract void messageReceived(ChannelHandlerContext ctx, HandlerState state, I msg);
 
+    public HandlerState getHandlerState() {
+        return handlerState;
+    }
 }

@@ -9,9 +9,9 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.app.AppChannelStateHandler;
-import cc.blynk.server.handlers.app.AppHandler;
 import cc.blynk.server.handlers.app.auth.AppLoginHandler;
 import cc.blynk.server.handlers.app.auth.RegisterHandler;
+import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -35,7 +35,6 @@ import java.security.cert.CertificateException;
  */
 public class AppServer extends BaseServer {
 
-    private final AppHandler appHandler;
     private final ChannelInitializer<SocketChannel> channelInitializer;
     private boolean isMutualSSL;
 
@@ -44,10 +43,8 @@ public class AppServer extends BaseServer {
         super(props.getIntProperty("app.ssl.port"), transportType);
 
         RegisterHandler registerHandler = new RegisterHandler(userRegistry, props.getProperty("allowed.users.list"));
-        AppLoginHandler appLoginHandler = new AppLoginHandler(userRegistry, sessionsHolder);
+        AppLoginHandler appLoginHandler = new AppLoginHandler(props, userRegistry, sessionsHolder, storageDao);
         AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(sessionsHolder);
-
-        this.appHandler = new AppHandler(props, userRegistry, sessionsHolder, storageDao);
 
         SslContext sslCtx = initSslContext(props);
 
@@ -78,7 +75,7 @@ public class AppServer extends BaseServer {
                 //sharable business logic handlers initialized previously
                 pipeline.addLast(registerHandler);
                 pipeline.addLast(appLoginHandler);
-                pipeline.addLast(appHandler);
+                pipeline.addLast(new UserNotLoggerHandler());
             }
         };
 

@@ -5,12 +5,14 @@ import cc.blynk.common.enums.Response;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.model.messages.protocol.appllication.LoginMessage;
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.model.auth.ChannelState;
+import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.model.auth.User;
-import io.netty.channel.Channel;
+import cc.blynk.server.storage.StorageDao;
+import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -32,10 +34,16 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
     private final UserRegistry userRegistry;
     private final SessionsHolder sessionsHolder;
+    private final ServerProperties props;
+    private final StorageDao storageDao;
+    private final NotificationsProcessor notificationsProcessor;
 
-    public HardwareLoginHandler(UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public HardwareLoginHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao, NotificationsProcessor notificationsProcessor) {
+        this.props = props;
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
+        this.storageDao = storageDao;
+        this.notificationsProcessor = notificationsProcessor;
     }
 
     @Override
@@ -58,14 +66,13 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         Integer dashId = UserRegistry.getDashIdByToken(user, token, message.id);
 
-        Channel channel = ctx.channel();
-        channel.attr(ChannelState.DASH_ID).set(dashId);
-        channel.attr(ChannelState.USER).set(user);
-        channel.attr(ChannelState.TOKEN).set(token);
-
-        sessionsHolder.addHardwareChannel(user, channel);
+        sessionsHolder.addHardwareChannel(user, ctx.channel());
 
         log.info("{} hardware joined.", user.getName());
+
+        ctx.pipeline().removeLast();
+        ctx.pipeline().remove(this);
+        ctx.pipeline().addLast(new HardwareHandler(props, sessionsHolder, storageDao, notificationsProcessor, new HandlerState(dashId, user, token)));
 
         ctx.writeAndFlush(produce(message.id, OK));
 

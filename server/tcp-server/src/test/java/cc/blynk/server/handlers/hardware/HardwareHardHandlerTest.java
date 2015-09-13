@@ -6,16 +6,15 @@ import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
+import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.handlers.hardware.logic.HardwareLogic;
 import cc.blynk.server.model.Profile;
-import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.Attribute;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,9 +61,6 @@ public class HardwareHardHandlerTest extends TestBase {
     private Channel channel;
 
     @Mock
-    private Attribute<Integer> attr;
-
-    @Mock
     private Session session;
 
     @Mock
@@ -72,20 +68,19 @@ public class HardwareHardHandlerTest extends TestBase {
 
     @Test
     public void testNoDeviceAndPinModeMessage() {
+        HandlerState state = new HandlerState(1, user, null);
         HardwareMessage message = new HardwareMessage(1, "p test");
         when(ctx.channel()).thenReturn(channel);
-        when(channel.attr(ChannelState.DASH_ID)).thenReturn(attr);
         Profile profile = spy(new Profile());
-        when(attr.get()).thenReturn(1);
         when(user.getProfile()).thenReturn(profile);
         profile.activeDashId = 1;
         SessionsHolder sessionsHolder = spy(new SessionsHolder());
         final Session session = new Session();
         sessionsHolder.userSession.put(user, session);
         HardwareLogic hardwareHandler = spy(new HardwareLogic(sessionsHolder, storageDao));
-        try{
-            hardwareHandler.messageReceived(ctx, user, message);
-        }catch (DeviceNotInNetworkException e){
+        try {
+            hardwareHandler.messageReceived(ctx, state, message);
+        } catch (DeviceNotInNetworkException e) {
             Assert.assertEquals(message, profile.pinModeMessage);
         }
     }

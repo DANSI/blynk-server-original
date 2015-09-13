@@ -93,8 +93,16 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     public void testLogin2Times() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 1", "login dmitriy@mail.ua 1").check(2, OK);
+        makeCommands(1, "login dmitriy@mail.ua 1", "login dmitriy@mail.ua 1").check(1, OK);
     }
+
+    @Test
+    public void testLogin2TimesAndWork() throws Exception {
+        makeCommands("register dmitriy@mail.ua 1").check(OK);
+
+        makeCommands(2, "login dmitriy@mail.ua 1", "login dmitriy@mail.ua 1", "getToken 1").check(1, OK).check(produce(1, ILLEGAL_COMMAND));
+    }
+
 
     @Test
     public void testGetTokenForNonExistentDashId() throws Exception {
@@ -201,7 +209,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
      * 4) Checks that sever response is OK;
      * 5) Closing socket.
      */
-    private MockHolder makeCommands(String... commands) throws Exception {
+    private MockHolder makeCommands(int expected, String... commands) throws Exception {
         TestAppClient appClient = new TestAppClient(host, appPort);
 
         OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
@@ -217,8 +225,12 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         appClient.start(bufferedReader);
 
-        verify(appClient.responseMock, times(commands.length)).channelRead(any(), any());
+        verify(appClient.responseMock, times(expected)).channelRead(any(), any());
         return new MockHolder(appClient.responseMock);
+    }
+
+    private MockHolder makeCommands(String... commands) throws Exception {
+        return makeCommands(commands.length, commands);
     }
 
 }

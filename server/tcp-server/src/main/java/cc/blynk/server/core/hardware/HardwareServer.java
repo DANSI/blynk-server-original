@@ -8,8 +8,8 @@ import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.HardwareChannelStateHandler;
-import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
@@ -31,7 +31,7 @@ public class HardwareServer extends BaseServer {
                           GlobalStats stats, NotificationsProcessor notificationsProcessor, TransportTypeHolder transportType, StorageDao storageDao) {
         super(props.getIntProperty("hardware.default.port"), transportType);
 
-        HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(userRegistry, sessionsHolder);
+        HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(props, userRegistry, sessionsHolder, storageDao, notificationsProcessor);
         HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(sessionsHolder, notificationsProcessor);
 
         int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 0);
@@ -51,7 +51,7 @@ public class HardwareServer extends BaseServer {
 
                 //sharable business logic handlers
                 pipeline.addLast(hardwareLoginHandler);
-                pipeline.addLast(new HardwareHandler(props, sessionsHolder, storageDao, notificationsProcessor));
+                pipeline.addLast(new UserNotLoggerHandler());
             }
         };
 

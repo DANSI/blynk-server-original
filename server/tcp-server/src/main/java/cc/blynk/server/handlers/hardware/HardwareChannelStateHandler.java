@@ -1,7 +1,6 @@
 package cc.blynk.server.handlers.hardware;
 
 import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Notification;
@@ -16,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.common.enums.Response.DEVICE_WENT_OFFLINE;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.server.utils.HandlerUtil.getState;
 
 /**
  * The Blynk Project.
@@ -54,7 +54,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void sentOfflineMessage(Channel channel) {
-        User user = channel.attr(ChannelState.USER).get();
+        User user = getState(channel).user;
         if (user != null) {
             Notification notification = user.getProfile().getActiveDashboardWidgetByType(Notification.class);
             if (notification == null || !notification.notifyWhenOffline) {

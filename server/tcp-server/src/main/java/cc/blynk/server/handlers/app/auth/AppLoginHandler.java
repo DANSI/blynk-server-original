@@ -2,14 +2,16 @@ package cc.blynk.server.handlers.app.auth;
 
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.protocol.appllication.LoginMessage;
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.exceptions.UserNotRegistered;
-import cc.blynk.server.model.auth.ChannelState;
+import cc.blynk.server.handlers.app.AppHandler;
+import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.User;
-import io.netty.channel.Channel;
+import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -29,12 +31,16 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 @ChannelHandler.Sharable
 public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
 
+    private final ServerProperties props;
     private final UserRegistry userRegistry;
     private final SessionsHolder sessionsHolder;
+    private final StorageDao storageDao;
 
-    public AppLoginHandler(UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public AppLoginHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao) {
+        this.props = props;
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
+        this.storageDao = storageDao;
     }
 
     @Override
@@ -63,10 +69,11 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel().remoteAddress()), messageId);
         }
 
-        Channel channel = ctx.channel();
-        channel.attr(ChannelState.USER).set(user);
+        ctx.pipeline().removeLast();
+        ctx.pipeline().remove(this);
+        ctx.pipeline().addLast(new AppHandler(props, userRegistry, sessionsHolder, storageDao, new HandlerState(user)));
 
-        sessionsHolder.addAppChannel(user, channel);
+        sessionsHolder.addAppChannel(user, ctx.channel());
 
         log.info("{} app joined.", user.getName());
     }
