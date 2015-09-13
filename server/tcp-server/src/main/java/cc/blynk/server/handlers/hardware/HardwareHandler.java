@@ -5,8 +5,8 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
+import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.handlers.hardware.logic.*;
-import cc.blynk.server.model.auth.User;
 import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandlerContext;
@@ -27,8 +27,8 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<Message> {
     private final TweetLogic tweet;
 
     public HardwareHandler(ServerProperties props, SessionsHolder sessionsHolder, StorageDao storageDao,
-                           NotificationsProcessor notificationsProcessor) {
-        super(props);
+                           NotificationsProcessor notificationsProcessor, HandlerState handlerState) {
+        super(props, handlerState);
         this.hardware = new HardwareLogic(sessionsHolder, storageDao);
         this.bridge = new BridgeLogic(sessionsHolder);
 
@@ -39,25 +39,25 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<Message> {
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, Message msg) {
+    protected void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message msg) {
         switch (msg.command) {
             case HARDWARE:
-                hardware.messageReceived(ctx, user, msg);
+                hardware.messageReceived(ctx, state, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
-            case EMAIL :
-                email.messageReceived(ctx, user, msg);
-                break;
             case BRIDGE :
-                bridge.messageReceived(ctx, user, msg);
+                bridge.messageReceived(ctx, state, msg);
+                break;
+            case EMAIL :
+                email.messageReceived(ctx, state.user, msg);
                 break;
             case PUSH_NOTIFICATION :
-                push.messageReceived(ctx, user,msg);
+                push.messageReceived(ctx, state.user,msg);
                 break;
             case TWEET :
-                tweet.messageReceived(ctx, user, msg);
+                tweet.messageReceived(ctx, state.user, msg);
                 break;
         }
     }

@@ -7,9 +7,8 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NoActiveDashboardException;
-import cc.blynk.server.model.auth.ChannelState;
+import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.Session;
-import cc.blynk.server.model.auth.User;
 import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -37,8 +36,8 @@ public class HardwareLogic {
         return dashId + StringUtils.BODY_SEPARATOR_STRING + body;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
-        Session session = sessionsHolder.userSession.get(user);
+    public void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message message) {
+        Session session = sessionsHolder.userSession.get(state.user);
 
         //if message from hardware, check if it belongs to graph. so we need save it in that case
         if (message.body.length() < 4) {
@@ -62,7 +61,7 @@ public class HardwareLogic {
             }
         }
 
-        if (user.getProfile().activeDashId == null || !user.getProfile().activeDashId.equals(ctx.channel().attr(ChannelState.DASH_ID).get())) {
+        if (state.user.getProfile().activeDashId == null || !state.user.getProfile().activeDashId.equals(state.dashId)) {
             throw new NoActiveDashboardException(message.id);
         }
 

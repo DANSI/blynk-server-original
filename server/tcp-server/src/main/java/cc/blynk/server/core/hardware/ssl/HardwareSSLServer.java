@@ -8,8 +8,8 @@ import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.HardwareChannelStateHandler;
-import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
@@ -38,8 +38,7 @@ public class HardwareSSLServer extends BaseServer {
     public HardwareSSLServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
                              GlobalStats stats, NotificationsProcessor notificationsProcessor, TransportTypeHolder transportType, StorageDao storageDao) {
         super(props.getIntProperty("hardware.ssl.port"), transportType);
-
-        HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(userRegistry, sessionsHolder);
+        HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(props, userRegistry, sessionsHolder, storageDao, notificationsProcessor);
         HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(sessionsHolder, notificationsProcessor);
 
         int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 0);
@@ -50,7 +49,7 @@ public class HardwareSSLServer extends BaseServer {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline pipeline = ch.pipeline();
-                //non-sharable handlers
+
                 if (hardTimeoutSecs > 0) {
                     pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
                 }
@@ -60,9 +59,8 @@ public class HardwareSSLServer extends BaseServer {
                 pipeline.addLast(new MessageDecoder(stats));
                 pipeline.addLast(new MessageEncoder());
 
-                //sharable business logic handlers
                 pipeline.addLast(hardwareLoginHandler);
-                pipeline.addLast(new HardwareHandler(props, sessionsHolder, storageDao, notificationsProcessor));
+                pipeline.addLast(new UserNotLoggerHandler());
             }
         };
 

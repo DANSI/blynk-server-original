@@ -8,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Set;
 
+import static cc.blynk.server.utils.HandlerUtil.getState;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -25,8 +27,8 @@ public class Session {
 
     public void sendMessageToHardware(Integer activeDashId, MessageBase message) {
         for (Channel channel : hardwareChannels) {
-            Integer dashId = channel.attr(ChannelState.DASH_ID).get();
-            if (dashId.equals(activeDashId)) {
+            Integer dashId = getState(channel).dashId;
+            if (activeDashId.equals(dashId)) {
                 log.trace("Sending {} to {}", message, channel);
                 channel.writeAndFlush(message);
             }

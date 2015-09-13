@@ -1,6 +1,5 @@
 package cc.blynk.server.dao;
 
-import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.Channel;
@@ -9,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static cc.blynk.server.utils.HandlerUtil.getState;
 
 /**
  * Holds session info related to specific user.
@@ -34,7 +35,7 @@ public class SessionsHolder {
     }
 
     public void removeAppFromSession(Channel channel) {
-        User user = channel.attr(ChannelState.USER).get();
+        User user = getState(channel).user;
         if (user != null) {
             Session session = userSession.get(user);
             if (session != null) {
@@ -44,7 +45,7 @@ public class SessionsHolder {
     }
 
     public void removeHardFromSession(Channel channel) {
-        User user = channel.attr(ChannelState.USER).get();
+        User user = getState(channel).user;
         if (user != null) {
             Session session = userSession.get(user);
             if (session != null) {

@@ -5,7 +5,6 @@ import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Notification;
 import cc.blynk.server.notifications.AndroidGCMMessage;
@@ -25,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.server.utils.HandlerUtil.getState;
 
 /**
  * The Blynk Project.
@@ -124,12 +124,10 @@ public class NotificationsProcessor {
     }
 
     private void log(Channel channel, String errorMessage, int msgId) {
-        User user = channel.attr(ChannelState.USER).get();
-        if (user != null) {
-            ThreadContext.put("user", user.getName());
-            log.error("Error sending notification. {}", errorMessage);
-            ThreadContext.clearMap();
-        }
+        User user = getState(channel).user;
+
+        log(user, errorMessage);
+
         channel.eventLoop().execute(() -> {
             channel.writeAndFlush(new ResponseMessage(msgId, Command.RESPONSE, Response.NOTIFICATION_EXCEPTION));
         });

@@ -7,7 +7,7 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.app.logic.*;
 import cc.blynk.server.handlers.common.PingLogic;
-import cc.blynk.server.model.auth.User;
+import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -31,8 +31,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
     private final GetShareTokenLogic getShareTokenLogic;
     private final RefreshShareTokenLogic refreshShareTokenLogic;
 
-    public AppHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao) {
-        super(props);
+    public AppHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao, HandlerState state) {
+        super(props, state);
         this.saveProfile = new SaveProfileLogic(props);
         this.token = new GetTokenLogic(userRegistry);
         this.hardwareApp = new HardwareAppLogic(sessionsHolder);
@@ -43,31 +43,31 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, Message msg) {
+    protected void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message msg) {
         switch (msg.command) {
             case HARDWARE:
-                hardwareApp.messageReceived(ctx, user, msg);
+                hardwareApp.messageReceived(ctx, state.user, msg);
                 break;
             case SAVE_PROFILE :
-                saveProfile.messageReceived(ctx, user, msg);
+                saveProfile.messageReceived(ctx, state.user, msg);
                 break;
             case ACTIVATE_DASHBOARD :
-                ActivateDashboardLogic.messageReceived(ctx, user, msg);
+                ActivateDashboardLogic.messageReceived(ctx, state.user, msg);
                 break;
             case DEACTIVATE_DASHBOARD :
-                DeActivateDashboardLogic.messageReceived(ctx, user, msg);
+                DeActivateDashboardLogic.messageReceived(ctx, state.user, msg);
                 break;
             case LOAD_PROFILE :
-                LoadProfileLogic.messageReceived(ctx, user, msg);
+                LoadProfileLogic.messageReceived(ctx, state.user, msg);
                 break;
             case GET_TOKEN :
-                token.messageReceived(ctx, user, msg);
+                token.messageReceived(ctx, state.user, msg);
                 break;
             case REFRESH_TOKEN :
-                refreshToken.messageReceived(ctx, user, msg);
+                refreshToken.messageReceived(ctx, state.user, msg);
                 break;
             case GET_GRAPH_DATA :
-                graphData.messageReceived(ctx, user, msg);
+                graphData.messageReceived(ctx, state.user, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);
