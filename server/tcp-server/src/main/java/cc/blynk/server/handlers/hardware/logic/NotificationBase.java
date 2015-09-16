@@ -10,7 +10,7 @@ import cc.blynk.server.exceptions.QuotaLimitException;
 public abstract class NotificationBase {
 
     private final long NOTIFICATION_QUOTA_LIMIT;
-    volatile long lastSentTs;
+    long lastSentTs;
 
     NotificationBase(long defaultNotificationQuotaLimit) {
         this.NOTIFICATION_QUOTA_LIMIT = defaultNotificationQuotaLimit;

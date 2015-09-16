@@ -59,9 +59,6 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
                 messageReceived(ctx, handlerState, imsg);
                 ThreadContext.clearMap();
             } catch (BaseServerException cause) {
-                if (user != null) {
-                    user.incrException();
-                }
                 handleAppException(ctx, cause);
             } catch (Exception e) {
                 handleUnexpectedException(ctx, e);

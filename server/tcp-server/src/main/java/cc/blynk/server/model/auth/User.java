@@ -53,10 +53,6 @@ public class User implements Serializable {
         quotaMeter.mark();
     }
 
-    public void incrException() {
-        quotaMeter.mark();
-    }
-
     public String getName() {
         return name;
     }
