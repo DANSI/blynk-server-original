@@ -84,7 +84,7 @@ public class Profile {
 
     public DashBoard getActiveDashBoard() {
         for (DashBoard dashBoard : dashBoards) {
-            if (dashBoard.getId() == activeDashId) {
+            if (activeDashId.equals(dashBoard.getId())) {
                 return dashBoard;
             }
         }

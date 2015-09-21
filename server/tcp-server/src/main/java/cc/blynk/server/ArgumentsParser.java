@@ -19,23 +19,27 @@ class ArgumentsParser {
 
     private final Options options;
 
+    private final String HARDWARE_PORT_OPTION = "hardPort";
+    private final String APPLICATION_PORT_OPTION = "appPort";
+    private final String WORKER_THREADS_OPTION = "workerThreads";
+    private final String DATA_FOLDER_OPTION = "workerThreads";
+
     ArgumentsParser() {
         options = new Options();
-        options.addOption("hardPort", true, "Hardware server port.")
-               .addOption("appPort", true, "Application server port.")
-               .addOption("workerThreads", true, "Server worker threads.")
-               .addOption("disableAppSsl", false, "Disables SSL for app mode.")
-               .addOption("dataFolder", true, "Folder where user profiles will be stored.");
+        options.addOption(HARDWARE_PORT_OPTION, true, "Hardware server port.")
+               .addOption(APPLICATION_PORT_OPTION, true, "Application server port.")
+               .addOption(WORKER_THREADS_OPTION, true, "Server worker threads.")
+               .addOption(DATA_FOLDER_OPTION, true, "Folder where user profiles will be stored.");
     }
 
 
     void processArguments(String[] args, Properties serverProperties) throws ParseException {
         CommandLine cmd = new BasicParser().parse(options, args);
 
-        String hardPort = cmd.getOptionValue("hardPort");
-        String appPort = cmd.getOptionValue("appPort");
-        String workerThreadsString = cmd.getOptionValue("workerThreads");
-        String dataFolder = cmd.getOptionValue("dataFolder");
+        String hardPort = cmd.getOptionValue(HARDWARE_PORT_OPTION);
+        String appPort = cmd.getOptionValue(APPLICATION_PORT_OPTION);
+        String workerThreadsString = cmd.getOptionValue(WORKER_THREADS_OPTION);
+        String dataFolder = cmd.getOptionValue(DATA_FOLDER_OPTION);
 
         if (hardPort != null) {
             ParseUtil.parseInt(hardPort);
