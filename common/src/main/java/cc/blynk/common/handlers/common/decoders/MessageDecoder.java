@@ -40,27 +40,25 @@ public class MessageDecoder extends ByteToMessageDecoder implements DefaultExcep
 
         in.markReaderIndex();
 
-        short command = in.readUnsignedByte();
-        int messageId = in.readUnsignedShort();
+        final short command = in.readUnsignedByte();
+        final int messageId = in.readUnsignedShort();
+        final int codeOrLength = in.readUnsignedShort();
 
         MessageBase message;
         if (command == Command.RESPONSE) {
-            int responseCode = in.readUnsignedShort();
-            message = produce(messageId, responseCode);
+            message = produce(messageId, codeOrLength);
         } else {
-            int length = in.readUnsignedShort();
-
-            if (in.readableBytes() < length) {
+            if (in.readableBytes() < codeOrLength) {
                 in.resetReaderIndex();
                 return;
             }
 
-            message = produce(messageId, command, in.readSlice(length).toString(Config.DEFAULT_CHARSET));
+            message = produce(messageId, command, in.readSlice(codeOrLength).toString(Config.DEFAULT_CHARSET));
         }
 
         log.trace("Incoming {}", message);
 
-        stats.mark(message.getClass());
+        stats.mark(command);
 
         out.add(message);
     }

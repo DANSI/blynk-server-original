@@ -1,7 +1,15 @@
 package cc.blynk.common.enums;
 
-import cc.blynk.common.utils.ReflectionUtil;
+import cc.blynk.common.model.messages.ResponseMessage;
+import cc.blynk.common.model.messages.protocol.BridgeMessage;
+import cc.blynk.common.model.messages.protocol.HardwareMessage;
+import cc.blynk.common.model.messages.protocol.PingMessage;
+import cc.blynk.common.model.messages.protocol.appllication.*;
+import cc.blynk.common.model.messages.protocol.hardware.MailMessage;
+import cc.blynk.common.model.messages.protocol.hardware.PushMessage;
+import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -36,7 +44,27 @@ public final class Command {
     //------------------------------------------
 
     //all this code just to make logging more user-friendly
-    private static final Map<Short, String> valuesName = ReflectionUtil.generateMapOfValueNameShort(Command.class);
+    public static final Map<Short, String> valuesName = new HashMap<Short, String>() {
+            {
+                put(RESPONSE, ResponseMessage.class.getSimpleName());
+                put(REGISTER, RegisterMessage.class.getSimpleName());
+                put(LOGIN, LoginMessage.class.getSimpleName());
+                put(SAVE_PROFILE, SaveProfileMessage.class.getSimpleName());
+                put(LOAD_PROFILE, LoadProfileMessage.class.getSimpleName());
+                put(GET_TOKEN, GetTokenMessage.class.getSimpleName());
+                put(PING, PingMessage.class.getSimpleName());
+                put(ACTIVATE_DASHBOARD, ActivateDashboardMessage.class.getSimpleName());
+                put(DEACTIVATE_DASHBOARD, DeActivateDashboardMessage.class.getSimpleName());
+                put(REFRESH_TOKEN, RefreshTokenMessage.class.getSimpleName());
+                put(GET_GRAPH_DATA, GetGraphDataMessage.class.getSimpleName());
+                put(GET_GRAPH_DATA_RESPONSE, GetGraphDataResponseMessage.class.getSimpleName());
+                put(TWEET, TweetMessage.class.getSimpleName());
+                put(EMAIL, MailMessage.class.getSimpleName());
+                put(PUSH_NOTIFICATION, PushMessage.class.getSimpleName());
+                put(BRIDGE, BridgeMessage.class.getSimpleName());
+                put(HARDWARE, HardwareMessage.class.getSimpleName());
+            }
+    };
 
     public static String getNameByValue(short val) {
         return valuesName.get(val);
