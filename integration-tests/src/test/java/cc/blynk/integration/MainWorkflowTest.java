@@ -1,6 +1,7 @@
 package cc.blynk.integration;
 
 import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
@@ -440,34 +441,6 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    @Ignore
-    public void testTryReachQuotaLimit() throws Exception {
-        String body = "ar 100 100";
-
-        //within 1 second sending more messages than default limit 100.
-        for (int i = 0; i < 1000 / 9; i++) {
-            clientPair.appClient.send("hardware " + body, 1);
-            sleep(9);
-        }
-
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, QUOTA_LIMIT_EXCEPTION)));
-        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
-
-        clientPair.appClient.reset();
-        clientPair.hardwareClient.reset();
-
-        //check no more accepted
-        for (int i = 0; i < 10; i++) {
-            clientPair.appClient.send("hardware " + body, 1);
-            sleep(9);
-        }
-
-        verify(clientPair.appClient.responseMock, times(0)).channelRead(any(), eq(produce(1, QUOTA_LIMIT_EXCEPTION)));
-        verify(clientPair.hardwareClient.responseMock, times(0)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
-    }
-
-
-    @Test
     public void test2ClientPairsWorkCorrectly() throws Exception {
         final int ITERATIONS = 100;
         ClientPair clientPair2 = initAppAndHardPair("localhost", appPort, hardPort, "dima2@mail.ua 1", null, properties);
@@ -488,6 +461,39 @@ public class MainWorkflowTest extends IntegrationBase {
         }
     }
 
+    @Test
+    public void testTryReachQuotaLimit() throws Exception {
+        String body = "aw 100 100";
+
+        //within 1 second sending more messages than default limit 100.
+        for (int i = 0; i < 1000 / 9; i++) {
+            clientPair.hardwareClient.send("hardware " + body);
+            sleep(9);
+        }
+
+        ArgumentCaptor<ResponseMessage> objectArgumentCaptor = ArgumentCaptor.forClass(ResponseMessage.class);
+        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        List<ResponseMessage> arguments = objectArgumentCaptor.getAllValues();
+        ResponseMessage responseMessage = arguments.get(0);
+        assertEquals(responseMessage, produce(109, QUOTA_LIMIT_EXCEPTION));
+
+        //at least 100 iterations should be
+        for (int i = 0; i < 100; i++) {
+            verify(clientPair.appClient.responseMock).channelRead(any(), eq(produce(i+1, HARDWARE, body.replaceAll(" ", "\0"))));
+        }
+
+        clientPair.appClient.reset();
+        clientPair.hardwareClient.reset();
+
+        //check no more accepted
+        for (int i = 0; i < 10; i++) {
+            clientPair.hardwareClient.send("hardware " + body);
+            sleep(9);
+        }
+
+        verify(clientPair.hardwareClient.responseMock, times(0)).channelRead(any(), eq(produce(1, QUOTA_LIMIT_EXCEPTION)));
+        verify(clientPair.appClient.responseMock, times(0)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
+    }
 
     @Test
     @Ignore("hard to test this case...")

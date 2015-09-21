@@ -13,9 +13,6 @@ import io.netty.util.ReferenceCountUtil;
 import io.netty.util.internal.TypeParameterMatcher;
 import org.apache.logging.log4j.ThreadContext;
 
-import static cc.blynk.common.enums.Response.QUOTA_LIMIT_EXCEPTION;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -24,14 +21,10 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
     private final TypeParameterMatcher matcher;
-    private final int USER_QUOTA_LIMIT;
-    private final int USER_QUOTA_LIMIT_WARN_PERIOD;
     private final HandlerState handlerState;
 
     protected BaseSimpleChannelInboundHandler(ServerProperties props, HandlerState handlerState) {
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
-        this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit");
-        this.USER_QUOTA_LIMIT_WARN_PERIOD = props.getIntProperty("user.message.quota.limit.exceeded.warning.period");
         this.handlerState = handlerState;
     }
 
@@ -43,12 +36,6 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
             I typedMsg = (I) msg;
 
             try {
-                if (user.getQuotaMeter().getOneMinuteRate() > USER_QUOTA_LIMIT) {
-                    sendErrorResponseIfTicked(ctx, user, typedMsg.id);
-                    return;
-                }
-                user.incrStat();
-
                 ThreadContext.put("user", user.getName());
                 messageReceived(ctx, handlerState, typedMsg);
                 ThreadContext.clearMap();
@@ -61,16 +48,6 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
             }
         } else {
             ctx.fireChannelRead(msg);
-        }
-    }
-
-    private void sendErrorResponseIfTicked(ChannelHandlerContext ctx, User user, int msgId) {
-        long now = System.currentTimeMillis();
-        //once a minute sending user response message in case limit is exceeded constantly
-        if (user.getLastQuotaExceededTime() + USER_QUOTA_LIMIT_WARN_PERIOD < now) {
-            user.setLastQuotaExceededTime(now);
-            log.warn("User '{}' had exceeded {} rec/sec limit. Ip : {}", user.getName(), USER_QUOTA_LIMIT, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(produce(msgId, QUOTA_LIMIT_EXCEPTION));
         }
     }
 
