@@ -89,4 +89,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<Message> {
         }
     }
 
+    public InstanceLoadMeter getQuotaMeter() {
+        return quotaMeter;
+    }
 }
