@@ -40,23 +40,17 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (matcher.match(msg)) {
             User user = handlerState.user;
-            try {
-                I imsg = (I) msg;
+            I typedMsg = (I) msg;
 
+            try {
                 if (user.getQuotaMeter().getOneMinuteRate() > USER_QUOTA_LIMIT) {
-                    long now = System.currentTimeMillis();
-                    //once a minute sending user response message in case limit is exceeded constantly
-                    if (user.getLastQuotaExceededTime() + USER_QUOTA_LIMIT_WARN_PERIOD < now) {
-                        user.setLastQuotaExceededTime(now);
-                        log.warn("User '{}' had exceeded {} rec/sec limit. Ip : {}", user.getName(), USER_QUOTA_LIMIT, ctx.channel().remoteAddress());
-                        ctx.writeAndFlush(produce(imsg.id, QUOTA_LIMIT_EXCEPTION));
-                    }
+                    sendErrorResponseIfTicked(ctx, user, typedMsg.id);
                     return;
                 }
                 user.incrStat();
 
                 ThreadContext.put("user", user.getName());
-                messageReceived(ctx, handlerState, imsg);
+                messageReceived(ctx, handlerState, typedMsg);
                 ThreadContext.clearMap();
             } catch (BaseServerException cause) {
                 handleAppException(ctx, cause);
@@ -67,6 +61,16 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
             }
         } else {
             ctx.fireChannelRead(msg);
+        }
+    }
+
+    private void sendErrorResponseIfTicked(ChannelHandlerContext ctx, User user, int msgId) {
+        long now = System.currentTimeMillis();
+        //once a minute sending user response message in case limit is exceeded constantly
+        if (user.getLastQuotaExceededTime() + USER_QUOTA_LIMIT_WARN_PERIOD < now) {
+            user.setLastQuotaExceededTime(now);
+            log.warn("User '{}' had exceeded {} rec/sec limit. Ip : {}", user.getName(), USER_QUOTA_LIMIT, ctx.channel().remoteAddress());
+            ctx.writeAndFlush(produce(msgId, QUOTA_LIMIT_EXCEPTION));
         }
     }
 
