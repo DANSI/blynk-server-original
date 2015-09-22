@@ -33,8 +33,8 @@ public class ManualResetPassword implements Executable {
             if (user == null) {
                 log.error("User '{}' not exists.", userName);
             } else {
-                user.setPass(SHA256Util.makeHash(newPass, userName));
-                user.setLastModifiedTs(System.currentTimeMillis());
+                user.pass = SHA256Util.makeHash(newPass, userName);
+                user.lastModifiedTs = System.currentTimeMillis();
                 log.info("Password updated");
                 result.add("Password updated.\n");
             }

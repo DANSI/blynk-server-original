@@ -32,8 +32,8 @@ public class ResetPassword implements Executable {
             if (user == null) {
                 log.error("User '{}' not exists.", userName);
             } else {
-                user.setPass(newPass);
-                user.setLastModifiedTs(System.currentTimeMillis());
+                user.pass = newPass;
+                user.lastModifiedTs = System.currentTimeMillis();
                 log.info("Password updated");
                 result.add("Password updated.\n");
             }

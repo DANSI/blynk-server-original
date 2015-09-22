@@ -31,7 +31,7 @@ public class ActiveUsers implements Executable {
         }
         long now = System.currentTimeMillis();
         for (User user : userRegistry.getUsers().values()) {
-            long diff = now - user.getLastModifiedTs();
+            long diff = now - user.lastModifiedTs;
             if (diff < periodDays * 24 * 60 * 60 * 1000) {
                 active++;
             }
