@@ -11,6 +11,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
+ * Handler sends push notifications to Applications. Initiation is on hardware side.
+ * Sends both to iOS and Android via Google Cloud Messaging service.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
