@@ -17,8 +17,10 @@ import java.util.Map;
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
     public final Map<Integer, String> dashShareTokens = new HashMap<>();
     public final Map<Integer, String> dashTokens = new HashMap<>();
+
 	public String name;
 
     public volatile String pass;
@@ -27,8 +29,6 @@ public class User implements Serializable {
     public volatile long lastModifiedTs;
 
     public volatile Profile profile;
-
-    public Map<Integer, String> dashTokens = new HashMap<>();
 
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
