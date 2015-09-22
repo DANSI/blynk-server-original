@@ -40,14 +40,12 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
     private final UserRegistry userRegistry;
     private final SessionsHolder sessionsHolder;
     private final StorageDao storageDao;
-    private final HandlerState handlerState;
 
-    public AppShareLoginHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao, HandlerState handlerState) {
+    public AppShareLoginHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao) {
         this.props = props;
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
         this.storageDao = storageDao;
-        this.handlerState = handlerState;
     }
 
     @Override
