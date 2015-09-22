@@ -36,7 +36,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
             I typedMsg = (I) msg;
 
             try {
-                ThreadContext.put("user", user.getName());
+                ThreadContext.put("user", user.name);
                 messageReceived(ctx, handlerState, typedMsg);
                 ThreadContext.clearMap();
             } catch (BaseServerException cause) {

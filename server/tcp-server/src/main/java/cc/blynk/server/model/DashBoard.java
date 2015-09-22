@@ -15,17 +15,17 @@ import java.util.List;
  */
 public class DashBoard {
 
-    private int id;
+    public int id;
 
-    private String name;
+    public String name;
 
-    private Long timestamp;
+    public Long timestamp;
 
-    private Widget[] widgets;
+    public Widget[] widgets;
 
-    private String boardType;
+    public String boardType;
 
-    private boolean keepScreenOn;
+    public boolean keepScreenOn;
 
     public List<Timer> getTimerWidgets() {
         if (widgets == null || widgets.length == 0) {
@@ -58,54 +58,6 @@ public class DashBoard {
         }
 
         return null;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Widget[] getWidgets() {
-        return widgets;
-    }
-
-    public void setWidgets(Widget[] widgets) {
-        this.widgets = widgets;
-    }
-
-    public String getBoardType() {
-        return boardType;
-    }
-
-    public void setBoardType(String boardType) {
-        this.boardType = boardType;
-    }
-
-    public Long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public boolean isKeepScreenOn() {
-        return keepScreenOn;
-    }
-
-    public void setKeepScreenOn(boolean keepScreenOn) {
-        this.keepScreenOn = keepScreenOn;
     }
 
     @Override

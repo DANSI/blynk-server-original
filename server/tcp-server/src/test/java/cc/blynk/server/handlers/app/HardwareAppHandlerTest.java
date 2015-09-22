@@ -72,7 +72,7 @@ public class HardwareAppHandlerTest extends TestBase {
     public void testActiveDashboardIdNull() {
         HardwareMessage message = new HardwareMessage(1, "test");
         when(ctx.channel()).thenReturn(channel);
-        when(user.getProfile()).thenReturn(profile);
+        user.profile = profile;
         profile.activeDashId = null;
         SessionsHolder sessionsHolder = spy(new SessionsHolder());
         HardwareAppLogic hardwareHandler = spy(new HardwareAppLogic(sessionsHolder));

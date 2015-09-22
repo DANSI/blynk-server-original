@@ -74,7 +74,7 @@ public class FileManager {
     }
 
     public void overrideUserFile(User user) throws IOException {
-        Path file = generateFileName(user.getName());
+        Path file = generateFileName(user.name);
         try (BufferedWriter writer = Files.newBufferedWriter(file, Config.DEFAULT_CHARSET)) {
             String userString = user.toString();
 

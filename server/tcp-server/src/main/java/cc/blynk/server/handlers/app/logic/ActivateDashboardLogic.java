@@ -30,9 +30,9 @@ public class ActivateDashboardLogic {
             throw new IllegalCommandException(String.format("Dash board id '%s' not valid.", dashBoardIdString), message.id);
         }
 
-        log.debug("Activating dash {} for user {}", dashBoardIdString, user.getName());
-        user.getProfile().validateDashId(dashBoardId, message.id);
-        user.getProfile().activeDashId = dashBoardId;
+        log.debug("Activating dash {} for user {}", dashBoardIdString, user.name);
+        user.profile.validateDashId(dashBoardId, message.id);
+        user.profile.activeDashId = dashBoardId;
 
         ctx.writeAndFlush(produce(message.id, OK));
     }

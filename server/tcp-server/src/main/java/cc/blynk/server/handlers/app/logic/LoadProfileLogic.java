@@ -15,7 +15,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 public class LoadProfileLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
-        String body = user.getProfile().toString();
+        String body = user.profile.toString();
         ctx.writeAndFlush(produce(message.id, message.command, body));
     }
 

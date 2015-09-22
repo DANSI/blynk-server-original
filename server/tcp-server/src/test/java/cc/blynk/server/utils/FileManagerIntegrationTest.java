@@ -29,16 +29,16 @@ public class FileManagerIntegrationTest extends TestBase {
     @Before
     public void cleanup() throws IOException {
         Path file;
-        file = fileManager.generateFileName(user1.getName());
+        file = fileManager.generateFileName(user1.name);
         Files.deleteIfExists(file);
 
-        file = fileManager.generateFileName(user2.getName());
+        file = fileManager.generateFileName(user2.name);
         Files.deleteIfExists(file);
     }
 
     @Test
     public void testGenerateFileName() {
-        Path file = fileManager.generateFileName(user1.getName());
+        Path file = fileManager.generateFileName(user1.name);
         assertEquals("u_name1.user", file.getFileName().toString());
     }
 
@@ -56,8 +56,8 @@ public class FileManagerIntegrationTest extends TestBase {
 
         Map<String, User> users = fileManager.deserialize();
         assertNotNull(users);
-        assertNotNull(users.get(user1.getName()));
-        assertNotNull(users.get(user2.getName()));
+        assertNotNull(users.get(user1.name));
+        assertNotNull(users.get(user2.name));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class FileManagerIntegrationTest extends TestBase {
 
         Map<String, User> users = fileManager.deserialize();
         assertNotNull(users);
-        assertNotNull(users.get(user1.getName()));
+        assertNotNull(users.get(user1.name));
     }
 
 }

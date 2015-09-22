@@ -37,12 +37,12 @@ public class UserRegistry {
     }
 
     public static Integer getDashIdByToken(User user, String token, int msgId) {
-        for (Map.Entry<Integer, String> dashToken : user.getDashTokens().entrySet()) {
+        for (Map.Entry<Integer, String> dashToken : user.dashTokens.entrySet()) {
             if (dashToken.getValue().equals(token)) {
                 return dashToken.getKey();
             }
         }
-        throw new InvalidTokenException(String.format("Error getting dashId for %s.", user.getName()), msgId);
+        throw new InvalidTokenException(String.format("Error getting dashId for %s.", user.name), msgId);
     }
 
     private static String generateNewToken() {
@@ -66,15 +66,15 @@ public class UserRegistry {
     }
 
     public String getToken(User user, Integer dashboardId) {
-        Map<Integer, String> dashTokens = user.getDashTokens();
+        Map<Integer, String> dashTokens = user.dashTokens;
         String token = dashTokens.get(dashboardId);
 
         //if token not exists. generate new one
         if (token == null) {
-            log.info("Token for user {} and dashId {} not generated yet.", user.getName(), dashboardId);
+            log.info("Token for user {} and dashId {} not generated yet.", user.name, dashboardId);
             token = refreshToken(user, dashboardId);
         } else {
-            log.info("Token for user {} and dashId {} generated already. Token {}", user.getName(), dashboardId, token);
+            log.info("Token for user {} and dashId {} generated already. Token {}", user.name, dashboardId, token);
         }
 
         return token;
@@ -82,7 +82,7 @@ public class UserRegistry {
 
     public String refreshToken(User user, Integer dashboardId) {
         // Clean old token from cache if exists.
-        String oldToken = user.getDashTokens().get(dashboardId);
+        String oldToken = user.dashTokens.get(dashboardId);
         if (oldToken != null) tokenToUserCache.remove(oldToken);
 
         //Create new token
@@ -90,7 +90,7 @@ public class UserRegistry {
         user.putToken(dashboardId, newToken);
         tokenToUserCache.put(newToken, user);
 
-        log.info("Generated newToken for user {} and dashId {} is {}.", user.getName(), dashboardId, newToken);
+        log.info("Generated newToken for user {} and dashId {} is {}.", user.name, dashboardId, newToken);
         return newToken;
     }
 
@@ -102,7 +102,7 @@ public class UserRegistry {
     private ConcurrentMap<String, User> createTokenToUserCache(final Map<String, User> users) {
         return new ConcurrentHashMap<String, User>() {{
             for (User user : users.values()) {
-                for (String userToken : user.getDashTokens().values()) {
+                for (String userToken : user.dashTokens.values()) {
                     put(userToken, user);
                 }
             }

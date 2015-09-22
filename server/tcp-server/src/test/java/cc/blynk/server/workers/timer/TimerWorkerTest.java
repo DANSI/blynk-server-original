@@ -79,8 +79,8 @@ public class TimerWorkerTest {
 
         when(userRegistry.getUsers()).thenReturn(users);
         when(sessionsHolder.getUserSession()).thenReturn(userSession);
-        when(user.getProfile()).thenReturn(profile);
-        when(profile.getDashBoards()).thenReturn(new DashBoard[] {});
+        user.profile = profile;
+        profile.dashBoards = new DashBoard[] {};
         when(profile.getActiveDashboardTimerWidgets()).thenReturn(timers);
 
         timerWorker.run();

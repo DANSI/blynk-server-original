@@ -53,7 +53,7 @@ public class GetGraphDataLogic {
 
         //special case for delete command
         if (messageParts.length == 4) {
-            if (deleteGraphData(messageParts, user.getName(), message.id)) {
+            if (deleteGraphData(messageParts, user.name, message.id)) {
                 ctx.writeAndFlush(produce(message.id, OK));
             }
         } else {
@@ -76,13 +76,13 @@ public class GetGraphDataLogic {
 
         for (int i = 0; i < numberOfPins; i++) {
             requestedPins[i] = new GraphPinRequestData(messageParts, i, msgId);
-            user.getProfile().validateDashId(requestedPins[i].dashBoardId, msgId);
+            user.profile.validateDashId(requestedPins[i].dashBoardId, msgId);
         }
 
         byte[][] values = new byte[numberOfPins][];
 
         for (int i = 0; i < numberOfPins; i++) {
-            values[i] = storageDao.getAllFromDisk(user.getName(),
+            values[i] = storageDao.getAllFromDisk(user.name,
                     requestedPins[i].dashBoardId, requestedPins[i].pinType,
                     requestedPins[i].pin, requestedPins[i].count, requestedPins[i].type);
         }

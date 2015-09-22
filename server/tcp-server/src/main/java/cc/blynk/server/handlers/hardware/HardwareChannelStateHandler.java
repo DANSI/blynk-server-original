@@ -56,15 +56,15 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     private void sentOfflineMessage(Channel channel) {
         User user = getState(channel).user;
         if (user != null) {
-            Notification notification = user.getProfile().getActiveDashboardWidgetByType(Notification.class);
+            Notification notification = user.profile.getActiveDashboardWidgetByType(Notification.class);
             if (notification == null || !notification.notifyWhenOffline) {
                 Session session = sessionsHolder.userSession.get(user);
                 if (session.appChannels.size() > 0) {
                     session.sendMessageToApp(produce(0, DEVICE_WENT_OFFLINE));
                 }
             } else {
-                String boardType = user.getProfile().getActiveDashBoard().getBoardType();
-                String dashName = user.getProfile().getActiveDashBoard().getName();
+                String boardType = user.profile.getActiveDashBoard().boardType;
+                String dashName = user.profile.getActiveDashBoard().name;
                 dashName = dashName == null ? "" : dashName;
                 notificationsProcessor.push(user, notification,
                         String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName));

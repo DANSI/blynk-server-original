@@ -38,10 +38,10 @@ public class HardwareLogic {
 
         StoreMessage storeMessage = null;
         if (message.body.charAt(1) == 'w') {
-            storeMessage = storageDao.process(state.user.getProfile(), state.dashId, message.body);
+            storeMessage = storageDao.process(state.user.profile, state.dashId, message.body);
         }
 
-        if (state.user.getProfile().activeDashId == null || !state.user.getProfile().activeDashId.equals(state.dashId)) {
+        if (state.user.profile.activeDashId == null || !state.user.profile.activeDashId.equals(state.dashId)) {
             throw new NoActiveDashboardException(message.id);
         }
 

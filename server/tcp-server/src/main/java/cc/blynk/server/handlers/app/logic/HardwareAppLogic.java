@@ -32,7 +32,7 @@ public class HardwareAppLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
         Session session = sessionsHolder.userSession.get(user);
 
-        if (user.getProfile().activeDashId == null) {
+        if (user.profile.activeDashId == null) {
             //throw new NoActiveDashboardException(message.id);
             return;
         }
@@ -41,7 +41,7 @@ public class HardwareAppLogic {
             log.trace("Pin Mode message catch. Remembering.");
             //check PM command not empty
             if (message.body.length() > 3) {
-                user.getProfile().pinModeMessage = message;
+                user.profile.pinModeMessage = message;
             }
         }
 
@@ -49,7 +49,7 @@ public class HardwareAppLogic {
             throw new DeviceNotInNetworkException(message.id);
         }
 
-        session.sendMessageToHardware(user.getProfile().activeDashId, message);
+        session.sendMessageToHardware(user.profile.activeDashId, message);
     }
 
 }

@@ -33,7 +33,7 @@ public class PushLogic extends NotificationBase {
             throw new NotificationBodyInvalidException(message.id);
         }
 
-        Notification widget = user.getProfile().getActiveDashboardWidgetByType(Notification.class);
+        Notification widget = user.profile.getActiveDashboardWidgetByType(Notification.class);
 
         if (widget == null ||
                 ((widget.token == null || widget.token.equals("")) &&
@@ -43,7 +43,7 @@ public class PushLogic extends NotificationBase {
 
         checkIfNotificationQuotaLimitIsNotReached(message.id);
 
-        log.trace("Sending push for user {}, with message : '{}'.", user.getName(), message.body);
+        log.trace("Sending push for user {}, with message : '{}'.", user.name, message.body);
         notificationsProcessor.push(ctx.channel(), widget, message.body, message.id);
     }
 
