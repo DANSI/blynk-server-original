@@ -73,7 +73,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
             return;
         }
 
-        Integer dashId = UserRegistry.getDashIdByToken(user.getDashShareTokens(), token, messageId);
+        Integer dashId = UserRegistry.getDashIdByToken(user.dashShareTokens, token, messageId);
 
         cleanPipeline(ctx.pipeline());
         ctx.pipeline().addLast(new AppShareHandler(props, userRegistry, sessionsHolder, storageDao, new HandlerState(dashId, user, token)));

@@ -17,20 +17,14 @@ import java.util.Map;
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
+    public final Map<Integer, String> dashShareTokens = new HashMap<>();
+    public final Map<Integer, String> dashTokens = new HashMap<>();
 	public String name;
-
     public String pass;
-
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
     public long lastModifiedTs;
-
     //todo avoid volatile
-    private volatile Profile profile;
-    private Map<Integer, String> dashTokens = new HashMap<>();
-    private Map<Integer, String> dashShareTokens = new HashMap<>();
-
-    public Map<Integer, String> dashTokens = new HashMap<>();
+    public volatile Profile profile;
 
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
@@ -66,7 +60,7 @@ public class User implements Serializable {
     }
 
     private boolean exists(int dashId) {
-        if (profile.getDashBoards() != null) {
+        if (profile.dashBoards != null) {
             for (DashBoard dashBoard : profile.dashBoards) {
                 if (dashBoard.id == dashId) {
                     return true;

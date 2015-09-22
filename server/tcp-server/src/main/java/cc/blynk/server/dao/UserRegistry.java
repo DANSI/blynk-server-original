@@ -30,12 +30,6 @@ public class UserRegistry {
         tokenToUserCache = createTokenToUserCache(users);
     }
 
-    public UserRegistry(ConcurrentMap<String, User> users, ConcurrentMap<String, User> usersFromAnotherSource) {
-        this.users = users;
-        this.users.putAll(usersFromAnotherSource);
-        tokenToUserCache = createTokenToUserCache(users);
-    }
-
     public static Integer getDashIdByToken(Map<Integer, String> tokens, String token, int msgId) {
         for (Map.Entry<Integer, String> dashToken : tokens.entrySet()) {
             if (dashToken.getValue().equals(token)) {
@@ -104,7 +98,7 @@ public class UserRegistry {
                 for (String userToken : user.dashTokens.values()) {
                     put(userToken, user);
                 }
-                for (String shareToken : user.getDashShareTokens().values()) {
+                for (String shareToken : user.dashShareTokens.values()) {
                     put(shareToken, user);
                 }
             }

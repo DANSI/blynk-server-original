@@ -32,9 +32,9 @@ public class RefreshShareTokenLogic {
             throw new NotAllowedException(String.format("Dash board id '%s' not valid.", dashBoardIdString), message.id);
         }
 
-        user.getProfile().validateDashId(dashBoardId, message.id);
+        user.profile.validateDashId(dashBoardId, message.id);
 
-        String token = userRegistry.refreshToken(user, dashBoardId, user.getDashShareTokens());
+        String token = userRegistry.refreshToken(user, dashBoardId, user.dashShareTokens);
 
         ctx.writeAndFlush(produce(message.id, message.command, token));
     }

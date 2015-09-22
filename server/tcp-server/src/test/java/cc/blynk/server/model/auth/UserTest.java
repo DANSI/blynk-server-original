@@ -15,8 +15,8 @@ public class UserTest {
     @Test
     public void putTokenTest() {
         User user = new User();
-        user.putToken(1, "1");
-        assertEquals(1, user.getDashTokens().size());
+        user.putToken(1, "1", user.dashTokens);
+        assertEquals(1, user.dashTokens.size());
     }
 
     @Test
@@ -27,7 +27,7 @@ public class UserTest {
         DashBoard dashBoard = new DashBoard();
         dashBoard.id = 1;
         user.profile.dashBoards = new DashBoard[] {dashBoard};
-        user.putToken(1, "1");
+        user.putToken(1, "1", user.dashTokens);
 
         assertEquals(1, user.dashTokens.size());
         assertEquals("1", user.dashTokens.get(1));
