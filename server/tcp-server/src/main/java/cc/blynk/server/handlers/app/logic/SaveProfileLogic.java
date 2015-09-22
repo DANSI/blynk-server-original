@@ -47,7 +47,7 @@ public class SaveProfileLogic {
         log.debug("Trying to parse user profile : {}", userProfileString);
         Profile profile = JsonParser.parseProfile(userProfileString, message.id);
 
-        if (profile.getDashBoards() != null && profile.getDashBoards().length > DASH_MAX_LIMIT) {
+        if (profile.dashBoards != null && profile.dashBoards.length > DASH_MAX_LIMIT) {
             throw new NotAllowedException(
                     String.format("Not allowed to create more than %s dashboards.", DASH_MAX_LIMIT), message.id);
         }

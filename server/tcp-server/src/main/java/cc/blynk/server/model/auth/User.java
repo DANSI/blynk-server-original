@@ -18,15 +18,19 @@ public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private String name;
-    private String pass;
-    private String id;
+	public String name;
+
+    public String pass;
+
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
-    private long lastModifiedTs;
+    public long lastModifiedTs;
+
     //todo avoid volatile
     private volatile Profile profile;
     private Map<Integer, String> dashTokens = new HashMap<>();
     private Map<Integer, String> dashShareTokens = new HashMap<>();
+
+    public Map<Integer, String> dashTokens = new HashMap<>();
 
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
@@ -37,26 +41,6 @@ public class User implements Serializable {
         this();
         this.name = name;
         this.pass = pass;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPass() {
-        return pass;
-    }
-
-    public void setPass(String pass) {
-        this.pass = pass;
-    }
-
-    public Profile getProfile() {
-        return profile;
     }
 
     public void setProfile(Profile profile) {
@@ -83,8 +67,8 @@ public class User implements Serializable {
 
     private boolean exists(int dashId) {
         if (profile.getDashBoards() != null) {
-            for (DashBoard dashBoard : profile.getDashBoards()) {
-                if (dashBoard.getId() == dashId) {
+            for (DashBoard dashBoard : profile.dashBoards) {
+                if (dashBoard.id == dashId) {
                     return true;
                 }
             }
@@ -93,33 +77,8 @@ public class User implements Serializable {
         return false;
     }
 
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Map<Integer, String> getDashTokens() {
-        return dashTokens;
-    }
-
-    public void setDashTokens(Map<Integer, String> dashTokens) {
-        this.dashTokens = dashTokens;
-    }
-
-    public long getLastModifiedTs() {
-        return lastModifiedTs;
-    }
-
-    public void setLastModifiedTs(long lastModifiedTs) {
-        this.lastModifiedTs = lastModifiedTs;
-    }
-
-    public Map<Integer, String> getDashShareTokens() {
-        return dashShareTokens;
+    public String getName() {
+        return name;
     }
 
     @Override

@@ -73,7 +73,7 @@ public class UserRegistry {
             log.info("Token for user {} and dashId {} not generated yet.", user.getName(), dashboardId);
             token = refreshToken(user, dashboardId, dashTokens);
         } else {
-            log.info("Token for user {} and dashId {} generated already. Token {}", user.getName(), dashboardId, token);
+            log.info("Token for user {} and dashId {} generated already. Token {}", user.name, dashboardId, token);
         }
 
         return token;
@@ -89,7 +89,7 @@ public class UserRegistry {
         user.putToken(dashboardId, newToken, dashTokens);
         tokenToUserCache.put(newToken, user);
 
-        log.info("Generated newToken for user {} and dashId {} is {}.", user.getName(), dashboardId, newToken);
+        log.info("Generated newToken for user {} and dashId {} is {}.", user.name, dashboardId, newToken);
         return newToken;
     }
 
@@ -101,7 +101,7 @@ public class UserRegistry {
     private ConcurrentMap<String, User> createTokenToUserCache(Map<String, User> users) {
         return new ConcurrentHashMap<String, User>() {{
             for (User user : users.values()) {
-                for (String userToken : user.getDashTokens().values()) {
+                for (String userToken : user.dashTokens.values()) {
                     put(userToken, user);
                 }
                 for (String shareToken : user.getDashShareTokens().values()) {

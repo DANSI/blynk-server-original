@@ -67,7 +67,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             throw new UserNotRegistered(String.format("User not registered. Username '%s', %s", userName, ctx.channel().remoteAddress()), messageId);
         }
 
-        if (!user.getPass().equals(pass)) {
+        if (!user.pass.equals(pass)) {
             throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel().remoteAddress()), messageId);
         }
 
@@ -76,7 +76,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
         sessionsHolder.addAppChannel(user, ctx.channel());
 
-        log.info("{} app joined.", user.getName());
+        log.info("{} app joined.", user.name);
     }
 
     private void cleanPipeline(ChannelPipeline pipeline) {

@@ -16,7 +16,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 public class DeActivateDashboardLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
-        user.getProfile().activeDashId = null;
+        user.profile.activeDashId = null;
         ctx.writeAndFlush(produce(message.id, OK));
     }
 

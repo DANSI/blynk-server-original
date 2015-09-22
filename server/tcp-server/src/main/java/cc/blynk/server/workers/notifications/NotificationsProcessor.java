@@ -135,7 +135,7 @@ public class NotificationsProcessor {
 
     private void log(User user, String errorMessage) {
         if (user != null) {
-            ThreadContext.put("user", user.getName());
+            ThreadContext.put("user", user.name);
             log.error("Error sending notification. {}", errorMessage);
             ThreadContext.clearMap();
         }

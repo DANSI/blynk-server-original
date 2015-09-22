@@ -42,9 +42,9 @@ public class UserStatisticsTest extends TestBase {
         System.out.println("Board Types :");
         Map<String, Integer> boards = new HashMap<>();
         for (User user : users.values()) {
-            if (user.getProfile().getDashBoards() != null) {
-                for (DashBoard dashBoard : user.getProfile().getDashBoards()) {
-                    String type = dashBoard.getBoardType();
+            if (user.profile.dashBoards != null) {
+                for (DashBoard dashBoard : user.profile.dashBoards) {
+                    String type = dashBoard.boardType;
                     Integer i = boards.get(type);
                     if (i == null) {
                         i = 0;
@@ -65,10 +65,10 @@ public class UserStatisticsTest extends TestBase {
         System.out.println("Widget Usage :");
         Map<String, Integer> boards = new HashMap<>();
         for (User user : users.values()) {
-            if (user.getProfile().getDashBoards() != null) {
-                for (DashBoard dashBoard : user.getProfile().getDashBoards()) {
-                    if (dashBoard.getWidgets() != null) {
-                        for (Widget widget : dashBoard.getWidgets()) {
+            if (user.profile.dashBoards != null) {
+                for (DashBoard dashBoard : user.profile.dashBoards) {
+                    if (dashBoard.widgets != null) {
+                        for (Widget widget : dashBoard.widgets) {
                             Integer i = boards.get(widget.getClass().getSimpleName());
                             if (i == null) {
                                 i = 0;
@@ -78,7 +78,7 @@ public class UserStatisticsTest extends TestBase {
                     }
                 }
             } else {
-                //System.out.println(JsonParser.toJson(user));
+                System.out.println(JsonParser.toJson(user));
             }
         }
 
@@ -94,11 +94,11 @@ public class UserStatisticsTest extends TestBase {
 
         List<Integer> all = new ArrayList<>();
         for (User user : users.values()) {
-            if (user.getProfile().getDashBoards() != null) {
-                for (DashBoard dashBoard : user.getProfile().getDashBoards()) {
-                    if (dashBoard.getWidgets() != null && dashBoard.getWidgets().length > 3) {
+            if (user.profile.dashBoards != null) {
+                for (DashBoard dashBoard : user.profile.dashBoards) {
+                    if (dashBoard.widgets != null && dashBoard.widgets.length > 3) {
                         int sum = 0;
-                        for (Widget widget : dashBoard.getWidgets()) {
+                        for (Widget widget : dashBoard.widgets) {
                            sum += widget.height * widget.width;
                         }
                         all.add(sum);

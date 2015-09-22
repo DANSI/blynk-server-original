@@ -28,7 +28,7 @@ public class MailLogic extends NotificationBase {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
-        Mail mail = user.getProfile().getActiveDashboardWidgetByType(Mail.class);
+        Mail mail = user.profile.getActiveDashboardWidgetByType(Mail.class);
 
         if (mail == null) {
             throw new NotAllowedException("User has no mail widget or active dashboard.", message.id);
@@ -50,7 +50,7 @@ public class MailLogic extends NotificationBase {
 
         checkIfNotificationQuotaLimitIsNotReached(message.id);
 
-        log.trace("Sending Mail for user {}, with message : '{}'.", user.getName(), message.body);
+        log.trace("Sending Mail for user {}, with message : '{}'.", user.name, message.body);
         notificationsProcessor.mail(ctx.channel(), to, subj, body, message.id);
     }
 

@@ -18,9 +18,11 @@ import java.util.*;
  */
 public class Profile {
 
-    private final transient Set<GraphKey> graphPins = new HashSet<>();
+    public final transient Set<GraphKey> graphPins = new HashSet<>();
+
     //todo avoid volatile
     public volatile Integer activeDashId;
+
     /**
      * Specific property used for improving user experience on mobile application.
      * In case user activated dashboard before hardware connected to server, user have to
@@ -31,7 +33,8 @@ public class Profile {
      */
     //todo avoid volatile
     public volatile transient Message pinModeMessage;
-    private DashBoard[] dashBoards;
+
+    public DashBoard[] dashBoards;
 
     /**
      * Check if dashboardId is real and exists in user profile.
@@ -39,21 +42,13 @@ public class Profile {
     public void validateDashId(int dashBoardId, int msgId) {
         if (dashBoards != null) {
             for (DashBoard dashBoard : dashBoards) {
-                if (dashBoard.getId() == dashBoardId) {
+                if (dashBoard.id == dashBoardId) {
                     return;
                 }
             }
         }
 
         throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashBoardId), msgId);
-    }
-
-    public DashBoard[] getDashBoards() {
-        return dashBoards;
-    }
-
-    public void setDashBoards(DashBoard[] dashBoards) {
-        this.dashBoards = dashBoards;
     }
 
     public List<Timer> getActiveDashboardTimerWidgets() {
@@ -84,7 +79,7 @@ public class Profile {
 
     public DashBoard getActiveDashBoard() {
         for (DashBoard dashBoard : dashBoards) {
-            if (activeDashId.equals(dashBoard.getId())) {
+            if (activeDashId.equals(dashBoard.id)) {
                 return dashBoard;
             }
         }
@@ -97,14 +92,14 @@ public class Profile {
         }
 
         for (DashBoard dashBoard : dashBoards) {
-            if (dashBoard.getWidgets() == null || dashBoard.getWidgets().length == 0) {
+            if (dashBoard.widgets == null || dashBoard.widgets.length == 0) {
                 continue;
             }
 
-            for (Widget widget : dashBoard.getWidgets()) {
+            for (Widget widget : dashBoard.widgets) {
                 if (widget instanceof Graph) {
                     if (widget.pin != null) {
-                        graphPins.add(new GraphKey(dashBoard.getId(), widget.pin, widget.pinType));
+                        graphPins.add(new GraphKey(dashBoard.id, widget.pin, widget.pinType));
                     }
                 }
             }

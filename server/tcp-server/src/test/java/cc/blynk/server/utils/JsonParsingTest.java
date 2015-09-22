@@ -31,24 +31,24 @@ public class JsonParsingTest {
 
         Profile profile = JsonParser.parseProfile(is);
         assertNotNull(profile);
-        assertNotNull(profile.getDashBoards());
-        assertEquals(profile.getDashBoards().length, 1);
+        assertNotNull(profile.dashBoards);
+        assertEquals(profile.dashBoards.length, 1);
 
         //this property shoudn't be parsed
         assertNotNull(profile.activeDashId);
 
-        DashBoard dashBoard = profile.getDashBoards()[0];
+        DashBoard dashBoard = profile.dashBoards[0];
 
         assertNotNull(dashBoard);
 
-        assertEquals(1, dashBoard.getId());
-        assertEquals("My Dashboard", dashBoard.getName());
-        assertNotNull(dashBoard.getWidgets());
-        assertEquals(dashBoard.getWidgets().length, 8);
-        assertNotNull(dashBoard.getBoardType());
-        assertEquals("UNO", dashBoard.getBoardType());
+        assertEquals(1, dashBoard.id);
+        assertEquals("My Dashboard", dashBoard.name);
+        assertNotNull(dashBoard.widgets);
+        assertEquals(dashBoard.widgets.length, 8);
+        assertNotNull(dashBoard.boardType);
+        assertEquals("UNO", dashBoard.boardType);
 
-        for (Widget widget : dashBoard.getWidgets()) {
+        for (Widget widget : dashBoard.widgets) {
             assertNotNull(widget);
             assertEquals(1, widget.x);
             assertEquals(1, widget.y);
@@ -75,13 +75,13 @@ public class JsonParsingTest {
         Profile profile = JsonParser.parseProfile(is);
 
         assertNotNull(profile);
-        assertNotNull(profile.getDashBoards());
-        assertEquals(1, profile.getDashBoards().length);
-        assertNotNull(profile.getDashBoards()[0].getWidgets());
-        assertNotNull(profile.getDashBoards()[0].getWidgets()[0]);
-        assertNotNull(profile.getDashBoards()[0].getWidgets()[1]);
-        assertTrue(((Button) profile.getDashBoards()[0].getWidgets()[0]).pushMode);
-        assertFalse(((Button) profile.getDashBoards()[0].getWidgets()[1]).pushMode);
+        assertNotNull(profile.dashBoards);
+        assertEquals(1, profile.dashBoards.length);
+        assertNotNull(profile.dashBoards[0].widgets);
+        assertNotNull(profile.dashBoards[0].widgets[0]);
+        assertNotNull(profile.dashBoards[0].widgets[1]);
+        assertTrue(((Button) profile.dashBoards[0].widgets[0]).pushMode);
+        assertFalse(((Button) profile.dashBoards[0].widgets[1]).pushMode);
     }
 
     @Test
@@ -91,13 +91,13 @@ public class JsonParsingTest {
         Profile profile = JsonParser.parseProfile(is);
 
         assertNotNull(profile);
-        assertNotNull(profile.getDashBoards());
-        assertEquals(1, profile.getDashBoards().length);
-        assertNotNull(profile.getDashBoards()[0]);
-        assertNotNull(profile.getDashBoards()[0].getWidgets());
-        assertEquals(1, profile.getDashBoards()[0].getWidgets().length);
+        assertNotNull(profile.dashBoards);
+        assertEquals(1, profile.dashBoards.length);
+        assertNotNull(profile.dashBoards[0]);
+        assertNotNull(profile.dashBoards[0].widgets);
+        assertEquals(1, profile.dashBoards[0].widgets.length);
 
-        RGB rgb = (RGB) profile.getDashBoards()[0].getWidgets()[0];
+        RGB rgb = (RGB) profile.dashBoards[0].widgets[0];
 
         assertNotNull(rgb.pins);
         assertEquals(2, rgb.pins.length);

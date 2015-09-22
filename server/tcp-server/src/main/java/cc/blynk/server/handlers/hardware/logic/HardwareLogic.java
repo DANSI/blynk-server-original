@@ -44,24 +44,12 @@ public class HardwareLogic {
             throw new IllegalCommandException("HardwareLogic command body too short.", message.id);
         }
 
-        String body = message.body;
-        long ts = System.currentTimeMillis();
-
-        final int dashId = state.dashId;
-
-        if (body.charAt(1) == 'w') {
-            GraphKey key = new GraphKey(dashId, body, ts);
-
-            //storing to DB and aggregating
-            storageDao.process(key);
-
-            //in case message is for graph - attaching ts.
-            if (state.user.getProfile().hasGraphPin(key)) {
-                body = attachTS(body, ts);
-            }
+        StoreMessage storeMessage = null;
+        if (message.body.charAt(1) == 'w') {
+            storeMessage = storageDao.process(state.user.getProfile(), state.dashId, message.body);
         }
 
-        if (state.user.getProfile().activeDashId == null || !state.user.getProfile().activeDashId.equals(state.dashId)) {
+        if (state.user.profile.activeDashId == null || !state.user.profile.activeDashId.equals(state.dashId)) {
             throw new NoActiveDashboardException(message.id);
         }
 

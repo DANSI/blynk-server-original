@@ -33,7 +33,7 @@ public class TweetLogic extends NotificationBase {
             throw new NotificationBodyInvalidException(message.id);
         }
 
-        Twitter twitterWidget = user.getProfile().getActiveDashboardWidgetByType(Twitter.class);
+        Twitter twitterWidget = user.profile.getActiveDashboardWidgetByType(Twitter.class);
 
         if (twitterWidget == null ||
                 twitterWidget.token == null || twitterWidget.token.equals("") ||
@@ -43,7 +43,7 @@ public class TweetLogic extends NotificationBase {
 
         checkIfNotificationQuotaLimitIsNotReached(message.id);
 
-        log.trace("Sending Twit for user {}, with message : '{}'.", user.getName(), message.body);
+        log.trace("Sending Twit for user {}, with message : '{}'.", user.name, message.body);
         notificationsProcessor.twit(ctx.channel(), twitterWidget.token, twitterWidget.secret, message.body, message.id);
     }
 

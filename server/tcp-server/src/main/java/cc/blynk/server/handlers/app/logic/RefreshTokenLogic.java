@@ -32,7 +32,7 @@ public class RefreshTokenLogic {
             throw new NotAllowedException(String.format("Dash board id '%s' not valid.", dashBoardIdString), message.id);
         }
 
-        user.getProfile().validateDashId(dashBoardId, message.id);
+        user.profile.validateDashId(dashBoardId, message.id);
 
         String token = userRegistry.refreshToken(user, dashBoardId, user.getDashTokens());
 

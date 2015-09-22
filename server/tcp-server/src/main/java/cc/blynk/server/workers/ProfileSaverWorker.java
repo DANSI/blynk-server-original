@@ -37,7 +37,7 @@ public class ProfileSaverWorker implements Runnable {
         long newStart = System.currentTimeMillis();
 
         for (User user : userRegistry.getUsers().values()) {
-            if (lastStart <= user.getLastModifiedTs()) {
+            if (lastStart <= user.lastModifiedTs) {
                 try {
                     fileManager.overrideUserFile(user);
                     count++;

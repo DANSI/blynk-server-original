@@ -61,7 +61,7 @@ public class MailHandlerTest extends TestBase {
 	public void testNoEmailWidget() throws InterruptedException {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body");
 
-        when(user.getProfile()).thenReturn(profile);
+        user.profile = profile;
         when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(null);
 
         mailHandler.messageReceived(ctx, user, mailMessage);
@@ -71,7 +71,7 @@ public class MailHandlerTest extends TestBase {
 	public void testNoToBody() throws InterruptedException {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "".replaceAll(" ", "\0"));
 
-        when(user.getProfile()).thenReturn(profile);
+        user.profile = profile;
         cc.blynk.server.model.widgets.others.Mail mail = new cc.blynk.server.model.widgets.others.Mail();
         when(profile.getActiveDashboardWidgetByType(cc.blynk.server.model.widgets.others.Mail.class)).thenReturn(mail);
 
@@ -82,7 +82,7 @@ public class MailHandlerTest extends TestBase {
 	public void testNoBody() throws InterruptedException {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body".replaceAll(" ", "\0"));
 
-        when(user.getProfile()).thenReturn(profile);
+        user.profile = profile;
         when(profile.getActiveDashboardWidgetByType(cc.blynk.server.model.widgets.others.Mail.class)).thenReturn(new cc.blynk.server.model.widgets.others.Mail());
 
         mailHandler.messageReceived(ctx, user, mailMessage);

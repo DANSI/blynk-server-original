@@ -72,7 +72,7 @@ public class HardwareHardHandlerTest extends TestBase {
         HardwareMessage message = new HardwareMessage(1, "p test");
         when(ctx.channel()).thenReturn(channel);
         Profile profile = spy(new Profile());
-        when(user.getProfile()).thenReturn(profile);
+        user.profile = profile;
         profile.activeDashId = 1;
         SessionsHolder sessionsHolder = spy(new SessionsHolder());
         final Session session = new Session();

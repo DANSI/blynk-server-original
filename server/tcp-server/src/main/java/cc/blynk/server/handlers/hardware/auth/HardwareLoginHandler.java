@@ -69,7 +69,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         sessionsHolder.addHardwareChannel(user, ctx.channel());
 
-        log.info("{} hardware joined.", user.getName());
+        log.info("{} hardware joined.", user.name);
 
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(UserNotLoggerHandler.class);
@@ -79,8 +79,8 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         //send Pin Mode command in case channel connected to active dashboard with Pin Mode command that
         //was sent previously
-        if (dashId.equals(user.getProfile().activeDashId) && user.getProfile().pinModeMessage != null) {
-            ctx.writeAndFlush(user.getProfile().pinModeMessage);
+        if (dashId.equals(user.profile.activeDashId) && user.profile.pinModeMessage != null) {
+            ctx.writeAndFlush(user.profile.pinModeMessage);
         }
     }
 
