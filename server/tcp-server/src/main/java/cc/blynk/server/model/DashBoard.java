@@ -27,7 +27,7 @@ public class DashBoard {
 
     private boolean keepScreenOn;
 
-    private volatile String sharingToken;
+    private boolean isShared;
 
     public List<Timer> getTimerWidgets() {
         if (widgets == null || widgets.length == 0) {
@@ -110,12 +110,12 @@ public class DashBoard {
         this.keepScreenOn = keepScreenOn;
     }
 
-    public String getSharingToken() {
-        return sharingToken;
+    public boolean isShared() {
+        return isShared;
     }
 
-    public void setSharingToken(String sharingToken) {
-        this.sharingToken = sharingToken;
+    public void setIsShared(boolean isShared) {
+        this.isShared = isShared;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class DashBoard {
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
+        int result = (id ^ (id >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (widgets != null ? Arrays.hashCode(widgets) : 0);
         return result;

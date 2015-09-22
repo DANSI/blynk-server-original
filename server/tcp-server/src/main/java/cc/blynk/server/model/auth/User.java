@@ -26,6 +26,7 @@ public class User implements Serializable {
     //todo avoid volatile
     private volatile Profile profile;
     private Map<Integer, String> dashTokens = new HashMap<>();
+    private Map<Integer, String> dashShareTokens = new HashMap<>();
 
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
@@ -65,14 +66,14 @@ public class User implements Serializable {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    public void putToken(Integer dashId, String token) {
-        cleanTokensForNonExistentDashes();
-        this.dashTokens.put(dashId, token);
+    public void putToken(Integer dashId, String token, Map<Integer, String> tokens) {
+        cleanTokensForNonExistentDashes(tokens);
+        tokens.put(dashId, token);
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    private void cleanTokensForNonExistentDashes() {
-        Iterator<Integer> iterator = this.dashTokens.keySet().iterator();
+    private void cleanTokensForNonExistentDashes(Map<Integer, String> tokens) {
+        Iterator<Integer> iterator = tokens.keySet().iterator();
         while (iterator.hasNext()) {
             if (!exists(iterator.next())) {
                 iterator.remove();
@@ -81,13 +82,11 @@ public class User implements Serializable {
     }
 
     private boolean exists(int dashId) {
-        if (profile.getDashBoards() == null) {
-            return false;
-        }
-
-        for (DashBoard dashBoard : profile.getDashBoards()) {
-            if (dashBoard.getId() == dashId) {
-                return true;
+        if (profile.getDashBoards() != null) {
+            for (DashBoard dashBoard : profile.getDashBoards()) {
+                if (dashBoard.getId() == dashId) {
+                    return true;
+                }
             }
         }
 
@@ -117,6 +116,10 @@ public class User implements Serializable {
 
     public void setLastModifiedTs(long lastModifiedTs) {
         this.lastModifiedTs = lastModifiedTs;
+    }
+
+    public Map<Integer, String> getDashShareTokens() {
+        return dashShareTokens;
     }
 
     @Override

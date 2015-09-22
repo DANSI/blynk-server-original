@@ -8,7 +8,7 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.handlers.app.AppHandler;
+import cc.blynk.server.handlers.app.AppShareHandler;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.User;
@@ -40,12 +40,14 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
     private final UserRegistry userRegistry;
     private final SessionsHolder sessionsHolder;
     private final StorageDao storageDao;
+    private final HandlerState handlerState;
 
-    public AppShareLoginHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao) {
+    public AppShareLoginHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao, HandlerState handlerState) {
         this.props = props;
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
         this.storageDao = storageDao;
+        this.handlerState = handlerState;
     }
 
     @Override
@@ -73,8 +75,10 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
             return;
         }
 
+        Integer dashId = UserRegistry.getDashIdByToken(user.getDashShareTokens(), token, messageId);
+
         cleanPipeline(ctx.pipeline());
-        ctx.pipeline().addLast(new AppHandler(props, userRegistry, sessionsHolder, storageDao, new HandlerState(user)));
+        ctx.pipeline().addLast(new AppShareHandler(props, userRegistry, sessionsHolder, storageDao, new HandlerState(dashId, user, token)));
 
         sessionsHolder.addAppChannel(user, ctx.channel());
 

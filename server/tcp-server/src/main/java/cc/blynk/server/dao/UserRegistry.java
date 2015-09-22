@@ -36,13 +36,13 @@ public class UserRegistry {
         tokenToUserCache = createTokenToUserCache(users);
     }
 
-    public static Integer getDashIdByToken(User user, String token, int msgId) {
-        for (Map.Entry<Integer, String> dashToken : user.getDashTokens().entrySet()) {
+    public static Integer getDashIdByToken(Map<Integer, String> tokens, String token, int msgId) {
+        for (Map.Entry<Integer, String> dashToken : tokens.entrySet()) {
             if (dashToken.getValue().equals(token)) {
                 return dashToken.getKey();
             }
         }
-        throw new InvalidTokenException(String.format("Error getting dashId for %s.", user.getName()), msgId);
+        throw new InvalidTokenException("Error getting dashId.", msgId);
     }
 
     private static String generateNewToken() {
