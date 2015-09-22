@@ -28,6 +28,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
     private final GetGraphDataLogic graphData;
     private final GetShareTokenLogic getShareTokenLogic;
     private final RefreshShareTokenLogic refreshShareTokenLogic;
+    private final GetSharedDashLogic getSharedDashLogic;
 
     public AppHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao, HandlerState state) {
         super(props, state);
@@ -38,6 +39,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
         this.graphData = new GetGraphDataLogic(storageDao);
         this.getShareTokenLogic = new GetShareTokenLogic(userRegistry);
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(userRegistry);
+        this.getSharedDashLogic = new GetSharedDashLogic(userRegistry);
     }
 
     @Override
@@ -75,6 +77,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
                 break;
             case REFRESH_SHARE_TOKEN :
                 refreshShareTokenLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case GET_SHARED_DASH :
+                getSharedDashLogic.messageReceived(ctx, msg);
                 break;
         }
     }

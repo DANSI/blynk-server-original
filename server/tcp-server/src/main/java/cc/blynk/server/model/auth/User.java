@@ -18,8 +18,8 @@ public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-    public final Map<Integer, String> dashShareTokens = new HashMap<>();
-    public final Map<Integer, String> dashTokens = new HashMap<>();
+    public final Map<Integer, String> dashShareTokens;
+    public final Map<Integer, String> dashTokens;
 
 	public String name;
 
@@ -33,6 +33,8 @@ public class User implements Serializable {
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
         this.profile = new Profile();
+        this.dashShareTokens = new HashMap<>();
+        this.dashTokens = new HashMap<>();
     }
 
     public User(String name, String pass) {

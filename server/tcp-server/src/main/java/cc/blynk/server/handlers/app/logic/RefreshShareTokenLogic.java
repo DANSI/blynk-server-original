@@ -34,7 +34,7 @@ public class RefreshShareTokenLogic {
 
         user.profile.validateDashId(dashBoardId, message.id);
 
-        String token = userRegistry.refreshToken(user, dashBoardId, user.dashShareTokens);
+        String token = userRegistry.sharedTokenManager.refreshToken(user, dashBoardId, user.dashShareTokens);
 
         ctx.writeAndFlush(produce(message.id, message.command, token));
     }

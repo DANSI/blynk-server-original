@@ -2,6 +2,7 @@ package cc.blynk.server.model;
 
 import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.others.Timer;
+import cc.blynk.server.utils.JsonParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,5 +91,10 @@ public class DashBoard {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (widgets != null ? Arrays.hashCode(widgets) : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return JsonParser.toJson(this);
     }
 }

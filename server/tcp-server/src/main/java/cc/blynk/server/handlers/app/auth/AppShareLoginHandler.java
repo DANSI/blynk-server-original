@@ -65,7 +65,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
     private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String token) {
         String userName = username.toLowerCase();
 
-        User user = userRegistry.getUserByToken(token);
+        User user = userRegistry.sharedTokenManager.getUserByToken(token);
 
         if (user == null || !user.getName().equals(userName)) {
             log.debug("Share token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());

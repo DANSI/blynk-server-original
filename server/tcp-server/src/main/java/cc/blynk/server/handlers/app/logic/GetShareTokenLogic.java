@@ -34,7 +34,7 @@ public class GetShareTokenLogic {
 
         user.profile.validateDashId(dashBoardId, message.id);
 
-        String token = userRegistry.getToken(user, dashBoardId, user.dashShareTokens);
+        String token = userRegistry.sharedTokenManager.getToken(user, dashBoardId);
 
         ctx.writeAndFlush(produce(message.id, message.command, token));
     }

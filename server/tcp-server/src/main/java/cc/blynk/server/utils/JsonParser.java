@@ -2,6 +2,7 @@ package cc.blynk.server.utils;
 
 import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.exceptions.IllegalCommandException;
+import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.notifications.AndroidGCMMessage;
@@ -38,6 +39,7 @@ public final class JsonParser {
 
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
+    private static final ObjectWriter dashboardWriter = mapper.writerFor(DashBoard.class);
     private static final ObjectWriter gcmWriter = mapper.writerFor(AndroidGCMMessage.class);
     private static final ObjectWriter iOSGCMWriter = mapper.writerFor(IOSGCMMessage.class);
     private static final ObjectWriter statWriter = init().writerWithDefaultPrettyPrinter().forType(Stat.class);
@@ -65,6 +67,10 @@ public final class JsonParser {
 
     public static String toJson(Profile profile) {
         return toJson(profileWriter, profile);
+    }
+
+    public static String toJson(DashBoard dashBoard) {
+        return toJson(dashboardWriter, dashBoard);
     }
 
     public static String toJson(Stat stat) {

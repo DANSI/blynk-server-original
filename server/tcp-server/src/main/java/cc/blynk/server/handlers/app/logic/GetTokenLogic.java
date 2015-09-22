@@ -34,7 +34,7 @@ public class GetTokenLogic {
 
         user.profile.validateDashId(dashBoardId, message.id);
 
-        String token = userRegistry.getToken(user, dashBoardId, user.dashTokens);
+        String token = userRegistry.tokenManager.getToken(user, dashBoardId);
 
         ctx.writeAndFlush(produce(message.id, message.command, token));
     }

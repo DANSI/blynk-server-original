@@ -51,6 +51,15 @@ public class Profile {
         throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashBoardId), msgId);
     }
 
+    public DashBoard getDashboardById(int id) {
+        for (DashBoard dashBoard : dashBoards) {
+            if (dashBoard.id == id) {
+                return dashBoard;
+            }
+        }
+        return null;
+    }
+
     public List<Timer> getActiveDashboardTimerWidgets() {
         if (dashBoards == null || dashBoards.length == 0 || activeDashId == null) {
             return Collections.emptyList();
