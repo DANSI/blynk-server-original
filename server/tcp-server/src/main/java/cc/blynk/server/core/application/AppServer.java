@@ -30,6 +30,8 @@ import java.io.File;
 import java.security.cert.CertificateException;
 
 /**
+ * Class responsible for handling all Application connections and netty pipeline initialization.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.

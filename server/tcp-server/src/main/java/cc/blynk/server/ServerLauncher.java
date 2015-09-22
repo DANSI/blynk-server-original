@@ -32,8 +32,11 @@ import static cc.blynk.server.utils.ReportingUtil.getReportingFolder;
 /**
  * Entry point for server launch.
  *
- * By default starts 2 servers on different ports.
- * First is plain tcp/ip sockets server for hardware, second tls/ssl tcp/ip server for mobile applications.
+ * By default starts 3 server sockets on different ports:
+ *
+ * 1 server socket for SSL/TLS Hardware (8441 default)
+ * 1 server socket for plain tcp/ip Hardware (8442 default)
+ * 1 server socket for SSL/TLS Applications (8443 default)
  *
  * In addition launcher start all related to business logic threads like saving user profiles thread, timers
  * processing thread, properties reload thread and so on.
@@ -123,6 +126,7 @@ public class ServerLauncher {
         startJobs();
     }
 
+    //todo move to separate class
     private void startJobs() {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 

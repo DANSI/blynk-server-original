@@ -10,7 +10,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 /**
  * Used in order to re-user EventLoopGroups, this is done for performance reasons.
- * To create less threads and minimize memory footprint.
+ * To create less threads and minimize memory footprint (recommended way by netty devs)
  *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.

@@ -9,6 +9,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
+ * Base server abstraction. Class responsible for Netty EventLoops creation.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 3/10/2015.

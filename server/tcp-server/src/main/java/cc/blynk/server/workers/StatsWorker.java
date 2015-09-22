@@ -1,5 +1,6 @@
 package cc.blynk.server.workers;
 
+import cc.blynk.common.enums.Command;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -38,10 +39,11 @@ public class StatsWorker implements Runnable {
         Stat stat = new Stat();
         stat.oneMinRate = (long) stats.incomeMessages.getOneMinuteRate();
 
-        //yeap, some stats updates may be lost (because if sumThenReset()),
-        //but I don't care, cause this is just for general monitoring
-        for (Map.Entry<Class<?>, LongAdder> counterEntry : stats.specificCounters.entrySet()) {
-            stat.messages.put(counterEntry.getKey().getSimpleName(), counterEntry.getValue().sumThenReset());
+        //yeap, some stats updates may be lost (because of sumThenReset()),
+        //but we don't care, cause this is just for general monitoring
+        for (Map.Entry<Short, String> counterEntry : Command.valuesName.entrySet()) {
+            LongAdder longAdder = stats.specificCounters[counterEntry.getKey()];
+            stat.messages.put(counterEntry.getValue(), longAdder.sumThenReset());
         }
 
         int activeSessions = 0;

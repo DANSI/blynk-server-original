@@ -81,9 +81,7 @@ public final class JsonParser {
     }
 
     public static User parseUserFromFile(File userFile) throws IOException {
-        User user = userReader.readValue(userFile);
-        user.initQuota();
-        return user;
+        return userReader.readValue(userFile);
     }
 
     public static GCMResponseMessage parseGCMResponse(String reader) throws IOException {
