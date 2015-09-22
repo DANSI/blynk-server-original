@@ -58,6 +58,8 @@ public class MessageFactory {
                 return new GetShareTokenMessage(messageId, body);
             case REFRESH_SHARE_TOKEN :
                 return new RefreshShareTokenMessage(messageId, body);
+            case GET_SHARED_DASH :
+                return new GetSharedDashMessage(messageId, body);
 
             default: throw new UnsupportedCommandException(String.format("Command with code %d not supported message.", command), messageId);
         }

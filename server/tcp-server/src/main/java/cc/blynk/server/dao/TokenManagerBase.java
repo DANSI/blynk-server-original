@@ -1,8 +1,6 @@
 package cc.blynk.server.dao;
 
 import cc.blynk.server.model.auth.User;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 import java.util.UUID;
@@ -15,8 +13,6 @@ import java.util.concurrent.ConcurrentMap;
  * Created on 22.09.15.
  */
 public abstract class TokenManagerBase {
-
-    private static final Logger log = LogManager.getLogger(TokenManagerBase.class);
 
     private final ConcurrentMap<String, User> cache;
 
@@ -44,7 +40,6 @@ public abstract class TokenManagerBase {
 
         //if token not exists. generate new one
         if (token == null) {
-            log.info("Token for user {} and dashId {} not generated yet.", user.name, dashboardId);
             token = refreshToken(user, dashboardId, tokens);
         }
 
@@ -61,7 +56,7 @@ public abstract class TokenManagerBase {
         user.putToken(dashboardId, newToken, dashTokens);
         cache.put(newToken, user);
 
-        log.info("Generated newToken for user {} and dashId {} is {}.", user.name, dashboardId, newToken);
+        printMessage(user.name, dashboardId, newToken);
         return newToken;
     }
 
@@ -70,5 +65,7 @@ public abstract class TokenManagerBase {
     }
 
     abstract Map<Integer, String> getTokens(User user);
+
+    abstract void printMessage(String username, Integer dashId, String token);
 
 }

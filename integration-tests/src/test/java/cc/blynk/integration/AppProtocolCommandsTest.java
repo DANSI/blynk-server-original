@@ -1,5 +1,8 @@
 package cc.blynk.integration;
 
+import cc.blynk.common.enums.Command;
+import cc.blynk.common.stats.GlobalStats;
+import cc.blynk.common.utils.ReflectionUtil;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestAppClient;
@@ -13,6 +16,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.OngoingStubbing;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 import static cc.blynk.common.enums.Command.*;
 import static cc.blynk.common.enums.Response.*;
@@ -54,6 +61,15 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     @After
     public void shutdown() {
         appServer.stop();
+    }
+
+    @Test
+    public void testCommandsIndexOk() {
+        Map<Short, String> commandCodes = ReflectionUtil.generateMapOfValueNameShort(Command.class);
+        Collection<Short> codes = commandCodes.keySet();
+        Short maxShort = Collections.max(codes);
+        GlobalStats stat = new GlobalStats();
+        stat.mark(maxShort);
     }
 
     @Test

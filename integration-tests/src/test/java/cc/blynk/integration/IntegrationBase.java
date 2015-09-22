@@ -115,12 +115,13 @@ public abstract class IntegrationBase {
         hardClient.start(null);
 
         String userProfileString = readTestUserProfile(jsonProfile);
+        int dashId = JsonParser.parseProfile(userProfileString, 1).dashBoards[0].id;
 
         appClient.send("register " + user)
                  .send("login " + user)
                  .send("saveProfile " + userProfileString)
-                 .send("activate 1")
-                 .send("getToken 1");
+                 .send("activate " + dashId)
+                 .send("getToken " + dashId);
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
         verify(appClient.responseMock, timeout(2000).times(5)).channelRead(any(), objectArgumentCaptor.capture());

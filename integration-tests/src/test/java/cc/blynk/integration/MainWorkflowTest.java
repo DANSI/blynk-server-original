@@ -3,6 +3,7 @@ package cc.blynk.integration;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
+import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.TransportTypeHolder;
@@ -404,11 +405,11 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("getToken 2");
 
-        //getting token for second hardware
-        ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
+        //getting token for second GetTokenMessage
+        ArgumentCaptor<GetTokenMessage> objectArgumentCaptor = ArgumentCaptor.forClass(GetTokenMessage.class);
         verify(clientPair.appClient.responseMock, timeout(2000).times(1)).channelRead(any(), objectArgumentCaptor.capture());
-        List<Object> arguments = objectArgumentCaptor.getAllValues();
-        Message getTokenMessage = (Message) arguments.get(0);
+        List<GetTokenMessage> arguments = objectArgumentCaptor.getAllValues();
+        GetTokenMessage getTokenMessage = arguments.get(0);
         String token = getTokenMessage.body;
 
         clientPair.appClient.reset();
