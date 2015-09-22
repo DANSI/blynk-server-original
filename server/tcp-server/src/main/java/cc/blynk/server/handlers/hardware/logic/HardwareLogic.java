@@ -13,6 +13,10 @@ import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
+ * Handler responsible for forwarding messages from hardware to applications.
+ * Also handler stores all incoming hardware commands to disk in order to export and
+ * analyze data.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.

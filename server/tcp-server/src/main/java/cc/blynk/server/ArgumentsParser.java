@@ -22,7 +22,7 @@ class ArgumentsParser {
     private final String HARDWARE_PORT_OPTION = "hardPort";
     private final String APPLICATION_PORT_OPTION = "appPort";
     private final String WORKER_THREADS_OPTION = "workerThreads";
-    private final String DATA_FOLDER_OPTION = "workerThreads";
+    private final String DATA_FOLDER_OPTION = "dataFolder";
 
     ArgumentsParser() {
         options = new Options();

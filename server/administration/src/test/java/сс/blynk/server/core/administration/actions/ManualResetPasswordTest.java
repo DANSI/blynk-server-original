@@ -35,15 +35,15 @@ public class ManualResetPasswordTest {
         String username = "dima@dima.ua";
         String pass = "123";
         when(userRegistry.getByName(username)).thenReturn(user);
-        List<String> repsonse = manualResetPassword.execute(userRegistry, null, username, pass);
+        List<String> response = manualResetPassword.execute(userRegistry, null, username, pass);
 
-        verify(user).setPass(eq("UDgMLjFcZ/HDe1jFqejmJIGh8aOc1V7xSLVUKR5hmsk="));
-        verify(user).setLastModifiedTs(any(long.class));
+        verify(user).pass = eq("UDgMLjFcZ/HDe1jFqejmJIGh8aOc1V7xSLVUKR5hmsk=");
+        verify(user).lastModifiedTs = any(long.class);
 
-        assertNotNull(repsonse);
-        assertEquals(2, repsonse.size());
-        assertEquals("Password updated.\n", repsonse.get(0));
-        assertEquals("ok\n", repsonse.get(1));
+        assertNotNull(response);
+        assertEquals(2, response.size());
+        assertEquals("Password updated.\n", response.get(0));
+        assertEquals("ok\n", response.get(1));
     }
 
     @Test

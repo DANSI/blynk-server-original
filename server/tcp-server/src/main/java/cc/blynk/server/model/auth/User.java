@@ -20,11 +20,15 @@ public class User implements Serializable {
     public final Map<Integer, String> dashShareTokens = new HashMap<>();
     public final Map<Integer, String> dashTokens = new HashMap<>();
 	public String name;
-    public String pass;
+
+    public volatile String pass;
+
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
-    public long lastModifiedTs;
-    //todo avoid volatile
+    public volatile long lastModifiedTs;
+
     public volatile Profile profile;
+
+    public Map<Integer, String> dashTokens = new HashMap<>();
 
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();

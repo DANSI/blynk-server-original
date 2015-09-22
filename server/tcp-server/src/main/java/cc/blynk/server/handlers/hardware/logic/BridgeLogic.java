@@ -17,6 +17,16 @@ import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static cc.blynk.server.utils.HandlerUtil.getState;
 
+/**
+ * Bridge handler responsible for forwarding messages between different hardware via Blynk Server.
+ * SendTo device defined by Auth Token.
+ *
+ *
+ * The Blynk Project.
+ * Created by Dmitriy Dumanskiy.
+ * Created on 2/1/2015.
+ *
+ */
 public class BridgeLogic {
 
     private final SessionsHolder sessionsHolder;
