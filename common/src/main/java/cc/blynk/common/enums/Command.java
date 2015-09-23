@@ -69,6 +69,10 @@ public final class Command {
                 put(PUSH_NOTIFICATION, PushMessage.class.getSimpleName());
                 put(BRIDGE, BridgeMessage.class.getSimpleName());
                 put(HARDWARE, HardwareMessage.class.getSimpleName());
+                put(GET_SHARED_DASH, GetSharedDashMessage.class.getSimpleName());
+                put(GET_SHARE_TOKEN, GetShareTokenMessage.class.getSimpleName());
+                put(REFRESH_SHARE_TOKEN, RefreshShareTokenMessage.class.getSimpleName());
+                put(SHARE_LOGIN, ShareLoginMessage.class.getSimpleName());
             }
     };
 
