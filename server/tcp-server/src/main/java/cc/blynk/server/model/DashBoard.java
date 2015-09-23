@@ -30,6 +30,8 @@ public class DashBoard {
 
     public boolean isSharedPublic;
 
+    public boolean isActive;
+
     public List<Timer> getTimerWidgets() {
         if (widgets == null || widgets.length == 0) {
             return Collections.emptyList();
