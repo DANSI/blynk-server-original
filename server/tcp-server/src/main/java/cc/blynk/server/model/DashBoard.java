@@ -28,7 +28,7 @@ public class DashBoard {
 
     public boolean keepScreenOn;
 
-    private boolean isShared;
+    public boolean isSharedPublic;
 
     public List<Timer> getTimerWidgets() {
         if (widgets == null || widgets.length == 0) {
@@ -61,14 +61,6 @@ public class DashBoard {
         }
 
         return null;
-    }
-
-    public boolean isShared() {
-        return isShared;
-    }
-
-    public void setIsShared(boolean isShared) {
-        this.isShared = isShared;
     }
 
     @Override
