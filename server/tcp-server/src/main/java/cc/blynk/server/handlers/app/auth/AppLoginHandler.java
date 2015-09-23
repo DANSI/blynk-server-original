@@ -9,6 +9,7 @@ import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.exceptions.UserNotRegistered;
 import cc.blynk.server.handlers.app.AppHandler;
+import cc.blynk.server.handlers.app.auth.sharing.AppShareLoginHandler;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.User;

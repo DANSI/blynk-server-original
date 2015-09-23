@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.app.logic;
+package cc.blynk.server.handlers.app.logic.sharing;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.dao.UserRegistry;
@@ -14,11 +14,11 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
-public class RefreshShareTokenLogic {
+public class GetShareTokenLogic {
 
     private final UserRegistry userRegistry;
 
-    public RefreshShareTokenLogic(UserRegistry userRegistry) {
+    public GetShareTokenLogic(UserRegistry userRegistry) {
         this.userRegistry = userRegistry;
     }
 
@@ -34,7 +34,7 @@ public class RefreshShareTokenLogic {
 
         user.profile.validateDashId(dashBoardId, message.id);
 
-        String token = userRegistry.sharedTokenManager.refreshToken(user, dashBoardId, user.dashShareTokens);
+        String token = userRegistry.sharedTokenManager.getToken(user, dashBoardId);
 
         ctx.writeAndFlush(produce(message.id, message.command, token));
     }

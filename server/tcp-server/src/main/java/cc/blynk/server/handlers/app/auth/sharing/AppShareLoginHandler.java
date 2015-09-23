@@ -1,14 +1,16 @@
-package cc.blynk.server.handlers.app.auth;
+package cc.blynk.server.handlers.app.auth.sharing;
 
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.ResponseMessage;
-import cc.blynk.common.model.messages.protocol.appllication.ShareLoginMessage;
+import cc.blynk.common.model.messages.protocol.appllication.sharing.ShareLoginMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.handlers.app.AppShareHandler;
+import cc.blynk.server.handlers.app.auth.AppLoginHandler;
+import cc.blynk.server.handlers.app.auth.RegisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.User;

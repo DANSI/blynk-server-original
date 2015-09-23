@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.app.logic;
+package cc.blynk.server.handlers.app.logic.sharing;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.dao.UserRegistry;

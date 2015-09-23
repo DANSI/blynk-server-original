@@ -1,4 +1,4 @@
-package cc.blynk.common.model.messages.protocol.appllication;
+package cc.blynk.common.model.messages.protocol.appllication.sharing;
 
 import cc.blynk.common.model.messages.Message;
 
