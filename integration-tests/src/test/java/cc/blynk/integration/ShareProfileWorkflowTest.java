@@ -7,6 +7,8 @@ import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.model.Profile;
+import cc.blynk.server.model.widgets.others.Notification;
+import cc.blynk.server.model.widgets.others.Twitter;
 import cc.blynk.server.utils.JsonParser;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -91,6 +93,10 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         assertNotNull(dashboard);
         Profile profile = JsonParser.parseProfile(readTestUserProfile(), 1);
+        Twitter twitter = profile.dashBoards[0].getWidgetByType(Twitter.class);
+        twitter.cleanPrivateData();
+        Notification notification = profile.dashBoards[0].getWidgetByType(Notification.class);
+        notification.cleanPrivateData();
         assertEquals(profile.dashBoards[0].toString(), dashboard);
         System.out.println(dashboard);
     }
