@@ -15,4 +15,9 @@ public class Notification extends Widget {
 
     public boolean notifyWhenOffline;
 
+    public void cleanPrivateData() {
+        token = null;
+        iOSToken = null;
+    }
+
 }

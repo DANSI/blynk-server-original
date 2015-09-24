@@ -15,4 +15,10 @@ public class Twitter extends Widget {
 
     public String username;
 
+    public void cleanPrivateData() {
+        token = null;
+        secret = null;
+        username = null;
+    }
+
 }

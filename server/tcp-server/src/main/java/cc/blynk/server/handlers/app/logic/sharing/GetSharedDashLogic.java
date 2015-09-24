@@ -5,6 +5,8 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.InvalidTokenException;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.model.widgets.others.Notification;
+import cc.blynk.server.model.widgets.others.Twitter;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Map;
@@ -35,6 +37,18 @@ public class GetSharedDashLogic {
         return null;
     }
 
+    private static void cleanPrivateData(DashBoard dashBoard) {
+        Twitter twitter = dashBoard.getWidgetByType(Twitter.class);
+        if (twitter != null) {
+            twitter.cleanPrivateData();
+        }
+
+        Notification notification = dashBoard.getWidgetByType(Notification.class);
+        if (notification != null) {
+            notification.cleanPrivateData();
+        }
+    }
+
     public void messageReceived(ChannelHandlerContext ctx, Message message) {
         String token = message.body;
 
@@ -51,7 +65,9 @@ public class GetSharedDashLogic {
         }
 
         DashBoard dashBoard = userThatShared.profile.getDashboardById(dashId);
+        cleanPrivateData(dashBoard);
 
         ctx.writeAndFlush(produce(message.id, message.command, dashBoard.toString()));
     }
+
 }
