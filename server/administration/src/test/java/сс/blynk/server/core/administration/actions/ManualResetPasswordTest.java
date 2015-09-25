@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 /**
  * The Blynk Project.
@@ -37,8 +37,7 @@ public class ManualResetPasswordTest {
         when(userRegistry.getByName(username)).thenReturn(user);
         List<String> response = manualResetPassword.execute(userRegistry, null, username, pass);
 
-        verify(user).pass = eq("UDgMLjFcZ/HDe1jFqejmJIGh8aOc1V7xSLVUKR5hmsk=");
-        verify(user).lastModifiedTs = any(long.class);
+        assertEquals(user.pass, "UDgMLjFcZ/HDe1jFqejmJIGh8aOc1V7xSLVUKR5hmsk=");
 
         assertNotNull(response);
         assertEquals(2, response.size());
