@@ -13,6 +13,7 @@ import cc.blynk.server.handlers.app.auth.AppLoginHandler;
 import cc.blynk.server.handlers.app.auth.RegisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.storage.StorageDao;
+import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -41,11 +42,11 @@ public class AppServer extends BaseServer {
     private boolean isMutualSSL;
 
     public AppServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                     GlobalStats stats, TransportTypeHolder transportType, StorageDao storageDao) {
+                     GlobalStats stats, NotificationsProcessor notificationsProcessor,TransportTypeHolder transportType, StorageDao storageDao) {
         super(props.getIntProperty("app.ssl.port"), transportType);
 
         RegisterHandler registerHandler = new RegisterHandler(userRegistry, props.getProperty("allowed.users.list"));
-        AppLoginHandler appLoginHandler = new AppLoginHandler(props, userRegistry, sessionsHolder, storageDao);
+        AppLoginHandler appLoginHandler = new AppLoginHandler(props, userRegistry, sessionsHolder, storageDao, notificationsProcessor);
         AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(sessionsHolder);
 
         SslContext sslCtx = initSslContext(props);

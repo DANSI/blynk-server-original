@@ -68,7 +68,7 @@ public class MainWorkflowTest extends IntegrationBase {
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
         hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsProcessor, new TransportTypeHolder(properties), storageDao);
-        appServer = new AppServer(properties, userRegistry, sessionsHolder, stats, new TransportTypeHolder(properties), storageDao);
+        appServer = new AppServer(properties, userRegistry, sessionsHolder, stats, notificationsProcessor, new TransportTypeHolder(properties), storageDao);
         new Thread(hardwareServer).start();
         new Thread(appServer).start();
 
@@ -132,6 +132,13 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getgraphdata 1 d 8 del");
 
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, OK)));
+    }
+
+    @Test
+    public void testSendEmail() throws Exception {
+        ClientPair clientPair = initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties);;
+        clientPair.appClient.send("email 1");
+        verify(notificationsProcessor, timeout(1000)).mail(any(), eq("dima@mail.ua"), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"), eq(1));
     }
 
 

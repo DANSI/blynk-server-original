@@ -13,6 +13,7 @@ import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.storage.StorageDao;
+import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -36,12 +37,14 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     private final UserRegistry userRegistry;
     private final SessionsHolder sessionsHolder;
     private final StorageDao storageDao;
+    private final NotificationsProcessor notificationsProcessor;
 
-    public AppLoginHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao) {
+    public AppLoginHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao, NotificationsProcessor notificationsProcessor) {
         this.props = props;
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
         this.storageDao = storageDao;
+        this.notificationsProcessor = notificationsProcessor;
     }
 
     @Override
@@ -73,7 +76,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(UserNotLoggerHandler.class);
         ctx.pipeline().remove(RegisterHandler.class);
-        ctx.pipeline().addLast(new AppHandler(props, userRegistry, sessionsHolder, storageDao, new HandlerState(user)));
+        ctx.pipeline().addLast(new AppHandler(props, userRegistry, sessionsHolder, storageDao, notificationsProcessor, new HandlerState(user)));
 
         sessionsHolder.addAppChannel(user, ctx.channel());
 

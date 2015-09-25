@@ -9,6 +9,7 @@ import cc.blynk.server.handlers.app.logic.*;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.storage.StorageDao;
+import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.common.enums.Command.*;
@@ -26,14 +27,16 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
     private final HardwareAppLogic hardwareApp;
     private final RefreshTokenLogic refreshToken;
     private final GetGraphDataLogic graphData;
+    private final AppMailLogic appMailLogic;
 
-    public AppHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao, HandlerState state) {
+    public AppHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao, NotificationsProcessor notificationsProcessor, HandlerState state) {
         super(props, state);
         this.saveProfile = new SaveProfileLogic(props);
         this.token = new GetTokenLogic(userRegistry);
         this.hardwareApp = new HardwareAppLogic(sessionsHolder);
         this.refreshToken = new RefreshTokenLogic(userRegistry);
         this.graphData = new GetGraphDataLogic(storageDao);
+        this.appMailLogic = new AppMailLogic(notificationsProcessor);
     }
 
     @Override
@@ -66,6 +69,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
+            case EMAIL :
+                appMailLogic.messageReceived(ctx, state.user, msg);
         }
     }
 

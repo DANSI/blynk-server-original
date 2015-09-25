@@ -77,7 +77,7 @@ public class ServerLauncher {
 
         this.hardwareServer = new HardwareServer(serverProperties, userRegistry, sessionsHolder, stats, notificationsProcessor, transportType, storageDao);
         this.hardwareSSLServer = new HardwareSSLServer(serverProperties, userRegistry, sessionsHolder, stats, notificationsProcessor, transportType, storageDao);
-        this.appServer = new AppServer(serverProperties, userRegistry, sessionsHolder, stats, transportType, storageDao);
+        this.appServer = new AppServer(serverProperties, userRegistry, sessionsHolder, stats, notificationsProcessor, transportType, storageDao);
         this.adminServer = new AdminServer(serverProperties, userRegistry, sessionsHolder, transportType);
 
     }
