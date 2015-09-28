@@ -2,12 +2,12 @@ package cc.blynk.server.handlers.app.logic;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
+import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NoDataException;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
-import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,10 +27,10 @@ public class GetGraphDataLogic {
     private static final Logger log = LogManager.getLogger(GetGraphDataLogic.class);
 
     private static int VALUES_PER_PIN = 5;
-    private final StorageDao storageDao;
+    private final ReportingDao reportingDao;
 
-    public GetGraphDataLogic(StorageDao storageDao) {
-        this.storageDao = storageDao;
+    public GetGraphDataLogic(ReportingDao reportingDao) {
+        this.reportingDao = reportingDao;
     }
 
     private static boolean checkNoData(byte[][] data) {
@@ -82,7 +82,7 @@ public class GetGraphDataLogic {
         byte[][] values = new byte[numberOfPins][];
 
         for (int i = 0; i < numberOfPins; i++) {
-            values[i] = storageDao.getAllFromDisk(user.name,
+            values[i] = reportingDao.getAllFromDisk(user.name,
                     requestedPins[i].dashBoardId, requestedPins[i].pinType,
                     requestedPins[i].pin, requestedPins[i].count, requestedPins[i].type);
         }
@@ -97,7 +97,7 @@ public class GetGraphDataLogic {
             byte pin = Byte.parseByte(messageParts[2]);
             String cmd = messageParts[3];
             if ("del".equals(cmd)) {
-                storageDao.delete(username, dashBoardId, pinType, pin);
+                reportingDao.delete(username, dashBoardId, pinType, pin);
                 return true;
             }
         } catch (NumberFormatException e) {

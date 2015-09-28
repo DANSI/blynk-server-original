@@ -39,9 +39,9 @@ public class AppServer extends BaseServer {
     public AppServer(Holder holder) {
         super(holder.props.getIntProperty("app.ssl.port"), holder.transportType);
 
-        RegisterHandler registerHandler = new RegisterHandler(holder.userRegistry, holder.props.getProperty("allowed.users.list"));
-        AppLoginHandler appLoginHandler = new AppLoginHandler(holder.props, holder.userRegistry, holder.sessionsHolder, holder.storageDao, holder.notificationsProcessor);
-        AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionsHolder);
+        RegisterHandler registerHandler = new RegisterHandler(holder.userDao, holder.props.getProperty("allowed.users.list"));
+        AppLoginHandler appLoginHandler = new AppLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.notificationsProcessor);
+        AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
 
         SslContext sslCtx = initSslContext(holder.props);
 

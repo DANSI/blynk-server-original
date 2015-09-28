@@ -2,8 +2,8 @@ package cc.blynk.server.core.administration.actions;
 
 import cc.blynk.common.administration.SHA256Util;
 import cc.blynk.server.core.administration.Executable;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,13 +23,13 @@ public class ManualResetPassword implements Executable {
     private static final Logger log = LogManager.getLogger(ManualResetPassword.class);
 
     @Override
-    public List<String> execute(UserRegistry userRegistry, SessionsHolder sessionsHolder, String... params) {
+    public List<String> execute(UserDao userDao, SessionDao sessionDao, String... params) {
         List<String> result = new ArrayList<>();
         if (params != null && params.length == 2) {
             String userName = params[0].toLowerCase();
             String newPass = params[1];
 
-            User user = userRegistry.getByName(userName);
+            User user = userDao.getByName(userName);
             if (user == null) {
                 log.error("User '{}' not exists.", userName);
             } else {

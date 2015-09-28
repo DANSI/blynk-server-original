@@ -2,13 +2,13 @@ package cc.blynk.server.handlers.app;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.ReportingDao;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.app.logic.*;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
-import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -29,13 +29,13 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
     private final GetGraphDataLogic graphData;
     private final AppMailLogic appMailLogic;
 
-    public AppHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao, NotificationsProcessor notificationsProcessor, HandlerState state) {
+    public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, NotificationsProcessor notificationsProcessor, HandlerState state) {
         super(state);
         this.saveProfile = new SaveProfileLogic(props);
-        this.token = new GetTokenLogic(userRegistry);
-        this.hardwareApp = new HardwareAppLogic(sessionsHolder);
-        this.refreshToken = new RefreshTokenLogic(userRegistry);
-        this.graphData = new GetGraphDataLogic(storageDao);
+        this.token = new GetTokenLogic(userDao);
+        this.hardwareApp = new HardwareAppLogic(sessionDao);
+        this.refreshToken = new RefreshTokenLogic(userDao);
+        this.graphData = new GetGraphDataLogic(reportingDao);
         this.appMailLogic = new AppMailLogic(notificationsProcessor);
     }
 

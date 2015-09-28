@@ -3,10 +3,10 @@ package cc.blynk.server;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.storage.StorageDao;
-import cc.blynk.server.storage.reporting.average.AverageAggregator;
+import cc.blynk.server.dao.ReportingDao;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
+import cc.blynk.server.reporting.average.AverageAggregator;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 
 import static cc.blynk.server.utils.ReportingUtil.getReportingFolder;
@@ -24,11 +24,11 @@ public class Holder {
 
     public final FileManager fileManager;
 
-    public final SessionsHolder sessionsHolder;
+    public final SessionDao sessionDao;
 
-    public final UserRegistry userRegistry;
+    public final UserDao userDao;
 
-    public final StorageDao storageDao;
+    public final ReportingDao reportingDao;
 
     public final GlobalStats stats;
 
@@ -52,11 +52,11 @@ public class Holder {
 
         this.transportType = new TransportTypeHolder(serverProperties);
         this.fileManager = new FileManager(dataFolder);
-        this.sessionsHolder = new SessionsHolder();
-        this.userRegistry = new UserRegistry(fileManager.deserialize());
+        this.sessionDao = new SessionDao();
+        this.userDao = new UserDao(fileManager.deserialize());
         this.stats = new GlobalStats();
         this.averageAggregator = new AverageAggregator(getReportingFolder(dataFolder));
-        this.storageDao = new StorageDao(averageAggregator, serverProperties);
+        this.reportingDao = new ReportingDao(averageAggregator, serverProperties);
 
         this.notificationsProcessor = notificationsProcessor;
     }

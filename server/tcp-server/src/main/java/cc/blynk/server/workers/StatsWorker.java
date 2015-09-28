@@ -2,8 +2,8 @@ package cc.blynk.server.workers;
 
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.stats.GlobalStats;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import org.apache.logging.log4j.LogManager;
@@ -25,13 +25,13 @@ public class StatsWorker implements Runnable {
     private static final Logger log = LogManager.getLogger(StatsWorker.class);
 
     private final GlobalStats stats;
-    private final SessionsHolder sessionsHolder;
-    private final UserRegistry userRegistry;
+    private final SessionDao sessionDao;
+    private final UserDao userDao;
 
-    public StatsWorker(GlobalStats stats, SessionsHolder sessionsHolder, UserRegistry userRegistry) {
+    public StatsWorker(GlobalStats stats, SessionDao sessionDao, UserDao userDao) {
         this.stats = stats;
-        this.sessionsHolder = sessionsHolder;
-        this.userRegistry = userRegistry;
+        this.sessionDao = sessionDao;
+        this.userDao = userDao;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class StatsWorker implements Runnable {
         int activeSessions = 0;
         int hardActive = 0;
         int appActive = 0;
-        for (Map.Entry<User, Session> entry: sessionsHolder.getUserSession().entrySet()) {
+        for (Map.Entry<User, Session> entry: sessionDao.getUserSession().entrySet()) {
             Session session = entry.getValue();
             if (session.hardwareChannels.size() > 0 && session.appChannels.size() > 0) {
                 activeSessions++;
@@ -66,8 +66,8 @@ public class StatsWorker implements Runnable {
         stat.connected = activeSessions;
         stat.onlineApps = appActive;
         stat.onlineHards = hardActive;
-        stat.active = sessionsHolder.getUserSession().size();
-        stat.total = userRegistry.getUsers().size();
+        stat.active = sessionDao.getUserSession().size();
+        stat.total = userDao.getUsers().size();
 
         log.info(stat.toString());
     }

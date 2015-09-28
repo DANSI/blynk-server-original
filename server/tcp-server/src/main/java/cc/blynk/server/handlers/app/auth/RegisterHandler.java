@@ -2,7 +2,7 @@ package cc.blynk.server.handlers.app.auth;
 
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.protocol.appllication.RegisterMessage;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.UserDao;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -30,11 +30,11 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 @ChannelHandler.Sharable
 public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage> implements DefaultExceptionHandler {
 
-    private final UserRegistry userRegistry;
+    private final UserDao userDao;
     private final Set<String> allowedUsers;
 
-    public RegisterHandler(UserRegistry userRegistry, String allowedUsersString) {
-        this.userRegistry = userRegistry;
+    public RegisterHandler(UserDao userDao, String allowedUsersString) {
+        this.userDao = userDao;
         String[] allowedUsersArray = allowedUsersString == null ? null : allowedUsersString.toLowerCase().split(",");
         if (allowedUsersArray != null && allowedUsersArray.length > 0 &&
                 allowedUsersArray[0] != null && !"".equals(allowedUsersArray[0])) {
@@ -67,7 +67,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        if (userRegistry.isUserExists(userName)) {
+        if (userDao.isUserExists(userName)) {
             log.warn("User with name {} already exists.", userName);
             ctx.writeAndFlush(produce(message.id, USER_ALREADY_REGISTERED));
             return;
@@ -79,7 +79,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        userRegistry.createNewUser(userName, pass);
+        userDao.createNewUser(userName, pass);
 
         log.info("Registered {}.", userName);
 

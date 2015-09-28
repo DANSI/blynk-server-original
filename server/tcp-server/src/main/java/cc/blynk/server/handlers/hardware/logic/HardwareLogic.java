@@ -3,13 +3,13 @@ package cc.blynk.server.handlers.hardware.logic;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.StringUtils;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.graph.StoreMessage;
+import cc.blynk.server.dao.ReportingDao;
+import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NoActiveDashboardException;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.Session;
-import cc.blynk.server.storage.StorageDao;
+import cc.blynk.server.model.graph.StoreMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
@@ -24,16 +24,16 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class HardwareLogic {
 
-    private final StorageDao storageDao;
-    private final SessionsHolder sessionsHolder;
+    private final ReportingDao reportingDao;
+    private final SessionDao sessionDao;
 
-    public HardwareLogic(SessionsHolder sessionsHolder, StorageDao storageDao) {
-        this.sessionsHolder = sessionsHolder;
-        this.storageDao = storageDao;
+    public HardwareLogic(SessionDao sessionDao, ReportingDao reportingDao) {
+        this.sessionDao = sessionDao;
+        this.reportingDao = reportingDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message message) {
-        Session session = sessionsHolder.userSession.get(state.user);
+        Session session = sessionDao.userSession.get(state.user);
 
         //if message from hardware, check if it belongs to graph. so we need save it in that case
         if (message.body.length() < 4) {
@@ -42,7 +42,7 @@ public class HardwareLogic {
 
         StoreMessage storeMessage = null;
         if (message.body.charAt(1) == 'w') {
-            storeMessage = storageDao.process(state.user.profile, state.dashId, message.body);
+            storeMessage = reportingDao.process(state.user.profile, state.dashId, message.body);
         }
 
         if (state.user.profile.activeDashId == null || !state.user.profile.activeDashId.equals(state.dashId)) {

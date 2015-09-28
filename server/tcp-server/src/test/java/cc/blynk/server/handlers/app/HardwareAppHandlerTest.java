@@ -3,14 +3,14 @@ package cc.blynk.server.handlers.app;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.TestBase;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.ReportingDao;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.app.logic.HardwareAppLogic;
 import cc.blynk.server.handlers.hardware.logic.HardwareLogic;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -42,10 +42,10 @@ public class HardwareAppHandlerTest extends TestBase {
     private ChannelHandlerContext ctx;
 
     @Mock
-    private UserRegistry userRegistry;
+    private UserDao userDao;
 
     @InjectMocks
-    private SessionsHolder sessionsHolder;
+    private SessionDao sessionDao;
 
     @Mock
     private ServerProperties serverProperties;
@@ -66,7 +66,7 @@ public class HardwareAppHandlerTest extends TestBase {
     private Session session;
 
     @Mock
-    private StorageDao storageDao;
+    private ReportingDao reportingDao;
 
     @Test
     public void testActiveDashboardIdNull() {
@@ -74,8 +74,8 @@ public class HardwareAppHandlerTest extends TestBase {
         when(ctx.channel()).thenReturn(channel);
         user.profile = profile;
         profile.activeDashId = null;
-        SessionsHolder sessionsHolder = spy(new SessionsHolder());
-        HardwareAppLogic hardwareHandler = spy(new HardwareAppLogic(sessionsHolder));
+        SessionDao sessionDao = spy(new SessionDao());
+        HardwareAppLogic hardwareHandler = spy(new HardwareAppLogic(sessionDao));
         hardwareHandler.messageReceived(ctx, user, message);
     }
 

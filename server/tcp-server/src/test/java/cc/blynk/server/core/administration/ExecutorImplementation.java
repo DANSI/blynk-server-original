@@ -1,7 +1,7 @@
 package cc.blynk.server.core.administration;
 
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 public class ExecutorImplementation implements Executable {
 
     @Override
-    public List<String> execute(UserRegistry userRegistry, SessionsHolder sessionsHolder, String... params) {
+    public List<String> execute(UserDao userDao, SessionDao sessionDao, String... params) {
         List<String> res = new ArrayList<>();
         res.add("Test success!");
         return res;

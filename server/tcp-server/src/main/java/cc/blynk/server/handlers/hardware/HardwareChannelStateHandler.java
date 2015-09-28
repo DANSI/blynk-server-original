@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.hardware;
 
-import cc.blynk.server.dao.SessionsHolder;
+import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Notification;
@@ -29,17 +29,17 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LogManager.getLogger(HardwareChannelStateHandler.class);
 
-    private final SessionsHolder sessionsHolder;
+    private final SessionDao sessionDao;
     private final NotificationsProcessor notificationsProcessor;
 
-    public HardwareChannelStateHandler(SessionsHolder sessionsHolder, NotificationsProcessor notificationsProcessor) {
-        this.sessionsHolder = sessionsHolder;
+    public HardwareChannelStateHandler(SessionDao sessionDao, NotificationsProcessor notificationsProcessor) {
+        this.sessionDao = sessionDao;
         this.notificationsProcessor = notificationsProcessor;
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        sessionsHolder.removeHardFromSession(ctx.channel());
+        sessionDao.removeHardFromSession(ctx.channel());
         log.trace("Hardware channel disconnect.");
         sentOfflineMessage(ctx.channel());
     }
@@ -58,7 +58,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         if (user != null) {
             Notification notification = user.profile.getActiveDashboardWidgetByType(Notification.class);
             if (notification == null || !notification.notifyWhenOffline) {
-                Session session = sessionsHolder.userSession.get(user);
+                Session session = sessionDao.userSession.get(user);
                 if (session.appChannels.size() > 0) {
                     session.sendMessageToApp(produce(0, DEVICE_WENT_OFFLINE));
                 }

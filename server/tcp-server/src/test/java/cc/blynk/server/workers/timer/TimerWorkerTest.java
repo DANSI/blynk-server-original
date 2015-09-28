@@ -1,7 +1,7 @@
 package cc.blynk.server.workers.timer;
 
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.Session;
@@ -32,10 +32,10 @@ import static org.mockito.Mockito.*;
 public class TimerWorkerTest {
 
     @Mock
-    private UserRegistry userRegistry;
+    private UserDao userDao;
 
     @Mock
-    private SessionsHolder sessionsHolder;
+    private SessionDao sessionDao;
 
     @Spy
     @InjectMocks
@@ -77,8 +77,8 @@ public class TimerWorkerTest {
             users.put(String.valueOf(i), user);
         }
 
-        when(userRegistry.getUsers()).thenReturn(users);
-        when(sessionsHolder.getUserSession()).thenReturn(userSession);
+        when(userDao.getUsers()).thenReturn(users);
+        when(sessionDao.getUserSession()).thenReturn(userSession);
         user.profile = profile;
         profile.dashBoards = new DashBoard[] {};
         when(profile.getActiveDashboardTimerWidgets()).thenReturn(timers);

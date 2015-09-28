@@ -1,4 +1,4 @@
-package cc.blynk.server.dao.graph;
+package cc.blynk.server.model.graph;
 
 /**
  * The Blynk Project.

@@ -1,13 +1,13 @@
-package cc.blynk.server.storage;
+package cc.blynk.server.dao;
 
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.common.utils.StringUtils;
-import cc.blynk.server.dao.graph.GraphKey;
-import cc.blynk.server.dao.graph.StoreMessage;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
-import cc.blynk.server.storage.reporting.average.AverageAggregator;
+import cc.blynk.server.model.graph.GraphKey;
+import cc.blynk.server.model.graph.StoreMessage;
+import cc.blynk.server.reporting.average.AverageAggregator;
 import cc.blynk.server.utils.ReportingUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -30,17 +30,17 @@ import static java.lang.String.format;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/18/2015.
  */
-public class StorageDao {
+public class ReportingDao {
 
     public static final String REPORTING_HOURLY_FILE_NAME = "history_%s_%c%d_hourly.bin";
     public static final String REPORTING_DAILY_FILE_NAME = "history_%s_%c%d_daily.bin";
-    private static final Logger log = LogManager.getLogger(StorageDao.class);
+    private static final Logger log = LogManager.getLogger(ReportingDao.class);
     private final AverageAggregator averageAggregator;
     private final String dataFolder;
 
     private final boolean ENABLE_RAW_DATA_STORE;
 
-    public StorageDao(AverageAggregator averageAggregator, ServerProperties serverProperties) {
+    public ReportingDao(AverageAggregator averageAggregator, ServerProperties serverProperties) {
         this.averageAggregator = averageAggregator;
         this.dataFolder = ReportingUtil.getReportingFolder(serverProperties.getProperty("data.folder"));
         this.ENABLE_RAW_DATA_STORE = serverProperties.getBoolProperty("enable.raw.data.store");

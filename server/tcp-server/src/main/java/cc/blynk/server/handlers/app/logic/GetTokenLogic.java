@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.app.logic;
 
 import cc.blynk.common.model.messages.Message;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,10 +16,10 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  */
 public class GetTokenLogic {
 
-    private final UserRegistry userRegistry;
+    private final UserDao userDao;
 
-    public GetTokenLogic( UserRegistry userRegistry) {
-        this.userRegistry = userRegistry;
+    public GetTokenLogic( UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
@@ -34,7 +34,7 @@ public class GetTokenLogic {
 
         user.profile.validateDashId(dashBoardId, message.id);
 
-        String token = userRegistry.getToken(user, dashBoardId);
+        String token = userDao.getToken(user, dashBoardId);
 
         ctx.writeAndFlush(produce(message.id, message.command, token));
     }

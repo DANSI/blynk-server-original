@@ -1,4 +1,4 @@
-package cc.blynk.server.storage.reporting.average;
+package cc.blynk.server.reporting.average;
 
 import cc.blynk.server.model.enums.PinType;
 import org.junit.Test;
@@ -8,8 +8,8 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import static cc.blynk.server.storage.reporting.average.AverageAggregator.DAY;
-import static cc.blynk.server.storage.reporting.average.AverageAggregator.HOURS;
+import static cc.blynk.server.reporting.average.AverageAggregator.DAY;
+import static cc.blynk.server.reporting.average.AverageAggregator.HOURS;
 import static cc.blynk.server.utils.ReportingUtil.getReportingFolder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

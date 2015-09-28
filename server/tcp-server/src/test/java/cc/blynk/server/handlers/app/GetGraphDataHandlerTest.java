@@ -1,9 +1,9 @@
 package cc.blynk.server.handlers.app;
 
 import cc.blynk.server.TestBase;
-import cc.blynk.server.dao.graph.GraphKey;
-import cc.blynk.server.dao.graph.StoreMessage;
 import cc.blynk.server.model.enums.PinType;
+import cc.blynk.server.model.graph.GraphKey;
+import cc.blynk.server.model.graph.StoreMessage;
 import cc.blynk.server.utils.ByteUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;

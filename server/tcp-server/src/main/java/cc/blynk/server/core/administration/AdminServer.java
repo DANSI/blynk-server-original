@@ -16,7 +16,7 @@ public class AdminServer extends BaseServer {
 
     public AdminServer(Holder holder) {
         super(holder.props.getIntProperty("server.admin.port"), holder.transportType);
-        this.channelInitializer = new AdminChannelInitializer(holder.userRegistry, holder.sessionsHolder);
+        this.channelInitializer = new AdminChannelInitializer(holder.userDao, holder.sessionDao);
         log.info("Administration server port {}.", port);
     }
 

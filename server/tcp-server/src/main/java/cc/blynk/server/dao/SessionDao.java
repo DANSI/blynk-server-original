@@ -18,9 +18,9 @@ import static cc.blynk.server.utils.HandlerUtil.getState;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/18/2015.
  */
-public class SessionsHolder {
+public class SessionDao {
 
-    private static final Logger log = LogManager.getLogger(SessionsHolder.class);
+    private static final Logger log = LogManager.getLogger(SessionDao.class);
 
     public final Map<User, Session> userSession = new ConcurrentHashMap<>();
 

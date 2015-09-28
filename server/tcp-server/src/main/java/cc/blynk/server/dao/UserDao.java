@@ -17,20 +17,20 @@ import java.util.concurrent.ConcurrentMap;
  * Date: 8/11/13
  * Time: 4:02 PM
  */
-public class UserRegistry {
+public class UserDao {
 
-    private static final Logger log = LogManager.getLogger(UserRegistry.class);
+    private static final Logger log = LogManager.getLogger(UserDao.class);
     private final ConcurrentMap<String, User> users;
     private final ConcurrentMap<String, User> tokenToUserCache;
     //init user DB if possible
 
-    public UserRegistry(ConcurrentMap<String, User> users) {
+    public UserDao(ConcurrentMap<String, User> users) {
         //reading DB to RAM.
         this.users = users;
         tokenToUserCache = createTokenToUserCache(users);
     }
 
-    public UserRegistry(ConcurrentMap<String, User> users, ConcurrentMap<String, User> usersFromAnotherSource) {
+    public UserDao(ConcurrentMap<String, User> users, ConcurrentMap<String, User> usersFromAnotherSource) {
         this.users = users;
         this.users.putAll(usersFromAnotherSource);
         tokenToUserCache = createTokenToUserCache(users);

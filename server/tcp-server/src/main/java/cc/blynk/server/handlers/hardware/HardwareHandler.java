@@ -2,14 +2,14 @@ package cc.blynk.server.handlers.hardware;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.SessionsHolder;
+import cc.blynk.server.dao.ReportingDao;
+import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.exceptions.QuotaLimitException;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.handlers.hardware.logic.*;
 import cc.blynk.server.stats.metrics.InstanceLoadMeter;
-import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -34,11 +34,11 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<Message> {
     private InstanceLoadMeter quotaMeter;
     private long lastQuotaExceededTime;
 
-    public HardwareHandler(ServerProperties props, SessionsHolder sessionsHolder, StorageDao storageDao,
+    public HardwareHandler(ServerProperties props, SessionDao sessionDao, ReportingDao reportingDao,
                            NotificationsProcessor notificationsProcessor, HandlerState handlerState) {
         super(handlerState);
-        this.hardware = new HardwareLogic(sessionsHolder, storageDao);
-        this.bridge = new BridgeLogic(sessionsHolder);
+        this.hardware = new HardwareLogic(sessionDao, reportingDao);
+        this.bridge = new BridgeLogic(sessionDao);
 
         long defaultNotificationQuotaLimit = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
         this.email = new MailLogic(notificationsProcessor, defaultNotificationQuotaLimit);

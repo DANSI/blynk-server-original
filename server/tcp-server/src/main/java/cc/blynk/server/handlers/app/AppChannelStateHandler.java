@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.app;
 
-import cc.blynk.server.dao.SessionsHolder;
+import cc.blynk.server.dao.SessionDao;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -20,15 +20,15 @@ public class AppChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LogManager.getLogger(AppChannelStateHandler.class);
 
-    private final SessionsHolder sessionsHolder;
+    private final SessionDao sessionDao;
 
-    public AppChannelStateHandler(SessionsHolder sessionsHolder) {
-        this.sessionsHolder = sessionsHolder;
+    public AppChannelStateHandler(SessionDao sessionDao) {
+        this.sessionDao = sessionDao;
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        sessionsHolder.removeAppFromSession(ctx.channel());
+        sessionDao.removeAppFromSession(ctx.channel());
         log.trace("Application channel disconnect.");
     }
 

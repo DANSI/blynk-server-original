@@ -2,7 +2,7 @@ package cc.blynk.server.workers;
 
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.FileManager;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.model.auth.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 public class ProfileSaverWorkerTest {
 
     @Mock
-    private UserRegistry userRegistry;
+    private UserDao userDao;
 
     @Mock
     private FileManager fileManager;
@@ -34,7 +34,7 @@ public class ProfileSaverWorkerTest {
 
     @Test
     public void testCorrectProfilesAreSaved() throws IOException {
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userRegistry, fileManager);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager);
 
         User user1 = new User("1", "");
         User user2 = new User("2", "");
@@ -47,7 +47,7 @@ public class ProfileSaverWorkerTest {
         userMap.put("3", user3);
         userMap.put("4", user4);
 
-        when(userRegistry.getUsers()).thenReturn(userMap);
+        when(userDao.getUsers()).thenReturn(userMap);
         profileSaverWorker.run();
 
         verify(fileManager, times(4)).overrideUserFile(any());
@@ -72,9 +72,9 @@ public class ProfileSaverWorkerTest {
 
         Thread.sleep(1);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userRegistry, fileManager);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager);
 
-        when(userRegistry.getUsers()).thenReturn(userMap);
+        when(userDao.getUsers()).thenReturn(userMap);
         profileSaverWorker.run();
 
         verifyNoMoreInteractions(fileManager);

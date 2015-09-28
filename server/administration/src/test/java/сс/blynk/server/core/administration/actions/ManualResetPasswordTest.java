@@ -1,7 +1,7 @@
 package сс.blynk.server.core.administration.actions;
 
 import cc.blynk.server.core.administration.actions.ManualResetPassword;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.model.auth.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 public class ManualResetPasswordTest {
 
     @Mock
-    private UserRegistry userRegistry;
+    private UserDao userDao;
 
     @Mock
     private User user;
@@ -34,8 +34,8 @@ public class ManualResetPasswordTest {
 
         String username = "dima@dima.ua";
         String pass = "123";
-        when(userRegistry.getByName(username)).thenReturn(user);
-        List<String> response = manualResetPassword.execute(userRegistry, null, username, pass);
+        when(userDao.getByName(username)).thenReturn(user);
+        List<String> response = manualResetPassword.execute(userDao, null, username, pass);
 
         assertEquals(user.pass, "UDgMLjFcZ/HDe1jFqejmJIGh8aOc1V7xSLVUKR5hmsk=");
 
@@ -51,8 +51,8 @@ public class ManualResetPasswordTest {
 
         String username = "dima@dima.ua";
         String pass = "123";
-        when(userRegistry.getByName(username)).thenReturn(null);
-        List<String> repsonse = manualResetPassword.execute(userRegistry, null, username, pass);
+        when(userDao.getByName(username)).thenReturn(null);
+        List<String> repsonse = manualResetPassword.execute(userDao, null, username, pass);
 
         assertNotNull(repsonse);
         assertEquals(1, repsonse.size());

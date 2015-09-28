@@ -1,7 +1,7 @@
 package сс.blynk.server.core.administration.actions;
 
 import cc.blynk.server.core.administration.actions.ActivityMonitor;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.model.auth.User;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 public class ActivityMonitorTest {
 
     @Mock
-    private UserRegistry userRegistry;
+    private UserDao userDao;
 
     @Mock
     private User user;
@@ -47,11 +47,11 @@ public class ActivityMonitorTest {
         };
         usersList.get(0);
 
-        when(userRegistry.getUsers()).thenReturn(users);
+        when(userDao.getUsers()).thenReturn(users);
         when(users.size()).thenReturn(2);
         when(users.values()).thenReturn(usersList);
 
-        List<String> repsonse = activityMonitor.execute(userRegistry, null);
+        List<String> repsonse = activityMonitor.execute(userDao, null);
 
         assertNotNull(repsonse);
         assertEquals(4, repsonse.size());
@@ -63,11 +63,11 @@ public class ActivityMonitorTest {
     public void testNoUser() {
         ActivityMonitor activityMonitor = new ActivityMonitor();
 
-        when(userRegistry.getUsers()).thenReturn(users);
+        when(userDao.getUsers()).thenReturn(users);
         when(users.size()).thenReturn(2);
         when(users.values()).thenReturn(Collections.emptyList());
 
-        List<String> repsonse = activityMonitor.execute(userRegistry, null);
+        List<String> repsonse = activityMonitor.execute(userDao, null);
 
         assertNotNull(repsonse);
         assertEquals(2, repsonse.size());

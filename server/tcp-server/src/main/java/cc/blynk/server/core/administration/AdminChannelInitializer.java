@@ -2,8 +2,8 @@ package cc.blynk.server.core.administration;
 
 import cc.blynk.server.core.administration.handlers.AdminReplayingMessageDecoder;
 import cc.blynk.server.core.administration.handlers.ExecutorHandler;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -18,12 +18,12 @@ final class AdminChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     private static final StringEncoder ENCODER = new StringEncoder();
 
-    private final SessionsHolder sessionsHolder;
-    private final UserRegistry userRegistry;
+    private final SessionDao sessionDao;
+    private final UserDao userDao;
 
-    public AdminChannelInitializer(UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        this.userRegistry = userRegistry;
-        this.sessionsHolder = sessionsHolder;
+    public AdminChannelInitializer(UserDao userDao, SessionDao sessionDao) {
+        this.userDao = userDao;
+        this.sessionDao = sessionDao;
     }
 
     @Override
@@ -33,7 +33,7 @@ final class AdminChannelInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(ENCODER);
 
         pipeline.addLast(new AdminReplayingMessageDecoder());
-        pipeline.addLast(new ExecutorHandler(userRegistry, sessionsHolder));
+        pipeline.addLast(new ExecutorHandler(userDao, sessionDao));
 
 
     }

@@ -1,9 +1,9 @@
 package cc.blynk.server.storage;
 
-import cc.blynk.server.dao.graph.GraphKey;
-import cc.blynk.server.dao.graph.StoreMessage;
 import cc.blynk.server.model.enums.PinType;
-import cc.blynk.server.storage.reporting.average.AverageAggregator;
+import cc.blynk.server.model.graph.GraphKey;
+import cc.blynk.server.model.graph.StoreMessage;
+import cc.blynk.server.reporting.average.AverageAggregator;
 import cc.blynk.server.workers.StorageWorker;
 import org.junit.Ignore;
 import org.junit.Test;

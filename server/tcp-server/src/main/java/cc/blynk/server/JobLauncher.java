@@ -1,7 +1,7 @@
 package cc.blynk.server;
 
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.storage.reporting.average.AverageAggregator;
+import cc.blynk.server.reporting.average.AverageAggregator;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
 import cc.blynk.server.workers.StatsWorker;
@@ -34,11 +34,11 @@ public class JobLauncher {
         startDelay = AverageAggregator.HOURS - (System.currentTimeMillis() % AverageAggregator.HOURS);
         scheduler.scheduleAtFixedRate(storageWorker, startDelay, AverageAggregator.HOURS, TimeUnit.MILLISECONDS);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userRegistry, holder.fileManager);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager);
         scheduler.scheduleAtFixedRate(profileSaverWorker, 1000,
                 holder.props.getIntProperty("profile.save.worker.period"), TimeUnit.MILLISECONDS);
 
-        StatsWorker statsWorker = new StatsWorker(holder.stats, holder.sessionsHolder, holder.userRegistry);
+        StatsWorker statsWorker = new StatsWorker(holder.stats, holder.sessionDao, holder.userDao);
         scheduler.scheduleAtFixedRate(statsWorker, 1000,
                 holder.props.getIntProperty("stats.print.worker.period"), TimeUnit.MILLISECONDS);
 
@@ -47,7 +47,7 @@ public class JobLauncher {
 
         //separate thread for timer.
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(
-                new TimerWorker(holder.userRegistry, holder.sessionsHolder), startDelay, 1000, TimeUnit.MILLISECONDS);
+                new TimerWorker(holder.userDao, holder.sessionDao), startDelay, 1000, TimeUnit.MILLISECONDS);
 
         //shutdown hook thread catcher
         Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(holder.averageAggregator, profileSaverWorker,
