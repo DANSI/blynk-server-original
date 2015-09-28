@@ -5,7 +5,6 @@ import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
-import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import io.netty.channel.ChannelFuture;
@@ -65,10 +64,10 @@ public class MainWorkflowTest extends IntegrationBase {
     public void init() throws Exception {
         initServerStructures();
 
-        FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
+        FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
 
-        hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsProcessor, new TransportTypeHolder(properties), storageDao);
-        appServer = new AppServer(properties, userRegistry, sessionsHolder, stats, notificationsProcessor, new TransportTypeHolder(properties), storageDao);
+        hardwareServer = new HardwareServer(holder);
+        appServer = new AppServer(holder);
         new Thread(hardwareServer).start();
         new Thread(appServer).start();
 

@@ -3,7 +3,6 @@ package cc.blynk.server.handlers;
 import cc.blynk.common.exceptions.BaseServerException;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,7 +22,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
     private final TypeParameterMatcher matcher;
     private final HandlerState handlerState;
 
-    protected BaseSimpleChannelInboundHandler(ServerProperties props, HandlerState handlerState) {
+    protected BaseSimpleChannelInboundHandler(HandlerState handlerState) {
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
         this.handlerState = handlerState;
     }

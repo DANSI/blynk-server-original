@@ -2,18 +2,13 @@ package cc.blynk.server.core.application;
 
 import cc.blynk.common.handlers.common.decoders.MessageDecoder;
 import cc.blynk.common.handlers.common.encoders.MessageEncoder;
-import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.TransportTypeHolder;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.app.AppChannelStateHandler;
 import cc.blynk.server.handlers.app.auth.AppLoginHandler;
 import cc.blynk.server.handlers.app.auth.RegisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
-import cc.blynk.server.storage.StorageDao;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -41,17 +36,16 @@ public class AppServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
     private boolean isMutualSSL;
 
-    public AppServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                     GlobalStats stats, NotificationsProcessor notificationsProcessor,TransportTypeHolder transportType, StorageDao storageDao) {
-        super(props.getIntProperty("app.ssl.port"), transportType);
+    public AppServer(Holder holder) {
+        super(holder.props.getIntProperty("app.ssl.port"), holder.transportType);
 
-        RegisterHandler registerHandler = new RegisterHandler(userRegistry, props.getProperty("allowed.users.list"));
-        AppLoginHandler appLoginHandler = new AppLoginHandler(props, userRegistry, sessionsHolder, storageDao, notificationsProcessor);
-        AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(sessionsHolder);
+        RegisterHandler registerHandler = new RegisterHandler(holder.userRegistry, holder.props.getProperty("allowed.users.list"));
+        AppLoginHandler appLoginHandler = new AppLoginHandler(holder.props, holder.userRegistry, holder.sessionsHolder, holder.storageDao, holder.notificationsProcessor);
+        AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionsHolder);
 
-        SslContext sslCtx = initSslContext(props);
+        SslContext sslCtx = initSslContext(holder.props);
 
-        int appTimeoutSecs = props.getIntProperty("app.socket.idle.timeout", 0);
+        int appTimeoutSecs = holder.props.getIntProperty("app.socket.idle.timeout", 0);
         log.debug("app.socket.idle.timeout = {}", appTimeoutSecs);
 
         this.channelInitializer = new ChannelInitializer<SocketChannel>() {
@@ -72,7 +66,7 @@ public class AppServer extends BaseServer {
 
                 //non-sharable handlers
                 pipeline.addLast(appChannelStateHandler);
-                pipeline.addLast(new MessageDecoder(stats));
+                pipeline.addLast(new MessageDecoder(holder.stats));
                 pipeline.addLast(new MessageEncoder());
 
                 //sharable business logic handlers initialized previously

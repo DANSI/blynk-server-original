@@ -2,7 +2,6 @@ package cc.blynk.integration;
 
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestHardClient;
-import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.hardware.HardwareServer;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -36,9 +35,9 @@ public class HardProtocolCommandsTest extends IntegrationBase {
     public void init() throws Exception {
         initServerStructures();
 
-        FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
+        FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
 
-        hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsProcessor, new TransportTypeHolder(properties), storageDao);
+        hardwareServer = new HardwareServer(holder);
 
         new Thread(hardwareServer).start();
 

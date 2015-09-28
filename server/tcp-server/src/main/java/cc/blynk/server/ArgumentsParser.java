@@ -17,14 +17,14 @@ import java.util.Properties;
  */
 class ArgumentsParser {
 
-    private final Options options;
+    private static final Options options;
 
-    private final String HARDWARE_PORT_OPTION = "hardPort";
-    private final String APPLICATION_PORT_OPTION = "appPort";
-    private final String WORKER_THREADS_OPTION = "workerThreads";
-    private final String DATA_FOLDER_OPTION = "dataFolder";
+    private static final String HARDWARE_PORT_OPTION = "hardPort";
+    private static final String APPLICATION_PORT_OPTION = "appPort";
+    private static final String WORKER_THREADS_OPTION = "workerThreads";
+    private static final String DATA_FOLDER_OPTION = "dataFolder";
 
-    ArgumentsParser() {
+    static  {
         options = new Options();
         options.addOption(HARDWARE_PORT_OPTION, true, "Hardware server port.")
                .addOption(APPLICATION_PORT_OPTION, true, "Application server port.")
@@ -33,7 +33,7 @@ class ArgumentsParser {
     }
 
 
-    void processArguments(String[] args, Properties serverProperties) throws ParseException {
+    static void processArguments(String[] args, Properties serverProperties) throws ParseException {
         CommandLine cmd = new BasicParser().parse(options, args);
 
         String hardPort = cmd.getOptionValue(HARDWARE_PORT_OPTION);

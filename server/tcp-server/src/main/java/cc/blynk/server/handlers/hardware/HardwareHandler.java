@@ -36,7 +36,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<Message> {
 
     public HardwareHandler(ServerProperties props, SessionsHolder sessionsHolder, StorageDao storageDao,
                            NotificationsProcessor notificationsProcessor, HandlerState handlerState) {
-        super(props, handlerState);
+        super(handlerState);
         this.hardware = new HardwareLogic(sessionsHolder, storageDao);
         this.bridge = new BridgeLogic(sessionsHolder);
 

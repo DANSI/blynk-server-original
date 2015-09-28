@@ -2,17 +2,11 @@ package cc.blynk.server.core.hardware;
 
 import cc.blynk.common.handlers.common.decoders.MessageDecoder;
 import cc.blynk.common.handlers.common.encoders.MessageEncoder;
-import cc.blynk.common.stats.GlobalStats;
-import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.TransportTypeHolder;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareLoginHandler;
-import cc.blynk.server.storage.StorageDao;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -27,14 +21,13 @@ public class HardwareServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public HardwareServer(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder,
-                          GlobalStats stats, NotificationsProcessor notificationsProcessor, TransportTypeHolder transportType, StorageDao storageDao) {
-        super(props.getIntProperty("hardware.default.port"), transportType);
+    public HardwareServer(Holder holder) {
+        super(holder.props.getIntProperty("hardware.default.port"), holder.transportType);
 
-        HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(props, userRegistry, sessionsHolder, storageDao, notificationsProcessor);
-        HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(sessionsHolder, notificationsProcessor);
+        HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder.props, holder.userRegistry, holder.sessionsHolder, holder.storageDao, holder.notificationsProcessor);
+        HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionsHolder, holder.notificationsProcessor);
 
-        int hardTimeoutSecs = props.getIntProperty("hard.socket.idle.timeout", 0);
+        int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -46,7 +39,7 @@ public class HardwareServer extends BaseServer {
                     pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
                 }
                 pipeline.addLast(hardwareChannelStateHandler);
-                pipeline.addLast(new MessageDecoder(stats));
+                pipeline.addLast(new MessageDecoder(holder.stats));
                 pipeline.addLast(new MessageEncoder());
 
                 //sharable business logic handlers
