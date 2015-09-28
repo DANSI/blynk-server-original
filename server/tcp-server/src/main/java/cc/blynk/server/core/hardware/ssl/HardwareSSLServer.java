@@ -8,13 +8,12 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareLoginHandler;
+import cc.blynk.server.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
-import io.netty.handler.ssl.util.SelfSignedCertificate;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
 import javax.net.ssl.SSLException;
@@ -82,13 +81,10 @@ public class HardwareSSLServer extends BaseServer {
             if (!serverCert.exists() || !serverKey.exists()) {
                 log.warn("ATTENTION. Certificate {} and key {} paths not valid. Using embedded certs. This is not secure. Please replace it with your own certs.",
                         serverCert.getAbsolutePath(), serverKey.getAbsolutePath());
-                SelfSignedCertificate ssc = new SelfSignedCertificate();
-                return SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).sslProvider(sslProvider).build();
+                return SslUtil.build(sslProvider);
             }
 
-            return SslContextBuilder.forServer(serverCert, serverKey, serverPass)
-                    .sslProvider(sslProvider)
-                    .build();
+            return SslUtil.build(serverCert, serverKey, serverPass, sslProvider);
         } catch (CertificateException | SSLException | IllegalArgumentException e) {
             log.error("Error initializing ssl context. Reason : {}", e.getMessage());
             throw new RuntimeException(e.getMessage());
