@@ -55,7 +55,6 @@ public class HardwareLogic {
             } else {
                 session.sendMessageToApp(((HardwareMessage) message).updateMessageBody(message.body + StringUtils.BODY_SEPARATOR_STRING + storeMessage.ts));
             }
-
         }
     }
 

@@ -30,7 +30,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
     private final AppMailLogic appMailLogic;
 
     public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, NotificationsProcessor notificationsProcessor, HandlerState state) {
-        super(state);
+        super(props, state);
         this.saveProfile = new SaveProfileLogic(props);
         this.token = new GetTokenLogic(userDao);
         this.hardwareApp = new HardwareAppLogic(sessionDao);
@@ -71,6 +71,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
                 break;
             case EMAIL :
                 appMailLogic.messageReceived(ctx, state.user, msg);
+                break;
         }
     }
 
