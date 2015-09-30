@@ -3,6 +3,7 @@ package cc.blynk.server.handlers.app.logic;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
 import cc.blynk.server.dao.ReportingDao;
+import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NoDataException;
 import cc.blynk.server.model.auth.User;
@@ -53,9 +54,8 @@ public class GetGraphDataLogic {
 
         //special case for delete command
         if (messageParts.length == 4) {
-            if (deleteGraphData(messageParts, user.name, message.id)) {
-                ctx.writeAndFlush(produce(message.id, OK));
-            }
+            deleteGraphData(messageParts, user.name, message.id);
+            ctx.writeAndFlush(produce(message.id, OK));
         } else {
             byte[][] data = process(messageParts, user, message.id);
 
@@ -90,20 +90,19 @@ public class GetGraphDataLogic {
         return values;
     }
 
-    private boolean deleteGraphData(String[] messageParts, String username, int msgId) {
+    private void deleteGraphData(String[] messageParts, String username, int msgId) {
         try {
             int dashBoardId = Integer.parseInt(messageParts[0]);
             PinType pinType = PinType.getPingType(messageParts[1].charAt(0));
             byte pin = Byte.parseByte(messageParts[2]);
             String cmd = messageParts[3];
-            if ("del".equals(cmd)) {
-                reportingDao.delete(username, dashBoardId, pinType, pin);
-                return true;
+            if (!"del".equals(cmd)) {
+                throw new IllegalCommandBodyException("Wrong body format. Expecting 'del'.", msgId);
             }
+            reportingDao.delete(username, dashBoardId, pinType, pin);
         } catch (NumberFormatException e) {
             throw new IllegalCommandException("HardwareLogic command body incorrect.", msgId);
         }
-        return false;
     }
 
     private class GraphPinRequestData {
