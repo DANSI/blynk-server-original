@@ -9,6 +9,7 @@ import java.io.Serializable;
  */
 public class AggregationValue implements Serializable {
 
+    //todo consider case for reporting when few hardware using same token and same pin
     private double values = 0;
     private long count = 0;
 
