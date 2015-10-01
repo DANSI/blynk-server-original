@@ -58,6 +58,7 @@ public class InstanceLoadMeter {
 
     private void tick() {
         final double instantRate = count / TICK_INTERVAL_DOUBLE;
+        count = 0;
         if (initialized) {
             rate += (alpha * (instantRate - rate));
         } else {
