@@ -29,7 +29,7 @@ public class Session {
         for (Channel channel : hardwareChannels) {
             Integer dashId = getState(channel).dashId;
             if (activeDashId.equals(dashId)) {
-                log.trace("Sending {} to {}", message, channel);
+                log.trace("Sending {} to hardware {}", message, channel);
                 channel.writeAndFlush(message);
             }
         }
@@ -37,14 +37,14 @@ public class Session {
 
     public void sendMessageToHardware(MessageBase message) {
         for (Channel channel : hardwareChannels) {
-            log.trace("Sending {} to {}", message, channel);
+            log.trace("Sending {} to hardware {}", message, channel);
             channel.writeAndFlush(message);
         }
     }
 
     public void sendMessageToApp(MessageBase message) {
         for (Channel channel : appChannels) {
-            log.trace("Sending {} to {}", message, channel);
+            log.trace("Sending {} to app {}", message, channel);
             channel.writeAndFlush(message);
         }
     }

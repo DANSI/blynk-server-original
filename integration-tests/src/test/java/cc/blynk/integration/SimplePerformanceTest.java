@@ -76,6 +76,7 @@ public class SimplePerformanceTest extends IntegrationBase {
         while (true) {
             for (ClientPair clientPair : clients) {
                 clientPair.appClient.send("hardware aw 10 10");
+                clientPair.hardwareClient.send("hardware vw 11 11");
             }
             sleep(10);
         }
