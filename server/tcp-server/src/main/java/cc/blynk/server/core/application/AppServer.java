@@ -77,6 +77,11 @@ public class AppServer extends BaseServer {
     }
 
     @Override
+    protected String getServerName() {
+        return "application";
+    }
+
+    @Override
     public void stop() {
         log.info("Shutting down SSL server...");
         super.stop();

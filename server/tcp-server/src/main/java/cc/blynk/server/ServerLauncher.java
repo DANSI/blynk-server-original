@@ -53,16 +53,17 @@ public class ServerLauncher {
         //configurable folder for logs via property.
         System.setProperty("logs.folder", serverProperties.getProperty("logs.folder"));
 
+        //changing log level based on properties file
         LoggerUtil.changeLogLevel(serverProperties.getProperty("log.level"));
 
-        ArgumentsParser.processArguments(args, serverProperties);
+        ArgumentsParser.parse(args, serverProperties);
 
         System.setProperty("data.folder", serverProperties.getProperty("data.folder"));
 
-        new ServerLauncher(serverProperties).start();
+        new ServerLauncher(serverProperties).run();
     }
 
-    private void start() {
+    private void run() {
         //start servers
         new Thread(appServer).start();
         new Thread(hardwareServer).start();

@@ -59,6 +59,11 @@ public class HardwareServer extends BaseServer {
     }
 
     @Override
+    protected String getServerName() {
+        return "hardware";
+    }
+
+    @Override
     public void stop() {
         log.info("Shutting down default server...");
         super.stop();

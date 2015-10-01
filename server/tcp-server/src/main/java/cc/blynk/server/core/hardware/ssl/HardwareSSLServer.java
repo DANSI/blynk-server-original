@@ -97,6 +97,11 @@ public class HardwareSSLServer extends BaseServer {
     }
 
     @Override
+    protected String getServerName() {
+        return "hardware ssl";
+    }
+
+    @Override
     public void stop() {
         log.info("Shutting down default server...");
         super.stop();

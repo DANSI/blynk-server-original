@@ -31,7 +31,7 @@ public abstract class BaseServer implements Runnable {
     @Override
     public void run() {
         if (transportTypeHolder.epollEnabled) {
-            log.warn("Native epoll transport enabled.");
+            log.warn("Native epoll transport for {} server enabled.", getServerName());
         }
         buildServerAndRun(
                 transportTypeHolder.bossGroup,
@@ -63,6 +63,8 @@ public abstract class BaseServer implements Runnable {
     }
 
     protected abstract ChannelInitializer<SocketChannel> getChannelInitializer();
+
+    protected abstract String getServerName();
 
     public void stop() {
         if (channel != null) {

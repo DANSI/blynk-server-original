@@ -26,6 +26,11 @@ public class AdminServer extends BaseServer {
     }
 
     @Override
+    protected String getServerName() {
+        return "admin";
+    }
+
+    @Override
     public void stop() {
         log.info("Shutting down admin server...");
         super.stop();

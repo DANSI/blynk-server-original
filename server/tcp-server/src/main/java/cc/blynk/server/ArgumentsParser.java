@@ -33,7 +33,7 @@ class ArgumentsParser {
     }
 
 
-    static void processArguments(String[] args, Properties serverProperties) throws ParseException {
+    static void parse(String[] args, Properties serverProperties) throws ParseException {
         CommandLine cmd = new BasicParser().parse(options, args);
 
         String hardPort = cmd.getOptionValue(HARDWARE_PORT_OPTION);
