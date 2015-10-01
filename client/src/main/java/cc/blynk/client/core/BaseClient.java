@@ -131,6 +131,8 @@ public abstract class BaseClient {
     }
 
     public ChannelFuture stop() {
-        return channel.close().awaitUninterruptibly();
+        ChannelFuture channelFuture = channel.close().awaitUninterruptibly();
+        nioEventLoopGroup.shutdownGracefully();
+        return channelFuture;
     }
 }
