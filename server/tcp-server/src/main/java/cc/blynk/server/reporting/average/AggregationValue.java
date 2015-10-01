@@ -1,8 +1,6 @@
 package cc.blynk.server.reporting.average;
 
 import java.io.Serializable;
-import java.util.concurrent.atomic.DoubleAdder;
-import java.util.concurrent.atomic.LongAdder;
 
 /**
  * The Blynk Project.
@@ -11,15 +9,15 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class AggregationValue implements Serializable {
 
-    private final DoubleAdder values = new DoubleAdder();
-    private final LongAdder count = new LongAdder();
+    private double values = 0;
+    private long count = 0;
 
     public void update(double val) {
-        values.add(val);
-        count.increment();
+        values += val;
+        count++;
     }
 
     public double calcAverage() {
-        return values.sum() / count.sum();
+        return values / count;
     }
 }
