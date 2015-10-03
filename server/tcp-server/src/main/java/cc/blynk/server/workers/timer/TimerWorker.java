@@ -1,8 +1,8 @@
 package cc.blynk.server.workers.timer;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Timer;
@@ -25,16 +25,16 @@ public class TimerWorker implements Runnable {
 
     private static final Logger log = LogManager.getLogger(TimerWorker.class);
 
-    private final UserRegistry userRegistry;
-    private final SessionsHolder sessionsHolder;
+    private final UserDao userDao;
+    private final SessionDao sessionDao;
     private final ZoneId UTC = ZoneId.of("UTC");
 
     private int tickedTimers;
     private int onlineTimers;
 
-    public TimerWorker(UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        this.userRegistry = userRegistry;
-        this.sessionsHolder = sessionsHolder;
+    public TimerWorker(UserDao userDao, SessionDao sessionDao) {
+        this.userDao = userDao;
+        this.sessionDao = sessionDao;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class TimerWorker implements Runnable {
 
         long curTime = localDateTime.getSecond() + localDateTime.getMinute() * 60 + localDateTime.getHour() * 3600;
 
-        for (User user : userRegistry.getUsers().values()) {
+        for (User user : userDao.getUsers().values()) {
             if (user.profile.dashBoards != null) {
                 for (Timer timer : user.profile.getActiveDashboardTimerWidgets()) {
                     allTimers++;
@@ -67,7 +67,7 @@ public class TimerWorker implements Runnable {
     private void sendMessageIfTicked(User user, long curTime, Long time, String value) {
         if (timerTick(curTime, time)) {
             tickedTimers++;
-            Session session = sessionsHolder.getUserSession().get(user);
+            Session session = sessionDao.getUserSession().get(user);
             if (session != null) {
                 onlineTimers++;
                 if (session.hardwareChannels.size() > 0) {

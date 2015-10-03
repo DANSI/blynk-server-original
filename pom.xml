@@ -11,7 +11,7 @@
 
     <groupId>cc.blynk</groupId>
     <artifactId>blynk</artifactId>
-    <version>0.8.2-SNAPSHOT</version>
+    <version>0.8.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <scm>
@@ -81,7 +81,8 @@
     </profiles>
 
     <properties>
-        <netty.version>4.0.28.Final</netty.version>
+        <netty.version>4.0.32.Final</netty.version>
+        <netty.tcnative.version>1.1.33.Fork8</netty.tcnative.version>
         <log4j2.version>2.3</log4j2.version>
         <maven.assembly.plugin.version>2.5.5</maven.assembly.plugin.version>
     </properties>

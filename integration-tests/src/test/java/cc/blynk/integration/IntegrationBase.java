@@ -1,19 +1,13 @@
 package cc.blynk.integration;
 
 import cc.blynk.common.model.messages.Message;
-import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.integration.model.TestHardClient;
-import cc.blynk.server.dao.FileManager;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.Holder;
 import cc.blynk.server.model.Profile;
-import cc.blynk.server.storage.StorageDao;
-import cc.blynk.server.storage.reporting.average.AverageAggregator;
 import cc.blynk.server.utils.JsonParser;
-import cc.blynk.server.utils.ReportingUtil;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import org.junit.Before;
 import org.mockito.ArgumentCaptor;
@@ -50,17 +44,7 @@ public abstract class IntegrationBase {
     @Mock
     public NotificationsProcessor notificationsProcessor;
 
-    public AverageAggregator averageAggregator;
-
-    public StorageDao storageDao;
-
-    public FileManager fileManager;
-
-    public SessionsHolder sessionsHolder;
-
-    public UserRegistry userRegistry;
-
-    public GlobalStats stats;
+    public Holder holder;
 
     public static void sleep(int ms) {
         try {
@@ -140,12 +124,6 @@ public abstract class IntegrationBase {
     }
 
     public void initServerStructures() {
-        String dataFolder = properties.getProperty("data.folder");
-        fileManager = new FileManager(dataFolder);
-        sessionsHolder = new SessionsHolder();
-        userRegistry = new UserRegistry(fileManager.deserialize());
-        stats = new GlobalStats();
-        averageAggregator = new AverageAggregator(ReportingUtil.getReportingFolder(dataFolder));
-        storageDao = new StorageDao(averageAggregator, properties);
+        holder = new Holder(properties, notificationsProcessor);
     }
 }

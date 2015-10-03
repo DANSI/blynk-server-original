@@ -1,11 +1,12 @@
 package cc.blynk.server.handlers;
 
-import cc.blynk.common.exceptions.BaseServerException;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.server.exceptions.QuotaLimitException;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.stats.metrics.InstanceLoadMeter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -20,12 +21,19 @@ import org.apache.logging.log4j.ThreadContext;
  */
 public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
+    protected final int USER_QUOTA_LIMIT_WARN_PERIOD;
+    protected final int USER_QUOTA_LIMIT;
     private final TypeParameterMatcher matcher;
     private final HandlerState handlerState;
+    private final InstanceLoadMeter quotaMeter;
+    private long lastQuotaExceededTime;
 
     protected BaseSimpleChannelInboundHandler(ServerProperties props, HandlerState handlerState) {
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
         this.handlerState = handlerState;
+        this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit");
+        this.USER_QUOTA_LIMIT_WARN_PERIOD = props.getIntProperty("user.message.quota.limit.exceeded.warning.period");
+        this.quotaMeter = new InstanceLoadMeter();
     }
 
     @Override
@@ -37,17 +45,28 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
 
             try {
                 ThreadContext.put("user", user.name);
+                if (quotaMeter.getOneMinuteRate() > USER_QUOTA_LIMIT) {
+                    sendErrorResponseIfTicked(ctx, typedMsg.id);
+                    return;
+                }
+
+                quotaMeter.mark();
                 messageReceived(ctx, handlerState, typedMsg);
-                ThreadContext.clearMap();
-            } catch (BaseServerException cause) {
-                handleAppException(ctx, cause);
             } catch (Exception e) {
-                handleUnexpectedException(ctx, e);
+                handleGeneralException(ctx, e);
             } finally {
+                ThreadContext.clearMap();
                 ReferenceCountUtil.release(msg);
             }
-        } else {
-            ctx.fireChannelRead(msg);
+        }
+    }
+
+    private void sendErrorResponseIfTicked(ChannelHandlerContext ctx, int msgId) {
+        long now = System.currentTimeMillis();
+        //once a minute sending user response message in case limit is exceeded constantly
+        if (lastQuotaExceededTime + USER_QUOTA_LIMIT_WARN_PERIOD < now) {
+            lastQuotaExceededTime = now;
+            throw new QuotaLimitException("User has exceeded message quota limit.", msgId);
         }
     }
 
@@ -65,5 +84,9 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
 
     public HandlerState getHandlerState() {
         return handlerState;
+    }
+
+    public InstanceLoadMeter getQuotaMeter() {
+        return quotaMeter;
     }
 }

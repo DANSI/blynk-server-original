@@ -2,8 +2,8 @@ package cc.blynk.server.core.administration.handlers;
 
 import cc.blynk.server.core.administration.Executable;
 import cc.blynk.server.core.administration.model.AdminMessage;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.utils.ByteClassLoaderUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -18,12 +18,12 @@ import java.util.List;
 public class ExecutorHandler extends SimpleChannelInboundHandler<AdminMessage> {
 
     private final ByteClassLoaderUtil byteClassLoaderUtil;
-    private final SessionsHolder sessionsHolder;
-    private final UserRegistry userRegistry;
+    private final SessionDao sessionDao;
+    private final UserDao userDao;
 
-    public ExecutorHandler(UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        this.sessionsHolder = sessionsHolder;
-        this.userRegistry = userRegistry;
+    public ExecutorHandler(UserDao userDao, SessionDao sessionDao) {
+        this.sessionDao = sessionDao;
+        this.userDao = userDao;
         this.byteClassLoaderUtil = new ByteClassLoaderUtil();
     }
 
@@ -31,7 +31,7 @@ public class ExecutorHandler extends SimpleChannelInboundHandler<AdminMessage> {
     protected void channelRead0(ChannelHandlerContext ctx, AdminMessage msg) throws Exception {
         Executable executable = byteClassLoaderUtil.defineClass(msg.classBytes);
 
-        List<String> result = executable.execute(userRegistry, sessionsHolder, msg.params);
+        List<String> result = executable.execute(userDao, sessionDao, msg.params);
 
         for (String s : result) {
             ctx.writeAndFlush(s);

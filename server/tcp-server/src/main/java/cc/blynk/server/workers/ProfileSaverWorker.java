@@ -1,7 +1,7 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.server.dao.FileManager;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,12 +20,12 @@ public class ProfileSaverWorker implements Runnable {
     private static final Logger log = LogManager.getLogger(ProfileSaverWorker.class);
 
     //1 min
-    private final UserRegistry userRegistry;
+    private final UserDao userDao;
     private final FileManager fileManager;
     private long lastStart;
 
-    public ProfileSaverWorker(UserRegistry userRegistry, FileManager fileManager) {
-        this.userRegistry = userRegistry;
+    public ProfileSaverWorker(UserDao userDao, FileManager fileManager) {
+        this.userDao = userDao;
         this.fileManager = fileManager;
         this.lastStart = System.currentTimeMillis();
     }
@@ -36,7 +36,7 @@ public class ProfileSaverWorker implements Runnable {
         int count = 0;
         long newStart = System.currentTimeMillis();
 
-        for (User user : userRegistry.getUsers().values()) {
+        for (User user : userDao.getUsers().values()) {
             if (lastStart <= user.lastModifiedTs) {
                 try {
                     fileManager.overrideUserFile(user);

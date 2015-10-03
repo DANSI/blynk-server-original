@@ -2,12 +2,13 @@ package cc.blynk.server.handlers.app.logic;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
+import cc.blynk.server.dao.ReportingDao;
+import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NoDataException;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
-import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,10 +28,10 @@ public class GetGraphDataLogic {
     private static final Logger log = LogManager.getLogger(GetGraphDataLogic.class);
 
     private static int VALUES_PER_PIN = 5;
-    private final StorageDao storageDao;
+    private final ReportingDao reportingDao;
 
-    public GetGraphDataLogic(StorageDao storageDao) {
-        this.storageDao = storageDao;
+    public GetGraphDataLogic(ReportingDao reportingDao) {
+        this.reportingDao = reportingDao;
     }
 
     private static boolean checkNoData(byte[][] data) {
@@ -53,9 +54,8 @@ public class GetGraphDataLogic {
 
         //special case for delete command
         if (messageParts.length == 4) {
-            if (deleteGraphData(messageParts, user.name, message.id)) {
-                ctx.writeAndFlush(produce(message.id, OK));
-            }
+            deleteGraphData(messageParts, user.name, message.id);
+            ctx.writeAndFlush(produce(message.id, OK));
         } else {
             byte[][] data = process(messageParts, user, message.id);
 
@@ -82,7 +82,7 @@ public class GetGraphDataLogic {
         byte[][] values = new byte[numberOfPins][];
 
         for (int i = 0; i < numberOfPins; i++) {
-            values[i] = storageDao.getAllFromDisk(user.name,
+            values[i] = reportingDao.getAllFromDisk(user.name,
                     requestedPins[i].dashBoardId, requestedPins[i].pinType,
                     requestedPins[i].pin, requestedPins[i].count, requestedPins[i].type);
         }
@@ -90,20 +90,19 @@ public class GetGraphDataLogic {
         return values;
     }
 
-    private boolean deleteGraphData(String[] messageParts, String username, int msgId) {
+    private void deleteGraphData(String[] messageParts, String username, int msgId) {
         try {
             int dashBoardId = Integer.parseInt(messageParts[0]);
             PinType pinType = PinType.getPingType(messageParts[1].charAt(0));
             byte pin = Byte.parseByte(messageParts[2]);
             String cmd = messageParts[3];
-            if ("del".equals(cmd)) {
-                storageDao.delete(username, dashBoardId, pinType, pin);
-                return true;
+            if (!"del".equals(cmd)) {
+                throw new IllegalCommandBodyException("Wrong body format. Expecting 'del'.", msgId);
             }
+            reportingDao.delete(username, dashBoardId, pinType, pin);
         } catch (NumberFormatException e) {
             throw new IllegalCommandException("HardwareLogic command body incorrect.", msgId);
         }
-        return false;
     }
 
     private class GraphPinRequestData {

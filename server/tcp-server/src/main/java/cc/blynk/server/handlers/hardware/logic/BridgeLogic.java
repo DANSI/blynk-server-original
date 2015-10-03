@@ -2,7 +2,7 @@ package cc.blynk.server.handlers.hardware.logic;
 
 import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.Message;
-import cc.blynk.server.dao.SessionsHolder;
+import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
@@ -29,11 +29,11 @@ import static cc.blynk.server.utils.HandlerUtil.getState;
  */
 public class BridgeLogic {
 
-    private final SessionsHolder sessionsHolder;
+    private final SessionDao sessionDao;
     private final Map<String, String> sendToMap;
 
-    public BridgeLogic(SessionsHolder sessionsHolder) {
-        this.sessionsHolder = sessionsHolder;
+    public BridgeLogic(SessionDao sessionDao) {
+        this.sessionDao = sessionDao;
         this.sendToMap = new ConcurrentHashMap<>();
     }
 
@@ -42,7 +42,7 @@ public class BridgeLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message message) {
-        Session session = sessionsHolder.userSession.get(state.user);
+        Session session = sessionDao.userSession.get(state.user);
         String[] split = message.body.split("\0");
         if (split.length < 3) {
             throw new IllegalCommandException("Wrong bridge body.", message.id);

@@ -13,13 +13,14 @@ import java.util.concurrent.ConcurrentMap;
  * Date: 8/11/13
  * Time: 4:02 PM
  */
-public class UserRegistry {
+public class UserDao {
 
     public final TokenManagerBase tokenManager;
     public final TokenManagerBase sharedTokenManager;
+    private static final Logger log = LogManager.getLogger(UserDao.class);
     private final ConcurrentMap<String, User> users;
 
-    public UserRegistry(ConcurrentMap<String, User> users) {
+    public UserDao(ConcurrentMap<String, User> users) {
         //reading DB to RAM.
         this.users = users;
         this.tokenManager = new TokenManager(users.values());

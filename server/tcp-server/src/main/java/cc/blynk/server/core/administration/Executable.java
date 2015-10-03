@@ -1,7 +1,7 @@
 package cc.blynk.server.core.administration;
 
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
 
 import java.util.List;
 
@@ -12,6 +12,6 @@ import java.util.List;
  */
 public interface Executable {
 
-    List<String> execute(UserRegistry userRegistry, SessionsHolder sessionsHolder, String... params);
+    List<String> execute(UserDao userDao, SessionDao sessionDao, String... params);
 
 }

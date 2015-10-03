@@ -6,13 +6,13 @@ import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.model.messages.protocol.appllication.LoginMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.ReportingDao;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -33,17 +33,17 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 @ChannelHandler.Sharable
 public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
 
-    private final UserRegistry userRegistry;
-    private final SessionsHolder sessionsHolder;
+    private final UserDao userDao;
+    private final SessionDao sessionDao;
     private final ServerProperties props;
-    private final StorageDao storageDao;
+    private final ReportingDao reportingDao;
     private final NotificationsProcessor notificationsProcessor;
 
-    public HardwareLoginHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao, NotificationsProcessor notificationsProcessor) {
+    public HardwareLoginHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, NotificationsProcessor notificationsProcessor) {
         this.props = props;
-        this.userRegistry = userRegistry;
-        this.sessionsHolder = sessionsHolder;
-        this.storageDao = storageDao;
+        this.userDao = userDao;
+        this.sessionDao = sessionDao;
+        this.reportingDao = reportingDao;
         this.notificationsProcessor = notificationsProcessor;
     }
 
@@ -57,7 +57,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         }
 
         String token = messageParts[0].trim();
-        User user = userRegistry.tokenManager.getUserByToken(token);
+        User user = userDao.tokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
@@ -67,13 +67,13 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         Integer dashId = UserRegistry.getDashIdByToken(user.dashTokens, token, message.id);
 
-        sessionsHolder.addHardwareChannel(user, ctx.channel());
+        sessionDao.addHardwareChannel(user, ctx.channel());
 
         log.info("{} hardware joined.", user.name);
 
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(UserNotLoggerHandler.class);
-        ctx.pipeline().addLast(new HardwareHandler(props, sessionsHolder, storageDao, notificationsProcessor, new HandlerState(dashId, user, token)));
+        ctx.pipeline().addLast(new HardwareHandler(props, sessionDao, reportingDao, notificationsProcessor, new HandlerState(dashId, user, token)));
 
         ctx.writeAndFlush(produce(message.id, OK));
 

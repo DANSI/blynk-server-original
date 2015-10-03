@@ -1,12 +1,12 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
-import cc.blynk.server.storage.StorageDao;
-import cc.blynk.server.storage.reporting.average.AggregationKey;
-import cc.blynk.server.storage.reporting.average.AggregationValue;
-import cc.blynk.server.storage.reporting.average.AverageAggregator;
+import cc.blynk.server.reporting.average.AggregationKey;
+import cc.blynk.server.reporting.average.AggregationValue;
+import cc.blynk.server.reporting.average.AverageAggregator;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cc.blynk.server.storage.StorageDao.generateFilename;
+import static cc.blynk.server.dao.ReportingDao.generateFilename;
 import static cc.blynk.server.utils.ReportingUtil.getReportingFolder;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
@@ -93,7 +93,7 @@ public class StorageWorkerTest {
         assertTrue(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
         assertTrue(Files.exists(Paths.get(dataFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
 
-        byte[] data = StorageDao.getAllFromDisk(dataFolder, "test", 1, PinType.ANALOG, (byte) 1, 2, GraphType.HOURLY);
+        byte[] data = ReportingDao.getAllFromDisk(dataFolder, "test", 1, PinType.ANALOG, (byte) 1, 2, GraphType.HOURLY);
         ByteBuffer byteBuffer = ByteBuffer.wrap(data);
         assertNotNull(data);
         assertEquals(32, data.length);
@@ -104,7 +104,7 @@ public class StorageWorkerTest {
         assertEquals(100.0, byteBuffer.getDouble(), 0.001);
         assertEquals(ts * AverageAggregator.HOURS, byteBuffer.getLong());
 
-        data = StorageDao.getAllFromDisk(dataFolder, "test2", 2, PinType.ANALOG, (byte) 2, 1, GraphType.HOURLY);
+        data = ReportingDao.getAllFromDisk(dataFolder, "test2", 2, PinType.ANALOG, (byte) 2, 1, GraphType.HOURLY);
         byteBuffer = ByteBuffer.wrap(data);
         assertNotNull(data);
         assertEquals(16, data.length);
@@ -144,7 +144,7 @@ public class StorageWorkerTest {
         assertTrue(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
 
         //take less
-        byte[] data = StorageDao.getAllFromDisk(dataFolder, "test", 1, PinType.ANALOG, (byte) 1, 1, GraphType.HOURLY);
+        byte[] data = ReportingDao.getAllFromDisk(dataFolder, "test", 1, PinType.ANALOG, (byte) 1, 1, GraphType.HOURLY);
         ByteBuffer byteBuffer = ByteBuffer.wrap(data);
         assertNotNull(data);
         assertEquals(16, data.length);
@@ -154,7 +154,7 @@ public class StorageWorkerTest {
 
 
         //take more
-        data = StorageDao.getAllFromDisk(dataFolder, "test", 1, PinType.ANALOG, (byte) 1, 24, GraphType.HOURLY);
+        data = ReportingDao.getAllFromDisk(dataFolder, "test", 1, PinType.ANALOG, (byte) 1, 24, GraphType.HOURLY);
         byteBuffer = ByteBuffer.wrap(data);
         assertNotNull(data);
         assertEquals(48, data.length);
@@ -204,7 +204,7 @@ public class StorageWorkerTest {
         assertTrue(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
         assertTrue(Files.exists(Paths.get(dataFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
 
-        new StorageDao(null, properties).delete("test", 1, PinType.ANALOG, (byte) 1);
+        new ReportingDao(null, properties).delete("test", 1, PinType.ANALOG, (byte) 1);
         assertFalse(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
     }
 

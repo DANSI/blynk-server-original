@@ -1,4 +1,4 @@
-package cc.blynk.server.storage.reporting.average;
+package cc.blynk.server.reporting.average;
 
 import cc.blynk.server.model.enums.PinType;
 import org.apache.commons.io.FileUtils;

@@ -1,7 +1,7 @@
 package cc.blynk.server.model;
 
-import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.model.enums.PinType;
+import cc.blynk.server.model.graph.GraphKey;
 import cc.blynk.server.utils.JsonParser;
 import org.junit.Test;
 

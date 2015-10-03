@@ -5,8 +5,8 @@ import cc.blynk.common.model.messages.MessageFactory;
 import cc.blynk.common.model.messages.protocol.hardware.MailMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.TestBase;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.handlers.hardware.logic.MailLogic;
@@ -40,10 +40,10 @@ public class MailHandlerTest extends TestBase {
 	private ChannelHandlerContext ctx;
 
 	@Mock
-	private UserRegistry userRegistry;
+	private UserDao userDao;
 
 	@Mock
-	private SessionsHolder sessionsHolder;
+	private SessionDao sessionDao;
 
 	@Mock
 	private ServerProperties serverProperties;

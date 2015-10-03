@@ -3,15 +3,15 @@ package cc.blynk.server.handlers.hardware;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.TestBase;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.ReportingDao;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.handlers.hardware.logic.HardwareLogic;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.storage.StorageDao;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -43,10 +43,10 @@ public class HardwareHardHandlerTest extends TestBase {
     private ChannelHandlerContext ctx;
 
     @Mock
-    private UserRegistry userRegistry;
+    private UserDao userDao;
 
     @InjectMocks
-    private SessionsHolder sessionsHolder;
+    private SessionDao sessionDao;
 
     @Mock
     private ServerProperties serverProperties;
@@ -64,7 +64,7 @@ public class HardwareHardHandlerTest extends TestBase {
     private Session session;
 
     @Mock
-    private StorageDao storageDao;
+    private ReportingDao reportingDao;
 
     @Test
     public void testNoDeviceAndPinModeMessage() {
@@ -74,10 +74,10 @@ public class HardwareHardHandlerTest extends TestBase {
         Profile profile = spy(new Profile());
         user.profile = profile;
         profile.activeDashId = 1;
-        SessionsHolder sessionsHolder = spy(new SessionsHolder());
+        SessionDao sessionDao = spy(new SessionDao());
         final Session session = new Session();
-        sessionsHolder.userSession.put(user, session);
-        HardwareLogic hardwareHandler = spy(new HardwareLogic(sessionsHolder, storageDao));
+        sessionDao.userSession.put(user, session);
+        HardwareLogic hardwareHandler = spy(new HardwareLogic(sessionDao, reportingDao));
         try {
             hardwareHandler.messageReceived(ctx, state, message);
         } catch (DeviceNotInNetworkException e) {

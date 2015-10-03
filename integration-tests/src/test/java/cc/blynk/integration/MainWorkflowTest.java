@@ -6,7 +6,6 @@ import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponse
 import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
-import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import io.netty.channel.ChannelFuture;
@@ -66,10 +65,10 @@ public class MainWorkflowTest extends IntegrationBase {
     public void init() throws Exception {
         initServerStructures();
 
-        FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
+        FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
 
-        hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsProcessor, new TransportTypeHolder(properties), storageDao);
-        appServer = new AppServer(properties, userRegistry, sessionsHolder, stats, new TransportTypeHolder(properties), storageDao);
+        hardwareServer = new HardwareServer(holder);
+        appServer = new AppServer(holder);
         new Thread(hardwareServer).start();
         new Thread(appServer).start();
 
@@ -133,6 +132,13 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getgraphdata 1 d 8 del");
 
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, OK)));
+    }
+
+    @Test
+    public void testSendEmail() throws Exception {
+        ClientPair clientPair = initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties);;
+        clientPair.appClient.send("email 1");
+        verify(notificationsProcessor, timeout(1000)).mail(any(), eq("dima@mail.ua"), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"), eq(1));
     }
 
 

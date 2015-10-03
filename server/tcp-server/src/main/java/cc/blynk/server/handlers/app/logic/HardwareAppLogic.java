@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.app.logic;
 
 import cc.blynk.common.model.messages.Message;
-import cc.blynk.server.dao.SessionsHolder;
+import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
@@ -19,10 +19,10 @@ public class HardwareAppLogic {
 
     private static final Logger log = LogManager.getLogger(HardwareAppLogic.class);
 
-    private final SessionsHolder sessionsHolder;
+    private final SessionDao sessionDao;
 
-    public HardwareAppLogic(SessionsHolder sessionsHolder) {
-        this.sessionsHolder = sessionsHolder;
+    public HardwareAppLogic(SessionDao sessionDao) {
+        this.sessionDao = sessionDao;
     }
 
     private static boolean pinModeMessage(String body) {
@@ -30,7 +30,7 @@ public class HardwareAppLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
-        Session session = sessionsHolder.userSession.get(user);
+        Session session = sessionDao.userSession.get(user);
 
         if (user.profile.activeDashId == null) {
             //throw new NoActiveDashboardException(message.id);

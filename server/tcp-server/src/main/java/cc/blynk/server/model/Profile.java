@@ -1,8 +1,8 @@
 package cc.blynk.server.model;
 
 import cc.blynk.common.model.messages.Message;
-import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.exceptions.IllegalCommandException;
+import cc.blynk.server.model.graph.GraphKey;
 import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.others.Timer;
 import cc.blynk.server.model.widgets.outputs.Graph;
@@ -49,6 +49,15 @@ public class Profile {
         }
 
         throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashBoardId), msgId);
+    }
+
+    public DashBoard getDashById(int dashId) {
+        for (DashBoard dashBoard : dashBoards) {
+            if (dashBoard.id == dashId) {
+                return dashBoard;
+            }
+        }
+        return null;
     }
 
     public DashBoard getDashboardById(int id) {

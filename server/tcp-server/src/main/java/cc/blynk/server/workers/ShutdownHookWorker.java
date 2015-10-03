@@ -1,7 +1,7 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.storage.reporting.average.AverageAggregator;
+import cc.blynk.server.reporting.average.AverageAggregator;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

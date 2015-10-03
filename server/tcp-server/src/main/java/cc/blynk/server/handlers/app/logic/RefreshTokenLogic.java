@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.app.logic;
 
 import cc.blynk.common.model.messages.Message;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,10 +16,10 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  */
 public class RefreshTokenLogic {
 
-    private final UserRegistry userRegistry;
+    private final UserDao userDao;
 
-    public RefreshTokenLogic(UserRegistry userRegistry) {
-        this.userRegistry = userRegistry;
+    public RefreshTokenLogic(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
@@ -34,7 +34,7 @@ public class RefreshTokenLogic {
 
         user.profile.validateDashId(dashBoardId, message.id);
 
-        String token = userRegistry.tokenManager.refreshToken(user, dashBoardId, user.dashTokens);
+        String token = userDao.tokenManager.refreshToken(user, dashBoardId, user.dashTokens);
 
         ctx.writeAndFlush(produce(message.id, message.command, token));
     }

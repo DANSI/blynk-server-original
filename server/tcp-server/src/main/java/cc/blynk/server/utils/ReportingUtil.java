@@ -1,7 +1,7 @@
 package cc.blynk.server.utils;
 
-import cc.blynk.server.storage.reporting.average.AggregationKey;
-import cc.blynk.server.storage.reporting.average.AggregationValue;
+import cc.blynk.server.reporting.average.AggregationKey;
+import cc.blynk.server.reporting.average.AggregationValue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

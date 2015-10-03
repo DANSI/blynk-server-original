@@ -3,8 +3,9 @@ package cc.blynk.server.handlers.app.auth;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.protocol.appllication.LoginMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.ReportingDao;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.exceptions.UserNotRegistered;
@@ -13,7 +14,7 @@ import cc.blynk.server.handlers.app.auth.sharing.AppShareLoginHandler;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.storage.StorageDao;
+import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -35,15 +36,17 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
 
     private final ServerProperties props;
-    private final UserRegistry userRegistry;
-    private final SessionsHolder sessionsHolder;
-    private final StorageDao storageDao;
+    private final UserDao userDao;
+    private final SessionDao sessionDao;
+    private final ReportingDao reportingDao;
+    private final NotificationsProcessor notificationsProcessor;
 
-    public AppLoginHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao) {
+    public AppLoginHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, NotificationsProcessor notificationsProcessor) {
         this.props = props;
-        this.userRegistry = userRegistry;
-        this.sessionsHolder = sessionsHolder;
-        this.storageDao = storageDao;
+        this.userDao = userDao;
+        this.sessionDao = sessionDao;
+        this.reportingDao = reportingDao;
+        this.notificationsProcessor = notificationsProcessor;
     }
 
     @Override
@@ -62,7 +65,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
     private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String pass) {
         String userName = username.toLowerCase();
-        User user = userRegistry.getByName(userName);
+        User user = userDao.getByName(userName);
 
         if (user == null) {
             throw new UserNotRegistered(String.format("User not registered. Username '%s', %s", userName, ctx.channel().remoteAddress()), messageId);
@@ -73,9 +76,9 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         }
 
         cleanPipeline(ctx.pipeline());
-        ctx.pipeline().addLast(new AppHandler(props, userRegistry, sessionsHolder, storageDao, new HandlerState(user)));
+        ctx.pipeline().addLast(new AppHandler(props, userDao, sessionDao, reportingDao, notificationsProcessor, new HandlerState(user)));
 
-        sessionsHolder.addAppChannel(user, ctx.channel());
+        sessionDao.addAppChannel(user, ctx.channel());
 
         log.info("{} app joined.", user.name);
     }

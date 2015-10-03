@@ -1,4 +1,4 @@
-package cc.blynk.server.dao.graph;
+package cc.blynk.server.model.graph;
 
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.model.enums.PinType;

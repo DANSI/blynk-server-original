@@ -8,7 +8,6 @@ import io.netty.handler.ssl.NotSslRecordException;
 import io.netty.handler.timeout.ReadTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
 
 import javax.net.ssl.SSLException;
 import java.io.IOException;
@@ -26,7 +25,10 @@ public interface DefaultExceptionHandler {
 
     default void handleGeneralException(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (cause instanceof BaseServerException) {
-            handleAppException(ctx, (BaseServerException) cause);
+            BaseServerException baseServerException = (BaseServerException) cause;
+            //no need for stack trace for known exceptions
+            log.error(baseServerException.getMessage());
+            ctx.writeAndFlush(produce(baseServerException));
         } else {
             handleUnexpectedException(ctx, cause);
         }
@@ -68,18 +70,6 @@ public interface DefaultExceptionHandler {
             log.error("Handler class : {}. Name : {}", ctx.handler().getClass(), ctx.name());
         }
 
-    }
-
-    default void handleAppException(ChannelHandlerContext ctx, BaseServerException baseServerException) {
-        //no need for stack trace for known exceptions
-        log.error(baseServerException.getMessage());
-        try {
-            //todo handle exception here?
-            ctx.writeAndFlush(produce(baseServerException));
-        } finally {
-            //cleanup logging context in case error happened.
-            ThreadContext.clearMap();
-        }
     }
 
 }
