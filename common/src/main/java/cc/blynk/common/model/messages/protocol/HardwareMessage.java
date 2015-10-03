@@ -15,12 +15,6 @@ public class HardwareMessage extends Message {
         super(messageId, HARDWARE, body.length(), body);
     }
 
-    public HardwareMessage updateMessageBody(String newBody) {
-        this.body = newBody;
-        this.length = newBody.length();
-        return this;
-    }
-
     @Override
     public String toString() {
         return "HardwareMessage{" + super.toString() + "}";

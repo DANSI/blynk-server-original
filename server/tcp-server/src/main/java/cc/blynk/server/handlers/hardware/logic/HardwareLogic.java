@@ -10,7 +10,12 @@ import cc.blynk.server.exceptions.NoActiveDashboardException;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.graph.GraphKey;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import static cc.blynk.server.utils.HandlerUtil.getState;
 
 /**
  * Handler responsible for forwarding messages from hardware to applications.
@@ -24,20 +29,14 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class HardwareLogic {
 
+    private static final Logger log = LogManager.getLogger(HardwareLogic.class);
+
     private final ReportingDao reportingDao;
     private final SessionDao sessionDao;
 
     public HardwareLogic(SessionDao sessionDao, ReportingDao reportingDao) {
         this.sessionDao = sessionDao;
         this.reportingDao = reportingDao;
-    }
-
-    private static String attachTS(String body, long ts) {
-        return body + StringUtils.BODY_SEPARATOR_STRING + ts;
-    }
-
-    private static String attachDashId(String body, int dashId) {
-        return dashId + StringUtils.BODY_SEPARATOR_STRING + body;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message message) {
@@ -61,7 +60,7 @@ public class HardwareLogic {
 
             //in case message is for graph - attaching ts.
             if (state.user.profile.hasGraphPin(key)) {
-                body = attachTS(body, ts);
+                body += StringUtils.BODY_SEPARATOR_STRING + ts;
             }
         }
 
@@ -70,7 +69,17 @@ public class HardwareLogic {
         }
 
         if (session.appChannels.size() > 0) {
-            session.sendMessageToApp(((HardwareMessage) message).updateMessageBody(attachDashId(body, dashId)));
+            //todo this code should be removed when both iOS and Android will support sharing.
+            HardwareMessage newAPIMessage = new HardwareMessage(message.id, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
+            HardwareMessage oldAPIMessage = new HardwareMessage(message.id, body);
+            for (Channel channel : session.appChannels) {
+                log.trace("Sending {} to app {}", message, channel);
+                if (getState(channel).version == null) {
+                    channel.writeAndFlush(oldAPIMessage);
+                } else {
+                    channel.writeAndFlush(newAPIMessage);
+                }
+            }
         }
     }
 

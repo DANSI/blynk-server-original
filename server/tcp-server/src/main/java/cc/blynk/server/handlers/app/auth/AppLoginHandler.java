@@ -52,18 +52,24 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
         //warn: split may be optimized
-        String[] messageParts = message.body.split(" ", 2);
+        String[] messageParts = message.body.split(" ");
 
-        if (messageParts.length == 2) {
-            appLogin(ctx, message.id, messageParts[0], messageParts[1]);
+        if (messageParts.length < 2) {
+            throw new IllegalCommandException("Wrong income message format.", message.id);
         } else {
-           throw new IllegalCommandException("Wrong income message format.", message.id);
+            String osType = null;
+            String version = null;
+            if (messageParts.length == 4) {
+                osType = messageParts[2];
+                version = messageParts[3];
+            }
+            appLogin(ctx, message.id, messageParts[0], messageParts[1], osType, version);
         }
 
         ctx.writeAndFlush(produce(message.id, OK));
     }
 
-    private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String pass) {
+    private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String pass, String osType, String version) {
         String userName = username.toLowerCase();
         User user = userDao.getByName(userName);
 
@@ -76,7 +82,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         }
 
         cleanPipeline(ctx.pipeline());
-        ctx.pipeline().addLast(new AppHandler(props, userDao, sessionDao, reportingDao, notificationsProcessor, new HandlerState(user)));
+        ctx.pipeline().addLast(new AppHandler(props, userDao, sessionDao, reportingDao, notificationsProcessor, new HandlerState(user, osType, version)));
 
         sessionDao.addAppChannel(user, ctx.channel());
 

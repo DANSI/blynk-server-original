@@ -53,18 +53,24 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ShareLoginMessage message) throws Exception {
         //warn: split may be optimized
-        String[] messageParts = message.body.split(" ", 2);
+        String[] messageParts = message.body.split(" ");
 
-        if (messageParts.length == 2) {
-            appLogin(ctx, message.id, messageParts[0], messageParts[1]);
+        if (messageParts.length < 2) {
+            throw new IllegalCommandException("Wrong income message format.", message.id);
         } else {
-           throw new IllegalCommandException("Wrong income message format.", message.id);
+            String osType = null;
+            String version = null;
+            if (messageParts.length == 4) {
+                osType = messageParts[2];
+                version = messageParts[3];
+            }
+            appLogin(ctx, message.id, messageParts[0], messageParts[1], osType, version);
         }
 
         ctx.writeAndFlush(produce(message.id, OK));
     }
 
-    private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String token) {
+    private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String token, String osType, String version) {
         String userName = username.toLowerCase();
 
         User user = userDao.sharedTokenManager.getUserByToken(token);
