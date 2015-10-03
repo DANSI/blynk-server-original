@@ -65,10 +65,6 @@ public final class JsonParser {
         return toJson(iOSGCMWriter, message);
     }
 
-    public static String toJson(DashBoard message) {
-        return toJson(dashboardWriter, message);
-    }
-
     public static String toJson(Profile profile) {
         return toJson(profileWriter, profile);
     }

@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.app.logic.sharing;
 
 import cc.blynk.common.model.messages.Message;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,10 +16,10 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  */
 public class GetShareTokenLogic {
 
-    private final UserRegistry userRegistry;
+    private final UserDao userDao;
 
-    public GetShareTokenLogic(UserRegistry userRegistry) {
-        this.userRegistry = userRegistry;
+    public GetShareTokenLogic(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
@@ -34,7 +34,7 @@ public class GetShareTokenLogic {
 
         user.profile.validateDashId(dashBoardId, message.id);
 
-        String token = userRegistry.sharedTokenManager.getToken(user, dashBoardId);
+        String token = userDao.sharedTokenManager.getToken(user, dashBoardId);
 
         ctx.writeAndFlush(produce(message.id, message.command, token));
     }

@@ -3,7 +3,6 @@ package cc.blynk.integration;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.SimpleClientHandler;
-import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.model.Profile;
@@ -52,10 +51,10 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     public void init() throws Exception {
         initServerStructures();
 
-        FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
+        FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
 
-        hardwareServer = new HardwareServer(properties, userRegistry, sessionsHolder, stats, notificationsProcessor, new TransportTypeHolder(properties), storageDao);
-        appServer = new AppServer(properties, userRegistry, sessionsHolder, stats, new TransportTypeHolder(properties), storageDao);
+        hardwareServer = new HardwareServer(holder);
+        appServer = new AppServer(holder);
         new Thread(hardwareServer).start();
         new Thread(appServer).start();
 

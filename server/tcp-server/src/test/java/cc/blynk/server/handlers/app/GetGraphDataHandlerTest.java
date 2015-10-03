@@ -2,7 +2,6 @@ package cc.blynk.server.handlers.app;
 
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.TestBase;
-import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.graph.GraphKey;
 import cc.blynk.server.utils.ByteUtils;
 import org.junit.Test;

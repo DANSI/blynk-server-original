@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.app.logic.sharing;
 
 import cc.blynk.common.model.messages.Message;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.InvalidTokenException;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
@@ -21,10 +21,10 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  */
 public class GetSharedDashLogic {
 
-    private final UserRegistry userRegistry;
+    private final UserDao userDao;
 
-    public GetSharedDashLogic(UserRegistry userRegistry) {
-        this.userRegistry = userRegistry;
+    public GetSharedDashLogic(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     private static Integer getSharedDashId(Map<Integer, String> sharedTokens, String token) {
@@ -52,7 +52,7 @@ public class GetSharedDashLogic {
     public void messageReceived(ChannelHandlerContext ctx, Message message) {
         String token = message.body;
 
-        User userThatShared = userRegistry.sharedTokenManager.getUserByToken(token);
+        User userThatShared = userDao.sharedTokenManager.getUserByToken(token);
 
         if (userThatShared == null) {
             throw new InvalidTokenException("Illegal sharing token. No user with those shared token.", message.id);

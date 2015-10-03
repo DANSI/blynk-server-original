@@ -2,15 +2,15 @@ package cc.blynk.server.handlers.app;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.ReportingDao;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.app.logic.GetGraphDataLogic;
 import cc.blynk.server.handlers.app.logic.HardwareAppLogic;
 import cc.blynk.server.handlers.app.logic.LoadProfileLogic;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
-import cc.blynk.server.storage.StorageDao;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.common.enums.Command.*;
@@ -26,10 +26,10 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<Message> {
     private final HardwareAppLogic hardwareApp;
     private final GetGraphDataLogic graphData;
 
-    public AppShareHandler(ServerProperties props, UserRegistry userRegistry, SessionsHolder sessionsHolder, StorageDao storageDao, HandlerState state) {
+    public AppShareHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, HandlerState state) {
         super(props, state);
-        this.hardwareApp = new HardwareAppLogic(sessionsHolder);
-        this.graphData = new GetGraphDataLogic(storageDao);
+        this.hardwareApp = new HardwareAppLogic(sessionDao);
+        this.graphData = new GetGraphDataLogic(reportingDao);
     }
 
     @Override

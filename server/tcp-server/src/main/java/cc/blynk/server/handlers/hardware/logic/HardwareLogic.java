@@ -5,13 +5,11 @@ import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.graph.GraphKey;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NoActiveDashboardException;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.Session;
-import cc.blynk.server.model.graph.StoreMessage;
+import cc.blynk.server.model.graph.GraphKey;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
@@ -59,7 +57,7 @@ public class HardwareLogic {
             GraphKey key = new GraphKey(dashId, body, ts);
 
             //storing to DB and aggregating
-            storageDao.process(key);
+            reportingDao.process(key);
 
             //in case message is for graph - attaching ts.
             if (state.user.profile.hasGraphPin(key)) {
@@ -72,12 +70,7 @@ public class HardwareLogic {
         }
 
         if (session.appChannels.size() > 0) {
-            if (storeMessage == null) {
-                session.sendMessageToApp(message);
-            } else {
-                session.sendMessageToApp(((HardwareMessage) message).updateMessageBody(message.body + StringUtils.BODY_SEPARATOR_STRING + storeMessage.ts));
-            }
-
+            session.sendMessageToApp(((HardwareMessage) message).updateMessageBody(attachDashId(body, dashId)));
         }
     }
 

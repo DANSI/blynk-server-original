@@ -65,7 +65,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             return;
         }
 
-        Integer dashId = UserRegistry.getDashIdByToken(user.dashTokens, token, message.id);
+        Integer dashId = UserDao.getDashIdByToken(user.dashTokens, token, message.id);
 
         sessionDao.addHardwareChannel(user, ctx.channel());
 

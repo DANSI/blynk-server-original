@@ -2,6 +2,8 @@ package cc.blynk.server.dao;
 
 import cc.blynk.server.exceptions.InvalidTokenException;
 import cc.blynk.server.model.auth.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
@@ -15,9 +17,9 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class UserDao {
 
+    private static final Logger log = LogManager.getLogger(UserDao.class);
     public final TokenManagerBase tokenManager;
     public final TokenManagerBase sharedTokenManager;
-    private static final Logger log = LogManager.getLogger(UserDao.class);
     private final ConcurrentMap<String, User> users;
 
     public UserDao(ConcurrentMap<String, User> users) {
