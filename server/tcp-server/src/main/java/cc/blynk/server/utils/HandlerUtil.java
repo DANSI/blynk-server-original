@@ -12,7 +12,7 @@ import io.netty.channel.ChannelHandler;
  */
 public class HandlerUtil {
 
-    private static final HandlerState NO_STATE = new HandlerState(null, null, null);
+    private static final HandlerState NO_STATE = new HandlerState(null);
 
     public static HandlerState getState(Channel channel) {
         final ChannelHandler channelHandler = channel.pipeline().last();

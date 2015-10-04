@@ -62,12 +62,12 @@ public abstract class BaseClient {
         }
 
         String body = input.length == 1 ? "" : input[1];
-        if (command == Command.REGISTER || command == Command.LOGIN) {
-            String[] userPass = body.split(" ");
-            if (userPass.length == 2) {
+        if (command == Command.REGISTER || command == Command.LOGIN || command == Command.SHARE_LOGIN) {
+            String[] userPass = body.split(" ", 3);
+            if (userPass.length > 1) {
                 String username = userPass[0];
                 String pass = userPass[1];
-                body = username + " " + SHA256Util.makeHash(pass, username);
+                body = username + " " + SHA256Util.makeHash(pass, username) + (userPass.length == 3 ? " " + userPass[2] : "");
             }
         }
         if (command == Command.HARDWARE || command == Command.BRIDGE || command == Command.EMAIL) {
