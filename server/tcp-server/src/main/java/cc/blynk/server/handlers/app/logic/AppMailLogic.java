@@ -21,11 +21,11 @@ public class AppMailLogic {
 
     private static final Logger log = LogManager.getLogger(AppMailLogic.class);
     private final static String SUBJECT = "Auth Token for %s project";
-    private final static String BODY = "Auth Token for %s project “%s”\n" +
+    private final static String BODY = "Auth Token for %s project \"%s\"\n" +
             "\n" +
             "Happy Blynking!\n" +
-            "—\n" +
-            "blynk.cc\n" +
+            "-\n" +
+            "http://www.blynk.cc\n" +
             "twitter.com/blynk_app\n" +
             "www.facebook.com/blynkapp";
     private final NotificationsProcessor notificationsProcessor;
