@@ -52,8 +52,9 @@ public class AppMailLogic {
         }
 
         String to = user.name;
-        String subj = String.format(SUBJECT, dashBoard.name);
-        String body = String.format(BODY, dashBoard.name, token);
+        String name = dashBoard.name == null ? "New Project" : dashBoard.name;
+        String subj = String.format(SUBJECT, name);
+        String body = String.format(BODY, name, token);
 
         log.trace("Sending Mail for user {}, with message : '{}'.", user.name, message.body);
         notificationsProcessor.mail(ctx.channel(), to, subj, body, message.id);
