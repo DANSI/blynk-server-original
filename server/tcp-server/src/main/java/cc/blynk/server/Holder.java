@@ -1,6 +1,8 @@
 package cc.blynk.server;
 
 import cc.blynk.common.stats.GlobalStats;
+import cc.blynk.common.utils.Config;
+import cc.blynk.common.utils.FileLoaderUtil;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.ReportingDao;
@@ -40,7 +42,8 @@ public class Holder {
 
     public Holder(ServerProperties serverProperties) {
         this(serverProperties, new NotificationsProcessor(
-                serverProperties.getIntProperty("notifications.queue.limit", 10000)
+                serverProperties.getIntProperty("notifications.queue.limit", 10000),
+                FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY)
         ));
     }
 

@@ -40,8 +40,9 @@ public class NotificationsProcessor {
     private final GCMWrapper gcmWrapper;
     private final ThreadPoolExecutor executor;
     private final Logger log = LogManager.getLogger(NotificationsProcessor.class);
+    public volatile String tokenBody;
 
-    public NotificationsProcessor(int maxQueueSize) {
+    public NotificationsProcessor(int maxQueueSize, String tokenBody) {
         this.twitterWrapper = new TwitterWrapper();
         this.mailWrapper = new MailWrapper(new ServerProperties(Config.MAIL_PROPERTIES_FILENAME));
         this.gcmWrapper = new GCMWrapper();
@@ -50,6 +51,7 @@ public class NotificationsProcessor {
                 0L, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<>(maxQueueSize)
         );
+        this.tokenBody = tokenBody;
     }
 
     public void mail(Channel channel, String to, String subj, String body, int msgId) {

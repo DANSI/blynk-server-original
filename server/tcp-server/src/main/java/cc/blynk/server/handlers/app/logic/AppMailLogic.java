@@ -21,17 +21,13 @@ public class AppMailLogic {
 
     private static final Logger log = LogManager.getLogger(AppMailLogic.class);
     private final static String SUBJECT = "Auth Token for %s project";
-    private final static String BODY = "Auth Token for %s project \"%s\"\n" +
-            "\n" +
-            "Happy Blynking!\n" +
-            "-\n" +
-            "http://www.blynk.cc\n" +
-            "twitter.com/blynk_app\n" +
-            "www.facebook.com/blynkapp";
+    private final String BODY;
+
     private final NotificationsProcessor notificationsProcessor;
 
     public AppMailLogic(NotificationsProcessor notificationsProcessor) {
         this.notificationsProcessor = notificationsProcessor;
+        this.BODY = notificationsProcessor.tokenBody;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
@@ -56,7 +52,7 @@ public class AppMailLogic {
         String subj = String.format(SUBJECT, name);
         String body = String.format(BODY, name, token);
 
-        log.trace("Sending Mail for user {}, with message : '{}'.", user.name, message.body);
+        log.trace("Sending Mail for user {}, with token : '{}'.", user.name, token);
         notificationsProcessor.mail(ctx.channel(), to, subj, body, message.id);
     }
 
