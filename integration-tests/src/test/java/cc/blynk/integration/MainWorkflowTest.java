@@ -136,6 +136,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testSendEmail() throws Exception {
+        notificationsProcessor.tokenBody = "Auth Token for %s project";
         ClientPair clientPair = initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties, false);
         clientPair.appClient.send("email 1");
         verify(notificationsProcessor, timeout(1000)).mail(any(), eq("dima@mail.ua"), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"), eq(1));
