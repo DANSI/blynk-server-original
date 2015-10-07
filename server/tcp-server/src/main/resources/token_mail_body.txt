@@ -3,7 +3,7 @@ Auth Token for %s project "%s"
 Happy Blynking!
 -
 Getting Started Guide -> http://www.blynk.cc/getting-started
-Documentation -> http://blynkkk.github.io/
+Documentation -> http://docs.blynk.cc/
 Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.3.1/Blynk_v0.3.1.zip
 -
 http://www.blynk.cc
