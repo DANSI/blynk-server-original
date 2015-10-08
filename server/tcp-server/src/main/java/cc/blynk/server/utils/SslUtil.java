@@ -40,15 +40,21 @@ public class SslUtil {
                                          String clientCertPath,
                                          SslProvider sslProvider) {
         try {
-            File serverCert =  new File(serverCertPath);
+            File serverCert = new File(serverCertPath);
             File serverKey = new File(serverKeyPath);
-            File clientCert =  new File(clientCertPath);
+            File clientCert = new File(clientCertPath);
 
-            if (!serverCert.exists() || !serverKey.exists() || !clientCert.exists()) {
-                log.warn("ATTENTION. Certificate {}, key {}, client cert {} paths not valid. Using embedded certs. This is not secure. Please replace it with your own certs.",
-                        serverCert.getAbsolutePath(), serverKey.getAbsolutePath(), clientCert.getAbsolutePath());
+            if (!serverCert.exists() || !serverKey.exists()) {
+                log.warn("ATTENTION. Server certificate paths cert : '{}', key : '{}' - not valid. Using embedded server certs and one way ssl. This is not secure. Please replace it with your own certs.",
+                        serverCert.getAbsolutePath(), serverKey.getAbsolutePath());
 
                 return new AppSslContext(false, build(sslProvider));
+            }
+
+            if (!clientCert.exists()) {
+                log.warn("Found server certificates but no client certificate for '{}' path. Using one way ssl.", clientCert.getAbsolutePath());
+
+                return new AppSslContext(false, build(serverCert, serverKey, serverPass, sslProvider));
             }
 
             return new AppSslContext(true, build(serverCert, serverKey, serverPass, sslProvider, clientCert));
