@@ -45,7 +45,7 @@ public class SslUtil {
             File clientCert =  new File(clientCertPath);
 
             if (!serverCert.exists() || !serverKey.exists() || !clientCert.exists()) {
-                log.warn("ATTENTION. Certificate {}, key {}, clietn cert {} paths not valid. Using embedded certs. This is not secure. Please replace it with your own certs.",
+                log.warn("ATTENTION. Certificate {}, key {}, client cert {} paths not valid. Using embedded certs. This is not secure. Please replace it with your own certs.",
                         serverCert.getAbsolutePath(), serverKey.getAbsolutePath(), clientCert.getAbsolutePath());
 
                 return new AppSslContext(false, build(sslProvider));
