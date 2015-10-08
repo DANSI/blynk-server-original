@@ -3,6 +3,7 @@ package cc.blynk.integration;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.integration.model.ClientPair;
+import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.Holder;
@@ -66,6 +67,14 @@ public abstract class IntegrationBase {
 
     static String readTestUserProfile() {
         return readTestUserProfile(null);
+    }
+
+    static String getBody(SimpleClientHandler responseMock) throws Exception {
+        ArgumentCaptor<Message> objectArgumentCaptor = ArgumentCaptor.forClass(Message.class);
+        verify(responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        List<Message> arguments = objectArgumentCaptor.getAllValues();
+        Message getTokenMessage = arguments.get(0);
+        return getTokenMessage.body;
     }
 
     @Before

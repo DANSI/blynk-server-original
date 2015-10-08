@@ -1,6 +1,7 @@
 package cc.blynk.server.model.auth;
 
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import io.netty.channel.Channel;
 import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
@@ -26,12 +27,17 @@ public class Session {
     public final Set<Channel> hardwareChannels = new ConcurrentSet<>();
 
     public void sendMessageToHardware(Integer activeDashId, MessageBase message) {
+        boolean noActiveHardware = true;
         for (Channel channel : hardwareChannels) {
             Integer dashId = getState(channel).dashId;
             if (activeDashId.equals(dashId)) {
+                noActiveHardware = false;
                 log.trace("Sending {} to hardware {}", message, channel);
                 channel.writeAndFlush(message);
             }
+        }
+        if (noActiveHardware) {
+            throw new DeviceNotInNetworkException(message.id);
         }
     }
 

@@ -104,6 +104,29 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testDashboardHasNoActiveDevice() throws Exception {
+        String newProfile = readTestUserProfile("user_profile_json_3_dashes.txt");
+        clientPair.appClient.send("saveProfile " + newProfile);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+
+        clientPair.appClient.send("hardware 1 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, "1 1".replaceAll(" ", "\0"))));
+
+        clientPair.appClient.send("activate 2");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, OK)));
+
+        clientPair.appClient.send("hardware 1 1");
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, DEVICE_NOT_IN_NETWORK)));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, OK)));
+
+        clientPair.appClient.send("hardware 1 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, HARDWARE, "1 1".replaceAll(" ", "\0"))));
+    }
+
+    @Test
     public void testPingCommandWorks() throws Exception {
         clientPair.appClient.send("ping");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));

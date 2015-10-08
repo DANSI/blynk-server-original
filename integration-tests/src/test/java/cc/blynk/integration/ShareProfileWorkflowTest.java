@@ -1,8 +1,6 @@
 package cc.blynk.integration;
 
-import cc.blynk.common.model.messages.Message;
 import cc.blynk.integration.model.ClientPair;
-import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.model.Profile;
@@ -14,10 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.List;
 
 import static cc.blynk.common.enums.Response.INVALID_TOKEN;
 import static cc.blynk.common.enums.Response.NOT_ALLOWED;
@@ -38,14 +33,6 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     private AppServer appServer;
     private HardwareServer hardwareServer;
     private ClientPair clientPair;
-
-    private static String getBody(SimpleClientHandler responseMock) throws Exception {
-        ArgumentCaptor<Message> objectArgumentCaptor = ArgumentCaptor.forClass(Message.class);
-        verify(responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        List<Message> arguments = objectArgumentCaptor.getAllValues();
-        Message getTokenMessage = arguments.get(0);
-        return getTokenMessage.body;
-    }
 
     @Before
     public void init() throws Exception {
