@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <name>Blynk Server</name>
@@ -83,7 +83,7 @@
     <properties>
         <netty.version>4.0.32.Final</netty.version>
         <netty.tcnative.version>1.1.33.Fork8</netty.tcnative.version>
-        <log4j2.version>2.3</log4j2.version>
+        <log4j2.version>2.4</log4j2.version>
         <maven.assembly.plugin.version>2.5.5</maven.assembly.plugin.version>
     </properties>
 
