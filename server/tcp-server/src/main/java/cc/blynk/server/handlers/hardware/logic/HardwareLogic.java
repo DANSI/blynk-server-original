@@ -70,14 +70,12 @@ public class HardwareLogic {
 
         if (session.appChannels.size() > 0) {
             //todo this code should be removed when both iOS and Android will support sharing.
-            HardwareMessage newAPIMessage = new HardwareMessage(message.id, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
-            HardwareMessage oldAPIMessage = new HardwareMessage(message.id, body);
             for (Channel channel : session.appChannels) {
                 log.trace("Sending {} to app {}", message, channel);
                 if (getState(channel).version == null) {
-                    channel.writeAndFlush(oldAPIMessage);
+                    channel.writeAndFlush(new HardwareMessage(message.id, body));
                 } else {
-                    channel.writeAndFlush(newAPIMessage);
+                    channel.writeAndFlush(new HardwareMessage(message.id, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
                 }
             }
         }
