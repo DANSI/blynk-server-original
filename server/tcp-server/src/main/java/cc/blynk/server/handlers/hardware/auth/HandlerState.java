@@ -36,4 +36,8 @@ public class HandlerState {
         this.version = version;
     }
 
+    public boolean isOldAPI() {
+        return version == null;
+    }
+
 }
