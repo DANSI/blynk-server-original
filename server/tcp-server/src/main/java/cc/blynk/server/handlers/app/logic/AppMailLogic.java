@@ -1,6 +1,7 @@
 package cc.blynk.server.handlers.app.logic;
 
 import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
@@ -33,12 +34,7 @@ public class AppMailLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
         String dashBoardIdString = message.body;
 
-        int dashId;
-        try {
-            dashId = Integer.parseInt(dashBoardIdString);
-        } catch (NumberFormatException ex) {
-            throw new IllegalCommandBodyException(String.format("Dash board id '%s' not valid.", dashBoardIdString), message.id);
-        }
+        int dashId = ParseUtil.parseInt(dashBoardIdString, message.id);
 
         DashBoard dashBoard = user.profile.getDashById(dashId);
         String token = user.dashTokens.get(dashId);

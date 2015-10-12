@@ -1,5 +1,8 @@
 package cc.blynk.common.utils;
 
+import cc.blynk.common.enums.Response;
+import cc.blynk.common.exceptions.BaseServerException;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -12,6 +15,14 @@ public final class ParseUtil {
             return Integer.parseInt(intProperty);
         } catch (NumberFormatException nfe) {
             throw new RuntimeException(intProperty + " not a number. " + nfe.getMessage());
+        }
+    }
+
+    public static int parseInt(String intProperty, int msgId) {
+        try {
+            return Integer.parseInt(intProperty);
+        } catch (NumberFormatException ex) {
+            throw new BaseServerException(String.format("Dash board id '%s' not valid.", intProperty), msgId, Response.ILLEGAL_COMMAND);
         }
     }
 
