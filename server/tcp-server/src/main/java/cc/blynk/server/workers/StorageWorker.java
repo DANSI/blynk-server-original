@@ -35,14 +35,12 @@ public class StorageWorker implements Runnable {
         this.dataFolder = dataFolder;
     }
 
-    public static void write(Path reportingPath, double value, long ts) {
+    public static void write(Path reportingPath, double value, long ts) throws IOException {
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(reportingPath, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
             dos.writeDouble(value);
             dos.writeLong(ts);
             dos.flush();
-        } catch (IOException e) {
-            log.error("Error open user data reporting file.", e);
         }
     }
 
@@ -69,9 +67,21 @@ public class StorageWorker implements Runnable {
 
                 String fileName = generateFilename(key.dashId, key.pinType, key.pin, type);
 
-                Path reportingPath = Paths.get(dataFolder, key.username, fileName);
-                write(reportingPath, average, eventTS);
-                map.remove(key);
+                Path reportingPath = Paths.get(dataFolder, key.username);
+                try {
+                    if (Files.notExists(reportingPath)) {
+                        Files.createDirectories(reportingPath);
+                    }
+
+                    Path filePath = Paths.get(reportingPath.toString(), fileName);
+
+                    write(filePath, average, eventTS);
+
+                    //removing only if no error
+                    map.remove(key);
+                } catch (IOException ioe) {
+                    log.error("Error open user data reporting file.", ioe);
+                }
             }
         }
     }

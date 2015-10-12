@@ -85,9 +85,6 @@ public class StorageWorkerTest {
         when(averageAggregator.getHourly()).thenReturn(map);
         when(averageAggregator.getDaily()).thenReturn(new ConcurrentHashMap<>());
 
-        createFolders("test");
-        createFolders("test2");
-
         storageWorker.run();
 
         assertTrue(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
@@ -136,8 +133,6 @@ public class StorageWorkerTest {
 
         when(averageAggregator.getHourly()).thenReturn(map);
         when(averageAggregator.getDaily()).thenReturn(new ConcurrentHashMap<>());
-
-        createFolders("test");
 
         storageWorker.run();
 
@@ -196,9 +191,6 @@ public class StorageWorkerTest {
         when(averageAggregator.getDaily()).thenReturn(new ConcurrentHashMap<>());
         when(properties.getProperty("data.folder")).thenReturn(System.getProperty("java.io.tmpdir"));
 
-        createFolders("test");
-        createFolders("test2");
-
         storageWorker.run();
 
         assertTrue(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
@@ -206,18 +198,6 @@ public class StorageWorkerTest {
 
         new ReportingDao(null, properties).delete("test", 1, PinType.ANALOG, (byte) 1);
         assertFalse(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
-    }
-
-    private void createFolders(String username) {
-        Path userPath = Paths.get(dataFolder, username);
-        if (Files.notExists(userPath)) {
-            try {
-                Files.createDirectories(userPath);
-            } catch (IOException e) {
-                System.out.println("Error creating user data reporting folder.");
-                System.out.println(e);
-            }
-        }
     }
 
     private long getTS() {
