@@ -80,7 +80,7 @@ public class StorageWorker implements Runnable {
                     //removing only if no error
                     map.remove(key);
                 } catch (IOException ioe) {
-                    log.error("Error open user data reporting file.", ioe);
+                    log.error("Error open user data reporting file. Reason : {}", ioe.getMessage());
                 }
             }
         }
