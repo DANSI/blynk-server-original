@@ -36,10 +36,10 @@ public class AppMailLogic {
 
         int dashId = ParseUtil.parseInt(dashBoardIdString, message.id);
 
-        DashBoard dashBoard = user.profile.getDashById(dashId);
+        DashBoard dashBoard = user.profile.getDashById(dashId, message.id);
         String token = user.dashTokens.get(dashId);
 
-        if (dashBoard == null || token == null) {
+        if (token == null) {
             throw new IllegalCommandBodyException("Wrong dash id.", message.id);
         }
 

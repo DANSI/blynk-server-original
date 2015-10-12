@@ -51,13 +51,14 @@ public class Profile {
         throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashBoardId), msgId);
     }
 
-    public DashBoard getDashById(int dashId) {
+    public DashBoard getDashById(int dashId, int msgId) {
         for (DashBoard dashBoard : dashBoards) {
             if (dashBoard.id == dashId) {
                 return dashBoard;
             }
         }
-        return null;
+
+        throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashId), msgId);
     }
 
     public DashBoard getDashboardById(int id) {
