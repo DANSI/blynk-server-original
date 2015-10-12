@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import static cc.blynk.server.reporting.average.AverageAggregator.DAY;
-import static cc.blynk.server.reporting.average.AverageAggregator.HOURS;
+import static cc.blynk.server.reporting.average.AverageAggregator.HOUR;
 import static cc.blynk.server.utils.ReportingUtil.getReportingFolder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -50,7 +50,7 @@ public class AverageAggregatorTest {
         assertEquals(1, averageAggregator.getHourly().size());
         assertEquals(1, averageAggregator.getDaily().size());
 
-        assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(username, dashId, pinType, pin, ts / HOURS)).calcAverage(), 0);
+        assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(username, dashId, pinType, pin, ts / HOUR)).calcAverage(), 0);
         assertEquals(expectedAverage, averageAggregator.getDaily().get(new AggregationKey(username, dashId, pinType, pin, ts / DAY)).calcAverage(), 0);
     }
 
@@ -79,7 +79,7 @@ public class AverageAggregatorTest {
 
             assertEquals(hour + 1, averageAggregator.getHourly().size());
 
-            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(username, dashId, pinType, pin, ts / HOURS)).calcAverage(), 0);
+            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(username, dashId, pinType, pin, ts / HOUR)).calcAverage(), 0);
         }
         expectedDailyAverage /= COUNT * 24;
 
@@ -114,7 +114,7 @@ public class AverageAggregatorTest {
 
             assertEquals(hour + 1, averageAggregator.getHourly().size());
 
-            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(username, dashId, pinType, pin, ts / HOURS)).calcAverage(), 0);
+            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(username, dashId, pinType, pin, ts / HOUR)).calcAverage(), 0);
         }
         expectedDailyAverage /= COUNT * 24;
 

@@ -46,6 +46,7 @@ public class StorageWorker implements Runnable {
 
     @Override
     public void run() {
+        process(averageAggregator.getMinute(), GraphType.MINUTE);
         process(averageAggregator.getHourly(), GraphType.HOURLY);
         process(averageAggregator.getDaily(), GraphType.DAILY);
     }

@@ -28,9 +28,9 @@ public class JobLauncher {
 
         StorageWorker storageWorker = new StorageWorker(holder.averageAggregator, getReportingFolder(holder.props.getProperty("data.folder")));
 
-        //to start at the beggining of an hour
-        startDelay = AverageAggregator.HOURS - (System.currentTimeMillis() % AverageAggregator.HOURS);
-        scheduler.scheduleAtFixedRate(storageWorker, startDelay, AverageAggregator.HOURS, TimeUnit.MILLISECONDS);
+        //to start at the beggining of an minute
+        startDelay = AverageAggregator.MINUTE - (System.currentTimeMillis() % AverageAggregator.MINUTE);
+        scheduler.scheduleAtFixedRate(storageWorker, startDelay, AverageAggregator.MINUTE, TimeUnit.MILLISECONDS);
 
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager);
         scheduler.scheduleAtFixedRate(profileSaverWorker, 1000,

@@ -66,7 +66,7 @@ public class StorageWorkerTest {
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
-        long ts = getTS() / AverageAggregator.HOURS;
+        long ts = getTS() / AverageAggregator.HOUR;
 
         AggregationKey aggregationKey = new AggregationKey("test", 1, PinType.ANALOG, (byte) 1, ts);
         AggregationValue aggregationValue = new AggregationValue();
@@ -82,6 +82,7 @@ public class StorageWorkerTest {
         map.put(aggregationKey2, aggregationValue2);
         map.put(aggregationKey3, aggregationValue3);
 
+        when(averageAggregator.getMinute()).thenReturn(new ConcurrentHashMap<>());
         when(averageAggregator.getHourly()).thenReturn(map);
         when(averageAggregator.getDaily()).thenReturn(new ConcurrentHashMap<>());
 
@@ -96,17 +97,17 @@ public class StorageWorkerTest {
         assertEquals(32, data.length);
 
         assertEquals(150.54, byteBuffer.getDouble(), 0.001);
-        assertEquals((ts - 1) * AverageAggregator.HOURS, byteBuffer.getLong());
+        assertEquals((ts - 1) * AverageAggregator.HOUR, byteBuffer.getLong());
 
         assertEquals(100.0, byteBuffer.getDouble(), 0.001);
-        assertEquals(ts * AverageAggregator.HOURS, byteBuffer.getLong());
+        assertEquals(ts * AverageAggregator.HOUR, byteBuffer.getLong());
 
         data = ReportingDao.getAllFromDisk(dataFolder, "test2", 2, PinType.ANALOG, (byte) 2, 1, GraphType.HOURLY);
         byteBuffer = ByteBuffer.wrap(data);
         assertNotNull(data);
         assertEquals(16, data.length);
         assertEquals(200.0, byteBuffer.getDouble(), 0.001);
-        assertEquals(ts * AverageAggregator.HOURS, byteBuffer.getLong());
+        assertEquals(ts * AverageAggregator.HOUR, byteBuffer.getLong());
     }
 
     @Test
@@ -115,7 +116,7 @@ public class StorageWorkerTest {
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
-        long ts = getTS() / AverageAggregator.HOURS;
+        long ts = getTS() / AverageAggregator.HOUR;
 
         AggregationKey aggregationKey = new AggregationKey("test", 1, PinType.ANALOG, (byte) 1, ts);
         AggregationValue aggregationValue = new AggregationValue();
@@ -131,6 +132,7 @@ public class StorageWorkerTest {
         map.put(aggregationKey2, aggregationValue2);
         map.put(aggregationKey3, aggregationValue3);
 
+        when(averageAggregator.getMinute()).thenReturn(new ConcurrentHashMap<>());
         when(averageAggregator.getHourly()).thenReturn(map);
         when(averageAggregator.getDaily()).thenReturn(new ConcurrentHashMap<>());
 
@@ -145,7 +147,7 @@ public class StorageWorkerTest {
         assertEquals(16, data.length);
 
         assertEquals(100.0, byteBuffer.getDouble(), 0.001);
-        assertEquals(ts * AverageAggregator.HOURS, byteBuffer.getLong());
+        assertEquals(ts * AverageAggregator.HOUR, byteBuffer.getLong());
 
 
         //take more
@@ -155,13 +157,13 @@ public class StorageWorkerTest {
         assertEquals(48, data.length);
 
         assertEquals(200.0, byteBuffer.getDouble(), 0.001);
-        assertEquals((ts - 2) * AverageAggregator.HOURS, byteBuffer.getLong());
+        assertEquals((ts - 2) * AverageAggregator.HOUR, byteBuffer.getLong());
 
         assertEquals(150.54, byteBuffer.getDouble(), 0.001);
-        assertEquals((ts - 1) * AverageAggregator.HOURS, byteBuffer.getLong());
+        assertEquals((ts - 1) * AverageAggregator.HOUR, byteBuffer.getLong());
 
         assertEquals(100.0, byteBuffer.getDouble(), 0.001);
-        assertEquals(ts * AverageAggregator.HOURS, byteBuffer.getLong());
+        assertEquals(ts * AverageAggregator.HOUR, byteBuffer.getLong());
     }
 
 
@@ -171,7 +173,7 @@ public class StorageWorkerTest {
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
-        long ts = getTS() / AverageAggregator.HOURS;
+        long ts = getTS() / AverageAggregator.HOUR;
 
         AggregationKey aggregationKey = new AggregationKey("test", 1, PinType.ANALOG, (byte) 1, ts);
         AggregationValue aggregationValue = new AggregationValue();
@@ -187,6 +189,7 @@ public class StorageWorkerTest {
         map.put(aggregationKey2, aggregationValue2);
         map.put(aggregationKey3, aggregationValue3);
 
+        when(averageAggregator.getMinute()).thenReturn(new ConcurrentHashMap<>());
         when(averageAggregator.getHourly()).thenReturn(map);
         when(averageAggregator.getDaily()).thenReturn(new ConcurrentHashMap<>());
         when(properties.getProperty("data.folder")).thenReturn(System.getProperty("java.io.tmpdir"));

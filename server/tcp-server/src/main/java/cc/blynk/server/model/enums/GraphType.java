@@ -7,6 +7,7 @@ package cc.blynk.server.model.enums;
  */
 public enum GraphType {
 
+    MINUTE('m', 60 * 1000),
     HOURLY('h', 60 * 60 * 1000),
     DAILY('d', 24 * 60 * 60 * 1000);
 

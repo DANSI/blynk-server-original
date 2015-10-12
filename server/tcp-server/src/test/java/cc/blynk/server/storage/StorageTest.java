@@ -52,9 +52,9 @@ public class StorageTest {
         int count = 7 * 24;
         Path path = Paths.get("/home/doom369/blynk/data/dmitriy@blynk.cc/hourly_data.bin");
         //now - 1 week.
-        long ts  = (System.currentTimeMillis() / AverageAggregator.HOURS - count);
+        long ts  = (System.currentTimeMillis() / AverageAggregator.HOUR - count);
         for (int i = 0; i < count; i++ ) {
-            StorageWorker.write(path, i, (ts + i) * AverageAggregator.HOURS);
+            StorageWorker.write(path, i, (ts + i) * AverageAggregator.HOUR);
         }
     }
 

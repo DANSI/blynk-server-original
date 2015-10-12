@@ -29,6 +29,7 @@ import static java.lang.String.format;
  */
 public class ReportingDao {
 
+    public static final String REPORTING_MINUTE_FILE_NAME = "history_%s_%c%d_minute.bin";
     public static final String REPORTING_HOURLY_FILE_NAME = "history_%s_%c%d_hourly.bin";
     public static final String REPORTING_DAILY_FILE_NAME = "history_%s_%c%d_daily.bin";
     private static final Logger log = LogManager.getLogger(ReportingDao.class);
@@ -44,10 +45,14 @@ public class ReportingDao {
     }
 
     public static String generateFilename(int dashId, PinType pinType, byte pin, GraphType type) {
-        if (type == GraphType.HOURLY) {
-            return format(REPORTING_HOURLY_FILE_NAME, dashId, pinType.pintTypeChar, pin);
+        switch (type) {
+            case MINUTE :
+                return format(REPORTING_MINUTE_FILE_NAME, dashId, pinType.pintTypeChar, pin);
+            case HOURLY :
+                return format(REPORTING_HOURLY_FILE_NAME, dashId, pinType.pintTypeChar, pin);
+            default :
+                return format(REPORTING_DAILY_FILE_NAME, dashId, pinType.pintTypeChar, pin);
         }
-        return format(REPORTING_DAILY_FILE_NAME, dashId, pinType.pintTypeChar, pin);
     }
 
     public static byte[] getAllFromDisk(String dataFolder, String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
@@ -77,8 +82,10 @@ public class ReportingDao {
 
     public void delete(String username, int dashId, PinType pinType, byte pin) {
         log.debug("Removing {}{} pin data for dashId {}.", pinType.pintTypeChar, pin, dashId);
+        Path userDataMinuteFile = Paths.get(dataFolder, username, format(REPORTING_MINUTE_FILE_NAME, dashId, pinType.pintTypeChar, pin));
         Path userDataHourlyFile = Paths.get(dataFolder, username, format(REPORTING_HOURLY_FILE_NAME, dashId, pinType.pintTypeChar, pin));
         Path userDataDailyFile = Paths.get(dataFolder, username, format(REPORTING_DAILY_FILE_NAME, dashId, pinType.pintTypeChar, pin));
+        FileUtils.deleteQuietly(userDataMinuteFile.toFile());
         FileUtils.deleteQuietly(userDataHourlyFile.toFile());
         FileUtils.deleteQuietly(userDataDailyFile.toFile());
     }
