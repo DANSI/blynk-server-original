@@ -3,7 +3,8 @@ package cc.blynk.server.handlers.hardware.logic;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
-import cc.blynk.server.model.auth.User;
+import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.widgets.others.Mail;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandlerContext;
@@ -29,8 +30,10 @@ public class MailLogic extends NotificationBase {
         this.notificationsProcessor = notificationsProcessor;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
-        Mail mail = user.profile.getActiveDashboardWidgetByType(Mail.class);
+    public void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message message) {
+        DashBoard dash = state.user.profile.getDashById(state.dashId, message.id);
+
+        Mail mail = dash.getWidgetByType(Mail.class);
 
         if (mail == null) {
             throw new NotAllowedException("User has no mail widget or active dashboard.", message.id);
@@ -52,7 +55,7 @@ public class MailLogic extends NotificationBase {
 
         checkIfNotificationQuotaLimitIsNotReached(message.id);
 
-        log.trace("Sending Mail for user {}, with message : '{}'.", user.name, message.body);
+        log.trace("Sending Mail for user {}, with message : '{}'.", state.user.name, message.body);
         notificationsProcessor.mail(ctx.channel(), to, subj, body, message.id);
     }
 

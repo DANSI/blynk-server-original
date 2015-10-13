@@ -51,13 +51,13 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<Message> {
                 bridge.messageReceived(ctx, state, msg);
                 break;
             case EMAIL :
-                email.messageReceived(ctx, state.user, msg);
+                email.messageReceived(ctx, state, msg);
                 break;
             case PUSH_NOTIFICATION :
-                push.messageReceived(ctx, state.user,msg);
+                push.messageReceived(ctx, state, msg);
                 break;
             case TWEET :
-                tweet.messageReceived(ctx, state.user, msg);
+                tweet.messageReceived(ctx, state, msg);
                 break;
         }
     }

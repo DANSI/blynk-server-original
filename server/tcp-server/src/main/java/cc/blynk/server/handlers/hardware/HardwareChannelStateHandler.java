@@ -1,8 +1,9 @@
 package cc.blynk.server.handlers.hardware;
 
 import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
-import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Notification;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.Channel;
@@ -54,20 +55,23 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void sentOfflineMessage(Channel channel) {
-        User user = getState(channel).user;
-        if (user != null) {
-            Notification notification = user.profile.getActiveDashboardWidgetByType(Notification.class);
-            if (notification == null || !notification.notifyWhenOffline) {
-                Session session = sessionDao.userSession.get(user);
-                if (session.appChannels.size() > 0) {
-                    session.sendMessageToApp(produce(0, DEVICE_WENT_OFFLINE));
+        HandlerState handlerState = getState(channel);
+        if (handlerState.user != null) {
+            DashBoard dashBoard = handlerState.user.profile.getDashboardById(handlerState.dashId, 0);
+            if (dashBoard.isActive) {
+                Notification notification = dashBoard.getWidgetByType(Notification.class);
+                if (notification == null || !notification.notifyWhenOffline) {
+                    Session session = sessionDao.userSession.get(handlerState.user);
+                    if (session.appChannels.size() > 0) {
+                        session.sendMessageToApp(produce(0, DEVICE_WENT_OFFLINE));
+                    }
+                } else {
+                    String boardType = dashBoard.boardType;
+                    String dashName = dashBoard.name;
+                    dashName = dashName == null ? "" : dashName;
+                    notificationsProcessor.push(handlerState.user, notification,
+                            String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName));
                 }
-            } else {
-                String boardType = user.profile.getActiveDashBoard().boardType;
-                String dashName = user.profile.getActiveDashBoard().name;
-                dashName = dashName == null ? "" : dashName;
-                notificationsProcessor.push(user, notification,
-                        String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName));
             }
         }
     }

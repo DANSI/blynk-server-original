@@ -153,7 +153,7 @@ public class JsonParsingTest {
 
         assertNotNull(userProfileString);
         assertTrue(userProfileString.contains("dashBoards"));
-        List<Timer> timers = profile.getActiveDashboardTimerWidgets();
+        List<Timer> timers = profile.getActiveTimerWidgets();
         assertNotNull(timers);
         assertEquals(1, timers.size());
     }

@@ -8,6 +8,7 @@ import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NoActiveDashboardException;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.graph.GraphKey;
 import io.netty.channel.Channel;
@@ -64,7 +65,8 @@ public class HardwareLogic {
             }
         }
 
-        if (state.user.profile.activeDashId == null || !state.user.profile.activeDashId.equals(state.dashId)) {
+        DashBoard dash = state.user.profile.getDashById(dashId, message.id);
+        if (!dash.isActive) {
             throw new NoActiveDashboardException(message.id);
         }
 

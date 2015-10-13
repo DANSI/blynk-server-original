@@ -1,6 +1,5 @@
 package cc.blynk.server.model;
 
-import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.graph.GraphKey;
 import cc.blynk.server.model.widgets.Widget;
@@ -20,19 +19,8 @@ public class Profile {
 
     public final transient Set<GraphKey> graphPins = new HashSet<>();
 
-    //todo avoid volatile
+    //todo remove in next release
     public volatile Integer activeDashId;
-
-    /**
-     * Specific property used for improving user experience on mobile application.
-     * In case user activated dashboard before hardware connected to server, user have to
-     * deactivate and activate dashboard again in order to setup PIN MODES (OUT, IN).
-     * With this property problem resolved by server side. Command for setting Pin Modes
-     * is remembered and when hardware goes online - server sends Pin Modes command to hardware
-     * without requiring user to activate/deactivate dashboard again.
-     */
-    //todo avoid volatile
-    public volatile transient Message pinModeMessage;
 
     public DashBoard[] dashBoards;
 
@@ -61,48 +49,37 @@ public class Profile {
         throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashId), msgId);
     }
 
-    public DashBoard getDashboardById(int id) {
+    public DashBoard getDashboardById(int id, int msgId) {
         for (DashBoard dashBoard : dashBoards) {
             if (dashBoard.id == id) {
                 return dashBoard;
             }
         }
-        return null;
+        throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", id), msgId);
     }
 
-    public List<Timer> getActiveDashboardTimerWidgets() {
+    public List<Timer> getActiveTimerWidgets() {
         if (dashBoards == null || dashBoards.length == 0 || activeDashId == null) {
             return Collections.emptyList();
         }
 
-        DashBoard dashBoard = getActiveDashBoard();
-        if (dashBoard == null) {
-            return Collections.emptyList();
-        }
-
-        return dashBoard.getTimerWidgets();
-    }
-
-    public <T> T getActiveDashboardWidgetByType(Class<T> clazz) {
-        if (dashBoards == null || dashBoards.length == 0 || activeDashId == null) {
-            return null;
-        }
-
-        DashBoard dashBoard = getActiveDashBoard();
-        if (dashBoard == null) {
-            return null;
-        }
-
-        return dashBoard.getWidgetByType(clazz);
-    }
-
-    public DashBoard getActiveDashBoard() {
+        List<Timer> activeTimers = new ArrayList<>();
         for (DashBoard dashBoard : dashBoards) {
-            if (activeDashId.equals(dashBoard.id)) {
-                return dashBoard;
+            if (dashBoard.isActive) {
+                activeTimers.addAll(dashBoard.getTimerWidgets());
             }
         }
-        return null;
+        return activeTimers;
+    }
+
+    public List<DashBoard> getActiveDashBoards() {
+        List<DashBoard> activeDashboards = new ArrayList<>();
+        for (DashBoard dashBoard : dashBoards) {
+            if (dashBoard.isActive) {
+                activeDashboards.add(dashBoard);
+            }
+        }
+        return activeDashboards;
     }
 
     public void calcGraphPins() {

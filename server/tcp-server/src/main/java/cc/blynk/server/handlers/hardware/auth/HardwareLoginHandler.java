@@ -12,6 +12,7 @@ import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
+import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
@@ -79,8 +80,9 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         //send Pin Mode command in case channel connected to active dashboard with Pin Mode command that
         //was sent previously
-        if (dashId.equals(user.profile.activeDashId) && user.profile.pinModeMessage != null) {
-            ctx.writeAndFlush(user.profile.pinModeMessage);
+        DashBoard dash = user.profile.getDashboardById(dashId, message.id);
+        if (dash.isActive && dash.pinModeMessage != null) {
+            ctx.writeAndFlush(dash.pinModeMessage);
         }
     }
 

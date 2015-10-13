@@ -3,18 +3,16 @@ package cc.blynk.server.handlers.app;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.TestBase;
-import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.app.logic.HardwareAppLogic;
+import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.handlers.hardware.logic.HardwareLogic;
 import cc.blynk.server.model.Profile;
-import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.Attribute;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -59,15 +57,6 @@ public class HardwareAppHandlerTest extends TestBase {
     @Mock
     private Channel channel;
 
-    @Mock
-    private Attribute<Boolean> attr;
-
-    @Mock
-    private Session session;
-
-    @Mock
-    private ReportingDao reportingDao;
-
     @Test
     public void testActiveDashboardIdNull() {
         HardwareMessage message = new HardwareMessage(1, "test");
@@ -76,7 +65,8 @@ public class HardwareAppHandlerTest extends TestBase {
         profile.activeDashId = null;
         SessionDao sessionDao = spy(new SessionDao());
         HardwareAppLogic hardwareHandler = spy(new HardwareAppLogic(sessionDao));
-        hardwareHandler.messageReceived(ctx, user, message);
+        HandlerState handlerState = new HandlerState(1, user, "x");
+        hardwareHandler.messageReceived(ctx, handlerState, message);
     }
 
 }

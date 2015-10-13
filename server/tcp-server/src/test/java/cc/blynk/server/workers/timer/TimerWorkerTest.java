@@ -81,7 +81,7 @@ public class TimerWorkerTest {
         when(sessionDao.getUserSession()).thenReturn(userSession);
         user.profile = profile;
         profile.dashBoards = new DashBoard[] {};
-        when(profile.getActiveDashboardTimerWidgets()).thenReturn(timers);
+        when(profile.getActiveTimerWidgets()).thenReturn(timers);
 
         timerWorker.run();
 

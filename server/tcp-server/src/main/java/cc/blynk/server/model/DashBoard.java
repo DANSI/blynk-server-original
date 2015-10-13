@@ -1,5 +1,6 @@
 package cc.blynk.server.model;
 
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.others.Timer;
 import cc.blynk.server.utils.JsonParser;
@@ -30,7 +31,18 @@ public class DashBoard {
 
     public boolean isSharedPublic;
 
-    public boolean isActive;
+    public volatile boolean isActive;
+
+    /**
+     * Specific property used for improving user experience on mobile application.
+     * In case user activated dashboard before hardware connected to server, user have to
+     * deactivate and activate dashboard again in order to setup PIN MODES (OUT, IN).
+     * With this property problem resolved by server side. Command for setting Pin Modes
+     * is remembered and when hardware goes online - server sends Pin Modes command to hardware
+     * without requiring user to activate/deactivate dashboard again.
+     */
+    //todo avoid volatile
+    public volatile transient Message pinModeMessage;
 
     public List<Timer> getTimerWidgets() {
         if (widgets == null || widgets.length == 0) {
@@ -52,7 +64,7 @@ public class DashBoard {
     }
 
     public  <T> T getWidgetByType(Class<T> clazz) {
-        if (widgets == null || widgets.length == 0) {
+        if (!isActive || widgets == null || widgets.length == 0) {
             return null;
         }
 

@@ -64,7 +64,7 @@ public class GetSharedDashLogic {
             throw new InvalidTokenException("Illegal sharing token. User has not token. Could happen only in rare cases.", message.id);
         }
 
-        DashBoard dashBoard = userThatShared.profile.getDashboardById(dashId);
+        DashBoard dashBoard = userThatShared.profile.getDashboardById(dashId, message.id);
         cleanPrivateData(dashBoard);
 
         ctx.writeAndFlush(produce(message.id, message.command, dashBoard.toString()));

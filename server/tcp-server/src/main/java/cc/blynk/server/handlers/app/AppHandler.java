@@ -52,7 +52,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
     protected void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message msg) {
         switch (msg.command) {
             case HARDWARE:
-                hardwareApp.messageReceived(ctx, state.user, msg);
+                hardwareApp.messageReceived(ctx, state, msg);
                 break;
             case SAVE_PROFILE :
                 saveProfile.messageReceived(ctx, state.user, msg);

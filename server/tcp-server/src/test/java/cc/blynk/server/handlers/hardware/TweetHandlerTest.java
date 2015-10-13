@@ -9,7 +9,9 @@ import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.exceptions.QuotaLimitException;
+import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.handlers.hardware.logic.TweetLogic;
+import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Twitter;
@@ -17,6 +19,7 @@ import cc.blynk.server.notifications.twitter.exceptions.TwitterNotAuthorizedExce
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -59,114 +62,126 @@ public class TweetHandlerTest extends TestBase {
 	@Mock
 	private Profile profile;
 
+	@Mock
+	private DashBoard dash;
+
+
+    private HandlerState state;
+
+    @Before
+    public void setup() {
+        state = new HandlerState(1, user, "x");
+    }
+
 	@Test(expected = NotificationBodyInvalidException.class)
 	public void testTweetMessageWithEmptyBody() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "");
-		user.profile = profile;
+        state.user.profile = profile;
 		TweetLogic tweetHandler = new TweetLogic(notificationsProcessor, 60);
-		tweetHandler.messageReceived(ctx, user, tweetMessage);
+		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
 	@Test(expected = NotificationBodyInvalidException.class)
 	public void testTweetMessageWithBodyMoreThen140Symbols() {
 		final String longBody = RandomStringUtils.random(150);
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, longBody);
-		user.profile = profile;
+        state.user.profile = profile;
 		TweetLogic tweetHandler = new TweetLogic(notificationsProcessor, 60);
-		tweetHandler.messageReceived(ctx, user, tweetMessage);
+		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
 	@Test(expected = TwitterNotAuthorizedException.class)
 	public void testTweetMessageWithNoTwitterAccessToken() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
-		user.profile = profile;
 		TweetLogic tweetHandler = new TweetLogic(notificationsProcessor, 60);
-		user.profile = profile;
-		tweetHandler.messageReceived(ctx, user, tweetMessage);
+        state.user.profile = profile;
+        when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
+        when(dash.getWidgetByType(Twitter.class)).thenReturn(null);
+		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
 	@Test(expected = TwitterNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterTokenNull() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
-		user.profile = profile;
 		TweetLogic tweetHandler = new TweetLogic(notificationsProcessor, 60);
-		user.profile = profile;
+        state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = null;
 		twitter.secret = "secret_token";
-		when(user.profile.getActiveDashboardWidgetByType(Twitter.class)).thenReturn(twitter);
-		tweetHandler.messageReceived(ctx, user, tweetMessage);
+		when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
+		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
+		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
 	@Test(expected = TwitterNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterTokenEmpty() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
-		user.profile = profile;
 		TweetLogic tweetHandler = new TweetLogic(notificationsProcessor, 60);
-		user.profile = profile;
+        state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = null;
 		twitter.secret = "secret_token";
-		when(user.profile.getActiveDashboardWidgetByType(Twitter.class)).thenReturn(twitter);
-		tweetHandler.messageReceived(ctx, user, tweetMessage);
+		when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
+		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
+		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
 	@Test(expected = TwitterNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterSecretTokenNull() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
-		user.profile = profile;
 		TweetLogic tweetHandler = new TweetLogic(notificationsProcessor, 60);
-		user.profile = profile;
+        state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
 		twitter.secret = null;
-		when(user.profile.getActiveDashboardWidgetByType(Twitter.class)).thenReturn(twitter);
-		tweetHandler.messageReceived(ctx, user, tweetMessage);
+		when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
+		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
+		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
 	@Test(expected = TwitterNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterSecretTokenEmpty() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
-		user.profile = profile;
 		TweetLogic tweetHandler = new TweetLogic(notificationsProcessor, 60);
-		user.profile = profile;
+        state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
 		twitter.secret = null;
-		when(user.profile.getActiveDashboardWidgetByType(Twitter.class)).thenReturn(twitter);
-		tweetHandler.messageReceived(ctx, user, tweetMessage);
+		when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
+		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
+		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
 	@Test(expected = QuotaLimitException.class)
 	public void testSendQuotaLimitationException() throws InterruptedException {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "this is a test tweet");
-		User user = spy(new User());
 		TweetLogic tweetHandler = spy(new TweetLogic(notificationsProcessor, 60));
-		user.profile = profile;
+        state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
 		twitter.secret = "secret_token";
-		when(user.profile.getActiveDashboardWidgetByType(Twitter.class)).thenReturn(twitter);
-		tweetHandler.messageReceived(ctx, user, tweetMessage);
-		tweetHandler.messageReceived(ctx, user, tweetMessage);
+		when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
+		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
+		tweetHandler.messageReceived(ctx, state, tweetMessage);
+		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
-	@Test()
+	@Test
 	public void testSendQuotaLimitationIsWorking() throws InterruptedException {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "this is a test tweet");
 		ServerProperties props = new ServerProperties();
 		props.setProperty("notifications.frequency.user.quota.limit", "1");
 		final long defaultQuotaTime = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
-		User user = spy(new User());
 		TweetLogic tweetHandler = spy(new TweetLogic(notificationsProcessor, 60));
-		user.profile = profile;
+		state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
 		twitter.secret = "secret_token";
-		when(user.profile.getActiveDashboardWidgetByType(Twitter.class)).thenReturn(twitter);
-		tweetHandler.messageReceived(ctx, user, tweetMessage);
+		when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
+		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
+		tweetHandler.messageReceived(ctx, state, tweetMessage);
 		TimeUnit.MILLISECONDS.sleep(defaultQuotaTime);
-		tweetHandler.messageReceived(ctx, user, tweetMessage);
+		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
 }

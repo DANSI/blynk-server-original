@@ -9,7 +9,9 @@ import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
+import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.handlers.hardware.logic.MailLogic;
+import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Mail;
@@ -55,6 +57,9 @@ public class MailHandlerTest extends TestBase {
     private Profile profile;
 
     @Mock
+    private DashBoard dashBoard;
+
+    @Mock
     private Channel channel;
 
     @Test(expected = NotAllowedException.class)
@@ -62,9 +67,11 @@ public class MailHandlerTest extends TestBase {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body");
 
         user.profile = profile;
-        when(profile.getActiveDashboardWidgetByType(Mail.class)).thenReturn(null);
+        when(profile.getDashById(1, 1)).thenReturn(dashBoard);
+        when(dashBoard.getWidgetByType(Mail.class)).thenReturn(null);
 
-        mailHandler.messageReceived(ctx, user, mailMessage);
+        HandlerState state = new HandlerState(1, user, "x");
+        mailHandler.messageReceived(ctx, state, mailMessage);
     }
 
     @Test(expected = IllegalCommandException.class)
@@ -72,10 +79,12 @@ public class MailHandlerTest extends TestBase {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "".replaceAll(" ", "\0"));
 
         user.profile = profile;
-        cc.blynk.server.model.widgets.others.Mail mail = new cc.blynk.server.model.widgets.others.Mail();
-        when(profile.getActiveDashboardWidgetByType(cc.blynk.server.model.widgets.others.Mail.class)).thenReturn(mail);
+        when(profile.getDashById(1, 1)).thenReturn(dashBoard);
+        Mail mail = new Mail();
+        when(dashBoard.getWidgetByType(cc.blynk.server.model.widgets.others.Mail.class)).thenReturn(mail);
 
-        mailHandler.messageReceived(ctx, user, mailMessage);
+        HandlerState state = new HandlerState(1, user, "x");
+        mailHandler.messageReceived(ctx, state, mailMessage);
     }
 
     @Test(expected = IllegalCommandException.class)
@@ -83,9 +92,11 @@ public class MailHandlerTest extends TestBase {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body".replaceAll(" ", "\0"));
 
         user.profile = profile;
-        when(profile.getActiveDashboardWidgetByType(cc.blynk.server.model.widgets.others.Mail.class)).thenReturn(new cc.blynk.server.model.widgets.others.Mail());
+        when(profile.getDashById(1, 1)).thenReturn(dashBoard);
+        when(dashBoard.getWidgetByType(Mail.class)).thenReturn(new Mail());
 
-        mailHandler.messageReceived(ctx, user, mailMessage);
+        HandlerState state = new HandlerState(1, user, "x");
+        mailHandler.messageReceived(ctx, state, mailMessage);
     }
 
 }

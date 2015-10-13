@@ -2,7 +2,8 @@ package cc.blynk.server.handlers.hardware.logic;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.exceptions.NotificationBodyInvalidException;
-import cc.blynk.server.model.auth.User;
+import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.widgets.others.Notification;
 import cc.blynk.server.notifications.twitter.exceptions.TwitterNotAuthorizedException;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
@@ -31,12 +32,13 @@ public class PushLogic extends NotificationBase {
         this.notificationsProcessor = notificationsProcessor;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
+    public void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message message) {
         if (message.body == null || message.body.equals("") || message.body.length() > MAX_PUSH_BODY_SIZE) {
             throw new NotificationBodyInvalidException(message.id);
         }
 
-        Notification widget = user.profile.getActiveDashboardWidgetByType(Notification.class);
+        DashBoard dash = state.user.profile.getDashById(state.dashId, message.id);
+        Notification widget = dash.getWidgetByType(Notification.class);
 
         if (widget == null ||
                 ((widget.token == null || widget.token.equals("")) &&
@@ -46,7 +48,7 @@ public class PushLogic extends NotificationBase {
 
         checkIfNotificationQuotaLimitIsNotReached(message.id);
 
-        log.trace("Sending push for user {}, with message : '{}'.", user.name, message.body);
+        log.trace("Sending push for user {}, with message : '{}'.", state.user.name, message.body);
         notificationsProcessor.push(ctx.channel(), widget, message.body, message.id);
     }
 
