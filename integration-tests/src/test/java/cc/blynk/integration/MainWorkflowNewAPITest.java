@@ -2,7 +2,6 @@ package cc.blynk.integration;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.ResponseMessage;
-import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
 import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
@@ -142,39 +141,10 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         verify(notificationsProcessor, timeout(1000)).mail(any(), eq("dima@mail.ua"), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"), eq(1));
     }
 
-
-    @Test
-    @Ignore("not used yet")
-    public void testGetAllGraphData() throws Exception {
-        for (int i = 0; i < 1000; i++) {
-            clientPair.hardwareClient.send("hardware aw 8 " + i);
-        }
-
-        verify(clientPair.appClient.responseMock, timeout(2000).times(1000)).channelRead(any(), any());
-        clientPair.appClient.reset();
-
-        clientPair.appClient.send("getgraphdata 1 a 8 0 h");
-
-        ArgumentCaptor<GetGraphDataResponseMessage> objectArgumentCaptor = ArgumentCaptor.forClass(GetGraphDataResponseMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), objectArgumentCaptor.capture());
-
-        List<GetGraphDataResponseMessage> arguments = objectArgumentCaptor.getAllValues();
-        GetGraphDataResponseMessage graphMessage = arguments.get(0);
-        assertEquals(1, graphMessage.id);
-
-        String result = decompress(graphMessage.data);
-        String[] splitted = result.split(" ");
-        assertEquals(2000, splitted.length);
-
-        for (int i = 0; i < 1000; i++) {
-            assertEquals(String.valueOf(i), splitted[i * 2]);
-        }
-    }
-
     @Test
     public void testAppSendAnyHardCommandAndBack() throws Exception {
-        clientPair.appClient.send("hardware 1 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "1 1".replaceAll(" ", "\0"))));
+        clientPair.appClient.send("hardware 1 dw 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "dw 1".replaceAll(" ", "\0"))));
 
         clientPair.hardwareClient.send("hardware ar 1");
 
@@ -247,10 +217,10 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
     @Test
     public void testAppSendWriteHardCommandNotGraphAndBack() throws Exception {
         clientPair.appClient.send("hardware 1 ar 11");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "1 ar 11".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "ar 11".replaceAll(" ", "\0"))));
 
         String body = "aw 11 333";
-        clientPair.hardwareClient.send("hardware 1 " + body);
+        clientPair.hardwareClient.send("hardware " + body);
 
         ArgumentCaptor<Message> objectArgumentCaptor = ArgumentCaptor.forClass(Message.class);
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
@@ -259,8 +229,7 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         Message hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
         assertEquals(HARDWARE, hardMessage.command);
-        //2 is length of "1'\0'"
-        assertEquals(body.length() + 2, hardMessage.length);
+        assertEquals(("1 " + body).length(), hardMessage.length);
         assertTrue(hardMessage.body.startsWith(("1 " + body).replaceAll(" ", "\0")));
     }
 
@@ -270,10 +239,10 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         clientPair.appClient.send("activate 2");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, ILLEGAL_COMMAND)));
 
-        clientPair.appClient.send("deactivate");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, OK)));
+        clientPair.appClient.send("deactivate 2");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, ILLEGAL_COMMAND)));
 
-        clientPair.appClient.send("hardware ar 1 1");
+        clientPair.appClient.send("hardware 1 ar 1 1");
         //todo check no response
         verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(produce(3, OK)));
 
@@ -281,7 +250,7 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, OK)));
 
         clientPair.appClient.send("hardware 1 ar 1 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, "1 ar 1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, "ar 1 1".replaceAll(" ", "\0"))));
 
         String userProfileWithGraph = readTestUserProfile();
 
@@ -290,7 +259,7 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
 
 
         clientPair.appClient.send("hardware 1 ar 1 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, HARDWARE, "1 ar 1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, HARDWARE, "ar 1 1".replaceAll(" ", "\0"))));
     }
 
     @Test
@@ -349,9 +318,9 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("hardware 1 ar 8");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "1 ar 8".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "ar 8".replaceAll(" ", "\0"))));
 
-        String body = "1 aw 8 333";
+        String body = "aw 8 333";
         clientPair.hardwareClient.send("hardware " + body);
 
         ArgumentCaptor<Message> objectArgumentCaptor = ArgumentCaptor.forClass(Message.class);
@@ -362,8 +331,8 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         assertEquals(1, hardMessage.id);
         assertEquals(HARDWARE, hardMessage.command);
         //"aw 11 333".length + ts.length + separator
-        assertEquals(body.length() + 14, hardMessage.length);
-        assertTrue(hardMessage.body.startsWith(body.replaceAll(" ", "\0")));
+        assertEquals(("1 " + body).length() + 14, hardMessage.length);
+        assertTrue(hardMessage.body.startsWith(("1 " + body).replaceAll(" ", "\0")));
     }
 
     @Test
@@ -454,10 +423,10 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         final int ITERATIONS = 100;
         ClientPair clientPair2 = initAppAndHardPair("localhost", appPort, hardPort, "dima2@mail.ua 1", null, properties, true);
 
-        String body = "1 ar 1";
+        String body = "ar 1";
         for (int i = 1; i <= ITERATIONS; i++) {
-            clientPair.appClient.send("hardware " + body);
-            clientPair2.appClient.send("hardware " + body);
+            clientPair.appClient.send("hardware 1 " + body);
+            clientPair2.appClient.send("hardware 1 " + body);
         }
 
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(ITERATIONS)).channelRead(any(), any());

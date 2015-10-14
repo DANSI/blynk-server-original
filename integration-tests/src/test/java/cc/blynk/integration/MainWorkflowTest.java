@@ -2,7 +2,6 @@ package cc.blynk.integration;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.ResponseMessage;
-import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
 import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
@@ -163,35 +162,6 @@ public class MainWorkflowTest extends IntegrationBase {
         ClientPair clientPair = initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties, false);
         clientPair.appClient.send("email 1");
         verify(notificationsProcessor, timeout(1000)).mail(any(), eq("dima@mail.ua"), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"), eq(1));
-    }
-
-
-    @Test
-    @Ignore("not used yet")
-    public void testGetAllGraphData() throws Exception {
-        for (int i = 0; i < 1000; i++) {
-            clientPair.hardwareClient.send("hardware aw 8 " + i);
-        }
-
-        verify(clientPair.appClient.responseMock, timeout(2000).times(1000)).channelRead(any(), any());
-        clientPair.appClient.reset();
-
-        clientPair.appClient.send("getgraphdata 1 a 8 0 h");
-
-        ArgumentCaptor<GetGraphDataResponseMessage> objectArgumentCaptor = ArgumentCaptor.forClass(GetGraphDataResponseMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), objectArgumentCaptor.capture());
-
-        List<GetGraphDataResponseMessage> arguments = objectArgumentCaptor.getAllValues();
-        GetGraphDataResponseMessage graphMessage = arguments.get(0);
-        assertEquals(1, graphMessage.id);
-
-        String result = decompress(graphMessage.data);
-        String[] splitted = result.split(" ");
-        assertEquals(2000, splitted.length);
-
-        for (int i = 0; i < 1000; i++) {
-            assertEquals(String.valueOf(i), splitted[i * 2]);
-        }
     }
 
     @Test

@@ -1,6 +1,7 @@
 package cc.blynk.server.handlers.app.logic;
 
 import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.SessionDao;
@@ -73,7 +74,7 @@ public class HardwareAppLogic {
                 throw new DeviceNotInNetworkException(message.id);
             }
 
-            session.sendMessageToHardware(dashId, message);
+            session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
         }
     }
 

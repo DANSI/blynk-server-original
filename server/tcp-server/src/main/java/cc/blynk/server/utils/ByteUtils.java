@@ -33,4 +33,23 @@ public class ByteUtils {
         return baos.toByteArray();
     }
 
+    public static byte[] compress(int dashId, byte[][] values, int msgId) {
+        //todo calculate size
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
+
+        try (OutputStream out = new DeflaterOutputStream(baos)) {
+            out.write(ByteBuffer.allocate(4).putInt(dashId).array());
+            for (byte[] data : values) {
+                ByteBuffer bb = ByteBuffer.allocate(4);
+                bb.putInt(data.length / REPORTING_RECORD_SIZE_BYTES);
+                out.write(bb.array());
+                out.write(data);
+            }
+        } catch (Exception ioe) {
+            throw new GetGraphDataException(msgId);
+        }
+        return baos.toByteArray();
+    }
+
+
 }
