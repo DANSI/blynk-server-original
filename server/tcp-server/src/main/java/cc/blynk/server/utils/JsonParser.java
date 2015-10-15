@@ -1,7 +1,6 @@
 package cc.blynk.server.utils;
 
 import cc.blynk.server.exceptions.IllegalCommandBodyException;
-import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
@@ -35,6 +34,7 @@ public final class JsonParser {
     private static final Logger log = LogManager.getLogger(JsonParser.class);
     private static final ObjectReader userReader = mapper.reader(User.class);
     private static final ObjectReader profileReader = mapper.reader(Profile.class);
+    private static final ObjectReader dashboardReader = mapper.reader(DashBoard.class);
     private static final ObjectReader gcmResponseReader = mapper.reader(GCMResponseMessage.class);
 
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
@@ -94,13 +94,23 @@ public final class JsonParser {
         return gcmResponseReader.readValue(reader);
     }
 
+    public static DashBoard parseDashboard(String reader, int id) {
+        try {
+            return dashboardReader.readValue(reader);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new IllegalCommandBodyException("Error parsing dashboard.", id);
+        }
+    }
+
     public static Profile parseProfile(String reader, int id) {
         try {
             Profile profile = profileReader.readValue(reader);
             profile.calcGraphPins();
             return profile;
         } catch (IOException e) {
-            throw new IllegalCommandBodyException("Error parsing user profile. Reason : " + e.getMessage(), id);
+            log.error(e.getMessage());
+            throw new IllegalCommandBodyException("Error parsing user profile.", id);
         }
     }
 
@@ -111,7 +121,8 @@ public final class JsonParser {
             profile.calcGraphPins();
             return profile;
         } catch (IOException e) {
-            throw new IllegalCommandException("Error parsing user profile. Reason : " + e.getMessage(), 1);
+            log.error(e.getMessage());
+            throw new IllegalCommandBodyException("Error parsing user profile.", 1);
         }
     }
 
