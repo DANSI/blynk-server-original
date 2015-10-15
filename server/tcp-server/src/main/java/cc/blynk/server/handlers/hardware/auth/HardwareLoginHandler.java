@@ -68,13 +68,13 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         Integer dashId = UserDao.getDashIdByToken(user.dashTokens, token, message.id);
 
-        sessionDao.addHardwareChannel(user, ctx.channel());
-
         log.info("{} hardware joined.", user.name);
 
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(UserNotLoggerHandler.class);
         ctx.pipeline().addLast(new HardwareHandler(props, sessionDao, reportingDao, notificationsProcessor, new HandlerState(dashId, user, token)));
+
+        sessionDao.addHardwareChannel(user, ctx.channel());
 
         ctx.writeAndFlush(produce(message.id, OK));
 
