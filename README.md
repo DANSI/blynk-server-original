@@ -17,6 +17,7 @@ If you need more information, please follow these links:
 ![Button edit](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/button_edit.png)
 ![terminal edit](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/terminal_edit.png)
 ![Dashboard](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/dash.png)
+![Dashboard2](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/dash2.png)
 
 # Blynk server
 Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Java server, responsible for forwarding messages between Blynk mobile application and various microcontroller boards (i.e. Arduino, Raspberry Pi. etc).
