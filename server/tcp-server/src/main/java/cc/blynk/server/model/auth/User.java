@@ -46,6 +46,17 @@ public class User implements Serializable {
     public void setProfile(Profile profile) {
         //do not accept activeDashId from user, it is calculated field.
         profile.activeDashId = this.profile.activeDashId;
+
+        //todo remove later.
+        for (DashBoard dashBoard : profile.dashBoards) {
+            for (DashBoard curDash : this.profile.dashBoards) {
+                if (dashBoard.id == curDash.id) {
+                    dashBoard.isActive = curDash.isActive;
+                    break;
+                }
+            }
+        }
+
         this.profile = profile;
         this.lastModifiedTs = System.currentTimeMillis();
     }
