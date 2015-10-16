@@ -59,7 +59,7 @@ public class Profile {
     }
 
     public List<Timer> getActiveTimerWidgets() {
-        if (dashBoards == null || dashBoards.length == 0 || activeDashId == null) {
+        if (dashBoards == null || dashBoards.length == 0) {
             return Collections.emptyList();
         }
 
