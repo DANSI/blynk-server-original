@@ -50,6 +50,17 @@ public class User implements Serializable {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
+    public boolean hasActive() {
+        if (profile != null && profile.dashBoards != null) {
+            for (DashBoard dashBoard : profile.dashBoards) {
+                if (dashBoard.isActive) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void putToken(Integer dashId, String token, Map<Integer, String> tokens) {
         cleanTokensForNonExistentDashes(tokens);
         tokens.put(dashId, token);

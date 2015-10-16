@@ -36,7 +36,7 @@ public class HardwareAppLogic {
     public void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message message) {
         Session session = sessionDao.userSession.get(state.user);
 
-        if (state.user.profile.activeDashId == null) {
+        if (!state.user.hasActive()) {
             //throw new NoActiveDashboardException(message.id);
             return;
         }
