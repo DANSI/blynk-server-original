@@ -200,6 +200,47 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
     }
 
     @Test
+    public void testActive2AndDeactivate1() throws Exception {
+        TestHardClient hardClient2 = new TestHardClient(host, hardPort);
+        hardClient2.start(null);
+
+        String newProfile = readTestUserProfile("user_profile_json_3_dashes.txt");
+        clientPair.appClient.send("saveProfile " + newProfile);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, OK)));
+
+        clientPair.appClient.send("activate 2");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, OK)));
+
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getToken 2");
+        String token2 = getBody(clientPair.appClient.responseMock);
+        hardClient2.send("login " + token2);
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+
+        clientPair.appClient.reset();
+
+        clientPair.hardwareClient.send("hardware aw 1 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
+
+        hardClient2.send("hardware aw 1 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
+
+
+        clientPair.appClient.send("deactivate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+
+        clientPair.hardwareClient.send("hardware aw 1 1");
+        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(2, NO_ACTIVE_DASHBOARD)));
+
+        hardClient2.send("hardware aw 1 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
+    }
+
+    @Test
     public void testPushWhenHardwareOffline() throws Exception {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
