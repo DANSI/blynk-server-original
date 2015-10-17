@@ -49,10 +49,12 @@ public class User implements Serializable {
 
         //todo remove later.
         for (DashBoard dashBoard : profile.dashBoards) {
-            for (DashBoard curDash : this.profile.dashBoards) {
-                if (dashBoard.id == curDash.id) {
-                    dashBoard.isActive = curDash.isActive;
-                    break;
+            if (this.profile.dashBoards != null) {
+                for (DashBoard curDash : this.profile.dashBoards) {
+                    if (dashBoard.id == curDash.id) {
+                        dashBoard.isActive = curDash.isActive;
+                        break;
+                    }
                 }
             }
         }
