@@ -9,16 +9,15 @@ import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.exceptions.UserNotRegistered;
+import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.app.AppHandler;
 import cc.blynk.server.handlers.app.auth.sharing.AppShareLoginHandler;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -33,7 +32,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 @ChannelHandler.Sharable
-public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
+public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler, DefaultReregisterHandler {
 
     private final ServerProperties props;
     private final UserDao userDao;
@@ -84,9 +83,19 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         cleanPipeline(ctx.pipeline());
         ctx.pipeline().addLast(new AppHandler(props, userDao, sessionDao, reportingDao, notificationsProcessor, new HandlerState(user, osType, version)));
 
-        sessionDao.addAppChannel(user, ctx.channel());
+        Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
 
-        log.info("{} app joined.", user.name);
+        if (session.initialEventLoop != ctx.channel().eventLoop()) {
+            log.debug("Re registering app channel. {}", ctx.channel());
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(ctx.channel(), session, user.name));
+        } else {
+            completeLogin(ctx.channel(), session, user.name);
+        }
+    }
+
+    private void completeLogin(Channel channel, Session session, String userName) {
+        session.appChannels.add(channel);
+        log.info("{} app joined.", userName);
     }
 
     private void cleanPipeline(ChannelPipeline pipeline) {

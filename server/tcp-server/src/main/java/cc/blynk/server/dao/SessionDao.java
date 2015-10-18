@@ -3,6 +3,7 @@ package cc.blynk.server.dao;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.Channel;
+import io.netty.channel.EventLoop;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,16 +24,6 @@ public class SessionDao {
     private static final Logger log = LogManager.getLogger(SessionDao.class);
 
     public final Map<User, Session> userSession = new ConcurrentHashMap<>();
-
-    public void addHardwareChannel(User user, Channel channel) {
-        Session session = getSessionByUser(user);
-        session.hardwareChannels.add(channel);
-    }
-
-    public void addAppChannel(User user, Channel channel) {
-        Session session = getSessionByUser(user);
-        session.appChannels.add(channel);
-    }
 
     public void removeAppFromSession(Channel channel) {
         User user = getState(channel).user;
@@ -55,11 +46,11 @@ public class SessionDao {
     }
 
     //threadsafe
-    private Session getSessionByUser(User user) {
+    public Session getSessionByUser(User user, EventLoop initialEventLoop) {
         Session group = userSession.get(user);
         //only one side came
         if (group == null) {
-            Session value = new Session();
+            Session value = new Session(initialEventLoop);
             group = userSession.putIfAbsent(user, value);
             if (group == null) {
                 log.trace("Creating unique session for user: {}", user);

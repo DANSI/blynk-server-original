@@ -10,9 +10,11 @@ import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
+import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.model.DashBoard;
+import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandler;
@@ -32,7 +34,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 @ChannelHandler.Sharable
-public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
+public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler, DefaultReregisterHandler {
 
     private final UserDao userDao;
     private final SessionDao sessionDao;
@@ -66,21 +68,34 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             return;
         }
 
-        Integer dashId = UserDao.getDashIdByToken(user.dashTokens, token, message.id);
-
-        log.info("{} hardware joined.", user.name);
+        final Integer dashId = UserDao.getDashIdByToken(user.dashTokens, token, message.id);
 
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(UserNotLoggerHandler.class);
         ctx.pipeline().addLast(new HardwareHandler(props, sessionDao, reportingDao, notificationsProcessor, new HandlerState(dashId, user, token)));
 
-        sessionDao.addHardwareChannel(user, ctx.channel());
+        Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
 
-        ctx.writeAndFlush(produce(message.id, OK));
+        if (session.initialEventLoop != ctx.channel().eventLoop()) {
+            log.debug("Re registering hard channel. {}", ctx.channel());
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(ctx, session, user, dashId, message.id));
+        } else {
+            completeLogin(ctx, session, user, dashId, message.id);
+        }
+    }
 
-        //send Pin Mode command in case channel connected to active dashboard with Pin Mode command that
-        //was sent previously
-        DashBoard dash = user.profile.getDashboardById(dashId, message.id);
+    private void completeLogin(ChannelHandlerContext ctx, Session session, User user, Integer dashId, int msgId) {
+        log.debug("completeLogin. {}", ctx.channel());
+        session.hardwareChannels.add(ctx.channel());
+        ctx.writeAndFlush(produce(msgId, OK));
+        sendPinMode(ctx, user, dashId, msgId);
+        log.info("{} hardware joined.", user.name);
+    }
+
+    //send Pin Mode command in case channel connected to active dashboard with Pin Mode command that
+    //was sent previously
+    private void sendPinMode(ChannelHandlerContext ctx, User user, Integer dashId, int msgId) {
+        DashBoard dash = user.profile.getDashboardById(dashId, msgId);
         if (dash.isActive && dash.pinModeMessage != null) {
             ctx.writeAndFlush(dash.pinModeMessage);
         }

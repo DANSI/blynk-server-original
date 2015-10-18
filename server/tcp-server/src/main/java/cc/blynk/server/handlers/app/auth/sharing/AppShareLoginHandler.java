@@ -9,21 +9,17 @@ import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
+import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.app.AppShareHandler;
 import cc.blynk.server.handlers.app.auth.AppLoginHandler;
 import cc.blynk.server.handlers.app.auth.RegisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import static cc.blynk.common.enums.Response.OK;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
  * Handler responsible for managing apps sharing login messages.
@@ -34,7 +30,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 @ChannelHandler.Sharable
-public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLoginMessage> {
+public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLoginMessage> implements DefaultReregisterHandler {
 
     private static final Logger log = LogManager.getLogger(AppShareLoginHandler.class);
 
@@ -66,8 +62,6 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
             }
             appLogin(ctx, message.id, messageParts[0], messageParts[1], osType, version);
         }
-
-        ctx.writeAndFlush(produce(message.id, OK));
     }
 
     private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String token, String osType, String version) {
@@ -86,9 +80,19 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         cleanPipeline(ctx.pipeline());
         ctx.pipeline().addLast(new AppShareHandler(props, userDao, sessionDao, reportingDao, new HandlerState(dashId, user, token)));
 
-        sessionDao.addAppChannel(user, ctx.channel());
+        Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
 
-        log.info("Shared {} app joined.", user.getName());
+        if (session.initialEventLoop != ctx.channel().eventLoop()) {
+            log.debug("Re registering app channel. {}", ctx.channel());
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(ctx.channel(), session, user.name));
+        } else {
+            completeLogin(ctx.channel(), session, user.name);
+        }
+    }
+
+    private void completeLogin(Channel channel, Session session, String userName) {
+        session.appChannels.add(channel);
+        log.info("Shared {} app joined.", userName);
     }
 
     private void cleanPipeline(ChannelPipeline pipeline) {

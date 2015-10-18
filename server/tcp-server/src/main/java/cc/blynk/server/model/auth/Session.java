@@ -3,6 +3,7 @@ package cc.blynk.server.model.auth;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import io.netty.channel.Channel;
+import io.netty.channel.EventLoop;
 import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +26,12 @@ public class Session {
 
     public final Set<Channel> appChannels = new ConcurrentSet<>();
     public final Set<Channel> hardwareChannels = new ConcurrentSet<>();
+
+    public final EventLoop initialEventLoop;
+
+    public Session(EventLoop initialEventLoop) {
+        this.initialEventLoop = initialEventLoop;
+    }
 
     public void sendMessageToHardware(Integer activeDashId, MessageBase message) {
         boolean noActiveHardware = true;
