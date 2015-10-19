@@ -38,6 +38,10 @@ public final class Command {
     public static final short GET_GRAPH_DATA = 10;
     public static final short GET_GRAPH_DATA_RESPONSE = 11;
 
+    public static final short CREATE_DASH = 21;
+    public static final short SAVE_DASH = 22;
+    public static final short DELETE_DASH = 23;
+
     //sharing commands
     public static final short GET_SHARED_DASH = 29;
     public static final short GET_SHARE_TOKEN = 30;
@@ -77,6 +81,9 @@ public final class Command {
                 put(GET_SHARE_TOKEN, GetShareTokenMessage.class.getSimpleName());
                 put(REFRESH_SHARE_TOKEN, RefreshShareTokenMessage.class.getSimpleName());
                 put(SHARE_LOGIN, ShareLoginMessage.class.getSimpleName());
+                put(CREATE_DASH, CreateDashMessage.class.getSimpleName());
+                put(SAVE_DASH, SaveDashMessage.class.getSimpleName());
+                put(DELETE_DASH, DeleteDashMessage.class.getSimpleName());
             }
     };
 

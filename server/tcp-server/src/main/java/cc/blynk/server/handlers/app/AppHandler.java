@@ -7,6 +7,9 @@ import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.app.logic.*;
+import cc.blynk.server.handlers.app.logic.dashboard.CreateDashLogic;
+import cc.blynk.server.handlers.app.logic.dashboard.DeleteDashLogic;
+import cc.blynk.server.handlers.app.logic.dashboard.SaveDashLogic;
 import cc.blynk.server.handlers.app.logic.sharing.GetShareTokenLogic;
 import cc.blynk.server.handlers.app.logic.sharing.GetSharedDashLogic;
 import cc.blynk.server.handlers.app.logic.sharing.RefreshShareTokenLogic;
@@ -34,6 +37,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
     private final GetShareTokenLogic getShareTokenLogic;
     private final RefreshShareTokenLogic refreshShareTokenLogic;
     private final GetSharedDashLogic getSharedDashLogic;
+    private final CreateDashLogic createDashLogic;
+    private final SaveDashLogic saveDashLogic;
 
     public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, NotificationsProcessor notificationsProcessor, HandlerState state) {
         super(props, state);
@@ -46,6 +51,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
         this.getShareTokenLogic = new GetShareTokenLogic(userDao);
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(userDao);
         this.getSharedDashLogic = new GetSharedDashLogic(userDao);
+        this.createDashLogic = new CreateDashLogic(props);
+        this.saveDashLogic = new SaveDashLogic(props);
     }
 
     @Override
@@ -89,6 +96,15 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
                 break;
             case EMAIL :
                 appMailLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case CREATE_DASH :
+                createDashLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case SAVE_DASH :
+                saveDashLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case DELETE_DASH :
+                DeleteDashLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }

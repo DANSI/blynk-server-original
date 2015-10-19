@@ -18,7 +18,7 @@ import cc.blynk.server.model.widgets.others.Twitter;
 import cc.blynk.server.notifications.twitter.exceptions.TwitterNotAuthorizedException;
 import cc.blynk.server.workers.notifications.NotificationsProcessor;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

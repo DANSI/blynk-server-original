@@ -49,6 +49,12 @@ public class CommandParser {
                 return GET_SHARED_DASH;
             case "refreshsharetoken" :
                 return REFRESH_SHARE_TOKEN;
+            case "createdash" :
+                return CREATE_DASH;
+            case "savedash" :
+                return SAVE_DASH;
+            case "deletedash" :
+                return DELETE_DASH;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

@@ -62,8 +62,14 @@ public class MessageFactory {
                 return new RefreshShareTokenMessage(messageId, body);
             case GET_SHARED_DASH :
                 return new GetSharedDashMessage(messageId, body);
-            case HARDWARE:
+            case HARDWARE :
                 return new HardwareMessage(messageId, body);
+            case CREATE_DASH :
+                return new CreateDashMessage(messageId, body);
+            case DELETE_DASH :
+                return new DeleteDashMessage(messageId, body);
+            case SAVE_DASH :
+                return new SaveDashMessage(messageId, body);
 
             default: throw new UnsupportedCommandException(String.format("Command with code %d not supported message.", command), messageId);
         }

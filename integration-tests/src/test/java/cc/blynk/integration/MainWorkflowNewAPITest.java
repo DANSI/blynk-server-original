@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.zip.InflaterInputStream;
 
 import static cc.blynk.common.enums.Command.HARDWARE;
+import static cc.blynk.common.enums.Command.LOAD_PROFILE;
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
@@ -117,6 +118,30 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
 
         clientPair.appClient.send("ping");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+    }
+
+    @Test
+    public void testDashCommands() throws Exception {
+        clientPair.appClient.send("saveDash {\"id\":10, \"name\":\"test board update\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, ILLEGAL_COMMAND)));
+
+        clientPair.appClient.send("createDash {\"id\":10, \"name\":\"test board\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, OK)));
+
+        clientPair.appClient.send("createDash {\"id\":10, \"name\":\"test board\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, NOT_ALLOWED)));
+
+        clientPair.appClient.send("saveDash {\"id\":10, \"name\":\"test board update\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, OK)));
+
+        clientPair.appClient.send("deleteDash 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, OK)));
+
+        clientPair.appClient.send("deleteDash 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, ILLEGAL_COMMAND)));
+
+        clientPair.appClient.send("loadProfile");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, LOAD_PROFILE, "{\"activeDashId\":1,\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isSharedPublic\":false,\"isActive\":false}]}")));
     }
 
     @Test
