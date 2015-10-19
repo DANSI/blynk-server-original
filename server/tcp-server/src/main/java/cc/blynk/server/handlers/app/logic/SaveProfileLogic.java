@@ -20,6 +20,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
+@Deprecated
 public class SaveProfileLogic {
 
     private static final Logger log = LogManager.getLogger(SaveProfileLogic.class);

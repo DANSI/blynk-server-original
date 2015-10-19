@@ -9,6 +9,7 @@ import static cc.blynk.common.enums.Command.SAVE_PROFILE;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
+@Deprecated
 public class SaveProfileMessage extends Message {
 
     public SaveProfileMessage(int messageId, String body) {
