@@ -1,6 +1,7 @@
 package cc.blynk.server.dao;
 
 import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.server.handlers.app.logic.GetGraphDataLogic;
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.graph.GraphKey;
@@ -101,7 +102,19 @@ public class ReportingDao {
         averageAggregator.collect(ThreadContext.get("user"), key.dashId, key.pinType, key.pin, key.ts, key.value);
     }
 
-    public byte[] getAllFromDisk(String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
+    public byte[][] getAllFromDisk(String username, GetGraphDataLogic.GraphPinRequest[] requestedPins) {
+        byte[][] values = new byte[requestedPins.length][];
+
+        for (int i = 0; i < requestedPins.length; i++) {
+            values[i] = getAllFromDisk(username,
+                    requestedPins[i].dashId, requestedPins[i].pinType,
+                    requestedPins[i].pin, requestedPins[i].count, requestedPins[i].type);
+        }
+
+        return values;
+    }
+
+    private byte[] getAllFromDisk(String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
         return getAllFromDisk(dataFolder, username, dashId, pinType, pin, count, type);
     }
 

@@ -91,42 +91,26 @@ public class GetGraphDataLogic {
     private byte[][] process(String[] messageParts, User user, int msgId, int valuesPerPin) {
         int numberOfPins = messageParts.length / valuesPerPin;
 
-        GraphPinRequestData[] requestedPins = new GraphPinRequestData[numberOfPins];
+        GraphPinRequest[] requestedPins = new GraphPinRequestData[numberOfPins];
 
         for (int i = 0; i < numberOfPins; i++) {
             requestedPins[i] = new GraphPinRequestData(messageParts, i, msgId, valuesPerPin);
-            user.profile.validateDashId(requestedPins[i].dashBoardId, msgId);
+            user.profile.validateDashId(requestedPins[i].dashId, msgId);
         }
 
-        byte[][] values = new byte[numberOfPins][];
-
-        for (int i = 0; i < numberOfPins; i++) {
-            values[i] = reportingDao.getAllFromDisk(user.name,
-                    requestedPins[i].dashBoardId, requestedPins[i].pinType,
-                    requestedPins[i].pin, requestedPins[i].count, requestedPins[i].type);
-        }
-
-        return values;
+        return reportingDao.getAllFromDisk(user.name, requestedPins);
     }
 
     private byte[][] processNewAPI(int dashId, String[] messageParts, User user, int msgId, int valuesPerPin) {
         int numberOfPins = messageParts.length / valuesPerPin;
 
-        GraphPinRequestDataNewAPI[] requestedPins = new GraphPinRequestDataNewAPI[numberOfPins];
+        GraphPinRequest[] requestedPins = new GraphPinRequestDataNewAPI[numberOfPins];
 
         for (int i = 0; i < numberOfPins; i++) {
-            requestedPins[i] = new GraphPinRequestDataNewAPI(messageParts, i, msgId, valuesPerPin);
+            requestedPins[i] = new GraphPinRequestDataNewAPI(dashId, messageParts, i, msgId, valuesPerPin);
         }
 
-        byte[][] values = new byte[numberOfPins][];
-
-        for (int i = 0; i < numberOfPins; i++) {
-            values[i] = reportingDao.getAllFromDisk(user.name,
-                    dashId, requestedPins[i].pinType,
-                    requestedPins[i].pin, requestedPins[i].count, requestedPins[i].type);
-        }
-
-        return values;
+        return reportingDao.getAllFromDisk(user.name, requestedPins);
     }
 
     private void deleteGraphData(String[] messageParts, String username, int msgId) {
@@ -144,21 +128,11 @@ public class GetGraphDataLogic {
         }
     }
 
-    private class GraphPinRequestData {
-
-        int dashBoardId;
-
-        PinType pinType;
-
-        byte pin;
-
-        int count;
-
-        GraphType type;
+    private class GraphPinRequestData extends GraphPinRequest {
 
         public GraphPinRequestData(String[] messageParts, final int pinIndex, int msgId, int valuesPerPin) {
             try {
-                dashBoardId = Integer.parseInt(messageParts[pinIndex * valuesPerPin]);
+                dashId = Integer.parseInt(messageParts[pinIndex * valuesPerPin]);
                 pinType = PinType.getPingType(messageParts[pinIndex * valuesPerPin + 1].charAt(0));
                 pin = Byte.parseByte(messageParts[pinIndex * valuesPerPin + 2]);
                 count = Integer.parseInt(messageParts[pinIndex * valuesPerPin + 3]);
@@ -169,18 +143,11 @@ public class GetGraphDataLogic {
         }
     }
 
-    private class GraphPinRequestDataNewAPI {
+    private class GraphPinRequestDataNewAPI extends GraphPinRequest{
 
-        PinType pinType;
-
-        byte pin;
-
-        int count;
-
-        GraphType type;
-
-        public GraphPinRequestDataNewAPI(String[] messageParts, final int pinIndex, int msgId, int valuesPerPin) {
+          public GraphPinRequestDataNewAPI(int dashId, String[] messageParts, final int pinIndex, int msgId, int valuesPerPin) {
             try {
+                this.dashId = dashId;
                 pinType = PinType.getPingType(messageParts[pinIndex * valuesPerPin ].charAt(0));
                 pin = Byte.parseByte(messageParts[pinIndex * valuesPerPin + 1]);
                 count = Integer.parseInt(messageParts[pinIndex * valuesPerPin + 2]);
@@ -189,6 +156,20 @@ public class GetGraphDataLogic {
                 throw new IllegalCommandException("HardwareLogic command body incorrect.", msgId);
             }
         }
+    }
+
+    public abstract class GraphPinRequest {
+
+        public int dashId;
+
+        public PinType pinType;
+
+        public byte pin;
+
+        public int count;
+
+        public GraphType type;
+
     }
 
 }
