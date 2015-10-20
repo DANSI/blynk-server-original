@@ -20,12 +20,13 @@ public abstract class BaseServer implements Runnable {
     protected static final Logger log = LogManager.getLogger(HardwareServer.class);
     protected final int port;
     private final TransportTypeHolder transportTypeHolder;
-
+    public volatile boolean isRunning;
     private Channel channel;
 
     protected BaseServer(int port, TransportTypeHolder transportTypeHolder) {
         this.port = port;
         this.transportTypeHolder = transportTypeHolder;
+        this.isRunning = true;
     }
 
     @Override
@@ -56,6 +57,7 @@ public abstract class BaseServer implements Runnable {
             this.channel.closeFuture().sync();
         } catch (Exception e) {
             log.error(e);
+            this.isRunning = false;
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();

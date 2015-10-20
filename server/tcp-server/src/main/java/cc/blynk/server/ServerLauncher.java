@@ -63,6 +63,23 @@ public class ServerLauncher {
         new ServerLauncher(serverProperties).run();
     }
 
+    private static void printStartedString(BaseServer... servers) {
+        try {
+            Thread.sleep(500);
+        } catch (Exception e) {
+        }
+        for (BaseServer server : servers) {
+            if (!server.isRunning) {
+                System.out.println("Error starting Blynk server. Stopping.");
+                System.exit(0);
+            }
+        }
+
+        System.out.println();
+        System.out.println("Blynk Server successfully started.");
+        System.out.println("All server output is stored in current folder in 'logs/blynk.log' file.");
+    }
+
     private void run() {
         //start servers
         new Thread(appServer).start();
@@ -72,6 +89,8 @@ public class ServerLauncher {
 
         //Launching all background jobs.
         JobLauncher.start(holder, hardwareServer, appServer, adminServer, hardwareSSLServer);
+
+        printStartedString(hardwareServer, appServer, adminServer, hardwareSSLServer);
     }
 
 }

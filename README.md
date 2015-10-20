@@ -42,7 +42,12 @@ By default, mobile application uses 8443 port and is based on SSL/TLS sockets. D
 
         java -jar server-0.9.1.jar -dataFolder /path
         
-That's it! You will see no output cause all logging is done within same folder in ./logs/blynk.log file.
+That's it! 
+
++ As output you will see something like that :
+
+        Blynk Server successfully started.
+        All server output is stored in current folder in 'logs/blynk.log' file.
 
 ## Quick local server setup on Raspberry PI
 
@@ -64,7 +69,12 @@ That's it! You will see no output cause all logging is done within same folder i
 
         java -jar server-0.9.1.jar -dataFolder /home/pi/Blynk        
         
-That's it! You will see no output cause all logging is done within same folder in ./logs/blynk.log file.
+That's it! 
+
++ As output you will see something like that :
+
+        Blynk Server successfully started.
+        All server output is stored in current folder in 'logs/blynk.log' file.
         
 + To enable server auto restart find /etc/init.d/rc.local file and add :
 
