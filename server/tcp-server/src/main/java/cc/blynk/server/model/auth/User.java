@@ -28,7 +28,7 @@ public class User implements Serializable {
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
     public volatile long lastModifiedTs;
 
-    public volatile Profile profile;
+    public Profile profile;
 
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();

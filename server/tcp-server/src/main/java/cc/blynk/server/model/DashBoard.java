@@ -31,7 +31,7 @@ public class DashBoard {
 
     public boolean isSharedPublic;
 
-    public volatile boolean isActive;
+    public boolean isActive;
 
     /**
      * Specific property used for improving user experience on mobile application.
@@ -41,8 +41,7 @@ public class DashBoard {
      * is remembered and when hardware goes online - server sends Pin Modes command to hardware
      * without requiring user to activate/deactivate dashboard again.
      */
-    //todo avoid volatile
-    public volatile transient Message pinModeMessage;
+    public transient Message pinModeMessage;
 
     public List<Timer> getTimerWidgets() {
         if (widgets == null || widgets.length == 0) {
