@@ -1,5 +1,7 @@
 package cc.blynk.server.handlers.hardware;
 
+import cc.blynk.common.enums.Command;
+import cc.blynk.common.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.DashBoard;
@@ -15,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.common.enums.Response.DEVICE_WENT_OFFLINE;
+import static cc.blynk.common.enums.Response.DEVICE_WENT_OFFLINE_2;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static cc.blynk.server.utils.HandlerUtil.getState;
 
@@ -63,7 +66,17 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                 if (notification == null || !notification.notifyWhenOffline) {
                     Session session = sessionDao.userSession.get(handlerState.user);
                     if (session.appChannels.size() > 0) {
-                        session.sendMessageToApp(produce(0, DEVICE_WENT_OFFLINE));
+                        for (Channel appChannel : session.appChannels) {
+                            if (getState(appChannel).isOldAPI()) {
+                                appChannel.writeAndFlush(produce(0, DEVICE_WENT_OFFLINE));
+                            } else {
+                                appChannel.writeAndFlush(
+                                        new ResponseWithBodyMessage(
+                                                0, Command.RESPONSE, DEVICE_WENT_OFFLINE_2, handlerState.dashId
+                                        )
+                                );
+                            }
+                        }
                     }
                 } else {
                     String boardType = dashBoard.boardType;

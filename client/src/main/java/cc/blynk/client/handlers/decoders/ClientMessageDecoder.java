@@ -1,8 +1,10 @@
 package cc.blynk.client.handlers.decoders;
 
 import cc.blynk.common.enums.Command;
+import cc.blynk.common.enums.Response;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.common.model.messages.ResponseWithBodyMessage;
 import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
 import cc.blynk.common.utils.Config;
 import io.netty.buffer.ByteBuf;
@@ -40,7 +42,11 @@ public class ClientMessageDecoder extends ByteToMessageDecoder implements Defaul
         MessageBase message;
         if (command == Command.RESPONSE) {
             int responseCode = in.readUnsignedShort();
-            message = produce(messageId, responseCode);
+            if (responseCode == Response.DEVICE_WENT_OFFLINE_2) {
+                message = new ResponseWithBodyMessage(messageId, Command.RESPONSE, responseCode, in.readInt());
+            } else {
+                message = produce(messageId, responseCode);
+            }
         } else {
             int length = in.readUnsignedShort();
 

@@ -1,8 +1,10 @@
 package cc.blynk.common.handlers.common.encoders;
 
 import cc.blynk.common.enums.Command;
+import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.common.model.messages.ResponseWithBodyMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -23,6 +25,9 @@ public class MessageEncoder extends MessageToByteEncoder<MessageBase> {
 
         if (message.command == Command.RESPONSE) {
             out.writeShort(message.length);
+            if (message.length == Response.DEVICE_WENT_OFFLINE_2) {
+                out.writeInt(((ResponseWithBodyMessage) message).dashId);
+            }
         } else {
             byte[] body = ((Message) message).getBytes();
             out.writeShort(body.length);

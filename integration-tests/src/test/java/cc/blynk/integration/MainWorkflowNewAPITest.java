@@ -1,7 +1,9 @@
 package cc.blynk.integration;
 
+import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.ResponseMessage;
+import cc.blynk.common.model.messages.ResponseWithBodyMessage;
 import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
@@ -100,7 +102,7 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(0, DEVICE_WENT_OFFLINE)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseWithBodyMessage(0, Command.RESPONSE, DEVICE_WENT_OFFLINE_2, 1)));
     }
 
     @Test
