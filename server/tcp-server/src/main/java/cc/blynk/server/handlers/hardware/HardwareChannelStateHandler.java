@@ -67,7 +67,8 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                     Session session = sessionDao.userSession.get(handlerState.user);
                     if (session.appChannels.size() > 0) {
                         for (Channel appChannel : session.appChannels) {
-                            if (getState(appChannel).isOldAPI()) {
+                            HandlerState appState = getState(appChannel);
+                            if (appState.isOldAPI() || ("Android".equals(appState.osType) && "21".equals(appState.version))) {
                                 appChannel.writeAndFlush(produce(0, DEVICE_WENT_OFFLINE));
                             } else {
                                 appChannel.writeAndFlush(
