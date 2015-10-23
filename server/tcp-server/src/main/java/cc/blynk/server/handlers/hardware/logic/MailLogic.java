@@ -6,7 +6,7 @@ import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.widgets.others.Mail;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,11 +23,11 @@ public class MailLogic extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(MailLogic.class);
 
-    private final NotificationsProcessor notificationsProcessor;
+    private final BlockingIOProcessor blockingIOProcessor;
 
-    public MailLogic(NotificationsProcessor notificationsProcessor, long notificationQuotaLimit) {
+    public MailLogic(BlockingIOProcessor blockingIOProcessor, long notificationQuotaLimit) {
         super(notificationQuotaLimit);
-        this.notificationsProcessor = notificationsProcessor;
+        this.blockingIOProcessor = blockingIOProcessor;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message message) {
@@ -56,7 +56,7 @@ public class MailLogic extends NotificationBase {
         checkIfNotificationQuotaLimitIsNotReached(message.id);
 
         log.trace("Sending Mail for user {}, with message : '{}'.", state.user.name, message.body);
-        notificationsProcessor.mail(ctx.channel(), to, subj, body, message.id);
+        blockingIOProcessor.mail(ctx.channel(), to, subj, body, message.id);
     }
 
 }

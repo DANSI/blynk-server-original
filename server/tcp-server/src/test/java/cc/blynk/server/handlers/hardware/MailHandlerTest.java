@@ -15,7 +15,7 @@ import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.others.Mail;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.junit.Test;
@@ -34,9 +34,9 @@ import static org.mockito.Mockito.when;
 public class MailHandlerTest extends TestBase {
 
     @Mock
-    private NotificationsProcessor notificationsProcessor;
+    private BlockingIOProcessor blockingIOProcessor;
 
-    private MailLogic mailHandler = new MailLogic(notificationsProcessor, 1);
+    private MailLogic mailHandler = new MailLogic(blockingIOProcessor, 1);
 
 	@Mock
 	private ChannelHandlerContext ctx;

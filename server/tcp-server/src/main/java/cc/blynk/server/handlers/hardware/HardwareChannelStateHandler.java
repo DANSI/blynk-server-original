@@ -7,7 +7,7 @@ import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.widgets.others.Notification;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -34,11 +34,11 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     private static final Logger log = LogManager.getLogger(HardwareChannelStateHandler.class);
 
     private final SessionDao sessionDao;
-    private final NotificationsProcessor notificationsProcessor;
+    private final BlockingIOProcessor blockingIOProcessor;
 
-    public HardwareChannelStateHandler(SessionDao sessionDao, NotificationsProcessor notificationsProcessor) {
+    public HardwareChannelStateHandler(SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor) {
         this.sessionDao = sessionDao;
-        this.notificationsProcessor = notificationsProcessor;
+        this.blockingIOProcessor = blockingIOProcessor;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                     String boardType = dashBoard.boardType;
                     String dashName = dashBoard.name;
                     dashName = dashName == null ? "" : dashName;
-                    notificationsProcessor.push(handlerState.user, notification,
+                    blockingIOProcessor.push(handlerState.user, notification,
                             String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName));
                 }
             }

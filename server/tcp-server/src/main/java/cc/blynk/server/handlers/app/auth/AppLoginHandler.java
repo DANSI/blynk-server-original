@@ -16,7 +16,7 @@ import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.*;
 
 import static cc.blynk.common.enums.Response.OK;
@@ -38,14 +38,14 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     private final UserDao userDao;
     private final SessionDao sessionDao;
     private final ReportingDao reportingDao;
-    private final NotificationsProcessor notificationsProcessor;
+    private final BlockingIOProcessor blockingIOProcessor;
 
-    public AppLoginHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, NotificationsProcessor notificationsProcessor) {
+    public AppLoginHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor) {
         this.props = props;
         this.userDao = userDao;
         this.sessionDao = sessionDao;
         this.reportingDao = reportingDao;
-        this.notificationsProcessor = notificationsProcessor;
+        this.blockingIOProcessor = blockingIOProcessor;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         }
 
         cleanPipeline(ctx.pipeline());
-        ctx.pipeline().addLast(new AppHandler(props, userDao, sessionDao, reportingDao, notificationsProcessor, new HandlerState(user, osType, version)));
+        ctx.pipeline().addLast(new AppHandler(props, userDao, sessionDao, reportingDao, blockingIOProcessor, new HandlerState(user, osType, version)));
 
         Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
 

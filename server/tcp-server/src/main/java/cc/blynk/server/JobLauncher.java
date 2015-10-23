@@ -40,7 +40,7 @@ public class JobLauncher {
         scheduler.scheduleAtFixedRate(statsWorker, 1000,
                 holder.props.getIntProperty("stats.print.worker.period"), TimeUnit.MILLISECONDS);
 
-        FileChangeWatcherWorker fileChangeWatcherWorker = new FileChangeWatcherWorker(Config.TOKEN_MAIL_BODY, holder.notificationsProcessor);
+        FileChangeWatcherWorker fileChangeWatcherWorker = new FileChangeWatcherWorker(Config.TOKEN_MAIL_BODY, holder.blockingIOProcessor);
         new Thread(fileChangeWatcherWorker).start();
 
         //millis we need to wait to start scheduler at the beginning of a second.
@@ -52,7 +52,7 @@ public class JobLauncher {
 
         //shutdown hook thread catcher
         Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(holder.averageAggregator, profileSaverWorker,
-                holder.notificationsProcessor, servers)));
+                holder.blockingIOProcessor, servers)));
     }
 
 

@@ -9,7 +9,7 @@ import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.Holder;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.utils.JsonParser;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import org.junit.Before;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -43,7 +43,7 @@ public abstract class IntegrationBase {
     public BufferedReader bufferedReader2;
 
     @Mock
-    public NotificationsProcessor notificationsProcessor;
+    public BlockingIOProcessor blockingIOProcessor;
 
     public Holder holder;
 
@@ -141,6 +141,6 @@ public abstract class IntegrationBase {
     }
 
     public void initServerStructures() {
-        holder = new Holder(properties, notificationsProcessor);
+        holder = new Holder(properties, blockingIOProcessor);
     }
 }

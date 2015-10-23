@@ -9,7 +9,7 @@ import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.reporting.average.AverageAggregator;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 
 import static cc.blynk.server.utils.ReportingUtil.getReportingFolder;
 
@@ -36,19 +36,19 @@ public class Holder {
 
     public final ServerProperties props;
 
-    public final NotificationsProcessor notificationsProcessor;
+    public final BlockingIOProcessor blockingIOProcessor;
 
     public final AverageAggregator averageAggregator;
 
     public Holder(ServerProperties serverProperties) {
-        this(serverProperties, new NotificationsProcessor(
+        this(serverProperties, new BlockingIOProcessor(
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
                 FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY)
         ));
     }
 
     //needed for tests only
-    public Holder(ServerProperties serverProperties, NotificationsProcessor notificationsProcessor) {
+    public Holder(ServerProperties serverProperties, BlockingIOProcessor blockingIOProcessor) {
         this.props = serverProperties;
 
         String dataFolder = serverProperties.getProperty("data.folder");
@@ -61,6 +61,6 @@ public class Holder {
         this.averageAggregator = new AverageAggregator(getReportingFolder(dataFolder));
         this.reportingDao = new ReportingDao(averageAggregator, serverProperties);
 
-        this.notificationsProcessor = notificationsProcessor;
+        this.blockingIOProcessor = blockingIOProcessor;
     }
 }

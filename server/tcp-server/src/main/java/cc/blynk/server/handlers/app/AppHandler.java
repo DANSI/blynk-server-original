@@ -15,7 +15,7 @@ import cc.blynk.server.handlers.app.logic.sharing.GetSharedDashLogic;
 import cc.blynk.server.handlers.app.logic.sharing.RefreshShareTokenLogic;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.common.enums.Command.*;
@@ -40,14 +40,14 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
     private final CreateDashLogic createDashLogic;
     private final SaveDashLogic saveDashLogic;
 
-    public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, NotificationsProcessor notificationsProcessor, HandlerState state) {
+    public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, HandlerState state) {
         super(props, state);
         this.saveProfile = new SaveProfileLogic(props);
         this.token = new GetTokenLogic(userDao);
         this.hardwareApp = new HardwareAppLogic(sessionDao);
         this.refreshToken = new RefreshTokenLogic(userDao);
         this.graphData = new GetGraphDataLogic(reportingDao);
-        this.appMailLogic = new AppMailLogic(notificationsProcessor);
+        this.appMailLogic = new AppMailLogic(blockingIOProcessor);
         this.getShareTokenLogic = new GetShareTokenLogic(userDao);
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(userDao);
         this.getSharedDashLogic = new GetSharedDashLogic(userDao);

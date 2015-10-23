@@ -16,7 +16,7 @@ import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -40,14 +40,14 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     private final SessionDao sessionDao;
     private final ServerProperties props;
     private final ReportingDao reportingDao;
-    private final NotificationsProcessor notificationsProcessor;
+    private final BlockingIOProcessor blockingIOProcessor;
 
-    public HardwareLoginHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, NotificationsProcessor notificationsProcessor) {
+    public HardwareLoginHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor) {
         this.props = props;
         this.userDao = userDao;
         this.sessionDao = sessionDao;
         this.reportingDao = reportingDao;
-        this.notificationsProcessor = notificationsProcessor;
+        this.blockingIOProcessor = blockingIOProcessor;
     }
 
     @Override
@@ -72,7 +72,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(UserNotLoggerHandler.class);
-        ctx.pipeline().addLast(new HardwareHandler(props, sessionDao, reportingDao, notificationsProcessor, new HandlerState(dashId, user, token)));
+        ctx.pipeline().addLast(new HardwareHandler(props, sessionDao, reportingDao, blockingIOProcessor, new HandlerState(dashId, user, token)));
 
         Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
 

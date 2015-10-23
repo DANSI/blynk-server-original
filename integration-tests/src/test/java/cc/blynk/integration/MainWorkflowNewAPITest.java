@@ -168,10 +168,10 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
 
     @Test
     public void testSendEmail() throws Exception {
-        notificationsProcessor.tokenBody = "Auth Token for %s project";
+        blockingIOProcessor.tokenBody = "Auth Token for %s project";
         ClientPair clientPair = initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties, false);
         clientPair.appClient.send("email 1");
-        verify(notificationsProcessor, timeout(1000)).mail(any(), eq("dima@mail.ua"), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"), eq(1));
+        verify(blockingIOProcessor, timeout(1000)).mail(any(), eq("dima@mail.ua"), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"), eq(1));
     }
 
     @Test
@@ -278,14 +278,14 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
 
-        verify(notificationsProcessor, timeout(500)).push(any(), any(), eq("Your UNO went offline. \"My Dashboard\" project is disconnected."));
+        verify(blockingIOProcessor, timeout(500)).push(any(), any(), eq("Your UNO went offline. \"My Dashboard\" project is disconnected."));
     }
 
     @Test
     public void testPushHandler() throws Exception {
         clientPair.hardwareClient.send("push Yo!");
 
-        verify(notificationsProcessor, timeout(500)).push(any(), any(), eq("Yo!"), eq(1));
+        verify(blockingIOProcessor, timeout(500)).push(any(), any(), eq("Yo!"), eq(1));
     }
 
     @Test
@@ -338,7 +338,7 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
 
     @Test
     public void testTweetNotWorks() throws Exception {
-        reset(notificationsProcessor);
+        reset(blockingIOProcessor);
 
         clientPair.hardwareClient.send("tweet");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, NOTIFICATION_INVALID_BODY_EXCEPTION)));
@@ -363,14 +363,14 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
 
     @Test
     public void testTweetWorks() throws Exception {
-        reset(notificationsProcessor);
+        reset(blockingIOProcessor);
         String userProfileWithTwit = readTestUserProfile();
         clientPair.appClient.send("saveProfile " + userProfileWithTwit);
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
 
         clientPair.hardwareClient.send("tweet yo");
-        verify(notificationsProcessor, timeout(500)).twit(any(), eq("token"), eq("secret"), eq("yo"), eq(1));
+        verify(blockingIOProcessor, timeout(500)).twit(any(), eq("token"), eq("secret"), eq("yo"), eq(1));
 
         clientPair.hardwareClient.send("tweet yo");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, QUOTA_LIMIT_EXCEPTION)));

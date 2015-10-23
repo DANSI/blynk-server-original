@@ -33,7 +33,7 @@ public class AppServer extends BaseServer {
         super(holder.props.getIntProperty("app.ssl.port"), holder.transportType);
 
         RegisterHandler registerHandler = new RegisterHandler(holder.userDao, holder.props.getProperty("allowed.users.list"));
-        AppLoginHandler appLoginHandler = new AppLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.notificationsProcessor);
+        AppLoginHandler appLoginHandler = new AppLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
         AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
         AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao);
 

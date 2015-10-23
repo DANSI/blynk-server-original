@@ -8,7 +8,7 @@ import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.handlers.hardware.logic.*;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.common.enums.Command.*;
@@ -27,15 +27,15 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<Message> {
     private final TweetLogic tweet;
 
     public HardwareHandler(ServerProperties props, SessionDao sessionDao, ReportingDao reportingDao,
-                           NotificationsProcessor notificationsProcessor, HandlerState handlerState) {
+                           BlockingIOProcessor blockingIOProcessor, HandlerState handlerState) {
         super(props, handlerState);
         this.hardware = new HardwareLogic(sessionDao, reportingDao);
         this.bridge = new BridgeLogic(sessionDao);
 
         long defaultNotificationQuotaLimit = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
-        this.email = new MailLogic(notificationsProcessor, defaultNotificationQuotaLimit);
-        this.push = new PushLogic(notificationsProcessor, defaultNotificationQuotaLimit);
-        this.tweet = new TweetLogic(notificationsProcessor, defaultNotificationQuotaLimit);
+        this.email = new MailLogic(blockingIOProcessor, defaultNotificationQuotaLimit);
+        this.push = new PushLogic(blockingIOProcessor, defaultNotificationQuotaLimit);
+        this.tweet = new TweetLogic(blockingIOProcessor, defaultNotificationQuotaLimit);
     }
 
     @Override

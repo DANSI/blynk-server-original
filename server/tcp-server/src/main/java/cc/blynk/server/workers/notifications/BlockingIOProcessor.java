@@ -31,7 +31,7 @@ import static cc.blynk.server.utils.HandlerUtil.getState;
  * Created by Dmitriy Dumanskiy.
  * Created on 07.04.15.
  */
-public class NotificationsProcessor {
+public class BlockingIOProcessor {
 
     //todo move to properties
     private static final int NOTIFICATIONS_PROCESSORS = 5;
@@ -39,10 +39,10 @@ public class NotificationsProcessor {
     private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
     private final ThreadPoolExecutor executor;
-    private final Logger log = LogManager.getLogger(NotificationsProcessor.class);
+    private final Logger log = LogManager.getLogger(BlockingIOProcessor.class);
     public volatile String tokenBody;
 
-    public NotificationsProcessor(int maxQueueSize, String tokenBody) {
+    public BlockingIOProcessor(int maxQueueSize, String tokenBody) {
         this.twitterWrapper = new TwitterWrapper();
         this.mailWrapper = new MailWrapper(new ServerProperties(Config.MAIL_PROPERTIES_FILENAME));
         this.gcmWrapper = new GCMWrapper();

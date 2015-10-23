@@ -2,7 +2,7 @@ package cc.blynk.server.workers;
 
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.reporting.average.AverageAggregator;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,21 +20,21 @@ public class ShutdownHookWorker implements Runnable {
     private final AverageAggregator averageAggregator;
     private final BaseServer[] servers;
     private final ProfileSaverWorker profileSaverWorker;
-    private final NotificationsProcessor notificationsProcessor;
+    private final BlockingIOProcessor blockingIOProcessor;
 
-    public ShutdownHookWorker(AverageAggregator averageAggregator, ProfileSaverWorker profileSaverWorker, NotificationsProcessor notificationsProcessor,
+    public ShutdownHookWorker(AverageAggregator averageAggregator, ProfileSaverWorker profileSaverWorker, BlockingIOProcessor blockingIOProcessor,
                               BaseServer... servers) {
         this.averageAggregator = averageAggregator;
         this.servers = servers;
         this.profileSaverWorker = profileSaverWorker;
-        this.notificationsProcessor = notificationsProcessor;
+        this.blockingIOProcessor = blockingIOProcessor;
     }
 
     @Override
     public void run() {
         log.info("Catch shutdown hook. Trying to save users and close threads.");
 
-        notificationsProcessor.stop();
+        blockingIOProcessor.stop();
         profileSaverWorker.run();
 
         for (BaseServer server : servers) {

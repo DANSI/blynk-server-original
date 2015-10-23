@@ -5,7 +5,7 @@ import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,11 +24,11 @@ public class AppMailLogic {
     private final static String SUBJECT = "Auth Token for %s project";
     private final String BODY;
 
-    private final NotificationsProcessor notificationsProcessor;
+    private final BlockingIOProcessor blockingIOProcessor;
 
-    public AppMailLogic(NotificationsProcessor notificationsProcessor) {
-        this.notificationsProcessor = notificationsProcessor;
-        this.BODY = notificationsProcessor.tokenBody;
+    public AppMailLogic(BlockingIOProcessor blockingIOProcessor) {
+        this.blockingIOProcessor = blockingIOProcessor;
+        this.BODY = blockingIOProcessor.tokenBody;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
@@ -49,7 +49,7 @@ public class AppMailLogic {
         String body = String.format(BODY, name, token);
 
         log.trace("Sending Mail for user {}, with token : '{}'.", user.name, token);
-        notificationsProcessor.mail(ctx.channel(), to, subj, body, message.id);
+        blockingIOProcessor.mail(ctx.channel(), to, subj, body, message.id);
     }
 
 }

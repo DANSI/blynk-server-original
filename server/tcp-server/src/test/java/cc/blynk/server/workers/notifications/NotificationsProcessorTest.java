@@ -40,7 +40,7 @@ public class NotificationsProcessorTest {
         when(channel.pipeline()).thenReturn(pipeline);
         when(pipeline.last()).thenReturn(hardwareHandler);
         when(hardwareHandler.getHandlerState()).thenReturn(new HandlerState(new User("test", "test")));
-        NotificationsProcessor processor = new NotificationsProcessor(5, "");
+        BlockingIOProcessor processor = new BlockingIOProcessor(5, "");
         processor.twit(channel, "token", "secret", "body", 1);
         verify(channel, timeout(2000)).eventLoop();
         verify(eventLoop, timeout(2000)).execute(any());

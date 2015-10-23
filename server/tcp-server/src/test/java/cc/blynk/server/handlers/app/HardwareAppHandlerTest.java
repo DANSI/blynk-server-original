@@ -10,7 +10,7 @@ import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.handlers.hardware.logic.HardwareLogic;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.junit.Test;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 public class HardwareAppHandlerTest extends TestBase {
 
     @Mock
-    private NotificationsProcessor notificationsProcessor;
+    private BlockingIOProcessor blockingIOProcessor;
 
     @InjectMocks
     private HardwareLogic hardwareHandler;

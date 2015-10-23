@@ -6,7 +6,7 @@ import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.widgets.others.Twitter;
 import cc.blynk.server.notifications.twitter.exceptions.TwitterNotAuthorizedException;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,11 +24,11 @@ public class TweetLogic extends NotificationBase {
     private static final Logger log = LogManager.getLogger(TweetLogic.class);
 
     private static final int MAX_TWITTER_BODY_SIZE = 140;
-    private final NotificationsProcessor notificationsProcessor;
+    private final BlockingIOProcessor blockingIOProcessor;
 
-    public TweetLogic(NotificationsProcessor notificationsProcessor, long notificationQuotaLimit) {
+    public TweetLogic(BlockingIOProcessor blockingIOProcessor, long notificationQuotaLimit) {
         super(notificationQuotaLimit);
-        this.notificationsProcessor = notificationsProcessor;
+        this.blockingIOProcessor = blockingIOProcessor;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message message) {
@@ -48,7 +48,7 @@ public class TweetLogic extends NotificationBase {
         checkIfNotificationQuotaLimitIsNotReached(message.id);
 
         log.trace("Sending Twit for user {}, with message : '{}'.", state.user.name, message.body);
-        notificationsProcessor.twit(ctx.channel(), twitterWidget.token, twitterWidget.secret, message.body, message.id);
+        blockingIOProcessor.twit(ctx.channel(), twitterWidget.token, twitterWidget.secret, message.body, message.id);
     }
 
 }

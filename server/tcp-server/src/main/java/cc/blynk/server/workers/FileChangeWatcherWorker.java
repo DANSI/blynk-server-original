@@ -2,7 +2,7 @@ package cc.blynk.server.workers;
 
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.FileLoaderUtil;
-import cc.blynk.server.workers.notifications.NotificationsProcessor;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,12 +24,12 @@ public class FileChangeWatcherWorker implements Runnable {
 
     private final String fileName;
     private final Path propsFileFolder;
-    private final NotificationsProcessor notificationsProcessor;
+    private final BlockingIOProcessor blockingIOProcessor;
 
-    public FileChangeWatcherWorker(String fileName, NotificationsProcessor notificationsProcessor) {
+    public FileChangeWatcherWorker(String fileName, BlockingIOProcessor blockingIOProcessor) {
         this.fileName = fileName;
         this.propsFileFolder = getCurrentDir();
-        this.notificationsProcessor = notificationsProcessor;
+        this.blockingIOProcessor = blockingIOProcessor;
     }
 
     private static Path getCurrentDir() {
@@ -48,7 +48,7 @@ public class FileChangeWatcherWorker implements Runnable {
                     Path changedFile = propsFileFolder.resolve(changed.toString());
                     if (changed.getFileName().toString().endsWith(fileName) && Files.exists(changedFile)) {
                         log.info("File '{}' changed. Updating values.", changedFile);
-                        notificationsProcessor.tokenBody = FileLoaderUtil.readFileAsString(fileName);
+                        blockingIOProcessor.tokenBody = FileLoaderUtil.readFileAsString(fileName);
                     }
                 }
                 // reset the key
