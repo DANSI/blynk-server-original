@@ -42,7 +42,7 @@ public class HardwareAppLogic {
         }
 
         //todo remove on next deployment.
-        if (state.isOldAPI()) {
+        if (state.isOldAPI() || ("Android".equals(state.osType) && "21".equals(state.version))) {
             if (pinModeMessage(message.body)) {
                 log.trace("Pin Mode message catch. Remembering.");
                 //check PM command not empty

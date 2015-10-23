@@ -7,6 +7,7 @@ import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NoDataException;
+import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
@@ -62,7 +63,8 @@ public class GetGraphDataLogic {
             ctx.writeAndFlush(produce(message.id, OK));
         } else {
             //todo remove after next deployment
-            if (HandlerUtil.getState(ctx.channel()).isOldAPI()) {
+            HandlerState state = HandlerUtil.getState(ctx.channel());
+            if (state.isOldAPI() || ("Android".equals(state.osType) && "21".equals(state.version))) {
                 byte[][] data = process(messageParts, user, message.id, VALUES_PER_PIN);
 
                 if (checkNoData(data)) {

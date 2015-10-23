@@ -37,7 +37,7 @@ public class HandlerState {
     }
 
     public boolean isOldAPI() {
-        return version == null || ("Android".equals(osType) && "21".equals(version));
+        return version == null;
     }
 
 }
