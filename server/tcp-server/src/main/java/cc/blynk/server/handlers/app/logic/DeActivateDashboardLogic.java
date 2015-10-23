@@ -27,6 +27,10 @@ public class DeActivateDashboardLogic {
             int dashId = ParseUtil.parseInt(message.body, message.id);
             DashBoard dashBoard = user.profile.getDashboardById(dashId, message.id);
             dashBoard.isActive = false;
+        } else {
+            for (DashBoard dashBoard : user.profile.dashBoards) {
+                dashBoard.isActive = false;
+            }
         }
         user.profile.activeDashId = null;
         ctx.writeAndFlush(produce(message.id, OK));

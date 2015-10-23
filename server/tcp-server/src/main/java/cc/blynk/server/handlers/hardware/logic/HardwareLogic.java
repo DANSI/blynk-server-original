@@ -67,14 +67,8 @@ public class HardwareLogic {
 
         DashBoard dash = state.user.profile.getDashById(dashId, message.id);
 
-        if (state.isOldAPI() || ("Android".equals(state.osType) && "21".equals(state.version))) {
-            if (state.user.profile.activeDashId == null || !state.user.profile.activeDashId.equals(state.dashId)) {
-                throw new NoActiveDashboardException(message.id);
-            }
-        } else {
-            if (!dash.isActive) {
-                throw new NoActiveDashboardException(message.id);
-            }
+        if (!dash.isActive) {
+            throw new NoActiveDashboardException(message.id);
         }
 
         if (session.appChannels.size() > 0) {
