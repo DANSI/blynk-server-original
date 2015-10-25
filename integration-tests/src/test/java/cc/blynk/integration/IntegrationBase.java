@@ -141,6 +141,7 @@ public abstract class IntegrationBase {
     }
 
     public void initServerStructures() {
-        holder = new Holder(properties, blockingIOProcessor);
+        holder = new Holder(properties);
+        holder.setBlockingIOProcessor(blockingIOProcessor);
     }
 }

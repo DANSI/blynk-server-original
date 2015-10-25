@@ -1,7 +1,8 @@
 package cc.blynk.server.dao;
 
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.handlers.app.logic.GetGraphDataLogic;
+import cc.blynk.server.exceptions.NoDataException;
+import cc.blynk.server.handlers.app.logic.reporting.GraphPinRequest;
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.graph.GraphKey;
@@ -82,6 +83,16 @@ public class ReportingDao {
         return EMPTY_ARRAY;
     }
 
+    private static boolean checkNoData(byte[][] data) {
+        boolean noData = true;
+
+        for (byte[] pinData : data) {
+            noData = noData && pinData.length == 0;
+        }
+
+        return noData;
+    }
+
     public void delete(String username, int dashId, PinType pinType, byte pin) {
         log.debug("Removing {}{} pin data for dashId {}.", pinType.pintTypeChar, pin, dashId);
         Path userDataMinuteFile = Paths.get(dataFolder, username, format(REPORTING_MINUTE_FILE_NAME, dashId, pinType.pintTypeChar, pin));
@@ -102,13 +113,18 @@ public class ReportingDao {
         averageAggregator.collect(ThreadContext.get("user"), key.dashId, key.pinType, key.pin, key.ts, key.value);
     }
 
-    public byte[][] getAllFromDisk(String username, GetGraphDataLogic.GraphPinRequest[] requestedPins) {
+    public byte[][] getAllFromDisk(String username, GraphPinRequest[] requestedPins, int msgId) {
         byte[][] values = new byte[requestedPins.length][];
 
         for (int i = 0; i < requestedPins.length; i++) {
             values[i] = getAllFromDisk(username,
                     requestedPins[i].dashId, requestedPins[i].pinType,
                     requestedPins[i].pin, requestedPins[i].count, requestedPins[i].type);
+        }
+
+
+        if (checkNoData(values)) {
+            throw new NoDataException(msgId);
         }
 
         return values;

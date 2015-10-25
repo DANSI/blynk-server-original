@@ -10,6 +10,7 @@ import cc.blynk.server.handlers.app.logic.*;
 import cc.blynk.server.handlers.app.logic.dashboard.CreateDashLogic;
 import cc.blynk.server.handlers.app.logic.dashboard.DeleteDashLogic;
 import cc.blynk.server.handlers.app.logic.dashboard.SaveDashLogic;
+import cc.blynk.server.handlers.app.logic.reporting.GetGraphDataLogic;
 import cc.blynk.server.handlers.app.logic.sharing.GetShareTokenLogic;
 import cc.blynk.server.handlers.app.logic.sharing.GetSharedDashLogic;
 import cc.blynk.server.handlers.app.logic.sharing.RefreshShareTokenLogic;
@@ -46,7 +47,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
         this.token = new GetTokenLogic(userDao);
         this.hardwareApp = new HardwareAppLogic(sessionDao);
         this.refreshToken = new RefreshTokenLogic(userDao);
-        this.graphData = new GetGraphDataLogic(reportingDao);
+        this.graphData = new GetGraphDataLogic(reportingDao, blockingIOProcessor);
         this.appMailLogic = new AppMailLogic(blockingIOProcessor);
         this.getShareTokenLogic = new GetShareTokenLogic(userDao);
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(userDao);

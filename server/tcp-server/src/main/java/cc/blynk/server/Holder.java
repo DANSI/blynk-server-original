@@ -35,20 +35,10 @@ public class Holder {
     public final GlobalStats stats;
 
     public final ServerProperties props;
-
-    public final BlockingIOProcessor blockingIOProcessor;
-
     public final AverageAggregator averageAggregator;
+    public BlockingIOProcessor blockingIOProcessor;
 
     public Holder(ServerProperties serverProperties) {
-        this(serverProperties, new BlockingIOProcessor(
-                serverProperties.getIntProperty("notifications.queue.limit", 10000),
-                FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY)
-        ));
-    }
-
-    //needed for tests only
-    public Holder(ServerProperties serverProperties, BlockingIOProcessor blockingIOProcessor) {
         this.props = serverProperties;
 
         String dataFolder = serverProperties.getProperty("data.folder");
@@ -61,6 +51,15 @@ public class Holder {
         this.averageAggregator = new AverageAggregator(getReportingFolder(dataFolder));
         this.reportingDao = new ReportingDao(averageAggregator, serverProperties);
 
+        this.blockingIOProcessor = new BlockingIOProcessor(
+                serverProperties.getIntProperty("notifications.queue.limit", 10000),
+                FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY),
+                reportingDao
+        );
+    }
+
+    //for tests only
+    public void setBlockingIOProcessor(BlockingIOProcessor blockingIOProcessor) {
         this.blockingIOProcessor = blockingIOProcessor;
     }
 }

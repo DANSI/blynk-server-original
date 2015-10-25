@@ -1,5 +1,6 @@
 package cc.blynk.server.workers.notifications;
 
+import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
 import cc.blynk.server.model.auth.User;
@@ -34,13 +35,16 @@ public class NotificationsProcessorTest {
     @Mock
     private EventLoop eventLoop;
 
+    @Mock
+    private ReportingDao reportingDao;
+
     @Test
     public void testNoCorrectWrapper() {
         when(channel.eventLoop()).thenReturn(eventLoop);
         when(channel.pipeline()).thenReturn(pipeline);
         when(pipeline.last()).thenReturn(hardwareHandler);
         when(hardwareHandler.getHandlerState()).thenReturn(new HandlerState(new User("test", "test")));
-        BlockingIOProcessor processor = new BlockingIOProcessor(5, "");
+        BlockingIOProcessor processor = new BlockingIOProcessor(5, "", reportingDao);
         processor.twit(channel, "token", "secret", "body", 1);
         verify(channel, timeout(2000)).eventLoop();
         verify(eventLoop, timeout(2000)).execute(any());

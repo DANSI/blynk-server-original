@@ -9,6 +9,9 @@ import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
+import cc.blynk.server.handlers.app.logic.reporting.GraphPinRequest;
+import cc.blynk.server.handlers.app.logic.reporting.GraphPinRequestDataNewAPI;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -156,7 +159,13 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
     public void testGetGraphEmptyData() throws Exception {
         clientPair.appClient.send("getgraphdata 1 d 8 24 h");
 
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NO_DATA_EXCEPTION)));
+        GraphPinRequest[] array = new GraphPinRequest[] {
+                new GraphPinRequestDataNewAPI(1, "d 8 24 h".split(" "), 0, 1, 4)
+        };
+
+        //todo find how to check arrays
+        verify(blockingIOProcessor, timeout(1000)).readGraphDataNewAPI(any(Channel.class), eq("dima@mail.ua"), any(GraphPinRequest[].class), eq(1));
+        //verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NO_DATA_EXCEPTION)));
     }
 
     @Test

@@ -6,11 +6,12 @@ import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.handlers.app.logic.GetGraphDataLogic;
 import cc.blynk.server.handlers.app.logic.HardwareAppLogic;
 import cc.blynk.server.handlers.app.logic.LoadProfileLogic;
+import cc.blynk.server.handlers.app.logic.reporting.GetGraphDataLogic;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.common.enums.Command.*;
@@ -26,10 +27,10 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<Message> {
     private final HardwareAppLogic hardwareApp;
     private final GetGraphDataLogic graphData;
 
-    public AppShareHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, HandlerState state) {
+    public AppShareHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, HandlerState state) {
         super(props, state);
         this.hardwareApp = new HardwareAppLogic(sessionDao);
-        this.graphData = new GetGraphDataLogic(reportingDao);
+        this.graphData = new GetGraphDataLogic(reportingDao, blockingIOProcessor);
     }
 
     @Override
