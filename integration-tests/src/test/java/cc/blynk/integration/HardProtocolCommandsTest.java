@@ -1,5 +1,6 @@
 package cc.blynk.integration;
 
+import cc.blynk.common.utils.StringUtils;
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.core.hardware.HardwareServer;
@@ -58,7 +59,12 @@ public class HardProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testInvalidCommandAppLoginOnHardChannel() throws Exception {
-        makeCommands("login dima@dima.ua 1").check(produce(1, ILLEGAL_COMMAND));
+        makeCommands("login dima@dima.ua 1").check(produce(1, INVALID_TOKEN));
+
+        String body = "dima@dima.ua 1".replaceAll(" ",StringUtils.BODY_SEPARATOR_STRING);
+        makeCommands("login " + body).check(produce(1, INVALID_TOKEN));
+
+        makeCommands("login").check(produce(1, INVALID_TOKEN));
     }
 
     @Test

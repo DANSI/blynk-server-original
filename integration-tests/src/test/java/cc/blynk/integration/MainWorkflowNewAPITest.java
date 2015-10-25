@@ -5,6 +5,7 @@ import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.model.messages.ResponseWithBodyMessage;
 import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
+import cc.blynk.common.utils.StringUtils;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.core.application.AppServer;
@@ -239,6 +240,19 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
 
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
+    }
+
+    @Test
+    public void testHardwareLoginWithInfo() throws Exception {
+        TestHardClient hardClient2 = new TestHardClient(host, hardPort);
+        hardClient2.start(null);
+
+        clientPair.appClient.send("getToken 1");
+        String token2 = getBody(clientPair.appClient.responseMock) +
+                " ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100"
+                        .replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING);
+        hardClient2.send("login " + token2);
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
     }
 
     @Test
