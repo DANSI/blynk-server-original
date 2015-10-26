@@ -47,7 +47,7 @@ public class MessageFactory {
             case REFRESH_TOKEN :
                 return new RefreshTokenMessage(messageId, body);
             case GET_GRAPH_DATA :
-                return new GetGraphDataMessage(messageId, body);
+                return new GetGraphDataStringMessage(messageId, body);
             case TWEET :
                 return new TweetMessage(messageId, body);
             case EMAIL :

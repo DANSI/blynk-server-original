@@ -9,14 +9,14 @@ import static cc.blynk.common.enums.Command.GET_GRAPH_DATA;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class GetGraphDataMessage extends StringMessage {
+public class GetGraphDataStringMessage extends StringMessage {
 
-    public GetGraphDataMessage(int messageId, String body) {
+    public GetGraphDataStringMessage(int messageId, String body) {
         super(messageId, GET_GRAPH_DATA, body.length(), body);
     }
 
     @Override
     public String toString() {
-        return "GetGraphDataMessage{" + super.toString() + "}";
+        return "GetGraphDataStringMessage{" + super.toString() + "}";
     }
 }
