@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.app.logic;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.common.utils.StringUtils;
@@ -33,7 +33,7 @@ public class HardwareAppLogic {
         return body.length() > 0 && body.charAt(0) == 'p';
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message message) {
+    public void messageReceived(ChannelHandlerContext ctx, HandlerState state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
         if (!state.user.hasActive()) {

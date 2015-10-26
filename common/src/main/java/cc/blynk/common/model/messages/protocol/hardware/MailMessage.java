@@ -1,6 +1,6 @@
 package cc.blynk.common.model.messages.protocol.hardware;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 
 import static cc.blynk.common.enums.Command.EMAIL;
 
@@ -9,7 +9,7 @@ import static cc.blynk.common.enums.Command.EMAIL;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class MailMessage extends Message {
+public class MailMessage extends StringMessage {
 
     public MailMessage(int messageId, String body) {
         super(messageId, EMAIL, body.length(), body);

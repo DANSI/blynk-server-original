@@ -15,6 +15,11 @@ public class ResponseMessage extends MessageBase {
     }
 
     @Override
+    public byte[] getBytes() {
+        return null;
+    }
+
+    @Override
     public String toString() {
         return "ResponseMessage{id=" + id +
                 ", command=" + Command.getNameByValue(command) +

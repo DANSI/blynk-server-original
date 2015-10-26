@@ -18,6 +18,11 @@ public class ResponseWithBodyMessage extends MessageBase {
     }
 
     @Override
+    public byte[] getBytes() {
+        return null;
+    }
+
+    @Override
     public String toString() {
         return "ResponseWithBodyMessage{id=" + id +
                 ", command=" + Command.getNameByValue(command) +

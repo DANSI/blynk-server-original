@@ -1,6 +1,6 @@
 package cc.blynk.common.model.messages.protocol;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 
 import static cc.blynk.common.enums.Command.PING;
 
@@ -9,7 +9,7 @@ import static cc.blynk.common.enums.Command.PING;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class PingMessage extends Message {
+public class PingMessage extends StringMessage {
 
     public PingMessage(int messageId, String body) {
         super(messageId, PING, body.length(), body);

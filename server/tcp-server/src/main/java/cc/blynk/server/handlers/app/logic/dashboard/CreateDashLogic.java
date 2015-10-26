@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.app.logic.dashboard;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
@@ -33,7 +33,7 @@ public class CreateDashLogic {
         this.DASH_MAX_SIZE = props.getIntProperty("user.profile.max.size") * 1024;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String dashString = message.body;
 
         //expecting message with 2 parts

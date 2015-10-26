@@ -2,7 +2,6 @@ package cc.blynk.common.handlers.common.encoders;
 
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.enums.Response;
-import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.model.messages.ResponseWithBodyMessage;
 import io.netty.buffer.ByteBuf;
@@ -29,7 +28,7 @@ public class MessageEncoder extends MessageToByteEncoder<MessageBase> {
                 out.writeInt(((ResponseWithBodyMessage) message).dashId);
             }
         } else {
-            byte[] body = ((Message) message).getBytes();
+            byte[] body = message.getBytes();
             out.writeShort(body.length);
             if (body.length > 0) {
                 out.writeBytes(body);

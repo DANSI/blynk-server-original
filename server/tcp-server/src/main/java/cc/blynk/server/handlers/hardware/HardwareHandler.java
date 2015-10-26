@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.hardware;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
@@ -18,7 +18,7 @@ import static cc.blynk.common.enums.Command.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 29.07.15.
  */
-public class HardwareHandler extends BaseSimpleChannelInboundHandler<Message> {
+public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
     private final HardwareLogic hardware;
     private final MailLogic email;
@@ -39,7 +39,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<Message> {
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message msg) {
+    protected void messageReceived(ChannelHandlerContext ctx, HandlerState state, StringMessage msg) {
         switch (msg.command) {
             case HARDWARE:
                 hardware.messageReceived(ctx, state, msg);

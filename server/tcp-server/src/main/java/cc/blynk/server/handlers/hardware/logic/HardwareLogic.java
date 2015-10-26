@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.hardware.logic;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.ReportingDao;
@@ -40,7 +40,7 @@ public class HardwareLogic {
         this.reportingDao = reportingDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message message) {
+    public void messageReceived(ChannelHandlerContext ctx, HandlerState state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
         //if message from hardware, check if it belongs to graph. so we need save it in that case

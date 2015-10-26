@@ -1,6 +1,6 @@
 package cc.blynk.common.model.messages.protocol.appllication;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.BinaryMessage;
 
 import static cc.blynk.common.enums.Command.GET_GRAPH_DATA_RESPONSE;
 
@@ -9,18 +9,10 @@ import static cc.blynk.common.enums.Command.GET_GRAPH_DATA_RESPONSE;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class GetGraphDataResponseMessage extends Message {
-
-    public final byte[] data;
+public class GetGraphDataResponseMessage extends BinaryMessage {
 
     public GetGraphDataResponseMessage(int messageId, byte[] data) {
-        super(messageId, GET_GRAPH_DATA_RESPONSE, data.length, null);
-        this.data = data;
-    }
-
-    @Override
-    public byte[] getBytes() {
-        return data;
+        super(messageId, GET_GRAPH_DATA_RESPONSE, data);
     }
 
     @Override

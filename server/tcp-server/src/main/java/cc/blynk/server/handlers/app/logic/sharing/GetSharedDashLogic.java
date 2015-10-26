@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.app.logic.sharing;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.InvalidTokenException;
 import cc.blynk.server.model.DashBoard;
@@ -49,7 +49,7 @@ public class GetSharedDashLogic {
         }
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, Message message) {
+    public void messageReceived(ChannelHandlerContext ctx, StringMessage message) {
         String token = message.body;
 
         User userThatShared = userDao.sharedTokenManager.getUserByToken(token);

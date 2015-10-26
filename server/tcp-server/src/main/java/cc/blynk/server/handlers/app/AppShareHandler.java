@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.app;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
@@ -22,7 +22,7 @@ import static cc.blynk.common.enums.Command.*;
  * Created on 2/1/2015.
  *
  */
-public class AppShareHandler extends BaseSimpleChannelInboundHandler<Message> {
+public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
     private final HardwareAppLogic hardwareApp;
     private final GetGraphDataLogic graphData;
@@ -34,7 +34,7 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<Message> {
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message msg) {
+    protected void messageReceived(ChannelHandlerContext ctx, HandlerState state, StringMessage msg) {
         switch (msg.command) {
             case HARDWARE:
                 hardwareApp.messageReceived(ctx, state, msg);

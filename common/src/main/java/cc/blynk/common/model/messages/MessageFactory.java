@@ -24,7 +24,7 @@ import static cc.blynk.common.enums.Command.*;
  */
 public class MessageFactory {
 
-    public static Message produce(int messageId, short command, String body) {
+    public static StringMessage produce(int messageId, short command, String body) {
         switch (command) {
             case REGISTER :
                 return new RegisterMessage(messageId, body);

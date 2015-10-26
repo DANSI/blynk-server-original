@@ -6,6 +6,7 @@ import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.model.messages.ResponseWithBodyMessage;
 import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
+import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedMessage;
 import cc.blynk.common.utils.Config;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -56,13 +57,21 @@ public class ClientMessageDecoder extends ByteToMessageDecoder implements Defaul
             }
 
             ByteBuf buf = in.readSlice(length);
-            if (command == Command.GET_GRAPH_DATA_RESPONSE) {
-                byte[] bytes = new byte[buf.readableBytes()];
-                buf.readBytes(bytes);
-                message = new GetGraphDataResponseMessage(messageId, bytes);
-            } else {
-                message = produce(messageId, command, buf.toString(Config.DEFAULT_CHARSET));
+            switch (command) {
+                case Command.GET_GRAPH_DATA_RESPONSE :
+                    byte[] bytes = new byte[buf.readableBytes()];
+                    buf.readBytes(bytes);
+                    message = new GetGraphDataResponseMessage(messageId, bytes);
+                    break;
+                case Command.LOAD_PROFILE_GZIPPED :
+                    bytes = new byte[buf.readableBytes()];
+                    buf.readBytes(bytes);
+                    message = new LoadProfileGzippedMessage(messageId, bytes);
+                    break;
+                default:
+                    message = produce(messageId, command, buf.toString(Config.DEFAULT_CHARSET));
             }
+
         }
 
         log.trace("Incoming {}", message);

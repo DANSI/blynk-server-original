@@ -1,6 +1,6 @@
 package cc.blynk.common.model.messages.protocol.appllication.sharing;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 
 import static cc.blynk.common.enums.Command.SHARE_LOGIN;
 
@@ -9,7 +9,7 @@ import static cc.blynk.common.enums.Command.SHARE_LOGIN;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class ShareLoginMessage extends Message {
+public class ShareLoginMessage extends StringMessage {
 
     public ShareLoginMessage(int messageId, String body) {
         super(messageId, SHARE_LOGIN, body.length(), body);

@@ -1,6 +1,6 @@
 package cc.blynk.server.model;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.others.Timer;
 import cc.blynk.server.utils.JsonParser;
@@ -41,7 +41,7 @@ public class DashBoard {
      * is remembered and when hardware goes online - server sends Pin Modes command to hardware
      * without requiring user to activate/deactivate dashboard again.
      */
-    public transient Message pinModeMessage;
+    public transient StringMessage pinModeMessage;
 
     public List<Timer> getTimerWidgets() {
         if (widgets == null || widgets.length == 0) {

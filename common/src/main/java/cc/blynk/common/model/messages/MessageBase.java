@@ -29,6 +29,8 @@ public abstract class MessageBase {
         this.length = length;
     }
 
+    public abstract byte[] getBytes();
+
     @Override
     public String toString() {
         return "id=" + id +

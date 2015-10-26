@@ -1,9 +1,9 @@
 package cc.blynk.integration;
 
 import cc.blynk.common.enums.Command;
-import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.model.messages.ResponseWithBodyMessage;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.integration.model.ClientPair;
@@ -191,11 +191,11 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
 
         clientPair.hardwareClient.send("hardware ar 1");
 
-        ArgumentCaptor<Message> objectArgumentCaptor = ArgumentCaptor.forClass(Message.class);
+        ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
 
-        List<Message> arguments = objectArgumentCaptor.getAllValues();
-        Message hardMessage = arguments.get(0);
+        List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
+        StringMessage hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
         assertEquals(HARDWARE, hardMessage.command);
         assertEquals(6, hardMessage.length);
@@ -319,11 +319,11 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         String body = "aw 11 333";
         clientPair.hardwareClient.send("hardware " + body);
 
-        ArgumentCaptor<Message> objectArgumentCaptor = ArgumentCaptor.forClass(Message.class);
+        ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
 
-        List<Message> arguments = objectArgumentCaptor.getAllValues();
-        Message hardMessage = arguments.get(0);
+        List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
+        StringMessage hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
         assertEquals(HARDWARE, hardMessage.command);
         assertEquals(("1 " + body).length(), hardMessage.length);
@@ -420,11 +420,11 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         String body = "aw 8 333";
         clientPair.hardwareClient.send("hardware " + body);
 
-        ArgumentCaptor<Message> objectArgumentCaptor = ArgumentCaptor.forClass(Message.class);
+        ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
 
-        List<Message> arguments = objectArgumentCaptor.getAllValues();
-        Message hardMessage = arguments.get(0);
+        List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
+        StringMessage hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
         assertEquals(HARDWARE, hardMessage.command);
         //"aw 11 333".length + ts.length + separator

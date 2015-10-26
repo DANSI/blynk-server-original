@@ -1,11 +1,11 @@
 package cc.blynk.server.handlers.app.logic;
 
 import cc.blynk.common.model.messages.StringMessage;
+import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedMessage;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.utils.ByteUtils;
 import io.netty.channel.ChannelHandlerContext;
-
-import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
  * The Blynk Project.
@@ -13,7 +13,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
-public class LoadProfileLogic {
+public class LoadProfileGzippedLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String body;
@@ -26,7 +26,9 @@ public class LoadProfileLogic {
             body = user.profile.getDashById(dashId, message.id).toString();
         }
 
-        ctx.writeAndFlush(produce(message.id, message.command, body));
+        byte[] compressed = ByteUtils.compress(body, message.id);
+
+        ctx.writeAndFlush(new LoadProfileGzippedMessage(message.id, compressed));
     }
 
 }

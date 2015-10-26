@@ -1,7 +1,7 @@
 package cc.blynk.client;
 
-import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.model.messages.protocol.appllication.LoginMessage;
 import cc.blynk.common.utils.Config;
 
@@ -12,12 +12,12 @@ public class HexConvertor {
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
     public static void main(String args[]) {
-        Message message = new LoginMessage(1, "username@example.com UserPassword");
+        StringMessage message = new LoginMessage(1, "username@example.com UserPassword");
         System.out.println(messageToHex(message));
     }
 
 
-    public static String messageToHex(Message message) {
+    public static String messageToHex(StringMessage message) {
         ByteBuffer bb = ByteBuffer.allocate(MessageBase.HEADER_LENGTH + message.length);
         bb.put((byte) message.command);
         bb.putShort((short) message.id);

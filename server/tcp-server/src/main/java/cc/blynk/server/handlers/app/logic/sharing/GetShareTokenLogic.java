@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.app.logic.sharing;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.model.auth.User;
@@ -22,7 +22,7 @@ public class GetShareTokenLogic {
         this.userDao = userDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String dashBoardIdString = message.body;
 
         int dashBoardId;

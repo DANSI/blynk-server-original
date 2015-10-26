@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.app.logic;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.model.DashBoard;
@@ -31,7 +31,7 @@ public class AppMailLogic {
         this.BODY = blockingIOProcessor.tokenBody;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String dashBoardIdString = message.body;
 
         int dashId = ParseUtil.parseInt(dashBoardIdString, message.id);

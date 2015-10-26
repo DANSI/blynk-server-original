@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.hardware.logic;
 
 import cc.blynk.common.enums.Response;
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
@@ -41,7 +41,7 @@ public class BridgeLogic {
         return body.length() > 0 && body.charAt(0) == 'i';
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message message) {
+    public void messageReceived(ChannelHandlerContext ctx, HandlerState state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
         String[] split = message.body.split("\0");
         if (split.length < 3) {

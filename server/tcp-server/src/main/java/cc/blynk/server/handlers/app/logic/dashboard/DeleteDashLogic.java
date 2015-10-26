@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.app.logic.dashboard;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
@@ -21,7 +21,7 @@ public class DeleteDashLogic {
 
     private static final Logger log = LogManager.getLogger(DeleteDashLogic.class);
 
-    public static void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
+    public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         int dashId = ParseUtil.parseInt(message.body, message.id);
 
         int index = user.profile.getDashIndex(dashId, message.id);

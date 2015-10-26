@@ -1,6 +1,6 @@
 package cc.blynk.common.model.messages.protocol.appllication;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 
 import static cc.blynk.common.enums.Command.SAVE_PROFILE;
 
@@ -10,7 +10,7 @@ import static cc.blynk.common.enums.Command.SAVE_PROFILE;
  * Created on 2/1/2015.
  */
 @Deprecated
-public class SaveProfileMessage extends Message {
+public class SaveProfileMessage extends StringMessage {
 
     public SaveProfileMessage(int messageId, String body) {
         super(messageId, SAVE_PROFILE, body.length(), body);

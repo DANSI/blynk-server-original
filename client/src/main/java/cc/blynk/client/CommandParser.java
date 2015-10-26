@@ -19,6 +19,8 @@ public class CommandParser {
                 return PING;
             case "loadprofile" :
                 return LOAD_PROFILE;
+            case "loadprofilegzipped" :
+                return LOAD_PROFILE_GZIPPED;
             case "saveprofile" :
                 return SAVE_PROFILE;
             case "gettoken" :

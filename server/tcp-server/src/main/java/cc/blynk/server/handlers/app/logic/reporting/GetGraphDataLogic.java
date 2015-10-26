@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.app.logic.reporting;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.exceptions.IllegalCommandBodyException;
@@ -39,7 +39,7 @@ public class GetGraphDataLogic {
         this.blockingIOProcessor = blockingIOProcessor;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
+    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         //warn: split may be optimized
         String[] messageParts = message.body.split(" ");
 

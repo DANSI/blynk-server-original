@@ -1,6 +1,6 @@
 package cc.blynk.integration;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.core.application.AppServer;
@@ -148,7 +148,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(2000).times(1)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Object> arguments = objectArgumentCaptor.getAllValues();
-        String token2 = ((Message) arguments.get(0)).body;
+        String token2 = ((StringMessage) arguments.get(0)).body;
 
         //creating 1 new hard client
         TestHardClient hardClient1 = new TestHardClient(host, hardPort);
@@ -171,7 +171,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(2000).times(1)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Object> arguments = objectArgumentCaptor.getAllValues();
-        String token2 = ((Message) arguments.get(0)).body;
+        String token2 = ((StringMessage) arguments.get(0)).body;
 
         //creating 2 new hard clients
         TestHardClient hardClient1 = new TestHardClient(host, hardPort);
@@ -205,8 +205,8 @@ public class BridgeWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(2000).times(2)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Object> arguments = objectArgumentCaptor.getAllValues();
-        String token2 = ((Message) arguments.get(0)).body;
-        String token3 = ((Message) arguments.get(1)).body;
+        String token2 = ((StringMessage) arguments.get(0)).body;
+        String token3 = ((StringMessage) arguments.get(1)).body;
 
         //creating 2 new hard clients
         TestHardClient hardClient1 = new TestHardClient(host, hardPort);

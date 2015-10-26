@@ -41,6 +41,7 @@ public final class Command {
     public static final short CREATE_DASH = 21;
     public static final short SAVE_DASH = 22;
     public static final short DELETE_DASH = 23;
+    public static final short LOAD_PROFILE_GZIPPED = 24;
 
     //sharing commands
     public static final short GET_SHARED_DASH = 29;
@@ -65,6 +66,7 @@ public final class Command {
                 put(LOGIN, LoginMessage.class.getSimpleName());
                 put(SAVE_PROFILE, SaveProfileMessage.class.getSimpleName());
                 put(LOAD_PROFILE, LoadProfileMessage.class.getSimpleName());
+                put(LOAD_PROFILE_GZIPPED, LoadProfileGzippedMessage.class.getSimpleName());
                 put(GET_TOKEN, GetTokenMessage.class.getSimpleName());
                 put(PING, PingMessage.class.getSimpleName());
                 put(ACTIVATE_DASHBOARD, ActivateDashboardMessage.class.getSimpleName());

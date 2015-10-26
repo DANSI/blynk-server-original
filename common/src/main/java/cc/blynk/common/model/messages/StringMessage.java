@@ -7,15 +7,16 @@ import cc.blynk.common.utils.Config;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public abstract class Message extends MessageBase {
+public abstract class StringMessage extends MessageBase {
 
     public String body;
 
-    public Message(int messageId, short command, int length, String body) {
+    public StringMessage(int messageId, short command, int length, String body) {
         super(messageId, command, length);
         this.body = body;
     }
 
+    @Override
     public byte[] getBytes() {
         return body.getBytes(Config.DEFAULT_CHARSET);
     }

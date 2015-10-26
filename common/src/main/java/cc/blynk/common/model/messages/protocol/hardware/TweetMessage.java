@@ -1,6 +1,6 @@
 package cc.blynk.common.model.messages.protocol.hardware;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 
 import static cc.blynk.common.enums.Command.TWEET;
 
@@ -9,7 +9,7 @@ import static cc.blynk.common.enums.Command.TWEET;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class TweetMessage extends Message {
+public class TweetMessage extends StringMessage {
 
     public TweetMessage(int messageId, String body) {
         super(messageId, TWEET, body.length(), body);

@@ -1,6 +1,8 @@
 package cc.blynk.server.utils;
 
+import cc.blynk.common.utils.Config;
 import cc.blynk.server.exceptions.GetGraphDataException;
+import cc.blynk.server.exceptions.NoDataException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -16,6 +18,19 @@ public class ByteUtils {
 
     public static final int REPORTING_RECORD_SIZE_BYTES = 16;
 
+    public static byte[] compress(String value, int msgId) {
+        byte[] stringData = value.getBytes(Config.DEFAULT_CHARSET);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(stringData.length);
+
+        try (OutputStream out = new DeflaterOutputStream(baos)) {
+            out.write(stringData);
+        } catch (Exception ioe) {
+            //todo refactor exception
+            throw new NoDataException(msgId);
+        }
+        return baos.toByteArray();
+    }
+
     public static byte[] compress(byte[][] values, int msgId) {
         //todo calculate size
         ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
@@ -28,6 +43,7 @@ public class ByteUtils {
                 out.write(data);
             }
         } catch (Exception ioe) {
+            //todo refactor exception
             throw new GetGraphDataException(msgId);
         }
         return baos.toByteArray();
@@ -46,6 +62,7 @@ public class ByteUtils {
                 out.write(data);
             }
         } catch (Exception ioe) {
+            //todo refactor exception
             throw new GetGraphDataException(msgId);
         }
         return baos.toByteArray();

@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.app.logic;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
@@ -21,7 +21,7 @@ public class DeActivateDashboardLogic {
 
     private static final Logger log = LogManager.getLogger(ActivateDashboardLogic.class);
 
-    public static void messageReceived(ChannelHandlerContext ctx, User user, Message message) {
+    public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         if (message.length > 0) {
             log.debug("Activating dash {} for user {}", message.body, user.name);
             int dashId = ParseUtil.parseInt(message.body, message.id);

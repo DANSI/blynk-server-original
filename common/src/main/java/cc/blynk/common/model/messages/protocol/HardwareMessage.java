@@ -1,6 +1,6 @@
 package cc.blynk.common.model.messages.protocol;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 
 import static cc.blynk.common.enums.Command.HARDWARE;
 
@@ -9,7 +9,7 @@ import static cc.blynk.common.enums.Command.HARDWARE;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class HardwareMessage extends Message {
+public class HardwareMessage extends StringMessage {
 
     public HardwareMessage(int messageId, String body) {
         super(messageId, HARDWARE, body.length(), body);

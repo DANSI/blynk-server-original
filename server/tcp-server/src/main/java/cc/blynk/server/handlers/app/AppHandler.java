@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.app;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
@@ -27,7 +27,7 @@ import static cc.blynk.common.enums.Command.*;
  * Created on 2/1/2015.
  *
  */
-public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
+public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
     private final SaveProfileLogic saveProfile;
     private final GetTokenLogic token;
@@ -57,7 +57,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, HandlerState state, Message msg) {
+    protected void messageReceived(ChannelHandlerContext ctx, HandlerState state, StringMessage msg) {
         switch (msg.command) {
             case HARDWARE:
                 hardwareApp.messageReceived(ctx, state, msg);
@@ -73,6 +73,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<Message> {
                 break;
             case LOAD_PROFILE :
                 LoadProfileLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case LOAD_PROFILE_GZIPPED :
+                LoadProfileGzippedLogic.messageReceived(ctx, state.user, msg);
                 break;
             case GET_TOKEN :
                 token.messageReceived(ctx, state.user, msg);

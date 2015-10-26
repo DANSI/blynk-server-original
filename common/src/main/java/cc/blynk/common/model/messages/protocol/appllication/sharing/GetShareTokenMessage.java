@@ -1,6 +1,6 @@
 package cc.blynk.common.model.messages.protocol.appllication.sharing;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 
 import static cc.blynk.common.enums.Command.GET_SHARE_TOKEN;
 
@@ -9,7 +9,7 @@ import static cc.blynk.common.enums.Command.GET_SHARE_TOKEN;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class GetShareTokenMessage extends Message {
+public class GetShareTokenMessage extends StringMessage {
 
     public GetShareTokenMessage(int messageId, String body) {
         super(messageId, GET_SHARE_TOKEN, body.length(), body);

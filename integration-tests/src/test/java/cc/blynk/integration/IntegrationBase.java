@@ -1,6 +1,6 @@
 package cc.blynk.integration;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.SimpleClientHandler;
@@ -70,10 +70,10 @@ public abstract class IntegrationBase {
     }
 
     static String getBody(SimpleClientHandler responseMock) throws Exception {
-        ArgumentCaptor<Message> objectArgumentCaptor = ArgumentCaptor.forClass(Message.class);
+        ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
         verify(responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        List<Message> arguments = objectArgumentCaptor.getAllValues();
-        Message getTokenMessage = arguments.get(0);
+        List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
+        StringMessage getTokenMessage = arguments.get(0);
         return getTokenMessage.body;
     }
 
@@ -128,7 +128,7 @@ public abstract class IntegrationBase {
         verify(appClient.responseMock, timeout(2000).times(5)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Object> arguments = objectArgumentCaptor.getAllValues();
-        Message getTokenMessage = (Message) arguments.get(4);
+        StringMessage getTokenMessage = (StringMessage) arguments.get(4);
         String token = getTokenMessage.body;
 
         hardClient.send("login " + token);

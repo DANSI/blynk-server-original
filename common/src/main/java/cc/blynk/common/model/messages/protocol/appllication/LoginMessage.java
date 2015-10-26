@@ -1,6 +1,6 @@
 package cc.blynk.common.model.messages.protocol.appllication;
 
-import cc.blynk.common.model.messages.Message;
+import cc.blynk.common.model.messages.StringMessage;
 
 import static cc.blynk.common.enums.Command.LOGIN;
 
@@ -9,7 +9,7 @@ import static cc.blynk.common.enums.Command.LOGIN;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class LoginMessage extends Message {
+public class LoginMessage extends StringMessage {
 
     public LoginMessage(int messageId, String body) {
         super(messageId, LOGIN, body.length(), body);
