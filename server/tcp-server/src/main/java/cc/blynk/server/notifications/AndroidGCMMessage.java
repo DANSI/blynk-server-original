@@ -13,9 +13,9 @@ public class AndroidGCMMessage implements GCMMessage {
 
     private final GCMData data;
 
-    public AndroidGCMMessage(String to, String message) {
+    public AndroidGCMMessage(String to, String message, int dashId) {
         this.to = to;
-        this.data = new GCMData(message);
+        this.data = new GCMData(message, dashId);
     }
 
     @Override
@@ -30,9 +30,11 @@ public class AndroidGCMMessage implements GCMMessage {
 
     private class GCMData {
         private final String message;
+        private final int dashId;
 
-        public GCMData(String message) {
+        public GCMData(String message, int dashId) {
             this.message = message;
+            this.dashId = dashId;
         }
     }
 }

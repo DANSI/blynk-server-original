@@ -235,14 +235,14 @@ public class MainWorkflowTest extends IntegrationBase {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
 
-        verify(blockingIOProcessor, timeout(500)).push(any(), any(), eq("Your UNO went offline. \"My Dashboard\" project is disconnected."));
+        verify(blockingIOProcessor, timeout(500)).push(any(), any(), eq("Your UNO went offline. \"My Dashboard\" project is disconnected."), eq(1));
     }
 
     @Test
     public void testPushHandler() throws Exception {
         clientPair.hardwareClient.send("push Yo!");
 
-        verify(blockingIOProcessor, timeout(500)).push(any(), any(), eq("Yo!"), eq(1));
+        verify(blockingIOProcessor, timeout(500)).push(any(), any(), eq("Yo!"), eq(1), eq(1));
     }
 
     @Test

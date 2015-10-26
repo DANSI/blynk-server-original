@@ -83,8 +83,10 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                     String boardType = dashBoard.boardType;
                     String dashName = dashBoard.name;
                     dashName = dashName == null ? "" : dashName;
-                    blockingIOProcessor.push(handlerState.user, notification,
-                            String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName));
+                    blockingIOProcessor.push(handlerState.user,
+                            notification,
+                            String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName),
+                            handlerState.dashId);
                 }
             }
         }

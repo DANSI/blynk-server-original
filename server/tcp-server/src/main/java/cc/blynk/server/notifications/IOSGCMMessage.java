@@ -13,9 +13,9 @@ public class IOSGCMMessage implements GCMMessage {
 
     private final IOSBody notification;
 
-    public IOSGCMMessage(String to, String message) {
+    public IOSGCMMessage(String to, String message, int dashId) {
         this.to = to;
-        this.notification = new IOSBody(message);
+        this.notification = new IOSBody(message, dashId);
     }
 
     @Override
@@ -31,9 +31,11 @@ public class IOSGCMMessage implements GCMMessage {
     private class IOSBody {
         private final String title = "Blynk Notification";
         private final String body;
+        private final int dashId;
 
-        public IOSBody(String body) {
+        public IOSBody(String body, int dashId) {
             this.body = body;
+            this.dashId = dashId;
         }
     }
 

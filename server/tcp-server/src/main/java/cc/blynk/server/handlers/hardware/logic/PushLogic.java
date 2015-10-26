@@ -49,7 +49,7 @@ public class PushLogic extends NotificationBase {
         checkIfNotificationQuotaLimitIsNotReached(message.id);
 
         log.trace("Sending push for user {}, with message : '{}'.", state.user.name, message.body);
-        blockingIOProcessor.push(ctx.channel(), widget, message.body, message.id);
+        blockingIOProcessor.push(ctx.channel(), widget, message.body, state.dashId, message.id);
     }
 
 

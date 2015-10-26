@@ -14,13 +14,13 @@ public class GCMWrapperTest {
     @Ignore
     public void testIOS() throws Exception {
         GCMWrapper gcmWrapper = new GCMWrapper();
-        gcmWrapper.send(new IOSGCMMessage("", "yo!!!"));
+        gcmWrapper.send(new IOSGCMMessage("", "yo!!!", 1));
     }
 
     @Test
     @Ignore
     public void testAndroid() throws Exception {
         GCMWrapper gcmWrapper = new GCMWrapper();
-        gcmWrapper.send(new AndroidGCMMessage("", "yo!!!"));
+        gcmWrapper.send(new AndroidGCMMessage("", "yo!!!", 1));
     }
 }
