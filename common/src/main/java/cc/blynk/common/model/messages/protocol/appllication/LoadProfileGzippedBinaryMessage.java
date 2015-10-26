@@ -9,14 +9,14 @@ import static cc.blynk.common.enums.Command.LOAD_PROFILE_GZIPPED;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class LoadProfileGzippedMessage extends BinaryMessage {
+public class LoadProfileGzippedBinaryMessage extends BinaryMessage {
 
-    public LoadProfileGzippedMessage(int messageId, byte[] data) {
+    public LoadProfileGzippedBinaryMessage(int messageId, byte[] data) {
         super(messageId, LOAD_PROFILE_GZIPPED, data);
     }
 
     @Override
     public String toString() {
-        return "LoadProfileGzippedMessage{" + super.toString() + "}";
+        return "LoadProfileGzippedBinaryMessage{" + super.toString() + "}";
     }
 }

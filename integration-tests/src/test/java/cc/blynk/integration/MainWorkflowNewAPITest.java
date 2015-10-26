@@ -5,6 +5,7 @@ import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.model.messages.ResponseWithBodyMessage;
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
+import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
@@ -12,6 +13,7 @@ import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.handlers.app.logic.reporting.GraphPinRequest;
 import cc.blynk.server.handlers.app.logic.reporting.GraphPinRequestDataNewAPI;
+import cc.blynk.server.utils.ByteUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import org.apache.commons.io.FileUtils;
@@ -23,12 +25,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.zip.InflaterInputStream;
 
 import static cc.blynk.common.enums.Command.HARDWARE;
 import static cc.blynk.common.enums.Command.LOAD_PROFILE;
@@ -50,22 +47,6 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
     private AppServer appServer;
     private HardwareServer hardwareServer;
     private ClientPair clientPair;
-
-    private static String decompress(byte[] bytes) {
-        InputStream in = new InflaterInputStream(new ByteArrayInputStream(bytes));
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            byte[] buffer = new byte[4096];
-            int len;
-            while((len = in.read(buffer)) > 0) {
-                baos.write(buffer, 0, len);
-            }
-            return new String(baos.toByteArray());
-        } catch (IOException e) {
-            throw new AssertionError(e);
-        }
-
-    }
 
     @Before
     public void init() throws Exception {
@@ -154,6 +135,20 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
 
         clientPair.appClient.send("loadProfile 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(9, ILLEGAL_COMMAND)));
+    }
+
+    @Test
+    public void loadGzippedProfile() throws Exception{
+        clientPair.appClient.send("loadprofile");
+
+        String profileString = getBody(clientPair.appClient.responseMock);
+
+        byte[] data = ByteUtils.compress(profileString, 2);
+        clientPair.appClient.send("loadProfileGzipped");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(2, data)));
+
+        assertTrue(profileString.length() > data.length);
+        System.out.println("Compression ratio : " + ((double) profileString.length() / data.length));
     }
 
     @Test

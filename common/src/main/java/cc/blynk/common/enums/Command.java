@@ -66,7 +66,7 @@ public final class Command {
                 put(LOGIN, LoginMessage.class.getSimpleName());
                 put(SAVE_PROFILE, SaveProfileMessage.class.getSimpleName());
                 put(LOAD_PROFILE, LoadProfileMessage.class.getSimpleName());
-                put(LOAD_PROFILE_GZIPPED, LoadProfileGzippedMessage.class.getSimpleName());
+                put(LOAD_PROFILE_GZIPPED, LoadProfileGzippedBinaryMessage.class.getSimpleName());
                 put(GET_TOKEN, GetTokenMessage.class.getSimpleName());
                 put(PING, PingMessage.class.getSimpleName());
                 put(ACTIVATE_DASHBOARD, ActivateDashboardMessage.class.getSimpleName());

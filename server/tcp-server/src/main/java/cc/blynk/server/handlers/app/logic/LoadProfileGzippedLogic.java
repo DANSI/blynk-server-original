@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.app.logic;
 
 import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedMessage;
+import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.ByteUtils;
@@ -28,7 +28,7 @@ public class LoadProfileGzippedLogic {
 
         byte[] compressed = ByteUtils.compress(body, message.id);
 
-        ctx.writeAndFlush(new LoadProfileGzippedMessage(message.id, compressed));
+        ctx.writeAndFlush(new LoadProfileGzippedBinaryMessage(message.id, compressed));
     }
 
 }

@@ -6,7 +6,7 @@ import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.model.messages.ResponseWithBodyMessage;
 import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
-import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedMessage;
+import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.common.utils.Config;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -66,7 +66,7 @@ public class ClientMessageDecoder extends ByteToMessageDecoder implements Defaul
                 case Command.LOAD_PROFILE_GZIPPED :
                     bytes = new byte[buf.readableBytes()];
                     buf.readBytes(bytes);
-                    message = new LoadProfileGzippedMessage(messageId, bytes);
+                    message = new LoadProfileGzippedBinaryMessage(messageId, bytes);
                     break;
                 default:
                     message = produce(messageId, command, buf.toString(Config.DEFAULT_CHARSET));

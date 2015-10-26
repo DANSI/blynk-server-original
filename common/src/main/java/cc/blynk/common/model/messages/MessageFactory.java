@@ -24,7 +24,7 @@ import static cc.blynk.common.enums.Command.*;
  */
 public class MessageFactory {
 
-    public static StringMessage produce(int messageId, short command, String body) {
+    public static MessageBase produce(int messageId, short command, String body) {
         switch (command) {
             case REGISTER :
                 return new RegisterMessage(messageId, body);
@@ -34,6 +34,8 @@ public class MessageFactory {
                 return new SaveProfileMessage(messageId, body);
             case LOAD_PROFILE :
                 return new LoadProfileMessage(messageId, body);
+            case LOAD_PROFILE_GZIPPED :
+                return new LoadProfileGzippedStringMessage(messageId, body);
             case GET_TOKEN :
                 return new GetTokenMessage(messageId, body);
             case PING :

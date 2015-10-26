@@ -1,10 +1,9 @@
 package cc.blynk.client.core;
 
 import cc.blynk.client.CommandParser;
-import cc.blynk.client.HexConvertor;
 import cc.blynk.common.administration.SHA256Util;
 import cc.blynk.common.enums.Command;
-import cc.blynk.common.model.messages.StringMessage;
+import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.utils.ServerProperties;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -49,7 +48,7 @@ public abstract class BaseClient {
         props = properties;
     }
 
-    public static StringMessage produceMessageBaseOnUserInput(String line, int msgId) {
+    public static MessageBase produceMessageBaseOnUserInput(String line, int msgId) {
         String[] input = line.split(" ", 2);
 
         short command;
@@ -114,7 +113,7 @@ public abstract class BaseClient {
                 break;
             }
 
-            StringMessage msg = produceMessageBaseOnUserInput(line, (short) random.nextInt(Short.MAX_VALUE));
+            MessageBase msg = produceMessageBaseOnUserInput(line, (short) random.nextInt(Short.MAX_VALUE));
             if (msg == null) {
                 continue;
             }
@@ -123,8 +122,7 @@ public abstract class BaseClient {
         }
     }
 
-    public void send(StringMessage msg) {
-        log.trace("StringMessage hex : {}", HexConvertor.messageToHex(msg));
+    public void send(MessageBase msg) {
         if (channel.isWritable()) {
             channel.writeAndFlush(msg);
         }
