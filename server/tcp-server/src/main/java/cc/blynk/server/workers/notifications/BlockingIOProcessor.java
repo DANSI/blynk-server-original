@@ -3,7 +3,7 @@ package cc.blynk.server.workers.notifications;
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.ResponseMessage;
-import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
+import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataBinaryMessage;
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.ReportingDao;
@@ -69,7 +69,7 @@ public class BlockingIOProcessor {
 
                 log.trace("Sending getGraph response. ");
                 channel.eventLoop().execute(() -> {
-                    channel.writeAndFlush(new GetGraphDataResponseMessage(msgId, compressed));
+                    channel.writeAndFlush(new GetGraphDataBinaryMessage(msgId, compressed));
                 });
             } catch (Exception e) {
                 log(channel, e.getMessage(), msgId, Response.NO_DATA_EXCEPTION);
@@ -85,7 +85,7 @@ public class BlockingIOProcessor {
 
                 log.trace("Sending getGraph response. ");
                 channel.eventLoop().execute(() -> {
-                    channel.writeAndFlush(new GetGraphDataResponseMessage(msgId, compressed));
+                    channel.writeAndFlush(new GetGraphDataBinaryMessage(msgId, compressed));
                 });
             } catch (Exception e) {
                 log(channel, e.getMessage(), msgId, Response.NO_DATA_EXCEPTION);

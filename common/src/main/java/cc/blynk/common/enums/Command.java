@@ -73,7 +73,7 @@ public final class Command {
                 put(DEACTIVATE_DASHBOARD, DeActivateDashboardMessage.class.getSimpleName());
                 put(REFRESH_TOKEN, RefreshTokenMessage.class.getSimpleName());
                 put(GET_GRAPH_DATA, GetGraphDataMessage.class.getSimpleName());
-                put(GET_GRAPH_DATA_RESPONSE, GetGraphDataResponseMessage.class.getSimpleName());
+                put(GET_GRAPH_DATA_RESPONSE, GetGraphDataBinaryMessage.class.getSimpleName());
                 put(TWEET, TweetMessage.class.getSimpleName());
                 put(EMAIL, MailMessage.class.getSimpleName());
                 put(PUSH_NOTIFICATION, PushMessage.class.getSimpleName());

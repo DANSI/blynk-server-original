@@ -5,7 +5,7 @@ import cc.blynk.common.enums.Response;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.model.messages.ResponseWithBodyMessage;
-import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataResponseMessage;
+import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataBinaryMessage;
 import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.common.utils.Config;
 import io.netty.buffer.ByteBuf;
@@ -61,7 +61,7 @@ public class ClientMessageDecoder extends ByteToMessageDecoder implements Defaul
                 case Command.GET_GRAPH_DATA_RESPONSE :
                     byte[] bytes = new byte[buf.readableBytes()];
                     buf.readBytes(bytes);
-                    message = new GetGraphDataResponseMessage(messageId, bytes);
+                    message = new GetGraphDataBinaryMessage(messageId, bytes);
                     break;
                 case Command.LOAD_PROFILE_GZIPPED :
                     bytes = new byte[buf.readableBytes()];
