@@ -49,12 +49,10 @@ public class User implements Serializable {
 
         //todo remove later.
         for (DashBoard dashBoard : profile.dashBoards) {
-            if (this.profile.dashBoards != null) {
-                for (DashBoard curDash : this.profile.dashBoards) {
-                    if (dashBoard.id == curDash.id) {
-                        dashBoard.isActive = curDash.isActive;
-                        break;
-                    }
+            for (DashBoard curDash : this.profile.dashBoards) {
+                if (dashBoard.id == curDash.id) {
+                    dashBoard.isActive = curDash.isActive;
+                    break;
                 }
             }
         }
@@ -64,7 +62,7 @@ public class User implements Serializable {
     }
 
     public boolean hasActive() {
-        if (profile != null && profile.dashBoards != null) {
+        if (profile != null) {
             for (DashBoard dashBoard : profile.dashBoards) {
                 if (dashBoard.isActive) {
                     return true;
@@ -90,11 +88,9 @@ public class User implements Serializable {
     }
 
     private boolean exists(int dashId) {
-        if (profile.dashBoards != null) {
-            for (DashBoard dashBoard : profile.dashBoards) {
-                if (dashBoard.id == dashId) {
-                    return true;
-                }
+        for (DashBoard dashBoard : profile.dashBoards) {
+            if (dashBoard.id == dashId) {
+                return true;
             }
         }
 

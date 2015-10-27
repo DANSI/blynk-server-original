@@ -74,7 +74,6 @@ public class UserStatisticsTest extends TestBase {
         System.out.println("Board Types :");
         Map<String, Integer> boards = new HashMap<>();
         for (User user : users.values()) {
-            if (user.profile.dashBoards != null) {
                 for (DashBoard dashBoard : user.profile.dashBoards) {
                     String type = dashBoard.boardType;
                     Integer i = boards.get(type);
@@ -83,7 +82,6 @@ public class UserStatisticsTest extends TestBase {
                     }
                     boards.put(type, ++i);
                 }
-            }
         }
 
         for (Map.Entry<String, Integer> entry : boards.entrySet()) {
@@ -97,7 +95,6 @@ public class UserStatisticsTest extends TestBase {
         System.out.println("Widget Usage :");
         Map<String, Integer> boards = new HashMap<>();
         for (User user : users.values()) {
-            if (user.profile.dashBoards != null) {
                 for (DashBoard dashBoard : user.profile.dashBoards) {
                     if (dashBoard.widgets != null) {
                         for (Widget widget : dashBoard.widgets) {
@@ -109,9 +106,6 @@ public class UserStatisticsTest extends TestBase {
                         }
                     }
                 }
-            } else {
-                //System.out.println(JsonParser.toJson(user));
-            }
         }
 
         for (Map.Entry<String, Integer> entry : boards.entrySet()) {
@@ -126,7 +120,6 @@ public class UserStatisticsTest extends TestBase {
 
         List<Integer> all = new ArrayList<>();
         for (User user : users.values()) {
-            if (user.profile.dashBoards != null) {
                 for (DashBoard dashBoard : user.profile.dashBoards) {
                     if (dashBoard.widgets != null && dashBoard.widgets.length > 3) {
                         int sum = 0;
@@ -135,7 +128,6 @@ public class UserStatisticsTest extends TestBase {
                         }
                         all.add(sum);
                     }
-                }
             }
         }
 
@@ -167,7 +159,6 @@ public class UserStatisticsTest extends TestBase {
         int max = 0;
         String maxDash = null;
         for (User user : users.values()) {
-            if (user.profile.dashBoards != null) {
                 for (DashBoard dashBoard : user.profile.dashBoards) {
                     if (dashBoard.widgets != null && dashBoard.widgets.length > 0) {
                         String json = JsonParser.toJson(dashBoard);
@@ -178,7 +169,6 @@ public class UserStatisticsTest extends TestBase {
                         }
                     }
                 }
-            }
         }
 
         System.out.println(maxDash);

@@ -17,22 +17,25 @@ import java.util.*;
  */
 public class Profile {
 
-    public final transient Set<GraphKey> graphPins = new HashSet<>();
+    public final transient Set<GraphKey> graphPins;
 
     //todo remove in next release
     public volatile Integer activeDashId;
 
     public DashBoard[] dashBoards;
 
+    public Profile() {
+        this.graphPins = new HashSet<>();
+        this.dashBoards = new DashBoard[0];
+    }
+
     /**
      * Check if dashboardId is real and exists in user profile.
      */
     public void validateDashId(int dashBoardId, int msgId) {
-        if (dashBoards != null) {
-            for (DashBoard dashBoard : dashBoards) {
-                if (dashBoard.id == dashBoardId) {
-                    return;
-                }
+        for (DashBoard dashBoard : dashBoards) {
+            if (dashBoard.id == dashBoardId) {
+                return;
             }
         }
 
@@ -68,7 +71,7 @@ public class Profile {
     }
 
     public List<Timer> getActiveTimerWidgets() {
-        if (dashBoards == null || dashBoards.length == 0) {
+        if (dashBoards.length == 0) {
             return Collections.emptyList();
         }
 
@@ -81,18 +84,8 @@ public class Profile {
         return activeTimers;
     }
 
-    public List<DashBoard> getActiveDashBoards() {
-        List<DashBoard> activeDashboards = new ArrayList<>();
-        for (DashBoard dashBoard : dashBoards) {
-            if (dashBoard.isActive) {
-                activeDashboards.add(dashBoard);
-            }
-        }
-        return activeDashboards;
-    }
-
     public void calcGraphPins() {
-        if (dashBoards == null || dashBoards.length == 0) {
+        if (dashBoards.length == 0) {
             return;
         }
 
@@ -134,6 +127,6 @@ public class Profile {
 
     @Override
     public int hashCode() {
-        return dashBoards != null ? Arrays.hashCode(dashBoards) : 0;
+        return Arrays.hashCode(dashBoards);
     }
 }
