@@ -7,10 +7,7 @@ import cc.blynk.common.model.messages.protocol.BridgeMessage;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.model.messages.protocol.PingMessage;
 import cc.blynk.common.model.messages.protocol.appllication.*;
-import cc.blynk.common.model.messages.protocol.appllication.sharing.GetShareTokenMessage;
-import cc.blynk.common.model.messages.protocol.appllication.sharing.GetSharedDashMessage;
-import cc.blynk.common.model.messages.protocol.appllication.sharing.RefreshShareTokenMessage;
-import cc.blynk.common.model.messages.protocol.appllication.sharing.ShareLoginMessage;
+import cc.blynk.common.model.messages.protocol.appllication.sharing.*;
 import cc.blynk.common.model.messages.protocol.hardware.MailMessage;
 import cc.blynk.common.model.messages.protocol.hardware.PushMessage;
 import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
@@ -36,6 +33,8 @@ public class MessageFactory {
                 return new LoadProfileMessage(messageId, body);
             case LOAD_PROFILE_GZIPPED :
                 return new LoadProfileGzippedStringMessage(messageId, body);
+            case SYNC :
+                return new SyncMessage(messageId, body);
             case GET_TOKEN :
                 return new GetTokenMessage(messageId, body);
             case PING :

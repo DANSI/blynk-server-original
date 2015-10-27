@@ -21,6 +21,8 @@ public class CommandParser {
                 return LOAD_PROFILE;
             case "loadprofilegzipped" :
                 return LOAD_PROFILE_GZIPPED;
+            case "sync" :
+                return SYNC;
             case "saveprofile" :
                 return SAVE_PROFILE;
             case "gettoken" :
