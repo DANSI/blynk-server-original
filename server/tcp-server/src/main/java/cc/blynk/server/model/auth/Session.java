@@ -48,16 +48,19 @@ public class Session {
         }
     }
 
+    public boolean hasHardwareOnline(int activeDashId) {
+        for (Channel channel : hardwareChannels) {
+            Integer dashId = getState(channel).dashId;
+            if (dashId.equals(activeDashId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void sendMessageToHardware(MessageBase message) {
         for (Channel channel : hardwareChannels) {
             log.trace("Sending {} to hardware {}", message, channel);
-            channel.writeAndFlush(message);
-        }
-    }
-
-    public void sendMessageToApp(MessageBase message) {
-        for (Channel channel : appChannels) {
-            log.trace("Sending {} to app {}", message, channel);
             channel.writeAndFlush(message);
         }
     }

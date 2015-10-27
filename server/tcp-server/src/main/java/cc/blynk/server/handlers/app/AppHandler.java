@@ -40,6 +40,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final GetSharedDashLogic getSharedDashLogic;
     private final CreateDashLogic createDashLogic;
     private final SaveDashLogic saveDashLogic;
+    private final ActivateDashboardLogic activateDashboardLogic;
 
     public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, HandlerState state) {
         super(props, state);
@@ -54,6 +55,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.getSharedDashLogic = new GetSharedDashLogic(userDao);
         this.createDashLogic = new CreateDashLogic(props);
         this.saveDashLogic = new SaveDashLogic(props);
+        this.activateDashboardLogic = new ActivateDashboardLogic(sessionDao);
     }
 
     @Override
@@ -66,7 +68,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 saveProfile.messageReceived(ctx, state.user, msg);
                 break;
             case ACTIVATE_DASHBOARD :
-                ActivateDashboardLogic.messageReceived(ctx, state.user, msg);
+                activateDashboardLogic.messageReceived(ctx, state.user, msg);
                 break;
             case DEACTIVATE_DASHBOARD :
                 DeActivateDashboardLogic.messageReceived(ctx, state.user, msg);

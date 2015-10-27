@@ -115,7 +115,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, "1 1".replaceAll(" ", "\0"))));
 
         clientPair.appClient.send("activate 2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, DEVICE_NOT_IN_NETWORK)));
 
         clientPair.appClient.send("hardware 1 1");
 
@@ -218,7 +218,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(2, NO_ACTIVE_DASHBOARD)));
 
         clientPair.appClient.send("activate 2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, DEVICE_NOT_IN_NETWORK)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(3, NO_ACTIVE_DASHBOARD)));

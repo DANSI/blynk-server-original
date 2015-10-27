@@ -2,7 +2,10 @@ package cc.blynk.server.handlers.app.logic;
 
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ParseUtil;
+import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.model.DashBoard;
+import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +24,13 @@ public class ActivateDashboardLogic {
 
     private static final Logger log = LogManager.getLogger(ActivateDashboardLogic.class);
 
-    public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    private final SessionDao sessionDao;
+
+    public ActivateDashboardLogic(SessionDao sessionDao) {
+        this.sessionDao = sessionDao;
+    }
+
+    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String dashBoardIdString = message.body;
 
         int dashId = ParseUtil.parseInt(dashBoardIdString, message.id);
@@ -31,7 +40,13 @@ public class ActivateDashboardLogic {
         user.profile.activeDashId = dashId;
         dashBoard.isActive = true;
 
-        ctx.writeAndFlush(produce(message.id, OK));
+        Session session = sessionDao.userSession.get(user);
+
+        if (session.hasHardwareOnline(dashId)) {
+            ctx.writeAndFlush(produce(message.id, OK));
+        } else {
+            throw new DeviceNotInNetworkException(message.id);
+        }
     }
 
 }
