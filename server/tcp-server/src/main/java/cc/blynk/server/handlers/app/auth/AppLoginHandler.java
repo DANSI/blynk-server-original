@@ -16,10 +16,13 @@ import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
-import io.netty.channel.*;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.SimpleChannelInboundHandler;
 
-import static cc.blynk.common.enums.Response.OK;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.common.enums.Response.*;
+import static cc.blynk.common.model.messages.MessageFactory.*;
 
 /**
  * Handler responsible for managing apps login messages.
@@ -63,8 +66,6 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             }
             appLogin(ctx, message.id, messageParts[0], messageParts[1], osType, version);
         }
-
-        ctx.writeAndFlush(produce(message.id, OK));
     }
 
     private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String pass, String osType, String version) {
@@ -86,14 +87,15 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering app channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(ctx.channel(), session, user.name));
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(ctx, session, user.name, messageId));
         } else {
-            completeLogin(ctx.channel(), session, user.name);
+            completeLogin(ctx, session, user.name, messageId);
         }
     }
 
-    private void completeLogin(Channel channel, Session session, String userName) {
-        session.appChannels.add(channel);
+    private void completeLogin(ChannelHandlerContext ctx, Session session, String userName, int msgId) {
+        session.appChannels.add(ctx.channel());
+        ctx.writeAndFlush(produce(msgId, OK));
         log.info("{} app joined.", userName);
     }
 
@@ -106,6 +108,6 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-       handleGeneralException(ctx, cause);
+        handleGeneralException(ctx, cause);
     }
 }

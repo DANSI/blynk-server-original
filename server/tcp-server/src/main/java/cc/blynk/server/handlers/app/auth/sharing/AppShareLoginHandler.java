@@ -18,9 +18,15 @@ import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
-import io.netty.channel.*;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import static cc.blynk.common.enums.Response.*;
+import static cc.blynk.common.model.messages.MessageFactory.*;
 
 /**
  * Handler responsible for managing apps sharing login messages.
@@ -87,14 +93,15 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering app channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(ctx.channel(), session, user.name));
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(ctx, session, user.name, messageId));
         } else {
-            completeLogin(ctx.channel(), session, user.name);
+            completeLogin(ctx, session, user.name, messageId);
         }
     }
 
-    private void completeLogin(Channel channel, Session session, String userName) {
-        session.appChannels.add(channel);
+    private void completeLogin(ChannelHandlerContext ctx, Session session, String userName, int msgId) {
+        session.appChannels.add(ctx.channel());
+        ctx.writeAndFlush(produce(msgId, OK));
         log.info("Shared {} app joined.", userName);
     }
 
