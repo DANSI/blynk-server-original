@@ -50,21 +50,17 @@ public class CreateDashLogic {
 
         log.info("Creating new dashboard.");
 
-        if (user.profile.dashBoards.length == 0) {
-            user.profile.dashBoards = new DashBoard[] {newDash};
-        } else {
-            if (user.profile.dashBoards.length > DASH_MAX_LIMIT) {
-                throw new NotAllowedException("Dashboards limit reached.", message.id);
-            }
-
-            for (DashBoard dashBoard : user.profile.dashBoards) {
-                if (dashBoard.id == newDash.id) {
-                    throw new NotAllowedException("Dashboards already exists.", message.id);
-                }
-            }
-
-            user.profile.dashBoards = ArrayUtils.add(user.profile.dashBoards, newDash);
+        if (user.profile.dashBoards.length > DASH_MAX_LIMIT) {
+            throw new NotAllowedException("Dashboards limit reached.", message.id);
         }
+
+        for (DashBoard dashBoard : user.profile.dashBoards) {
+            if (dashBoard.id == newDash.id) {
+                throw new NotAllowedException("Dashboard already exists.", message.id);
+            }
+        }
+
+        user.profile.dashBoards = ArrayUtils.add(user.profile.dashBoards, newDash);
 
         ctx.writeAndFlush(produce(message.id, OK));
     }
