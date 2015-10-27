@@ -50,7 +50,7 @@ public class CreateDashLogic {
 
         log.info("Creating new dashboard.");
 
-        if (user.profile.dashBoards == null) {
+        if (user.profile.dashBoards.length == 0) {
             user.profile.dashBoards = new DashBoard[] {newDash};
         } else {
             if (user.profile.dashBoards.length > DASH_MAX_LIMIT) {
