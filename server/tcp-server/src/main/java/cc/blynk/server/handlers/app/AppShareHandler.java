@@ -13,6 +13,7 @@ import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.ThreadContext;
 
 import static cc.blynk.common.enums.Command.*;
 
@@ -35,6 +36,7 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage msg) {
+        ThreadContext.put("user", state.user.name);
         switch (msg.command) {
             case HARDWARE:
                 hardwareApp.messageReceived(ctx, state, msg);

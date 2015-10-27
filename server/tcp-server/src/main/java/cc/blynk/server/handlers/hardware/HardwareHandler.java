@@ -10,6 +10,7 @@ import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.handlers.hardware.logic.*;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.ThreadContext;
 
 import static cc.blynk.common.enums.Command.*;
 
@@ -40,6 +41,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage msg) {
+        ThreadContext.put("user", state.user.name);
         switch (msg.command) {
             case HARDWARE:
                 hardware.messageReceived(ctx, state, msg);

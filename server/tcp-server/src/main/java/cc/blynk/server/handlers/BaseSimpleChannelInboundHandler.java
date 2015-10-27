@@ -5,7 +5,6 @@ import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.exceptions.QuotaLimitException;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
-import cc.blynk.server.model.auth.User;
 import cc.blynk.server.stats.metrics.InstanceLoadMeter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -40,16 +39,12 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
     @SuppressWarnings("unchecked")
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (matcher.match(msg)) {
-            User user = handlerState.user;
-            I typedMsg = (I) msg;
-
+            final I typedMsg = (I) msg;
             try {
-                ThreadContext.put("user", user.name);
                 if (quotaMeter.getOneMinuteRate() > USER_QUOTA_LIMIT) {
-                    sendErrorResponseIfTicked(ctx, typedMsg.id);
+                    sendErrorResponseIfTicked(typedMsg.id);
                     return;
                 }
-
                 quotaMeter.mark();
                 messageReceived(ctx, handlerState, typedMsg);
             } catch (Exception e) {
@@ -61,7 +56,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
         }
     }
 
-    private void sendErrorResponseIfTicked(ChannelHandlerContext ctx, int msgId) {
+    private void sendErrorResponseIfTicked(int msgId) {
         long now = System.currentTimeMillis();
         //once a minute sending user response message in case limit is exceeded constantly
         if (lastQuotaExceededTime + USER_QUOTA_LIMIT_WARN_PERIOD < now) {
