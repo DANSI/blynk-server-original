@@ -27,12 +27,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static cc.blynk.common.enums.Command.HARDWARE;
-import static cc.blynk.common.enums.Command.LOAD_PROFILE;
+import static cc.blynk.common.enums.Command.*;
 import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static cc.blynk.common.model.messages.MessageFactory.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -278,7 +276,7 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
 
         hardClient2.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, "2 aw 1 1".replaceAll(" ", "\0"))));
 
 
         clientPair.appClient.send("deactivate 1");
@@ -288,7 +286,7 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(2, NO_ACTIVE_DASHBOARD)));
 
         hardClient2.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, "2 aw 1 1".replaceAll(" ", "\0"))));
     }
 
     @Test

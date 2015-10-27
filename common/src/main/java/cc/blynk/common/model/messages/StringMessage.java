@@ -25,4 +25,23 @@ public abstract class StringMessage extends MessageBase {
     public String toString() {
         return super.toString() + ", body='" + body + "'";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        StringMessage that = (StringMessage) o;
+
+        return !(body != null ? !body.equals(that.body) : that.body != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (body != null ? body.hashCode() : 0);
+        return result;
+    }
 }
