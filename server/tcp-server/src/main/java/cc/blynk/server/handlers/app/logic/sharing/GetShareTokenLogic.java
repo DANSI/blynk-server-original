@@ -1,12 +1,11 @@
 package cc.blynk.server.handlers.app.logic.sharing;
 
 import cc.blynk.common.model.messages.StringMessage;
+import cc.blynk.common.model.messages.protocol.appllication.sharing.GetShareTokenMessage;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
-
-import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
  * The Blynk Project.
@@ -25,17 +24,17 @@ public class GetShareTokenLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String dashBoardIdString = message.body;
 
-        int dashBoardId;
+        int dashId;
         try {
-            dashBoardId = Integer.parseInt(dashBoardIdString);
+            dashId = Integer.parseInt(dashBoardIdString);
         } catch (NumberFormatException ex) {
             throw new NotAllowedException(String.format("Dash board id '%s' not valid.", dashBoardIdString), message.id);
         }
 
-        user.profile.validateDashId(dashBoardId, message.id);
+        user.profile.validateDashId(dashId, message.id);
 
-        String token = userDao.sharedTokenManager.getToken(user, dashBoardId);
+        String token = userDao.sharedTokenManager.getToken(user, dashId);
 
-        ctx.writeAndFlush(produce(message.id, message.command, token));
+        ctx.writeAndFlush(new GetShareTokenMessage(message.id, token));
     }
 }

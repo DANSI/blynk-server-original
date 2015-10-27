@@ -1,7 +1,6 @@
 package cc.blynk.server.handlers.app.logic;
 
 import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.model.DashBoard;
@@ -11,8 +10,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.common.enums.Response.OK;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.common.enums.Response.*;
+import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.common.utils.ParseUtil.*;
 
 /**
  * The Blynk Project.
@@ -33,7 +33,7 @@ public class ActivateDashboardLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String dashBoardIdString = message.body;
 
-        int dashId = ParseUtil.parseInt(dashBoardIdString, message.id);
+        int dashId = parseInt(dashBoardIdString, message.id);
 
         log.debug("Activating dash {} for user {}", dashBoardIdString, user.name);
         DashBoard dashBoard = user.profile.getDashboardById(dashId, message.id);

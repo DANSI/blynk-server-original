@@ -1,11 +1,10 @@
 package cc.blynk.server.handlers.app.logic;
 
 import cc.blynk.common.model.messages.StringMessage;
+import cc.blynk.common.model.messages.protocol.appllication.LoadProfileMessage;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
-
-import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
  * The Blynk Project.
@@ -26,7 +25,7 @@ public class LoadProfileLogic {
             body = user.profile.getDashById(dashId, message.id).toString();
         }
 
-        ctx.writeAndFlush(produce(message.id, message.command, body));
+        ctx.writeAndFlush(new LoadProfileMessage(message.id, body));
     }
 
 }
