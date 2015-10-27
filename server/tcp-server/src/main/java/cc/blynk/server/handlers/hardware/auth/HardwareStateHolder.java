@@ -12,8 +12,6 @@ public class HardwareStateHolder {
     public final Integer dashId;
     public final User user;
     public final String token;
-    public final String osType;
-    public final String version;
 
     public HardwareStateHolder(User user) {
         this(null, user, null);
@@ -23,8 +21,6 @@ public class HardwareStateHolder {
         this.dashId = dashId;
         this.user = user;
         this.token = token;
-        this.osType = null;
-        this.version = null;
     }
 
 
@@ -32,12 +28,6 @@ public class HardwareStateHolder {
         this.dashId = null;
         this.user = user;
         this.token = null;
-        this.osType = osType;
-        this.version = version;
-    }
-
-    public boolean isOldAPI() {
-        return version == null;
     }
 
 }

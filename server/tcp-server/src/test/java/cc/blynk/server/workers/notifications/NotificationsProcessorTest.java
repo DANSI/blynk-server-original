@@ -1,5 +1,6 @@
 package cc.blynk.server.workers.notifications;
 
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
@@ -30,7 +31,7 @@ public class NotificationsProcessorTest {
     private ChannelPipeline pipeline;
 
     @Mock
-    private HardwareHandler hardwareHandler;
+    private ServerProperties props;
 
     @Mock
     private EventLoop eventLoop;
@@ -40,10 +41,13 @@ public class NotificationsProcessorTest {
 
     @Test
     public void testNoCorrectWrapper() {
+        HardwareHandler hardwareHandler = new HardwareHandler(props, null, null, null, new HardwareStateHolder(new User("test", "test")));
+
         when(channel.eventLoop()).thenReturn(eventLoop);
         when(channel.pipeline()).thenReturn(pipeline);
-        when(pipeline.last()).thenReturn(hardwareHandler);
-        when(hardwareHandler.getHandlerState()).thenReturn(new HardwareStateHolder(new User("test", "test")));
+
+        when(pipeline.get(HardwareHandler.class)).thenReturn(hardwareHandler);
+
         BlockingIOProcessor processor = new BlockingIOProcessor(5, "", reportingDao);
         processor.twit(channel, "token", "secret", "body", 1);
         verify(channel, timeout(2000)).eventLoop();

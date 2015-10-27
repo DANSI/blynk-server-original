@@ -16,7 +16,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.utils.HandlerUtil.getState;
+import static cc.blynk.server.utils.StateHolderUtil.getAppState;
 
 /**
  * Handler responsible for forwarding messages from hardware to applications.
@@ -75,7 +75,7 @@ public class HardwareLogic {
             //todo this code should be removed when both iOS and Android will support sharing.
             for (Channel channel : session.appChannels) {
                 log.trace("Sending {} to app {}", message, channel);
-                if (getState(channel).isOldAPI()) {
+                if (getAppState(channel).isOldAPI()) {
                     channel.writeAndFlush(new HardwareMessage(message.id, body));
                 } else {
                     channel.writeAndFlush(new HardwareMessage(message.id, dashId + StringUtils.BODY_SEPARATOR_STRING + body));

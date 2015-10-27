@@ -6,11 +6,11 @@ import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.app.auth.AppStateHolder;
 import cc.blynk.server.handlers.app.logic.HardwareAppLogic;
 import cc.blynk.server.handlers.app.logic.LoadProfileLogic;
 import cc.blynk.server.handlers.app.logic.reporting.GetGraphDataLogic;
 import cc.blynk.server.handlers.common.PingLogic;
-import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.ThreadContext;
@@ -25,17 +25,19 @@ import static cc.blynk.common.enums.Command.*;
  */
 public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
+    public final AppStateHolder state;
     private final HardwareAppLogic hardwareApp;
     private final GetGraphDataLogic graphData;
 
-    public AppShareHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, HardwareStateHolder state) {
-        super(props, state);
+    public AppShareHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, AppStateHolder state) {
+        super(props);
         this.hardwareApp = new HardwareAppLogic(sessionDao);
         this.graphData = new GetGraphDataLogic(reportingDao, blockingIOProcessor);
+        this.state = state;
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage msg) {
+    protected void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
         ThreadContext.put("user", state.user.name);
         switch (msg.command) {
             case HARDWARE:

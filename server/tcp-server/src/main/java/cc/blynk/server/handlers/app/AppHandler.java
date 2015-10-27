@@ -6,6 +6,7 @@ import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.app.auth.AppStateHolder;
 import cc.blynk.server.handlers.app.logic.*;
 import cc.blynk.server.handlers.app.logic.dashboard.CreateDashLogic;
 import cc.blynk.server.handlers.app.logic.dashboard.DeleteDashLogic;
@@ -15,7 +16,6 @@ import cc.blynk.server.handlers.app.logic.sharing.GetShareTokenLogic;
 import cc.blynk.server.handlers.app.logic.sharing.GetSharedDashLogic;
 import cc.blynk.server.handlers.app.logic.sharing.RefreshShareTokenLogic;
 import cc.blynk.server.handlers.common.PingLogic;
-import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.ThreadContext;
@@ -30,6 +30,7 @@ import static cc.blynk.common.enums.Command.*;
  */
 public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
+    public final AppStateHolder state;
     private final SaveProfileLogic saveProfile;
     private final GetTokenLogic token;
     private final HardwareAppLogic hardwareApp;
@@ -43,8 +44,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final SaveDashLogic saveDashLogic;
     private final ActivateDashboardLogic activateDashboardLogic;
 
-    public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, HardwareStateHolder state) {
-        super(props, state);
+    public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, AppStateHolder state) {
+        super(props);
         this.saveProfile = new SaveProfileLogic(props);
         this.token = new GetTokenLogic(userDao);
         this.hardwareApp = new HardwareAppLogic(sessionDao);
@@ -57,10 +58,11 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.createDashLogic = new CreateDashLogic(props);
         this.saveDashLogic = new SaveDashLogic(props);
         this.activateDashboardLogic = new ActivateDashboardLogic(sessionDao);
+        this.state = state;
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage msg) {
+    protected void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
         ThreadContext.put("user", state.user.name);
         switch (msg.command) {
             case HARDWARE:

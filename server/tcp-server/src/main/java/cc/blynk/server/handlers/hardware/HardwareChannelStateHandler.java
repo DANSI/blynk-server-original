@@ -3,6 +3,7 @@ package cc.blynk.server.handlers.hardware;
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.handlers.app.auth.AppStateHolder;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
@@ -19,7 +20,8 @@ import org.apache.logging.log4j.Logger;
 import static cc.blynk.common.enums.Response.DEVICE_WENT_OFFLINE;
 import static cc.blynk.common.enums.Response.DEVICE_WENT_OFFLINE_2;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
-import static cc.blynk.server.utils.HandlerUtil.getState;
+import static cc.blynk.server.utils.StateHolderUtil.getAppState;
+import static cc.blynk.server.utils.StateHolderUtil.getHardState;
 
 /**
  * The Blynk Project.
@@ -58,8 +60,8 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void sentOfflineMessage(Channel channel) {
-        HardwareStateHolder handlerState = getState(channel);
-        if (handlerState.user != null) {
+        HardwareStateHolder handlerState = getHardState(channel);
+        if (handlerState != null) {
             DashBoard dashBoard = handlerState.user.profile.getDashboardById(handlerState.dashId, 0);
             if (dashBoard.isActive) {
                 Notification notification = dashBoard.getWidgetByType(Notification.class);
@@ -67,7 +69,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                     Session session = sessionDao.userSession.get(handlerState.user);
                     if (session.appChannels.size() > 0) {
                         for (Channel appChannel : session.appChannels) {
-                            HardwareStateHolder appState = getState(appChannel);
+                            AppStateHolder appState = getAppState(appChannel);
                             if (appState.isOldAPI() || ("Android".equals(appState.osType) && "21".equals(appState.version))) {
                                 appChannel.writeAndFlush(produce(0, DEVICE_WENT_OFFLINE));
                             } else {

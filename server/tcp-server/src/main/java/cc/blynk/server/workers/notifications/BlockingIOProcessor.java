@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static cc.blynk.server.utils.ByteUtils.compress;
-import static cc.blynk.server.utils.HandlerUtil.getState;
+import static cc.blynk.server.utils.StateHolderUtil.getStateUser;
 
 /**
  * The Blynk Project.
@@ -155,7 +155,7 @@ public class BlockingIOProcessor {
             try {
                 gcmWrapper.send(message);
             } catch (Exception e) {
-                log(user, e.getMessage());
+                log(user.name, e.getMessage());
             }
         });
     }
@@ -165,21 +165,19 @@ public class BlockingIOProcessor {
     }
 
     private void log(Channel channel, String errorMessage, int msgId, int response) {
-        User user = getState(channel).user;
+        User user = getStateUser(channel);
 
-        log(user, errorMessage);
+        log(user.name, errorMessage);
 
         channel.eventLoop().execute(() -> {
             channel.writeAndFlush(new ResponseMessage(msgId, Command.RESPONSE, response));
         });
     }
 
-    private void log(User user, String errorMessage) {
-        if (user != null) {
-            ThreadContext.put("user", user.name);
-            log.error("Error performing blocking IO. {}", errorMessage);
-            ThreadContext.clearMap();
-        }
+    private void log(String username, String errorMessage) {
+        ThreadContext.put("user", username);
+        log.error("Error performing blocking IO. {}", errorMessage);
+        ThreadContext.clearMap();
     }
 
 }

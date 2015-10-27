@@ -21,6 +21,7 @@ import static cc.blynk.common.enums.Command.*;
  */
 public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
+    public final HardwareStateHolder state;
     private final HardwareLogic hardware;
     private final MailLogic email;
     private final BridgeLogic bridge;
@@ -28,8 +29,8 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final TweetLogic tweet;
 
     public HardwareHandler(ServerProperties props, SessionDao sessionDao, ReportingDao reportingDao,
-                           BlockingIOProcessor blockingIOProcessor, HardwareStateHolder handlerState) {
-        super(props, handlerState);
+                           BlockingIOProcessor blockingIOProcessor, HardwareStateHolder stateHolder) {
+        super(props);
         this.hardware = new HardwareLogic(sessionDao, reportingDao);
         this.bridge = new BridgeLogic(sessionDao);
 
@@ -37,10 +38,12 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.email = new MailLogic(blockingIOProcessor, defaultNotificationQuotaLimit);
         this.push = new PushLogic(blockingIOProcessor, defaultNotificationQuotaLimit);
         this.tweet = new TweetLogic(blockingIOProcessor, defaultNotificationQuotaLimit);
+
+        this.state = stateHolder;
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage msg) {
+    protected void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
         ThreadContext.put("user", state.user.name);
         switch (msg.command) {
             case HARDWARE:
@@ -62,6 +65,12 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 tweet.messageReceived(ctx, state, msg);
                 break;
         }
+    }
+
+
+    //for test only
+    public HardwareStateHolder getState() {
+        return state;
     }
 
 }

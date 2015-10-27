@@ -12,9 +12,9 @@ import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.app.AppShareHandler;
 import cc.blynk.server.handlers.app.auth.AppLoginHandler;
+import cc.blynk.server.handlers.app.auth.AppStateHolder;
 import cc.blynk.server.handlers.app.auth.RegisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
-import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
@@ -72,7 +72,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
         User user = userDao.sharedTokenManager.getUserByToken(token);
 
-        if (user == null || !user.getName().equals(userName)) {
+        if (user == null || !user.name.equals(userName)) {
             log.debug("Share token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
             ctx.writeAndFlush(new ResponseMessage(messageId, Command.RESPONSE, Response.INVALID_TOKEN));
             return;
@@ -81,7 +81,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         Integer dashId = UserDao.getDashIdByToken(user.dashShareTokens, token, messageId);
 
         cleanPipeline(ctx.pipeline());
-        ctx.pipeline().addLast(new AppShareHandler(props, userDao, sessionDao, reportingDao, blockingIOProcessor, new HardwareStateHolder(dashId, user, token)));
+        ctx.pipeline().addLast(new AppShareHandler(props, userDao, sessionDao, reportingDao, blockingIOProcessor, new AppStateHolder(user, osType, version)));
 
         Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
 

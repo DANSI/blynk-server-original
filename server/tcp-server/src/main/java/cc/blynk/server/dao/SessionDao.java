@@ -1,5 +1,7 @@
 package cc.blynk.server.dao;
 
+import cc.blynk.server.handlers.app.auth.AppStateHolder;
+import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.Channel;
@@ -10,7 +12,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cc.blynk.server.utils.HandlerUtil.getState;
+import static cc.blynk.server.utils.StateHolderUtil.getAppState;
+import static cc.blynk.server.utils.StateHolderUtil.getHardState;
 
 /**
  * Holds session info related to specific user.
@@ -26,9 +29,9 @@ public class SessionDao {
     public final Map<User, Session> userSession = new ConcurrentHashMap<>();
 
     public void removeAppFromSession(Channel channel) {
-        User user = getState(channel).user;
-        if (user != null) {
-            Session session = userSession.get(user);
+        AppStateHolder state = getAppState(channel);
+        if (state != null) {
+            Session session = userSession.get(state.user);
             if (session != null) {
                 session.appChannels.remove(channel);
             }
@@ -36,9 +39,9 @@ public class SessionDao {
     }
 
     public void removeHardFromSession(Channel channel) {
-        User user = getState(channel).user;
-        if (user != null) {
-            Session session = userSession.get(user);
+        HardwareStateHolder state = getHardState(channel);
+        if (state != null) {
+            Session session = userSession.get(state.user);
             if (session != null) {
                 session.hardwareChannels.remove(channel);
             }

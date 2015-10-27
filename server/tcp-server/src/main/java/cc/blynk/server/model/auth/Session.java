@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Set;
 
-import static cc.blynk.server.utils.HandlerUtil.getState;
+import static cc.blynk.server.utils.StateHolderUtil.getHardState;
 
 /**
  * The Blynk Project.
@@ -36,7 +36,7 @@ public class Session {
     public void sendMessageToHardware(Integer activeDashId, MessageBase message) {
         boolean noActiveHardware = true;
         for (Channel channel : hardwareChannels) {
-            Integer dashId = getState(channel).dashId;
+            Integer dashId = getHardState(channel).dashId;
             if (activeDashId.equals(dashId)) {
                 noActiveHardware = false;
                 log.trace("Sending {} to hardware {}", message, channel);
@@ -50,7 +50,7 @@ public class Session {
 
     public boolean hasHardwareOnline(int activeDashId) {
         for (Channel channel : hardwareChannels) {
-            Integer dashId = getState(channel).dashId;
+            Integer dashId = getHardState(channel).dashId;
             if (dashId.equals(activeDashId)) {
                 return true;
             }
