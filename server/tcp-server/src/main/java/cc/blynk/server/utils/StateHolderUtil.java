@@ -3,6 +3,7 @@ package cc.blynk.server.utils;
 import cc.blynk.server.handlers.app.AppHandler;
 import cc.blynk.server.handlers.app.AppShareHandler;
 import cc.blynk.server.handlers.app.auth.AppStateHolder;
+import cc.blynk.server.handlers.app.auth.sharing.AppShareStateHolder;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.auth.User;
@@ -32,6 +33,27 @@ public class StateHolderUtil {
     public static AppStateHolder getAppState(ChannelPipeline pipeline) {
         AppHandler handler = pipeline.get(AppHandler.class);
         return handler == null ? null : handler.state;
+    }
+
+    public static AppStateHolder getShareState(Channel channel) {
+        return getShareState(channel.pipeline());
+    }
+
+    public static AppStateHolder getShareState(ChannelPipeline pipeline) {
+        AppShareHandler handler = pipeline.get(AppShareHandler.class);
+        return handler == null ? null : handler.state;
+    }
+
+    public static boolean needSync(Channel channel, String sharedToken) {
+        ChannelPipeline pipeline = channel.pipeline();
+        AppHandler appHandler = pipeline.get(AppHandler.class);
+        //means admin channel. shared check is done before.
+        if (appHandler != null) {
+            return true;
+        }
+
+        AppShareStateHolder appShareStateHolder = pipeline.get(AppShareHandler.class).state;
+        return appShareStateHolder.contains(sharedToken);
     }
 
     //use only for rare cases

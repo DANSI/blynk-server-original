@@ -1,6 +1,8 @@
 package cc.blynk.integration;
 
+import cc.blynk.common.utils.StringUtils;
 import cc.blynk.integration.model.ClientPair;
+import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.model.Profile;
@@ -14,9 +16,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static cc.blynk.common.enums.Response.INVALID_TOKEN;
-import static cc.blynk.common.enums.Response.NOT_ALLOWED;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.common.enums.Command.*;
+import static cc.blynk.common.enums.Response.*;
+import static cc.blynk.common.model.messages.MessageFactory.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -49,7 +51,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         //wait util server starts.
         sleep(500);
 
-        clientPair = initAppAndHardPair();
+        clientPair = initAppAndHardPairNewAPI();
     }
 
     @After
@@ -86,6 +88,28 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         notification.cleanPrivateData();
         assertEquals(profile.dashBoards[0].toString(), dashboard);
         //System.out.println(dashboard);
+    }
+
+    @Test
+    public void getShareTokenAndLoginViaIt() throws Exception {
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = getBody(clientPair.appClient.responseMock);
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+
+        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        appClient2.start(null);
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+
+        clientPair.appClient.send("hardware 1 vw 1 1");
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, "1 vw 1 2".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+
+        appClient2.send("hardware 1 vw 2 2");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, "1 vw 2 2".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
     }
 
     @Test

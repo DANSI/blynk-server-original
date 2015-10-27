@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.Random;
 
-import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.common.model.messages.MessageFactory.*;
 
 /**
  * The Blynk Project.
@@ -61,7 +61,7 @@ public abstract class BaseClient {
         }
 
         String body = input.length == 1 ? "" : input[1];
-        if (command == Command.REGISTER || command == Command.LOGIN || command == Command.SHARE_LOGIN) {
+        if (command == Command.REGISTER || command == Command.LOGIN) {
             String[] userPass = body.split(" ", 3);
             if (userPass.length > 1) {
                 String username = userPass[0];

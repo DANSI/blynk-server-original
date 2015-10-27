@@ -6,7 +6,7 @@ import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.handlers.app.auth.AppStateHolder;
+import cc.blynk.server.handlers.app.auth.sharing.AppShareStateHolder;
 import cc.blynk.server.handlers.app.logic.HardwareAppLogic;
 import cc.blynk.server.handlers.app.logic.LoadProfileGzippedLogic;
 import cc.blynk.server.handlers.app.logic.LoadProfileLogic;
@@ -27,12 +27,12 @@ import static cc.blynk.common.enums.Command.*;
  */
 public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
-    public final AppStateHolder state;
+    public final AppShareStateHolder state;
     private final HardwareAppLogic hardwareApp;
     private final GetGraphDataLogic graphData;
     private final SyncLogic syncLogic;
 
-    public AppShareHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, AppStateHolder state) {
+    public AppShareHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, AppShareStateHolder state) {
         super(props);
         this.hardwareApp = new HardwareAppLogic(sessionDao);
         this.graphData = new GetGraphDataLogic(reportingDao, blockingIOProcessor);

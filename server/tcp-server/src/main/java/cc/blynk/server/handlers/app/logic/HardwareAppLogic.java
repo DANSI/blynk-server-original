@@ -2,15 +2,19 @@ package cc.blynk.server.handlers.app.logic;
 
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
+import cc.blynk.common.model.messages.protocol.appllication.sharing.SyncMessage;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.handlers.app.auth.AppStateHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
  * The Blynk Project.
@@ -62,6 +66,16 @@ public class HardwareAppLogic {
                 if (split[1].length() > 3) {
                     DashBoard dash = state.user.profile.getDashById(dashId, message.id);
                     dash.pinModeMessage = message;
+                }
+            }
+
+            //if dash was shared. check for shared channels
+            String sharedToken = state.user.dashShareTokens.get(dashId);
+            if (sharedToken != null) {
+                for (Channel appChannel : session.appChannels) {
+                    if (appChannel != ctx.channel() && needSync(appChannel, sharedToken)) {
+                        appChannel.writeAndFlush(new SyncMessage(message.id, message.body));
+                    }
                 }
             }
 

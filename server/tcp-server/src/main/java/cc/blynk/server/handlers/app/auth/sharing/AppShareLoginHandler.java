@@ -12,7 +12,6 @@ import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.app.AppShareHandler;
 import cc.blynk.server.handlers.app.auth.AppLoginHandler;
-import cc.blynk.server.handlers.app.auth.AppStateHolder;
 import cc.blynk.server.handlers.app.auth.RegisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.model.auth.Session;
@@ -81,7 +80,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         Integer dashId = UserDao.getDashIdByToken(user.dashShareTokens, token, messageId);
 
         cleanPipeline(ctx.pipeline());
-        ctx.pipeline().addLast(new AppShareHandler(props, userDao, sessionDao, reportingDao, blockingIOProcessor, new AppStateHolder(user, osType, version)));
+        ctx.pipeline().addLast(new AppShareHandler(props, userDao, sessionDao, reportingDao, blockingIOProcessor, new AppShareStateHolder(user, osType, version, token)));
 
         Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
 
