@@ -3,7 +3,7 @@ package cc.blynk.server.handlers.hardware;
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.dao.SessionDao;
-import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.widgets.others.Notification;
@@ -58,7 +58,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void sentOfflineMessage(Channel channel) {
-        HandlerState handlerState = getState(channel);
+        HardwareStateHolder handlerState = getState(channel);
         if (handlerState.user != null) {
             DashBoard dashBoard = handlerState.user.profile.getDashboardById(handlerState.dashId, 0);
             if (dashBoard.isActive) {
@@ -67,7 +67,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                     Session session = sessionDao.userSession.get(handlerState.user);
                     if (session.appChannels.size() > 0) {
                         for (Channel appChannel : session.appChannels) {
-                            HandlerState appState = getState(appChannel);
+                            HardwareStateHolder appState = getState(appChannel);
                             if (appState.isOldAPI() || ("Android".equals(appState.osType) && "21".equals(appState.version))) {
                                 appChannel.writeAndFlush(produce(0, DEVICE_WENT_OFFLINE));
                             } else {

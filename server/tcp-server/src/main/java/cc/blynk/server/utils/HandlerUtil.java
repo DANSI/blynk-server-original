@@ -1,7 +1,7 @@
 package cc.blynk.server.utils;
 
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 
@@ -12,9 +12,9 @@ import io.netty.channel.ChannelHandler;
  */
 public class HandlerUtil {
 
-    private static final HandlerState NO_STATE = new HandlerState(null);
+    private static final HardwareStateHolder NO_STATE = new HardwareStateHolder(null);
 
-    public static HandlerState getState(Channel channel) {
+    public static HardwareStateHolder getState(Channel channel) {
         final ChannelHandler channelHandler = channel.pipeline().last();
         if (channelHandler instanceof BaseSimpleChannelInboundHandler) {
             return ((BaseSimpleChannelInboundHandler) channelHandler).getHandlerState();

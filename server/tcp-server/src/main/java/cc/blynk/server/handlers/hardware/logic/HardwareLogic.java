@@ -7,7 +7,7 @@ import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NoActiveDashboardException;
-import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.graph.GraphKey;
@@ -40,7 +40,7 @@ public class HardwareLogic {
         this.reportingDao = reportingDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, HandlerState state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
         //if message from hardware, check if it belongs to graph. so we need save it in that case

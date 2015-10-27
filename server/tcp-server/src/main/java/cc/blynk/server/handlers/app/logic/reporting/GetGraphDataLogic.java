@@ -5,7 +5,7 @@ import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.utils.HandlerUtil;
@@ -53,7 +53,7 @@ public class GetGraphDataLogic {
             ctx.writeAndFlush(produce(message.id, OK));
         } else {
             //todo remove after next deployment
-            HandlerState state = HandlerUtil.getState(ctx.channel());
+            HardwareStateHolder state = HandlerUtil.getState(ctx.channel());
             if (state.isOldAPI() || ("Android".equals(state.osType) && "21".equals(state.version))) {
                 process(ctx.channel(), messageParts, user, message.id, VALUES_PER_PIN);
             } else {

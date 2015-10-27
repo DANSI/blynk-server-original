@@ -3,7 +3,7 @@ package cc.blynk.server.handlers.hardware.logic;
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
-import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.widgets.others.Mail;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
@@ -30,7 +30,7 @@ public class MailLogic extends NotificationBase {
         this.blockingIOProcessor = blockingIOProcessor;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, HandlerState state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         DashBoard dash = state.user.profile.getDashById(state.dashId, message.id);
 
         Mail mail = dash.getWidgetByType(Mail.class);

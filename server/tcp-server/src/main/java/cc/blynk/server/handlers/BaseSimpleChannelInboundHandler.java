@@ -4,7 +4,7 @@ import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.exceptions.QuotaLimitException;
-import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.stats.metrics.InstanceLoadMeter;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,11 +24,11 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
     protected final int USER_QUOTA_LIMIT_WARN_PERIOD;
     protected final int USER_QUOTA_LIMIT;
     private final TypeParameterMatcher matcher;
-    private final HandlerState handlerState;
+    private final HardwareStateHolder handlerState;
     private final InstanceLoadMeter quotaMeter;
     private long lastQuotaExceededTime;
 
-    protected BaseSimpleChannelInboundHandler(ServerProperties props, HandlerState handlerState) {
+    protected BaseSimpleChannelInboundHandler(ServerProperties props, HardwareStateHolder handlerState) {
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
         this.handlerState = handlerState;
         this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit");
@@ -80,9 +80,9 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
      *                      belongs to
      * @param msg           the message to handle
      */
-    protected abstract void messageReceived(ChannelHandlerContext ctx, HandlerState state, I msg);
+    protected abstract void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, I msg);
 
-    public HandlerState getHandlerState() {
+    public HardwareStateHolder getHandlerState() {
         return handlerState;
     }
 

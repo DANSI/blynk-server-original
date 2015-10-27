@@ -10,7 +10,7 @@ import cc.blynk.server.handlers.app.logic.HardwareAppLogic;
 import cc.blynk.server.handlers.app.logic.LoadProfileLogic;
 import cc.blynk.server.handlers.app.logic.reporting.GetGraphDataLogic;
 import cc.blynk.server.handlers.common.PingLogic;
-import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -27,14 +27,14 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final HardwareAppLogic hardwareApp;
     private final GetGraphDataLogic graphData;
 
-    public AppShareHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, HandlerState state) {
+    public AppShareHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, HardwareStateHolder state) {
         super(props, state);
         this.hardwareApp = new HardwareAppLogic(sessionDao);
         this.graphData = new GetGraphDataLogic(reportingDao, blockingIOProcessor);
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, HandlerState state, StringMessage msg) {
+    protected void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage msg) {
         switch (msg.command) {
             case HARDWARE:
                 hardwareApp.messageReceived(ctx, state, msg);

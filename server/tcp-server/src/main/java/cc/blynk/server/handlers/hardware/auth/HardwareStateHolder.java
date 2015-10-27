@@ -7,7 +7,7 @@ import cc.blynk.server.model.auth.User;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.09.15.
  */
-public class HandlerState {
+public class HardwareStateHolder {
 
     public final Integer dashId;
     public final User user;
@@ -15,11 +15,11 @@ public class HandlerState {
     public final String osType;
     public final String version;
 
-    public HandlerState(User user) {
+    public HardwareStateHolder(User user) {
         this(null, user, null);
     }
 
-    public HandlerState(Integer dashId, User user, String token) {
+    public HardwareStateHolder(Integer dashId, User user, String token) {
         this.dashId = dashId;
         this.user = user;
         this.token = token;
@@ -28,7 +28,7 @@ public class HandlerState {
     }
 
 
-    public HandlerState(User user, String osType, String version) {
+    public HardwareStateHolder(User user, String osType, String version) {
         this.dashId = null;
         this.user = user;
         this.token = null;

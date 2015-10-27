@@ -95,7 +95,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             ctx.pipeline().remove(ReadTimeoutHandler.class);
             ctx.pipeline().addFirst(new ReadTimeoutHandler(newHardwareInterval));
         }
-        ctx.pipeline().addLast(new HardwareHandler(props, sessionDao, reportingDao, blockingIOProcessor, new HandlerState(dashId, user, token)));
+        ctx.pipeline().addLast(new HardwareHandler(props, sessionDao, reportingDao, blockingIOProcessor, new HardwareStateHolder(dashId, user, token)));
 
         Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
 

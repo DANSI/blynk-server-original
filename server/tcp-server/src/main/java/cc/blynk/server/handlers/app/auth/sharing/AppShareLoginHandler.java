@@ -14,7 +14,7 @@ import cc.blynk.server.handlers.app.AppShareHandler;
 import cc.blynk.server.handlers.app.auth.AppLoginHandler;
 import cc.blynk.server.handlers.app.auth.RegisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
-import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
@@ -81,7 +81,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         Integer dashId = UserDao.getDashIdByToken(user.dashShareTokens, token, messageId);
 
         cleanPipeline(ctx.pipeline());
-        ctx.pipeline().addLast(new AppShareHandler(props, userDao, sessionDao, reportingDao, blockingIOProcessor, new HandlerState(dashId, user, token)));
+        ctx.pipeline().addLast(new AppShareHandler(props, userDao, sessionDao, reportingDao, blockingIOProcessor, new HardwareStateHolder(dashId, user, token)));
 
         Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
 

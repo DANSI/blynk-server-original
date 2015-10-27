@@ -9,7 +9,7 @@ import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.exceptions.QuotaLimitException;
-import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.handlers.hardware.logic.TweetLogic;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.Profile;
@@ -66,11 +66,11 @@ public class TweetHandlerTest extends TestBase {
 	private DashBoard dash;
 
 
-    private HandlerState state;
+    private HardwareStateHolder state;
 
     @Before
     public void setup() {
-        state = new HandlerState(1, user, "x");
+        state = new HardwareStateHolder(1, user, "x");
     }
 
 	@Test(expected = NotificationBodyInvalidException.class)

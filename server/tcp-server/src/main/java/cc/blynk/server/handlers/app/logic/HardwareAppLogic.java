@@ -5,7 +5,7 @@ import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.SessionDao;
-import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
 import io.netty.channel.ChannelHandlerContext;
@@ -32,7 +32,7 @@ public class HardwareAppLogic {
         return body.length() > 0 && body.charAt(0) == 'p';
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, HandlerState state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
         if (!state.user.hasActive()) {

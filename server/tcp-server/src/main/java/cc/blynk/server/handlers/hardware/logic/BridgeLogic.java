@@ -5,7 +5,7 @@ import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
-import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.auth.Session;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -41,7 +41,7 @@ public class BridgeLogic {
         return body.length() > 0 && body.charAt(0) == 'i';
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, HandlerState state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
         String[] split = message.body.split("\0");
         if (split.length < 3) {

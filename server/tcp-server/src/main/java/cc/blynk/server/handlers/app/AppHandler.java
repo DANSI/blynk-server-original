@@ -15,7 +15,7 @@ import cc.blynk.server.handlers.app.logic.sharing.GetShareTokenLogic;
 import cc.blynk.server.handlers.app.logic.sharing.GetSharedDashLogic;
 import cc.blynk.server.handlers.app.logic.sharing.RefreshShareTokenLogic;
 import cc.blynk.server.handlers.common.PingLogic;
-import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -42,7 +42,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final SaveDashLogic saveDashLogic;
     private final ActivateDashboardLogic activateDashboardLogic;
 
-    public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, HandlerState state) {
+    public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, HardwareStateHolder state) {
         super(props, state);
         this.saveProfile = new SaveProfileLogic(props);
         this.token = new GetTokenLogic(userDao);
@@ -59,7 +59,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, HandlerState state, StringMessage msg) {
+    protected void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage msg) {
         switch (msg.command) {
             case HARDWARE:
                 hardwareApp.messageReceived(ctx, state, msg);

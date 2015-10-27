@@ -9,7 +9,7 @@ import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
-import cc.blynk.server.handlers.hardware.auth.HandlerState;
+import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.handlers.hardware.logic.MailLogic;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.Profile;
@@ -70,7 +70,7 @@ public class MailHandlerTest extends TestBase {
         when(profile.getDashById(1, 1)).thenReturn(dashBoard);
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(null);
 
-        HandlerState state = new HandlerState(1, user, "x");
+        HardwareStateHolder state = new HardwareStateHolder(1, user, "x");
         mailHandler.messageReceived(ctx, state, mailMessage);
     }
 
@@ -83,7 +83,7 @@ public class MailHandlerTest extends TestBase {
         Mail mail = new Mail();
         when(dashBoard.getWidgetByType(cc.blynk.server.model.widgets.others.Mail.class)).thenReturn(mail);
 
-        HandlerState state = new HandlerState(1, user, "x");
+        HardwareStateHolder state = new HardwareStateHolder(1, user, "x");
         mailHandler.messageReceived(ctx, state, mailMessage);
     }
 
@@ -95,7 +95,7 @@ public class MailHandlerTest extends TestBase {
         when(profile.getDashById(1, 1)).thenReturn(dashBoard);
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(new Mail());
 
-        HandlerState state = new HandlerState(1, user, "x");
+        HardwareStateHolder state = new HardwareStateHolder(1, user, "x");
         mailHandler.messageReceived(ctx, state, mailMessage);
     }
 
