@@ -128,6 +128,10 @@ server.properties options:
 + Hardware port
 
         hardware.default.port=8442
+        
++ Administration port
+
+        server.admin.port=8777
 
 + User profiles folder. Folder in which all users profiles will be stored. By default System.getProperty("java.io.tmpdir")/blynk used. Will be created if not exists
 
