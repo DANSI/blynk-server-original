@@ -110,6 +110,14 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         appClient2.send("hardware 1 vw 2 2");
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, "1 vw 2 2".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+
+        clientPair.appClient.reset();
+
+        appClient2.send("hardware 1 vr 2 2");
+        verify(clientPair.appClient.responseMock, never()).channelRead(any(), any());
+
+        appClient2.send("hardware 1 pm 2 2");
+        verify(clientPair.appClient.responseMock, never()).channelRead(any(), any());
     }
 
     @Test

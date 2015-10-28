@@ -32,6 +32,10 @@ public class HardwareAppShareLogic {
         this.sessionDao = sessionDao;
     }
 
+    private static boolean isWriteOperation(String body) {
+        return body.length() > 1 && body.charAt(1) == 'w';
+    }
+
     public void messageReceived(ChannelHandlerContext ctx, AppShareStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
@@ -44,11 +48,13 @@ public class HardwareAppShareLogic {
         int dashId = ParseUtil.parseInt(split[0], message.id);
 
         //if dash was shared. check for shared channels
-        String sharedToken = state.user.dashShareTokens.get(dashId);
-        if (sharedToken != null) {
-            for (Channel appChannel : session.appChannels) {
-                if (appChannel != ctx.channel() && needSync(appChannel, sharedToken)) {
-                    appChannel.writeAndFlush(new SyncMessage(message.id, message.body));
+        if (isWriteOperation(split[1])) {
+            String sharedToken = state.user.dashShareTokens.get(dashId);
+            if (sharedToken != null) {
+                for (Channel appChannel : session.appChannels) {
+                    if (appChannel != ctx.channel() && needSync(appChannel, sharedToken)) {
+                        appChannel.writeAndFlush(new SyncMessage(message.id, message.body));
+                    }
                 }
             }
         }

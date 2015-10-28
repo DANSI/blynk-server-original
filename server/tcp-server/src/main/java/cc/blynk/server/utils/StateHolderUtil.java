@@ -1,11 +1,11 @@
 package cc.blynk.server.utils;
 
+import cc.blynk.server.exceptions.ServerException;
 import cc.blynk.server.handlers.app.AppHandler;
 import cc.blynk.server.handlers.app.auth.AppStateHolder;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.handlers.sharing.AppShareHandler;
-import cc.blynk.server.handlers.sharing.AppShareStateHolder;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
@@ -52,8 +52,11 @@ public class StateHolderUtil {
             return true;
         }
 
-        AppShareStateHolder appShareStateHolder = pipeline.get(AppShareHandler.class).state;
-        return appShareStateHolder.contains(sharedToken);
+        AppShareHandler appShareHandler = pipeline.get(AppShareHandler.class);
+        if (appShareHandler == null) {
+            throw new ServerException(0, "Channel has no state. Should never happen.");
+        }
+        return appShareHandler.state.contains(sharedToken);
     }
 
     //use only for rare cases
