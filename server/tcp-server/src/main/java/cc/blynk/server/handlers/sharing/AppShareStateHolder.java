@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.app.auth.sharing;
+package cc.blynk.server.handlers.sharing;
 
 import cc.blynk.server.handlers.app.auth.AppStateHolder;
 import cc.blynk.server.model.auth.User;
@@ -11,10 +11,12 @@ import cc.blynk.server.model.auth.User;
 public class AppShareStateHolder extends AppStateHolder {
 
     public final String token;
+    public final int dashId;
 
-    public AppShareStateHolder(User user, String osType, String version, String token) {
+    public AppShareStateHolder(User user, String osType, String version, String token, int dashId) {
         super(user, osType, version);
         this.token = token;
+        this.dashId = dashId;
     }
 
     public boolean contains(String sharedToken) {
