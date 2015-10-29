@@ -128,6 +128,10 @@ public abstract class BaseClient {
         }
     }
 
+    public boolean isClosed() {
+        return !channel.isOpen();
+    }
+
     public ChannelFuture stop() {
         ChannelFuture channelFuture = channel.close().awaitUninterruptibly();
         nioEventLoopGroup.shutdownGracefully();

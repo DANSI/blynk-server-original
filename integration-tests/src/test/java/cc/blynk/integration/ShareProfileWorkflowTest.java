@@ -121,6 +121,58 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void wrongSharedToken() throws Exception {
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = getBody(clientPair.appClient.responseMock);
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        appClient2.start(null);
+        appClient2.send("shareLogin " + "dima@mail.ua " + token+"a" + " Android 24");
+
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NOT_ALLOWED)));
+    }
+
+    @Test
+    public void revokeSharedToken() throws Exception {
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = getBody(clientPair.appClient.responseMock);
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        appClient2.start(null);
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, OK)));
+
+        clientPair.appClient.reset();
+        appClient2.reset();
+
+        assertFalse(clientPair.appClient.isClosed());
+        assertFalse(appClient2.isClosed());
+
+        clientPair.appClient.send("refreshShareToken 1");
+        token = getBody(clientPair.appClient.responseMock);
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NOT_ALLOWED)));
+
+        assertFalse(clientPair.appClient.isClosed());
+        assertTrue(appClient2.isClosed());
+
+        TestAppClient appClient3 = new TestAppClient(host, appPort, properties);
+        appClient3.start(null);
+        appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient3.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, OK)));
+    }
+
+    @Test
     public void testGetShareTokenAndRefresh() throws Exception {
         clientPair.appClient.send("getShareToken 1");
 

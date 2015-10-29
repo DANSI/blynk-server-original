@@ -53,7 +53,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.graphData = new GetGraphDataLogic(reportingDao, blockingIOProcessor);
         this.appMailLogic = new AppMailLogic(blockingIOProcessor);
         this.getShareTokenLogic = new GetShareTokenLogic(userDao);
-        this.refreshShareTokenLogic = new RefreshShareTokenLogic(userDao);
+        this.refreshShareTokenLogic = new RefreshShareTokenLogic(userDao, sessionDao);
         this.getSharedDashLogic = new GetSharedDashLogic(userDao);
         this.createDashLogic = new CreateDashLogic(props);
         this.saveDashLogic = new SaveDashLogic(props);
