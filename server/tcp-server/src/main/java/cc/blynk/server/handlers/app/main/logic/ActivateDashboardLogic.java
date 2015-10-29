@@ -6,6 +6,7 @@ import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.*;
 import static cc.blynk.common.utils.ParseUtil.*;
+import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
  * The Blynk Project.
@@ -41,6 +43,12 @@ public class ActivateDashboardLogic {
         dashBoard.isActive = true;
 
         Session session = sessionDao.userSession.get(user);
+
+        for (Channel appChannel : session.appChannels) {
+            if (getShareState(appChannel) != null) {
+                appChannel.writeAndFlush(message);
+            }
+        }
 
         if (session.hasHardwareOnline(dashId)) {
             ctx.writeAndFlush(produce(message.id, OK));

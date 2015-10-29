@@ -173,6 +173,38 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testDeactivateAndActivateForSubscriptions() throws Exception {
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = getBody(clientPair.appClient.responseMock);
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        appClient2.start(null);
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        TestAppClient appClient3 = new TestAppClient(host, appPort, properties);
+        appClient3.start(null);
+        appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+
+        clientPair.appClient.send("deactivate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, OK)));
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "1")));
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "1")));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, OK)));
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(3, ACTIVATE_DASHBOARD, "1")));
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(3, ACTIVATE_DASHBOARD, "1")));
+    }
+
+    @Test
     public void testGetShareTokenAndRefresh() throws Exception {
         clientPair.appClient.send("getShareToken 1");
 
