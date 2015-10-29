@@ -3,7 +3,7 @@ package cc.blynk.server.handlers.hardware;
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.dao.SessionDao;
-import cc.blynk.server.handlers.app.auth.AppStateHolder;
+import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
@@ -17,11 +17,9 @@ import io.netty.handler.timeout.ReadTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.common.enums.Response.DEVICE_WENT_OFFLINE;
-import static cc.blynk.common.enums.Response.DEVICE_WENT_OFFLINE_2;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
-import static cc.blynk.server.utils.StateHolderUtil.getAppState;
-import static cc.blynk.server.utils.StateHolderUtil.getHardState;
+import static cc.blynk.common.enums.Response.*;
+import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
  * The Blynk Project.

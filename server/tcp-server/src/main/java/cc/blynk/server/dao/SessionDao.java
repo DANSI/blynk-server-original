@@ -1,6 +1,6 @@
 package cc.blynk.server.dao;
 
-import cc.blynk.server.handlers.app.auth.AppStateHolder;
+import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
@@ -12,8 +12,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cc.blynk.server.utils.StateHolderUtil.getAppState;
-import static cc.blynk.server.utils.StateHolderUtil.getHardState;
+import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
  * Holds session info related to specific user.
@@ -30,6 +29,9 @@ public class SessionDao {
 
     public void removeAppFromSession(Channel channel) {
         AppStateHolder state = getAppState(channel);
+        if (state == null) {
+            state = getShareState(channel);
+        }
         if (state != null) {
             Session session = userSession.get(state.user);
             if (session != null) {

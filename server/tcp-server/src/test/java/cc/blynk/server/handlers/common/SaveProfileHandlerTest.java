@@ -4,11 +4,11 @@ import cc.blynk.common.model.messages.protocol.appllication.SaveProfileMessage;
 import cc.blynk.server.TestBase;
 import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.exceptions.NotAllowedException;
-import cc.blynk.server.handlers.app.logic.SaveProfileLogic;
+import cc.blynk.server.handlers.app.main.logic.SaveProfileLogic;
 import org.junit.Test;
 
-import static cc.blynk.common.enums.Command.SAVE_PROFILE;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.common.enums.Command.*;
+import static cc.blynk.common.model.messages.MessageFactory.*;
 
 /**
  * The Blynk Project.

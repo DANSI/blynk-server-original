@@ -5,8 +5,8 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
-import cc.blynk.server.handlers.app.auth.AppStateHolder;
-import cc.blynk.server.handlers.app.logic.HardwareAppLogic;
+import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
+import cc.blynk.server.handlers.app.main.logic.HardwareAppLogic;
 import cc.blynk.server.handlers.hardware.logic.HardwareLogic;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
@@ -19,8 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.

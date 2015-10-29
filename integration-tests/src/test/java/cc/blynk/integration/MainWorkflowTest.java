@@ -7,8 +7,8 @@ import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
-import cc.blynk.server.handlers.app.logic.reporting.GraphPinRequest;
-import cc.blynk.server.handlers.app.logic.reporting.GraphPinRequestData;
+import cc.blynk.server.handlers.app.main.logic.reporting.GraphPinRequest;
+import cc.blynk.server.handlers.app.main.logic.reporting.GraphPinRequestData;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import org.apache.commons.io.FileUtils;
@@ -27,11 +27,10 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.zip.InflaterInputStream;
 
-import static cc.blynk.common.enums.Command.HARDWARE;
+import static cc.blynk.common.enums.Command.*;
 import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static cc.blynk.common.model.messages.MessageFactory.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**

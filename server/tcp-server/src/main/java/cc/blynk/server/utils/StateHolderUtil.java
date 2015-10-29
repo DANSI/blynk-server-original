@@ -1,11 +1,11 @@
 package cc.blynk.server.utils;
 
 import cc.blynk.server.exceptions.ServerException;
-import cc.blynk.server.handlers.app.AppHandler;
-import cc.blynk.server.handlers.app.auth.AppStateHolder;
+import cc.blynk.server.handlers.app.main.AppHandler;
+import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
+import cc.blynk.server.handlers.app.sharing.AppShareHandler;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
-import cc.blynk.server.handlers.sharing.AppShareHandler;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
