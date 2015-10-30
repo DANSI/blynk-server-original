@@ -6,7 +6,7 @@ import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.handlers.app.main.logic.LoadProfileLogic;
+import cc.blynk.server.handlers.app.main.logic.LoadProfileGzippedLogic;
 import cc.blynk.server.handlers.app.main.logic.reporting.GetGraphDataLogic;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
@@ -42,7 +42,7 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 hardwareApp.messageReceived(ctx, state, msg);
                 break;
             case LOAD_PROFILE :
-                LoadProfileLogic.messageReceived(ctx, state.user, msg);
+                LoadProfileGzippedLogic.messageReceived(ctx, state.user, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);
