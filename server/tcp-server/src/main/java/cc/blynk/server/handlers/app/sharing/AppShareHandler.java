@@ -41,7 +41,7 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
             case HARDWARE:
                 hardwareApp.messageReceived(ctx, state, msg);
                 break;
-            case LOAD_PROFILE :
+            case LOAD_PROFILE_GZIPPED :
                 LoadProfileGzippedLogic.messageReceived(ctx, state.user, msg);
                 break;
             case PING :

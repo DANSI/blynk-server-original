@@ -1,5 +1,6 @@
 package cc.blynk.integration;
 
+import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestAppClient;
@@ -8,6 +9,7 @@ import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.widgets.others.Notification;
 import cc.blynk.server.model.widgets.others.Twitter;
+import cc.blynk.server.utils.ByteUtils;
 import cc.blynk.server.utils.JsonParser;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -203,6 +205,30 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(3, ACTIVATE_DASHBOARD, "1")));
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(3, ACTIVATE_DASHBOARD, "1")));
     }
+
+    @Test
+    public void loadGzippedProfileForSharedBoard() throws Exception{
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = getBody(clientPair.appClient.responseMock);
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        appClient2.start(null);
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("loadProfile");
+        String body = getBody(clientPair.appClient.responseMock);
+
+        appClient2.send("loadProfileGzipped");
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(2, ByteUtils.compress(body, 0))));
+    }
+
 
     @Test
     public void testGetShareTokenAndRefresh() throws Exception {
