@@ -247,7 +247,8 @@ WARNING : this will changed in near future.
 
         openssl pkcs8 -topk8 -inform PEM -outform PEM -in server.key -out server.pem
         
-WARNING : in case you connect hardware via [USB script](https://github.com/blynkkk/blynk-library/tree/master/scripts) you have to provide an option '-s' pointing to "common name" (hostname) you did specified during certificate generation.
+WARNING : you should have password for certificate. Certificates without pass are not accepted. 
+In case you connect hardware via [USB script](https://github.com/blynkkk/blynk-library/tree/master/scripts) you have to provide an option '-s' pointing to "common name" (hostname) you did specified during certificate generation.
         
 As output you'll retrieve server.crt and server.pem files that you need to provide for server.ssl properties.
 
