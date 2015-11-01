@@ -9,25 +9,14 @@ import cc.blynk.server.model.auth.User;
  */
 public class HardwareStateHolder {
 
-    public final Integer dashId;
+    public final int dashId;
     public final User user;
     public final String token;
 
-    public HardwareStateHolder(User user) {
-        this(null, user, null);
-    }
-
-    public HardwareStateHolder(Integer dashId, User user, String token) {
+    public HardwareStateHolder(int dashId, User user, String token) {
         this.dashId = dashId;
         this.user = user;
         this.token = token;
-    }
-
-
-    public HardwareStateHolder(User user, String osType, String version) {
-        this.dashId = null;
-        this.user = user;
-        this.token = null;
     }
 
 }

@@ -41,7 +41,7 @@ public class NotificationsProcessorTest {
 
     @Test
     public void testNoCorrectWrapper() {
-        HardwareHandler hardwareHandler = new HardwareHandler(props, null, null, null, new HardwareStateHolder(new User("test", "test")));
+        HardwareHandler hardwareHandler = new HardwareHandler(props, null, null, null, new HardwareStateHolder(1, new User("test", "test"), null));
 
         when(channel.eventLoop()).thenReturn(eventLoop);
         when(channel.pipeline()).thenReturn(pipeline);
