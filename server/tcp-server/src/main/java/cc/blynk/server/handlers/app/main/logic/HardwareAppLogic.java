@@ -14,6 +14,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.utils.PinUtil.*;
 import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
@@ -30,10 +31,6 @@ public class HardwareAppLogic {
 
     public HardwareAppLogic(SessionDao sessionDao) {
         this.sessionDao = sessionDao;
-    }
-
-    private static boolean pinModeMessage(String body) {
-        return body.length() > 0 && body.charAt(0) == 'p';
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
@@ -70,11 +67,13 @@ public class HardwareAppLogic {
             }
 
             //if dash was shared. check for shared channels
-            String sharedToken = state.user.dashShareTokens.get(dashId);
-            if (sharedToken != null) {
-                for (Channel appChannel : session.appChannels) {
-                    if (appChannel != ctx.channel() && needSync(appChannel, sharedToken)) {
-                        appChannel.writeAndFlush(new SyncMessage(message.id, message.body));
+            if (isWriteOperation(split[1])) {
+                String sharedToken = state.user.dashShareTokens.get(dashId);
+                if (sharedToken != null) {
+                    for (Channel appChannel : session.appChannels) {
+                        if (appChannel != ctx.channel() && needSync(appChannel, sharedToken)) {
+                            appChannel.writeAndFlush(new SyncMessage(message.id, message.body));
+                        }
                     }
                 }
             }

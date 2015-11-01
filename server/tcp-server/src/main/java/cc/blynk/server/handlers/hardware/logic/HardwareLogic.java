@@ -59,6 +59,7 @@ public class HardwareLogic {
             reportingDao.process(state.user.name, key);
 
             //in case message is for graph - attaching ts.
+            //todo remove this after adding support in apps
             if (state.user.profile.hasGraphPin(key)) {
                 body += StringUtils.BODY_SEPARATOR_STRING + ts;
             }

@@ -14,6 +14,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.utils.PinUtil.*;
 import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
@@ -30,10 +31,6 @@ public class HardwareAppShareLogic {
 
     public HardwareAppShareLogic(SessionDao sessionDao) {
         this.sessionDao = sessionDao;
-    }
-
-    private static boolean isWriteOperation(String body) {
-        return body.length() > 1 && body.charAt(1) == 'w';
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppShareStateHolder state, StringMessage message) {
