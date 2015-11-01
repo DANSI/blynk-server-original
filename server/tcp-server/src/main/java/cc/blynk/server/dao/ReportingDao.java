@@ -103,14 +103,14 @@ public class ReportingDao {
         FileUtils.deleteQuietly(userDataDailyFile.toFile());
     }
 
-    public void process(GraphKey key) {
+    public void process(String username, GraphKey key) {
         if (ENABLE_RAW_DATA_STORE) {
             ThreadContext.put("dashId", Integer.toString(key.dashId));
             ThreadContext.put("pin", String.valueOf(key.pinType.pintTypeChar) + key.pin);
             log.info(key.toCSV());
         }
 
-        averageAggregator.collect(ThreadContext.get("user"), key.dashId, key.pinType, key.pin, key.ts, key.value);
+        averageAggregator.collect(username, key.dashId, key.pinType, key.pin, key.ts, key.value);
     }
 
     public byte[][] getAllFromDisk(String username, GraphPinRequest[] requestedPins, int msgId) {

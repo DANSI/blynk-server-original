@@ -16,7 +16,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.utils.StateHolderUtil.getAppState;
+import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
  * Handler responsible for forwarding messages from hardware to applications.
@@ -43,7 +43,6 @@ public class HardwareLogic {
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
-        //if message from hardware, check if it belongs to graph. so we need save it in that case
         if (message.body.length() < 4) {
             throw new IllegalCommandException("HardwareLogic command body too short.", message.id);
         }
@@ -57,7 +56,7 @@ public class HardwareLogic {
             GraphKey key = new GraphKey(dashId, body, ts);
 
             //storing to DB and aggregating
-            reportingDao.process(key);
+            reportingDao.process(state.user.name, key);
 
             //in case message is for graph - attaching ts.
             if (state.user.profile.hasGraphPin(key)) {
