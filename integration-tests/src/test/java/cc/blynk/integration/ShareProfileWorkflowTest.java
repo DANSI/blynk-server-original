@@ -209,6 +209,41 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void checkBothClientsReceiveMessage() throws Exception {
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = getBody(clientPair.appClient.responseMock);
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        appClient2.start(null);
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+
+        //check from hard side
+        clientPair.hardwareClient.send("hardware aw 3 151");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, "1 aw 3 151".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, "1 aw 3 151".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+
+        clientPair.hardwareClient.send("hardware aw 3 152");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, HARDWARE, "1 aw 3 152".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, HARDWARE, "1 aw 3 152".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfile");
+        String profileString = getBody(clientPair.appClient.responseMock);
+        assertNotNull(profileString);
+        Profile profile = JsonParser.parseProfile(profileString, 0);
+
+        Widget tmp = getWidgetByPin(profile, 3);
+
+        assertNotNull(tmp);
+        assertEquals("152", tmp.value);
+    }
+
+    @Test
     public void wrongSharedToken() throws Exception {
         clientPair.appClient.send("getShareToken 1");
 
