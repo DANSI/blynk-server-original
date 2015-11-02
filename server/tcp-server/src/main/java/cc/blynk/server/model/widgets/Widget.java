@@ -93,7 +93,7 @@ public abstract class Widget {
     public String value;
 
     public void updateIfSame(HardwareBody body) {
-        if (pin == body.pin && pinType == body.type) {
+        if (pin != null && pin == body.pin && pinType == body.type) {
             value = body.value[0];
         }
     }

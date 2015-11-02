@@ -179,8 +179,8 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
 
     @Test
     public void testAppSendAnyHardCommandAndBack() throws Exception {
-        clientPair.appClient.send("hardware 1 dw 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "dw 1".replaceAll(" ", "\0"))));
+        clientPair.appClient.send("hardware 1 dw 1 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "dw 1 1".replaceAll(" ", "\0"))));
 
         clientPair.hardwareClient.send("hardware ar 1");
 

@@ -37,16 +37,18 @@ public class HardwareAppShareLogic {
     public void messageReceived(ChannelHandlerContext ctx, AppShareStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
-        DashBoard dashBoard = state.user.profile.getDashById(state.dashId, message.id);
+        String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING, 2);
+        int dashId = ParseUtil.parseInt(split[0], message.id);
+
+        DashBoard dashBoard = state.user.profile.getDashById(dashId, message.id);
         if (!dashBoard.isActive) {
             throw new NoActiveDashboardException(message.id);
         }
 
-        String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING, 2);
-        int dashId = ParseUtil.parseInt(split[0], message.id);
-
         //if dash was shared. check for shared channels
         if (isWriteOperation(split[1])) {
+            state.user.profile.updateWidgetValue(split[1], dashId, message.id);
+
             String sharedToken = state.user.dashShareTokens.get(dashId);
             if (sharedToken != null) {
                 for (Channel appChannel : session.appChannels) {
