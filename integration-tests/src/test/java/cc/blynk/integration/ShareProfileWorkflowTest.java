@@ -126,17 +126,23 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
         appClient2.reset();
 
-        appClient2.send("hardware 1 vr 2 2");
+        appClient2.send("hardware 1 vr 3 3");
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "vr 3 3".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
 
         appClient2.send("hardware 1 pm 2 2");
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, "pm 2 2".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+
+        clientPair.hardwareClient.reset();
 
         clientPair.appClient.send("hardware 1 vr 2 2");
         verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "vr 2 2".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
 
         clientPair.appClient.send("hardware 1 pm 2 2");
         verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, "pm 2 2".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
     }
 
     @Test
