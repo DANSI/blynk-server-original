@@ -26,6 +26,14 @@ public final class ParseUtil {
         }
     }
 
+    public static byte parseByte(String intProperty, int msgId) {
+        try {
+            return Byte.parseByte(intProperty);
+        } catch (NumberFormatException ex) {
+            throw new BaseServerException("Pin is not a number.", msgId, Response.ILLEGAL_COMMAND);
+        }
+    }
+
     public static long parseLong(String longProperty) {
         try {
             return Long.parseLong(longProperty);

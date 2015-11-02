@@ -42,6 +42,11 @@ public class Profile {
         throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashBoardId), msgId);
     }
 
+    public void updateWidgetValue(String body, int dashId, int msgId) {
+        DashBoard dash = getDashById(dashId, msgId);
+        dash.update(body, msgId);
+    }
+
     public int getDashIndex(int dashId, int msgId) {
         for (int i = 0; i < dashBoards.length; i++) {
             if (dashBoards[i].id == dashId) {

@@ -1,16 +1,13 @@
 package cc.blynk.server.model.widgets.outputs;
 
-import cc.blynk.server.model.Pin;
-import cc.blynk.server.model.widgets.Widget;
+import cc.blynk.server.model.widgets.MultiPinWidget;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class LCD extends Widget {
-
-    public Pin[] pins;
+public class LCD extends MultiPinWidget {
 
     public int frequency;
 

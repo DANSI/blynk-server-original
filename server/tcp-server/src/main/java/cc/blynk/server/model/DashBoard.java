@@ -62,6 +62,18 @@ public class DashBoard {
         return timerWidgets;
     }
 
+    public void update(String body, int msgId) {
+        if (widgets == null) {
+            return;
+        }
+
+        HardwareBody hardwareBody = new HardwareBody(body, msgId);
+
+        for (Widget widget : widgets) {
+            widget.updateIfSame(hardwareBody);
+        }
+    }
+
     public  <T> T getWidgetByType(Class<T> clazz) {
         if (!isActive || widgets == null || widgets.length == 0) {
             return null;

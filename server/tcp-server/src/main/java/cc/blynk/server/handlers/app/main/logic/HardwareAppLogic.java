@@ -18,6 +18,9 @@ import static cc.blynk.server.utils.PinUtil.*;
 import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
+ * Responsible for handling incoming hardware commands from applications and forwarding it to
+ * appropriate hardware.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
@@ -36,6 +39,7 @@ public class HardwareAppLogic {
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
+        //if no active dashboards at all - do nothing. this could happen only in case of app. bug
         if (!state.user.hasActive()) {
             //throw new NoActiveDashboardException(message.id);
             return;
@@ -66,8 +70,10 @@ public class HardwareAppLogic {
                 }
             }
 
-            //if dash was shared. check for shared channels
             if (isWriteOperation(split[1])) {
+                state.user.profile.updateWidgetValue(split[1], dashId, message.id);
+
+                //if dash was shared. check for shared channels
                 String sharedToken = state.user.dashShareTokens.get(dashId);
                 if (sharedToken != null) {
                     for (Channel appChannel : session.appChannels) {

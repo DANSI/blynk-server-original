@@ -1,5 +1,6 @@
 package cc.blynk.server.model.widgets;
 
+import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.enums.State;
 import cc.blynk.server.model.widgets.controls.*;
@@ -89,7 +90,12 @@ public abstract class Widget {
     //todo is it used?
     public State state;
 
-    //todo is it used?
     public String value;
+
+    public void updateIfSame(HardwareBody body) {
+        if (pin == body.pin && pinType == body.type) {
+            value = body.value[0];
+        }
+    }
 
 }

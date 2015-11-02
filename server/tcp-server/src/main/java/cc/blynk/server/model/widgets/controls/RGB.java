@@ -1,17 +1,14 @@
 package cc.blynk.server.model.widgets.controls;
 
-import cc.blynk.server.model.Pin;
-import cc.blynk.server.model.widgets.Widget;
+import cc.blynk.server.model.widgets.MultiPinWidget;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class RGB extends Widget {
+public class RGB extends MultiPinWidget {
 
     public boolean splitMode;
-
-    public Pin[] pins;
 
 }

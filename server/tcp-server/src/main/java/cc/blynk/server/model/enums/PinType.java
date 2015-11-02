@@ -7,7 +7,6 @@ package cc.blynk.server.model.enums;
  */
 public enum PinType {
 
-    NONE('x'),
     DIGITAL('d'),
     VIRTUAL('v'),
     ANALOG('a');
@@ -27,7 +26,7 @@ public enum PinType {
             case 'd' :
                 return DIGITAL;
             default:
-                return NONE;
+                throw new RuntimeException("Invalid pin type.");
         }
     }
 
