@@ -8,6 +8,8 @@ import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.app.main.logic.LoadProfileGzippedLogic;
 import cc.blynk.server.handlers.app.main.logic.reporting.GetGraphDataLogic;
+import cc.blynk.server.handlers.app.sharing.auth.AppShareStateHolder;
+import cc.blynk.server.handlers.app.sharing.logic.HardwareAppShareLogic;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;

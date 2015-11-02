@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.app.sharing;
+package cc.blynk.server.handlers.app.sharing.auth;
 
 import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
 import cc.blynk.server.model.auth.User;

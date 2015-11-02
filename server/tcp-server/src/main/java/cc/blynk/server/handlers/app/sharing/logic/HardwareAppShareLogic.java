@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.app.sharing;
+package cc.blynk.server.handlers.app.sharing.logic;
 
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
@@ -7,6 +7,7 @@ import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.exceptions.NoActiveDashboardException;
+import cc.blynk.server.handlers.app.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
 import io.netty.channel.Channel;

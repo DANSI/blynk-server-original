@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.app.sharing;
+package cc.blynk.server.handlers.app.sharing.auth;
 
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.enums.Response;
@@ -12,6 +12,7 @@ import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.app.main.auth.AppLoginHandler;
 import cc.blynk.server.handlers.app.main.auth.RegisterHandler;
+import cc.blynk.server.handlers.app.sharing.AppShareHandler;
 import cc.blynk.server.handlers.common.UserNotLoggerHandler;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
