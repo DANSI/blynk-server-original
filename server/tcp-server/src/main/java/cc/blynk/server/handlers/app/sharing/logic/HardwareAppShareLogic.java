@@ -47,7 +47,8 @@ public class HardwareAppShareLogic {
 
         //if dash was shared. check for shared channels
         if (isWriteOperation(split[1])) {
-            state.user.profile.updateWidgetValue(split[1], dashId, message.id);
+            state.user.profile.getDashById(dashId, message.id)
+                    .update(split[1], message.id);
 
             String sharedToken = state.user.dashShareTokens.get(dashId);
             if (sharedToken != null) {

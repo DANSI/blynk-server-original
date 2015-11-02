@@ -32,14 +32,17 @@ public class StateHolderUtil {
 
     public static AppStateHolder getAppState(ChannelPipeline pipeline) {
         AppHandler handler = pipeline.get(AppHandler.class);
-        return handler == null ? null : handler.state;
+        if (handler == null) {
+            return getShareState(pipeline);
+        }
+        return handler.state;
     }
 
     public static AppStateHolder getShareState(Channel channel) {
         return getShareState(channel.pipeline());
     }
 
-    public static AppStateHolder getShareState(ChannelPipeline pipeline) {
+    private static AppStateHolder getShareState(ChannelPipeline pipeline) {
         AppShareHandler handler = pipeline.get(AppShareHandler.class);
         return handler == null ? null : handler.state;
     }

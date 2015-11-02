@@ -29,9 +29,6 @@ public class SessionDao {
 
     public void removeAppFromSession(Channel channel) {
         AppStateHolder state = getAppState(channel);
-        if (state == null) {
-            state = getShareState(channel);
-        }
         if (state != null) {
             Session session = userSession.get(state.user);
             if (session != null) {

@@ -7,6 +7,7 @@ import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.model.Profile;
+import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.others.Notification;
 import cc.blynk.server.model.widgets.others.Twitter;
 import cc.blynk.server.utils.ByteUtils;
@@ -37,6 +38,15 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     private AppServer appServer;
     private HardwareServer hardwareServer;
     private ClientPair clientPair;
+
+    private static Widget getWidgetByPin(Profile profile, int pin) {
+        for (Widget widget : profile.dashBoards[0].widgets) {
+            if (widget.pin != null && widget.pin == pin) {
+                return widget;
+            }
+        }
+        return null;
+    }
 
     @Before
     public void init() throws Exception {
@@ -127,7 +137,75 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("hardware 1 pm 2 2");
         verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
+    }
 
+    @Test
+    public void checkStateWasChanged() throws Exception {
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = getBody(clientPair.appClient.responseMock);
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        appClient2.start(null);
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+
+        clientPair.appClient.send("hardware 1 vw 1 1");
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, "1 vw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+
+        appClient2.send("hardware 1 vw 2 2");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, "1 vw 2 2".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+
+        clientPair.appClient.reset();
+        appClient2.reset();
+
+        //check from master side
+        clientPair.appClient.send("hardware 1 aw 3 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, "aw 3 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+
+        clientPair.appClient.send("loadProfile");
+        String profileString = getBody(clientPair.appClient.responseMock);
+        assertNotNull(profileString);
+        Profile profile = JsonParser.parseProfile(profileString, 0);
+
+        Widget tmp = getWidgetByPin(profile, 3);
+
+        assertNotNull(tmp);
+        assertEquals("1", tmp.value);
+
+
+        //check from slave side
+        appClient2.send("hardware 1 aw 3 150");
+        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, "aw 3 150".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfile");
+        profileString = getBody(clientPair.appClient.responseMock);
+        assertNotNull(profileString);
+        profile = JsonParser.parseProfile(profileString, 0);
+
+        tmp = getWidgetByPin(profile, 3);
+
+        assertNotNull(tmp);
+        assertEquals("150", tmp.value);
+
+        //check from hard side
+        clientPair.hardwareClient.send("hardware aw 3 151");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, "1 aw 3 151".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfile");
+        profileString = getBody(clientPair.appClient.responseMock);
+        assertNotNull(profileString);
+        profile = JsonParser.parseProfile(profileString, 0);
+
+        tmp = getWidgetByPin(profile, 3);
+
+        assertNotNull(tmp);
+        assertEquals("151", tmp.value);
     }
 
     @Test
