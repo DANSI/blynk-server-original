@@ -46,7 +46,7 @@ public class DeActivateDashboardLogic {
 
         Session session = sessionDao.userSession.get(user);
         for (Channel appChannel : session.appChannels) {
-            if (getAppState(appChannel) != null) {
+            if (appChannel != ctx.channel() && getAppState(appChannel) != null) {
                 appChannel.writeAndFlush(message);
             }
         }
