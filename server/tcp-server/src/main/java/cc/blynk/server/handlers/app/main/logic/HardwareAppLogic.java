@@ -8,6 +8,7 @@ import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
 import cc.blynk.server.model.DashBoard;
+import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.auth.Session;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -71,8 +72,8 @@ public class HardwareAppLogic {
             }
 
             if (isWriteOperation(split[1])) {
-                state.user.profile.getDashById(dashId, message.id)
-                        .update(split[1], message.id);
+                DashBoard dash = state.user.profile.getDashById(dashId, message.id);
+                dash.update(new HardwareBody(split[1], message.id));
 
                 //if dash was shared. check for shared channels
                 String sharedToken = state.user.dashShareTokens.get(dashId);

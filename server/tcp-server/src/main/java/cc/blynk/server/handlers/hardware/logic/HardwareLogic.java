@@ -9,6 +9,7 @@ import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NoActiveDashboardException;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.DashBoard;
+import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.graph.GraphKey;
 import cc.blynk.server.utils.PinUtil;
@@ -52,9 +53,11 @@ public class HardwareLogic {
         long ts = System.currentTimeMillis();
 
         final int dashId = state.dashId;
+        DashBoard dash = state.user.profile.getDashById(dashId, message.id);
 
         if (PinUtil.isWriteOperation(body)) {
-            GraphKey key = new GraphKey(dashId, body, ts);
+            String[] bodyParts = body.split(StringUtils.BODY_SEPARATOR_STRING);
+            GraphKey key = new GraphKey(dashId, bodyParts, ts);
 
             //storing to DB and aggregating
             reportingDao.process(state.user.name, key);
@@ -64,9 +67,9 @@ public class HardwareLogic {
             if (state.user.profile.hasGraphPin(key)) {
                 body += StringUtils.BODY_SEPARATOR_STRING + ts;
             }
-        }
 
-        DashBoard dash = state.user.profile.getDashById(dashId, message.id);
+            dash.update(new HardwareBody(body, message.id));
+        }
 
         if (!dash.isActive) {
             throw new NoActiveDashboardException(message.id);

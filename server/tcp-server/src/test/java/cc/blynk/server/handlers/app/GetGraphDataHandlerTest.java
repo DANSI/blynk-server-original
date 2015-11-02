@@ -15,9 +15,8 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.zip.InflaterInputStream;
 
-import static cc.blynk.server.utils.ByteUtils.REPORTING_RECORD_SIZE_BYTES;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static cc.blynk.server.utils.ByteUtils.*;
+import static org.junit.Assert.*;
 
 /**
  * The Blynk Project.
@@ -57,7 +56,7 @@ public class GetGraphDataHandlerTest extends TestBase {
         int dataLength = 0;
         for (int i = 0; i < 1000; i++) {
             long ts = System.currentTimeMillis();
-            GraphKey mes = new GraphKey(1, ("aw 1 " + i).replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), ts);
+            GraphKey mes = new GraphKey(1, ("aw 1 " + i).split(StringUtils.BODY_SEPARATOR_STRING), ts);
             bb.put(toByteArray(mes));
             dataLength += REPORTING_RECORD_SIZE_BYTES;
         }

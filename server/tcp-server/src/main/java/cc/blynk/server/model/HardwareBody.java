@@ -17,11 +17,14 @@ public class HardwareBody {
     public byte pin;
     public String[] value;
 
-    public HardwareBody(String body, int msgId) {
-        String[] splitted = body.split(StringUtils.BODY_SEPARATOR_STRING);
+    public HardwareBody(String[] splitted, int msgId) {
         this.type = PinType.getPingType(splitted[0].charAt(0));
         this.pin = ParseUtil.parseByte(splitted[1], msgId);
         this.value = Arrays.copyOfRange(splitted, 2, splitted.length);
+    }
+
+    public HardwareBody(String body, int msgId) {
+        this(body.split(StringUtils.BODY_SEPARATOR_STRING), msgId);
     }
 
 }

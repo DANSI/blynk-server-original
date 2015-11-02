@@ -62,12 +62,10 @@ public class DashBoard {
         return timerWidgets;
     }
 
-    public void update(String body, int msgId) {
+    public void update(HardwareBody hardwareBody) {
         if (widgets == null) {
             return;
         }
-
-        HardwareBody hardwareBody = new HardwareBody(body, msgId);
 
         for (Widget widget : widgets) {
             widget.updateIfSame(hardwareBody);

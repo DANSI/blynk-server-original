@@ -1,6 +1,5 @@
 package cc.blynk.server.model.graph;
 
-import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.model.enums.PinType;
 
 /**
@@ -28,11 +27,10 @@ public class GraphKey {
         this.ts = 0;
     }
 
-    public GraphKey(int dashId, String body, long ts) {
-        String[] bodyParts = body.split(StringUtils.BODY_SEPARATOR_STRING);
+    public GraphKey(int dashId, String[] bodyParts, long ts) {
         this.dashId = dashId;
+        this.pinType = PinType.getPingType(bodyParts[0].charAt(0));
         this.pin = Byte.parseByte(bodyParts[1]);
-        this.pinType = PinType.getPingType(body.charAt(0));
         this.value = bodyParts[2];
         this.ts = ts;
     }

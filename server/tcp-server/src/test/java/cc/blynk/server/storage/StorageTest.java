@@ -28,7 +28,7 @@ public class StorageTest {
         try (BufferedWriter bw = Files.newBufferedWriter(path)) {
             //200 req/sec current load.
             for (int j = 0; j < 24 * 3600; j++) {
-                GraphKey storeMessage = new GraphKey(100000, "aw 10 " + i++, ts++);
+                GraphKey storeMessage = new GraphKey(100000, ("aw 10 " + i++).split(" "), ts++);
                 bw.write(storeMessage.toCSV());
                 bw.write("\n");
             }

@@ -9,6 +9,7 @@ import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.exceptions.NoActiveDashboardException;
 import cc.blynk.server.handlers.app.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.model.DashBoard;
+import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.auth.Session;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -47,8 +48,8 @@ public class HardwareAppShareLogic {
 
         //if dash was shared. check for shared channels
         if (isWriteOperation(split[1])) {
-            state.user.profile.getDashById(dashId, message.id)
-                    .update(split[1], message.id);
+            DashBoard dash = state.user.profile.getDashById(dashId, message.id);
+            dash.update(new HardwareBody(split[1], message.id));
 
             String sharedToken = state.user.dashShareTokens.get(dashId);
             if (sharedToken != null) {
