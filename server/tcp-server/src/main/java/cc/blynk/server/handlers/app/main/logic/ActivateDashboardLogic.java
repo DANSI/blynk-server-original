@@ -41,6 +41,7 @@ public class ActivateDashboardLogic {
         DashBoard dashBoard = user.profile.getDashboardById(dashId, message.id);
         user.profile.activeDashId = dashId;
         dashBoard.isActive = true;
+        user.lastModifiedTs = System.currentTimeMillis();
 
         Session session = sessionDao.userSession.get(user);
 

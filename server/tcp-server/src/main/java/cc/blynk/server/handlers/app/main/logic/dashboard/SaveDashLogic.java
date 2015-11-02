@@ -49,6 +49,7 @@ public class SaveDashLogic {
 
         int index = user.profile.getDashIndex(updatedDash.id, message.id);
         user.profile.dashBoards[index] = updatedDash;
+        user.lastModifiedTs = System.currentTimeMillis();
 
         ctx.writeAndFlush(produce(message.id, OK));
     }
