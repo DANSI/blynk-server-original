@@ -11,6 +11,7 @@ import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.graph.GraphKey;
+import cc.blynk.server.utils.PinUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -52,7 +53,7 @@ public class HardwareLogic {
 
         final int dashId = state.dashId;
 
-        if (body.charAt(1) == 'w') {
+        if (PinUtil.isWriteOperation(body)) {
             GraphKey key = new GraphKey(dashId, body, ts);
 
             //storing to DB and aggregating
