@@ -5,8 +5,10 @@ import cc.blynk.server.model.widgets.Widget;
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
- * Created on 21.03.15.
+ * Created on 03.11.15.
  */
-public class Digit4Display extends Widget {
+public abstract class FrequencyWidget extends Widget {
+
+    public int frequency;
 
 }
