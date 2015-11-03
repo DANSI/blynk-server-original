@@ -1,7 +1,10 @@
 package cc.blynk.server.notifications;
 
+import cc.blynk.server.model.widgets.others.Priority;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * The Blynk Project.
@@ -21,6 +24,11 @@ public class GCMWrapperTest {
     @Ignore
     public void testAndroid() throws Exception {
         GCMWrapper gcmWrapper = new GCMWrapper();
-        gcmWrapper.send(new AndroidGCMMessage("", "yo!!!", 1));
+        gcmWrapper.send(new AndroidGCMMessage("", Priority.normal, "yo!!!", 1));
+    }
+
+    @Test
+    public void testJson() {
+        assertEquals("{\"to\":\"to\",\"priority\":\"normal\",\"data\":{\"message\":\"yo!!!\",\"dashId\":1}}", new AndroidGCMMessage("to", Priority.normal, "yo!!!", 1).toString());
     }
 }

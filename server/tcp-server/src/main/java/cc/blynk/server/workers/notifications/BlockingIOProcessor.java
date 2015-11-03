@@ -121,7 +121,7 @@ public class BlockingIOProcessor {
 
     public void push(Channel channel, Notification widget, String body, int dashId, int msgId) {
         if (widget.token != null && !widget.token.equals("")) {
-            push(channel, new AndroidGCMMessage(widget.token, body, dashId), msgId);
+            push(channel, new AndroidGCMMessage(widget.token, widget.priority, body, dashId), msgId);
         }
         if (widget.iOSToken != null && !widget.iOSToken.equals("")) {
             push(channel, new IOSGCMMessage(widget.iOSToken, body, dashId), msgId);
@@ -143,7 +143,7 @@ public class BlockingIOProcessor {
 
     public void push(User user, Notification widget, String body, int dashId) {
         if (widget.token != null && !widget.token.equals("")) {
-            push(user, new AndroidGCMMessage(widget.token, body, dashId));
+            push(user, new AndroidGCMMessage(widget.token,  widget.priority, body, dashId));
         }
         if (widget.iOSToken != null && !widget.iOSToken.equals("")) {
             push(user, new IOSGCMMessage(widget.iOSToken, body, dashId));

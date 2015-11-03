@@ -1,5 +1,6 @@
 package cc.blynk.server.notifications;
 
+import cc.blynk.server.model.widgets.others.Priority;
 import cc.blynk.server.utils.JsonParser;
 
 /**
@@ -11,10 +12,13 @@ public class AndroidGCMMessage implements GCMMessage {
 
     private final String to;
 
+    private final Priority priority;
+
     private final GCMData data;
 
-    public AndroidGCMMessage(String to, String message, int dashId) {
+    public AndroidGCMMessage(String to, Priority priority, String message, int dashId) {
         this.to = to;
+        this.priority = priority;
         this.data = new GCMData(message, dashId);
     }
 
@@ -37,4 +41,5 @@ public class AndroidGCMMessage implements GCMMessage {
             this.dashId = dashId;
         }
     }
+
 }
