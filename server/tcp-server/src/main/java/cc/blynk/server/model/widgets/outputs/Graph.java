@@ -13,8 +13,4 @@ public class Graph extends Widget {
 
     public boolean isBar;
 
-    public int min;
-
-    public int max;
-
 }

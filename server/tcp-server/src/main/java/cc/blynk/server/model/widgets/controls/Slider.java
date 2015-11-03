@@ -9,10 +9,4 @@ import cc.blynk.server.model.widgets.Widget;
  */
 public class Slider extends Widget {
 
-    public boolean pwmMode;
-
-    public int min;
-
-    public int max;
-
 }

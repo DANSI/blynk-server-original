@@ -16,7 +16,7 @@ public abstract class MultiPinWidget extends Widget {
     public void updateIfSame(HardwareBody body) {
         if (pins != null) {
             for (int i = 0; i < pins.length; i++) {
-                if (pins[i].pin == body.pin && pins[i].pinType == body.type) {
+                if (pins[i].isSame(body)) {
                     pins[i].value = (body.value.length > 1 ? body.value[i] : body.value[0]);
                 }
             }

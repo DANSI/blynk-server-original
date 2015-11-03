@@ -11,10 +11,4 @@ public class Gauge extends Widget {
 
     public int frequency;
 
-    public int min;
-
-    public int max;
-
-    public int mappingMode;
-
 }

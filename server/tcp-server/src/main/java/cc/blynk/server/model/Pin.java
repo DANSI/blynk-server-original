@@ -11,7 +11,9 @@ public class Pin {
 
     public Byte pin;
 
-    public Boolean pwmMode;
+    public boolean pwmMode;
+
+    public boolean rangeMappingOn;
 
     public PinType pinType;
 
@@ -20,5 +22,9 @@ public class Pin {
     public Integer min;
 
     public Integer max;
+
+    public boolean isSame(HardwareBody body) {
+        return pin != null && pin == body.pin && ((pwmMode && body.type == PinType.ANALOG) || (body.type == pinType));
+    }
 
 }

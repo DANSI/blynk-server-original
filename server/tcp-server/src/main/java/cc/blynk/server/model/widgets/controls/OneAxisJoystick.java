@@ -9,12 +9,6 @@ import cc.blynk.server.model.widgets.Widget;
  */
 public class OneAxisJoystick extends Widget {
 
-    public boolean pwmMode;
-
-    public int min;
-
-    public int max;
-
     public boolean autoReturn;
 
     public boolean horizontal;

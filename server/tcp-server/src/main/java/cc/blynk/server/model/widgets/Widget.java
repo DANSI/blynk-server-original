@@ -87,13 +87,21 @@ public abstract class Widget {
 
     public Byte pin;
 
+    public boolean pwmMode;
+
+    public boolean rangeMappingOn;
+
+    public int min;
+
+    public int max;
+
     //todo is it used?
     public State state;
 
     public String value;
 
     public void updateIfSame(HardwareBody body) {
-        if (pin != null && pin == body.pin && pinType == body.type) {
+        if (pin != null && pin == body.pin && ((pwmMode && body.type == PinType.ANALOG) || (body.type == pinType))) {
             value = body.value[0];
         }
     }
