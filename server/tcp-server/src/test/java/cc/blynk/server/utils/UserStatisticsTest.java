@@ -121,7 +121,7 @@ public class UserStatisticsTest extends TestBase {
         List<Integer> all = new ArrayList<>();
         for (User user : users.values()) {
                 for (DashBoard dashBoard : user.profile.dashBoards) {
-                    if (dashBoard.widgets != null && dashBoard.widgets.length > 3) {
+                    if (dashBoard.widgets.length > 3) {
                         int sum = 0;
                         for (Widget widget : dashBoard.widgets) {
                            sum += widget.height * widget.width;
@@ -160,7 +160,7 @@ public class UserStatisticsTest extends TestBase {
         String maxDash = null;
         for (User user : users.values()) {
                 for (DashBoard dashBoard : user.profile.dashBoards) {
-                    if (dashBoard.widgets != null && dashBoard.widgets.length > 0) {
+                    if (dashBoard.widgets.length > 0) {
                         String json = JsonParser.toJson(dashBoard);
                         byte[] compressed = compress(json.getBytes());
                         if (compressed.length > max) {

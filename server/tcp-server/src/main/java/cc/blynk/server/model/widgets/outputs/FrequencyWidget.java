@@ -11,4 +11,6 @@ public abstract class FrequencyWidget extends Widget {
 
     public int frequency;
 
+    public transient long lastRequestTS;
+
 }

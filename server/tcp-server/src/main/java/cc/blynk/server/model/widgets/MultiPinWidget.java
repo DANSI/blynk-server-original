@@ -23,5 +23,13 @@ public abstract class MultiPinWidget extends Widget {
         }
     }
 
-
+    @Override
+    public boolean isSame(HardwareBody body) {
+        for (Pin pin : pins) {
+            if (pin.isSame(body)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

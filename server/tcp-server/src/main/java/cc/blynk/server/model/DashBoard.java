@@ -1,8 +1,10 @@
 package cc.blynk.server.model;
 
 import cc.blynk.common.model.messages.StringMessage;
+import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.others.Timer;
+import cc.blynk.server.model.widgets.outputs.FrequencyWidget;
 import cc.blynk.server.utils.JsonParser;
 
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ public class DashBoard {
 
     public Long timestamp;
 
-    public Widget[] widgets;
+    public Widget[] widgets = {};
 
     public String boardType;
 
@@ -44,7 +46,7 @@ public class DashBoard {
     public transient StringMessage pinModeMessage;
 
     public List<Timer> getTimerWidgets() {
-        if (widgets == null || widgets.length == 0) {
+        if (widgets.length == 0) {
             return Collections.emptyList();
         }
 
@@ -63,17 +65,22 @@ public class DashBoard {
     }
 
     public void update(HardwareBody hardwareBody) {
-        if (widgets == null) {
-            return;
-        }
-
         for (Widget widget : widgets) {
             widget.updateIfSame(hardwareBody);
         }
     }
 
+    public FrequencyWidget findReadingWidget(HardwareBody hardwareBody, int msgId) {
+        for (Widget widget : widgets) {
+            if (widget instanceof FrequencyWidget && widget.isSame(hardwareBody)) {
+                return (FrequencyWidget) widget;
+            }
+        }
+        throw new IllegalCommandBodyException("No frequency widget for read command.", msgId);
+    }
+
     public  <T> T getWidgetByType(Class<T> clazz) {
-        if (!isActive || widgets == null || widgets.length == 0) {
+        if (!isActive || widgets.length == 0) {
             return null;
         }
 

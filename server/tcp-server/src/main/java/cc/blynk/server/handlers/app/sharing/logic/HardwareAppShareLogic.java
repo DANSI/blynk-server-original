@@ -11,12 +11,12 @@ import cc.blynk.server.handlers.app.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.auth.Session;
+import cc.blynk.server.model.widgets.outputs.FrequencyWidget;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.utils.PinUtil.*;
 import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
@@ -46,22 +46,34 @@ public class HardwareAppShareLogic {
             throw new NoActiveDashboardException(message.id);
         }
 
-        //if dash was shared. check for shared channels
-        if (isWriteOperation(split[1])) {
-            DashBoard dash = state.user.profile.getDashById(dashId, message.id);
-            dash.update(new HardwareBody(split[1], message.id));
+        char operation = split[1].charAt(1);
+        DashBoard dash = state.user.profile.getDashById(dashId, message.id);
 
-            String sharedToken = state.user.dashShareTokens.get(dashId);
-            if (sharedToken != null) {
-                for (Channel appChannel : session.appChannels) {
-                    if (appChannel != ctx.channel() && needSync(appChannel, sharedToken)) {
-                        appChannel.writeAndFlush(new SyncMessage(message.id, message.body));
+        switch (operation) {
+            case 'w':
+                dash.update(new HardwareBody(split[1], message.id));
+
+                String sharedToken = state.user.dashShareTokens.get(dashId);
+                if (sharedToken != null) {
+                    for (Channel appChannel : session.appChannels) {
+                        if (appChannel != ctx.channel() && needSync(appChannel, sharedToken)) {
+                            appChannel.writeAndFlush(new SyncMessage(message.id, message.body));
+                        }
                     }
                 }
-            }
+                session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
+                break;
+            case 'r':
+                FrequencyWidget widget = dash.findReadingWidget(new HardwareBody(split[1], message.id), message.id);
+                final long now = System.currentTimeMillis();
+                if (widget.frequency > 0 && now > widget.lastRequestTS + widget.frequency) {
+                    widget.lastRequestTS = now;
+                    session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
+                }
+                break;
         }
 
-        session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
+
     }
 
 }

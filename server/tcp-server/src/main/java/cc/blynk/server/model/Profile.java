@@ -85,15 +85,7 @@ public class Profile {
     }
 
     public void calcGraphPins() {
-        if (dashBoards.length == 0) {
-            return;
-        }
-
         for (DashBoard dashBoard : dashBoards) {
-            if (dashBoard.widgets == null || dashBoard.widgets.length == 0) {
-                continue;
-            }
-
             for (Widget widget : dashBoard.widgets) {
                 if (widget instanceof Graph) {
                     if (widget.pin != null) {

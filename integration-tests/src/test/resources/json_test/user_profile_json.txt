@@ -11,8 +11,8 @@
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"SLIDER",  "pinType":"ANALOG", "pin":3, "value":"0", "state":"OFF"},
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"SLIDER",         "pinType":"VIRTUAL", "pin":4, "value":"244" },
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"TIMER",          "pinType":"DIGITAL", "pin":5, "value":"1", "startTime":0},
-                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"LED",            "pinType":"DIGITAL", "pin":6},
-                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"DIGIT4_DISPLAY", "pinType":"DIGITAL", "pin":7},
+                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"LED",            "pinType":"ANALOG", "pin":6, "frequency" : 100},
+                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"DIGIT4_DISPLAY", "pinType":"ANALOG", "pin":7, "frequency" : 1000},
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"GRAPH",          "pinType":"ANALOG", "pin":8},
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "type":"NOTIFICATION", "notifyWhenOffline":true, "token":"faketoken"},
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "token":"token", "secret":"secret", "type":"TWITTER"          }

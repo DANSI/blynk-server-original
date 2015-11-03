@@ -124,25 +124,30 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, "1 vw 2 2".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
 
         clientPair.appClient.reset();
+        clientPair.hardwareClient.reset();
         appClient2.reset();
 
-        appClient2.send("hardware 1 vr 3 3");
-        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "vr 3 3".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        appClient2.send("hardware 1 ar 7");
+        verify(clientPair.appClient.responseMock, after(200).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "ar 7".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
 
-        appClient2.send("hardware 1 pm 2 2");
-        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, "pm 2 2".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        clientPair.appClient.send("hardware 1 ar 7");
+        verify(appClient2.responseMock, after(200).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, after(100).never()).channelRead(any(), eq(produce(2, HARDWARE, "ar 7".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
 
         clientPair.hardwareClient.reset();
 
-        clientPair.appClient.send("hardware 1 vr 2 2");
-        verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "vr 2 2".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        appClient2.send("hardware 1 pm 2 2");
+        verify(clientPair.appClient.responseMock, after(300).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock,  after(500).never()).channelRead(any(), any());
+
+        clientPair.appClient.send("hardware 1 ar 7");
+        verify(appClient2.responseMock, after(300).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, "ar 7".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
 
         clientPair.appClient.send("hardware 1 pm 2 2");
-        verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, "pm 2 2".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(appClient2.responseMock, after(300).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, "pm 2 2".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
     }
 
     @Test
