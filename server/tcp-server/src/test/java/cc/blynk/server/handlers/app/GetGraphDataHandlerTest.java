@@ -1,6 +1,5 @@
 package cc.blynk.server.handlers.app;
 
-import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.TestBase;
 import cc.blynk.server.model.graph.GraphKey;
 import cc.blynk.server.utils.ByteUtils;
@@ -56,7 +55,7 @@ public class GetGraphDataHandlerTest extends TestBase {
         int dataLength = 0;
         for (int i = 0; i < 1000; i++) {
             long ts = System.currentTimeMillis();
-            GraphKey mes = new GraphKey(1, ("aw 1 " + i).split(StringUtils.BODY_SEPARATOR_STRING), ts);
+            GraphKey mes = new GraphKey(1, ("aw 1 " + i).split(" "), ts);
             bb.put(toByteArray(mes));
             dataLength += REPORTING_RECORD_SIZE_BYTES;
         }
