@@ -116,7 +116,7 @@ public class JsonParsingTest {
         assertEquals(PinType.DIGITAL, pin1.pinType);
         assertEquals(PinType.DIGITAL, pin2.pinType);
 
-        assertNull(pin1.pwmMode);
+        assertFalse(pin1.pwmMode);
         assertTrue(pin2.pwmMode);
 
     }
@@ -169,6 +169,6 @@ public class JsonParsingTest {
 
         String result = JsonParser.mapper.writeValueAsString(button);
 
-        assertEquals("{\"type\":\"BUTTON\",\"id\":1,\"x\":2,\"y\":2,\"label\":\"MyButton\",\"pushMode\":false}", result);
+        assertEquals("{\"type\":\"BUTTON\",\"id\":1,\"x\":2,\"y\":2,\"label\":\"MyButton\",\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false}", result);
     }
 }
