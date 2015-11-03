@@ -46,6 +46,9 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
             case LOAD_PROFILE_GZIPPED :
                 LoadProfileGzippedLogic.messageReceived(ctx, state.user, msg);
                 break;
+            case GET_GRAPH_DATA :
+                graphData.messageReceived(ctx, state.user, msg);
+                break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
