@@ -20,7 +20,7 @@ import java.util.zip.InflaterInputStream;
  * Date: 09.12.13
  * Time: 8:07
  */
-
+@Ignore
 public class UserStatisticsTest extends TestBase {
 
     static FileManager fileManager;
