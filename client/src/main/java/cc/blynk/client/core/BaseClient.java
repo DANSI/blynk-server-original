@@ -123,9 +123,7 @@ public abstract class BaseClient {
     }
 
     public void send(MessageBase msg) {
-        if (channel.isWritable()) {
-            channel.writeAndFlush(msg);
-        }
+        channel.writeAndFlush(msg);
     }
 
     public boolean isClosed() {
