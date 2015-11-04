@@ -20,7 +20,7 @@ import java.util.zip.InflaterInputStream;
  * Date: 09.12.13
  * Time: 8:07
  */
-@Ignore
+
 public class UserStatisticsTest extends TestBase {
 
     static FileManager fileManager;
@@ -31,8 +31,6 @@ public class UserStatisticsTest extends TestBase {
         fileManager = new FileManager("/home/doom369/test/root/data");
         long start = System.currentTimeMillis();
         users = fileManager.deserialize();
-        System.out.println("time : " + (System.currentTimeMillis() - start));
-        System.out.println(users.size());
     }
 
     public static byte[] decompress(byte[] bytes) throws IOException {
@@ -65,7 +63,7 @@ public class UserStatisticsTest extends TestBase {
 
     @Test
     public void read() {
-
+        System.out.println("Registered users : " + users.size());
     }
 
     @Test
@@ -118,6 +116,7 @@ public class UserStatisticsTest extends TestBase {
         System.out.println();
         System.out.println("Dashboard Space Usage :");
 
+        int dashes;
         List<Integer> all = new ArrayList<>();
         for (User user : users.values()) {
                 for (DashBoard dashBoard : user.profile.dashBoards) {
@@ -133,10 +132,8 @@ public class UserStatisticsTest extends TestBase {
 
         Collections.sort(all);
 
-        System.out.println(all.get(all.size() / 2));
-        System.out.println(all.get(all.size() / 2) * 100 / 72 + "%");
-        //System.out.println(usersCounter);
-        //System.out.println(dashes);
+        System.out.println("Mediana of cells used : " + all.get(all.size() / 2));
+        System.out.println("Avg. percentage of space filling : " + all.get(all.size() / 2) * 100 / 72 + "%");
         //System.out.println("Average filled square per dash : " + (sum / dashes));
         //System.out.println("Percentage : " + (int)((sum / dashes) * 100 / 72));
     }
@@ -151,10 +148,11 @@ public class UserStatisticsTest extends TestBase {
                 counter++;
             }
         }
-        System.out.println("Profiles older then 3 months : " + counter);
+        System.out.println("Profiles not updated more then 3 months : " + counter);
     }
 
     @Test
+    @Ignore
     public void findLargestDashboard() throws Exception{
         int max = 0;
         String maxDash = null;
@@ -172,6 +170,29 @@ public class UserStatisticsTest extends TestBase {
         }
 
         System.out.println(maxDash);
+    }
+
+    @Test
+    public void dashesPerUser() {
+        int usersCounter = 0;
+        int dashesCounter = 0;
+        int maxDashes = 0;
+        int widgetCount = 0;
+        for (User user : users.values()) {
+            if (user.profile.dashBoards.length == 0) {
+                continue;
+            }
+            usersCounter++;
+            dashesCounter += user.profile.dashBoards.length;
+            maxDashes = Math.max(user.profile.dashBoards.length, maxDashes);
+            for (DashBoard dash : user.profile.dashBoards) {
+                widgetCount += dash.widgets.length;
+            }
+        }
+
+        System.out.println("Dashboards per user : " + (double) dashesCounter / usersCounter);
+        System.out.println("Widgets per user : " + (double) widgetCount / usersCounter);
+        System.out.println("Max dashes : " + maxDashes);
     }
 
     @Test
