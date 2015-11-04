@@ -35,7 +35,7 @@ public class UserDao {
                 return dashToken.getKey();
             }
         }
-        throw new InvalidTokenException("Error getting dashId.", msgId);
+        throw new InvalidTokenException("Error getting dashId. Wrong token.", msgId);
     }
 
     public boolean isUserExists(String name) {
