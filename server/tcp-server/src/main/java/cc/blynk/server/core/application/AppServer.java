@@ -8,7 +8,7 @@ import cc.blynk.server.handlers.app.main.AppChannelStateHandler;
 import cc.blynk.server.handlers.app.main.auth.AppLoginHandler;
 import cc.blynk.server.handlers.app.main.auth.RegisterHandler;
 import cc.blynk.server.handlers.app.sharing.auth.AppShareLoginHandler;
-import cc.blynk.server.handlers.common.UserNotLoggerHandler;
+import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -32,10 +32,11 @@ public class AppServer extends BaseServer {
     public AppServer(Holder holder) {
         super(holder.props.getIntProperty("app.ssl.port"), holder.transportType);
 
-        RegisterHandler registerHandler = new RegisterHandler(holder.userDao, holder.props.getProperty("allowed.users.list"));
-        AppLoginHandler appLoginHandler = new AppLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
-        AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
-        AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
+        final RegisterHandler registerHandler = new RegisterHandler(holder.userDao, holder.props.getProperty("allowed.users.list"));
+        final AppLoginHandler appLoginHandler = new AppLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
+        final AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
+        final AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
+        final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 
         AppSslContext appSslContext = SslUtil.initSslContext(holder.props);
 
@@ -67,7 +68,7 @@ public class AppServer extends BaseServer {
                 pipeline.addLast(registerHandler);
                 pipeline.addLast(appLoginHandler);
                 pipeline.addLast(appShareLoginHandler);
-                pipeline.addLast(new UserNotLoggerHandler());
+                pipeline.addLast(userNotLoggedHandler);
             }
         };
 

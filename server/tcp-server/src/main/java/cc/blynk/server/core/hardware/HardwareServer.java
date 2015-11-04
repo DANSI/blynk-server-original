@@ -4,7 +4,7 @@ import cc.blynk.common.handlers.common.decoders.MessageDecoder;
 import cc.blynk.common.handlers.common.encoders.MessageEncoder;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.handlers.common.UserNotLoggerHandler;
+import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareLoginHandler;
 import io.netty.channel.ChannelInitializer;
@@ -25,8 +25,9 @@ public class HardwareServer extends BaseServer {
         super(holder.props.getIntProperty("hardware.default.port"), holder.transportType);
 
         final int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
-        HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
-        HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.blockingIOProcessor);
+        final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
+        final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.blockingIOProcessor);
+        final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -43,7 +44,7 @@ public class HardwareServer extends BaseServer {
 
                 //sharable business logic handlers
                 pipeline.addLast(hardwareLoginHandler);
-                pipeline.addLast(new UserNotLoggerHandler());
+                pipeline.addLast(userNotLoggedHandler);
             }
         };
 

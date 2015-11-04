@@ -13,7 +13,7 @@ import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.app.main.auth.AppLoginHandler;
 import cc.blynk.server.handlers.app.main.auth.RegisterHandler;
 import cc.blynk.server.handlers.app.sharing.AppShareHandler;
-import cc.blynk.server.handlers.common.UserNotLoggerHandler;
+import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
@@ -103,7 +103,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
     private void cleanPipeline(ChannelPipeline pipeline) {
         pipeline.remove(this);
-        pipeline.remove(UserNotLoggerHandler.class);
+        pipeline.remove(UserNotLoggedHandler.class);
         pipeline.remove(RegisterHandler.class);
         pipeline.remove(AppLoginHandler.class);
     }

@@ -11,7 +11,7 @@ import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
-import cc.blynk.server.handlers.common.UserNotLoggerHandler;
+import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
@@ -22,8 +22,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
-import static cc.blynk.common.enums.Response.OK;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.common.enums.Response.*;
+import static cc.blynk.common.model.messages.MessageFactory.*;
 
 /**
  * Handler responsible for managing hardware and apps login messages.
@@ -88,7 +88,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         HardwareProfile hardwareProfile = new HardwareProfile(messageParts);
 
         ctx.pipeline().remove(this);
-        ctx.pipeline().remove(UserNotLoggerHandler.class);
+        ctx.pipeline().remove(UserNotLoggedHandler.class);
 
         int newHardwareInterval = hardwareProfile.getHeartBeatInterval();
         if (hardwareIdleTimeout != 0 && newHardwareInterval > 0) {
