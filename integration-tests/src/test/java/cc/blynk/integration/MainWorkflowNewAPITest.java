@@ -119,6 +119,8 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         clientPair.appClient.send("saveDash {\"id\":10, \"name\":\"test board update\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, OK)));
 
+        clientPair.hardwareClient.send("ping");
+
         clientPair.appClient.send("deleteDash 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, OK)));
 
@@ -133,6 +135,18 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
 
         clientPair.appClient.send("loadProfile 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(9, ILLEGAL_COMMAND)));
+
+        clientPair.appClient.send("activate 10");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(10, DEVICE_NOT_IN_NETWORK)));
+
+        clientPair.appClient.send("loadProfile");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(11, LOAD_PROFILE, "{\"activeDashId\":10,\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}")));
+
+        clientPair.appClient.send("saveDash {\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(12, OK)));
+
+        clientPair.appClient.send("loadProfile");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(11, LOAD_PROFILE, "{\"activeDashId\":10,\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}")));
     }
 
     @Test
