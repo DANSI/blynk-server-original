@@ -31,7 +31,7 @@ public class DashBoard {
 
     public boolean keepScreenOn;
 
-    public boolean isSharedPublic;
+    public boolean isShared;
 
     public boolean isActive;
 
