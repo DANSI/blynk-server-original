@@ -48,6 +48,9 @@ public class SaveDashLogic {
         log.info("Saving dashboard.");
 
         int index = user.profile.getDashIndex(updatedDash.id, message.id);
+        //do not accept isActive field from "saveDash" command
+        updatedDash.isActive = user.profile.dashBoards[index].isActive;
+
         user.profile.dashBoards[index] = updatedDash;
         user.lastModifiedTs = System.currentTimeMillis();
 

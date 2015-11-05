@@ -126,10 +126,10 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, ILLEGAL_COMMAND)));
 
         clientPair.appClient.send("loadProfile");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, LOAD_PROFILE, "{\"activeDashId\":1,\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isSharedPublic\":false,\"isActive\":false}]}")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, LOAD_PROFILE, "{\"activeDashId\":1,\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}")));
 
         clientPair.appClient.send("loadProfile 10");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(8, LOAD_PROFILE, "{\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isSharedPublic\":false,\"isActive\":false}")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(8, LOAD_PROFILE, "{\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}")));
 
         clientPair.appClient.send("loadProfile 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(9, ILLEGAL_COMMAND)));
