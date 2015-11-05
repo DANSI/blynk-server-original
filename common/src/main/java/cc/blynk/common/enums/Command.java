@@ -40,6 +40,7 @@ public final class Command {
     public static final short DELETE_DASH = 23;
     public static final short LOAD_PROFILE_GZIPPED = 24;
     public static final short SYNC = 25;
+    public static final short SHARING = 26;
 
     //sharing commands
     public static final short GET_SHARED_DASH = 29;
@@ -66,6 +67,7 @@ public final class Command {
                 put(LOAD_PROFILE, LoadProfileMessage.class.getSimpleName());
                 put(LOAD_PROFILE_GZIPPED, LoadProfileGzippedBinaryMessage.class.getSimpleName());
                 put(SYNC, SyncMessage.class.getSimpleName());
+                put(SHARING, SharingMessage.class.getSimpleName());
                 put(GET_TOKEN, GetTokenMessage.class.getSimpleName());
                 put(PING, PingMessage.class.getSimpleName());
                 put(ACTIVATE_DASHBOARD, ActivateDashboardMessage.class.getSimpleName());

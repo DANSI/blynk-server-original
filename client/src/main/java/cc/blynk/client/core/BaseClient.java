@@ -69,7 +69,7 @@ public abstract class BaseClient {
                 body = username + " " + SHA256Util.makeHash(pass, username) + (userPass.length == 3 ? " " + userPass[2] : "");
             }
         }
-        if (command == Command.HARDWARE || command == Command.BRIDGE || command == Command.EMAIL) {
+        if (command == Command.HARDWARE || command == Command.BRIDGE || command == Command.EMAIL || command == Command.SHARING) {
             body = body.replaceAll(" ", "\0");
         }
         return produce(msgId, command, body);

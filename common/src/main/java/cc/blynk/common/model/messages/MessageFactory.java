@@ -35,6 +35,8 @@ public class MessageFactory {
                 return new LoadProfileGzippedStringMessage(messageId, body);
             case SYNC :
                 return new SyncMessage(messageId, body);
+            case SHARING :
+                return new SharingMessage(messageId, body);
             case GET_TOKEN :
                 return new GetTokenMessage(messageId, body);
             case PING :

@@ -15,6 +15,7 @@ import cc.blynk.server.handlers.app.main.logic.reporting.GetGraphDataLogic;
 import cc.blynk.server.handlers.app.main.logic.sharing.GetShareTokenLogic;
 import cc.blynk.server.handlers.app.main.logic.sharing.GetSharedDashLogic;
 import cc.blynk.server.handlers.app.main.logic.sharing.RefreshShareTokenLogic;
+import cc.blynk.server.handlers.app.main.logic.sharing.ShareLogic;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
@@ -44,6 +45,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final SaveDashLogic saveDashLogic;
     private final ActivateDashboardLogic activateDashboardLogic;
     private final DeActivateDashboardLogic deActivateDashboardLogic;
+    private final ShareLogic shareLogic;
 
     public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, AppStateHolder state) {
         super(props);
@@ -60,6 +62,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.saveDashLogic = new SaveDashLogic(props);
         this.activateDashboardLogic = new ActivateDashboardLogic(sessionDao);
         this.deActivateDashboardLogic = new DeActivateDashboardLogic(sessionDao);
+        this.shareLogic = new ShareLogic(sessionDao);
         this.state = state;
     }
 
@@ -84,6 +87,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case LOAD_PROFILE_GZIPPED :
                 LoadProfileGzippedLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case SHARING :
+                shareLogic.messageReceived(ctx, state.user, msg);
                 break;
             case GET_TOKEN :
                 token.messageReceived(ctx, state.user, msg);

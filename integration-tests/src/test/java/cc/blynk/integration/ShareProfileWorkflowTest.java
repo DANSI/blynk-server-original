@@ -221,6 +221,26 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void checkSharingMessageWasReceived() throws Exception {
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = getBody(clientPair.appClient.responseMock);
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        appClient2.start(null);
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+
+        clientPair.appClient.send("sharing 1 off");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, OK)));
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, "1 off".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+    }
+
+    @Test
     public void checkBothClientsReceiveMessage() throws Exception {
         clientPair.appClient.send("getShareToken 1");
 
