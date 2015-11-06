@@ -61,15 +61,19 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         } else {
             String osType = null;
             String version = null;
-            if (messageParts.length == 4) {
+            String uid = null;
+            if (messageParts.length > 3) {
                 osType = messageParts[2];
                 version = messageParts[3];
             }
-            appLogin(ctx, message.id, messageParts[0], messageParts[1], osType, version);
+            if (messageParts.length == 5) {
+              uid = messageParts[4];
+            }
+            appLogin(ctx, message.id, messageParts[0], messageParts[1], osType, version, uid);
         }
     }
 
-    private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String token, String osType, String version) {
+    private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String token, String osType, String version, String uid) {
         String userName = username.toLowerCase();
 
         User user = userDao.sharedTokenManager.getUserByToken(token);
