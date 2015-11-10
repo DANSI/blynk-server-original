@@ -72,7 +72,7 @@ public class HardwareAppLogic {
                     log.trace("Pin Mode message catch. Remembering.");
                     //check PM command not empty
                     if (split[1].length() > 3) {
-                        dash.pinModeMessage = message;
+                        dash.pinModeMessage = new HardwareMessage(message.id, split[1]);
                     }
                     session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
                     break;
