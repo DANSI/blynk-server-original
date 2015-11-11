@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import javax.net.ssl.SSLException;
 import java.io.IOException;
 
-import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.common.model.messages.MessageFactory.*;
 
 /**
  * The Blynk Project.
@@ -61,7 +61,7 @@ public interface DefaultExceptionHandler {
                     log.debug("Client goes offline. Reason : {}", cause.getMessage());
                     break;
                 default:
-                    log.error("Blynk server IOException. {}", cause.getMessage());
+                    log.error("Blynk server IOException. {}", cause);
                     break;
             }
 

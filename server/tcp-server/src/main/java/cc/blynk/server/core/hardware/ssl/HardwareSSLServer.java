@@ -34,6 +34,7 @@ public class HardwareSSLServer extends BaseServer {
 
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.blockingIOProcessor);
+        final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 
         int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
 
@@ -54,7 +55,7 @@ public class HardwareSSLServer extends BaseServer {
                 pipeline.addLast(new MessageEncoder());
 
                 pipeline.addLast(hardwareLoginHandler);
-                pipeline.addLast(new UserNotLoggedHandler());
+                pipeline.addLast(userNotLoggedHandler);
             }
         };
 
