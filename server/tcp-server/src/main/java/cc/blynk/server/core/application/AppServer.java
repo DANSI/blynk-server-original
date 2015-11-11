@@ -36,7 +36,6 @@ public class AppServer extends BaseServer {
         final AppLoginHandler appLoginHandler = new AppLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
         final AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
         final AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
-        final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 
         AppSslContext appSslContext = SslUtil.initSslContext(holder.props);
 
@@ -68,7 +67,7 @@ public class AppServer extends BaseServer {
                 pipeline.addLast(registerHandler);
                 pipeline.addLast(appLoginHandler);
                 pipeline.addLast(appShareLoginHandler);
-                pipeline.addLast(userNotLoggedHandler);
+                pipeline.addLast(new UserNotLoggedHandler());
             }
         };
 
