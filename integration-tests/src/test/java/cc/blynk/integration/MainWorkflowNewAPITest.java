@@ -8,6 +8,7 @@ import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
 import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.integration.model.ClientPair;
+import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
@@ -464,6 +465,18 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, OK)));
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
         verify(hardClient.responseMock, times(2)).channelRead(any(), any());
+    }
+
+    @Test
+    public void testClosedConnectionWhenNotLogged() throws Exception {
+        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        appClient2.start(null);
+        appClient2.send("getToken 1");
+        verify(appClient2.responseMock, after(200).never()).channelRead(any(), any());
+        assertTrue(appClient2.isClosed());
+
+        appClient2.send("login dima@mail.ua 1 Android 1RC7");
+        verify(appClient2.responseMock, after(100).never()).channelRead(any(), any());
     }
 
     @Test
