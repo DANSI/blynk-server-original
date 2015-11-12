@@ -19,10 +19,6 @@ public class UserNotLoggedHandler extends SimpleChannelInboundHandler<MessageBas
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageBase msg) throws Exception {
-        //remove itself to not spam logs in case many messages are came.
-        //ctx.pipeline().remove(this);
-        //this causes another bug.
-        //todo fix above code.
         log.error("User not logged. {}. Closing.", ctx.channel().remoteAddress());
         ctx.close();
     }
