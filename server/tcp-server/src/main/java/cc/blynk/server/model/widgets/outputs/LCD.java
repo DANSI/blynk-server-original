@@ -33,9 +33,11 @@ public class LCD extends FrequencyWidget {
 
     @Override
     public boolean isSame(HardwareBody body) {
-        for (Pin pin : pins) {
-            if (pin.isSame(body)) {
-                return true;
+        if (pins != null) {
+            for (Pin pin : pins) {
+                if (pin.isSame(body)) {
+                    return true;
+                }
             }
         }
         return false;
