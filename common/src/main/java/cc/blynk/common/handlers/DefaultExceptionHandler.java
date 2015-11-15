@@ -61,7 +61,7 @@ public interface DefaultExceptionHandler {
                     log.debug("Client goes offline. Reason : {}", cause.getMessage());
                     break;
                 default:
-                    log.error("Blynk server IOException. {}", cause);
+                    log.error("Blynk server IOException.", cause);
                     break;
             }
 
