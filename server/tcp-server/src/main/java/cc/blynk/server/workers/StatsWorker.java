@@ -46,13 +46,13 @@ public class StatsWorker implements Runnable {
             stat.messages.put(counterEntry.getValue(), longAdder.sumThenReset());
         }
 
-        int activeSessions = 0;
+        int connectedSessions = 0;
         int hardActive = 0;
         int appActive = 0;
         for (Map.Entry<User, Session> entry: sessionDao.getUserSession().entrySet()) {
             Session session = entry.getValue();
             if (session.hardwareChannels.size() > 0 && session.appChannels.size() > 0) {
-                activeSessions++;
+                connectedSessions++;
             }
             if (session.hardwareChannels.size() > 0) {
                 hardActive++;
@@ -63,7 +63,7 @@ public class StatsWorker implements Runnable {
 
         }
 
-        stat.connected = activeSessions;
+        stat.connected = connectedSessions;
         stat.onlineApps = appActive;
         stat.onlineHards = hardActive;
         stat.active = sessionDao.getUserSession().size();
