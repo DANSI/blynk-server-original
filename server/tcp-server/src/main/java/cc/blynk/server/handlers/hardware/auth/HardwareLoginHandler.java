@@ -17,6 +17,7 @@ import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -53,20 +54,20 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         this.hardwareIdleTimeout = props.getIntProperty("hard.socket.idle.timeout", 0);
     }
 
-    private static void completeLogin(ChannelHandlerContext ctx, Session session, User user, Integer dashId, int msgId) {
-        log.debug("completeLogin. {}", ctx.channel());
-        session.hardwareChannels.add(ctx.channel());
-        ctx.writeAndFlush(produce(msgId, OK));
-        sendPinMode(ctx, user, dashId, msgId);
+    private static void completeLogin(Channel channel, Session session, User user, Integer dashId, int msgId) {
+        log.debug("completeLogin. {}", channel);
+        session.hardwareChannels.add(channel);
+        channel.writeAndFlush(produce(msgId, OK));
+        sendPinMode(channel, user, dashId, msgId);
         log.info("{} hardware joined.", user.name);
     }
 
     //send Pin Mode command in case channel connected to active dashboard with Pin Mode command that
     //was sent previously
-    private static void sendPinMode(ChannelHandlerContext ctx, User user, Integer dashId, int msgId) {
+    private static void sendPinMode(Channel channel, User user, Integer dashId, int msgId) {
         DashBoard dash = user.profile.getDashboardById(dashId, msgId);
         if (dash.isActive && dash.pinModeMessage != null) {
-            ctx.writeAndFlush(dash.pinModeMessage);
+            channel.writeAndFlush(dash.pinModeMessage);
         }
     }
 
@@ -101,9 +102,9 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering hard channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(ctx, session, user, dashId, message.id));
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, dashId, message.id));
         } else {
-            completeLogin(ctx, session, user, dashId, message.id);
+            completeLogin(ctx.channel(), session, user, dashId, message.id);
         }
     }
 
