@@ -68,6 +68,10 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
+        if (state.user == null) {
+            log.error("Should never happen.");
+            return;
+        }
         ThreadContext.put("user", state.user.name);
         switch (msg.command) {
             case HARDWARE:

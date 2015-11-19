@@ -13,9 +13,9 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cc.blynk.common.enums.Response.OK;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
-import static cc.blynk.server.utils.StateHolderUtil.getHardState;
+import static cc.blynk.common.enums.Response.*;
+import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
  * Bridge handler responsible for forwarding messages between different hardware via Blynk Server.
@@ -66,7 +66,8 @@ public class BridgeLogic {
                 boolean messageWasSent = false;
                 message.body = message.body.substring(message.body.indexOf("\0") + 1);
                 for (Channel channel : session.hardwareChannels) {
-                    if (token.equals(getHardState(channel).token) && channel != ctx.channel()) {
+                    HardwareStateHolder hardwareState = getHardState(channel);
+                    if (hardwareState != null && token.equals(hardwareState.token) && channel != ctx.channel()) {
                         messageWasSent = true;
                         channel.writeAndFlush(message);
                     }

@@ -2,6 +2,7 @@ package cc.blynk.server.model.auth;
 
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
+import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoop;
 import io.netty.util.internal.ConcurrentSet;
@@ -36,11 +37,14 @@ public class Session {
     public void sendMessageToHardware(Integer activeDashId, MessageBase message) {
         boolean noActiveHardware = true;
         for (Channel channel : hardwareChannels) {
-            int dashId = getHardState(channel).dashId;
-            if (activeDashId.equals(dashId)) {
-                noActiveHardware = false;
-                log.trace("Sending {} to hardware {}", message, channel);
-                channel.writeAndFlush(message);
+            HardwareStateHolder hardwareState = getHardState(channel);
+            if (hardwareState != null) {
+                int dashId = hardwareState.dashId;
+                if (activeDashId.equals(dashId)) {
+                    noActiveHardware = false;
+                    log.trace("Sending {} to hardware {}", message, channel);
+                    channel.writeAndFlush(message);
+                }
             }
         }
         if (noActiveHardware) {
@@ -50,9 +54,11 @@ public class Session {
 
     public boolean hasHardwareOnline(int activeDashId) {
         for (Channel channel : hardwareChannels) {
-            int dashId = getHardState(channel).dashId;
-            if (dashId == activeDashId) {
-                return true;
+            HardwareStateHolder hardwareState = getHardState(channel);
+            if (hardwareState != null) {
+                if (hardwareState.dashId == activeDashId) {
+                    return true;
+                }
             }
         }
         return false;
