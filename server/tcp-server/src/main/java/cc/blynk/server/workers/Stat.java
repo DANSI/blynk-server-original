@@ -19,6 +19,7 @@ public class Stat {
     long oneMinRate;
     long total;
     long active;
+    long active3;
     long connected;
     long onlineApps;
     long onlineHards;
