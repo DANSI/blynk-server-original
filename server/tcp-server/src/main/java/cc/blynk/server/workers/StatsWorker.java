@@ -23,7 +23,8 @@ import java.util.concurrent.atomic.LongAdder;
 public class StatsWorker implements Runnable {
 
     private static final Logger log = LogManager.getLogger(StatsWorker.class);
-
+    private final static long ONE_DAY = 24 * 60 * 60 * 1000;
+    private final static long THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
     private final GlobalStats stats;
     private final SessionDao sessionDao;
     private final UserDao userDao;
@@ -49,8 +50,12 @@ public class StatsWorker implements Runnable {
         int connectedSessions = 0;
         int hardActive = 0;
         int appActive = 0;
+        int active = 0;
+        int active3 = 0;
+        long now = System.currentTimeMillis();
         for (Map.Entry<User, Session> entry: sessionDao.getUserSession().entrySet()) {
             Session session = entry.getValue();
+
             if (session.hardwareChannels.size() > 0 && session.appChannels.size() > 0) {
                 connectedSessions++;
             }
@@ -60,13 +65,20 @@ public class StatsWorker implements Runnable {
             if (session.appChannels.size() > 0) {
                 appActive++;
             }
+            if (now - entry.getKey().lastModifiedTs < ONE_DAY) {
+                active++;
+            }
+            if (now - entry.getKey().lastModifiedTs < THREE_DAYS) {
+                active3++;
+            }
 
         }
 
         stat.connected = connectedSessions;
         stat.onlineApps = appActive;
         stat.onlineHards = hardActive;
-        stat.active = sessionDao.getUserSession().size();
+        stat.active = active;
+        stat.active3 = active3;
         stat.total = userDao.getUsers().size();
 
         log.info(stat.toString());
