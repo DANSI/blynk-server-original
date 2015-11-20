@@ -47,6 +47,7 @@ public enum WidgetType {
     SD_CARD,
     EVENTOR,
     RCT,
-    BRIDGE
+    BRIDGE,
+    BLUETOOTH
 
 }
