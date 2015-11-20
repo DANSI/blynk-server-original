@@ -1,4 +1,4 @@
-package cc.blynk.server.model.widgets.others;
+package cc.blynk.server.model.widgets.outputs;
 
 import cc.blynk.server.model.enums.GraphPeriod;
 import cc.blynk.server.model.widgets.MultiPinWidget;

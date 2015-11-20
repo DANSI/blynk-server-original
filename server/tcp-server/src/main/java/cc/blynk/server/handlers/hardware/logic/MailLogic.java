@@ -5,7 +5,7 @@ import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.widgets.others.Mail;
+import cc.blynk.server.model.widgets.notifications.Mail;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;

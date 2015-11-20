@@ -1,6 +1,6 @@
 package cc.blynk.server.notifications;
 
-import cc.blynk.server.model.widgets.others.Priority;
+import cc.blynk.server.model.widgets.notifications.Priority;
 import cc.blynk.server.utils.JsonParser;
 
 /**

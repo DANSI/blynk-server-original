@@ -8,7 +8,13 @@ import cc.blynk.server.model.widgets.inputs.Accelerometer;
 import cc.blynk.server.model.widgets.inputs.GPS;
 import cc.blynk.server.model.widgets.inputs.Gyroscope;
 import cc.blynk.server.model.widgets.inputs.Microphone;
-import cc.blynk.server.model.widgets.others.*;
+import cc.blynk.server.model.widgets.notifications.Mail;
+import cc.blynk.server.model.widgets.notifications.Notification;
+import cc.blynk.server.model.widgets.notifications.Twitter;
+import cc.blynk.server.model.widgets.others.Bridge;
+import cc.blynk.server.model.widgets.others.Eventor;
+import cc.blynk.server.model.widgets.others.RCT;
+import cc.blynk.server.model.widgets.others.SDCard;
 import cc.blynk.server.model.widgets.outputs.*;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -31,6 +37,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Knob.class, name = "KNOB"),
         @JsonSubTypes.Type(value = RotaryKnob.class, name = "ROTARY_KNOB"),
         @JsonSubTypes.Type(value = RGB.class, name = "RGB"),
+        @JsonSubTypes.Type(value = Timer.class, name = "TIMER"),
         @JsonSubTypes.Type(value = TwoWayArrow.class, name = "TWO_WAY_ARROW"),
         @JsonSubTypes.Type(value = FourWayArrow.class, name = "FOUR_WAY_ARROW"),
         @JsonSubTypes.Type(value = OneAxisJoystick.class, name = "ONE_AXIS_JOYSTICK"),
@@ -62,9 +69,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = SDCard.class, name = "SD_CARD"),
         @JsonSubTypes.Type(value = Eventor.class, name = "EVENTOR"),
         @JsonSubTypes.Type(value = RCT.class, name = "RCT"),
-        @JsonSubTypes.Type(value = Timer.class, name = "TIMER"),
         @JsonSubTypes.Type(value = Bridge.class, name = "BRIDGE"),
-        @JsonSubTypes.Type(value = Logger.class, name = "LOGGER")
+        @JsonSubTypes.Type(value = Logger.class, name = "LOGGER"),
+        @JsonSubTypes.Type(value = Logger.class, name = "BLUETOOTH")
 
 })
 public abstract class Widget {

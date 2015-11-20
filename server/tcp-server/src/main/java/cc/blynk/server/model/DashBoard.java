@@ -3,7 +3,7 @@ package cc.blynk.server.model;
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.model.widgets.Widget;
-import cc.blynk.server.model.widgets.others.Timer;
+import cc.blynk.server.model.widgets.controls.Timer;
 import cc.blynk.server.model.widgets.outputs.FrequencyWidget;
 import cc.blynk.server.utils.JsonParser;
 

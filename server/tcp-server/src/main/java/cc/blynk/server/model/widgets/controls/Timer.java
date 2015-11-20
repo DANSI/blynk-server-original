@@ -1,4 +1,4 @@
-package cc.blynk.server.model.widgets.others;
+package cc.blynk.server.model.widgets.controls;
 
 import cc.blynk.server.model.widgets.Widget;
 

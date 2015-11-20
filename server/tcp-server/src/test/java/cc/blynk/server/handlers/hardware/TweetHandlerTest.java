@@ -14,7 +14,7 @@ import cc.blynk.server.handlers.hardware.logic.TweetLogic;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.others.Twitter;
+import cc.blynk.server.model.widgets.notifications.Twitter;
 import cc.blynk.server.notifications.twitter.exceptions.TwitterNotAuthorizedException;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
@@ -27,8 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.

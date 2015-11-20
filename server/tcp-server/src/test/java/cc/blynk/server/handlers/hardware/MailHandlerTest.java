@@ -14,7 +14,7 @@ import cc.blynk.server.handlers.hardware.logic.MailLogic;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.others.Mail;
+import cc.blynk.server.model.widgets.notifications.Mail;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,7 +23,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -81,7 +81,7 @@ public class MailHandlerTest extends TestBase {
         user.profile = profile;
         when(profile.getDashById(1, 1)).thenReturn(dashBoard);
         Mail mail = new Mail();
-        when(dashBoard.getWidgetByType(cc.blynk.server.model.widgets.others.Mail.class)).thenReturn(mail);
+        when(dashBoard.getWidgetByType(Mail.class)).thenReturn(mail);
 
         HardwareStateHolder state = new HardwareStateHolder(1, user, "x");
         mailHandler.messageReceived(ctx, state, mailMessage);

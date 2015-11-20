@@ -5,7 +5,7 @@ import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.others.Timer;
+import cc.blynk.server.model.widgets.controls.Timer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

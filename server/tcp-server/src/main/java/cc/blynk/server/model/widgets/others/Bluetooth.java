@@ -7,10 +7,8 @@ import cc.blynk.server.model.widgets.Widget;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class Terminal extends Widget {
+public class Bluetooth extends Widget {
 
-    public boolean autoScrollOn;
-
-    public boolean terminalInputOn;
+    public String name;
 
 }

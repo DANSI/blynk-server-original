@@ -6,7 +6,7 @@ import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.others.Timer;
+import cc.blynk.server.model.widgets.controls.Timer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

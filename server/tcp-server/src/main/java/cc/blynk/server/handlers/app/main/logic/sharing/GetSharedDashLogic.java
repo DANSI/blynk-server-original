@@ -5,8 +5,8 @@ import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.InvalidTokenException;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.others.Notification;
-import cc.blynk.server.model.widgets.others.Twitter;
+import cc.blynk.server.model.widgets.notifications.Notification;
+import cc.blynk.server.model.widgets.notifications.Twitter;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Map;

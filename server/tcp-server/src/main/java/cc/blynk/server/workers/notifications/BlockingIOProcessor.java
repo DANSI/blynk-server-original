@@ -9,7 +9,7 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.handlers.app.main.logic.reporting.GraphPinRequest;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.others.Notification;
+import cc.blynk.server.model.widgets.notifications.Notification;
 import cc.blynk.server.notifications.AndroidGCMMessage;
 import cc.blynk.server.notifications.GCMMessage;
 import cc.blynk.server.notifications.GCMWrapper;

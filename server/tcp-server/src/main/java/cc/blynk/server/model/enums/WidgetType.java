@@ -24,6 +24,7 @@ public enum WidgetType {
 
     //outputs
     LED,
+    LOGGER, //history_graph
     DIGIT4_DISPLAY, //same as NUMERICAL_DISPLAY
     GAUGE,
     LCD_DISPLAY,
@@ -43,7 +44,6 @@ public enum WidgetType {
     NOTIFICATION,
 
     //other
-    LOGGER,
     SD_CARD,
     EVENTOR,
     RCT,

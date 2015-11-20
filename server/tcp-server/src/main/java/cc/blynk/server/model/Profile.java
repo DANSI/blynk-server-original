@@ -3,7 +3,7 @@ package cc.blynk.server.model;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.graph.GraphKey;
 import cc.blynk.server.model.widgets.Widget;
-import cc.blynk.server.model.widgets.others.Timer;
+import cc.blynk.server.model.widgets.controls.Timer;
 import cc.blynk.server.model.widgets.outputs.Graph;
 import cc.blynk.server.utils.JsonParser;
 

@@ -7,7 +7,7 @@ import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
-import cc.blynk.server.model.widgets.others.Notification;
+import cc.blynk.server.model.widgets.notifications.Notification;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;

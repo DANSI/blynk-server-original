@@ -4,7 +4,7 @@ import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.server.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.widgets.others.Twitter;
+import cc.blynk.server.model.widgets.notifications.Twitter;
 import cc.blynk.server.notifications.twitter.exceptions.TwitterNotAuthorizedException;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;

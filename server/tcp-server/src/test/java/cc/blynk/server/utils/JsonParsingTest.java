@@ -7,7 +7,7 @@ import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.controls.Button;
 import cc.blynk.server.model.widgets.controls.RGB;
-import cc.blynk.server.model.widgets.others.Timer;
+import cc.blynk.server.model.widgets.controls.Timer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
 
