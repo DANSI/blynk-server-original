@@ -40,7 +40,7 @@ By default, mobile application uses 8443 port and is based on SSL/TLS sockets. D
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-0.11.2.jar -dataFolder /path
+        java -jar server-0.11.3.jar -dataFolder /path
         
 That's it! 
 
@@ -63,11 +63,11 @@ That's it!
         
 + Download Blynk server jar file (or manually copy it to raspberry via ssh and scp command) : 
    
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.10.2/server-0.11.2.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.11.3/server-0.11.3.jar"
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-0.11.2.jar -dataFolder /home/pi/Blynk        
+        java -jar server-0.11.3.jar -dataFolder /home/pi/Blynk        
         
 That's it! 
 
@@ -78,7 +78,7 @@ That's it!
         
 + To enable server auto restart find /etc/init.d/rc.local file and add :
 
-        java -jar /home/pi/server-0.11.2.jar -dataFolder /home/pi/Blynk &
+        java -jar /home/pi/server-0.11.3.jar -dataFolder /home/pi/Blynk &
 
                 
 ## App and sketch changes
