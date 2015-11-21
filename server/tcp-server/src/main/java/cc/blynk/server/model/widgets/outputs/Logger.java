@@ -1,5 +1,6 @@
 package cc.blynk.server.model.widgets.outputs;
 
+import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.enums.GraphPeriod;
 import cc.blynk.server.model.widgets.MultiPinWidget;
 
@@ -14,4 +15,7 @@ public class Logger extends MultiPinWidget {
 
     public boolean showLegends;
 
+    @Override
+    public void updateIfSame(HardwareBody body) {
+    }
 }
