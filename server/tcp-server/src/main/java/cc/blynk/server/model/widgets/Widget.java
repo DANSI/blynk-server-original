@@ -11,10 +11,7 @@ import cc.blynk.server.model.widgets.inputs.Microphone;
 import cc.blynk.server.model.widgets.notifications.Mail;
 import cc.blynk.server.model.widgets.notifications.Notification;
 import cc.blynk.server.model.widgets.notifications.Twitter;
-import cc.blynk.server.model.widgets.others.Bridge;
-import cc.blynk.server.model.widgets.others.Eventor;
-import cc.blynk.server.model.widgets.others.RCT;
-import cc.blynk.server.model.widgets.others.SDCard;
+import cc.blynk.server.model.widgets.others.*;
 import cc.blynk.server.model.widgets.outputs.*;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -71,7 +68,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = RCT.class, name = "RCT"),
         @JsonSubTypes.Type(value = Bridge.class, name = "BRIDGE"),
         @JsonSubTypes.Type(value = Logger.class, name = "LOGGER"),
-        @JsonSubTypes.Type(value = Logger.class, name = "BLUETOOTH")
+        @JsonSubTypes.Type(value = Bluetooth.class, name = "BLUETOOTH")
 
 })
 public abstract class Widget {
