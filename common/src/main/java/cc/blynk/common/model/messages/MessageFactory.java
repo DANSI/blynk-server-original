@@ -71,6 +71,8 @@ public class MessageFactory {
                 return new CreateDashMessage(messageId, body);
             case DELETE_DASH :
                 return new DeleteDashMessage(messageId, body);
+            case ADD_PUSH_TOKEN :
+                return new AddPushToken(messageId, body);
             case SAVE_DASH :
                 return new SaveDashMessage(messageId, body);
 

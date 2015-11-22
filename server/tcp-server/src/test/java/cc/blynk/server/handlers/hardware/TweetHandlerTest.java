@@ -15,7 +15,7 @@ import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.notifications.Twitter;
-import cc.blynk.server.notifications.twitter.exceptions.TwitterNotAuthorizedException;
+import cc.blynk.server.notifications.twitter.exceptions.NotifNotAuthorizedException;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -89,7 +89,7 @@ public class TweetHandlerTest extends TestBase {
 		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
-	@Test(expected = TwitterNotAuthorizedException.class)
+	@Test(expected = NotifNotAuthorizedException.class)
 	public void testTweetMessageWithNoTwitterAccessToken() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, 60);
@@ -99,7 +99,7 @@ public class TweetHandlerTest extends TestBase {
 		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
-	@Test(expected = TwitterNotAuthorizedException.class)
+	@Test(expected = NotifNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterTokenNull() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, 60);
@@ -112,7 +112,7 @@ public class TweetHandlerTest extends TestBase {
 		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
-	@Test(expected = TwitterNotAuthorizedException.class)
+	@Test(expected = NotifNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterTokenEmpty() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, 60);
@@ -125,7 +125,7 @@ public class TweetHandlerTest extends TestBase {
 		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
-	@Test(expected = TwitterNotAuthorizedException.class)
+	@Test(expected = NotifNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterSecretTokenNull() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, 60);
@@ -138,7 +138,7 @@ public class TweetHandlerTest extends TestBase {
 		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
-	@Test(expected = TwitterNotAuthorizedException.class)
+	@Test(expected = NotifNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterSecretTokenEmpty() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, 60);
@@ -161,6 +161,8 @@ public class TweetHandlerTest extends TestBase {
 		twitter.secret = "secret_token";
 		when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
 		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
+		dash.isActive = true;
+
 		tweetHandler.messageReceived(ctx, state, tweetMessage);
 		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
@@ -178,6 +180,8 @@ public class TweetHandlerTest extends TestBase {
 		twitter.secret = "secret_token";
 		when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
 		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
+		dash.isActive = true;
+
 		tweetHandler.messageReceived(ctx, state, tweetMessage);
 		TimeUnit.MILLISECONDS.sleep(defaultQuotaTime);
 		tweetHandler.messageReceived(ctx, state, tweetMessage);

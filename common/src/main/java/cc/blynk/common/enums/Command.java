@@ -41,6 +41,7 @@ public final class Command {
     public static final short LOAD_PROFILE_GZIPPED = 24;
     public static final short SYNC = 25;
     public static final short SHARING = 26;
+    public static final short ADD_PUSH_TOKEN = 27;
 
     //sharing commands
     public static final short GET_SHARED_DASH = 29;
@@ -87,6 +88,7 @@ public final class Command {
                 put(CREATE_DASH, CreateDashMessage.class.getSimpleName());
                 put(SAVE_DASH, SaveDashMessage.class.getSimpleName());
                 put(DELETE_DASH, DeleteDashMessage.class.getSimpleName());
+                put(ADD_PUSH_TOKEN, AddPushToken.class.getSimpleName());
             }
     };
 

@@ -8,9 +8,9 @@ import cc.blynk.common.exceptions.BaseServerException;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/3/2015.
  */
-public class TwitterNotAuthorizedException extends BaseServerException {
+public class NotifNotAuthorizedException extends BaseServerException {
 
-    public TwitterNotAuthorizedException(String message, int msgId) {
+    public NotifNotAuthorizedException(String message, int msgId) {
         super(message, msgId, Response.NOTIFICATION_NOT_AUTHORIZED_EXCEPTION);
     }
 

@@ -5,7 +5,7 @@ import cc.blynk.server.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.widgets.notifications.Notification;
-import cc.blynk.server.notifications.twitter.exceptions.TwitterNotAuthorizedException;
+import cc.blynk.server.notifications.twitter.exceptions.NotifNotAuthorizedException;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -40,10 +40,11 @@ public class PushLogic extends NotificationBase {
         DashBoard dash = state.user.profile.getDashById(state.dashId, message.id);
         Notification widget = dash.getWidgetByType(Notification.class);
 
-        if (widget == null ||
+        if (widget == null || !dash.isActive ||
                 ((widget.token == null || widget.token.equals("")) &&
-                 (widget.iOSToken == null || widget.iOSToken.equals("")))) {
-            throw new TwitterNotAuthorizedException("User has no access token provided.", message.id);
+                 (widget.iOSToken == null || widget.iOSToken.equals("")) &&
+                 (widget.iOSTokens.size() == 0 && widget.androidTokens.size() == 0))) {
+            throw new NotifNotAuthorizedException("User has no access token provided.", message.id);
         }
 
         checkIfNotificationQuotaLimitIsNotReached(message.id);

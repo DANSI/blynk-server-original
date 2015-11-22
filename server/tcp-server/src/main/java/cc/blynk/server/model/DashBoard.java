@@ -80,16 +80,11 @@ public class DashBoard {
     }
 
     public  <T> T getWidgetByType(Class<T> clazz) {
-        if (!isActive || widgets.length == 0) {
-            return null;
-        }
-
         for (Widget widget : widgets) {
             if (clazz.isInstance(widget)) {
                 return clazz.cast(widget);
             }
         }
-
         return null;
     }
 

@@ -82,6 +82,7 @@ public class MailHandlerTest extends TestBase {
         when(profile.getDashById(1, 1)).thenReturn(dashBoard);
         Mail mail = new Mail();
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(mail);
+        dashBoard.isActive = true;
 
         HardwareStateHolder state = new HardwareStateHolder(1, user, "x");
         mailHandler.messageReceived(ctx, state, mailMessage);
@@ -94,6 +95,7 @@ public class MailHandlerTest extends TestBase {
         user.profile = profile;
         when(profile.getDashById(1, 1)).thenReturn(dashBoard);
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(new Mail());
+        dashBoard.isActive = true;
 
         HardwareStateHolder state = new HardwareStateHolder(1, user, "x");
         mailHandler.messageReceived(ctx, state, mailMessage);
