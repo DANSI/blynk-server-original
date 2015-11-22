@@ -6,6 +6,7 @@ import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.app.main.logic.AddPushLogic;
 import cc.blynk.server.handlers.app.main.logic.LoadProfileGzippedLogic;
 import cc.blynk.server.handlers.app.main.logic.reporting.GetGraphDataLogic;
 import cc.blynk.server.handlers.app.sharing.auth.AppShareStateHolder;
@@ -45,6 +46,10 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 break;
             case LOAD_PROFILE_GZIPPED :
                 LoadProfileGzippedLogic.messageReceived(ctx, state.user, msg);
+                break;
+            //todo add test for that case
+            case ADD_PUSH_TOKEN :
+                AddPushLogic.messageReceived(ctx, state, msg);
                 break;
             case GET_GRAPH_DATA :
                 graphData.messageReceived(ctx, state.user, msg);

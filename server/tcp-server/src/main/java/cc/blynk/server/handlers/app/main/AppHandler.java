@@ -46,7 +46,6 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final ActivateDashboardLogic activateDashboardLogic;
     private final DeActivateDashboardLogic deActivateDashboardLogic;
     private final ShareLogic shareLogic;
-    private final AddPushLogic addPushLogic;
 
     public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, AppStateHolder state) {
         super(props);
@@ -64,7 +63,6 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.activateDashboardLogic = new ActivateDashboardLogic(sessionDao);
         this.deActivateDashboardLogic = new DeActivateDashboardLogic(sessionDao);
         this.shareLogic = new ShareLogic(sessionDao);
-        this.addPushLogic = new AddPushLogic();
         this.state = state;
     }
 
@@ -101,7 +99,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 token.messageReceived(ctx, state.user, msg);
                 break;
             case ADD_PUSH_TOKEN :
-                addPushLogic.messageReceived(ctx, state, msg);
+                AddPushLogic.messageReceived(ctx, state, msg);
                 break;
             case REFRESH_TOKEN :
                 refreshToken.messageReceived(ctx, state.user, msg);

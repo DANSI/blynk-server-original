@@ -20,7 +20,7 @@ import static cc.blynk.common.model.messages.MessageFactory.*;
  */
 public class AddPushLogic {
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String[] data = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         int dashId = ParseUtil.parseInt(data[0], message.id);

@@ -12,6 +12,7 @@ import io.netty.channel.ChannelHandlerContext;
  * Created on 2/1/2015.
  *
  */
+@Deprecated
 public class LoadProfileLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
