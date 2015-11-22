@@ -4,6 +4,7 @@ import cc.blynk.server.exceptions.ServerException;
 import cc.blynk.server.handlers.app.main.AppHandler;
 import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
 import cc.blynk.server.handlers.app.sharing.AppShareHandler;
+import cc.blynk.server.handlers.app.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.auth.User;
@@ -38,11 +39,11 @@ public class StateHolderUtil {
         return handler.state;
     }
 
-    public static AppStateHolder getShareState(Channel channel) {
+    public static AppShareStateHolder getShareState(Channel channel) {
         return getShareState(channel.pipeline());
     }
 
-    private static AppStateHolder getShareState(ChannelPipeline pipeline) {
+    private static AppShareStateHolder getShareState(ChannelPipeline pipeline) {
         AppShareHandler handler = pipeline.get(AppShareHandler.class);
         return handler == null ? null : handler.state;
     }

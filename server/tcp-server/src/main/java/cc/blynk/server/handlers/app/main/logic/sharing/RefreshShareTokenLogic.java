@@ -8,6 +8,7 @@ import cc.blynk.common.model.messages.protocol.appllication.sharing.RefreshShare
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.NotAllowedException;
+import cc.blynk.server.handlers.app.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.Channel;
@@ -48,7 +49,8 @@ public class RefreshShareTokenLogic {
 
         Session session = sessionDao.userSession.get(user);
         for (Channel appChannel : session.appChannels) {
-            if (getShareState(appChannel) != null) {
+            AppShareStateHolder state = getShareState(appChannel);
+            if (state != null && state.dashId == dashId) {
                 ChannelFuture cf = appChannel.writeAndFlush(new ResponseMessage(message.id, Command.RESPONSE, Response.NOT_ALLOWED));
                 cf.addListener(channelFuture -> appChannel.close());
             }
