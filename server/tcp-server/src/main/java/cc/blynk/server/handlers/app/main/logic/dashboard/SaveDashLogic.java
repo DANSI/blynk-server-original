@@ -6,6 +6,7 @@ import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.model.widgets.notifications.Notification;
 import cc.blynk.server.utils.JsonParser;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -50,6 +51,15 @@ public class SaveDashLogic {
         int index = user.profile.getDashIndex(updatedDash.id, message.id);
         //do not accept isActive field from "saveDash" command
         updatedDash.isActive = user.profile.dashBoards[index].isActive;
+
+        Notification newNotification = updatedDash.getWidgetByType(Notification.class);
+        if (newNotification != null) {
+            Notification oldNotification = user.profile.dashBoards[index].getWidgetByType(Notification.class);
+            if (oldNotification != null) {
+                newNotification.iOSTokens = oldNotification.iOSTokens;
+                newNotification.androidTokens = oldNotification.androidTokens;
+            }
+        }
 
         user.profile.dashBoards[index] = updatedDash;
         user.lastModifiedTs = System.currentTimeMillis();
