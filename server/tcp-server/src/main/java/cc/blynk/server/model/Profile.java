@@ -51,17 +51,7 @@ public class Profile {
         throw new IllegalCommandException("Dashboard with passed id not found.", msgId);
     }
 
-    public DashBoard getDashById(int dashId, int msgId) {
-        for (DashBoard dashBoard : dashBoards) {
-            if (dashBoard.id == dashId) {
-                return dashBoard;
-            }
-        }
-
-        throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashId), msgId);
-    }
-
-    public DashBoard getDashboardById(int id, int msgId) {
+    public DashBoard getDashById(int id, int msgId) {
         for (DashBoard dashBoard : dashBoards) {
             if (dashBoard.id == id) {
                 return dashBoard;

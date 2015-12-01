@@ -38,7 +38,7 @@ public class ActivateDashboardLogic {
         int dashId = parseInt(dashBoardIdString, message.id);
 
         log.debug("Activating dash {} for user {}", dashBoardIdString, user.name);
-        DashBoard dashBoard = user.profile.getDashboardById(dashId, message.id);
+        DashBoard dashBoard = user.profile.getDashById(dashId, message.id);
         user.profile.activeDashId = dashId;
         dashBoard.isActive = true;
         user.lastModifiedTs = System.currentTimeMillis();
