@@ -5,6 +5,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.administration.AdminServer;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
+import cc.blynk.server.core.hardware.HttpHardwareServer;
 import cc.blynk.server.core.hardware.HttpsHardwareServer;
 import cc.blynk.server.core.hardware.ssl.HardwareSSLServer;
 import cc.blynk.server.utils.LoggerUtil;
@@ -31,6 +32,7 @@ public class ServerLauncher {
     private final BaseServer hardwareServer;
     private final BaseServer hardwareSSLServer;
     private final BaseServer httpsHardwareServer;
+    private final BaseServer httpHardwareServer;
     private final BaseServer adminServer;
     private final Holder holder;
 
@@ -40,6 +42,7 @@ public class ServerLauncher {
         this.hardwareServer = new HardwareServer(holder);
         this.hardwareSSLServer = new HardwareSSLServer(holder);
         this.httpsHardwareServer = new HttpsHardwareServer(holder);
+        this.httpHardwareServer = new HttpHardwareServer(holder);
         this.appServer = new AppServer(holder);
         this.adminServer = new AdminServer(holder);
 
@@ -89,12 +92,13 @@ public class ServerLauncher {
         hardwareServer.run();
         hardwareSSLServer.run();
         httpsHardwareServer.run();
+        httpHardwareServer.run();
         adminServer.run();
 
         //Launching all background jobs.
-        JobLauncher.start(holder, hardwareServer, appServer, adminServer, hardwareSSLServer, httpsHardwareServer);
+        JobLauncher.start(holder, hardwareServer, appServer, adminServer, hardwareSSLServer, httpHardwareServer, httpsHardwareServer);
 
-        printStartedString(hardwareServer, appServer, adminServer, hardwareSSLServer, httpsHardwareServer);
+        printStartedString(hardwareServer, appServer, adminServer, hardwareSSLServer, httpHardwareServer, httpsHardwareServer);
     }
 
 }
