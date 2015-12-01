@@ -22,13 +22,18 @@ public class SslUtil {
 
     private final static Logger log = LogManager.getLogger(SslUtil.class);
 
-    public static AppSslContext initSslContext(ServerProperties props) {
-        log.info("Enabling SSL for application.");
+    public static SslProvider fetchSslProvider(ServerProperties props) {
         SslProvider sslProvider = props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK;
         if (sslProvider == SslProvider.OPENSSL) {
-            log.warn("Using native openSSL provider for app SSL.");
+            log.warn("Using native openSSL provider.");
         }
-        return initSslContext(
+        return sslProvider;
+    }
+
+    public static AppSslContext initMutualSslContext(ServerProperties props) {
+        SslProvider sslProvider = fetchSslProvider(props);
+
+        return initMutualSslContext(
                 props.getProperty("server.ssl.cert"),
                 props.getProperty("server.ssl.key"),
                 props.getProperty("server.ssl.key.pass"),
@@ -36,9 +41,37 @@ public class SslUtil {
                 sslProvider);
     }
 
-    private static AppSslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
-                                         String clientCertPath,
-                                         SslProvider sslProvider) {
+    public static SslContext initSslContext(ServerProperties props) {
+        SslProvider sslProvider = SslUtil.fetchSslProvider(props);
+
+        return initSslContext(props.getProperty("server.ssl.cert"),
+                props.getProperty("server.ssl.key"),
+                props.getProperty("server.ssl.key.pass"),
+                sslProvider);
+    }
+
+    private static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
+                                            SslProvider sslProvider) {
+        try {
+            File serverCert =  new File(serverCertPath);
+            File serverKey = new File(serverKeyPath);
+
+            if (!serverCert.exists() || !serverKey.exists()) {
+                log.warn("ATTENTION. Certificate {} and key {} paths not valid. Using embedded certs. This is not secure. Please replace it with your own certs.",
+                        serverCert.getAbsolutePath(), serverKey.getAbsolutePath());
+                return SslUtil.build(sslProvider);
+            }
+
+            return SslUtil.build(serverCert, serverKey, serverPass, sslProvider);
+        } catch (CertificateException | SSLException | IllegalArgumentException e) {
+            log.error("Error initializing ssl context. Reason : {}", e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private static AppSslContext initMutualSslContext(String serverCertPath, String serverKeyPath, String serverPass,
+                                                      String clientCertPath,
+                                                      SslProvider sslProvider) {
         try {
             File serverCert = new File(serverCertPath);
             File serverKey = new File(serverKeyPath);

@@ -38,7 +38,8 @@ public class AppServer extends BaseServer {
         final AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 
-        AppSslContext appSslContext = SslUtil.initSslContext(holder.props);
+        log.info("Enabling SSL for application.");
+        AppSslContext appSslContext = SslUtil.initMutualSslContext(holder.props);
 
         int appTimeoutSecs = holder.props.getIntProperty("app.socket.idle.timeout", 0);
         log.debug("app.socket.idle.timeout = {}", appTimeoutSecs);
