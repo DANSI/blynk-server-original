@@ -3,8 +3,6 @@ package cc.blynk.server.workers;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.reporting.average.AverageAggregator;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Used to close and store all important info to disk.
@@ -14,8 +12,6 @@ import org.apache.logging.log4j.Logger;
  * Created on 25.03.15.
  */
 public class ShutdownHookWorker implements Runnable {
-
-    private final static Logger log = LogManager.getLogger(ShutdownHookWorker.class);
 
     private final AverageAggregator averageAggregator;
     private final BaseServer[] servers;
@@ -32,16 +28,20 @@ public class ShutdownHookWorker implements Runnable {
 
     @Override
     public void run() {
-        log.info("Catch shutdown hook. Trying to save users and close threads.");
-
+        System.out.println("Catch shutdown hook.");
+        System.out.println("Stopping BlockingIOProcessor...");
         blockingIOProcessor.stop();
+        System.out.println("Saving user profiles...");
         profileSaverWorker.run();
 
+        System.out.println("Stopping servers...");
         for (BaseServer server : servers) {
             server.stop();
         }
 
+        System.out.println("Stopping aggregator...");
         averageAggregator.close();
+        System.out.println("Done.");
     }
 
 }
