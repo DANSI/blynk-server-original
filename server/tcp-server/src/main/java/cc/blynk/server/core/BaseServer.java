@@ -60,7 +60,7 @@ public abstract class BaseServer implements Runnable {
             this.bossGroup = bossGroup;
             this.workerGroup = workerGroup;
         } catch (Exception e) {
-            log.error(e);
+            log.error("Error initializing {}", getServerName(), e);
             this.isRunning = false;
         }
     }
