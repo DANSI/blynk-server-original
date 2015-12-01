@@ -3,7 +3,10 @@ package cc.blynk.server.core;
 import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.hardware.HardwareServer;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.ServerChannel;
 import io.netty.channel.socket.SocketChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +24,8 @@ public abstract class BaseServer implements Runnable {
     protected final int port;
     private final TransportTypeHolder transportTypeHolder;
     public volatile boolean isRunning;
-    private Channel channel;
+    private EventLoopGroup bossGroup;
+    private EventLoopGroup workerGroup;
 
     protected BaseServer(int port, TransportTypeHolder transportTypeHolder) {
         this.port = port;
@@ -51,16 +55,13 @@ public abstract class BaseServer implements Runnable {
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childHandler(getChannelInitializer());
 
-            ChannelFuture channelFuture = b.bind(port).sync();
+            b.bind(port).sync();
 
-            this.channel = channelFuture.channel();
-            this.channel.closeFuture().sync();
+            this.bossGroup = bossGroup;
+            this.workerGroup = workerGroup;
         } catch (Exception e) {
             log.error(e);
             this.isRunning = false;
-        } finally {
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
         }
     }
 
@@ -69,8 +70,7 @@ public abstract class BaseServer implements Runnable {
     protected abstract String getServerName();
 
     public void stop() {
-        if (channel != null) {
-            channel.close().awaitUninterruptibly();
-        }
+        bossGroup.shutdownGracefully();
+        workerGroup.shutdownGracefully();
     }
 }

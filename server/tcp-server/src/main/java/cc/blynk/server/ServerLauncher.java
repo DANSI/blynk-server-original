@@ -82,10 +82,10 @@ public class ServerLauncher {
 
     private void run() {
         //start servers
-        new Thread(appServer).start();
-        new Thread(hardwareServer).start();
-        new Thread(hardwareSSLServer).start();
-        new Thread(adminServer).start();
+        appServer.run();
+        hardwareServer.run();
+        hardwareSSLServer.run();
+        adminServer.run();
 
         //Launching all background jobs.
         JobLauncher.start(holder, hardwareServer, appServer, adminServer, hardwareSSLServer);
