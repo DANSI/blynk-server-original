@@ -43,4 +43,16 @@ public class LCD extends FrequencyWidget {
         }
         return false;
     }
+
+    @Override
+    public String getValue(byte pinIn, PinType pinType) {
+        if (pins != null) {
+            for (Pin pin : pins) {
+                if (pin.isSame(pinIn, pinType)) {
+                    return pin.value;
+                }
+            }
+        }
+        return null;
+    }
 }

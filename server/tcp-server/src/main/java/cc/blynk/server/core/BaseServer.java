@@ -70,7 +70,11 @@ public abstract class BaseServer implements Runnable {
     protected abstract String getServerName();
 
     public void stop() {
-        bossGroup.shutdownGracefully();
-        workerGroup.shutdownGracefully();
+        if (bossGroup != null) {
+            bossGroup.shutdownGracefully();
+        }
+        if (workerGroup != null) {
+            workerGroup.shutdownGracefully();
+        }
     }
 }

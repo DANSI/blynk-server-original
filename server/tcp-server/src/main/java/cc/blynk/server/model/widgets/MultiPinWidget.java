@@ -33,4 +33,14 @@ public abstract class MultiPinWidget extends Widget {
         }
         return false;
     }
+
+    @Override
+    public String getValue(byte pinIn, PinType pinType) {
+        for (Pin pin : pins) {
+            if (pin.isSame(pinIn, pinType)) {
+                return pin.value;
+            }
+        }
+        return null;
+    }
 }

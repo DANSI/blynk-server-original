@@ -114,4 +114,8 @@ public abstract class Widget {
         return this.pin != null && this.pin == pin && ((this.pwmMode && type == PinType.ANALOG) || (type == this.pinType));
     }
 
+    public String getValue(byte pin, PinType type) {
+        return value;
+    }
+
 }

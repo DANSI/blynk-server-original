@@ -32,7 +32,7 @@ public class AdminServer extends BaseServer {
 
     @Override
     public void stop() {
-        log.info("Shutting down admin server...");
+        System.out.println("Shutting down admin server...");
         super.stop();
     }
 

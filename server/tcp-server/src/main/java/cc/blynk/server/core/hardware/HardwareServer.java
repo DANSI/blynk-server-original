@@ -65,7 +65,7 @@ public class HardwareServer extends BaseServer {
 
     @Override
     public void stop() {
-        log.info("Shutting down default server...");
+        System.out.println("Shutting down plan tcp/ip hardware server...");
         super.stop();
     }
 
