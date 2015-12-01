@@ -28,7 +28,7 @@ public class HttpHardwareHandler extends ChannelInboundHandlerAdapter {
     private static final Logger log = LogManager.getLogger(HttpHardwareHandler.class);
 
     private static final String JSON = "application/json";
-    private static final String PLAIN_TEXT = "plain/text";
+    private static final String PLAIN_TEXT = "text/plain";
 
     private final UserDao userDao;
 
