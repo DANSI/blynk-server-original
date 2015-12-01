@@ -72,7 +72,7 @@ public class DashBoard {
 
     public FrequencyWidget findReadingWidget(HardwareBody hardwareBody, int msgId) {
         for (Widget widget : widgets) {
-            if (widget instanceof FrequencyWidget && widget.isSame(hardwareBody)) {
+            if (widget instanceof FrequencyWidget && widget.isSame(hardwareBody.pin, hardwareBody.type)) {
                 return (FrequencyWidget) widget;
             }
         }

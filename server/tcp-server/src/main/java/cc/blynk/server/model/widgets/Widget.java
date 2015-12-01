@@ -105,13 +105,13 @@ public abstract class Widget {
     public String value;
 
     public void updateIfSame(HardwareBody body) {
-        if (isSame(body)) {
+        if (isSame(body.pin, body.type)) {
             value = body.value[0];
         }
     }
 
-    public boolean isSame(HardwareBody body) {
-        return pin != null && pin == body.pin && ((pwmMode && body.type == PinType.ANALOG) || (body.type == pinType));
+    public boolean isSame(byte pin, PinType type) {
+        return this.pin != null && this.pin == pin && ((this.pwmMode && type == PinType.ANALOG) || (type == this.pinType));
     }
 
 }

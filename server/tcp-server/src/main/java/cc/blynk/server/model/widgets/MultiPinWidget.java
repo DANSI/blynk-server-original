@@ -2,6 +2,7 @@ package cc.blynk.server.model.widgets;
 
 import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.Pin;
+import cc.blynk.server.model.enums.PinType;
 
 /**
  * The Blynk Project.
@@ -16,7 +17,7 @@ public abstract class MultiPinWidget extends Widget {
     public void updateIfSame(HardwareBody body) {
         if (pins != null) {
             for (int i = 0; i < pins.length; i++) {
-                if (pins[i].isSame(body)) {
+                if (pins[i].isSame(body.pin, body.type)) {
                     pins[i].value = (body.value.length > 1 ? body.value[i] : body.value[0]);
                 }
             }
@@ -24,9 +25,9 @@ public abstract class MultiPinWidget extends Widget {
     }
 
     @Override
-    public boolean isSame(HardwareBody body) {
+    public boolean isSame(byte pinIn, PinType pinType) {
         for (Pin pin : pins) {
-            if (pin.isSame(body)) {
+            if (pin.isSame(pinIn, pinType)) {
                 return true;
             }
         }

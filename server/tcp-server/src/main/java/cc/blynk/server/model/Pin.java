@@ -23,8 +23,8 @@ public class Pin {
 
     public Integer max;
 
-    public boolean isSame(HardwareBody body) {
-        return pin != null && pin == body.pin && ((pwmMode && body.type == PinType.ANALOG) || (body.type == pinType));
+    public boolean isSame(byte pin, PinType type) {
+        return this.pin != null && this.pin == pin && ((this.pwmMode && type == PinType.ANALOG) || (type == this.pinType));
     }
 
 }
