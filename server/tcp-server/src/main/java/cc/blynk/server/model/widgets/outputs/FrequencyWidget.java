@@ -7,6 +7,19 @@ package cc.blynk.server.model.widgets.outputs;
  */
 public interface FrequencyWidget {
 
-    boolean isTicked();
+    int getFrequency();
+
+    long getLastRequestTS();
+
+    void setLastRequestTS(long now);
+
+    default boolean isTicked() {
+        final long now = System.currentTimeMillis();
+        if (getFrequency() > 0 && now > getLastRequestTS() + getFrequency()) {
+            setLastRequestTS(now);
+            return true;
+        }
+        return false;
+    }
 
 }

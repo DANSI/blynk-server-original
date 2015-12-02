@@ -11,18 +11,22 @@ public class LED extends OnePinWidget implements FrequencyWidget {
 
     public int color;
 
-    public int frequency;
+    private int frequency;
 
-    public transient long lastRequestTS;
+    private transient long lastRequestTS;
 
     @Override
-    public boolean isTicked() {
-        final long now = System.currentTimeMillis();
-        if (frequency > 0 && now > lastRequestTS + frequency) {
-            lastRequestTS = now;
-            return true;
-        }
-        return false;
+    public final int getFrequency() {
+        return frequency;
     }
 
+    @Override
+    public final long getLastRequestTS() {
+        return lastRequestTS;
+    }
+
+    @Override
+    public final void setLastRequestTS(long now) {
+        this.lastRequestTS = now;
+    }
 }
