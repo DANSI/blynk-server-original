@@ -10,6 +10,7 @@ import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.auth.Session;
+import cc.blynk.server.model.widgets.outputs.FrequencyWidget;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -90,7 +91,8 @@ public class HardwareAppLogic {
                     session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
                     break;
                 case 'r' :
-                    if (dash.tickedFrequency(new HardwareBody(split[1], message.id), message.id)) {
+                    FrequencyWidget frequencyWidget = dash.findReadingWidget(split[1], message.id);
+                    if (frequencyWidget.isTicked()) {
                         session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
                     }
                     break;
