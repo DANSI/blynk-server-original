@@ -1,10 +1,26 @@
 package cc.blynk.server.model.widgets.outputs;
 
+import cc.blynk.server.model.widgets.OnePinWidget;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class Gauge extends FrequencyWidget {
+public class Gauge extends OnePinWidget implements FrequencyWidget {
+
+    public int frequency;
+
+    public transient long lastRequestTS;
+
+    @Override
+    public boolean isTicked() {
+        final long now = System.currentTimeMillis();
+        if (frequency > 0 && now > lastRequestTS + frequency) {
+            lastRequestTS = now;
+            return true;
+        }
+        return false;
+    }
 
 }

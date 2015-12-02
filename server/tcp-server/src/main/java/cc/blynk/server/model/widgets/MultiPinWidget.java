@@ -26,9 +26,11 @@ public abstract class MultiPinWidget extends Widget {
 
     @Override
     public boolean isSame(byte pinIn, PinType pinType) {
-        for (Pin pin : pins) {
-            if (pin.isSame(pinIn, pinType)) {
-                return true;
+        if (pins != null) {
+            for (Pin pin : pins) {
+                if (pin.isSame(pinIn, pinType)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -36,9 +38,11 @@ public abstract class MultiPinWidget extends Widget {
 
     @Override
     public String getValue(byte pinIn, PinType pinType) {
-        for (Pin pin : pins) {
-            if (pin.isSame(pinIn, pinType)) {
-                return pin.value;
+        if (pins != null) {
+            for (Pin pin : pins) {
+                if (pin.isSame(pinIn, pinType)) {
+                    return pin.value;
+                }
             }
         }
         return null;

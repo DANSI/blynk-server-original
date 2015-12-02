@@ -11,7 +11,6 @@ import cc.blynk.server.handlers.app.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.auth.Session;
-import cc.blynk.server.model.widgets.outputs.FrequencyWidget;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -64,10 +63,7 @@ public class HardwareAppShareLogic {
                 session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
                 break;
             case 'r':
-                FrequencyWidget widget = dash.findReadingWidget(new HardwareBody(split[1], message.id), message.id);
-                final long now = System.currentTimeMillis();
-                if (widget.frequency > 0 && now > widget.lastRequestTS + widget.frequency) {
-                    widget.lastRequestTS = now;
+                if (dash.tickedFrequency(new HardwareBody(split[1], message.id), message.id)) {
                     session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
                 }
                 break;

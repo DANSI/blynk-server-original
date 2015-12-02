@@ -71,13 +71,18 @@ public class DashBoard {
         }
     }
 
-    public FrequencyWidget findReadingWidget(HardwareBody hardwareBody, int msgId) {
+    private FrequencyWidget findReadingWidget(HardwareBody hardwareBody, int msgId) {
         for (Widget widget : widgets) {
             if (widget instanceof FrequencyWidget && widget.isSame(hardwareBody.pin, hardwareBody.type)) {
                 return (FrequencyWidget) widget;
             }
         }
         throw new IllegalCommandBodyException("No frequency widget for read command.", msgId);
+    }
+
+    public boolean tickedFrequency(HardwareBody hardwareBody, int msgId) {
+        FrequencyWidget frequencyWidget = findReadingWidget(hardwareBody, msgId);
+        return frequencyWidget.isTicked();
     }
 
     public Widget findWidgetByPin(byte pin, PinType pinType) {

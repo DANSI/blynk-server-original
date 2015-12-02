@@ -1,13 +1,13 @@
 package cc.blynk.server.model.widgets.inputs;
 
-import cc.blynk.server.model.widgets.Widget;
+import cc.blynk.server.model.widgets.OnePinWidget;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class GPS extends Widget {
+public class GPS extends OnePinWidget {
 
     public boolean stream;
 

@@ -78,8 +78,9 @@ public class Profile {
         for (DashBoard dashBoard : dashBoards) {
             for (Widget widget : dashBoard.widgets) {
                 if (widget instanceof Graph) {
-                    if (widget.pin != null) {
-                        graphPins.add(new GraphKey(dashBoard.id, widget.pin, widget.pinType));
+                    Graph graph = (Graph) widget;
+                    if (graph.pin != null) {
+                        graphPins.add(new GraphKey(dashBoard.id, graph.pin, graph.pinType));
                     }
                 }
             }

@@ -7,6 +7,7 @@ import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.model.Profile;
+import cc.blynk.server.model.widgets.OnePinWidget;
 import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.notifications.Notification;
 import cc.blynk.server.model.widgets.notifications.Twitter;
@@ -39,10 +40,13 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     private HardwareServer hardwareServer;
     private ClientPair clientPair;
 
-    private static Widget getWidgetByPin(Profile profile, int pin) {
+    private static OnePinWidget getWidgetByPin(Profile profile, int pin) {
         for (Widget widget : profile.dashBoards[0].widgets) {
-            if (widget.pin != null && widget.pin == pin) {
-                return widget;
+            if (widget instanceof OnePinWidget) {
+                OnePinWidget onePinWidget = (OnePinWidget) widget;
+                if (onePinWidget.pin != null && onePinWidget.pin == pin) {
+                    return onePinWidget;
+                }
             }
         }
         return null;
@@ -183,7 +187,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(profileString);
         Profile profile = JsonParser.parseProfile(profileString, 0);
 
-        Widget tmp = getWidgetByPin(profile, 3);
+        OnePinWidget tmp = getWidgetByPin(profile, 3);
 
         assertNotNull(tmp);
         assertEquals("1", tmp.value);
@@ -269,7 +273,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(profileString);
         Profile profile = JsonParser.parseProfile(profileString, 0);
 
-        Widget tmp = getWidgetByPin(profile, 3);
+        OnePinWidget tmp = getWidgetByPin(profile, 3);
 
         assertNotNull(tmp);
         assertEquals("152", tmp.value);

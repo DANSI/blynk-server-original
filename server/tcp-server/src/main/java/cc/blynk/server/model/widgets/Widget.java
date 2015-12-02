@@ -4,14 +4,13 @@ import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.enums.State;
 import cc.blynk.server.model.widgets.controls.*;
-import cc.blynk.server.model.widgets.inputs.Accelerometer;
 import cc.blynk.server.model.widgets.inputs.GPS;
-import cc.blynk.server.model.widgets.inputs.Gyroscope;
-import cc.blynk.server.model.widgets.inputs.Microphone;
 import cc.blynk.server.model.widgets.notifications.Mail;
 import cc.blynk.server.model.widgets.notifications.Notification;
 import cc.blynk.server.model.widgets.notifications.Twitter;
-import cc.blynk.server.model.widgets.others.*;
+import cc.blynk.server.model.widgets.others.Bluetooth;
+import cc.blynk.server.model.widgets.others.Bridge;
+import cc.blynk.server.model.widgets.others.RCT;
 import cc.blynk.server.model.widgets.outputs.*;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -31,16 +30,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Button.class, name = "BUTTON"),
         @JsonSubTypes.Type(value = Slider.class, name = "SLIDER"),
         @JsonSubTypes.Type(value = VerticalSlider.class, name = "VERTICAL_SLIDER"),
-        @JsonSubTypes.Type(value = Knob.class, name = "KNOB"),
-        @JsonSubTypes.Type(value = RotaryKnob.class, name = "ROTARY_KNOB"),
         @JsonSubTypes.Type(value = RGB.class, name = "RGB"),
         @JsonSubTypes.Type(value = Timer.class, name = "TIMER"),
         @JsonSubTypes.Type(value = TwoWayArrow.class, name = "TWO_WAY_ARROW"),
-        @JsonSubTypes.Type(value = FourWayArrow.class, name = "FOUR_WAY_ARROW"),
         @JsonSubTypes.Type(value = OneAxisJoystick.class, name = "ONE_AXIS_JOYSTICK"),
         @JsonSubTypes.Type(value = TwoAxisJoystick.class, name = "TWO_AXIS_JOYSTICK"),
-        @JsonSubTypes.Type(value = Gamepad.class, name = "GAMEPAD"),
-        @JsonSubTypes.Type(value = Keypad.class, name = "KEYPAD"),
         @JsonSubTypes.Type(value = Terminal.class, name = "TERMINAL"),
 
         //outputs
@@ -52,9 +46,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = LevelDisplay.class, name = "LEVEL_DISPLAY"),
 
         //inputs
-        @JsonSubTypes.Type(value = Microphone.class, name = "MICROPHONE"),
-        @JsonSubTypes.Type(value = Gyroscope.class, name = "GYROSCOPE"),
-        @JsonSubTypes.Type(value = Accelerometer.class, name = "ACCELEROMETER"),
         @JsonSubTypes.Type(value = GPS.class, name = "GPS"),
 
         //notifications
@@ -63,8 +54,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Notification.class, name = "NOTIFICATION"),
 
         //others
-        @JsonSubTypes.Type(value = SDCard.class, name = "SD_CARD"),
-        @JsonSubTypes.Type(value = Eventor.class, name = "EVENTOR"),
         @JsonSubTypes.Type(value = RCT.class, name = "RCT"),
         @JsonSubTypes.Type(value = Bridge.class, name = "BRIDGE"),
         @JsonSubTypes.Type(value = Logger.class, name = "LOGGER"),
@@ -87,35 +76,13 @@ public abstract class Widget {
 
     public String label;
 
-    public PinType pinType;
-
-    public Byte pin;
-
-    public boolean pwmMode;
-
-    public boolean rangeMappingOn;
-
-    public int min;
-
-    public int max;
-
     //todo is it used?
     public State state;
 
-    public String value;
+    public abstract void updateIfSame(HardwareBody body);
 
-    public void updateIfSame(HardwareBody body) {
-        if (isSame(body.pin, body.type)) {
-            value = body.value[0];
-        }
-    }
+    public abstract boolean isSame(byte pin, PinType type);
 
-    public boolean isSame(byte pin, PinType type) {
-        return this.pin != null && this.pin == pin && ((this.pwmMode && type == PinType.ANALOG) || (type == this.pinType));
-    }
-
-    public String getValue(byte pin, PinType type) {
-        return value;
-    }
+    public abstract String getValue(byte pin, PinType type);
 
 }

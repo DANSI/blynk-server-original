@@ -1,15 +1,13 @@
 package cc.blynk.server.model.widgets.outputs;
 
-import cc.blynk.server.model.HardwareBody;
-import cc.blynk.server.model.Pin;
-import cc.blynk.server.model.enums.PinType;
+import cc.blynk.server.model.widgets.MultiPinWidget;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class LCD extends FrequencyWidget {
+public class LCD extends MultiPinWidget implements FrequencyWidget {
 
     public boolean advancedMode;
 
@@ -19,40 +17,18 @@ public class LCD extends FrequencyWidget {
 
     public boolean textLight;
 
-    public Pin[] pins;
+    public int frequency;
+
+    public transient long lastRequestTS;
 
     @Override
-    public void updateIfSame(HardwareBody body) {
-        if (pins != null) {
-            for (int i = 0; i < pins.length; i++) {
-                if (pins[i].isSame(body.pin, body.type)) {
-                    pins[i].value = (body.value.length > 1 ? body.value[i] : body.value[0]);
-                }
-            }
-        }
-    }
-
-    @Override
-    public boolean isSame(byte pinIn, PinType type) {
-        if (pins != null) {
-            for (Pin pin : pins) {
-                if (pin.isSame(pinIn, type)) {
-                    return true;
-                }
-            }
+    public boolean isTicked() {
+        final long now = System.currentTimeMillis();
+        if (frequency > 0 && now > lastRequestTS + frequency) {
+            lastRequestTS = now;
+            return true;
         }
         return false;
     }
 
-    @Override
-    public String getValue(byte pinIn, PinType pinType) {
-        if (pins != null) {
-            for (Pin pin : pins) {
-                if (pin.isSame(pinIn, pinType)) {
-                    return pin.value;
-                }
-            }
-        }
-        return null;
-    }
 }
