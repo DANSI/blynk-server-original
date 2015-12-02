@@ -1,5 +1,6 @@
 package cc.blynk.server.notifications;
 
+import cc.blynk.server.model.widgets.notifications.Priority;
 import cc.blynk.server.utils.JsonParser;
 
 /**
@@ -11,10 +12,13 @@ public class IOSGCMMessage implements GCMMessage {
 
     private final String to;
 
+    private final Priority priority;
+
     private final IOSBody notification;
 
-    public IOSGCMMessage(String to, String message, int dashId) {
+    public IOSGCMMessage(String to, Priority priority, String message, int dashId) {
         this.to = to;
+        this.priority = priority;
         this.notification = new IOSBody(message, dashId);
     }
 

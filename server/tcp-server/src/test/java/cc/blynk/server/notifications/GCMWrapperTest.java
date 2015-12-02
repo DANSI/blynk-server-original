@@ -17,7 +17,12 @@ public class GCMWrapperTest {
     @Ignore
     public void testIOS() throws Exception {
         GCMWrapper gcmWrapper = new GCMWrapper();
-        gcmWrapper.send(new IOSGCMMessage("", "yo!!!", 1));
+        gcmWrapper.send(new IOSGCMMessage("to", Priority.normal, "yo!!!", 1));
+    }
+
+    @Test
+    public void printIOSJson() {
+        System.out.println(new IOSGCMMessage("to", Priority.normal, "yo!!!", 1).toString());
     }
 
     @Test

@@ -130,10 +130,10 @@ public class BlockingIOProcessor {
 
         if (widget.iOSTokens.size() != 0) {
             for (String token : widget.iOSTokens.values()) {
-                push(channel, new IOSGCMMessage(token, body, dashId), msgId);
+                push(channel, new IOSGCMMessage(token, widget.priority, body, dashId), msgId);
             }
         } else if (widget.iOSToken != null && !widget.iOSToken.equals("")) {
-            push(channel, new IOSGCMMessage(widget.iOSToken, body, dashId), msgId);
+            push(channel, new IOSGCMMessage(widget.iOSToken, widget.priority, body, dashId), msgId);
         }
     }
 
@@ -161,10 +161,10 @@ public class BlockingIOProcessor {
 
         if (widget.iOSTokens.size() != 0) {
             for (String token : widget.iOSTokens.values()) {
-                push(user, new IOSGCMMessage(token, body, dashId));
+                push(user, new IOSGCMMessage(token, widget.priority, body, dashId));
             }
         } else if (widget.iOSToken != null && !widget.iOSToken.equals("")) {
-            push(user, new IOSGCMMessage(widget.iOSToken, body, dashId));
+            push(user, new IOSGCMMessage(widget.iOSToken, widget.priority, body, dashId));
         }
     }
 
