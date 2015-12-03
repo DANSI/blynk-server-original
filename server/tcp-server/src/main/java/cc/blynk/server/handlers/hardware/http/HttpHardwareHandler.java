@@ -3,7 +3,6 @@ package cc.blynk.server.handlers.hardware.http;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.Widget;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -27,9 +26,6 @@ public class HttpHardwareHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LogManager.getLogger(HttpHardwareHandler.class);
 
-    private static final String JSON = "application/json";
-    private static final String PLAIN_TEXT = "text/plain";
-
     private final UserDao userDao;
 
     public HttpHardwareHandler(UserDao userDao) {
@@ -42,40 +38,6 @@ public class HttpHardwareHandler extends ChannelInboundHandlerAdapter {
         } else {
             response.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
             ctx.write(response);
-        }
-    }
-
-    private static void processRequest(ChannelHandlerContext ctx, DashBoard dash, HttpRequest req, String[] paths) {
-        switch (req.getMethod().name()) {
-            case "POST" :
-                send(ctx, req, POST(paths, dash));
-                break;
-            case "GET" :
-                send(ctx, req, GET(paths, dash));
-                break;
-        }
-    }
-
-    private static FullHttpResponse POST(String[] paths, DashBoard dashBoard) {
-        return new HttpResponse(HTTP_1_1, OK, null, PLAIN_TEXT);
-    }
-
-    private static FullHttpResponse GET(String[] paths, DashBoard dash) {
-        switch (paths[2].toLowerCase()) {
-            /*
-                GET /token/dashboard - get dashboard relatad with token
-             */
-            case "dashboard" :
-                return new HttpResponse(HTTP_1_1, OK, dash.toString(), JSON);
-
-            /*
-                GET /token/v1 - fetch data from pin
-             */
-            default:
-                GetUri getData = new GetUri(paths);
-                Widget widget = dash.findWidgetByPin(getData.pin.pin, getData.pin.pinType);
-                String value = widget.getValue(getData.pin.pin, getData.pin.pinType);
-                return new HttpResponse(HTTP_1_1, OK, value, PLAIN_TEXT);
         }
     }
 
@@ -101,7 +63,7 @@ public class HttpHardwareHandler extends ChannelInboundHandlerAdapter {
         Integer dashId = UserDao.getDashIdByToken(user.dashTokens, token, 0);
         DashBoard dash = user.profile.getDashById(dashId, 0);
 
-        processRequest(ctx, dash, req, paths);
+        send(ctx, req, HttpRequestHandler.processRequest(ctx, dash, req, paths));
 
     }
 
