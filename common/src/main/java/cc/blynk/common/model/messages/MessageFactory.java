@@ -8,6 +8,7 @@ import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.model.messages.protocol.PingMessage;
 import cc.blynk.common.model.messages.protocol.appllication.*;
 import cc.blynk.common.model.messages.protocol.appllication.sharing.*;
+import cc.blynk.common.model.messages.protocol.hardware.HardwareSyncMessage;
 import cc.blynk.common.model.messages.protocol.hardware.MailMessage;
 import cc.blynk.common.model.messages.protocol.hardware.PushMessage;
 import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
@@ -40,7 +41,7 @@ public class MessageFactory {
             case GET_TOKEN :
                 return new GetTokenMessage(messageId, body);
             case PING :
-                return new PingMessage(messageId, body);
+                return new PingMessage(messageId);
             case ACTIVATE_DASHBOARD :
                 return new ActivateDashboardMessage(messageId, body);
             case DEACTIVATE_DASHBOARD :
@@ -75,6 +76,8 @@ public class MessageFactory {
                 return new AddPushToken(messageId, body);
             case SAVE_DASH :
                 return new SaveDashMessage(messageId, body);
+            case HARDWARE_SYNC :
+                return new HardwareSyncMessage(messageId);
 
             default: throw new UnsupportedCommandException(String.format("Command with code %d not supported message.", command), messageId);
         }

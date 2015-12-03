@@ -55,6 +55,8 @@ public class CommandParser {
                 return SAVE_DASH;
             case "deletedash" :
                 return DELETE_DASH;
+            case "hardsync" :
+                return HARDWARE_SYNC;
 
             //sharing section
             case "sharelogin" :

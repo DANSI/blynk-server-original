@@ -2,7 +2,7 @@ package cc.blynk.common.model.messages.protocol;
 
 import cc.blynk.common.model.messages.StringMessage;
 
-import static cc.blynk.common.enums.Command.PING;
+import static cc.blynk.common.enums.Command.*;
 
 /**
  * The Blynk Project.
@@ -11,8 +11,8 @@ import static cc.blynk.common.enums.Command.PING;
  */
 public class PingMessage extends StringMessage {
 
-    public PingMessage(int messageId, String body) {
-        super(messageId, PING, body.length(), body);
+    public PingMessage(int messageId) {
+        super(messageId, PING, 0, "");
     }
 
     @Override

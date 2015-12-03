@@ -48,7 +48,7 @@ public class ClientLauncher {
 
         //pinging for hardware client to avoid closing from server side for inactivity
         if (mode == ClientMode.HARDWARE) {
-            Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> baseClient.send(new PingMessage(777, "")), 12, 12, TimeUnit.SECONDS);
+            Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> baseClient.send(new PingMessage(777)), 12, 12, TimeUnit.SECONDS);
         }
 
         baseClient.start(new BufferedReader(new InputStreamReader(System.in)));

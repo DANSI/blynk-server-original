@@ -4,6 +4,8 @@ import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.Pin;
 import cc.blynk.server.model.enums.PinType;
 
+import static cc.blynk.common.utils.StringUtils.*;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -47,4 +49,13 @@ public abstract class MultiPinWidget extends Widget {
         }
         return null;
     }
+
+    public String makeHardwareBodyMerge() {
+        StringBuilder sb = new StringBuilder(OnePinWidget.makeHardwareBody(pins[0]));
+        for (int i = 1; i < pins.length; i++) {
+            sb.append(BODY_SEPARATOR).append(pins[i].value);
+        }
+        return sb.toString();
+    }
+
 }
