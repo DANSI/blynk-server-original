@@ -6,7 +6,6 @@ import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.model.messages.protocol.appllication.LoginMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.ReportingDao;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
@@ -21,7 +20,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.timeout.ReadTimeoutHandler;
 
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.*;
@@ -43,7 +41,6 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     private final ServerProperties props;
     private final ReportingDao reportingDao;
     private final BlockingIOProcessor blockingIOProcessor;
-    private final int hardwareIdleTimeout;
 
     public HardwareLoginHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor) {
         this.props = props;
@@ -51,7 +48,6 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         this.sessionDao = sessionDao;
         this.reportingDao = reportingDao;
         this.blockingIOProcessor = blockingIOProcessor;
-        this.hardwareIdleTimeout = props.getIntProperty("hard.socket.idle.timeout", 0);
     }
 
     private static void completeLogin(Channel channel, Session session, User user, Integer dashId, int msgId) {
@@ -73,10 +69,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
-        //warn: split may be optimized
-        String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
-
-        String token = messageParts[0].trim();
+        String token = message.body.trim();
         User user = userDao.tokenManager.getUserByToken(token);
 
         if (user == null) {
@@ -86,16 +79,9 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         }
 
         final Integer dashId = UserDao.getDashIdByToken(user.dashTokens, token, message.id);
-        HardwareProfile hardwareProfile = new HardwareProfile(messageParts);
 
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(UserNotLoggedHandler.class);
-
-        int newHardwareInterval = hardwareProfile.getHeartBeatInterval();
-        if (hardwareIdleTimeout != 0 && newHardwareInterval > 0) {
-            ctx.pipeline().remove(ReadTimeoutHandler.class);
-            ctx.pipeline().addFirst(new ReadTimeoutHandler(newHardwareInterval));
-        }
         ctx.pipeline().addLast(new HardwareHandler(props, sessionDao, reportingDao, blockingIOProcessor, new HardwareStateHolder(dashId, user, token)));
 
         Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());

@@ -28,6 +28,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final PushLogic push;
     private final TweetLogic tweet;
     private final HardwareSyncLogic sync;
+    private final HardwareInfoLogic info;
 
     public HardwareHandler(ServerProperties props, SessionDao sessionDao, ReportingDao reportingDao,
                            BlockingIOProcessor blockingIOProcessor, HardwareStateHolder stateHolder) {
@@ -40,6 +41,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.push = new PushLogic(blockingIOProcessor, defaultNotificationQuotaLimit);
         this.tweet = new TweetLogic(blockingIOProcessor, defaultNotificationQuotaLimit);
         this.sync = new HardwareSyncLogic();
+        this.info = new HardwareInfoLogic(props);
 
         this.state = stateHolder;
     }
@@ -68,6 +70,9 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 break;
             case HARDWARE_SYNC :
                 sync.messageReceived(ctx, state, msg);
+                break;
+            case HARDWARE_INFO :
+                info.messageReceived(ctx, state, msg);
                 break;
         }
     }

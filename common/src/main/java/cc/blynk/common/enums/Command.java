@@ -6,10 +6,7 @@ import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.model.messages.protocol.PingMessage;
 import cc.blynk.common.model.messages.protocol.appllication.*;
 import cc.blynk.common.model.messages.protocol.appllication.sharing.*;
-import cc.blynk.common.model.messages.protocol.hardware.HardwareSyncMessage;
-import cc.blynk.common.model.messages.protocol.hardware.MailMessage;
-import cc.blynk.common.model.messages.protocol.hardware.PushMessage;
-import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
+import cc.blynk.common.model.messages.protocol.hardware.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,6 +54,7 @@ public final class Command {
     public static final short PUSH_NOTIFICATION = 14;
     public static final short BRIDGE = 15;
     public static final short HARDWARE_SYNC = 16;
+    public static final short HARDWARE_INFO = 17;
     public static final short HARDWARE = 20;
     //------------------------------------------
 
@@ -91,6 +89,7 @@ public final class Command {
                 put(SAVE_DASH, SaveDashMessage.class.getSimpleName());
                 put(DELETE_DASH, DeleteDashMessage.class.getSimpleName());
                 put(HARDWARE_SYNC, HardwareSyncMessage.class.getSimpleName());
+                put(HARDWARE_INFO, HardwareInfoMessage.class.getSimpleName());
                 put(ADD_PUSH_TOKEN, AddPushToken.class.getSimpleName());
             }
     };

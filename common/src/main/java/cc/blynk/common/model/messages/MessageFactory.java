@@ -8,10 +8,7 @@ import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.model.messages.protocol.PingMessage;
 import cc.blynk.common.model.messages.protocol.appllication.*;
 import cc.blynk.common.model.messages.protocol.appllication.sharing.*;
-import cc.blynk.common.model.messages.protocol.hardware.HardwareSyncMessage;
-import cc.blynk.common.model.messages.protocol.hardware.MailMessage;
-import cc.blynk.common.model.messages.protocol.hardware.PushMessage;
-import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
+import cc.blynk.common.model.messages.protocol.hardware.*;
 
 import static cc.blynk.common.enums.Command.*;
 
@@ -78,6 +75,8 @@ public class MessageFactory {
                 return new SaveDashMessage(messageId, body);
             case HARDWARE_SYNC :
                 return new HardwareSyncMessage(messageId);
+            case HARDWARE_INFO :
+                return new HardwareInfoMessage(messageId, body);
 
             default: throw new UnsupportedCommandException(String.format("Command with code %d not supported message.", command), messageId);
         }
