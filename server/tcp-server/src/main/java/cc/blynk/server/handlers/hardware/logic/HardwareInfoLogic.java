@@ -39,12 +39,13 @@ public class HardwareInfoLogic {
         HardwareProfile hardwareProfile = new HardwareProfile(messageParts);
         int newHardwareInterval = hardwareProfile.getHeartBeatInterval();
 
-        log.trace("Info command. New Hardware timeout interval {}", newHardwareInterval);
+        log.trace("Info command. heartbeat interval {}", newHardwareInterval);
 
-        if (hardwareIdleTimeout != 0 && newHardwareInterval > 0 && hardwareIdleTimeout != newHardwareInterval) {
-            log.trace("Changing read timeout interval {}", newHardwareInterval);
+        if (hardwareIdleTimeout != 0 && newHardwareInterval > 0) {
+            final int newReadTimeout = (int) Math.ceil(newHardwareInterval * 2.3D);
+            log.trace("Changing read timeout interval to {}", newReadTimeout);
             ctx.pipeline().remove(ReadTimeoutHandler.class);
-            ctx.pipeline().addFirst(new ReadTimeoutHandler(newHardwareInterval));
+            ctx.pipeline().addFirst(new ReadTimeoutHandler(newReadTimeout));
         }
 
         ctx.writeAndFlush(produce(message.id, OK));
