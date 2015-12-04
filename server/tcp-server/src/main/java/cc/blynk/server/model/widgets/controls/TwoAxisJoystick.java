@@ -26,10 +26,14 @@ public class TwoAxisJoystick extends MultiPinWidget implements SyncWidget {
         }
         if (split) {
             for (Pin pin : pins) {
-                ctx.write(new HardwareMessage(msgId, OnePinWidget.makeHardwareBody(pin)));
+                if (pin.pin != -1) {
+                    ctx.write(new HardwareMessage(msgId, OnePinWidget.makeHardwareBody(pin)));
+                }
             }
         } else {
-            ctx.write(new HardwareMessage(msgId, makeHardwareBodyMerge()));
+            if (pins[0].pin != -1) {
+                ctx.write(new HardwareMessage(msgId, makeHardwareBodyMerge()));
+            }
         }
     }
 
