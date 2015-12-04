@@ -33,6 +33,8 @@ public final class Response {
     public static final int NOTIFICATION_NOT_AUTHORIZED_EXCEPTION = 14;
     public static final int NOTIFICATION_EXCEPTION = 15;
 
+    public static final int NOT_SUPPORTED_VERSION = 20;
+
     //reserved
     public static final int BLYNK_TIMEOUT_EXCEPTION = 16;
 
