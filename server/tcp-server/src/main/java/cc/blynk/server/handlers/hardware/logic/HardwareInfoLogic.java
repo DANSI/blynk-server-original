@@ -43,14 +43,6 @@ public class HardwareInfoLogic {
 
         if (hardwareIdleTimeout != 0 && newHardwareInterval > 0 && hardwareIdleTimeout != newHardwareInterval) {
             log.trace("Changing read timeout interval {}", newHardwareInterval);
-            ReadTimeoutHandler handler = ctx.pipeline().get(ReadTimeoutHandler.class);
-            try {
-                //explicit call.
-                handler.handlerRemoved(ctx);
-            } catch (Exception e) {
-                log.error(e);
-            }
-
             ctx.pipeline().remove(ReadTimeoutHandler.class);
             ctx.pipeline().addFirst(new ReadTimeoutHandler(newHardwareInterval));
         }
