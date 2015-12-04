@@ -495,11 +495,11 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
         appClient2.start(null);
         appClient2.send("getToken 1");
-        verify(appClient2.responseMock, after(200).never()).channelRead(any(), any());
+        verify(appClient2.responseMock, after(400).never()).channelRead(any(), any());
         assertTrue(appClient2.isClosed());
 
         appClient2.send("login dima@mail.ua 1 Android 1RC7");
-        verify(appClient2.responseMock, after(100).never()).channelRead(any(), any());
+        verify(appClient2.responseMock, after(200).never()).channelRead(any(), any());
     }
 
     @Test
