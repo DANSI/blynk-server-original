@@ -16,7 +16,7 @@ public class HardwareProfile {
 
     public HardwareProfile(String[] info) {
         this.infos = new HashMap<>();
-        for (int i = 1; i < info.length; i++) {
+        for (int i = 0; i < info.length; i++) {
             if (i < info.length - 1) {
                 infos.put(info[i], info[++i]);
             }
