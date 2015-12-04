@@ -9,7 +9,7 @@ import cc.blynk.server.model.widgets.Widget;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class RCT extends Widget {
+public class RTC extends Widget {
 
     @Override
     public void updateIfSame(HardwareBody body) {

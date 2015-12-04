@@ -14,4 +14,8 @@ public class PinUtil {
     public static boolean isWriteOperation(String body) {
         return body.length() > 1 && body.charAt(1) == 'w';
     }
+
+    public static boolean isReadOperation(String body) {
+        return body.length() > 1 && body.charAt(1) == 'r';
+    }
 }

@@ -74,7 +74,7 @@ public class MessageFactory {
             case SAVE_DASH :
                 return new SaveDashMessage(messageId, body);
             case HARDWARE_SYNC :
-                return new HardwareSyncMessage(messageId);
+                return new HardwareSyncMessage(messageId, body);
             case HARDWARE_INFO :
                 return new HardwareInfoMessage(messageId, body);
 

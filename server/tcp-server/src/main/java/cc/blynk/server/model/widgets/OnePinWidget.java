@@ -33,7 +33,11 @@ public abstract class OnePinWidget extends Widget {
     }
 
     public static String makeHardwareBody(boolean pwmMode, PinType pinType, byte pin, String value) {
-        return "" + (pwmMode ? PinType.ANALOG.pintTypeChar : pinType.pintTypeChar) + 'w'
+        return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
+    }
+
+    public static String makeHardwareBody(PinType pinType, byte pin, String value) {
+        return "" + pinType.pintTypeChar + 'w'
                 + BODY_SEPARATOR_STRING + pin
                 + BODY_SEPARATOR_STRING + value;
     }

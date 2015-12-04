@@ -11,8 +11,8 @@ import static cc.blynk.common.enums.Command.*;
  */
 public class HardwareSyncMessage extends StringMessage {
 
-    public HardwareSyncMessage(int messageId) {
-        super(messageId, HARDWARE_SYNC, 0, "");
+    public HardwareSyncMessage(int messageId, String body) {
+        super(messageId, HARDWARE_SYNC, body.length(), body);
     }
 
     @Override

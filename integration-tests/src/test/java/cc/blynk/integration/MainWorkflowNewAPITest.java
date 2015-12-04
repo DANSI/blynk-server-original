@@ -107,6 +107,15 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
     }
 
     @Test
+    public void testHardSyncReturn1HardwarCommand() throws Exception {
+        clientPair.hardwareClient.send("hardsync " + "vr 1".replaceAll(" ", "\0"));
+        verify(clientPair.hardwareClient.responseMock, timeout(1000).times(1)).channelRead(any(), any());
+
+        //todo think how to finish this.
+        //verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, "vw 1 1".replaceAll(" ", "\0"))));
+    }
+
+    @Test
     public void testPingCommandOk() throws Exception {
         clientPair.appClient.send("ping");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));

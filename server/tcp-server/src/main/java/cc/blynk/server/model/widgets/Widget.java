@@ -10,7 +10,7 @@ import cc.blynk.server.model.widgets.notifications.Notification;
 import cc.blynk.server.model.widgets.notifications.Twitter;
 import cc.blynk.server.model.widgets.others.Bluetooth;
 import cc.blynk.server.model.widgets.others.Bridge;
-import cc.blynk.server.model.widgets.others.RCT;
+import cc.blynk.server.model.widgets.others.RTC;
 import cc.blynk.server.model.widgets.outputs.*;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -52,7 +52,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Notification.class, name = "NOTIFICATION"),
 
         //others
-        @JsonSubTypes.Type(value = RCT.class, name = "RCT"),
+        @JsonSubTypes.Type(value = RTC.class, name = "RTC"),
         @JsonSubTypes.Type(value = Bridge.class, name = "BRIDGE"),
         @JsonSubTypes.Type(value = Logger.class, name = "LOGGER"),
         @JsonSubTypes.Type(value = Bluetooth.class, name = "BLUETOOTH")
