@@ -7,6 +7,8 @@ import cc.blynk.server.handlers.hardware.auth.HardwareProfile;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.*;
@@ -23,6 +25,8 @@ import static cc.blynk.common.model.messages.MessageFactory.*;
  */
 public class HardwareInfoLogic {
 
+    private static final Logger log = LogManager.getLogger(HardwareInfoLogic.class);
+
     private final int hardwareIdleTimeout;
 
     public HardwareInfoLogic(ServerProperties props) {
@@ -35,7 +39,16 @@ public class HardwareInfoLogic {
         HardwareProfile hardwareProfile = new HardwareProfile(messageParts);
         int newHardwareInterval = hardwareProfile.getHeartBeatInterval();
 
-        if (hardwareIdleTimeout != 0 && newHardwareInterval > 0) {
+        if (hardwareIdleTimeout != 0 && newHardwareInterval > 0 && hardwareIdleTimeout != newHardwareInterval) {
+            log.info("Info command. new hardware read timeout interval {}", newHardwareInterval);
+            ReadTimeoutHandler handler = ctx.pipeline().get(ReadTimeoutHandler.class);
+            try {
+                //explicit call.
+                handler.handlerRemoved(ctx);
+            } catch (Exception e) {
+                log.error(e);
+            }
+
             ctx.pipeline().remove(ReadTimeoutHandler.class);
             ctx.pipeline().addFirst(new ReadTimeoutHandler(newHardwareInterval));
         }
