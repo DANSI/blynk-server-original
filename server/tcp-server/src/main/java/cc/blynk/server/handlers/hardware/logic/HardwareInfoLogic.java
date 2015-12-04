@@ -39,8 +39,10 @@ public class HardwareInfoLogic {
         HardwareProfile hardwareProfile = new HardwareProfile(messageParts);
         int newHardwareInterval = hardwareProfile.getHeartBeatInterval();
 
+        log.trace("Info command. New Hardware timeout interval {}", newHardwareInterval);
+
         if (hardwareIdleTimeout != 0 && newHardwareInterval > 0 && hardwareIdleTimeout != newHardwareInterval) {
-            log.info("Info command. new hardware read timeout interval {}", newHardwareInterval);
+            log.trace("Changing read timeout interval {}", newHardwareInterval);
             ReadTimeoutHandler handler = ctx.pipeline().get(ReadTimeoutHandler.class);
             try {
                 //explicit call.
