@@ -54,15 +54,15 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
         if (messageParts.length < 2) {
             throw new IllegalCommandException("Wrong income message format.", message.id);
-        } else {
-            String osType = null;
-            String version = null;
-            if (messageParts.length == 4) {
-                osType = messageParts[2];
-                version = messageParts[3];
-            }
-            appLogin(ctx, message.id, messageParts[0], messageParts[1], osType, version);
         }
+
+        String osType = null;
+        String version = null;
+        if (messageParts.length == 4) {
+            osType = messageParts[2];
+            version = messageParts[3];
+        }
+        appLogin(ctx, message.id, messageParts[0], messageParts[1], osType, version);
     }
 
     private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String pass, String osType, String version) {
