@@ -77,8 +77,14 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel().remoteAddress()), messageId);
         }
 
+        AppStateHolder appStateHolder = new AppStateHolder(user, osType, version);
+        //todo finish.
+        //if (appStateHolder.isOldAPI()) {
+        //    throw new NotSupportedVersion(messageId);
+        //}
+
         cleanPipeline(ctx.pipeline());
-        ctx.pipeline().addLast(new AppHandler(props, userDao, sessionDao, reportingDao, blockingIOProcessor, new AppStateHolder(user, osType, version)));
+        ctx.pipeline().addLast(new AppHandler(props, userDao, sessionDao, reportingDao, blockingIOProcessor, appStateHolder));
 
         Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
 
