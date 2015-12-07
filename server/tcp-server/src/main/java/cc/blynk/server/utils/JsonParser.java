@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 
 /**
  * User: ddumanskiy
@@ -84,6 +85,24 @@ public final class JsonParser {
             log.error("Error jsoning object.", e);
         }
         return "{}";
+    }
+
+    public static String toJson(Collection<?> list) {
+        try {
+            return mapper.writeValueAsString(list);
+        } catch (Exception e) {
+            log.error("Error jsoning object.", e);
+        }
+        return "[]";
+    }
+
+    public static <T> T readAny(String val, Class<T> c) {
+        try {
+            return mapper.readValue(val, c);
+        } catch (Exception e) {
+            log.error("Error reading json object.", e);
+        }
+        return null;
     }
 
     public static User parseUserFromFile(File userFile) throws IOException {

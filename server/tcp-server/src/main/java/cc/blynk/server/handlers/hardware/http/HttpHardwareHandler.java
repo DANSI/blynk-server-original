@@ -1,12 +1,11 @@
 package cc.blynk.server.handlers.hardware.http;
 
+import cc.blynk.common.stats.GlobalStats;
+import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
-import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
@@ -14,8 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
-import static io.netty.handler.codec.http.HttpResponseStatus.*;
-import static io.netty.handler.codec.http.HttpVersion.*;
 
 /**
  * The Blynk Project.
@@ -26,10 +23,12 @@ public class HttpHardwareHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LogManager.getLogger(HttpHardwareHandler.class);
 
+    private final HttpRequestHandler httpRequestHandler;
     private final UserDao userDao;
 
-    public HttpHardwareHandler(UserDao userDao) {
+    public HttpHardwareHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
         this.userDao = userDao;
+        this.httpRequestHandler = new HttpRequestHandler(userDao, sessionDao, globalStats);
     }
 
     private static void send(ChannelHandlerContext ctx, HttpRequest req, FullHttpResponse response) {
@@ -49,21 +48,12 @@ public class HttpHardwareHandler extends ChannelInboundHandlerAdapter {
 
         HttpRequest req = (HttpRequest) msg;
 
-        String[] paths = req.getUri().split("/");
-        String token = paths[1];
+        log.info("URL : {}", req.getUri());
 
-        User user = userDao.tokenManager.getUserByToken(token);
+        URIDecoder uriDecoder = new URIDecoder(req.getUri());
 
-        if (user == null) {
-            log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
-            send(ctx, req, new DefaultFullHttpResponse(HTTP_1_1, UNAUTHORIZED));
-            return;
-        }
-
-        Integer dashId = UserDao.getDashIdByToken(user.dashTokens, token, 0);
-        DashBoard dash = user.profile.getDashById(dashId, 0);
-
-        send(ctx, req, HttpRequestHandler.processRequest(ctx, dash, req, paths));
+        FullHttpResponse response = httpRequestHandler.processRequest(req, uriDecoder);
+        send(ctx, req, response);
 
     }
 
