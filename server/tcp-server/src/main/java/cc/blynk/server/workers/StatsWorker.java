@@ -37,13 +37,18 @@ public class StatsWorker implements Runnable {
 
     @Override
     public void run() {
+        Stat stat = calcStats(stats);
+        log.info(stat.toString());
+    }
+
+    public Stat calcStats(GlobalStats localStats) {
         Stat stat = new Stat();
-        stat.oneMinRate = (long) stats.incomeMessages.getOneMinuteRate();
+        stat.oneMinRate = (long) localStats.incomeMessages.getOneMinuteRate();
 
         //yeap, some stats updates may be lost (because of sumThenReset()),
         //but we don't care, cause this is just for general monitoring
         for (Map.Entry<Short, String> counterEntry : Command.valuesName.entrySet()) {
-            LongAdder longAdder = stats.specificCounters[counterEntry.getKey()];
+            LongAdder longAdder = localStats.specificCounters[counterEntry.getKey()];
             stat.messages.put(counterEntry.getValue(), longAdder.sumThenReset());
         }
 
@@ -81,7 +86,7 @@ public class StatsWorker implements Runnable {
         stat.active3 = active3;
         stat.total = userDao.getUsers().size();
 
-        log.info(stat.toString());
+        return stat;
     }
 
 }
