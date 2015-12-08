@@ -1,6 +1,5 @@
 package cc.blynk.server.utils;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +15,7 @@ public class ListUtils {
         return list.stream()
                 .skip((page - 1)  * size)
                 .limit(size)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
     }
 
 }
