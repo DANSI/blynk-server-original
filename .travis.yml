@@ -1,4 +1,11 @@
 language: java
+
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+
 jdk:
   - oraclejdk8
+
 script: mvn -q clean test
