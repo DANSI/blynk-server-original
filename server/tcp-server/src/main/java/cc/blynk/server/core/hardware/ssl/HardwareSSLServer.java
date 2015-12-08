@@ -47,7 +47,7 @@ public class HardwareSSLServer extends BaseServer {
 
                 pipeline.addLast(hardwareChannelStateHandler);
                 pipeline.addLast(new MessageDecoder(holder.stats));
-                pipeline.addLast(new MessageEncoder());
+                pipeline.addLast(new MessageEncoder(holder.stats));
 
                 pipeline.addLast(hardwareLoginHandler);
                 pipeline.addLast(userNotLoggedHandler);

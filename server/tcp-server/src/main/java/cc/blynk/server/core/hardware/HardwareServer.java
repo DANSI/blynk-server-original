@@ -40,7 +40,7 @@ public class HardwareServer extends BaseServer {
                 }
                 pipeline.addLast(hardwareChannelStateHandler);
                 pipeline.addLast(new MessageDecoder(holder.stats));
-                pipeline.addLast(new MessageEncoder());
+                pipeline.addLast(new MessageEncoder(holder.stats));
 
                 //sharable business logic handlers
                 pipeline.addLast(hardwareLoginHandler);

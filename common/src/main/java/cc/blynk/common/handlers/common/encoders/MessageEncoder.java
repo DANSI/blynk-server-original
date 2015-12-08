@@ -4,6 +4,7 @@ import cc.blynk.common.enums.Command;
 import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.model.messages.ResponseWithBodyMessage;
+import cc.blynk.common.stats.GlobalStats;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -17,6 +18,12 @@ import io.netty.handler.codec.MessageToByteEncoder;
  */
 public class MessageEncoder extends MessageToByteEncoder<MessageBase> {
 
+    private final GlobalStats stats;
+
+    public MessageEncoder(GlobalStats stats) {
+        this.stats = stats;
+    }
+
     @Override
     protected void encode(ChannelHandlerContext ctx, MessageBase message, ByteBuf out) throws Exception {
         out.writeByte(message.command);
@@ -28,6 +35,8 @@ public class MessageEncoder extends MessageToByteEncoder<MessageBase> {
                 out.writeInt(((ResponseWithBodyMessage) message).dashId);
             }
         } else {
+            stats.mark(message.command);
+
             byte[] body = message.getBytes();
             out.writeShort(body.length);
             if (body.length > 0) {

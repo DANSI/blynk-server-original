@@ -3,6 +3,7 @@ package cc.blynk.integration.model;
 import cc.blynk.client.core.AppClient;
 import cc.blynk.client.handlers.decoders.ClientMessageDecoder;
 import cc.blynk.common.handlers.common.encoders.MessageEncoder;
+import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ServerProperties;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -66,7 +67,7 @@ public class TestAppClient extends AppClient {
 
                 pipeline.addLast(sslCtx.newHandler(ch.alloc(), host, port));
                 pipeline.addLast(new ClientMessageDecoder());
-                pipeline.addLast(new MessageEncoder());
+                pipeline.addLast(new MessageEncoder(new GlobalStats()));
                 pipeline.addLast(responseMock);
             }
         };

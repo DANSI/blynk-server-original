@@ -63,7 +63,7 @@ public class AppServer extends BaseServer {
                 //non-sharable handlers
                 pipeline.addLast(appChannelStateHandler);
                 pipeline.addLast(new MessageDecoder(holder.stats));
-                pipeline.addLast(new MessageEncoder());
+                pipeline.addLast(new MessageEncoder(holder.stats));
 
                 //sharable business logic handlers initialized previously
                 pipeline.addLast(registerHandler);
