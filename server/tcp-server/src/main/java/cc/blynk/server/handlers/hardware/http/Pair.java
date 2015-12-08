@@ -13,10 +13,12 @@ public class Pair {
     public String name;
     public static Comparator<Pair> byName = (e1, e2) -> e1.name.compareTo(e2.name);
     public static Comparator<Pair> byNameAsInt = (e1, e2) -> Integer.valueOf(e1.name).compareTo(Integer.valueOf(e2.name));
-    public Integer count;
+    public Long count;
     public static Comparator<Pair> byCount = (e1, e2) -> e1.count.compareTo(e2.count);
-    public Pair(Map.Entry<String, Integer> entry) {
+
+    public Pair(Map.Entry<String, ?> entry) {
         this.name = entry.getKey();
-        this.count = entry.getValue();
+        this.count = ((Number) entry.getValue()).longValue();
     }
+
 }

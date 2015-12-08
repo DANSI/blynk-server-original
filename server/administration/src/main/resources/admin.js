@@ -86,6 +86,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     var realtime = nga.entity('realtime').url('stats/realtime').readOnly();
     realtime.listView()
         .title('Realtime stats')
+        .batchActions([])
         .fields([
             nga.field('oneMinRate').label('1 min request rate'),
             nga.field('total').label('Total registrations'),
@@ -96,10 +97,21 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             nga.field('onlineHards').label('Hardware connections')
             ]);
 
+    var messages = nga.entity('messages').identifier(nga.field('name')).url('stats/messages').readOnly();
+    messages.listView()
+        .title('Messages')
+        .perPage(50)
+        .batchActions([])
+        .fields([
+            nga.field('name').label('Message'),
+            nga.field('count').label('Count')
+        ]);
+
     var boards = nga.entity('boards').identifier(nga.field('name')).url('stats/boards').readOnly();
     boards.listView()
         .title('Board Types')
         .perPage(50)
+        .batchActions([])
         .fields([
             nga.field('name').label('Board Name'),
             nga.field('count').label('Count')
@@ -110,6 +122,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     widgets.listView()
         .title('Widgets')
         .perPage(50)
+        .batchActions([])
         .fields([
             nga.field('name').label('Widget'),
             nga.field('count').label('Count')
@@ -119,6 +132,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     projectsPerUser.listView()
         .title('Project per user')
         .perPage(50)
+        .batchActions([])
         .fields([
             nga.field('name').label('# of project per user'),
             nga.field('count').label('Count')
@@ -129,6 +143,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     filledSpace.listView()
         .title('Filled space')
         .perPage(100)
+        .batchActions([])
         .fields([
             nga.field('name').label('# of cells per project'),
             nga.field('count').label('Count')
@@ -141,6 +156,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             .addChild(nga.menu(users).icon('<span class="glyphicon glyphicon-user"></span>'))
             .addChild(nga.menu().title('Stats')
                 .addChild(nga.menu(realtime).title('Realtime').icon(''))
+                .addChild(nga.menu(messages).title('Messages').icon(''))
                 .addChild(nga.menu(boards).title('Board types').icon(''))
                 .addChild(nga.menu(widgets).title('Widgets').icon(''))
                 .addChild(nga.menu(projectsPerUser).title('Projects per user').icon(''))
@@ -153,6 +169,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     // add the user entity to the admin application
     admin.addEntity(users);
     admin.addEntity(realtime);
+    admin.addEntity(messages);
     admin.addEntity(boards);
     admin.addEntity(widgets);
     admin.addEntity(projectsPerUser);

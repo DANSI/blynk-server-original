@@ -45,7 +45,7 @@ public class HttpAdminRequestHandler {
         return sort(list, field, order, false);
     }
 
-    private static List<Pair> convertMapToPair(Map<String, Integer> map) {
+    private static List<Pair> convertMapToPair(Map<String, ?> map) {
         return map.entrySet().stream().map(Pair::new).collect(Collectors.toList());
     }
 
@@ -74,6 +74,8 @@ public class HttpAdminRequestHandler {
                 switch (uriDecoder.getSubEntity()) {
                     case "realtime" :
                         return makeResponse(Collections.singletonList(StatsWorker.calcStats(sessionDao, userDao, stats, false)));
+                    case "messages" :
+                        return makeResponse(sort(convertMapToPair(StatsWorker.calcStats(sessionDao, userDao, stats, false).messages), uriDecoder.getSortField(), uriDecoder.getSortOrder()));
                     case "boards" :
                         return makeResponse(sort(convertMapToPair(userDao.getBoardsUsage()), uriDecoder.getSortField(), uriDecoder.getSortOrder()));
                     case "widgets" :

@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class Stat {
 
-    final Map<String, Long> messages = new HashMap<>();
+    public final Map<String, Long> messages = new HashMap<>();
     //2015-07-20T20:15:03.954+03:00
     String ts = OffsetDateTime.now().toString();
     long oneMinRate;
