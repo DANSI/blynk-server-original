@@ -1,8 +1,10 @@
-package cc.blynk.server.handlers.hardware.http;
+package cc.blynk.server.handlers.hardware.http.admin;
 
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
+import cc.blynk.server.handlers.hardware.http.Pair;
+import cc.blynk.server.handlers.hardware.http.URIDecoder;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.workers.StatsWorker;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -21,13 +23,13 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 03.12.15.
  */
-public class HttpRequestHandler {
+public class HttpAdminRequestHandler {
 
     private final GlobalStats stats;
     private final SessionDao sessionDao;
     private final UserDao userDao;
 
-    public HttpRequestHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
+    public HttpAdminRequestHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
         this.userDao = userDao;
         this.sessionDao = sessionDao;
         this.stats = globalStats;

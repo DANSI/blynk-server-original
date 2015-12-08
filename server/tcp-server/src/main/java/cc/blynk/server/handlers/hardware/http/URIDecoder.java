@@ -17,20 +17,24 @@ public class URIDecoder extends QueryStringDecoder {
         this.paths = path().split("/");
     }
 
-    public String getEntity() {
+    public String getHandlerType() {
         return paths[1].toLowerCase();
     }
 
-    public String getSubEntity() {
+    public String getEntity() {
         return paths[2].toLowerCase();
     }
 
+    public String getSubEntity() {
+        return paths[3].toLowerCase();
+    }
+
     public boolean hasId() {
-        return paths.length > 2;
+        return paths.length > 3;
     }
 
     public String getId() {
-        return paths[2];
+        return paths[3];
     }
 
     public int getPage() {

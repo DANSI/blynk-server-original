@@ -2,13 +2,15 @@ package cc.blynk.server.core.hardware;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.handlers.hardware.http.HttpHardwareHandler;
+import cc.blynk.server.handlers.hardware.http.admin.HttpAdminHandler;
 import cc.blynk.server.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.stream.ChunkedWriteHandler;
 
 /**
  * The Blynk Project.
@@ -30,9 +32,11 @@ public class HttpsHardwareServer extends BaseServer {
                 ChannelPipeline pipeline = ch.pipeline();
                 pipeline.addLast(sslCtx.newHandler(ch.alloc()));
                 pipeline.addLast(new HttpServerCodec());
+                pipeline.addLast(new HttpObjectAggregator(65536));
+                pipeline.addLast(new ChunkedWriteHandler());
                 //look like not all hardwares can support that
                 //pipeline.addLast(new HttpContentCompressor());
-                pipeline.addLast(new HttpHardwareHandler(holder.userDao, holder.sessionDao, holder.stats));
+                pipeline.addLast(new HttpAdminHandler(holder.userDao, holder.sessionDao, holder.stats));
             }
         };
 

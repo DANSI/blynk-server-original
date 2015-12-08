@@ -2,7 +2,7 @@ package cc.blynk.server.core.hardware;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.handlers.hardware.http.HttpHardwareHandler;
+import cc.blynk.server.handlers.hardware.http.admin.HttpAdminHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -28,7 +28,7 @@ public class HttpHardwareServer extends BaseServer {
                 pipeline.addLast(new HttpServerCodec());
                 //look like not all hardwares can support that
                 //pipeline.addLast(new HttpContentCompressor());
-                pipeline.addLast(new HttpHardwareHandler(holder.userDao, holder.sessionDao, holder.stats));
+                pipeline.addLast(new HttpAdminHandler(holder.userDao, holder.sessionDao, holder.stats));
             }
         };
 
