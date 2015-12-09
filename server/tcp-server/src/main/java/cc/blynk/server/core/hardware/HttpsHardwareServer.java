@@ -2,7 +2,7 @@ package cc.blynk.server.core.hardware;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.handlers.hardware.http.admin.HttpAdminHandler;
+import cc.blynk.server.handlers.http.admin.HttpAdminHandler;
 import cc.blynk.server.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

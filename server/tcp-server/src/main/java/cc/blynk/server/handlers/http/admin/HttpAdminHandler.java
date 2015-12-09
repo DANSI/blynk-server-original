@@ -1,9 +1,10 @@
-package cc.blynk.server.handlers.hardware.http.admin;
+package cc.blynk.server.handlers.http.admin;
 
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
-import cc.blynk.server.handlers.hardware.http.URIDecoder;
+import cc.blynk.server.handlers.http.admin.handlers.StatsHandler;
+import cc.blynk.server.handlers.http.admin.handlers.UsersHandler;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -24,12 +25,9 @@ public class HttpAdminHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LogManager.getLogger(HttpAdminHandler.class);
 
-    private final HttpAdminRequestHandler httpAdminRequestHandler;
-    private final UserDao userDao;
-
     public HttpAdminHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
-        this.userDao = userDao;
-        this.httpAdminRequestHandler = new HttpAdminRequestHandler(userDao, sessionDao, globalStats);
+        HandlerRegistry.register(new UsersHandler(userDao, sessionDao, globalStats));
+        HandlerRegistry.register(new StatsHandler(userDao, sessionDao, globalStats));
     }
 
     private static void send(ChannelHandlerContext ctx, HttpRequest req, FullHttpResponse response) {
@@ -51,19 +49,9 @@ public class HttpAdminHandler extends ChannelInboundHandlerAdapter {
 
         log.info("URL : {}", req.getUri());
 
-        URIDecoder uriDecoder = new URIDecoder(req.getUri());
-
-        FullHttpResponse response;
-        switch (uriDecoder.getHandlerType()) {
-            case "admin" :
-                response = httpAdminRequestHandler.processRequest(req, uriDecoder);
-                break;
-            default :
-                response = null;
-        }
+        FullHttpResponse response = HandlerRegistry.process(req);
 
         send(ctx, req, response);
-
     }
 
     @Override

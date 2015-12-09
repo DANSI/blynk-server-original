@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.hardware.http;
+package cc.blynk.server.handlers.http;
 
 import java.util.Comparator;
 import java.util.Map;

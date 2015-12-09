@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.hardware.http;
+package cc.blynk.server.handlers.http;
 
 import cc.blynk.server.model.enums.PinType;
 

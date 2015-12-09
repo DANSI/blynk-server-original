@@ -1,7 +1,9 @@
-package cc.blynk.server.handlers.hardware.http;
+package cc.blynk.server.handlers.http;
 
 import cc.blynk.server.utils.JsonParser;
 import io.netty.handler.codec.http.QueryStringDecoder;
+
+import java.util.Map;
 
 /**
  * The Blynk Project.
@@ -11,6 +13,7 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 public class URIDecoder extends QueryStringDecoder {
 
     public final String[] paths;
+    public Map<String, String> pathData;
 
     public URIDecoder(String uri) {
         super(uri);
