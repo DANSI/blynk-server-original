@@ -2,7 +2,6 @@ package cc.blynk.server.core.administration;
 
 import cc.blynk.common.utils.Config;
 import cc.blynk.server.core.administration.actions.ActiveUsers;
-import cc.blynk.server.core.administration.actions.ActivityMonitor;
 import cc.blynk.server.core.administration.actions.ManualResetPassword;
 import cc.blynk.server.core.administration.actions.ResetPassword;
 import cc.blynk.server.utils.ByteClassLoaderUtil;
@@ -62,8 +61,6 @@ public class AdminLauncher {
                 return readClassAsResource(ResetPassword.class);
             case "manualresetpassword" :
                 return readClassAsResource(ManualResetPassword.class);
-            case "quotausage" :
-                return readClassAsResource(ActivityMonitor.class);
             case "activeusers" :
                 return readClassAsResource(ActiveUsers.class);
         }
