@@ -10,7 +10,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-import java.util.Collection;
+import java.util.List;
 
 import static cc.blynk.server.handlers.http.ResponseGenerator.*;
 
@@ -32,14 +32,16 @@ public class UsersHandler extends BaseHandler {
     @Path("")
     public HttpResponse getUsers(@QueryParam("_filters") String filterParam,
                                  @QueryParam("_page") int page,
-                                 @QueryParam("_perPage") int size) {
+                                 @QueryParam("_perPage") int size,
+                                 @QueryParam("_sortField") String sortField,
+                                 @QueryParam("_sortDir") String sortOrder) {
         if (filterParam != null) {
             Filter filter = JsonParser.readAny(filterParam, Filter.class);
             filterParam = filter == null ? null : filter.name;
         }
-        Collection<User> users = userDao.saerchByUsername(filterParam);
+        List<User> users = userDao.saerchByUsername(filterParam);
         return appendTotalCountHeader(
-                makeResponse(users, page, size), users.size()
+                makeResponse(sort(users, sortField, sortOrder), page, size), users.size()
         );
     }
 

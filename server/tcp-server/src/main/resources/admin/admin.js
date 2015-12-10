@@ -5,9 +5,10 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         .baseApiUrl('http://127.0.0.1:8080/admin/'); // main API endpoint
     // create a user entity
     // the API endpoint for this entity will be 'http://jsonplaceholder.typicode.com/users/:id
-    var users = nga.entity('users').sortField('name').identifier(nga.field('name'));
+    var users = nga.entity('users').identifier(nga.field('name'));
     // set the fields of the user entity list view
     users.listView()
+        .sortField('name')
         .fields([
             nga.field('name', 'email').isDetailLink(true),
             nga.field('# of projects').map(function (value, entry) {
@@ -87,6 +88,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     realtime.listView()
         .title('Realtime stats')
         .batchActions([])
+        .sortField('count')
         .fields([
             nga.field('oneMinRate').label('1 min request rate'),
             nga.field('total').label('Total registrations'),
@@ -102,6 +104,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         .title('Requests per user')
         .perPage(50)
         .batchActions([])
+        .sortField('hardRate')
         .fields([
             nga.field('name').label('User'),
             nga.field('hardRate').label('Hardware requests per second'),

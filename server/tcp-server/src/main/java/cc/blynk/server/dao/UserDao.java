@@ -7,8 +7,9 @@ import cc.blynk.server.model.widgets.Widget;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -55,9 +56,9 @@ public class UserDao {
         return users;
     }
 
-    public Collection<User> saerchByUsername(String name) {
+    public List<User> saerchByUsername(String name) {
         if (name == null) {
-            return users.values();
+            return new ArrayList<>(users.values());
         }
 
         return users.values().stream().filter(user -> user.name.contains(name)).collect(Collectors.toList());
