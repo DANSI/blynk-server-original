@@ -2,7 +2,7 @@ package cc.blynk.server.stats.metrics;
 
 import java.util.concurrent.TimeUnit;
 
-import static java.lang.Math.exp;
+import static java.lang.Math.*;
 
 /**
  * Class used to restrict user in request rate. Mostly copied from codahale metrics for performance improvement.
@@ -16,7 +16,7 @@ public class InstanceLoadMeter {
     private static final long TICK_INTERVAL = TimeUnit.SECONDS.toMillis(1);
     private static final double TICK_INTERVAL_DOUBLE = (double) TICK_INTERVAL;
 
-    private final double alpha = 1 - exp(-1/60.0);
+    private static final double ALPHA = 1 - exp(-1/60.0);
 
     private long lastTick;
     private long count = 0;
@@ -60,7 +60,7 @@ public class InstanceLoadMeter {
         final double instantRate = count / TICK_INTERVAL_DOUBLE;
         count = 0;
         if (initialized) {
-            rate += (alpha * (instantRate - rate));
+            rate += (ALPHA * (instantRate - rate));
         } else {
             rate = instantRate;
             initialized = true;
