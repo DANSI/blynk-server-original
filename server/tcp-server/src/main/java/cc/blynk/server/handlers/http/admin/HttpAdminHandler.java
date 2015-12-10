@@ -1,5 +1,6 @@
 package cc.blynk.server.handlers.http.admin;
 
+import cc.blynk.server.handlers.http.admin.handlers.FileHandler;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -20,6 +21,8 @@ public class HttpAdminHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LogManager.getLogger(HttpAdminHandler.class);
 
+    private final FileHandler fileHandler = new FileHandler();
+
     private static void send(ChannelHandlerContext ctx, HttpRequest req, FullHttpResponse response) {
         if (!HttpHeaders.isKeepAlive(req)) {
             ctx.write(response).addListener(ChannelFutureListener.CLOSE);
@@ -39,9 +42,17 @@ public class HttpAdminHandler extends ChannelInboundHandlerAdapter {
 
         log.info("URL : {}", req.getUri());
 
-        FullHttpResponse response = HandlerRegistry.process(req);
-
-        send(ctx, req, response);
+        //a bit ugly code but it is ok for now. 2 branches. 1 fro static files, second for normal http api
+        if (req.getUri().startsWith("/admin/static")) {
+            try {
+                fileHandler.channelRead(ctx, req);
+            } catch (Exception e) {
+                log.error("Error handling static file.", e);
+            }
+        } else {
+            FullHttpResponse response = HandlerRegistry.process(req);
+            send(ctx, req, response);
+        }
     }
 
     @Override

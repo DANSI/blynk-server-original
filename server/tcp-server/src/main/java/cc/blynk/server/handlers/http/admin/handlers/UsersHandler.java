@@ -8,6 +8,8 @@ import cc.blynk.server.handlers.http.HttpResponse;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.ws.rs.*;
 import java.util.List;
@@ -23,6 +25,8 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  */
 @Path("/admin/users")
 public class UsersHandler extends BaseHandler {
+
+    private static final Logger log = LogManager.getLogger(UsersHandler.class);
 
     private final UserDao userDao;
     private final SessionDao sessionDao;
@@ -71,6 +75,8 @@ public class UsersHandler extends BaseHandler {
 
         Session session = sessionDao.userSession.get(new User(name, null));
         session.closeAll();
+
+        log.info("User {} successfully removed.", name);
 
         return new HttpResponse(HTTP_1_1, OK);
     }
