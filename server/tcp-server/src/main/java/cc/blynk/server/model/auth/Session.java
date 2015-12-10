@@ -2,7 +2,10 @@ package cc.blynk.server.model.auth;
 
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
+import cc.blynk.server.handlers.app.main.AppHandler;
+import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
+import cc.blynk.server.stats.metrics.InstanceLoadMeter;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoop;
 import io.netty.util.internal.ConcurrentSet;
@@ -69,6 +72,30 @@ public class Session {
             log.trace("Sending {} to hardware {}", message, channel);
             channel.writeAndFlush(message);
         }
+    }
+
+    public int getAppRequestRate() {
+        double sum = 0;
+        for (Channel c : appChannels) {
+            AppHandler handler = c.pipeline().get(AppHandler.class);
+            if (handler != null) {
+                InstanceLoadMeter loadMeter = handler.getQuotaMeter();
+                sum += loadMeter.getOneMinuteRateNoTick();
+            }
+        }
+        return (int) sum;
+    }
+
+    public int getHardRequestRate() {
+        double sum = 0;
+        for (Channel c : hardwareChannels) {
+            HardwareHandler handler = c.pipeline().get(HardwareHandler.class);
+            if (handler != null) {
+                InstanceLoadMeter loadMeter = handler.getQuotaMeter();
+                sum += loadMeter.getOneMinuteRateNoTick();
+            }
+        }
+        return (int) sum;
     }
 
 }

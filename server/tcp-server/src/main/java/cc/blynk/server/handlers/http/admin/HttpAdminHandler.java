@@ -1,10 +1,5 @@
 package cc.blynk.server.handlers.http.admin;
 
-import cc.blynk.common.stats.GlobalStats;
-import cc.blynk.server.dao.SessionDao;
-import cc.blynk.server.dao.UserDao;
-import cc.blynk.server.handlers.http.admin.handlers.StatsHandler;
-import cc.blynk.server.handlers.http.admin.handlers.UsersHandler;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -24,11 +19,6 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.*;
 public class HttpAdminHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LogManager.getLogger(HttpAdminHandler.class);
-
-    public HttpAdminHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
-        HandlerRegistry.register(new UsersHandler(userDao));
-        HandlerRegistry.register(new StatsHandler(userDao, sessionDao, globalStats));
-    }
 
     private static void send(ChannelHandlerContext ctx, HttpRequest req, FullHttpResponse response) {
         if (!HttpHeaders.isKeepAlive(req)) {

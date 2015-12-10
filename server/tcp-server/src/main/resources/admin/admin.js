@@ -5,7 +5,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         .baseApiUrl('http://127.0.0.1:8080/admin/'); // main API endpoint
     // create a user entity
     // the API endpoint for this entity will be 'http://jsonplaceholder.typicode.com/users/:id
-    var users = nga.entity('users').identifier(nga.field('name'));
+    var users = nga.entity('users').sortField('name').identifier(nga.field('name'));
     // set the fields of the user entity list view
     users.listView()
         .fields([
@@ -97,11 +97,23 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             nga.field('onlineHards').label('Hardware connections')
             ]);
 
+    var requestsPerUser = nga.entity('requestsPerUser').identifier(nga.field('name')).url('stats/requestsPerUser').readOnly();
+    requestsPerUser.listView()
+        .title('Requests per user')
+        .perPage(50)
+        .batchActions([])
+        .fields([
+            nga.field('name').label('User'),
+            nga.field('hardRate').label('Hardware requests per second'),
+            nga.field('appRate').label('Application requests per second')
+        ]);
+
     var messages = nga.entity('messages').identifier(nga.field('name')).url('stats/messages').readOnly();
     messages.listView()
         .title('Messages')
         .perPage(50)
         .batchActions([])
+        .sortField('count')
         .fields([
             nga.field('name').label('Message'),
             nga.field('count').label('Count')
@@ -112,6 +124,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         .title('Board Types')
         .perPage(50)
         .batchActions([])
+        .sortField('count')
         .fields([
             nga.field('name').label('Board Name'),
             nga.field('count').label('Count')
@@ -123,6 +136,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         .title('Widgets')
         .perPage(50)
         .batchActions([])
+        .sortField('count')
         .fields([
             nga.field('name').label('Widget'),
             nga.field('count').label('Count')
@@ -133,6 +147,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         .title('Project per user')
         .perPage(50)
         .batchActions([])
+        .sortField('count')
         .fields([
             nga.field('name').label('# of project per user'),
             nga.field('count').label('Count')
@@ -144,6 +159,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         .title('Filled space')
         .perPage(100)
         .batchActions([])
+        .sortField('count')
         .fields([
             nga.field('name').label('# of cells per project'),
             nga.field('count').label('Count')
@@ -156,6 +172,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             .addChild(nga.menu(users).icon('<span class="glyphicon glyphicon-user"></span>'))
             .addChild(nga.menu().title('Stats')
                 .addChild(nga.menu(realtime).title('Realtime').icon(''))
+                .addChild(nga.menu(requestsPerUser).title('Request per user').icon(''))
                 .addChild(nga.menu(messages).title('Messages').icon(''))
                 .addChild(nga.menu(boards).title('Board types').icon(''))
                 .addChild(nga.menu(widgets).title('Widgets').icon(''))
@@ -168,6 +185,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
 
     // add the user entity to the admin application
     admin.addEntity(users);
+    admin.addEntity(requestsPerUser);
     admin.addEntity(realtime);
     admin.addEntity(messages);
     admin.addEntity(boards);

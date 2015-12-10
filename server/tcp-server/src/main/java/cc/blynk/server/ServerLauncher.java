@@ -8,6 +8,9 @@ import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.core.hardware.HttpHardwareServer;
 import cc.blynk.server.core.hardware.HttpsHardwareServer;
 import cc.blynk.server.core.hardware.ssl.HardwareSSLServer;
+import cc.blynk.server.handlers.http.admin.HandlerRegistry;
+import cc.blynk.server.handlers.http.admin.handlers.StatsHandler;
+import cc.blynk.server.handlers.http.admin.handlers.UsersHandler;
 import cc.blynk.server.utils.LoggerUtil;
 
 /**
@@ -38,6 +41,9 @@ public class ServerLauncher {
 
     private ServerLauncher(ServerProperties serverProperties) {
         this.holder = new Holder(serverProperties);
+
+        HandlerRegistry.register(new UsersHandler(holder.userDao));
+        HandlerRegistry.register(new StatsHandler(holder.userDao, holder.sessionDao, holder.stats));
 
         this.hardwareServer = new HardwareServer(holder);
         this.hardwareSSLServer = new HardwareSSLServer(holder);

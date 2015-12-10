@@ -107,7 +107,7 @@ public class UserDao {
                 int sum = 0;
                 for (Widget widget : dashBoard.widgets) {
                     if (widget.height == null || widget.width == null) {
-                        log.error("Widget without length fields. User : {}", user.name);
+                        //log.error("Widget without length fields. User : {}", user.name);
                         continue;
                     }
                     sum += widget.height * widget.width;

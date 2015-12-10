@@ -28,7 +28,7 @@ public class HttpHardwareServer extends BaseServer {
                 pipeline.addLast(new HttpServerCodec());
                 //look like not all hardwares can support that
                 //pipeline.addLast(new HttpContentCompressor());
-                pipeline.addLast(new HttpAdminHandler(holder.userDao, holder.sessionDao, holder.stats));
+                pipeline.addLast(new HttpAdminHandler());
             }
         };
 
