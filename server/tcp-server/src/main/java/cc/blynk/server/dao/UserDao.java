@@ -56,12 +56,16 @@ public class UserDao {
         return users;
     }
 
-    public List<User> saerchByUsername(String name) {
+    public List<User> searchByUsername(String name) {
         if (name == null) {
             return new ArrayList<>(users.values());
         }
 
         return users.values().stream().filter(user -> user.name.contains(name)).collect(Collectors.toList());
+    }
+
+    public User deleteUser(String name) {
+        return users.remove(name);
     }
 
     public Map<String, Integer> getBoardsUsage() {

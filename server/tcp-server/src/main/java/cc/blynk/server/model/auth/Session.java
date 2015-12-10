@@ -98,4 +98,9 @@ public class Session {
         return (int) sum;
     }
 
+    public void closeAll() {
+        hardwareChannels.forEach(io.netty.channel.Channel::close);
+        appChannels.forEach(io.netty.channel.Channel::close);
+    }
+
 }

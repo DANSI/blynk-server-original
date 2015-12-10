@@ -3,6 +3,7 @@ package cc.blynk.server.dao;
 import cc.blynk.common.utils.Config;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.function.Function.identity;
+import static java.util.function.Function.*;
 
 
 /**
@@ -71,6 +72,11 @@ public class FileManager {
 
     public Path generateFileName(String userName) {
         return Paths.get(dataDir.toString(), "u_" + userName + ".user");
+    }
+
+    public boolean delete(String name) {
+        Path file = generateFileName(name);
+        return FileUtils.deleteQuietly(file.toFile());
     }
 
     public void overrideUserFile(User user) throws IOException {

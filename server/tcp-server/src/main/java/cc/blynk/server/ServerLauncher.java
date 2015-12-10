@@ -42,7 +42,7 @@ public class ServerLauncher {
     private ServerLauncher(ServerProperties serverProperties) {
         this.holder = new Holder(serverProperties);
 
-        HandlerRegistry.register(new UsersHandler(holder.userDao));
+        HandlerRegistry.register(new UsersHandler(holder.userDao, holder.sessionDao, holder.fileManager));
         HandlerRegistry.register(new StatsHandler(holder.userDao, holder.sessionDao, holder.stats));
 
         this.hardwareServer = new HardwareServer(holder);

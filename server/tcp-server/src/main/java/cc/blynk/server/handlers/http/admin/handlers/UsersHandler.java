@@ -1,18 +1,20 @@
 package cc.blynk.server.handlers.http.admin.handlers;
 
+import cc.blynk.server.dao.FileManager;
+import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.http.Filter;
 import cc.blynk.server.handlers.http.HttpResponse;
+import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import java.util.List;
 
 import static cc.blynk.server.handlers.http.ResponseGenerator.*;
+import static io.netty.handler.codec.http.HttpResponseStatus.*;
+import static io.netty.handler.codec.http.HttpVersion.*;
 
 /**
  * The Blynk Project.
@@ -23,9 +25,13 @@ import static cc.blynk.server.handlers.http.ResponseGenerator.*;
 public class UsersHandler extends BaseHandler {
 
     private final UserDao userDao;
+    private final SessionDao sessionDao;
+    private final FileManager fileManager;
 
-    public UsersHandler(UserDao userDao) {
+    public UsersHandler(UserDao userDao, SessionDao sessionDao, FileManager fileManager) {
         this.userDao = userDao;
+        this.fileManager = fileManager;
+        this.sessionDao = sessionDao;
     }
 
     @GET
@@ -39,7 +45,7 @@ public class UsersHandler extends BaseHandler {
             Filter filter = JsonParser.readAny(filterParam, Filter.class);
             filterParam = filter == null ? null : filter.name;
         }
-        List<User> users = userDao.saerchByUsername(filterParam);
+        List<User> users = userDao.searchByUsername(filterParam);
         return appendTotalCountHeader(
                 makeResponse(sort(users, sortField, sortOrder), page, size), users.size()
         );
@@ -49,6 +55,24 @@ public class UsersHandler extends BaseHandler {
     @Path("/{name}")
     public HttpResponse getUserByName(@PathParam("name") String name) {
         return makeResponse(userDao.getUsers().get(name));
+    }
+
+    @DELETE
+    @Path("/{name}")
+    public HttpResponse deleteUserByName(@PathParam("name") String name) {
+        User user = userDao.deleteUser(name);
+        if (user == null) {
+            return new HttpResponse(HTTP_1_1, NOT_FOUND);
+        }
+
+        if (!fileManager.delete(name)) {
+            return new HttpResponse(HTTP_1_1, NOT_FOUND);
+        }
+
+        Session session = sessionDao.userSession.get(new User(name, null));
+        session.closeAll();
+
+        return new HttpResponse(HTTP_1_1, OK);
     }
 
 }

@@ -1,8 +1,11 @@
 package cc.blynk.server.handlers.http.admin;
 
+import cc.blynk.server.handlers.http.HttpResponse;
 import cc.blynk.server.handlers.http.URIDecoder;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.uri.UriTemplate;
 
 import javax.ws.rs.Path;
@@ -16,12 +19,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.netty.handler.codec.http.HttpResponseStatus.*;
+import static io.netty.handler.codec.http.HttpVersion.*;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
 public class HandlerRegistry {
+
+    private static final Logger log = LogManager.getLogger(HandlerRegistry.class);
 
     private final static List<HandlerHolder> processors = new ArrayList<>();
 
@@ -80,7 +88,9 @@ public class HandlerRegistry {
 
             }
         }
-        throw new RuntimeException("ADASDASD");
+
+        log.error("Error resolving url. No path found.");
+        return new HttpResponse(HTTP_1_1, NOT_FOUND);
     }
 
 }

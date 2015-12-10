@@ -22,4 +22,8 @@ public class HttpResponse extends DefaultFullHttpResponse {
         headers().set(CONTENT_LENGTH, content().readableBytes());
         headers().set("Access-Control-Allow-Origin", "*");
     }
+
+    public HttpResponse(HttpVersion version, HttpResponseStatus status) {
+        super(version, status);
+    }
 }
