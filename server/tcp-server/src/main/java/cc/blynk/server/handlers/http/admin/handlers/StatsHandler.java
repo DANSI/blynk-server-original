@@ -18,7 +18,7 @@ import static cc.blynk.server.handlers.http.ResponseGenerator.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-@Path("/stats")
+@Path("/admin/stats")
 public class StatsHandler extends BaseHandler {
 
     private final GlobalStats stats;
@@ -52,12 +52,11 @@ public class StatsHandler extends BaseHandler {
     }
 
     @GET
-    @Path("/projectsperuser")
+    @Path("/projectsPerUser")
     public HttpResponse getProjectsPerUser(@QueryParam("_sortField") String sortField,
                                     @QueryParam("_sortOrder") String sortOrder) {
         return makeResponse(sort(convertMapToPair(userDao.getProjectsPerUser()), sortField, sortOrder, true));
     }
-
 
     @GET
     @Path("/boards")
@@ -67,7 +66,7 @@ public class StatsHandler extends BaseHandler {
     }
 
     @GET
-    @Path("/filledspace")
+    @Path("/filledSpace")
     public HttpResponse getFilledSpace(@QueryParam("_sortField") String sortField,
                                   @QueryParam("_sortOrder") String sortOrder) {
         return makeResponse(sort(convertMapToPair(userDao.getFilledSpace()), sortField, sortOrder, true));

@@ -26,7 +26,7 @@ public class HttpAdminHandler extends ChannelInboundHandlerAdapter {
     private static final Logger log = LogManager.getLogger(HttpAdminHandler.class);
 
     public HttpAdminHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
-        HandlerRegistry.register(new UsersHandler(userDao, sessionDao, globalStats));
+        HandlerRegistry.register(new UsersHandler(userDao));
         HandlerRegistry.register(new StatsHandler(userDao, sessionDao, globalStats));
     }
 

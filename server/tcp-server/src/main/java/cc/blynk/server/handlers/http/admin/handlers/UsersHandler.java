@@ -1,7 +1,5 @@
 package cc.blynk.server.handlers.http.admin.handlers;
 
-import cc.blynk.common.stats.GlobalStats;
-import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.http.Filter;
 import cc.blynk.server.handlers.http.HttpResponse;
@@ -21,21 +19,17 @@ import static cc.blynk.server.handlers.http.ResponseGenerator.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 03.12.15.
  */
-@Path("/admin")
+@Path("/admin/users")
 public class UsersHandler extends BaseHandler {
 
-    private final GlobalStats stats;
-    private final SessionDao sessionDao;
     private final UserDao userDao;
 
-    public UsersHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
+    public UsersHandler(UserDao userDao) {
         this.userDao = userDao;
-        this.sessionDao = sessionDao;
-        this.stats = globalStats;
     }
 
     @GET
-    @Path("/users")
+    @Path("")
     public HttpResponse getUsers(@QueryParam("_filters") String filterParam,
                                  @QueryParam("_page") int page,
                                  @QueryParam("_perPage") int size) {
@@ -50,7 +44,7 @@ public class UsersHandler extends BaseHandler {
     }
 
     @GET
-    @Path("/users/{name}")
+    @Path("/{name}")
     public HttpResponse getUserByName(@PathParam("name") String name) {
         return makeResponse(userDao.getUsers().get(name));
     }
