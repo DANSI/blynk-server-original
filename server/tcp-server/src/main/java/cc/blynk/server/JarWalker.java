@@ -26,7 +26,11 @@ public class JarWalker {
             while((ze = zip.getNextEntry()) != null) {
                 String entryName = ze.getName();
                 if (entryName.startsWith(staticResourcesFolder) &&
-                        (entryName.endsWith(".js") || entryName.endsWith(".css") || entryName.endsWith(".html"))) {
+                               (entryName.endsWith(".js") ||
+                                entryName.endsWith(".css") ||
+                                entryName.endsWith(".html")) ||
+                                entryName.endsWith(".ico") ||
+                                entryName.endsWith(".png")) {
                     staticResources.add(entryName);
                 }
             }
