@@ -33,8 +33,11 @@ public class GenericComparator implements Comparator {
     }
 
     private int compareActual(Object v1, Object v2, Class<?> returnType) {
-        if (returnType == int.class) {
+        if (returnType == int.class || returnType == Integer.class) {
             return Integer.compare((int) v1, (int) v2);
+        }
+        if (returnType == long.class || returnType == Long.class) {
+            return Long.compare((long) v1, (long) v2);
         }
         if (returnType == String.class) {
             if (nameAsInt) {
