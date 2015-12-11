@@ -25,7 +25,7 @@ public class ServerProperties extends Properties {
         initProperties(propertiesFileNamePath);
     }
 
-    private static Path getFileInCurrentDir(String filename) {
+    public static Path getFileInCurrentDir(String filename) {
         return Paths.get(System.getProperty("user.dir"), filename);
     }
 

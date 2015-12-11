@@ -13,6 +13,12 @@ import cc.blynk.server.handlers.http.admin.handlers.StatsHandler;
 import cc.blynk.server.handlers.http.admin.handlers.UsersHandler;
 import cc.blynk.server.utils.LoggerUtil;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
+
 /**
  * Entry point for server launch.
  *
@@ -72,6 +78,8 @@ public class ServerLauncher {
 
         System.setProperty("data.folder", serverProperties.getProperty("data.folder"));
 
+        unpackStaticFiles();
+
         new ServerLauncher(serverProperties).run();
     }
 
@@ -90,6 +98,21 @@ public class ServerLauncher {
         System.out.println();
         System.out.println("Blynk Server successfully started.");
         System.out.println("All server output is stored in current folder in 'logs/blynk.log' file.");
+    }
+
+    private static void unpackStaticFiles() throws Exception {
+        List<String> staticResources = JarWalker.find("admin");
+
+        for (String staticFile : staticResources) {
+            try (InputStream is = ServerLauncher.class.getResourceAsStream("/" + staticFile)) {
+                Path newStaticFile = ServerProperties.getFileInCurrentDir(staticFile);
+
+                Files.deleteIfExists(newStaticFile);
+                Files.createDirectories(newStaticFile);
+
+                Files.copy(is, newStaticFile, StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
     }
 
     private void run() {

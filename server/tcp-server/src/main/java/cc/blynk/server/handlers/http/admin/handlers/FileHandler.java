@@ -1,5 +1,6 @@
 package cc.blynk.server.handlers.http.admin.handlers;
 
+import cc.blynk.common.utils.ServerProperties;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
@@ -136,7 +137,7 @@ public class FileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         }
 
         //.substring(1) is all after "/" part
-        File file = new File(getClass().getClassLoader().getResource(request.getUri().substring(1)).getFile());
+        File file = ServerProperties.getFileInCurrentDir(request.getUri()).toFile();
 
         if (file.isHidden() || !file.exists()) {
             sendError(ctx, NOT_FOUND);
