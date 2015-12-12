@@ -2,13 +2,13 @@ var app = angular.module('app', ['ng-admin']);
 app.config(['NgAdminConfigurationProvider', function (nga) {
     // create an admin application
     var admin = nga.application('Blynk Administration', false)
-        .baseApiUrl(location.protocol + '//' + window.location.hostname + (location.port == 80 ? '' : (':' + location.port)) + '/admin/'); // main API endpoint
+        .baseApiUrl('http://127.0.0.1:8080/admin/'); // main API endpoint
     // create a user entity
     // the API endpoint for this entity will be 'http://jsonplaceholder.typicode.com/users/:id
     var users = nga.entity('users').identifier(nga.field('name'));
     // set the fields of the user entity list view
     users.listView()
-        .sortField('name')
+        .sortField('lastModifiedTs')
         .fields([
             nga.field('name', 'email').isDetailLink(true),
             nga.field('# of projects').map(function (value, entry) {
@@ -18,7 +18,14 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                     return 0;
                 }
             }),
-            nga.field('lastModifiedTs')])
+            nga.field('lastModifiedTs').map(
+                function tsToDate(value, entry) {
+                    var date = new Date(value);
+                    return pad(date.getDate()) + '-' + pad(date.getMonth()) + '-' + date.getFullYear() + ' ' +
+                        pad(date.getHours()) + ':' + pad(date.getMinutes()) + ':' + pad(date.getSeconds());
+                }
+            )
+        ])
         .filters([
             nga.field('name').label('').pinned(true)
                 .template('<div class="input-group"><input type="text" ng-model="value" placeholder="Search" class="form-control"></input><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span></div>')
@@ -199,3 +206,6 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     nga.configure(admin);
 }]);
 
+function pad(n) {
+    return (n < 10) ? ("0" + n) : n;
+}
