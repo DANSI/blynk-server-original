@@ -2,7 +2,7 @@ var app = angular.module('app', ['ng-admin']);
 app.config(['NgAdminConfigurationProvider', function (nga) {
     // create an admin application
     var admin = nga.application('Blynk Administration', false)
-        .baseApiUrl('http://127.0.0.1:8080/admin/'); // main API endpoint
+        .baseApiUrl(location.protocol + '//' + window.location.hostname + (location.port == 80 ? '' : (':' + location.port)) + '/admin/'); // main API endpoint
     // create a user entity
     // the API endpoint for this entity will be 'http://jsonplaceholder.typicode.com/users/:id
     var users = nga.entity('users').identifier(nga.field('name'));
@@ -18,13 +18,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                     return 0;
                 }
             }),
-            nga.field('lastModifiedTs').map(
-                function tsToDate(value, entry) {
-                    var date = new Date(value);
-                    return pad(date.getDate()) + '-' + pad(date.getMonth()) + '-' + date.getFullYear() + ' ' +
-                        pad(date.getHours()) + ':' + pad(date.getMinutes()) + ':' + pad(date.getSeconds());
-                }
-            )
+            nga.field('lastModifiedTs', 'datetime')
         ])
         .filters([
             nga.field('name').label('').pinned(true)
@@ -35,11 +29,12 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         .title('Edit user "{{entry.values.name}}"')
         .fields(
             nga.field('name', 'email'),
+            nga.field('pass', 'password'),
             nga.field('lastModifiedTs'),
             nga.field('profile.dashBoards', 'embedded_list')
                 .targetFields([
                     nga.field('id'),
-                    nga.field('name', 'email'),
+                    nga.field('name'),
                     nga.field('timestamp'),
                     nga.field('boardType', 'choice')
                         .choices([
@@ -208,4 +203,16 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
 
 function pad(n) {
     return (n < 10) ? ("0" + n) : n;
+}
+
+function encryptPassword(password, entry) {
+     if (entry.values.pass == password) {
+     return password;
+     }
+     var algo = CryptoJS.algo.SHA256.create();
+     algo.update(password, 'utf-8');
+     algo.update(CryptoJS.SHA256(entry.values.name.toLowerCase()), 'utf-8');
+     var hash = algo.finalize();
+     var final = hash.toString(CryptoJS.enc.Base64);
+     return final;
 }
