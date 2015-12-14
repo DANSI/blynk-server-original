@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.http.rest;
 
-import cc.blynk.server.handlers.http.HttpResponse;
+import cc.blynk.server.handlers.http.Response;
 import io.netty.handler.codec.http.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,9 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static io.netty.handler.codec.http.HttpResponseStatus.*;
-import static io.netty.handler.codec.http.HttpVersion.*;
 
 /**
  * The Blynk Project.
@@ -103,7 +100,7 @@ public class HandlerRegistry {
         }
 
         log.error("Error resolving url. No path found.");
-        return new HttpResponse(HTTP_1_1, NOT_FOUND);
+        return Response.notFound();
     }
 
 }

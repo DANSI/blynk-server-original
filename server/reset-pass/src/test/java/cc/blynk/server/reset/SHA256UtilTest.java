@@ -1,9 +1,9 @@
 package cc.blynk.server.reset;
 
-import cc.blynk.common.administration.SHA256Util;
+import cc.blynk.common.utils.SHA256Util;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class SHA256UtilTest {
 

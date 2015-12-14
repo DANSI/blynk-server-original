@@ -1,4 +1,4 @@
-package cc.blynk.common.administration;
+package cc.blynk.common.utils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

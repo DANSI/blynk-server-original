@@ -79,7 +79,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        userDao.createNewUser(userName, pass);
+        userDao.add(userName, pass);
 
         log.info("Registered {}.", userName);
 

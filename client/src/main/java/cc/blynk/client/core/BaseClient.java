@@ -1,9 +1,9 @@
 package cc.blynk.client.core;
 
 import cc.blynk.client.CommandParser;
-import cc.blynk.common.administration.SHA256Util;
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.common.utils.SHA256Util;
 import cc.blynk.common.utils.ServerProperties;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;

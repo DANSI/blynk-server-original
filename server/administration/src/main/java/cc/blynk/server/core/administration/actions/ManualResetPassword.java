@@ -1,6 +1,6 @@
 package cc.blynk.server.core.administration.actions;
 
-import cc.blynk.common.administration.SHA256Util;
+import cc.blynk.common.utils.SHA256Util;
 import cc.blynk.server.core.administration.Executable;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;

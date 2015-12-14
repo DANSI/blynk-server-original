@@ -8,22 +8,32 @@ import io.netty.handler.codec.http.HttpVersion;
 import java.nio.charset.StandardCharsets;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
+import static io.netty.handler.codec.http.HttpResponseStatus.*;
+import static io.netty.handler.codec.http.HttpVersion.*;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 01.12.15.
  */
-public class HttpResponse extends DefaultFullHttpResponse {
+public class Response extends DefaultFullHttpResponse {
 
-    public HttpResponse(HttpVersion version, HttpResponseStatus status, String content, String contentType) {
+    public Response(HttpVersion version, HttpResponseStatus status, String content, String contentType) {
         super(version, status, (content == null ? Unpooled.EMPTY_BUFFER : Unpooled.copiedBuffer(content, StandardCharsets.UTF_8)));
         headers().set(CONTENT_TYPE, contentType);
         headers().set(CONTENT_LENGTH, content().readableBytes());
         headers().set("Access-Control-Allow-Origin", "*");
     }
 
-    public HttpResponse(HttpVersion version, HttpResponseStatus status) {
+    public Response(HttpVersion version, HttpResponseStatus status) {
         super(version, status);
+    }
+    
+    public static Response ok() {
+        return new Response(HTTP_1_1, OK);
+    }
+
+    public static Response notFound() {
+        return new Response(HTTP_1_1, NOT_FOUND);
     }
 }

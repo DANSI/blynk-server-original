@@ -19,26 +19,26 @@ public class ResponseGenerator {
     private static final String JSON = "application/json";
     private static final String PLAIN_TEXT = "text/plain";
 
-    public static HttpResponse makeResponse(String data) {
-        return new HttpResponse(HTTP_1_1, OK, data, JSON);
+    public static Response makeResponse(String data) {
+        return new Response(HTTP_1_1, OK, data, JSON);
     }
 
-    public static HttpResponse makeResponse(User user) {
+    public static Response makeResponse(User user) {
         return makeResponse(JsonParser.toJson(user));
     }
 
-    public static HttpResponse makeResponse(Collection<?> list, int page, int size) {
+    public static Response makeResponse(Collection<?> list, int page, int size) {
         return makeResponse(JsonParser.toJson(subList(list, page, size)));
     }
 
-    public static HttpResponse makeResponse(Collection<?> list) {
+    public static Response makeResponse(Collection<?> list) {
         return makeResponse(JsonParser.toJson(list));
     }
 
-    public static HttpResponse appendTotalCountHeader(HttpResponse httpResponse, int count) {
-        httpResponse.headers().set("X-Total-Count", count);
-        httpResponse.headers().set("Access-Control-Expose-Headers", "x-total-count");
-        return httpResponse;
+    public static Response appendTotalCountHeader(Response response, int count) {
+        response.headers().set("X-Total-Count", count);
+        response.headers().set("Access-Control-Expose-Headers", "x-total-count");
+        return response;
     }
 
 }

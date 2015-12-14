@@ -1,10 +1,11 @@
 package cc.blynk.server.handlers.http.admin.handlers;
 
+import cc.blynk.common.utils.SHA256Util;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.http.Filter;
-import cc.blynk.server.handlers.http.HttpResponse;
+import cc.blynk.server.handlers.http.Response;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;
@@ -41,7 +42,7 @@ public class UsersHandler extends BaseHandler {
 
     @GET
     @Path("")
-    public HttpResponse getUsers(@QueryParam("_filters") String filterParam,
+    public Response getUsers(@QueryParam("_filters") String filterParam,
                                  @QueryParam("_page") int page,
                                  @QueryParam("_perPage") int size,
                                  @QueryParam("_sortField") String sortField,
@@ -58,28 +59,43 @@ public class UsersHandler extends BaseHandler {
 
     @GET
     @Path("/{name}")
-    public HttpResponse getUserByName(@PathParam("name") String name) {
+    public Response getUserByName(@PathParam("name") String name) {
         return makeResponse(userDao.getUsers().get(name));
     }
 
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{name}")
-    public HttpResponse updateUser(@PathParam("name") String name,
+    public Response updateUser(@PathParam("name") String name,
                                    User updatedUser) {
-        return new HttpResponse(HTTP_1_1, OK);
+
+        log.debug("Deleting user {}", name);
+        User oldUser = userDao.getByName(name);
+        userDao.delete(name);
+
+        //if pass was changed, cal hash.
+        if (!updatedUser.pass.equals(oldUser.pass)) {
+            log.debug("Updating pass for {}.", updatedUser.name);
+            updatedUser.pass = SHA256Util.makeHash(updatedUser.pass, updatedUser.name);
+        }
+
+        userDao.add(updatedUser);
+        log.debug("Adding new user {}", updatedUser.name);
+
+
+        return makeResponse(updatedUser);
     }
 
     @DELETE
     @Path("/{name}")
-    public HttpResponse deleteUserByName(@PathParam("name") String name) {
-        User user = userDao.deleteUser(name);
+    public Response deleteUserByName(@PathParam("name") String name) {
+        User user = userDao.delete(name);
         if (user == null) {
-            return new HttpResponse(HTTP_1_1, NOT_FOUND);
+            return new Response(HTTP_1_1, NOT_FOUND);
         }
 
         if (!fileManager.delete(name)) {
-            return new HttpResponse(HTTP_1_1, NOT_FOUND);
+            return new Response(HTTP_1_1, NOT_FOUND);
         }
 
         Session session = sessionDao.userSession.get(new User(name, null));
@@ -87,7 +103,7 @@ public class UsersHandler extends BaseHandler {
 
         log.info("User {} successfully removed.", name);
 
-        return new HttpResponse(HTTP_1_1, OK);
+        return Response.ok();
     }
 
 }

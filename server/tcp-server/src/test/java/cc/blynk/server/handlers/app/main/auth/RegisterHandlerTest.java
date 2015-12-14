@@ -37,7 +37,7 @@ public class RegisterHandlerTest extends TestBase {
         when(userDao.isUserExists(userName)).thenReturn(false);
         registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + " 1"));
 
-        verify(userDao).createNewUser(eq(userName), eq("1"));
+        verify(userDao).add(eq(userName), eq("1"));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class RegisterHandlerTest extends TestBase {
         when(userDao.isUserExists(userName)).thenReturn(false);
         registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + " 1"));
 
-        verify(userDao).createNewUser(eq(userName), eq("1"));
+        verify(userDao).add(eq(userName), eq("1"));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class RegisterHandlerTest extends TestBase {
         when(userDao.isUserExists(userName)).thenReturn(false);
         registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + " 1"));
 
-        verify(userDao).createNewUser(eq(userName), eq("1"));
+        verify(userDao).add(eq(userName), eq("1"));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class RegisterHandlerTest extends TestBase {
         when(userDao.isUserExists(userName)).thenReturn(false);
         registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + " 1"));
 
-        verify(userDao, times(0)).createNewUser(eq(userName), eq("1"));
+        verify(userDao, times(0)).add(eq(userName), eq("1"));
         verify(ctx).writeAndFlush(eq(produce(1, NOT_ALLOWED)));
     }
 
@@ -86,7 +86,7 @@ public class RegisterHandlerTest extends TestBase {
         when(userDao.isUserExists(userName)).thenReturn(false);
         registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + " 1"));
 
-        verify(userDao).createNewUser(eq(userName), eq("1"));
+        verify(userDao).add(eq(userName), eq("1"));
     }
 
 }

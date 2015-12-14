@@ -64,8 +64,12 @@ public class UserDao {
         return users.values().stream().filter(user -> user.name.contains(name)).collect(Collectors.toList());
     }
 
-    public User deleteUser(String name) {
+    public User delete(String name) {
         return users.remove(name);
+    }
+
+    public User add(User user) {
+        return users.put(user.name, user);
     }
 
     public Map<String, Integer> getBoardsUsage() {
@@ -129,7 +133,7 @@ public class UserDao {
         return filledSpace;
     }
 
-    public void createNewUser(String userName, String pass) {
+    public void add(String userName, String pass) {
         User newUser = new User(userName, pass);
         users.put(userName, newUser);
     }
