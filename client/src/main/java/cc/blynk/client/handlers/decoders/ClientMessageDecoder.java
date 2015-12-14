@@ -7,16 +7,16 @@ import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.model.messages.ResponseWithBodyMessage;
 import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataBinaryMessage;
 import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedBinaryMessage;
-import cc.blynk.common.utils.Config;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.common.model.messages.MessageFactory.*;
 
 /**
  * Decodes input byte array into java message.
@@ -69,7 +69,7 @@ public class ClientMessageDecoder extends ByteToMessageDecoder implements Defaul
                     message = new LoadProfileGzippedBinaryMessage(messageId, bytes);
                     break;
                 default:
-                    message = produce(messageId, command, buf.toString(Config.DEFAULT_CHARSET));
+                    message = produce(messageId, command, buf.toString(CharsetUtil.UTF_8));
             }
 
         }

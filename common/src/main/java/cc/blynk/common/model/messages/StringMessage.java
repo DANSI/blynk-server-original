@@ -1,6 +1,6 @@
 package cc.blynk.common.model.messages;
 
-import cc.blynk.common.utils.Config;
+import io.netty.util.CharsetUtil;
 
 /**
  * The Blynk Project.
@@ -18,7 +18,7 @@ public abstract class StringMessage extends MessageBase {
 
     @Override
     public byte[] getBytes() {
-        return body.getBytes(Config.DEFAULT_CHARSET);
+        return body.getBytes(CharsetUtil.UTF_8);
     }
 
     @Override

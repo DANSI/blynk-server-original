@@ -1,10 +1,10 @@
 package cc.blynk.server.core.administration;
 
-import cc.blynk.common.utils.Config;
 import cc.blynk.server.core.administration.actions.ActiveUsers;
 import cc.blynk.server.core.administration.actions.ManualResetPassword;
 import cc.blynk.server.core.administration.actions.ResetPassword;
 import cc.blynk.server.utils.ByteClassLoaderUtil;
+import io.netty.util.CharsetUtil;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -44,7 +44,7 @@ public class AdminLauncher {
             for (int i = 0; i < paramsNumber; i++) {
                 String param = args[i + 1];
                 outToServer.writeShort(param.length());
-                outToServer.write(param.getBytes(Config.DEFAULT_CHARSET));
+                outToServer.write(param.getBytes(CharsetUtil.UTF_8));
             }
         }
     }

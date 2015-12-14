@@ -1,11 +1,11 @@
 package cc.blynk.server.core.administration.handlers;
 
 import cc.blynk.common.handlers.DefaultExceptionHandler;
-import cc.blynk.common.utils.Config;
 import cc.blynk.server.core.administration.model.AdminMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
+import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,7 +24,7 @@ public class AdminReplayingMessageDecoder extends ReplayingDecoder<Void> impleme
         String[] params = new String[paramsNumber];
         for (int i = 0; i < paramsNumber; i++) {
             int paramLength = in.readUnsignedShort();
-            params[i] = in.readSlice(paramLength).toString(Config.DEFAULT_CHARSET);
+            params[i] = in.readSlice(paramLength).toString(CharsetUtil.UTF_8);
         }
         return params;
     }

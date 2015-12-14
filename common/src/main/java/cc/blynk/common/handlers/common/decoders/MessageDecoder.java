@@ -4,16 +4,16 @@ import cc.blynk.common.enums.Command;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.stats.GlobalStats;
-import cc.blynk.common.utils.Config;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.common.model.messages.MessageFactory.*;
 
 /**
  * Decodes input byte array into java message.
@@ -53,7 +53,7 @@ public class MessageDecoder extends ByteToMessageDecoder implements DefaultExcep
                 return;
             }
 
-            message = produce(messageId, command, in.readSlice(codeOrLength).toString(Config.DEFAULT_CHARSET));
+            message = produce(messageId, command, in.readSlice(codeOrLength).toString(CharsetUtil.UTF_8));
         }
 
         log.trace("Incoming {}", message);

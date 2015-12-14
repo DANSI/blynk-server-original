@@ -1,8 +1,8 @@
 package cc.blynk.server.dao;
 
-import cc.blynk.common.utils.Config;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;
+import io.netty.util.CharsetUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -81,7 +81,7 @@ public class FileManager {
 
     public void overrideUserFile(User user) throws IOException {
         Path file = generateFileName(user.name);
-        try (BufferedWriter writer = Files.newBufferedWriter(file, Config.DEFAULT_CHARSET)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(file, CharsetUtil.UTF_8)) {
             String userString = user.toString();
 
             writer.write(userString);
