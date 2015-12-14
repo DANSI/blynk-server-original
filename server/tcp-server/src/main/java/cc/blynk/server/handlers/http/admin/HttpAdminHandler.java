@@ -43,6 +43,9 @@ public class HttpAdminHandler extends ChannelInboundHandlerAdapter {
         log.info("URL : {}", req.getUri());
 
         //a bit ugly code but it is ok for now. 2 branches. 1 fro static files, second for normal http api
+        if (req.getUri().equals("/admin")) {
+            req.setUri("/admin/static/admin.html");
+        }
         if (req.getUri().startsWith("/admin/static")) {
             try {
                 fileHandler.channelRead(ctx, req);
