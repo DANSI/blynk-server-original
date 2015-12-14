@@ -1,16 +1,16 @@
-package cc.blynk.server.handlers.http.admin;
+package cc.blynk.server.handlers.http.rest;
 
 import cc.blynk.server.handlers.http.HttpResponse;
-import cc.blynk.server.handlers.http.URIDecoder;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.uri.UriTemplate;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -43,6 +43,12 @@ public class HandlerRegistry {
         String handlerMainPath = ((Path) pathAnnotation).value();
 
         for (Method method : handlerClass.getMethods()) {
+            Annotation consumes = method.getAnnotation(Consumes.class);
+            String contentType = MediaType.APPLICATION_JSON;
+            if (consumes != null) {
+                contentType = ((Consumes) consumes).value()[0];
+            }
+
             Annotation path = method.getAnnotation(Path.class);
             if (path != null) {
                 String fullPath = handlerMainPath + ((Path) path).value();
@@ -64,7 +70,7 @@ public class HandlerRegistry {
                     }
 
                     if (pathParamAnnotation == null && queryParamAnnotation == null) {
-                        throw new RuntimeException("Handler methods with parameters without @PathParam or @QueryParam not supported.");
+                        handlerHolder.params[i] = new BodyMethodParam(parameter.getName(), parameter.getType(), contentType);
                     }
                 }
 
@@ -79,7 +85,14 @@ public class HandlerRegistry {
         for (HandlerHolder handlerHolder : processors) {
             if (handlerHolder.httpMethod == req.getMethod() &&
                     handlerHolder.uriTemplate.match(uriDecoder.path(), pathData)) {
+                if (req.getMethod() == HttpMethod.PUT || req.getMethod() == HttpMethod.POST) {
+                    if (req instanceof HttpContent) {
+                        uriDecoder.bodyData = ((HttpContent) req).content();
+                        uriDecoder.contentType = req.headers().get(HttpHeaders.Names.CONTENT_TYPE);
+                    }
+                }
                 uriDecoder.pathData = pathData;
+
                 try {
                     return (FullHttpResponse) handlerHolder.method.invoke(handlerHolder.handler, handlerHolder.fetchParams(uriDecoder));
                 } catch (Exception e) {

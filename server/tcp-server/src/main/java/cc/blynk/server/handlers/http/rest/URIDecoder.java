@@ -1,5 +1,6 @@
-package cc.blynk.server.handlers.http;
+package cc.blynk.server.handlers.http.rest;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.QueryStringDecoder;
 
 import java.util.Map;
@@ -13,6 +14,8 @@ public class URIDecoder extends QueryStringDecoder {
 
     public final String[] paths;
     public Map<String, String> pathData;
+    public ByteBuf bodyData;
+    public String contentType;
 
     public URIDecoder(String uri) {
         super(uri);

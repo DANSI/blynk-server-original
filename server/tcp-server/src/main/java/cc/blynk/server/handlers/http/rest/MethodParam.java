@@ -1,6 +1,4 @@
-package cc.blynk.server.handlers.http.admin;
-
-import cc.blynk.server.handlers.http.URIDecoder;
+package cc.blynk.server.handlers.http.rest;
 
 /**
  * The Blynk Project.

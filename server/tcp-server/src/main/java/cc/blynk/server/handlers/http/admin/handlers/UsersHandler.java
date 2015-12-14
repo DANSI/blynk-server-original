@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 import static cc.blynk.server.handlers.http.ResponseGenerator.*;
@@ -59,6 +60,14 @@ public class UsersHandler extends BaseHandler {
     @Path("/{name}")
     public HttpResponse getUserByName(@PathParam("name") String name) {
         return makeResponse(userDao.getUsers().get(name));
+    }
+
+    @PUT
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Path("/{name}")
+    public HttpResponse updateUser(@PathParam("name") String name,
+                                   User updatedUser) {
+        return new HttpResponse(HTTP_1_1, OK);
     }
 
     @DELETE

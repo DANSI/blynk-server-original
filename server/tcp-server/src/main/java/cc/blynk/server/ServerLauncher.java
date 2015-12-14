@@ -8,9 +8,9 @@ import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.core.hardware.HttpHardwareServer;
 import cc.blynk.server.core.hardware.HttpsHardwareServer;
 import cc.blynk.server.core.hardware.ssl.HardwareSSLServer;
-import cc.blynk.server.handlers.http.admin.HandlerRegistry;
 import cc.blynk.server.handlers.http.admin.handlers.StatsHandler;
 import cc.blynk.server.handlers.http.admin.handlers.UsersHandler;
+import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import cc.blynk.server.utils.LoggerUtil;
 
 import java.io.InputStream;

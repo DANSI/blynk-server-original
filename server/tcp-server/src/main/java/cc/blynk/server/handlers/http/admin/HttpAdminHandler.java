@@ -1,6 +1,7 @@
 package cc.blynk.server.handlers.http.admin;
 
 import cc.blynk.server.handlers.http.admin.handlers.FileHandler;
+import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

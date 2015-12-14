@@ -1,6 +1,5 @@
-package cc.blynk.server.handlers.http.admin;
+package cc.blynk.server.handlers.http.rest;
 
-import cc.blynk.server.handlers.http.URIDecoder;
 import io.netty.handler.codec.http.HttpMethod;
 import org.glassfish.jersey.uri.UriTemplate;
 

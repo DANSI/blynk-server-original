@@ -90,6 +90,9 @@
         <Logger name="cc.blynk.server.core.administration" level="debug" additivity="false">
             <appender-ref ref="admin"/>
         </Logger>
+        <Logger name="cc.blynk.server.handlers.http.admin" level="debug" additivity="false">
+            <appender-ref ref="admin"/>
+        </Logger>
         <Logger name="cc.blynk.server.dao.ReportingDao" level="info" additivity="false">
             <appender-ref ref="dataStorage"/>
         </Logger>
