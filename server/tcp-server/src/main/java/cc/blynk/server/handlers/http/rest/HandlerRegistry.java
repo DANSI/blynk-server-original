@@ -91,11 +91,12 @@ public class HandlerRegistry {
                 uriDecoder.pathData = pathData;
 
                 try {
-                    return (FullHttpResponse) handlerHolder.method.invoke(handlerHolder.handler, handlerHolder.fetchParams(uriDecoder));
+                    Object[] params = handlerHolder.fetchParams(uriDecoder);
+                    return (FullHttpResponse) handlerHolder.method.invoke(handlerHolder.handler, params);
                 } catch (Exception e) {
-                    System.out.println(e);
+                    log.error(e);
+                    return Response.serverError();
                 }
-
             }
         }
 

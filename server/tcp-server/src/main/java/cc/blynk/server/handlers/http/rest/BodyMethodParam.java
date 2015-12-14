@@ -25,7 +25,11 @@ public class BodyMethodParam extends MethodParam {
             throw new RuntimeException("Unexpected content type for handler. Expecting " + contentType + " but got " + contentType);
         }
         if (contentType.equals(MediaType.APPLICATION_JSON)) {
-            return JsonParser.readAny(uriDecoder.bodyData.toString(CharsetUtil.UTF_8), type);
+            try {
+                return JsonParser.mapper.readValue(uriDecoder.bodyData.toString(CharsetUtil.UTF_8), type);
+            } catch (Exception e) {
+                throw new RuntimeException("Error parsing body param.", e);
+            }
         } else {
             return uriDecoder.bodyData.toString(CharsetUtil.UTF_8);
         }

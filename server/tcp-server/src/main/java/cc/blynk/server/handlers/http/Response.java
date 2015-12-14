@@ -36,4 +36,8 @@ public class Response extends DefaultFullHttpResponse {
     public static Response notFound() {
         return new Response(HTTP_1_1, NOT_FOUND);
     }
+
+    public static Response serverError() {
+        return new Response(HTTP_1_1, INTERNAL_SERVER_ERROR);
+    }
 }
