@@ -23,6 +23,8 @@ public class Pin {
 
     public Integer max;
 
+    public String label;
+
     public boolean isSame(byte pin, PinType type) {
         return this.pin != null && this.pin == pin && ((this.pwmMode && type == PinType.ANALOG) || (type == this.pinType));
     }
