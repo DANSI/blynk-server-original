@@ -199,7 +199,7 @@ server.properties options:
         
         allowed.administrator.ips=127.0.0.1
         
- + Administration https port
++ Administration https port
 
         https.port=7443
         
