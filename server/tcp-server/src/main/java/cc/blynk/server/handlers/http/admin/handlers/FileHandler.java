@@ -136,6 +136,9 @@ public class FileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             return;
         }
 
+        //for local mode
+        //System.setProperty("user.dir", "/home/doom369/IdeaProjects/blynk-server/server/tcp-server/target/classes");
+
         //.substring(1) is all after "/" part
         File file = ServerProperties.getFileInCurrentDir(request.getUri()).toFile();
 
