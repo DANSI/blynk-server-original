@@ -213,6 +213,8 @@ Blynk server also has administration panel where you could monitor your server. 
 
         https://127.0.0.1:7443/admin
         
+![Administration UI](https://github.com/blynkkk/blynk-server/blob/master/docs/admin_panel.png)
+        
 You can change it with next options :
         
         enable.administration.ui
