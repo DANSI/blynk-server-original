@@ -8,6 +8,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
+ * Returns list of resources that were packed to jar
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 11.12.15.
@@ -20,18 +22,19 @@ public class JarWalker {
 
         if (src != null) {
             URL jar = src.getLocation();
-            ZipInputStream zip = new ZipInputStream(jar.openStream());
-            ZipEntry ze;
+            try (ZipInputStream zip = new ZipInputStream(jar.openStream())) {
+                ZipEntry ze;
 
-            while((ze = zip.getNextEntry()) != null) {
-                String entryName = ze.getName();
-                if (entryName.startsWith(staticResourcesFolder) &&
-                               (entryName.endsWith(".js") ||
-                                entryName.endsWith(".css") ||
-                                entryName.endsWith(".html")) ||
-                                entryName.endsWith(".ico") ||
-                                entryName.endsWith(".png")) {
-                    staticResources.add(entryName);
+                while ((ze = zip.getNextEntry()) != null) {
+                    String entryName = ze.getName();
+                    if (entryName.startsWith(staticResourcesFolder) &&
+                            (entryName.endsWith(".js") ||
+                                    entryName.endsWith(".css") ||
+                                    entryName.endsWith(".html")) ||
+                            entryName.endsWith(".ico") ||
+                            entryName.endsWith(".png")) {
+                        staticResources.add(entryName);
+                    }
                 }
             }
         }
