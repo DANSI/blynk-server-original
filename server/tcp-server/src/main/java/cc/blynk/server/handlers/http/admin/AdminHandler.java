@@ -18,9 +18,9 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.12.15.
  */
-public class HttpAdminHandler extends ChannelInboundHandlerAdapter {
+public class AdminHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger log = LogManager.getLogger(HttpAdminHandler.class);
+    private static final Logger log = LogManager.getLogger(AdminHandler.class);
 
     private final FileHandler fileHandler = new FileHandler();
 

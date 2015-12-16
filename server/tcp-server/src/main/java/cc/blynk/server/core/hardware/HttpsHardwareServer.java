@@ -2,7 +2,7 @@ package cc.blynk.server.core.hardware;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.handlers.http.admin.HttpAdminHandler;
+import cc.blynk.server.handlers.http.admin.AdminHandler;
 import cc.blynk.server.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -21,7 +21,9 @@ public class HttpsHardwareServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HttpsHardwareServer(Holder holder) {
-        super(holder.props.getIntProperty("hardware.https.port"), holder.transportType);
+        super(holder.props.getIntProperty("https.port"), holder.transportType);
+
+        boolean isAdministrationEnabled = holder.props.getBoolProperty("enable.administration.ui");
 
         log.info("Enabling HTTPS for hardware.");
         SslContext sslCtx = SslUtil.initSslContext(holder.props);
@@ -34,9 +36,13 @@ public class HttpsHardwareServer extends BaseServer {
                 pipeline.addLast(new HttpServerCodec());
                 pipeline.addLast(new HttpObjectAggregator(65536));
                 pipeline.addLast(new ChunkedWriteHandler());
+
                 //look like not all hardwares can support that
                 //pipeline.addLast(new HttpContentCompressor());
-                pipeline.addLast(new HttpAdminHandler());
+
+                if (isAdministrationEnabled) {
+                    pipeline.addLast(new AdminHandler());
+                }
             }
         };
 
