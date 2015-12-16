@@ -79,7 +79,7 @@ public class RegisterHandlerTest extends TestBase {
 
     @Test
     public void testAllowedUsersSingleUserWork2() throws Exception {
-        RegisterHandler registerHandler = new RegisterHandler(userDao, new String[] {"test@gmail.com,test2@gmail.com"});
+        RegisterHandler registerHandler = new RegisterHandler(userDao, new String[] {"test@gmail.com", "test2@gmail.com"});
 
         String userName = "test2@gmail.com";
 
