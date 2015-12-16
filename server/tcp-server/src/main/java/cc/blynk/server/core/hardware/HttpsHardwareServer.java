@@ -3,6 +3,7 @@ package cc.blynk.server.core.hardware;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.http.admin.AdminHandler;
+import cc.blynk.server.handlers.http.admin.IpFilterHandler;
 import cc.blynk.server.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -11,6 +12,10 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.stream.ChunkedWriteHandler;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The Blynk Project.
@@ -23,7 +28,16 @@ public class HttpsHardwareServer extends BaseServer {
     public HttpsHardwareServer(Holder holder) {
         super(holder.props.getIntProperty("https.port"), holder.transportType);
 
-        boolean isAdministrationEnabled = holder.props.getBoolProperty("enable.administration.ui");
+        final boolean isAdministrationEnabled = holder.props.getBoolProperty("enable.administration.ui");
+        final String[] allowedIPsArray = holder.props.getCommaSeparatedList("allowed.administrator.ips");
+        final Set<String> allowedIPs;
+
+        if (allowedIPsArray != null && allowedIPsArray.length > 0 &&
+                allowedIPsArray[0] != null && !"".equals(allowedIPsArray[0])) {
+            allowedIPs = new HashSet<>(Arrays.asList(allowedIPsArray));
+        } else {
+            allowedIPs = null;
+        }
 
         log.info("Enabling HTTPS for hardware.");
         SslContext sslCtx = SslUtil.initSslContext(holder.props);
@@ -41,6 +55,7 @@ public class HttpsHardwareServer extends BaseServer {
                 //pipeline.addLast(new HttpContentCompressor());
 
                 if (isAdministrationEnabled) {
+                    pipeline.addLast(new IpFilterHandler(allowedIPs));
                     pipeline.addLast(new AdminHandler());
                 }
             }
