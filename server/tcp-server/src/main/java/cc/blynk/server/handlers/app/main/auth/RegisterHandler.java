@@ -33,13 +33,12 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
     private final UserDao userDao;
     private final Set<String> allowedUsers;
 
-    public RegisterHandler(UserDao userDao, String allowedUsersString) {
+    public RegisterHandler(UserDao userDao, String[] allowedUsersArray) {
         this.userDao = userDao;
-        String[] allowedUsersArray = allowedUsersString == null ? null : allowedUsersString.toLowerCase().split(",");
         if (allowedUsersArray != null && allowedUsersArray.length > 0 &&
                 allowedUsersArray[0] != null && !"".equals(allowedUsersArray[0])) {
             allowedUsers = new HashSet<>(Arrays.asList(allowedUsersArray));
-            log.debug("Created allowed user list : {}", allowedUsersString);
+            log.debug("Created allowed user list : {}", allowedUsersArray);
         } else {
             allowedUsers = null;
         }

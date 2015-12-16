@@ -92,4 +92,12 @@ public class ServerProperties extends Properties {
         return ParseUtil.parseLong(getProperty(propertyName));
     }
 
+    public String[] getCommaSeparatedList(String propertyName) {
+        String val = getProperty(propertyName);
+        if (val == null) {
+            return null;
+        }
+        return val.toLowerCase().split(",");
+    }
+
 }
