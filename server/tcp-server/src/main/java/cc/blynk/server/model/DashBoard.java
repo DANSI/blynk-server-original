@@ -24,7 +24,9 @@ public class DashBoard {
 
     public String name;
 
-    public Long timestamp;
+    public long createdAt;
+
+    public long updatedAt;
 
     public Widget[] widgets = {};
 

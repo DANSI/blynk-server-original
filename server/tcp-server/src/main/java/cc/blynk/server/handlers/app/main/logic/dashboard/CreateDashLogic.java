@@ -47,6 +47,9 @@ public class CreateDashLogic {
 
         log.debug("Trying to parse user newDash : {}", dashString);
         DashBoard newDash = JsonParser.parseDashboard(dashString, message.id);
+        final long now = System.currentTimeMillis();
+        newDash.createdAt = now;
+        newDash.updatedAt = now;
 
         log.info("Creating new dashboard.");
 
