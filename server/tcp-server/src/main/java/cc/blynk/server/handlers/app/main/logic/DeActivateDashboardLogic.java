@@ -43,6 +43,7 @@ public class DeActivateDashboardLogic {
             }
         }
         user.profile.activeDashId = null;
+        user.lastModifiedTs = System.currentTimeMillis();
 
         Session session = sessionDao.userSession.get(user);
         for (Channel appChannel : session.appChannels) {
