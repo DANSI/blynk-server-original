@@ -25,13 +25,11 @@ public class User implements Serializable {
 
     public volatile String pass;
 
-    //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
-    public volatile long lastModifiedTs;
+    public long lastModifiedTs;
 
     public Profile profile;
 
     public User() {
-        this.lastModifiedTs = System.currentTimeMillis();
         this.profile = new Profile();
         this.dashShareTokens = new HashMap<>();
         this.dashTokens = new HashMap<>();
@@ -58,7 +56,6 @@ public class User implements Serializable {
         }
 
         this.profile = profile;
-        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     public boolean hasActive() {
@@ -75,7 +72,6 @@ public class User implements Serializable {
     public void putToken(Integer dashId, String token, Map<Integer, String> tokens) {
         cleanTokensForNonExistentDashes(tokens);
         tokens.put(dashId, token);
-        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     private void cleanTokensForNonExistentDashes(Map<Integer, String> tokens) {

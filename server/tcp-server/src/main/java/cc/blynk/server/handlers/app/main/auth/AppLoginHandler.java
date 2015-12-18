@@ -87,6 +87,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         ctx.pipeline().addLast(new AppHandler(props, userDao, sessionDao, reportingDao, blockingIOProcessor, appStateHolder));
 
         Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
+        user.lastModifiedTs = System.currentTimeMillis();
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering app channel. {}", ctx.channel());

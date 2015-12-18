@@ -33,7 +33,6 @@ public class ResetPassword implements Executable {
                 log.error("User '{}' not exists.", userName);
             } else {
                 user.pass = newPass;
-                user.lastModifiedTs = System.currentTimeMillis();
                 log.info("Password updated");
                 result.add("Password updated.\n");
             }
