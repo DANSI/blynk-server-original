@@ -8,13 +8,14 @@ import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
 import io.netty.util.CharsetUtil;
 import io.netty.util.internal.SystemPropertyUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -33,6 +34,7 @@ public class FileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
     public static final int HTTP_CACHE_SECONDS = 60;
+    private static final Logger log = LogManager.getLogger(FileHandler.class);
     private static final Pattern INSECURE_URI = Pattern.compile(".*[<>&\"].*");
 
     private static String sanitizeUri(String uri) {
@@ -124,6 +126,20 @@ public class FileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
                 LAST_MODIFIED, dateFormatter.format(new Date(fileToCache.lastModified())));
     }
 
+    private static String getContentType(String fileName) {
+        if (fileName.endsWith(".ico")) {
+            return "image/x-icon";
+        }
+        if (fileName.endsWith(".js")) {
+            return "application/javascript";
+        }
+        if (fileName.endsWith(".css")) {
+            return "text/css";
+        }
+
+        return "text/html";
+    }
+
     @Override
     public void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
         if (!request.getDecoderResult().isSuccess()) {
@@ -181,7 +197,7 @@ public class FileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         HttpHeaders.setContentLength(response, fileLength);
 
         //setting content type
-        response.headers().set(CONTENT_TYPE, Files.probeContentType(file.toPath()));
+        response.headers().set(CONTENT_TYPE, getContentType(file.getName()));
 
         setDateAndCacheHeaders(response, file);
         if (HttpHeaders.isKeepAlive(request)) {
