@@ -45,7 +45,6 @@ public class SaveDashLogic {
 
         log.debug("Trying to parse user dash : {}", dashString);
         DashBoard updatedDash = JsonParser.parseDashboard(dashString, message.id);
-        updatedDash.updatedAt = System.currentTimeMillis();
 
         log.info("Saving dashboard.");
 
