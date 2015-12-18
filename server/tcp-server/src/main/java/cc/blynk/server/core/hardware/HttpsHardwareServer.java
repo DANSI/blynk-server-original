@@ -39,7 +39,7 @@ public class HttpsHardwareServer extends BaseServer {
             allowedIPs = null;
         }
 
-        log.info("Enabling HTTPS for hardware.");
+        log.info("Enabling HTTPS for admin UI.");
         SslContext sslCtx = SslUtil.initSslContext(holder.props);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
@@ -61,7 +61,7 @@ public class HttpsHardwareServer extends BaseServer {
             }
         };
 
-        log.info("HTTPS hardware server port {}.", port);
+        log.info("HTTPS admin UI port {}.", port);
     }
 
     @Override
