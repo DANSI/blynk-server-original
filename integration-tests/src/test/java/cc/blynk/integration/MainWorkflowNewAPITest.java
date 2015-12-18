@@ -149,10 +149,10 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, ILLEGAL_COMMAND)));
 
         clientPair.appClient.send("loadProfile");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, LOAD_PROFILE, "{\"activeDashId\":1,\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, LOAD_PROFILE, "{\"activeDashId\":1,\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}")));
 
         clientPair.appClient.send("loadProfile 10");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(8, LOAD_PROFILE, "{\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(8, LOAD_PROFILE, "{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}")));
 
         clientPair.appClient.send("loadProfile 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(9, ILLEGAL_COMMAND)));
@@ -161,13 +161,13 @@ public class MainWorkflowNewAPITest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(10, DEVICE_NOT_IN_NETWORK)));
 
         clientPair.appClient.send("loadProfile");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(11, LOAD_PROFILE, "{\"activeDashId\":10,\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(11, LOAD_PROFILE, "{\"activeDashId\":10,\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}")));
 
         clientPair.appClient.send("saveDash {\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(12, OK)));
 
         clientPair.appClient.send("loadProfile");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(11, LOAD_PROFILE, "{\"activeDashId\":10,\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(11, LOAD_PROFILE, "{\"activeDashId\":10,\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}")));
     }
 
     @Test
