@@ -147,7 +147,7 @@ server.properties options:
 
         data.folder=/tmp/blynk
 
-+ Folder for all application logs. Will be created if it doesn't exist
++ Folder for all application logs. Will be created if it doesn't exist. "." is dir from which you are running script.
 
         logs.folder=./logs
 
