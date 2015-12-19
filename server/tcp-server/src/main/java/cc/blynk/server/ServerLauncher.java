@@ -12,6 +12,7 @@ import cc.blynk.server.handlers.http.admin.handlers.UsersHandler;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import cc.blynk.server.utils.LoggerUtil;
 
+import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -94,7 +95,7 @@ public class ServerLauncher {
 
         System.out.println();
         System.out.println("Blynk Server successfully started.");
-        System.out.println("All server output is stored in current folder in 'logs/blynk.log' file.");
+        System.out.println("All server output is stored in folder '" + new File(System.getProperty("logs.folder")).getAbsolutePath() + "' file.");
     }
 
     private static void unpackStaticFiles() throws Exception {

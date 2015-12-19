@@ -1,9 +1,11 @@
 package cc.blynk.common.utils;
 
+import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.CodeSource;
 import java.util.Properties;
 
 /**
@@ -26,7 +28,14 @@ public class ServerProperties extends Properties {
     }
 
     public static Path getFileInCurrentDir(String filename) {
-        return Paths.get(System.getProperty("user.dir"), filename);
+        try {
+            CodeSource codeSource = ServerProperties.class.getProtectionDomain().getCodeSource();
+            File jarFile = new File(codeSource.getLocation().toURI().getPath());
+            String jarDir = jarFile.getParentFile().getPath();
+            return Paths.get(jarDir, filename);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
