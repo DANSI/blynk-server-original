@@ -1,6 +1,7 @@
 package cc.blynk.integration;
 
 import cc.blynk.common.model.messages.StringMessage;
+import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.SimpleClientHandler;
@@ -10,6 +11,8 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.utils.JsonParser;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -18,12 +21,11 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.util.List;
 
-import static cc.blynk.common.enums.Response.OK;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.common.enums.Response.*;
+import static cc.blynk.common.model.messages.MessageFactory.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -31,6 +33,8 @@ import static org.mockito.Mockito.verify;
  * Created on 2/4/2015.
  */
 public abstract class IntegrationBase {
+
+    protected static final Logger log = LogManager.getLogger(IntegrationBase.class);
 
     static int appPort;
     public ServerProperties properties;
@@ -77,6 +81,15 @@ public abstract class IntegrationBase {
         return getTokenMessage.body;
     }
 
+    private static GetTokenMessage getGetTokenMessage(List<Object> arguments) {
+        for (Object obj : arguments) {
+            if (obj instanceof GetTokenMessage) {
+                return (GetTokenMessage) obj;
+            }
+        }
+        throw new RuntimeException("Get token message wasn't retrieved.");
+    }
+
     @Before
     public void initBase() {
         properties = new ServerProperties();
@@ -109,8 +122,13 @@ public abstract class IntegrationBase {
                                   ServerProperties properties, boolean newAPI) throws Exception {
 
         TestAppClient appClient = new TestAppClient(host, appPort, properties);
-
         TestHardClient hardClient = new TestHardClient(host, hardPort);
+
+        return initAppAndHardPair(appClient, hardClient, user, jsonProfile, newAPI);
+    }
+
+    ClientPair initAppAndHardPair(TestAppClient appClient, TestHardClient hardClient, String user,
+                                  String jsonProfile, boolean newAPI) throws Exception {
 
         appClient.start(null);
         hardClient.start(null);
@@ -128,8 +146,7 @@ public abstract class IntegrationBase {
         verify(appClient.responseMock, timeout(2000).times(5)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Object> arguments = objectArgumentCaptor.getAllValues();
-        StringMessage getTokenMessage = (StringMessage) arguments.get(4);
-        String token = getTokenMessage.body;
+        String token = getGetTokenMessage(arguments).body;
 
         hardClient.send("login " + token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, OK)));

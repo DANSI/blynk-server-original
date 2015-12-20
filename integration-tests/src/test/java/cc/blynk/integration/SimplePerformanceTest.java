@@ -1,8 +1,12 @@
 package cc.blynk.integration;
 
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestAppClient;
+import cc.blynk.integration.model.TestHardClient;
+import io.netty.channel.nio.NioEventLoopGroup;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +17,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.mockito.Mockito.*;
 
@@ -26,7 +29,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class SimplePerformanceTest extends IntegrationBase {
 
-    private final AtomicInteger counter = new AtomicInteger();
+    private NioEventLoopGroup sharedNioEventLoopGroup;
 
     @Test
     @Ignore
@@ -44,10 +47,15 @@ public class SimplePerformanceTest extends IntegrationBase {
         }
     }
 
+    @Before
+    public void init() {
+        this.sharedNioEventLoopGroup = new NioEventLoopGroup();
+    }
+
     @Test
     @Ignore
     public void testConnectAppAndHardware() throws Exception {
-        int clientNumber = 250;
+        int clientNumber = 1000;
         ExecutorService executorService = Executors.newFixedThreadPool(4);
 
         ClientPair[] clients = new ClientPair[clientNumber];
@@ -55,8 +63,10 @@ public class SimplePerformanceTest extends IntegrationBase {
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < clientNumber; i++) {
+            String usernameAndPass = "dima" + i +  "@mail.ua 1";
+
             Future<ClientPair> future = executorService.submit(
-                    () -> initAppAndHardPair("localhost", 8443, 8442, "dima" + counter.incrementAndGet() + "@mail.ua 1", null, properties, false)
+                    () -> initClientsWithSharedNio("localhost", 8443, 8442, usernameAndPass, null, properties, false)
             );
             futures.add(future);
         }
@@ -72,6 +82,7 @@ public class SimplePerformanceTest extends IntegrationBase {
 
         System.out.println(clientNumber + " client pairs created in " + (System.currentTimeMillis() - start));
 
+        /*
         System.currentTimeMillis();
         while (true) {
             for (ClientPair clientPair : clients) {
@@ -80,6 +91,17 @@ public class SimplePerformanceTest extends IntegrationBase {
             }
             sleep(10);
         }
+        */
+    }
+
+
+    ClientPair initClientsWithSharedNio(String host, int appPort, int hardPort, String user, String jsonProfile,
+                                  ServerProperties properties, boolean newAPI) throws Exception {
+
+        TestAppClient appClient = new TestAppClient(host, appPort, properties, sharedNioEventLoopGroup);
+        TestHardClient hardClient = new TestHardClient(host, hardPort, sharedNioEventLoopGroup);
+
+        return initAppAndHardPair(appClient, hardClient, user, jsonProfile, newAPI);
     }
 
 }

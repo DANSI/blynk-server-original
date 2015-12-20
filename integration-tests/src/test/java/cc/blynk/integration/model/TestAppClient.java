@@ -28,20 +28,25 @@ public class TestAppClient extends AppClient {
 
     private ChannelPipeline pipeline;
 
+
     public TestAppClient(String host, int port) {
         super(host, port, Mockito.mock(Random.class), props);
         Mockito.when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
     }
 
     public TestAppClient(String host, int port, ServerProperties properties) {
+        this(host, port, properties, new NioEventLoopGroup());
+    }
+
+    public TestAppClient(String host, int port, ServerProperties properties, NioEventLoopGroup nioEventLoopGroup) {
         super(host, port, Mockito.mock(Random.class), properties);
         Mockito.when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
+        this.nioEventLoopGroup = nioEventLoopGroup;
     }
 
     @Override
     public void start(BufferedReader commandInputStream) {
         if (commandInputStream == null) {
-            nioEventLoopGroup = new NioEventLoopGroup();
 
             Bootstrap b = new Bootstrap();
             b.group(nioEventLoopGroup).channel(NioSocketChannel.class).handler(getChannelInitializer());

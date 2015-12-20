@@ -27,7 +27,12 @@ public class TestHardClient extends HardwareClient {
 
     private int msgId;
 
+
     public TestHardClient(String host, int port) {
+        this(host, port, new NioEventLoopGroup());
+    }
+
+    public TestHardClient(String host, int port, NioEventLoopGroup nioEventLoopGroup) {
         super(host, port, Mockito.mock(Random.class));
         Mockito.when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
 
