@@ -16,7 +16,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.utils.PinUtil.*;
 import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
@@ -47,56 +46,42 @@ public class HardwareAppLogic {
             return;
         }
 
-        //todo remove on next deployment.
-        if (state.isOldAPI() || ("Android".equals(state.osType) && "21".equals(state.version))) {
-            if (pinModeMessage(message.body)) {
+        String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING, 2);
+        int dashId = ParseUtil.parseInt(split[0], message.id);
+
+        char operation = split[1].charAt(1);
+
+        DashBoard dash = state.user.profile.getDashById(dashId, message.id);
+
+        switch (operation) {
+            case 'm' :
                 log.trace("Pin Mode message catch. Remembering.");
                 //check PM command not empty
-                if (message.body.length() > 3) {
-                    DashBoard dash = state.user.profile.getDashById(state.user.profile.activeDashId, message.id);
-                    dash.pinModeMessage = message;
+                if (split[1].length() > 3) {
+                    dash.pinModeMessage = new HardwareMessage(message.id, split[1]);
                 }
-            }
+                session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
+                break;
+            case 'w' :
+                dash.update(new HardwareBody(split[1], message.id));
 
-            session.sendMessageToHardware(state.user.profile.activeDashId, message);
-        } else {
-            String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING, 2);
-            int dashId = ParseUtil.parseInt(split[0], message.id);
-
-            char operation = split[1].charAt(1);
-
-            DashBoard dash = state.user.profile.getDashById(dashId, message.id);
-
-            switch (operation) {
-                case 'm' :
-                    log.trace("Pin Mode message catch. Remembering.");
-                    //check PM command not empty
-                    if (split[1].length() > 3) {
-                        dash.pinModeMessage = new HardwareMessage(message.id, split[1]);
-                    }
-                    session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
-                    break;
-                case 'w' :
-                    dash.update(new HardwareBody(split[1], message.id));
-
-                    //if dash was shared. check for shared channels
-                    String sharedToken = state.user.dashShareTokens.get(dashId);
-                    if (sharedToken != null) {
-                        for (Channel appChannel : session.appChannels) {
-                            if (appChannel != ctx.channel() && needSync(appChannel, sharedToken)) {
-                                appChannel.writeAndFlush(new SyncMessage(message.id, message.body));
-                            }
+                //if dash was shared. check for shared channels
+                String sharedToken = state.user.dashShareTokens.get(dashId);
+                if (sharedToken != null) {
+                    for (Channel appChannel : session.appChannels) {
+                        if (appChannel != ctx.channel() && needSync(appChannel, sharedToken)) {
+                            appChannel.writeAndFlush(new SyncMessage(message.id, message.body));
                         }
                     }
+                }
+                session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
+                break;
+            case 'r' :
+                FrequencyWidget frequencyWidget = dash.findReadingWidget(split[1], message.id);
+                if (frequencyWidget.isTicked()) {
                     session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
-                    break;
-                case 'r' :
-                    FrequencyWidget frequencyWidget = dash.findReadingWidget(split[1], message.id);
-                    if (frequencyWidget.isTicked()) {
-                        session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
-                    }
-                    break;
-            }
+                }
+                break;
         }
     }
 

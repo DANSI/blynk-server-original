@@ -34,9 +34,6 @@ public class JsonParsingTest {
         assertNotNull(profile.dashBoards);
         assertEquals(profile.dashBoards.length, 1);
 
-        //this property shoudn't be parsed
-        assertNotNull(profile.activeDashId);
-
         DashBoard dashBoard = profile.dashBoards[0];
 
         assertNotNull(dashBoard);
@@ -149,7 +146,6 @@ public class JsonParsingTest {
 
         Profile profile = JsonParser.parseProfile(is);
         String userProfileString = profile.toString();
-        profile.activeDashId = 1;
 
         assertNotNull(userProfileString);
         assertTrue(userProfileString.contains("dashBoards"));

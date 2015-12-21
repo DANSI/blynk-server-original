@@ -1,5 +1,4 @@
 {
-    "activeDashId" : 1,
     "dashBoards" :
         [
             {

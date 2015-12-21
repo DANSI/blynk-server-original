@@ -19,8 +19,4 @@ public class AppStateHolder {
         this.version = version;
     }
 
-    public boolean isOldAPI() {
-        return version == null;
-    }
-
 }

@@ -21,8 +21,6 @@ public final class Response {
     public static final int DEVICE_NOT_IN_NETWORK = 7;
     public static final int NO_ACTIVE_DASHBOARD = 8;
     public static final int INVALID_TOKEN = 9;
-    //todo remove in future
-    public static final int DEVICE_WENT_OFFLINE = 10;
     public static final int ILLEGAL_COMMAND_BODY = 11;
     public static final int GET_GRAPH_DATA_EXCEPTION = 12;
     public static final int NO_DATA_EXCEPTION = 17;

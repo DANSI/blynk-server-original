@@ -14,11 +14,8 @@ import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.graph.GraphKey;
 import cc.blynk.server.utils.PinUtil;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
  * Handler responsible for forwarding messages from hardware to applications.
@@ -42,7 +39,7 @@ public class HardwareLogic {
         this.reportingDao = reportingDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
+    public void messageReceived(HardwareStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
         if (message.body.length() < 4) {
@@ -78,13 +75,8 @@ public class HardwareLogic {
         if (session.appChannels.size() > 0) {
             //todo this code should be removed when both iOS and Android will support sharing.
             for (Channel channel : session.appChannels) {
-                boolean isOldAPI = getAppState(channel).isOldAPI();
-                log.trace("Sending {} to isOld = {} app {}", message, isOldAPI, channel);
-                if (isOldAPI) {
-                    channel.writeAndFlush(new HardwareMessage(message.id, body));
-                } else {
-                    channel.writeAndFlush(new HardwareMessage(message.id, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
-                }
+                log.trace("Sending {} to app {}", message, channel);
+                channel.writeAndFlush(new HardwareMessage(message.id, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
             }
         }
     }

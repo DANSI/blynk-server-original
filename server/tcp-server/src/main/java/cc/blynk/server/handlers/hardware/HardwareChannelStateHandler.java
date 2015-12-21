@@ -3,7 +3,6 @@ package cc.blynk.server.handlers.hardware;
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.dao.SessionDao;
-import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
@@ -18,7 +17,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
 import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
@@ -67,16 +65,11 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                     Session session = sessionDao.userSession.get(handlerState.user);
                     if (session.appChannels.size() > 0) {
                         for (Channel appChannel : session.appChannels) {
-                            AppStateHolder appState = getAppState(appChannel);
-                            if (appState.isOldAPI() || ("Android".equals(appState.osType) && "21".equals(appState.version))) {
-                                appChannel.writeAndFlush(produce(0, DEVICE_WENT_OFFLINE));
-                            } else {
-                                appChannel.writeAndFlush(
-                                        new ResponseWithBodyMessage(
-                                                0, Command.RESPONSE, DEVICE_WENT_OFFLINE_2, handlerState.dashId
-                                        )
-                                );
-                            }
+                            appChannel.writeAndFlush(
+                                    new ResponseWithBodyMessage(
+                                            0, Command.RESPONSE, DEVICE_WENT_OFFLINE_2, handlerState.dashId
+                                    )
+                            );
                         }
                     }
                 } else {

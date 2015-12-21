@@ -61,7 +61,6 @@ public class HardwareAppHandlerTest extends TestBase {
         HardwareMessage message = new HardwareMessage(1, "test");
         when(ctx.channel()).thenReturn(channel);
         user.profile = profile;
-        profile.activeDashId = null;
         SessionDao sessionDao = spy(new SessionDao());
         HardwareAppLogic hardwareHandler = spy(new HardwareAppLogic(sessionDao));
         AppStateHolder handlerState = new AppStateHolder(user, null, null);

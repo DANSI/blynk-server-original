@@ -42,7 +42,6 @@ public class DeActivateDashboardLogic {
                 dashBoard.isActive = false;
             }
         }
-        user.profile.activeDashId = null;
         user.lastModifiedTs = System.currentTimeMillis();
 
         Session session = sessionDao.userSession.get(user);

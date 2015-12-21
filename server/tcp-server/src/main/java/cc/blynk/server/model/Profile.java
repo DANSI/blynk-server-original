@@ -19,9 +19,6 @@ public class Profile {
 
     public final transient Set<GraphKey> graphPins;
 
-    //todo remove in next release
-    public volatile Integer activeDashId;
-
     public DashBoard[] dashBoards;
 
     public Profile() {
