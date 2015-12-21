@@ -2,7 +2,6 @@ package cc.blynk.server.model.widgets;
 
 import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.enums.PinType;
-import cc.blynk.server.model.enums.State;
 import cc.blynk.server.model.widgets.controls.*;
 import cc.blynk.server.model.widgets.inputs.GPS;
 import cc.blynk.server.model.widgets.notifications.Mail;
@@ -73,9 +72,6 @@ public abstract class Widget {
     public Integer height;
 
     public String label;
-
-    //todo is it used?
-    public State state;
 
     public abstract void updateIfSame(HardwareBody body);
 
