@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -53,7 +54,6 @@ public class SimplePerformanceTest extends IntegrationBase {
     }
 
     @Test
-    @Ignore
     public void testConnectAppAndHardware() throws Exception {
         int clientNumber = 1000;
         ExecutorService executorService = Executors.newFixedThreadPool(4);
@@ -81,6 +81,7 @@ public class SimplePerformanceTest extends IntegrationBase {
         }
 
         System.out.println(clientNumber + " client pairs created in " + (System.currentTimeMillis() - start));
+        assertEquals(1000, counter);
 
         /*
         System.currentTimeMillis();
