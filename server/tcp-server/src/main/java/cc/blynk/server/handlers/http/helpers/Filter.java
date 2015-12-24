@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.http;
+package cc.blynk.server.handlers.http.helpers;
 
 /**
  * The Blynk Project.

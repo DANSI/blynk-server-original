@@ -3,8 +3,8 @@ package cc.blynk.server.handlers.http.admin.handlers;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
-import cc.blynk.server.handlers.http.Response;
 import cc.blynk.server.handlers.http.admin.response.RequestPerSecondResponse;
+import cc.blynk.server.handlers.http.helpers.Response;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.workers.StatsWorker;
@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static cc.blynk.server.handlers.http.ResponseGenerator.*;
+import static cc.blynk.server.handlers.http.helpers.ResponseGenerator.*;
 
 /**
  * The Blynk Project.

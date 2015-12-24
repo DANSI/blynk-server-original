@@ -4,8 +4,8 @@ import cc.blynk.common.utils.SHA256Util;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
-import cc.blynk.server.handlers.http.Filter;
-import cc.blynk.server.handlers.http.Response;
+import cc.blynk.server.handlers.http.helpers.Filter;
+import cc.blynk.server.handlers.http.helpers.Response;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;
@@ -16,7 +16,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-import static cc.blynk.server.handlers.http.ResponseGenerator.*;
+import static cc.blynk.server.handlers.http.helpers.ResponseGenerator.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.*;
 

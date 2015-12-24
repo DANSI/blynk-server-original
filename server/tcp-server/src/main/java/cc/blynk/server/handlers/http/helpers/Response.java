@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.http;
+package cc.blynk.server.handlers.http.helpers;
 
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
