@@ -28,7 +28,6 @@ public class HttpsAdminServer extends BaseServer {
     public HttpsAdminServer(Holder holder) {
         super(holder.props.getIntProperty("https.port"), holder.transportType);
 
-        final boolean isAdministrationEnabled = holder.props.getBoolProperty("enable.administration.ui");
         final String[] allowedIPsArray = holder.props.getCommaSeparatedList("allowed.administrator.ips");
         final Set<String> allowedIPs;
 
@@ -47,15 +46,12 @@ public class HttpsAdminServer extends BaseServer {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline pipeline = ch.pipeline();
+                pipeline.addLast(ipFilterHandler);
                 pipeline.addLast(sslCtx.newHandler(ch.alloc()));
                 pipeline.addLast(new HttpServerCodec());
                 pipeline.addLast(new HttpObjectAggregator(65536));
                 pipeline.addLast(new ChunkedWriteHandler());
-
-                if (isAdministrationEnabled) {
-                    pipeline.addLast(ipFilterHandler);
-                    pipeline.addLast(new AdminHandler());
-                }
+                pipeline.addLast(new AdminHandler());
             }
         };
 

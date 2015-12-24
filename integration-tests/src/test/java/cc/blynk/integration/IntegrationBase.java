@@ -40,6 +40,8 @@ public abstract class IntegrationBase {
     public ServerProperties properties;
     public int hardPort;
     public String host;
+    public int httpsPort;
+
     @Mock
     public BufferedReader bufferedReader;
 
@@ -102,14 +104,6 @@ public abstract class IntegrationBase {
         return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties, true);
     }
 
-    ClientPair initAppAndHardPair() throws Exception {
-        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties, false);
-    }
-
-    ClientPair initMutualAppAndHardPair(ServerProperties properties) throws Exception {
-        return initAppAndHardPair("localhost", appPort, hardPort, "andrew@mail.ua 1", null, properties, false);
-    }
-
     public ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
         return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", jsonProfile, properties, false);
     }
@@ -160,5 +154,6 @@ public abstract class IntegrationBase {
     public void initServerStructures() {
         holder = new Holder(properties);
         holder.setBlockingIOProcessor(blockingIOProcessor);
+        httpsPort = holder.props.getIntProperty("https.port");
     }
 }

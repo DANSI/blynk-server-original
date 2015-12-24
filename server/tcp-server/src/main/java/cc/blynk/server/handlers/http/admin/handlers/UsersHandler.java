@@ -6,6 +6,7 @@ import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.http.helpers.Filter;
 import cc.blynk.server.handlers.http.helpers.Response;
+import cc.blynk.server.handlers.http.helpers.UserPassPojo;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;
@@ -71,7 +72,6 @@ public class UsersHandler extends BaseHandler {
 
         log.debug("Deleting user {}", name);
         User oldUser = userDao.getByName(name);
-        userDao.delete(name);
 
         //if pass was changed, cal hash.
         if (!updatedUser.pass.equals(oldUser.pass)) {
@@ -84,6 +84,24 @@ public class UsersHandler extends BaseHandler {
 
 
         return makeResponse(updatedUser);
+    }
+
+    @PUT
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Path("/{name}/changePass")
+    public Response updateUser(@PathParam("name") String name,
+                               UserPassPojo userPassPojo) {
+
+        log.debug("Updating pass for user {}", name);
+        User user = userDao.getByName(name);
+
+        if (user == null) {
+            return new Response(HTTP_1_1, NOT_FOUND);
+        }
+
+        user.pass = userPassPojo.pass;
+
+        return Response.ok();
     }
 
     @DELETE

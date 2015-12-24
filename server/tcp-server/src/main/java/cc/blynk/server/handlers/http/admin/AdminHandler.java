@@ -27,7 +27,7 @@ public class AdminHandler extends BaseHttpAPIHandler {
                 log.error("Error handling static file.", e);
             }
         } else {
-            this.process(ctx, req);
+            super.process(ctx, req);
         }
     }
 
