@@ -41,6 +41,7 @@ public class HttpsServer extends BaseServer {
 
         log.info("Enabling HTTPS for admin UI.");
         SslContext sslCtx = SslUtil.initSslContext(holder.props);
+        final IpFilterHandler ipFilterHandler = new IpFilterHandler(allowedIPs);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -51,11 +52,8 @@ public class HttpsServer extends BaseServer {
                 pipeline.addLast(new HttpObjectAggregator(65536));
                 pipeline.addLast(new ChunkedWriteHandler());
 
-                //look like not all hardwares can support that
-                //pipeline.addLast(new HttpContentCompressor());
-
                 if (isAdministrationEnabled) {
-                    pipeline.addLast(new IpFilterHandler(allowedIPs));
+                    pipeline.addLast(ipFilterHandler);
                     pipeline.addLast(new AdminHandler());
                 }
             }
