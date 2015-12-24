@@ -5,7 +5,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.administration.AdminServer;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
-import cc.blynk.server.core.hardware.HttpsHardwareServer;
+import cc.blynk.server.core.hardware.HttpsServer;
 import cc.blynk.server.core.hardware.ssl.HardwareSSLServer;
 import cc.blynk.server.handlers.http.admin.handlers.StatsHandler;
 import cc.blynk.server.handlers.http.admin.handlers.UsersHandler;
@@ -52,7 +52,7 @@ public class ServerLauncher {
 
         this.hardwareServer = new HardwareServer(holder);
         this.hardwareSSLServer = new HardwareSSLServer(holder);
-        this.httpsHardwareServer = new HttpsHardwareServer(holder);
+        this.httpsHardwareServer = new HttpsServer(holder);
         this.appServer = new AppServer(holder);
         this.adminServer = new AdminServer(holder);
 
