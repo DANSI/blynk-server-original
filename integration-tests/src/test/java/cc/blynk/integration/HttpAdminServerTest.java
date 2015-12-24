@@ -1,6 +1,6 @@
 package cc.blynk.integration;
 
-import cc.blynk.server.core.hardware.HttpsAdminServer;
+import cc.blynk.server.core.admin.HttpsAdminServer;
 import cc.blynk.server.reset.web.entities.ResponseUserEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPut;

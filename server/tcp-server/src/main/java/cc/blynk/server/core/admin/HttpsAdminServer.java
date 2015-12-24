@@ -1,4 +1,4 @@
-package cc.blynk.server.core.hardware;
+package cc.blynk.server.core.admin;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
