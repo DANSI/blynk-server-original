@@ -40,7 +40,7 @@ public class ServerLauncher {
     private final BaseServer appServer;
     private final BaseServer hardwareServer;
     private final BaseServer hardwareSSLServer;
-    private final BaseServer httpsHardwareServer;
+    private final BaseServer httpsAdminServer;
     private final BaseServer adminServer;
     private final Holder holder;
 
@@ -52,7 +52,7 @@ public class ServerLauncher {
 
         this.hardwareServer = new HardwareServer(holder);
         this.hardwareSSLServer = new HardwareSSLServer(holder);
-        this.httpsHardwareServer = new HttpsAdminServer(holder);
+        this.httpsAdminServer = new HttpsAdminServer(holder);
         this.appServer = new AppServer(holder);
         this.adminServer = new AdminServer(holder);
 
@@ -118,13 +118,13 @@ public class ServerLauncher {
         appServer.run();
         hardwareServer.run();
         hardwareSSLServer.run();
-        httpsHardwareServer.run();
+        httpsAdminServer.run();
         adminServer.run();
 
         //Launching all background jobs.
-        JobLauncher.start(holder, hardwareServer, appServer, adminServer, hardwareSSLServer, httpsHardwareServer);
+        JobLauncher.start(holder, hardwareServer, appServer, adminServer, hardwareSSLServer, httpsAdminServer);
 
-        printStartedString(hardwareServer, appServer, adminServer, hardwareSSLServer, httpsHardwareServer);
+        printStartedString(hardwareServer, appServer, adminServer, hardwareSSLServer, httpsAdminServer);
     }
 
 }
