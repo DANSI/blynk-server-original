@@ -139,10 +139,6 @@ server.properties options:
 
         hardware.default.port=8442
         
-+ Administration port
-
-        server.admin.port=8777
-
 + User profiles folder. Folder in which all users profiles will be stored. By default System.getProperty("java.io.tmpdir")/blynk used. Will be created if not exists
 
         data.folder=/tmp/blynk
@@ -190,10 +186,6 @@ server.properties options:
 + Mostly required for local servers setup in case user want to log raw data in CSV format. See [raw data] (https://github.com/blynkkk/blynk-server#raw-data-storage) section for more info.
         
         enable.raw.data.store=true
-        
-+ Enable or disable administration UI
-        
-        enable.administration.ui=true
         
 + Comma separated list of administrator IPs. Allow access to admin UI only for those IPs. Leave empty in order to allow for all. By default allow access from local host.
         
