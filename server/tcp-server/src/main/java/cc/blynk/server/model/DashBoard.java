@@ -32,6 +32,8 @@ public class DashBoard {
 
     public String boardType;
 
+    public String theme;
+
     public boolean keepScreenOn;
 
     public boolean isShared;
