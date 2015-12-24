@@ -1,5 +1,6 @@
 package cc.blynk.server.handlers.http;
 
+import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -16,7 +17,7 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 24.12.15.
  */
-public abstract class BaseHttpAPIHandler extends ChannelInboundHandlerAdapter {
+public class BaseHttpAPIHandler extends ChannelInboundHandlerAdapter {
 
     protected static final Logger log = LogManager.getLogger(BaseHttpAPIHandler.class);
 
@@ -27,6 +28,24 @@ public abstract class BaseHttpAPIHandler extends ChannelInboundHandlerAdapter {
             response.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
             ctx.write(response);
         }
+    }
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        if (!(msg instanceof HttpRequest)) {
+            return;
+        }
+
+        HttpRequest req = (HttpRequest) msg;
+
+        log.info("{} : {}", req.getMethod().name(), req.getUri());
+
+        process(ctx, req);
+    }
+
+    public void process(ChannelHandlerContext ctx, HttpRequest request) {
+        FullHttpResponse response = HandlerRegistry.process(request);
+        send(ctx, request, response);
     }
 
     @Override

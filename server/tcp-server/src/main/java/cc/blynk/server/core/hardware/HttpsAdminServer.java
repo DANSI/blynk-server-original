@@ -22,10 +22,10 @@ import java.util.Set;
  * Created by Dmitriy Dumanskiy.
  * Created on 1/12/2015.
  */
-public class HttpsServer extends BaseServer {
+public class HttpsAdminServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public HttpsServer(Holder holder) {
+    public HttpsAdminServer(Holder holder) {
         super(holder.props.getIntProperty("https.port"), holder.transportType);
 
         final boolean isAdministrationEnabled = holder.props.getBoolProperty("enable.administration.ui");
