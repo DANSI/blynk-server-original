@@ -1,37 +1,20 @@
 package cc.blynk.server.handlers.http.admin;
 
+import cc.blynk.server.handlers.http.BaseHttpAPIHandler;
 import cc.blynk.server.handlers.http.admin.handlers.FileHandler;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import static io.netty.handler.codec.http.HttpHeaders.Names.*;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 01.12.15.
  */
-public class AdminHandler extends ChannelInboundHandlerAdapter {
-
-    private static final Logger log = LogManager.getLogger(AdminHandler.class);
+public class AdminHandler extends BaseHttpAPIHandler {
 
     private final FileHandler fileHandler = new FileHandler();
-
-    private static void send(ChannelHandlerContext ctx, HttpRequest req, FullHttpResponse response) {
-        if (!HttpHeaders.isKeepAlive(req)) {
-            ctx.write(response).addListener(ChannelFutureListener.CLOSE);
-        } else {
-            response.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
-            ctx.write(response);
-        }
-    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -59,14 +42,4 @@ public class AdminHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) {
-        ctx.flush();
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.error("aaa", cause);
-        ctx.close();
-    }
 }

@@ -7,18 +7,12 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
 import io.netty.util.CharsetUtil;
-import io.netty.util.internal.SystemPropertyUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Pattern;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
@@ -34,36 +28,6 @@ public class FileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
     public static final int HTTP_CACHE_SECONDS = 60;
-    private static final Logger log = LogManager.getLogger(FileHandler.class);
-    private static final Pattern INSECURE_URI = Pattern.compile(".*[<>&\"].*");
-
-    private static String sanitizeUri(String uri) {
-        // Decode the path.
-        try {
-            uri = URLDecoder.decode(uri, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new Error(e);
-        }
-
-        if (uri.isEmpty() || uri.charAt(0) != '/') {
-            return null;
-        }
-
-        // Convert file separators.
-        uri = uri.replace('/', File.separatorChar);
-
-        // Simplistic dumb security check.
-        // You will have to do something serious in the production environment.
-        if (uri.contains(File.separator + '.') ||
-                uri.contains('.' + File.separator) ||
-                uri.charAt(0) == '.' || uri.charAt(uri.length() - 1) == '.' ||
-                INSECURE_URI.matcher(uri).matches()) {
-            return null;
-        }
-
-        // Convert to absolute path.
-        return SystemPropertyUtil.get("user.dir") + File.separator + uri;
-    }
 
     private static void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
         FullHttpResponse response = new DefaultFullHttpResponse(
