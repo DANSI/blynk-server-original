@@ -2,14 +2,11 @@ package cc.blynk.server;
 
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.HttpServer;
 import cc.blynk.server.core.admin.HttpsAdminServer;
-import cc.blynk.server.core.administration.AdminServer;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.core.hardware.ssl.HardwareSSLServer;
-import cc.blynk.server.handlers.http.admin.handlers.StatsHandler;
-import cc.blynk.server.handlers.http.admin.handlers.UsersHandler;
-import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import cc.blynk.server.utils.LoggerUtil;
 
 import java.io.File;
@@ -41,21 +38,18 @@ public class ServerLauncher {
     private final BaseServer hardwareServer;
     private final BaseServer hardwareSSLServer;
     private final BaseServer httpsAdminServer;
-    private final BaseServer adminServer;
+    private final BaseServer httpServer;
+
     private final Holder holder;
 
     private ServerLauncher(ServerProperties serverProperties) {
         this.holder = new Holder(serverProperties);
 
-        HandlerRegistry.register(new UsersHandler(holder.userDao, holder.sessionDao, holder.fileManager));
-        HandlerRegistry.register(new StatsHandler(holder.userDao, holder.sessionDao, holder.stats));
-
         this.hardwareServer = new HardwareServer(holder);
         this.hardwareSSLServer = new HardwareSSLServer(holder);
         this.httpsAdminServer = new HttpsAdminServer(holder);
         this.appServer = new AppServer(holder);
-        this.adminServer = new AdminServer(holder);
-
+        this.httpServer = new HttpServer(holder);
     }
 
     public static void main(String[] args) throws Exception {
@@ -119,12 +113,12 @@ public class ServerLauncher {
         hardwareServer.run();
         hardwareSSLServer.run();
         httpsAdminServer.run();
-        adminServer.run();
+        httpServer.run();
 
         //Launching all background jobs.
-        JobLauncher.start(holder, hardwareServer, appServer, adminServer, hardwareSSLServer, httpsAdminServer);
+        JobLauncher.start(holder, hardwareServer, appServer, httpServer, hardwareSSLServer, httpsAdminServer);
 
-        printStartedString(hardwareServer, appServer, adminServer, hardwareSSLServer, httpsAdminServer);
+        printStartedString(hardwareServer, appServer, httpServer, hardwareSSLServer, httpsAdminServer);
     }
 
 }

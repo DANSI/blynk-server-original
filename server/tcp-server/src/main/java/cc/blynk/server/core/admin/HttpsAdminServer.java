@@ -4,6 +4,9 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.http.admin.AdminHandler;
 import cc.blynk.server.handlers.http.admin.IpFilterHandler;
+import cc.blynk.server.handlers.http.admin.handlers.StatsHandler;
+import cc.blynk.server.handlers.http.admin.handlers.UsersHandler;
+import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import cc.blynk.server.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -27,6 +30,9 @@ public class HttpsAdminServer extends BaseServer {
 
     public HttpsAdminServer(Holder holder) {
         super(holder.props.getIntProperty("https.port"), holder.transportType);
+
+        HandlerRegistry.register(new UsersHandler(holder.userDao, holder.sessionDao, holder.fileManager));
+        HandlerRegistry.register(new StatsHandler(holder.userDao, holder.sessionDao, holder.stats));
 
         final String[] allowedIPsArray = holder.props.getCommaSeparatedList("allowed.administrator.ips");
         final Set<String> allowedIPs;

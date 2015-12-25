@@ -96,6 +96,16 @@ public class User implements Serializable {
         return false;
     }
 
+    public Integer getDashIdByToken(String token) {
+        for (Map.Entry<Integer, String> entry : dashTokens.entrySet()) {
+            if (entry.getValue().equals(token)) {
+                return entry.getKey();
+            }
+        }
+
+        return null;
+    }
+
     public String getName() {
         return name;
     }

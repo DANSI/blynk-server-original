@@ -4,6 +4,8 @@ import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.Pin;
 import cc.blynk.server.model.enums.PinType;
 
+import java.util.StringJoiner;
+
 import static cc.blynk.common.utils.StringUtils.*;
 
 /**
@@ -56,6 +58,22 @@ public abstract class MultiPinWidget extends Widget {
             sb.append(BODY_SEPARATOR).append(pins[i].value);
         }
         return sb.toString();
+    }
+
+    @Override
+    public String getJsonValue() {
+        if (pins == null) {
+            return "[]";
+        }
+        StringJoiner sj = new StringJoiner(",", "[", "]");
+        for (Pin pin : pins) {
+            if (pin.value == null) {
+                sj.add("\"\"");
+            } else {
+                sj.add("\"" + pin.value + "\"");
+            }
+        }
+        return sj.toString();
     }
 
 }

@@ -79,4 +79,6 @@ public abstract class Widget {
 
     public abstract String getValue(byte pin, PinType type);
 
+    public abstract String getJsonValue();
+
 }

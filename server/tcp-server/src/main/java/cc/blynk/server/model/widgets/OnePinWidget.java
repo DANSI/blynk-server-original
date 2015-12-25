@@ -56,4 +56,12 @@ public abstract class OnePinWidget extends Widget {
         return value;
     }
 
+    @Override
+    public String getJsonValue() {
+        if (value == null) {
+            return "[]";
+        }
+        return "[\"" + value + "\"]";
+    }
+
 }
