@@ -82,7 +82,7 @@ public class SimplePerformanceTest extends IntegrationBase {
 
     @Test
     public void testConnectAppAndHardware() throws Exception {
-        int clientNumber = 1000;
+        int clientNumber = 200;
         ExecutorService executorService = Executors.newFixedThreadPool(4);
 
         ClientPair[] clients = new ClientPair[clientNumber];
