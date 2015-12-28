@@ -37,13 +37,12 @@ public class Session {
         this.initialEventLoop = initialEventLoop;
     }
 
-    public void sendMessageToHardware(Integer activeDashId, MessageBase message) {
+    public void sendMessageToHardware(int activeDashId, MessageBase message) {
         boolean noActiveHardware = true;
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
             if (hardwareState != null) {
-                int dashId = hardwareState.dashId;
-                if (activeDashId.equals(dashId)) {
+                if (hardwareState.dashId == activeDashId) {
                     noActiveHardware = false;
                     log.trace("Sending {} to hardware {}", message, channel);
                     channel.writeAndFlush(message);
