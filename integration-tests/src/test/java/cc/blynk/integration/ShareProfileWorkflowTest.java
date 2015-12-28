@@ -67,7 +67,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         //wait util server starts.
         sleep(500);
 
-        clientPair = initAppAndHardPairNewAPI();
+        clientPair = initAppAndHardPair();
     }
 
     @After
@@ -91,7 +91,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        ClientPair clientPair2 = initAppAndHardPair("localhost", appPort, hardPort, "dima2@mail.ua 1", "user_profile_json_2.txt", properties, true);
+        ClientPair clientPair2 = initAppAndHardPair("localhost", appPort, hardPort, "dima2@mail.ua 1", "user_profile_json_2.txt", properties);
         clientPair2.appClient.send("getSharedDash " + token);
 
         String dashboard = getBody(clientPair2.appClient.responseMock);
@@ -395,7 +395,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        ClientPair clientPair2 = initAppAndHardPair("localhost", appPort, hardPort, "dima2@mail.ua 1", "user_profile_json_2.txt", properties, true);
+        ClientPair clientPair2 = initAppAndHardPair("localhost", appPort, hardPort, "dima2@mail.ua 1", "user_profile_json_2.txt", properties);
         clientPair2.appClient.send("getSharedDash " + token);
 
         String dashboard = getBody(clientPair2.appClient.responseMock);

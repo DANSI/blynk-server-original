@@ -101,29 +101,25 @@ public abstract class IntegrationBase {
         host = "localhost";
     }
 
-    ClientPair initAppAndHardPairNewAPI() throws Exception {
-        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties, true);
+    ClientPair initAppAndHardPair() throws Exception {
+        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties);
     }
 
     public ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
-        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", jsonProfile, properties, false);
-    }
-
-    public ClientPair initAppAndHardPairNewAPI(String jsonProfile) throws Exception {
-        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", jsonProfile, properties, true);
+        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", jsonProfile, properties);
     }
 
     ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
-                                  ServerProperties properties, boolean newAPI) throws Exception {
+                                  ServerProperties properties) throws Exception {
 
         TestAppClient appClient = new TestAppClient(host, appPort, properties);
         TestHardClient hardClient = new TestHardClient(host, hardPort);
 
-        return initAppAndHardPair(appClient, hardClient, user, jsonProfile, newAPI);
+        return initAppAndHardPair(appClient, hardClient, user, jsonProfile);
     }
 
     ClientPair initAppAndHardPair(TestAppClient appClient, TestHardClient hardClient, String user,
-                                  String jsonProfile, boolean newAPI) throws Exception {
+                                  String jsonProfile) throws Exception {
 
         appClient.start(null);
         hardClient.start(null);
@@ -132,7 +128,7 @@ public abstract class IntegrationBase {
         int dashId = JsonParser.parseProfile(userProfileString, 1).dashBoards[0].id;
 
         appClient.send("register " + user)
-                 .send("login " + user + (newAPI ? " Android 1RC7" : ""))
+                 .send("login " + user + " Android 1RC7")
                  .send("saveProfile " + userProfileString)
                  .send("activate " + dashId)
                  .send("getToken " + dashId);

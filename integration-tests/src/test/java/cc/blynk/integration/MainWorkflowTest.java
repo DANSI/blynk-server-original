@@ -62,7 +62,7 @@ public class MainWorkflowTest extends IntegrationBase {
         //wait util server starts.
         sleep(500);
 
-        clientPair = initAppAndHardPairNewAPI();
+        clientPair = initAppAndHardPair();
     }
 
     @After
@@ -207,7 +207,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testSendEmail() throws Exception {
         blockingIOProcessor.tokenBody = "Auth Token for %s project";
-        ClientPair clientPair = initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties, false);
+        ClientPair clientPair = initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties);
         clientPair.appClient.send("email 1");
         verify(blockingIOProcessor, timeout(1000)).mail(any(), eq("dima@mail.ua"), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"), eq(1));
     }
@@ -523,7 +523,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testSendHardwareCommandToNotActiveDashboard() throws Exception {
-        clientPair = initAppAndHardPairNewAPI("user_profile_json_3_dashes.txt");
+        clientPair = initAppAndHardPair("user_profile_json_3_dashes.txt");
 
         clientPair.appClient.send("getToken 2");
 
@@ -594,7 +594,7 @@ public class MainWorkflowTest extends IntegrationBase {
     //todo one more test here
     public void test2ClientPairsWorkCorrectly() throws Exception {
         final int ITERATIONS = 100;
-        ClientPair clientPair2 = initAppAndHardPair("localhost", appPort, hardPort, "dima2@mail.ua 1", null, properties, true);
+        ClientPair clientPair2 = initAppAndHardPair("localhost", appPort, hardPort, "dima2@mail.ua 1", null, properties);
 
         String body = "ar 7";
         for (int i = 1; i <= ITERATIONS; i++) {

@@ -5,13 +5,18 @@ import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.integration.model.TestHardClient;
+import cc.blynk.server.core.application.AppServer;
+import cc.blynk.server.core.hardware.HardwareServer;
 import io.netty.channel.nio.NioEventLoopGroup;
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -32,6 +37,33 @@ public class SimplePerformanceTest extends IntegrationBase {
 
     private NioEventLoopGroup sharedNioEventLoopGroup;
 
+    private AppServer appServer;
+    private HardwareServer hardwareServer;
+    private ClientPair clientPair;
+
+    @Before
+    public void init() throws IOException {
+        this.sharedNioEventLoopGroup = new NioEventLoopGroup();
+
+        initServerStructures();
+
+        FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
+
+        hardwareServer = new HardwareServer(holder);
+        appServer = new AppServer(holder);
+        hardwareServer.run();
+        appServer.run();
+        //wait util server starts.
+        sleep(500);
+    }
+
+
+    @After
+    public void shutdown() {
+        appServer.stop();
+        hardwareServer.stop();
+    }
+
     @Test
     @Ignore
     public void emulateSlider() throws Exception {
@@ -48,11 +80,6 @@ public class SimplePerformanceTest extends IntegrationBase {
         }
     }
 
-    @Before
-    public void init() {
-        this.sharedNioEventLoopGroup = new NioEventLoopGroup();
-    }
-
     @Test
     public void testConnectAppAndHardware() throws Exception {
         int clientNumber = 1000;
@@ -66,7 +93,7 @@ public class SimplePerformanceTest extends IntegrationBase {
             String usernameAndPass = "dima" + i +  "@mail.ua 1";
 
             Future<ClientPair> future = executorService.submit(
-                    () -> initClientsWithSharedNio("localhost", 8443, 8442, usernameAndPass, null, properties, false)
+                    () -> initClientsWithSharedNio("localhost", appPort, hardPort, usernameAndPass, null, properties)
             );
             futures.add(future);
         }
@@ -97,12 +124,12 @@ public class SimplePerformanceTest extends IntegrationBase {
 
 
     ClientPair initClientsWithSharedNio(String host, int appPort, int hardPort, String user, String jsonProfile,
-                                  ServerProperties properties, boolean newAPI) throws Exception {
+                                  ServerProperties properties) throws Exception {
 
         TestAppClient appClient = new TestAppClient(host, appPort, properties, sharedNioEventLoopGroup);
         TestHardClient hardClient = new TestHardClient(host, hardPort, sharedNioEventLoopGroup);
 
-        return initAppAndHardPair(appClient, hardClient, user, jsonProfile, newAPI);
+        return initAppAndHardPair(appClient, hardClient, user, jsonProfile);
     }
 
 }
