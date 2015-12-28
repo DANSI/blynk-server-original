@@ -193,7 +193,7 @@ public class MainWorkflowTest extends IntegrationBase {
         };
 
         //todo find how to check arrays
-        verify(blockingIOProcessor, timeout(1000)).readGraphDataNewAPI(any(Channel.class), eq("dima@mail.ua"), any(GraphPinRequest[].class), eq(1));
+        verify(blockingIOProcessor, timeout(1000)).readGraphData(any(Channel.class), eq("dima@mail.ua"), any(GraphPinRequest[].class), eq(1));
         //verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NO_DATA_EXCEPTION)));
     }
 

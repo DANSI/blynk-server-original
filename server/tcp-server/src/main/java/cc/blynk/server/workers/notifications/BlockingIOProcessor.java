@@ -63,23 +63,6 @@ public class BlockingIOProcessor {
     public void readGraphData(Channel channel, String name, GraphPinRequest[] requestedPins, int msgId) {
         executor.execute(() -> {
             try {
-
-                byte[][] data = reportingDao.getAllFromDisk(name, requestedPins, msgId);
-                byte[] compressed = compress(data, msgId);
-
-                log.trace("Sending getGraph response. ");
-                channel.eventLoop().execute(() -> {
-                    channel.writeAndFlush(new GetGraphDataBinaryMessage(msgId, compressed));
-                });
-            } catch (Exception e) {
-                log(channel, e.getMessage(), msgId, Response.NO_DATA_EXCEPTION);
-            }
-        });
-    }
-
-    public void readGraphDataNewAPI(Channel channel, String name, GraphPinRequest[] requestedPins, int msgId) {
-        executor.execute(() -> {
-            try {
                 byte[][] data = reportingDao.getAllFromDisk(name, requestedPins, msgId);
                 byte[] compressed = compress(requestedPins[0].dashId, data, msgId);
 

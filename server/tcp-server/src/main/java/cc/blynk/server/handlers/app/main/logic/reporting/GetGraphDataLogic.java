@@ -60,7 +60,7 @@ public class GetGraphDataLogic {
             requestedPins[i] = new GraphPinRequestData(dashId, messageParts, i, msgId, valuesPerPin);
         }
 
-        blockingIOProcessor.readGraphDataNewAPI(channel, user.name, requestedPins, msgId);
+        blockingIOProcessor.readGraphData(channel, user.name, requestedPins, msgId);
     }
 
     private void deleteGraphData(String[] messageParts, String username, int msgId) {
