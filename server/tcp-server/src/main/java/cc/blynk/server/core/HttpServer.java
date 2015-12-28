@@ -23,7 +23,7 @@ public class HttpServer extends BaseServer {
     public HttpServer(Holder holder) {
         super(holder.props.getIntProperty("http.port"), holder.transportType);
 
-        HandlerRegistry.register(new AppHttpHandler(holder.userDao));
+        HandlerRegistry.register(new AppHttpHandler(holder.userDao, holder.blockingIOProcessor));
 
         log.info("Enabling HTTP for app.");
 

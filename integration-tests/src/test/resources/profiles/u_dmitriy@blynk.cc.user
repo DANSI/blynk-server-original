@@ -324,6 +324,33 @@
                   "max":0,
                   "value":"1",
                   "pushMode":false
+               },
+               {
+                  "type":"NOTIFICATION",
+                  "id":1036300915,
+                  "x":5,
+                  "y":7,
+                  "width":2,
+                  "height":1,
+                  "pin":0,
+                  "pwmMode":false,
+                  "rangeMappingOn":false,
+                  "min":0,
+                  "max":0,
+                  "androidTokens":
+                     {
+                        "98b68199-b394-4d46-81c0-6fd077000f80":"cu21UsfOTz0:APA91bFUWdcSSXg3w3Q4rSYxA_zeJQoBJGKs_2X0yHgRHEZ9wF32wMyPzutSwRbJk6OeoeATalVUmJbyNiXi4jjOFH8aDc4DX66pexjbQU2MkWqWdtWCCNgk4xooSyKN4ALbSVL-5ABm"
+                     },
+                  "notifyWhenOffline":false,
+                  "priority":"normal"
+               },
+               {
+                   "type":"EMAIL",
+                   "id":1036300916,
+                   "x":5,
+                   "y":9,
+                   "width":2,
+                   "height":1
                }
             ],
             "boardType":"Arduino UNO",

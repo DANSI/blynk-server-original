@@ -2,9 +2,12 @@ package cc.blynk.integration.http;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.server.core.HttpServer;
+import cc.blynk.server.handlers.http.helpers.pojo.EmailPojo;
+import cc.blynk.server.handlers.http.helpers.pojo.PushMessagePojo;
 import cc.blynk.server.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -214,6 +217,86 @@ public class HttpAppServerTest extends IntegrationBase {
             List<String> values = consumeJsonPinValues(response);
             assertEquals(1, values.size());
             assertEquals("100", values.get(0));
+        }
+    }
+
+
+    //----------------------------NOTIFICATION POST METHODS SECTION
+
+    //----------------------------pushes
+    @Test
+    public void testPostNotifyNoContentType() throws Exception {
+        HttpPost request = new HttpPost(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/notify");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(500, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testPostNotifyNoBody() throws Exception {
+        HttpPost request = new HttpPost(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/notify");
+        request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testPostNotifyWithWrongBody() throws Exception {
+        HttpPost request = new HttpPost(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/notify");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 256; i++) {
+            sb.append(i);
+        }
+        request.setEntity(new StringEntity("{\"body\":\"" + sb.toString() + "\"}", ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testPostNotifyWithBody() throws Exception {
+        HttpPost request = new HttpPost(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/notify");
+        String message = JsonParser.mapper.writeValueAsString(new PushMessagePojo("This is Push Message"));
+        request.setEntity(new StringEntity(message, ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+    }
+
+
+    //----------------------------email
+    @Test
+    public void testPostEmailNoContentType() throws Exception {
+        HttpPost request = new HttpPost(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/email");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(500, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testPostEmailNoBody() throws Exception {
+        HttpPost request = new HttpPost(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/email");
+        request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testPostEmailWithBody() throws Exception {
+        HttpPost request = new HttpPost(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/email");
+        String message = JsonParser.mapper.writeValueAsString(new EmailPojo("pupkin@gmail.com", "Title", "Subject"));
+        request.setEntity(new StringEntity(message, ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
         }
     }
 

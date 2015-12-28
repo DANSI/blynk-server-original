@@ -106,6 +106,16 @@ public class BlockingIOProcessor {
         });
     }
 
+    public void mail(User user, String to, String subj, String body) {
+        executor.execute(() -> {
+            try {
+                mailWrapper.send(to, subj, body, null);
+            } catch (Exception e) {
+                log(user.name, e.getMessage());
+            }
+        });
+    }
+
     public void twit(Channel channel, String token, String secret, String body, int msgId) {
         executor.execute(() -> {
             try {

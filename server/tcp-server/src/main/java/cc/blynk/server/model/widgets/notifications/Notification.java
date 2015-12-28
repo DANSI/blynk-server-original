@@ -20,8 +20,9 @@ public class Notification extends Widget {
 
     public Map<String, String> iOSTokens = new HashMap<>();
 
+    //todo remove this field when ready
     public String token;
-
+    //todo remove this field when ready
     public String iOSToken;
 
     public boolean notifyWhenOffline;

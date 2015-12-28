@@ -2,11 +2,16 @@ package cc.blynk.server.handlers.app;
 
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.http.helpers.Response;
+import cc.blynk.server.handlers.http.helpers.pojo.EmailPojo;
+import cc.blynk.server.handlers.http.helpers.pojo.PushMessagePojo;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.widgets.Widget;
+import cc.blynk.server.model.widgets.notifications.Mail;
+import cc.blynk.server.model.widgets.notifications.Notification;
+import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,12 +28,14 @@ import static cc.blynk.server.handlers.http.helpers.ResponseGenerator.*;
 @Path("/app")
 public class AppHttpHandler {
 
-    static final Logger log = LogManager.getLogger(AppHttpHandler.class);
+    private static final Logger log = LogManager.getLogger(AppHttpHandler.class);
 
     private final UserDao userDao;
+    private final BlockingIOProcessor blockingIOProcessor;
 
-    public AppHttpHandler(UserDao userDao) {
+    public AppHttpHandler(UserDao userDao, BlockingIOProcessor blockingIOProcessor) {
         this.userDao = userDao;
+        this.blockingIOProcessor = blockingIOProcessor;
     }
 
     @GET
@@ -104,7 +111,7 @@ public class AppHttpHandler {
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException e) {
             log.error("Wrong pin format. {}", pinString);
-            return Response.notFound();
+            return Response.badRequest();
         }
 
         Widget widget = dashBoard.findWidgetByPin(pin, pinType);
@@ -117,6 +124,92 @@ public class AppHttpHandler {
         widget.updateIfSame(new HardwareBody(pinType, pin, pinValues));
 
         return Response.noContent();
+    }
+
+    @POST
+    @Path("/{token}/notify")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    public Response updateWidgetPinData(@PathParam("token") String token,
+                                        PushMessagePojo message) {
+
+        User user = userDao.tokenManager.getUserByToken(token);
+
+        if (user == null) {
+            log.error("Requested token {} not found.", token);
+            return Response.notFound();
+        }
+
+        Integer dashId = user.getDashIdByToken(token);
+
+        if (dashId == null) {
+            log.error("Dash id for token {} not found. User {}", token, user.name);
+            return Response.notFound();
+        }
+
+        if (message == null || Notification.isWrongBody(message.body)) {
+            log.error("Notification body is wrong. '{}'", message == null ? "" : message.body);
+            return Response.badRequest();
+        }
+
+        DashBoard dash = user.profile.getDashById(dashId);
+
+        if (!dash.isActive) {
+            log.error("No active dashboard.");
+            return Response.notFound();
+        }
+
+        Notification notification = dash.getWidgetByType(Notification.class);
+
+        if (notification == null || notification.hasNoToken()) {
+            log.error("No notification tokens.");
+            return Response.notFound();
+        }
+
+        log.trace("Sending push for user {}, with message : '{}'.", user.name, message.body);
+        blockingIOProcessor.push(user, notification, message.body, 1);
+
+        return Response.ok();
+    }
+
+    @POST
+    @Path("/{token}/email")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    public Response updateWidgetPinData(@PathParam("token") String token,
+                                        EmailPojo message) {
+
+        User user = userDao.tokenManager.getUserByToken(token);
+
+        if (user == null) {
+            log.error("Requested token {} not found.", token);
+            return Response.notFound();
+        }
+
+        Integer dashId = user.getDashIdByToken(token);
+
+        if (dashId == null) {
+            log.error("Dash id for token {} not found. User {}", token, user.name);
+            return Response.notFound();
+        }
+
+        DashBoard dash = user.profile.getDashById(dashId);
+
+        Mail mail = dash.getWidgetByType(Mail.class);
+
+        if (mail == null || !dash.isActive) {
+            log.error("No active dashboard.");
+            return Response.notFound();
+        }
+
+        if (message.subj == null || message.subj.equals("") ||
+            message.to == null || message.to.equals("")) {
+            log.error("Email body empty. '{}'", message.subj);
+            return Response.badRequest();
+        }
+
+        log.trace("Sending Mail for user {}, with message : '{}'.", user.name, message.subj);
+        blockingIOProcessor.mail(user, message.to, message.subj, message.title);
+
+        return Response.ok();
     }
 
 }

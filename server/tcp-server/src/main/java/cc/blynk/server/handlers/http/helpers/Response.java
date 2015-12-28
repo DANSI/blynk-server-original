@@ -37,6 +37,10 @@ public class Response extends DefaultFullHttpResponse {
         return new Response(HTTP_1_1, NOT_FOUND);
     }
 
+    public static Response badRequest() {
+        return new Response(HTTP_1_1, BAD_REQUEST);
+    }
+
     public static Response noContent() {
         return new Response(HTTP_1_1, NO_CONTENT);
     }
