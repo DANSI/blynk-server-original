@@ -58,7 +58,14 @@ public class AppHttpHandler {
 
         DashBoard dashBoard = user.profile.getDashById(dashId);
 
-        SimplePin simplePin = new SimplePin(pin);
+        SimplePin simplePin;
+
+        try {
+            simplePin = new SimplePin(pin);
+        } catch (NumberFormatException e) {
+            log.error("Wrong pin format. {}", pin);
+            return new Response(HTTP_1_1, NOT_FOUND);
+        }
 
         Widget widget = dashBoard.findWidgetByPin(simplePin.pin, simplePin.pinType);
 

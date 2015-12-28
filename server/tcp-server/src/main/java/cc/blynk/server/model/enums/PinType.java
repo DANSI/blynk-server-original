@@ -26,7 +26,7 @@ public enum PinType {
             case 'd' :
                 return DIGITAL;
             default:
-                throw new RuntimeException("Invalid pin type.");
+                throw new NumberFormatException("Invalid pin type.");
         }
     }
 
