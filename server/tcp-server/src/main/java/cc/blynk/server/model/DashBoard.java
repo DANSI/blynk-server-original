@@ -73,6 +73,7 @@ public class DashBoard {
         for (Widget widget : widgets) {
             widget.updateIfSame(hardwareBody);
         }
+        this.updatedAt = System.currentTimeMillis();
     }
 
     public FrequencyWidget findReadingWidget(String body, int msgId) {
