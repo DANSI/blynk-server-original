@@ -1,6 +1,7 @@
 package cc.blynk.server.handlers.hardware.logic;
 
 import cc.blynk.common.model.messages.StringMessage;
+import cc.blynk.server.exceptions.NoActiveDashboardException;
 import cc.blynk.server.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.DashBoard;
@@ -24,7 +25,6 @@ public class PushLogic extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(PushLogic.class);
 
-    private static final int MAX_PUSH_BODY_SIZE = 255;
     private final BlockingIOProcessor blockingIOProcessor;
 
     public PushLogic(BlockingIOProcessor blockingIOProcessor, long notificationQuotaLimit) {
@@ -33,17 +33,19 @@ public class PushLogic extends NotificationBase {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        if (message.body == null || message.body.equals("") || message.body.length() > MAX_PUSH_BODY_SIZE) {
+        if (Notification.isWrongBody(message.body)) {
             throw new NotificationBodyInvalidException(message.id);
         }
 
         DashBoard dash = state.user.profile.getDashById(state.dashId, message.id);
+
+        if (!dash.isActive) {
+            throw new NoActiveDashboardException(message.id);
+        }
+
         Notification widget = dash.getWidgetByType(Notification.class);
 
-        if (widget == null || !dash.isActive ||
-                ((widget.token == null || widget.token.equals("")) &&
-                 (widget.iOSToken == null || widget.iOSToken.equals("")) &&
-                 (widget.iOSTokens.size() == 0 && widget.androidTokens.size() == 0))) {
+        if (widget == null || widget.hasNoToken()) {
             throw new NotifNotAuthorizedException("User has no access token provided.", message.id);
         }
 

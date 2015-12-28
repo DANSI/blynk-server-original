@@ -14,6 +14,8 @@ import java.util.Map;
  */
 public class Notification extends Widget {
 
+    private static final int MAX_PUSH_BODY_SIZE = 255;
+
     public Map<String, String> androidTokens = new HashMap<>();
 
     public Map<String, String> iOSTokens = new HashMap<>();
@@ -25,6 +27,10 @@ public class Notification extends Widget {
     public boolean notifyWhenOffline;
 
     public Priority priority = Priority.normal;
+
+    public static boolean isWrongBody(String body) {
+        return body == null || body.equals("") || body.length() > MAX_PUSH_BODY_SIZE;
+    }
 
     public void cleanPrivateData() {
         token = null;
@@ -49,5 +55,11 @@ public class Notification extends Widget {
     @Override
     public String getJsonValue() {
         return null;
+    }
+
+    public boolean hasNoToken() {
+        return (token == null || token.equals("")) &&
+               (iOSToken == null || iOSToken.equals("")) &&
+               (iOSTokens.size() == 0 && androidTokens.size() == 0);
     }
 }
