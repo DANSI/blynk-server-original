@@ -12,6 +12,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -82,6 +83,7 @@ public class HttpsAdminServerTest extends IntegrationBase {
     }
 
     @Test
+    @Ignore("todo finish")
     public void testChangePassCorrect() throws Exception {
         String testUser = "dima@dima.ua";
         HttpPut request = new HttpPut(httpsServerUrl + testUser + "/changePass");
