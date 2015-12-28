@@ -1,0 +1,63 @@
+{
+    "dashShareTokens":
+        {
+            "125564119":"d81282986cb94920a82216d29d67a2b8",
+            "79780619":"f1554962745e40d3871f2e39c4dd24ff",
+            "698702477":"08b503b5224a44dbb97dd8606c648af3"
+        },
+    "dashTokens" :
+        {
+            "698702475":"cd2f5a62151e4fa2a6ae8ea506b6e15c",
+            "125564119":"4ae3851817194e2596cf1b7103603ef8",
+            "79780619":"1bd322be8fb24f3691b4724332e708e9",
+            "698702476":"f77d5ece132f4ac880d7c028d1200792",
+            "698702477":"7b0a3a61322e41a5b50589cf52d775d1",
+            "698702478":"83269b9b0bc14ac4825c068d35936bc9"
+        },
+    "name":"dmitriy@blynk.cc",
+    "pass":"DXaPEHb7PFXXxOm7BUj55+q6l5Eh9KFWCPu/Wg8OxXY=",
+    "lastModifiedTs":1451054351849,
+    "profile":
+    {
+        "dashBoards":
+        [
+            {
+                "id":79780619,"name":"Blynk","timestamp":1450970049,
+                "widgets":
+                [
+                    {"type":"LCD","id":1796287982,"x":0,"y":0,"color":616861439,"width":8,"height":2,"pinType":"ANALOG","pin":15,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"frequency":1000,"advancedMode":false,"textFormatLine1":"/pin0/fh","textFormatLine2":"/pin1/gh","textLight":false,"pins":[{"pin":15,"pwmMode":false,"rangeMappingOn":false,"pinType":"ANALOG","value":"ty","min":0,"max":255},{"pin":15,"pwmMode":false,"rangeMappingOn":false,"pinType":"ANALOG","value":"ty","min":0,"max":255}]},
+                    {"type":"TIMER","id":1923810248,"x":0,"y":2,"color":-308477697,"width":3,"height":1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"startTime":60202,"startValue":"1","stopTime":60262,"stopValue":"0"},
+                    {"type":"TWO_AXIS_JOYSTICK","id":1923810249,"x":3,"y":2,"color":-308477697,"width":5,"height":4,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"pins":[{"pin":-1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0},{"pin":-1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0}],"split":true,"autoReturnOn":true,"portraitLocked":false}
+                ],
+                "boardType":"Arduino UNO",
+                "keepScreenOn":false,
+                "isShared":false,
+                "isActive":false
+            },
+            {
+                "id":125564119,
+                "name":"New Project",
+                "timestamp":1450176508,
+                "widgets":
+                [
+                    {"type":"TWO_AXIS_JOYSTICK","id":1036300912,"x":0,"y":4,"color":-308477697,"width":5,"height":4,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"pins":[{"pin":-1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0},{"pin":-1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0}],"split":true,"autoReturnOn":true,"portraitLocked":false},
+                    {"type":"BUTTON","id":1036300899,"x":5,"y":0,"color":616861439,"width":2,"height":2,"pinType":"DIGITAL","pin":8,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"pushMode":true},
+                    {"type":"LED","id":1036300908,"x":4,"y":0,"color":1602017535,"width":1,"height":1,"label":"gggg","pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"frequency":0},
+                    {"type":"LED","id":1036300904,"x":7,"y":0,"color":1602017535,"width":1,"height":1,"pinType":"VIRTUAL","pin":2,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"frequency":0},
+                    {"type":"TIMER","id":276297114,"x":0,"y":1,"color":-308477697,"width":3,"height":1,"pinType":"DIGITAL","pin":0,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"startTime":75600,"startValue":"dw\u00000\u00001","stopTime":75599,"stopValue":"dw\u00000\u00000"},
+                    {"type":"LED","id":1036300903,"x":4,"y":1,"color":1602017535,"width":1,"height":1,"pinType":"VIRTUAL","pin":1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"frequency":0},
+                    {"type":"SLIDER","id":1036300911,"x":0,"y":0,"color":-308477697,"width":4,"height":1,"pinType":"DIGITAL","pin":3,"pwmMode":true,"rangeMappingOn":false,"min":0,"max":255},
+                    {"type":"GRAPH","id":1036300905,"x":0,"y":2,"color":-308477697,"width":8,"height":2,"pinType":"VIRTUAL","pin":5,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":1023,"frequency":0,"isBar":true},
+                    {"type":"LED","id":1036300902,"x":3,"y":1,"color":1602017535,"width":1,"height":1,"pinType":"VIRTUAL","pin":0,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"frequency":0}
+                ],
+                "boardType":"Arduino UNO",
+                "keepScreenOn":false,
+                "isShared":false,
+                "isActive":false
+            },
+            {"id":698702475,"name":"A","timestamp":1449678105,"widgets":[{"type":"LOGGER","id":509087093,"x":0,"y":5,"color":-308477697,"width":8,"height":3,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"pins":[{"pin":-1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0},{"pin":-1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0},{"pin":-1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0},{"pin":-1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0}],"showLegends":false},{"type":"TIMER","id":206797172,"x":2,"y":0,"color":-308477697,"width":3,"height":1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"startTime":68710,"startValue":"1","stopTime":68770,"stopValue":"0"},{"type":"BRIDGE","id":251138143,"x":0,"y":2,"color":-308477697,"width":2,"height":1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0},{"type":"LED","id":1534122532,"x":2,"y":1,"color":-308477697,"width":1,"height":1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"frequency":0},{"type":"BUTTON","id":592019947,"x":0,"y":3,"color":-750560001,"width":2,"height":2,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"pushMode":true},{"type":"LED","id":651785432,"x":7,"y":0,"color":-308477697,"width":1,"height":1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"frequency":0},{"type":"TWITTER","id":1872409949,"x":3,"y":1,"color":-308477697,"width":2,"height":1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0},{"type":"GAUGE","id":1553581316,"x":2,"y":2,"color":1602017535,"width":4,"height":3,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":1023,"frequency":1000}],"boardType":"Arduino UNO","keepScreenOn":false,"isShared":false,"isActive":false},
+            {"id":698702476,"name":"infoPoint","timestamp":1449678105,"widgets":[{"type":"BUTTON","id":3,"x":3,"y":0,"color":1602017535,"width":2,"height":2,"pinType":"DIGITAL","pin":9,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"pushMode":false},{"type":"LED","id":2,"x":2,"y":0,"color":1602017535,"width":1,"height":1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"frequency":0},{"type":"DIGIT4_DISPLAY","id":4,"x":0,"y":0,"color":-308477697,"width":2,"height":1,"pinType":"DIGITAL","pin":10,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":1023,"frequency":250}],"boardType":"Arduino Yun","keepScreenOn":false,"isShared":false,"isActive":false},
+            {"id":698702477,"timestamp":1450882233,"widgets":[{"type":"SLIDER","id":1,"x":0,"y":0,"color":-308477697,"width":8,"height":1,"pinType":"DIGITAL","pin":3,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":255},{"type":"TERMINAL","id":6,"x":0,"y":5,"color":-1,"width":8,"height":3,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"autoScrollOn":true,"terminalInputOn":true},{"type":"BUTTON","id":3,"x":4,"y":1,"color":616861439,"width":2,"height":2,"pinType":"DIGITAL","pin":0,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"pushMode":false},{"type":"SLIDER","id":7,"x":0,"y":2,"color":-308477697,"width":4,"height":1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":255},{"type":"SLIDER","id":2,"x":0,"y":1,"color":-308477697,"width":4,"height":1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":255},{"type":"LED","id":4,"x":6,"y":1,"color":1602017535,"width":1,"height":1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0,"frequency":0},{"type":"GRAPH","id":5,"x":0,"y":3,"color":-308477697,"width":8,"height":2,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":1023,"frequency":1000,"isBar":true}],"boardType":"Arduino UNO","keepScreenOn":false,"isShared":false,"isActive":false}
+        ]
+    }
+}

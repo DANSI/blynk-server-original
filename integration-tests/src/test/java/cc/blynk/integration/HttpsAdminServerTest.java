@@ -1,7 +1,7 @@
 package cc.blynk.integration;
 
+import cc.blynk.integration.model.ResponseUserEntity;
 import cc.blynk.server.core.admin.HttpsAdminServer;
-import cc.blynk.server.reset.web.entities.ResponseUserEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpAdminServerTest extends IntegrationBase  {
+public class HttpsAdminServerTest extends IntegrationBase  {
 
     private HttpsAdminServer httpAdminServer;
     private CloseableHttpClient httpclient;

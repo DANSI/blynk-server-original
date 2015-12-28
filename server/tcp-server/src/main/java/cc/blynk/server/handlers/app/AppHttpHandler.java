@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -40,6 +41,39 @@ public class AppHttpHandler {
     @Path("/{token}/widget/{pin}")
     public Response getWidgetPinData(@PathParam("token") String token,
                                      @PathParam("pin") String pin) {
+
+        User user = userDao.tokenManager.getUserByToken(token);
+
+        if (user == null) {
+            log.error("Requested token {} not found.", token);
+            return new Response(HTTP_1_1, NOT_FOUND);
+        }
+
+        Integer dashId = user.getDashIdByToken(token);
+
+        if (dashId == null) {
+            log.error("Dash id for token {} not found. User {}", token, user.name);
+            return new Response(HTTP_1_1, NOT_FOUND);
+        }
+
+        DashBoard dashBoard = user.profile.getDashById(dashId);
+
+        SimplePin simplePin = new SimplePin(pin);
+
+        Widget widget = dashBoard.findWidgetByPin(simplePin.pin, simplePin.pinType);
+
+        if (widget == null) {
+            log.error("Requested pin {} not found. User {}", pin, user.name);
+            return new Response(HTTP_1_1, NOT_FOUND);
+        }
+
+        return makeResponse(widget.getJsonValue());
+    }
+
+    @PUT
+    @Path("/{token}/widget/{pin}")
+    public Response updateWidgetPinData(@PathParam("token") String token,
+                                        @PathParam("pin") String pin) {
 
         User user = userDao.tokenManager.getUserByToken(token);
 

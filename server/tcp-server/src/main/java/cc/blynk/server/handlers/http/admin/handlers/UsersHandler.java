@@ -6,7 +6,7 @@ import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.http.helpers.Filter;
 import cc.blynk.server.handlers.http.helpers.Response;
-import cc.blynk.server.handlers.http.helpers.UserPassPojo;
+import cc.blynk.server.handlers.http.helpers.pojo.UserPassPojo;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;

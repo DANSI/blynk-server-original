@@ -5,6 +5,8 @@ import cc.blynk.server.model.widgets.controls.RGB;
 import cc.blynk.server.model.widgets.outputs.Digit4Display;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -23,10 +25,10 @@ public class PinGetJsonValueTest {
         OnePinWidget onePinWidget = new Digit4Display();
         onePinWidget.value = null;
 
-        assertEquals("[]", onePinWidget.getJsonPinValues());
+        assertEquals("[]", onePinWidget.getJsonValue());
 
         onePinWidget.value = "1.0";
-        assertEquals("[\"1.0\"]", onePinWidget.getJsonPinValues());
+        assertEquals("[\"1.0\"]", onePinWidget.getJsonValue());
     }
 
     @Test
@@ -34,14 +36,14 @@ public class PinGetJsonValueTest {
         MultiPinWidget multiPinWidget = new RGB();
         multiPinWidget.pins = null;
 
-        assertEquals("[]", multiPinWidget.getJsonPinValues());
+        assertEquals("[]", multiPinWidget.getJsonValue());
 
         multiPinWidget.pins = new Pin[3];
         multiPinWidget.pins[0] = createPinWithValue("1");
         multiPinWidget.pins[1] = createPinWithValue("2");
         multiPinWidget.pins[2] = createPinWithValue("3");
 
-        assertEquals("[\"1\",\"2\",\"3\"]", multiPinWidget.getJsonPinValues());
+        assertEquals("[\"1\",\"2\",\"3\"]", multiPinWidget.getJsonValue());
     }
 
 }
