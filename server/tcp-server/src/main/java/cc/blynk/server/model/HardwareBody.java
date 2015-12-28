@@ -23,6 +23,12 @@ public class HardwareBody {
         this.value = Arrays.copyOfRange(splitted, 2, splitted.length);
     }
 
+    public HardwareBody(PinType type, byte pin, String[] value) {
+        this.type = type;
+        this.pin = pin;
+        this.value = value;
+    }
+
     public HardwareBody(String body, int msgId) {
         this(body.split(StringUtils.BODY_SEPARATOR_STRING), msgId);
     }

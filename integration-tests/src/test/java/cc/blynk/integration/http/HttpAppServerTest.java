@@ -5,6 +5,9 @@ import cc.blynk.server.core.HttpServer;
 import cc.blynk.server.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -60,8 +63,10 @@ public class HttpAppServerTest extends IntegrationBase {
         this.httpServer.stop();
     }
 
+    //----------------------------GET METHODS SECTION
+
     @Test
-    public void testFakeToken() throws Exception {
+    public void testGetWithFakeToken() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + "dsadasddasdasdasdasdasdas/widget/d8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -70,7 +75,7 @@ public class HttpAppServerTest extends IntegrationBase {
     }
 
     @Test
-    public void testWrongPathToken() throws Exception {
+    public void testGetWithWrongPathToken() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/w/d8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -79,7 +84,7 @@ public class HttpAppServerTest extends IntegrationBase {
     }
 
     @Test
-    public void testWrongPin() throws Exception {
+    public void testGetWithWrongPin() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/x8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -88,7 +93,7 @@ public class HttpAppServerTest extends IntegrationBase {
     }
 
     @Test
-    public void testGetNonExistingPin() throws Exception {
+    public void testGetWithNonExistingPin() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/v10");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -97,7 +102,7 @@ public class HttpAppServerTest extends IntegrationBase {
     }
 
     @Test
-    public void testGetExistingPin() throws Exception {
+    public void testGetWithExistingPin() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/d8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -126,7 +131,7 @@ public class HttpAppServerTest extends IntegrationBase {
     }
 
     @Test
-    public void testGetExistingEmptyPin() throws Exception {
+    public void testGetWithExistingEmptyPin() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/a14");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -137,7 +142,7 @@ public class HttpAppServerTest extends IntegrationBase {
     }
 
     @Test
-    public void testGetExistingMultiPin() throws Exception {
+    public void testGetWithExistingMultiPin() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/a15");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -152,7 +157,65 @@ public class HttpAppServerTest extends IntegrationBase {
 
 
 
+    //----------------------------PUT METHODS SECTION
 
+    @Test
+    public void testPutNoContentType() throws Exception {
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/d8");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(500, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testPutFakeToken() throws Exception {
+        HttpPut request = new HttpPut(httpsServerUrl + "dsadasddasdasdasdasdasdas/widget/d8");
+        request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(404, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testPutWithWrongPin() throws Exception {
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/x8");
+        request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(404, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testPutWithNonExistingPin() throws Exception {
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/v10");
+        request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(404, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testPutWithExistingPin() throws Exception {
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/a14");
+        request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(204, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet getRequest = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/a14");
+
+        try (CloseableHttpResponse response = httpclient.execute(getRequest)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("100", values.get(0));
+        }
+    }
 
     @SuppressWarnings("unchecked")
     private List<String> consumeJsonPinValues(CloseableHttpResponse response) throws IOException {
