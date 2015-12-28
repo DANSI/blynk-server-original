@@ -63,6 +63,8 @@ public class GCMWrapper {
                     }
                 }
             }
+        } finally {
+            httpPost.releaseConnection();
         }
     }
 }
