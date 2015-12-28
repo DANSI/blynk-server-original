@@ -51,6 +51,7 @@ public class HttpAppServerTest extends IntegrationBase  {
 
     @After
     public void shutdown() throws Exception {
+        this.httpclient.close();
         this.httpServer.stop();
     }
 
@@ -60,7 +61,10 @@ public class HttpAppServerTest extends IntegrationBase  {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(404, response.getStatusLine().getStatusCode());
+        } finally {
+            request.releaseConnection();
         }
+
     }
 
 
