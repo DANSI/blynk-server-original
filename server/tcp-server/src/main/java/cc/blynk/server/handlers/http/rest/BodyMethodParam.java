@@ -12,21 +12,25 @@ import javax.ws.rs.core.MediaType;
  */
 public class BodyMethodParam extends MethodParam {
 
-    private String contentType;
+    private String expectedContentType;
 
-    public BodyMethodParam(String name, Class<?> type, String contentType) {
+    public BodyMethodParam(String name, Class<?> type, String expectedContentType) {
         super(name, type);
-        this.contentType = contentType;
+        this.expectedContentType = expectedContentType;
     }
 
     @Override
     Object get(URIDecoder uriDecoder) {
-        if (!uriDecoder.contentType.contains(contentType)) {
-            throw new RuntimeException("Unexpected content type for handler. Expecting " + contentType + " but got " + contentType);
+        if (uriDecoder.contentType == null || !uriDecoder.contentType.contains(expectedContentType)) {
+            throw new RuntimeException("Unexpected content type for handler. Expecting " + expectedContentType + " but got " + uriDecoder.contentType);
         }
-        if (contentType.equals(MediaType.APPLICATION_JSON)) {
+        if (expectedContentType.equals(MediaType.APPLICATION_JSON)) {
             try {
-                return JsonParser.mapper.readValue(uriDecoder.bodyData.toString(CharsetUtil.UTF_8), type);
+                String data = uriDecoder.bodyData.toString(CharsetUtil.UTF_8);
+                if ("".equals(data)) {
+                    return null;
+                }
+                return JsonParser.mapper.readValue(data, type);
             } catch (Exception e) {
                 throw new RuntimeException("Error parsing body param.", e);
             }
