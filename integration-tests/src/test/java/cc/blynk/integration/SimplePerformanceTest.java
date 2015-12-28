@@ -108,7 +108,7 @@ public class SimplePerformanceTest extends IntegrationBase {
         }
 
         System.out.println(clientNumber + " client pairs created in " + (System.currentTimeMillis() - start));
-        assertEquals(1000, counter);
+        assertEquals(clientNumber, counter);
 
         /*
         System.currentTimeMillis();
