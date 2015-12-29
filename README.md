@@ -40,7 +40,7 @@ By default, mobile application uses 8443 port and is based on SSL/TLS sockets. D
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-0.12.0.jar -dataFolder /path
+        java -jar server-0.12.2.jar -dataFolder /path
         
 That's it! 
 
@@ -63,11 +63,11 @@ That's it!
         
 + Download Blynk server jar file (or manually copy it to raspberry via ssh and scp command) : 
    
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.12.0/server-0.12.0.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.12.2/server-0.12.2.jar"
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-0.12.0.jar -dataFolder /home/pi/Blynk        
+        java -jar server-0.12.2.jar -dataFolder /home/pi/Blynk        
         
 That's it! 
 
@@ -78,7 +78,7 @@ That's it!
         
 + To enable server auto restart find /etc/init.d/rc.local file and add :
 
-        java -jar /home/pi/server-0.12.0.jar -dataFolder /home/pi/Blynk &
+        java -jar /home/pi/server-0.12.2.jar -dataFolder /home/pi/Blynk &
         
 + Or in case above approach doesn't work for you, execute 
        
@@ -86,7 +86,7 @@ That's it!
 
 add the following line
 
-        @reboot java -jar /home/pi/server-0.12.0.jar -dataFolder /home/pi/Blynk &
+        @reboot java -jar /home/pi/server-0.12.2.jar -dataFolder /home/pi/Blynk &
         
 save and exit.
 
@@ -139,6 +139,14 @@ server.properties options:
 
         hardware.default.port=8442
         
++ Https port
+        
+        https.port=7443
+        
++ Http port
+        
+        http.port=8080
+        
 + User profiles folder. Folder in which all users profiles will be stored. By default System.getProperty("java.io.tmpdir")/blynk used. Will be created if not exists
 
         data.folder=/tmp/blynk
@@ -187,13 +195,13 @@ server.properties options:
         
         enable.raw.data.store=true
         
++ Url for opening admin page. Must start from "/". For "/admin" url path will look like that "https://localhost:7443/admin". 
+
+        admin.rootPath=/admin
+        
 + Comma separated list of administrator IPs. Allow access to admin UI only for those IPs. Leave empty in order to allow for all. By default allow access from local host.
         
         allowed.administrator.ips=127.0.0.1
-        
-+ Administration https port
-
-        https.port=7443
         
 + Comma separated list of users allowed to create accounts. Leave it empty if no restriction required.
         
