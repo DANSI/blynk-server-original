@@ -1,5 +1,6 @@
 package cc.blynk.server.handlers.app;
 
+import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.http.helpers.Response;
 import cc.blynk.server.handlers.http.helpers.pojo.EmailPojo;
@@ -32,10 +33,12 @@ public class AppHttpHandler {
 
     private final UserDao userDao;
     private final BlockingIOProcessor blockingIOProcessor;
+    private final SessionDao sessionDao;
 
-    public AppHttpHandler(UserDao userDao, BlockingIOProcessor blockingIOProcessor) {
+    public AppHttpHandler(UserDao userDao, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor) {
         this.userDao = userDao;
         this.blockingIOProcessor = blockingIOProcessor;
+        this.sessionDao = sessionDao;
     }
 
     @GET
