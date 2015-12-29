@@ -41,7 +41,7 @@ public class Session {
         this.initialEventLoop = initialEventLoop;
     }
 
-    public void sendMessageToHardware(ChannelHandlerContext ctx, int activeDashId, MessageBase message) {
+    public boolean sendMessageToHardware(int activeDashId, MessageBase message) {
         boolean noActiveHardware = true;
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
@@ -53,7 +53,12 @@ public class Session {
                 }
             }
         }
-        if (noActiveHardware) {
+
+        return noActiveHardware;
+    }
+
+    public void sendMessageToHardware(ChannelHandlerContext ctx, int activeDashId, MessageBase message) {
+        if (sendMessageToHardware(activeDashId, message)) {
             log.debug("No device in session.");
             ctx.writeAndFlush(produce(message.id, Response.DEVICE_NOT_IN_NETWORK));
         }
