@@ -3,6 +3,7 @@ package cc.blynk.server.model.auth;
 import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
+import cc.blynk.common.model.messages.protocol.appllication.sharing.SyncMessage;
 import cc.blynk.server.handlers.app.main.AppHandler;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
@@ -81,6 +82,14 @@ public class Session {
         for (Channel channel : appChannels) {
             log.trace("Sending {} to app {}", message, channel);
             channel.writeAndFlush(message);
+        }
+    }
+
+    public void sendToSharedApps(ChannelHandlerContext ctx, String sharedToken, SyncMessage message) {
+        for (Channel appChannel : appChannels) {
+            if (appChannel != ctx.channel() && needSync(appChannel, sharedToken)) {
+                appChannel.writeAndFlush(message);
+            }
         }
     }
 

@@ -11,12 +11,9 @@ import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.widgets.outputs.FrequencyWidget;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
  * Responsible for handling incoming hardware commands from applications and forwarding it to
@@ -68,11 +65,7 @@ public class HardwareAppLogic {
                 //if dash was shared. check for shared channels
                 String sharedToken = state.user.dashShareTokens.get(dashId);
                 if (sharedToken != null) {
-                    for (Channel appChannel : session.appChannels) {
-                        if (appChannel != ctx.channel() && needSync(appChannel, sharedToken)) {
-                            appChannel.writeAndFlush(new SyncMessage(message.id, message.body));
-                        }
-                    }
+                    session.sendToSharedApps(ctx, sharedToken, new SyncMessage(message.id, message.body));
                 }
                 session.sendMessageToHardware(ctx, dashId, new HardwareMessage(message.id, split[1]));
                 break;
