@@ -13,7 +13,6 @@ import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.graph.GraphKey;
 import cc.blynk.server.utils.PinUtil;
-import io.netty.channel.Channel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -72,13 +71,7 @@ public class HardwareLogic {
             throw new NoActiveDashboardException(message.id);
         }
 
-        if (session.appChannels.size() > 0) {
-            //todo this code should be removed when both iOS and Android will support sharing.
-            for (Channel channel : session.appChannels) {
-                log.trace("Sending {} to app {}", message, channel);
-                channel.writeAndFlush(new HardwareMessage(message.id, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
-            }
-        }
+        session.sendToApps(new HardwareMessage(message.id, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
     }
 
 }

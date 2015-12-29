@@ -2,6 +2,7 @@ package cc.blynk.server.model.auth;
 
 import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.handlers.app.main.AppHandler;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
@@ -72,6 +73,13 @@ public class Session {
     public void sendMessageToHardware(MessageBase message) {
         for (Channel channel : hardwareChannels) {
             log.trace("Sending {} to hardware {}", message, channel);
+            channel.writeAndFlush(message);
+        }
+    }
+
+    public void sendToApps(HardwareMessage message) {
+        for (Channel channel : appChannels) {
+            log.trace("Sending {} to app {}", message, channel);
             channel.writeAndFlush(message);
         }
     }
