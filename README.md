@@ -10,7 +10,7 @@ If you need more information, please follow these links:
 * [App Store](https://itunes.apple.com/us/app/blynk-control-arduino-raspberry/id808760481?ls=1&mt=8)
 * [Google Play](https://play.google.com/store/apps/details?id=cc.blynk)
 * [Getting Started](http://www.blynk.cc/getting-started)
-* [Kickstarter](https://www.kickstarter.com/projects/167134865/blynk-build-an-app-for-your-arduino-project-in-5-m/description).
+* [Kickstarter](https://www.kickstarter.com/projects/167134865/blynk-build-an-app-for-your-arduino-project-in-5-m/description)
 
 ![Dashboard settings](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/dash_settings.png)
 ![Widgets Box](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/widgets_box.png)
@@ -217,7 +217,7 @@ Blynk server also has administration panel where you could monitor your server. 
         
 You can change it with next options :
         
-        enable.administration.ui
+        admin.rootPath
         allowed.administrator.ips
         https.port
         
