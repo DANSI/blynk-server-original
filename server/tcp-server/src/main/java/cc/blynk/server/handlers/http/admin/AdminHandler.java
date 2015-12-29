@@ -12,12 +12,18 @@ import io.netty.handler.codec.http.HttpRequest;
  */
 public class AdminHandler extends BaseHttpAPIHandler {
 
-    private final FileHandler fileHandler = new FileHandler();
+    private final FileHandler fileHandler;
+    private final String rootPath;
+
+    public AdminHandler(String rootPath) {
+        this.rootPath = rootPath;
+        this.fileHandler = new FileHandler();
+    }
 
     @Override
     public void process(ChannelHandlerContext ctx, HttpRequest req) {
         //a bit ugly code but it is ok for now. 2 branches. 1 fro static files, second for normal http api
-        if (req.getUri().equals("/admin")) {
+        if (req.getUri().equals(rootPath)) {
             req.setUri("/admin/static/admin.html");
         }
         if (req.getUri().startsWith("/admin/static")) {

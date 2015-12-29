@@ -24,7 +24,7 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 03.12.15.
  */
-@Path("/admin/users")
+@Path("/users")
 public class UsersHandler extends BaseHandler {
 
     private final UserDao userDao;

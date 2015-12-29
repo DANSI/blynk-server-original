@@ -31,8 +31,10 @@ public class HttpsAdminServer extends BaseServer {
     public HttpsAdminServer(Holder holder) {
         super(holder.props.getIntProperty("https.port"), holder.transportType);
 
-        HandlerRegistry.register(new UsersHandler(holder.userDao, holder.sessionDao, holder.fileManager));
-        HandlerRegistry.register(new StatsHandler(holder.userDao, holder.sessionDao, holder.stats));
+        final String rootPath = holder.props.getProperty("admin.rootPath", "/admin");
+
+        HandlerRegistry.register(rootPath, new UsersHandler(holder.userDao, holder.sessionDao, holder.fileManager));
+        HandlerRegistry.register(rootPath, new StatsHandler(holder.userDao, holder.sessionDao, holder.stats));
 
         final String[] allowedIPsArray = holder.props.getCommaSeparatedList("allowed.administrator.ips");
         final Set<String> allowedIPs;
@@ -57,7 +59,7 @@ public class HttpsAdminServer extends BaseServer {
                 pipeline.addLast(new HttpServerCodec());
                 pipeline.addLast(new HttpObjectAggregator(65536));
                 pipeline.addLast(new ChunkedWriteHandler());
-                pipeline.addLast(new AdminHandler());
+                pipeline.addLast(new AdminHandler(rootPath));
             }
         };
 

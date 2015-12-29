@@ -30,11 +30,15 @@ public class HandlerRegistry {
 
     private final static List<HandlerHolder> processors = new ArrayList<>();
 
-    public static void register(Object o) {
-        registerHandler(o);
+    public static void register(String rootPath, Object o) {
+        registerHandler(rootPath, o);
     }
 
-    private static void registerHandler(Object handler) {
+    public static void register(Object o) {
+        registerHandler("", o);
+    }
+
+    private static void registerHandler(String rootPath, Object handler) {
         Class<?> handlerClass = handler.getClass();
         Annotation pathAnnotation = handlerClass.getAnnotation(Path.class);
         String handlerMainPath = ((Path) pathAnnotation).value();
@@ -48,7 +52,7 @@ public class HandlerRegistry {
 
             Annotation path = method.getAnnotation(Path.class);
             if (path != null) {
-                String fullPath = handlerMainPath + ((Path) path).value();
+                String fullPath = rootPath + handlerMainPath + ((Path) path).value();
                 UriTemplate uriTemplate = new UriTemplate(fullPath);
 
                 HandlerHolder handlerHolder = new HandlerHolder(uriTemplate, method, handler, method.getParameterCount());

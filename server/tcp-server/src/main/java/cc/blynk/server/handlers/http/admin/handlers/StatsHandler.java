@@ -24,7 +24,7 @@ import static cc.blynk.server.handlers.http.helpers.ResponseGenerator.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-@Path("/admin/stats")
+@Path("/stats")
 public class StatsHandler extends BaseHandler {
 
     private final GlobalStats stats;
