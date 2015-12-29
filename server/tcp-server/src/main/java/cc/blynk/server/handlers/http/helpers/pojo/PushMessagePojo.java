@@ -16,4 +16,10 @@ public class PushMessagePojo {
         this.body = body;
     }
 
+    @Override
+    public String toString() {
+        return "PushMessagePojo{" +
+                "body='" + body + '\'' +
+                '}';
+    }
 }

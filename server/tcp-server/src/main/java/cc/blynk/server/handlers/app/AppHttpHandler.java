@@ -200,9 +200,10 @@ public class AppHttpHandler {
             return Response.notFound();
         }
 
-        if (message.subj == null || message.subj.equals("") ||
-            message.to == null || message.to.equals("")) {
-            log.error("Email body empty. '{}'", message.subj);
+        if (message == null ||
+                message.subj == null || message.subj.equals("") ||
+                message.to == null || message.to.equals("")) {
+            log.error("Email body empty. '{}'", message);
             return Response.badRequest();
         }
 

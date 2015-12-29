@@ -19,4 +19,13 @@ public class EmailPojo {
         this.title = title;
         this.subj = subj;
     }
+
+    @Override
+    public String toString() {
+        return "EmailPojo{" +
+                "to='" + to + '\'' +
+                ", title='" + title + '\'' +
+                ", subj='" + subj + '\'' +
+                '}';
+    }
 }

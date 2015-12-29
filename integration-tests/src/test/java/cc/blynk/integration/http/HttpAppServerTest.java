@@ -187,7 +187,7 @@ public class HttpAppServerTest extends IntegrationBase {
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(404, response.getStatusLine().getStatusCode());
+            assertEquals(400, response.getStatusLine().getStatusCode());
         }
     }
 
