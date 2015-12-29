@@ -1,12 +1,13 @@
 package cc.blynk.server.model.auth;
 
+import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.MessageBase;
-import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.handlers.app.main.AppHandler;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.stats.metrics.InstanceLoadMeter;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoop;
 import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Set;
 
+import static cc.blynk.common.model.messages.MessageFactory.*;
 import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
@@ -37,7 +39,7 @@ public class Session {
         this.initialEventLoop = initialEventLoop;
     }
 
-    public void sendMessageToHardware(int activeDashId, MessageBase message) {
+    public void sendMessageToHardware(ChannelHandlerContext ctx, int activeDashId, MessageBase message) {
         boolean noActiveHardware = true;
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
@@ -50,7 +52,8 @@ public class Session {
             }
         }
         if (noActiveHardware) {
-            throw new DeviceNotInNetworkException(message.id);
+            log.debug("No device in session.");
+            ctx.writeAndFlush(produce(message.id, Response.DEVICE_NOT_IN_NETWORK));
         }
     }
 

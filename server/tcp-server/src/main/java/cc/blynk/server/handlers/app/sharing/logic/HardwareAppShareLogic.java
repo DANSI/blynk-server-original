@@ -61,12 +61,12 @@ public class HardwareAppShareLogic {
                         }
                     }
                 }
-                session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
+                session.sendMessageToHardware(ctx, dashId, new HardwareMessage(message.id, split[1]));
                 break;
             case 'r':
                 FrequencyWidget frequencyWidget = dash.findReadingWidget(split[1], message.id);
                 if (frequencyWidget.isTicked()) {
-                    session.sendMessageToHardware(dashId, new HardwareMessage(message.id, split[1]));
+                    session.sendMessageToHardware(ctx, dashId, new HardwareMessage(message.id, split[1]));
                 }
                 break;
         }

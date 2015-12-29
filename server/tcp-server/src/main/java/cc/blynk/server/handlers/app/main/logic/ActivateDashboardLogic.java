@@ -1,8 +1,8 @@
 package cc.blynk.server.handlers.app.main.logic;
 
+import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.server.dao.SessionDao;
-import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
@@ -53,7 +53,8 @@ public class ActivateDashboardLogic {
         if (session.hasHardwareOnline(dashId)) {
             ctx.writeAndFlush(produce(message.id, OK));
         } else {
-            throw new DeviceNotInNetworkException(message.id);
+            log.debug("No device in session.");
+            ctx.writeAndFlush(produce(message.id, Response.DEVICE_NOT_IN_NETWORK));
         }
     }
 
