@@ -1,6 +1,5 @@
 package cc.blynk.server.utils;
 
-import cc.blynk.server.exceptions.ServerException;
 import cc.blynk.server.handlers.app.main.AppHandler;
 import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
 import cc.blynk.server.handlers.app.sharing.AppShareHandler;
@@ -10,6 +9,8 @@ import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The Blynk Project.
@@ -17,6 +18,8 @@ import io.netty.channel.ChannelPipeline;
  * Created on 13.09.15.
  */
 public class StateHolderUtil {
+
+    private static final Logger log = LogManager.getLogger(StateHolderUtil.class);
 
     public static HardwareStateHolder getHardState(Channel channel) {
         return getHardState(channel.pipeline());
@@ -58,7 +61,8 @@ public class StateHolderUtil {
 
         AppShareHandler appShareHandler = pipeline.get(AppShareHandler.class);
         if (appShareHandler == null) {
-            throw new ServerException(0, "Channel has no state. Should never happen.");
+            log.error("Channel has no state. Should never happen.");
+            return false;
         }
         return appShareHandler.state.contains(sharedToken);
     }
