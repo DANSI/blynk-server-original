@@ -1,5 +1,6 @@
 package cc.blynk.server.handlers.app;
 
+import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.http.helpers.Response;
@@ -7,6 +8,7 @@ import cc.blynk.server.handlers.http.helpers.pojo.EmailPojo;
 import cc.blynk.server.handlers.http.helpers.pojo.PushMessagePojo;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.HardwareBody;
+import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.widgets.Widget;
@@ -125,6 +127,13 @@ public class AppHttpHandler {
         }
 
         widget.updateIfSame(new HardwareBody(pinType, pin, pinValues));
+
+        String body = widget.makeHardwareBody();
+
+        if (body != null) {
+            Session session = sessionDao.getUserSession().get(user);
+            session.sendMessageToHardware(dashId, new HardwareMessage(111, body));
+        }
 
         return Response.noContent();
     }
