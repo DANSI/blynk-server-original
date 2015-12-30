@@ -30,4 +30,9 @@ public class RTC extends Widget {
     public String getJsonValue() {
         return null;
     }
+
+    @Override
+    public String makeHardwareBody() {
+        return null;
+    }
 }

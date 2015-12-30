@@ -5,8 +5,8 @@ import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.DashBoard;
+import cc.blynk.server.model.Pin;
 import cc.blynk.server.model.enums.PinType;
-import cc.blynk.server.model.widgets.OnePinWidget;
 import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.controls.SyncWidget;
 import cc.blynk.server.utils.PinUtil;
@@ -47,7 +47,7 @@ public class HardwareSyncLogic {
 
             if (PinUtil.isReadOperation(bodyParts[0])) {
                 long now = Instant.now().getEpochSecond();
-                ctx.writeAndFlush(new HardwareMessage(message.id, OnePinWidget.makeHardwareBody(pinType, pin, String.valueOf(now))));
+                ctx.writeAndFlush(new HardwareMessage(message.id, Pin.makeHardwareBody(pinType, pin, String.valueOf(now))));
                 //todo finish this when we have RTC widget.
                 //Widget widget = dash.findWidgetByPin(pin, pinType);
                 //if (widget instanceof RTC)  {

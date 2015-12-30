@@ -1,7 +1,6 @@
 package cc.blynk.server.model.widgets;
 
 import cc.blynk.server.model.HardwareBody;
-import cc.blynk.server.model.Pin;
 import cc.blynk.server.model.enums.PinType;
 
 import static cc.blynk.common.utils.StringUtils.*;
@@ -28,18 +27,15 @@ public abstract class OnePinWidget extends Widget {
 
     public String value;
 
-    public static String makeHardwareBody(Pin pin) {
-        return makeHardwareBody(pin.pwmMode, pin.pinType, pin.pin, pin.value);
-    }
-
-    public static String makeHardwareBody(boolean pwmMode, PinType pinType, byte pin, String value) {
-        return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
-    }
-
-    public static String makeHardwareBody(PinType pinType, byte pin, String value) {
+    private static String makeHardwareBody(PinType pinType, byte pin, String value) {
         return "" + pinType.pintTypeChar + 'w'
                 + BODY_SEPARATOR_STRING + pin
                 + BODY_SEPARATOR_STRING + value;
+    }
+
+    @Override
+    public String makeHardwareBody() {
+        return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
     public void updateIfSame(HardwareBody body) {

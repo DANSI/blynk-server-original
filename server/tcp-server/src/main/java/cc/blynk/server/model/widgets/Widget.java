@@ -81,4 +81,6 @@ public abstract class Widget {
 
     public abstract String getJsonValue();
 
+    public abstract String makeHardwareBody();
+
 }

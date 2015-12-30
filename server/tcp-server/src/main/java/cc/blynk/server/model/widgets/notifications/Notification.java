@@ -58,6 +58,11 @@ public class Notification extends Widget {
         return null;
     }
 
+    @Override
+    public String makeHardwareBody() {
+        return null;
+    }
+
     public boolean hasNoToken() {
         return (token == null || token.equals("")) &&
                (iOSToken == null || iOSToken.equals("")) &&

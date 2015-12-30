@@ -3,7 +3,6 @@ package cc.blynk.server.model.widgets.controls;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.model.Pin;
 import cc.blynk.server.model.widgets.MultiPinWidget;
-import cc.blynk.server.model.widgets.OnePinWidget;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
@@ -23,12 +22,12 @@ public class RGB extends MultiPinWidget implements SyncWidget {
         if (splitMode) {
             for (Pin pin : pins) {
                 if (pin.pin != -1) {
-                    ctx.write(new HardwareMessage(msgId, OnePinWidget.makeHardwareBody(pin)));
+                    ctx.write(new HardwareMessage(msgId, pin.makeHardwareBody()));
                 }
             }
         } else {
             if (pins[0].pin != -1) {
-                ctx.write(new HardwareMessage(msgId, makeHardwareBodyMerge()));
+                ctx.write(new HardwareMessage(msgId, makeHardwareBody()));
             }
         }
     }
