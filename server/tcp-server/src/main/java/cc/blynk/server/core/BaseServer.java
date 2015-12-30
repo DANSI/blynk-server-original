@@ -18,23 +18,20 @@ import org.apache.logging.log4j.Logger;
  * Created by Dmitriy Dumanskiy.
  * Created on 3/10/2015.
  */
-public abstract class BaseServer implements Runnable {
+public abstract class BaseServer {
 
     protected static final Logger log = LogManager.getLogger(HardwareServer.class);
     protected final int port;
     private final TransportTypeHolder transportTypeHolder;
-    public volatile boolean isRunning;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
 
     protected BaseServer(int port, TransportTypeHolder transportTypeHolder) {
         this.port = port;
         this.transportTypeHolder = transportTypeHolder;
-        this.isRunning = true;
     }
 
-    @Override
-    public void run() {
+    public void start() throws Exception {
         if (transportTypeHolder.epollEnabled) {
             log.warn("Native epoll transport for {} server enabled.", getServerName());
         }
@@ -46,7 +43,7 @@ public abstract class BaseServer implements Runnable {
     }
 
     private void buildServerAndRun(EventLoopGroup bossGroup, EventLoopGroup workerGroup,
-                             Class<? extends ServerChannel> channelClass) {
+                             Class<? extends ServerChannel> channelClass) throws Exception {
 
         ServerBootstrap b = new ServerBootstrap();
         try {
@@ -60,8 +57,8 @@ public abstract class BaseServer implements Runnable {
             this.bossGroup = bossGroup;
             this.workerGroup = workerGroup;
         } catch (Exception e) {
-            log.error("Error initializing {}", getServerName(), e);
-            this.isRunning = false;
+            log.error("Error initializing {}, port {}", getServerName(), port, e);
+            throw e;
         }
     }
 

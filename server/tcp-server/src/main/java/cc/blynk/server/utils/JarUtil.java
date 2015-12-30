@@ -1,6 +1,13 @@
-package cc.blynk.server;
+package cc.blynk.server.utils;
 
+import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.server.ServerLauncher;
+
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +21,22 @@ import java.util.zip.ZipInputStream;
  * Created by Dmitriy Dumanskiy.
  * Created on 11.12.15.
  */
-public class JarWalker {
+public class JarUtil {
+
+    public static void unpackStaticFiles(String staticFolder) throws Exception {
+        List<String> staticResources = find(staticFolder);
+
+        for (String staticFile : staticResources) {
+            try (InputStream is = ServerLauncher.class.getResourceAsStream("/" + staticFile)) {
+                Path newStaticFile = ServerProperties.getFileInCurrentDir(staticFile);
+
+                Files.deleteIfExists(newStaticFile);
+                Files.createDirectories(newStaticFile);
+
+                Files.copy(is, newStaticFile, StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+    }
 
     public static List<String> find(String staticResourcesFolder) throws Exception {
         CodeSource src = ServerLauncher.class.getProtectionDomain().getCodeSource();

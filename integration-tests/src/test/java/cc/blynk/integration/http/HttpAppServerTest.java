@@ -52,7 +52,7 @@ public class HttpAppServerTest extends IntegrationBase {
         initServerStructures();
 
         this.httpServer = new HttpServer(holder);
-        httpServer.run();
+        httpServer.start();
         sleep(500);
 
         httpsServerUrl = "http://localhost:" + httpPort + "/app/";

@@ -39,7 +39,7 @@ public class HttpsAdminServerTest extends IntegrationBase {
     public void init() throws Exception {
         initServerStructures();
         this.httpAdminServer = new HttpsAdminServer(holder);
-        new Thread(httpAdminServer).start();
+        httpAdminServer.start();
         sleep(500);
 
         httpsServerUrl = "https://localhost:" + httpsPort + "/admin/users/";

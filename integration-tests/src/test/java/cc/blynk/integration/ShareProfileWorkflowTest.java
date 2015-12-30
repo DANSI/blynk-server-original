@@ -60,8 +60,8 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         hardwareServer = new HardwareServer(holder);
         appServer = new AppServer(holder);
-        new Thread(hardwareServer).start();
-        new Thread(appServer).start();
+        hardwareServer.start();
+        appServer.start();
 
         //todo improve this
         //wait util server starts.

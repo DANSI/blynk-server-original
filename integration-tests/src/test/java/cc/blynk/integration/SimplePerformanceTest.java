@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -39,10 +38,9 @@ public class SimplePerformanceTest extends IntegrationBase {
 
     private AppServer appServer;
     private HardwareServer hardwareServer;
-    private ClientPair clientPair;
 
     @Before
-    public void init() throws IOException {
+    public void init() throws Exception {
         this.sharedNioEventLoopGroup = new NioEventLoopGroup();
 
         initServerStructures();
@@ -51,8 +49,8 @@ public class SimplePerformanceTest extends IntegrationBase {
 
         hardwareServer = new HardwareServer(holder);
         appServer = new AppServer(holder);
-        hardwareServer.run();
-        appServer.run();
+        hardwareServer.start();
+        appServer.start();
         //wait util server starts.
         sleep(500);
     }

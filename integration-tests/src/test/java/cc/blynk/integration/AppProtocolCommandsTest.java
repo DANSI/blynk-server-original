@@ -50,7 +50,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
         appServer = new AppServer(holder);
 
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager);
-        new Thread(appServer).start();
+        appServer.start();
         new Thread(profileSaverWorker).start();
 
         //wait util servers start.

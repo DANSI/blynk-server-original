@@ -55,8 +55,8 @@ public class MainWorkflowTest extends IntegrationBase {
 
         hardwareServer = new HardwareServer(holder);
         appServer = new AppServer(holder);
-        hardwareServer.run();
-        appServer.run();
+        hardwareServer.start();
+        appServer.start();
 
         //todo improve this
         //wait util server starts.

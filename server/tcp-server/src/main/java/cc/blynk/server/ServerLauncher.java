@@ -7,14 +7,11 @@ import cc.blynk.server.core.admin.HttpsAdminServer;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.core.hardware.ssl.HardwareSSLServer;
+import cc.blynk.server.utils.JarUtil;
 import cc.blynk.server.utils.LoggerUtil;
 
 import java.io.File;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.List;
+import java.net.BindException;
 
 /**
  * Entry point for server launch.
@@ -70,55 +67,41 @@ public class ServerLauncher {
 
         System.setProperty("data.folder", serverProperties.getProperty("data.folder"));
 
-        unpackStaticFiles();
+        JarUtil.unpackStaticFiles("admin");
 
         new ServerLauncher(serverProperties).run();
     }
 
-    private static void printStartedString(BaseServer... servers) {
+
+
+    private void run() {
+        //start servers
+        try {
+            appServer.start();
+            hardwareServer.start();
+            hardwareSSLServer.start();
+            httpsAdminServer.start();
+            httpServer.start();
+        } catch (BindException bindException) {
+            System.out.println("Server ports are busy. Most probably server already launched. See " +
+                    new File(System.getProperty("logs.folder")).getAbsolutePath() + " for more info.");
+            System.exit(0);
+        } catch (Exception e) {
+            System.out.println("Error starting Blynk server. Stopping.");
+            System.exit(0);
+        }
+
+        //Launching all background jobs.
+        JobLauncher.start(holder, hardwareServer, appServer, httpServer, hardwareSSLServer, httpsAdminServer);
+
         try {
             Thread.sleep(500);
         } catch (Exception e) {
-        }
-        for (BaseServer server : servers) {
-            if (!server.isRunning) {
-                System.out.println("Error starting Blynk server. Stopping.");
-                System.exit(0);
-            }
         }
 
         System.out.println();
         System.out.println("Blynk Server successfully started.");
         System.out.println("All server output is stored in folder '" + new File(System.getProperty("logs.folder")).getAbsolutePath() + "' file.");
-    }
-
-    private static void unpackStaticFiles() throws Exception {
-        List<String> staticResources = JarWalker.find("admin");
-
-        for (String staticFile : staticResources) {
-            try (InputStream is = ServerLauncher.class.getResourceAsStream("/" + staticFile)) {
-                Path newStaticFile = ServerProperties.getFileInCurrentDir(staticFile);
-
-                Files.deleteIfExists(newStaticFile);
-                Files.createDirectories(newStaticFile);
-
-                Files.copy(is, newStaticFile, StandardCopyOption.REPLACE_EXISTING);
-            }
-        }
-    }
-
-    private void run() {
-        //start servers
-        appServer.run();
-        hardwareServer.run();
-        hardwareSSLServer.run();
-        httpsAdminServer.run();
-        httpServer.run();
-
-        //Launching all background jobs.
-        JobLauncher.start(holder, hardwareServer, appServer, httpServer, hardwareSSLServer, httpsAdminServer);
-
-        printStartedString(hardwareServer, appServer, httpServer, hardwareSSLServer, httpsAdminServer);
     }
 
 }

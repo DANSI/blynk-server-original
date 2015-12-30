@@ -14,7 +14,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.OngoingStubbing;
 
 import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.common.model.messages.MessageFactory.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -40,7 +40,7 @@ public class HardProtocolCommandsTest extends IntegrationBase {
 
         hardwareServer = new HardwareServer(holder);
 
-        new Thread(hardwareServer).start();
+        hardwareServer.start();
 
         //wait util servers start.
         //todo fix.

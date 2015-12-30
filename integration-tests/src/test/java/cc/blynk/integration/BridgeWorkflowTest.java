@@ -15,9 +15,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static cc.blynk.common.enums.Command.BRIDGE;
+import static cc.blynk.common.enums.Command.*;
 import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.common.model.messages.MessageFactory.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -41,8 +41,8 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
         hardwareServer = new HardwareServer(holder);
         appServer = new AppServer(holder);
-        new Thread(hardwareServer).start();
-        new Thread(appServer).start();
+        hardwareServer.start();
+        appServer.start();
 
         //todo improve this
         //wait util server starts.
