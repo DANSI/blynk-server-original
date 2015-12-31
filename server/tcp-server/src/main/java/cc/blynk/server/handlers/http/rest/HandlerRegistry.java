@@ -98,7 +98,7 @@ public class HandlerRegistry {
                     Object[] params = handlerHolder.fetchParams(uriDecoder);
                     return (FullHttpResponse) handlerHolder.method.invoke(handlerHolder.handler, params);
                 } catch (Exception e) {
-                    log.error(e);
+                    log.error(e.getCause());
                     return Response.serverError();
                 }
             }

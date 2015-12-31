@@ -132,6 +132,10 @@ public class AppHttpHandler {
 
         if (body != null) {
             Session session = sessionDao.getUserSession().get(user);
+            if (session == null) {
+                log.error("No session for user {}.", user.name);
+                return Response.noContent();
+            }
             session.sendMessageToHardware(dashId, new HardwareMessage(111, body));
         }
 
