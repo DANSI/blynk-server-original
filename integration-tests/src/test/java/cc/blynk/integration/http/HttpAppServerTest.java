@@ -55,7 +55,7 @@ public class HttpAppServerTest extends IntegrationBase {
         httpServer.start();
         sleep(500);
 
-        httpsServerUrl = "http://localhost:" + httpPort + "/app/";
+        httpsServerUrl = "http://localhost:" + httpPort + "/";
 
         this.httpclient = HttpClients.createDefault();
     }
@@ -70,7 +70,7 @@ public class HttpAppServerTest extends IntegrationBase {
 
     @Test
     public void testGetWithFakeToken() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "dsadasddasdasdasdasdasdas/widget/d8");
+        HttpGet request = new HttpGet(httpsServerUrl + "dsadasddasdasdasdasdasdas/pin/d8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(404, response.getStatusLine().getStatusCode());
@@ -88,7 +88,7 @@ public class HttpAppServerTest extends IntegrationBase {
 
     @Test
     public void testGetWithWrongPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/x8");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/x8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(404, response.getStatusLine().getStatusCode());
@@ -97,7 +97,7 @@ public class HttpAppServerTest extends IntegrationBase {
 
     @Test
     public void testGetWithNonExistingPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/v10");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(404, response.getStatusLine().getStatusCode());
@@ -106,7 +106,7 @@ public class HttpAppServerTest extends IntegrationBase {
 
     @Test
     public void testGetWithExistingPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/d8");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/d8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -115,7 +115,7 @@ public class HttpAppServerTest extends IntegrationBase {
             assertEquals("0", values.get(0));
         }
 
-        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/d1");
+        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/d1");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -124,7 +124,7 @@ public class HttpAppServerTest extends IntegrationBase {
             assertEquals("1", values.get(0));
         }
 
-        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/d3");
+        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/d3");
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             List<String> values = consumeJsonPinValues(response);
@@ -135,7 +135,7 @@ public class HttpAppServerTest extends IntegrationBase {
 
     @Test
     public void testGetWithExistingEmptyPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/a14");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -146,7 +146,7 @@ public class HttpAppServerTest extends IntegrationBase {
 
     @Test
     public void testGetWithExistingMultiPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/a15");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a15");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -164,7 +164,7 @@ public class HttpAppServerTest extends IntegrationBase {
 
     @Test
     public void testPutNoContentType() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/d8");
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/d8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
@@ -173,7 +173,7 @@ public class HttpAppServerTest extends IntegrationBase {
 
     @Test
     public void testPutFakeToken() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + "dsadasddasdasdasdasdasdas/widget/d8");
+        HttpPut request = new HttpPut(httpsServerUrl + "dsadasddasdasdasdasdasdas/pin/d8");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -183,7 +183,7 @@ public class HttpAppServerTest extends IntegrationBase {
 
     @Test
     public void testPutWithWrongPin() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/x8");
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/x8");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -193,7 +193,7 @@ public class HttpAppServerTest extends IntegrationBase {
 
     @Test
     public void testPutWithNonExistingPin() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/v10");
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -203,14 +203,14 @@ public class HttpAppServerTest extends IntegrationBase {
 
     @Test
     public void testPutWithExistingPin() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/a14");
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14");
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(204, response.getStatusLine().getStatusCode());
         }
 
-        HttpGet getRequest = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/widget/a14");
+        HttpGet getRequest = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14");
 
         try (CloseableHttpResponse response = httpclient.execute(getRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

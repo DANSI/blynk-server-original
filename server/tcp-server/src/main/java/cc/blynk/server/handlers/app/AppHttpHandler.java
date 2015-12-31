@@ -1,6 +1,7 @@
 package cc.blynk.server.handlers.app;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
+import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.http.helpers.Response;
@@ -28,7 +29,7 @@ import static cc.blynk.server.handlers.http.helpers.ResponseGenerator.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 25.12.15.
  */
-@Path("/app")
+@Path("/")
 public class AppHttpHandler {
 
     private static final Logger log = LogManager.getLogger(AppHttpHandler.class);
@@ -44,7 +45,7 @@ public class AppHttpHandler {
     }
 
     @GET
-    @Path("/{token}/widget/{pin}")
+    @Path("{token}/pin/{pin}")
     public Response getWidgetPinData(@PathParam("token") String token,
                                      @PathParam("pin") String pinString) {
 
@@ -86,7 +87,7 @@ public class AppHttpHandler {
     }
 
     @PUT
-    @Path("/{token}/widget/{pin}")
+    @Path("{token}/pin/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     public Response updateWidgetPinData(@PathParam("token") String token,
                                         @PathParam("pin") String pinString,
@@ -137,13 +138,15 @@ public class AppHttpHandler {
                 return Response.noContent();
             }
             session.sendMessageToHardware(dashId, new HardwareMessage(111, body));
+            //todo check for shared apps? to minimize load...
+            session.sendToApps(new HardwareMessage(111, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
         }
 
         return Response.noContent();
     }
 
     @POST
-    @Path("/{token}/notify")
+    @Path("{token}/notify")
     @Consumes(value = MediaType.APPLICATION_JSON)
     public Response updateWidgetPinData(@PathParam("token") String token,
                                         PushMessagePojo message) {
@@ -188,7 +191,7 @@ public class AppHttpHandler {
     }
 
     @POST
-    @Path("/{token}/email")
+    @Path("{token}/email")
     @Consumes(value = MediaType.APPLICATION_JSON)
     public Response updateWidgetPinData(@PathParam("token") String token,
                                         EmailPojo message) {
