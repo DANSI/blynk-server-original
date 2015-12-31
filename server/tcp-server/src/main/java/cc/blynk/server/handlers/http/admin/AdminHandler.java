@@ -25,6 +25,8 @@ public class AdminHandler extends BaseHttpAPIHandler {
         //a bit ugly code but it is ok for now. 2 branches. 1 fro static files, second for normal http api
         if (req.getUri().equals(rootPath)) {
             req.setUri("/admin/static/admin.html");
+        } else if (req.getUri().equals("/favicon.ico")) {
+            req.setUri("/admin/static/favicon.ico");
         }
         if (req.getUri().startsWith("/admin/static")) {
             try {

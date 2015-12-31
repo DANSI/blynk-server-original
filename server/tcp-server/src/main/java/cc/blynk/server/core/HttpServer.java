@@ -2,7 +2,7 @@ package cc.blynk.server.core;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.handlers.app.AppHttpHandler;
-import cc.blynk.server.handlers.http.BaseHttpAPIHandler;
+import cc.blynk.server.handlers.http.HttpHandler;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -34,7 +34,7 @@ public class HttpServer extends BaseServer {
                 pipeline.addLast(new HttpServerCodec());
                 pipeline.addLast(new HttpObjectAggregator(65536));
                 pipeline.addLast(new ChunkedWriteHandler());
-                pipeline.addLast(new BaseHttpAPIHandler());
+                pipeline.addLast(new HttpHandler());
             }
         };
 
