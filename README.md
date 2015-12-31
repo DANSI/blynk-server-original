@@ -114,6 +114,12 @@ save and exit.
         or to
         Blynk.begin(auth, SSID, pass, IPAddress(XXX,XXX,XXX,XXX));
         
++ Change your rasp PI javascript from
+
+        var blynk = new Blynk.Blynk(AUTH, options = {connector : new Blynk.TcpClient()});
+        to
+        var blynk = new Blynk.Blynk(AUTH, options= {addr:"xxx.xxx.xxx.xxx"});
+        
 + or in case of USB when running blynk-ser.sh provide '-s' option with address of your local server
 
         ./blynk-ser.sh -s you_host_or_IP
