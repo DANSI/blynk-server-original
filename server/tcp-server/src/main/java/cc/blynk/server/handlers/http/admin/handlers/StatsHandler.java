@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static cc.blynk.server.handlers.http.helpers.ResponseGenerator.*;
+import static cc.blynk.server.handlers.http.helpers.Response.*;
 
 /**
  * The Blynk Project.
@@ -40,7 +40,7 @@ public class StatsHandler extends BaseHandler {
     @GET
     @Path("/realtime")
     public Response getReatime() {
-       return makeResponse(Collections.singletonList(StatsWorker.calcStats(sessionDao, userDao, stats, false)));
+       return ok(Collections.singletonList(StatsWorker.calcStats(sessionDao, userDao, stats, false)));
     }
 
     @GET
@@ -58,42 +58,42 @@ public class StatsHandler extends BaseHandler {
                 res.add(new RequestPerSecondResponse(entry.getKey().name, appReqRate, hardReqRate));
             }
         }
-        return makeResponse(sort(res, sortField, sortOrder));
+        return ok(sort(res, sortField, sortOrder));
     }
 
     @GET
     @Path("/messages")
     public Response getMessages(@QueryParam("_sortField") String sortField,
                                     @QueryParam("_sortDir") String sortOrder) {
-        return makeResponse(sort(convertMapToPair(StatsWorker.calcStats(sessionDao, userDao, stats, false).messages), sortField, sortOrder));
+        return ok(sort(convertMapToPair(StatsWorker.calcStats(sessionDao, userDao, stats, false).messages), sortField, sortOrder));
     }
 
     @GET
     @Path("/widgets")
     public Response getWidgets(@QueryParam("_sortField") String sortField,
                                    @QueryParam("_sortDir") String sortOrder) {
-        return makeResponse(sort(convertMapToPair(userDao.getWidgetsUsage()), sortField, sortOrder));
+        return ok(sort(convertMapToPair(userDao.getWidgetsUsage()), sortField, sortOrder));
     }
 
     @GET
     @Path("/projectsPerUser")
     public Response getProjectsPerUser(@QueryParam("_sortField") String sortField,
                                            @QueryParam("_sortDir") String sortOrder) {
-        return makeResponse(sort(convertMapToPair(userDao.getProjectsPerUser()), sortField, sortOrder, true));
+        return ok(sort(convertMapToPair(userDao.getProjectsPerUser()), sortField, sortOrder, true));
     }
 
     @GET
     @Path("/boards")
     public Response getBoards(@QueryParam("_sortField") String sortField,
                                     @QueryParam("_sortDir") String sortOrder) {
-        return makeResponse(sort(convertMapToPair(userDao.getBoardsUsage()), sortField, sortOrder));
+        return ok(sort(convertMapToPair(userDao.getBoardsUsage()), sortField, sortOrder));
     }
 
     @GET
     @Path("/filledSpace")
     public Response getFilledSpace(@QueryParam("_sortField") String sortField,
                                   @QueryParam("_sortDir") String sortOrder) {
-        return makeResponse(sort(convertMapToPair(userDao.getFilledSpace()), sortField, sortOrder, true));
+        return ok(sort(convertMapToPair(userDao.getFilledSpace()), sortField, sortOrder, true));
     }
 
 }

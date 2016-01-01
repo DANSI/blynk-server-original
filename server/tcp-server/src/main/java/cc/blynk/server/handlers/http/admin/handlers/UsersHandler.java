@@ -15,7 +15,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-import static cc.blynk.server.handlers.http.helpers.ResponseGenerator.*;
+import static cc.blynk.server.handlers.http.helpers.Response.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.*;
 
@@ -50,14 +50,14 @@ public class UsersHandler extends BaseHandler {
         }
         List<User> users = userDao.searchByUsername(filterParam);
         return appendTotalCountHeader(
-                makeResponse(sort(users, sortField, sortOrder), page, size), users.size()
+                ok(sort(users, sortField, sortOrder), page, size), users.size()
         );
     }
 
     @GET
     @Path("/{name}")
     public Response getUserByName(@PathParam("name") String name) {
-        return makeResponse(userDao.getUsers().get(name));
+        return ok(userDao.getUsers().get(name));
     }
 
     @PUT
@@ -79,7 +79,7 @@ public class UsersHandler extends BaseHandler {
         log.debug("Adding new user {}", updatedUser.name);
 
 
-        return makeResponse(updatedUser);
+        return ok(updatedUser);
     }
 
     @PUT
@@ -97,7 +97,7 @@ public class UsersHandler extends BaseHandler {
 
         user.pass = userPassPojo.pass;
 
-        return Response.ok();
+        return ok();
     }
 
     @DELETE
@@ -117,7 +117,7 @@ public class UsersHandler extends BaseHandler {
 
         log.info("User {} successfully removed.", name);
 
-        return Response.ok();
+        return ok();
     }
 
 }

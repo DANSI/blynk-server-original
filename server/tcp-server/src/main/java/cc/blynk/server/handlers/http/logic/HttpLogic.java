@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import static cc.blynk.server.handlers.http.helpers.ResponseGenerator.*;
+import static cc.blynk.server.handlers.http.helpers.Response.*;
 
 /**
  * The Blynk Project.
@@ -83,7 +83,7 @@ public class HttpLogic {
             return Response.badRequest();
         }
 
-        return makeResponse(widget.getJsonValue());
+        return ok(widget.getJsonValue());
     }
 
     @PUT
