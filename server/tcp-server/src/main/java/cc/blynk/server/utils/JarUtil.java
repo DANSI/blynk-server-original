@@ -15,7 +15,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * Returns list of resources that were packed to jar
+ * Utility class to work with jar file.
  *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -23,6 +23,12 @@ import java.util.zip.ZipInputStream;
  */
 public class JarUtil {
 
+    /**
+     * Unpacks all files from staticFolder of jar and puts them to current folder within staticFolder path.
+     *
+     * @param staticFolder - path to resources
+     * @throws Exception
+     */
     public static void unpackStaticFiles(String staticFolder) throws Exception {
         List<String> staticResources = find(staticFolder);
 
@@ -38,6 +44,13 @@ public class JarUtil {
         }
     }
 
+    /**
+     * Returns list of resources that were found in staticResourcesFolder
+     *
+     * @param staticResourcesFolder - resource folder
+     * @return - absolute path to resources within staticResourcesFolder
+     * @throws Exception
+     */
     public static List<String> find(String staticResourcesFolder) throws Exception {
         CodeSource src = ServerLauncher.class.getProtectionDomain().getCodeSource();
         List<String> staticResources = new ArrayList<>();
@@ -49,12 +62,7 @@ public class JarUtil {
 
                 while ((ze = zip.getNextEntry()) != null) {
                     String entryName = ze.getName();
-                    if (entryName.startsWith(staticResourcesFolder) &&
-                            (entryName.endsWith(".js") ||
-                                    entryName.endsWith(".css") ||
-                                    entryName.endsWith(".html")) ||
-                            entryName.endsWith(".ico") ||
-                            entryName.endsWith(".png")) {
+                    if (entryName.startsWith(staticResourcesFolder) && isResource(entryName)) {
                         staticResources.add(entryName);
                     }
                 }
@@ -62,6 +70,14 @@ public class JarUtil {
         }
 
         return staticResources;
+    }
+
+    private static boolean isResource(String filename) {
+        return filename.endsWith(".js") ||
+               filename.endsWith(".css") ||
+               filename.endsWith(".html") ||
+               filename.endsWith(".ico") ||
+               filename.endsWith(".png");
     }
 
 }
