@@ -21,8 +21,6 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -38,13 +36,6 @@ public class HttpAppServerTest extends IntegrationBase {
     private HttpServer httpServer;
     private CloseableHttpClient httpclient;
     private String httpsServerUrl;
-
-    private static String getProfileFolder() throws Exception {
-        URL resource = HttpAppServerTest.class.getResource("/profiles");
-        String resourcesPath = Paths.get(resource.toURI()).toAbsolutePath().toString();
-        System.out.println("Resource path : " + resourcesPath);
-        return resourcesPath;
-    }
 
     @Before
     public void init() throws Exception {

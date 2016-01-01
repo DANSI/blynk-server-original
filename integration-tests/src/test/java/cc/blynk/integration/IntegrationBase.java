@@ -11,14 +11,14 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.utils.JsonParser;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static cc.blynk.common.enums.Response.*;
@@ -33,8 +33,6 @@ import static org.mockito.Mockito.*;
  * Created on 2/4/2015.
  */
 public abstract class IntegrationBase {
-
-    protected static final Logger log = LogManager.getLogger(IntegrationBase.class);
 
     static int appPort;
     public ServerProperties properties;
@@ -148,6 +146,15 @@ public abstract class IntegrationBase {
 
         return new ClientPair(appClient, hardClient, token);
     }
+
+
+    public String getProfileFolder() throws Exception {
+        URL resource = this.getClass().getResource("/profiles");
+        String resourcesPath = Paths.get(resource.toURI()).toAbsolutePath().toString();
+        System.out.println("Resource path : " + resourcesPath);
+        return resourcesPath;
+    }
+
 
     public void initServerStructures() {
         holder = new Holder(properties);

@@ -12,7 +12,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -37,6 +36,7 @@ public class HttpsAdminServerTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
+        properties.setProperty("data.folder", getProfileFolder());
         initServerStructures();
         this.httpAdminServer = new HttpsAdminServer(holder);
         httpAdminServer.start();
@@ -83,9 +83,19 @@ public class HttpsAdminServerTest extends IntegrationBase {
     }
 
     @Test
-    @Ignore("todo finish")
-    public void testChangePassCorrect() throws Exception {
+    public void testChangePassNoUser() throws Exception {
         String testUser = "dima@dima.ua";
+        HttpPut request = new HttpPut(httpsServerUrl + testUser + "/changePass");
+        request.setEntity(new StringEntity(new ResponseUserEntity("123").toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(404, response.getStatusLine().getStatusCode() );
+        }
+    }
+
+    @Test
+    public void testChangePassCorrect() throws Exception {
+        String testUser = "dmitriy@blynk.cc";
         HttpPut request = new HttpPut(httpsServerUrl + testUser + "/changePass");
         request.setEntity(new StringEntity(new ResponseUserEntity("123").toString(), ContentType.APPLICATION_JSON));
 
