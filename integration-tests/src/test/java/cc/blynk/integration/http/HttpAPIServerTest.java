@@ -305,6 +305,28 @@ public class HttpAPIServerTest extends IntegrationBase {
         }
     }
 
+    //------------------------------ SYNC TEST
+    @Test
+    public void testSync() throws Exception {
+        String url = httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14";
+
+        for (int i = 0; i < 100; i++) {
+            HttpPut request = new HttpPut(url);
+            request.setEntity(new StringEntity("[\""+ i + "\"]", ContentType.APPLICATION_JSON));
+            try (CloseableHttpResponse response = httpclient.execute(request)) {
+                assertEquals(200, response.getStatusLine().getStatusCode());
+            }
+
+            HttpGet getRequest = new HttpGet(url);
+            try (CloseableHttpResponse response = httpclient.execute(getRequest)) {
+                assertEquals(200, response.getStatusLine().getStatusCode());
+                List<String> values = consumeJsonPinValues(response);
+                assertEquals(1, values.size());
+                assertEquals(String.valueOf(i), values.get(0));
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private List<String> consumeJsonPinValues(CloseableHttpResponse response) throws IOException {
         return JsonParser.readAny(consumeText(response), List.class);
