@@ -17,11 +17,11 @@ import io.netty.handler.stream.ChunkedWriteHandler;
  * Created by Dmitriy Dumanskiy.
  * Created on 1/12/2015.
  */
-public class HttpServer extends BaseServer {
+public class HttpAPIServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public HttpServer(Holder holder) {
+    public HttpAPIServer(Holder holder) {
         super(holder.props.getIntProperty("http.port"), holder.transportType);
 
         HandlerRegistry.register(new AppHttpHandler(holder.userDao, holder.sessionDao, holder.blockingIOProcessor));
@@ -49,7 +49,7 @@ public class HttpServer extends BaseServer {
 
     @Override
     protected String getServerName() {
-        return "HHTTP API";
+        return "HTTP API";
     }
 
     @Override

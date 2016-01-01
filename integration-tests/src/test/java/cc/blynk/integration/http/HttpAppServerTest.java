@@ -1,7 +1,7 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.IntegrationBase;
-import cc.blynk.server.core.http.HttpServer;
+import cc.blynk.server.core.http.HttpAPIServer;
 import cc.blynk.server.handlers.http.helpers.pojo.EmailPojo;
 import cc.blynk.server.handlers.http.helpers.pojo.PushMessagePojo;
 import cc.blynk.server.utils.JsonParser;
@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class HttpAppServerTest extends IntegrationBase {
 
-    private HttpServer httpServer;
+    private HttpAPIServer httpServer;
     private CloseableHttpClient httpclient;
     private String httpsServerUrl;
 
@@ -42,7 +42,7 @@ public class HttpAppServerTest extends IntegrationBase {
         properties.setProperty("data.folder", getProfileFolder());
         initServerStructures();
 
-        this.httpServer = new HttpServer(holder);
+        this.httpServer = new HttpAPIServer(holder);
         httpServer.start();
         sleep(500);
 

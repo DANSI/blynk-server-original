@@ -22,7 +22,6 @@ public class Response extends DefaultFullHttpResponse {
         super(version, status, (content == null ? Unpooled.EMPTY_BUFFER : Unpooled.copiedBuffer(content, StandardCharsets.UTF_8)));
         headers().set(CONTENT_TYPE, contentType);
         headers().set(CONTENT_LENGTH, content().readableBytes());
-        headers().set("Access-Control-Allow-Origin", "*");
     }
 
     public Response(HttpVersion version, HttpResponseStatus status) {

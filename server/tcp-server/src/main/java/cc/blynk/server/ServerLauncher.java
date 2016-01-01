@@ -5,7 +5,8 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.core.hardware.ssl.HardwareSSLServer;
-import cc.blynk.server.core.http.HttpServer;
+import cc.blynk.server.core.http.HttpAPIServer;
+import cc.blynk.server.core.http.HttpsAPIServer;
 import cc.blynk.server.core.http.admin.HttpsAdminServer;
 import cc.blynk.server.utils.JarUtil;
 import cc.blynk.server.utils.LoggerUtil;
@@ -34,22 +35,21 @@ import java.net.BindException;
  */
 public class ServerLauncher {
 
-    private final BaseServer appServer;
-    private final BaseServer hardwareServer;
-    private final BaseServer hardwareSSLServer;
-    private final BaseServer httpsAdminServer;
-    private final BaseServer httpServer;
+    private final BaseServer[] servers;
 
     private final Holder holder;
 
     private ServerLauncher(ServerProperties serverProperties) {
         this.holder = new Holder(serverProperties);
 
-        this.hardwareServer = new HardwareServer(holder);
-        this.hardwareSSLServer = new HardwareSSLServer(holder);
-        this.httpsAdminServer = new HttpsAdminServer(holder);
-        this.appServer = new AppServer(holder);
-        this.httpServer = new HttpServer(holder);
+        servers = new BaseServer[] {
+                new HardwareServer(holder),
+                new HardwareSSLServer(holder),
+                new AppServer(holder),
+                new HttpAPIServer(holder),
+                new HttpsAPIServer(holder),
+                new HttpsAdminServer(holder)
+        };
     }
 
     public static void main(String[] args) throws Exception {
@@ -80,11 +80,9 @@ public class ServerLauncher {
     private void run() {
         //start servers
         try {
-            appServer.start();
-            hardwareServer.start();
-            hardwareSSLServer.start();
-            httpsAdminServer.start();
-            httpServer.start();
+            for (BaseServer server : servers) {
+                server.start();
+            }
         } catch (BindException bindException) {
             System.out.println("Server ports are busy. Most probably server already launched. See " +
                     new File(System.getProperty("logs.folder")).getAbsolutePath() + " for more info.");
@@ -95,7 +93,7 @@ public class ServerLauncher {
         }
 
         //Launching all background jobs.
-        JobLauncher.start(holder, hardwareServer, appServer, httpServer, hardwareSSLServer, httpsAdminServer);
+        JobLauncher.start(holder, servers);
 
         try {
             Thread.sleep(500);
