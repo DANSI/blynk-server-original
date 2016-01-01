@@ -1,7 +1,7 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.IntegrationBase;
-import cc.blynk.server.core.HttpServer;
+import cc.blynk.server.core.http.HttpServer;
 import cc.blynk.server.handlers.http.helpers.pojo.EmailPojo;
 import cc.blynk.server.handlers.http.helpers.pojo.PushMessagePojo;
 import cc.blynk.server.utils.JsonParser;

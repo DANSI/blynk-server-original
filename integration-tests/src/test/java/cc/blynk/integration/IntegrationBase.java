@@ -40,6 +40,7 @@ public abstract class IntegrationBase {
     public ServerProperties properties;
     public int hardPort;
     public String host;
+    public int administrationHttpsPort;
     public int httpsPort;
     public int httpPort;
 
@@ -152,6 +153,7 @@ public abstract class IntegrationBase {
         holder = new Holder(properties);
         holder.setBlockingIOProcessor(blockingIOProcessor);
         httpsPort = holder.props.getIntProperty("https.port");
+        administrationHttpsPort = holder.props.getIntProperty("administration.https.port");
         httpPort = holder.props.getIntProperty("http.port");
     }
 }

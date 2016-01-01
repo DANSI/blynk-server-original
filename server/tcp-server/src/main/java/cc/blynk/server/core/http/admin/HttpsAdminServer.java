@@ -1,4 +1,4 @@
-package cc.blynk.server.core.admin;
+package cc.blynk.server.core.http.admin;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
@@ -29,7 +29,7 @@ public class HttpsAdminServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HttpsAdminServer(Holder holder) {
-        super(holder.props.getIntProperty("https.port"), holder.transportType);
+        super(holder.props.getIntProperty("administration.https.port", 7443), holder.transportType);
 
         final String rootPath = holder.props.getProperty("admin.rootPath", "/admin");
 
@@ -73,12 +73,12 @@ public class HttpsAdminServer extends BaseServer {
 
     @Override
     protected String getServerName() {
-        return "HTTPS Hardware";
+        return "HTTPS Admin UI";
     }
 
     @Override
     public void stop() {
-        System.out.println("Shutting down https hardware server...");
+        System.out.println("Shutting down https Admin UI server...");
         super.stop();
     }
 

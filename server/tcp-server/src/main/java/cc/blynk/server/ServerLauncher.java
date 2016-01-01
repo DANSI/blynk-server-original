@@ -2,11 +2,11 @@ package cc.blynk.server;
 
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.HttpServer;
-import cc.blynk.server.core.admin.HttpsAdminServer;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.core.hardware.ssl.HardwareSSLServer;
+import cc.blynk.server.core.http.HttpServer;
+import cc.blynk.server.core.http.admin.HttpsAdminServer;
 import cc.blynk.server.utils.JarUtil;
 import cc.blynk.server.utils.LoggerUtil;
 
@@ -16,13 +16,14 @@ import java.net.BindException;
 /**
  * Entry point for server launch.
  *
- * By default starts 5 servers on different ports:
+ * By default starts 6 servers on different ports:
  *
  * 1 server socket for SSL/TLS Hardware (8441 default)
  * 1 server socket for plain tcp/ip Hardware (8442 default)
  * 1 server socket for SSL/TLS Applications (8443 default)
  * 1 server socket for HTTP API (8080 default)
- * 1 server socket for HTTPS API ans Administration UI (7443 default)
+ * 1 server socket for HTTPS API (9443)
+ * 1 server socket for Administration UI (7443 default)
  *
  * In addition launcher start all related to business logic threads like saving user profiles thread, timers
  * processing thread, properties reload thread and so on.

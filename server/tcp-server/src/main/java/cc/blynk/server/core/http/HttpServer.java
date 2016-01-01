@@ -1,6 +1,7 @@
-package cc.blynk.server.core;
+package cc.blynk.server.core.http;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.app.AppHttpHandler;
 import cc.blynk.server.handlers.http.HttpHandler;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
@@ -25,7 +26,7 @@ public class HttpServer extends BaseServer {
 
         HandlerRegistry.register(new AppHttpHandler(holder.userDao, holder.sessionDao, holder.blockingIOProcessor));
 
-        log.info("Enabling HTTP for app.");
+        log.info("Enabling HTTP API.");
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -48,12 +49,12 @@ public class HttpServer extends BaseServer {
 
     @Override
     protected String getServerName() {
-        return "HTTP app";
+        return "HHTTP API";
     }
 
     @Override
     public void stop() {
-        System.out.println("Shutting down http app server...");
+        System.out.println("Shutting down HTTP API server...");
         super.stop();
     }
 

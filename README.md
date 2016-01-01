@@ -147,7 +147,7 @@ server.properties options:
         
 + Https port
         
-        https.port=7443
+        https.port=9443
         
 + Http port
         
@@ -200,6 +200,10 @@ server.properties options:
 + Mostly required for local servers setup in case user want to log raw data in CSV format. See [raw data] (https://github.com/blynkkk/blynk-server#raw-data-storage) section for more info.
         
         enable.raw.data.store=true
+        
++ Administration UI https port
+        
+        administration.https.port=7443
         
 + Url for opening admin page. Must start from "/". For "/admin" url path will look like that "https://localhost:7443/admin". 
 

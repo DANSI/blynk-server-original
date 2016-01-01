@@ -87,7 +87,7 @@
         <Logger name="cc.blynk.server.workers.StatsWorker" level="debug" additivity="false">
             <appender-ref ref="statsLog"/>
         </Logger>
-        <Logger name="cc.blynk.server.core.admin" level="debug" additivity="false">
+        <Logger name="cc.blynk.server.core.http.admin" level="debug" additivity="false">
             <appender-ref ref="admin"/>
         </Logger>
         <Logger name="cc.blynk.server.handlers.http" level="debug" additivity="false">
