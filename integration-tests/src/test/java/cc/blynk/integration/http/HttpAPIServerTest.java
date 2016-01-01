@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpAppServerTest extends IntegrationBase {
+public class HttpAPIServerTest extends IntegrationBase {
 
     private HttpAPIServer httpServer;
     private CloseableHttpClient httpclient;
@@ -64,7 +64,7 @@ public class HttpAppServerTest extends IntegrationBase {
         HttpGet request = new HttpGet(httpsServerUrl + "dsadasddasdasdasdasdasdas/pin/d8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(404, response.getStatusLine().getStatusCode());
+            assertEquals(400, response.getStatusLine().getStatusCode());
         }
     }
 
@@ -82,7 +82,7 @@ public class HttpAppServerTest extends IntegrationBase {
         HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/x8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(404, response.getStatusLine().getStatusCode());
+            assertEquals(400, response.getStatusLine().getStatusCode());
         }
     }
 
@@ -91,7 +91,7 @@ public class HttpAppServerTest extends IntegrationBase {
         HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(404, response.getStatusLine().getStatusCode());
+            assertEquals(400, response.getStatusLine().getStatusCode());
         }
     }
 
@@ -168,7 +168,7 @@ public class HttpAppServerTest extends IntegrationBase {
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(404, response.getStatusLine().getStatusCode());
+            assertEquals(400, response.getStatusLine().getStatusCode());
         }
     }
 
@@ -188,7 +188,7 @@ public class HttpAppServerTest extends IntegrationBase {
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(404, response.getStatusLine().getStatusCode());
+            assertEquals(400, response.getStatusLine().getStatusCode());
         }
     }
 
@@ -198,7 +198,7 @@ public class HttpAppServerTest extends IntegrationBase {
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(204, response.getStatusLine().getStatusCode());
+            assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
         HttpGet getRequest = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14");

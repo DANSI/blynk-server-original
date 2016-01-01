@@ -53,14 +53,14 @@ public class HttpLogic {
 
         if (user == null) {
             log.error("Requested token {} not found.", token);
-            return Response.notFound();
+            return Response.badRequest();
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
             log.error("Dash id for token {} not found. User {}", token, user.name);
-            return Response.notFound();
+            return Response.badRequest();
         }
 
         DashBoard dashBoard = user.profile.getDashById(dashId);
@@ -73,14 +73,14 @@ public class HttpLogic {
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException e) {
             log.error("Wrong pin format. {}", pinString);
-            return Response.notFound();
+            return Response.badRequest();
         }
 
         Widget widget = dashBoard.findWidgetByPin(pin, pinType);
 
         if (widget == null) {
             log.error("Requested pin {} not found. User {}", pinString, user.name);
-            return Response.notFound();
+            return Response.badRequest();
         }
 
         return makeResponse(widget.getJsonValue());
@@ -97,14 +97,14 @@ public class HttpLogic {
 
         if (user == null) {
             log.error("Requested token {} not found.", token);
-            return Response.notFound();
+            return Response.badRequest();
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
             log.error("Dash id for token {} not found. User {}", token, user.name);
-            return Response.notFound();
+            return Response.badRequest();
         }
 
         DashBoard dashBoard = user.profile.getDashById(dashId);
@@ -124,7 +124,7 @@ public class HttpLogic {
 
         if (widget == null) {
             log.error("Requested pin {} not found. User {}", pinString, user.name);
-            return Response.notFound();
+            return Response.badRequest();
         }
 
         widget.updateIfSame(new HardwareBody(pinType, pin, pinValues));
@@ -135,14 +135,14 @@ public class HttpLogic {
             Session session = sessionDao.getUserSession().get(user);
             if (session == null) {
                 log.error("No session for user {}.", user.name);
-                return Response.noContent();
+                return Response.ok();
             }
             session.sendMessageToHardware(dashId, new HardwareMessage(111, body));
             //todo check for shared apps? to minimize load...
             session.sendToApps(new HardwareMessage(111, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
         }
 
-        return Response.noContent();
+        return Response.ok();
     }
 
     @POST
@@ -155,14 +155,14 @@ public class HttpLogic {
 
         if (user == null) {
             log.error("Requested token {} not found.", token);
-            return Response.notFound();
+            return Response.badRequest();
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
             log.error("Dash id for token {} not found. User {}", token, user.name);
-            return Response.notFound();
+            return Response.badRequest();
         }
 
         if (message == null || Notification.isWrongBody(message.body)) {
@@ -174,14 +174,14 @@ public class HttpLogic {
 
         if (!dash.isActive) {
             log.error("No active dashboard.");
-            return Response.notFound();
+            return Response.badRequest();
         }
 
         Notification notification = dash.getWidgetByType(Notification.class);
 
         if (notification == null || notification.hasNoToken()) {
             log.error("No notification tokens.");
-            return Response.notFound();
+            return Response.badRequest();
         }
 
         log.trace("Sending push for user {}, with message : '{}'.", user.name, message.body);
@@ -200,14 +200,14 @@ public class HttpLogic {
 
         if (user == null) {
             log.error("Requested token {} not found.", token);
-            return Response.notFound();
+            return Response.badRequest();
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
             log.error("Dash id for token {} not found. User {}", token, user.name);
-            return Response.notFound();
+            return Response.badRequest();
         }
 
         DashBoard dash = user.profile.getDashById(dashId);
@@ -216,7 +216,7 @@ public class HttpLogic {
 
         if (mail == null || !dash.isActive) {
             log.error("No active dashboard.");
-            return Response.notFound();
+            return Response.badRequest();
         }
 
         if (message == null ||
