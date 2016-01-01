@@ -14,7 +14,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,28 +33,30 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class HttpAPIServerTest extends IntegrationBase {
 
-    private HttpAPIServer httpServer;
-    private CloseableHttpClient httpclient;
-    private String httpsServerUrl;
+    private static HttpAPIServer httpServer;
+    private static CloseableHttpClient httpclient;
+    private static String httpsServerUrl;
+
+    @AfterClass
+    public static void shutdown() throws Exception {
+        httpclient.close();
+        httpServer.stop();
+    }
 
     @Before
     public void init() throws Exception {
-        properties.setProperty("data.folder", getProfileFolder());
-        initServerStructures();
+        if (httpServer == null) {
+            properties.setProperty("data.folder", getProfileFolder());
+            initServerStructures();
 
-        this.httpServer = new HttpAPIServer(holder);
-        httpServer.start();
-        sleep(500);
+            httpServer = new HttpAPIServer(holder);
+            httpServer.start();
+            sleep(500);
 
-        httpsServerUrl = "http://localhost:" + httpPort + "/";
+            httpsServerUrl = "http://localhost:" + httpPort + "/";
 
-        this.httpclient = HttpClients.createDefault();
-    }
-
-    @After
-    public void shutdown() throws Exception {
-        this.httpclient.close();
-        this.httpServer.stop();
+            httpclient = HttpClients.createDefault();
+        }
     }
 
     //----------------------------GET METHODS SECTION

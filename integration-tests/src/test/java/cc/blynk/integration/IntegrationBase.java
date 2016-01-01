@@ -92,6 +92,13 @@ public abstract class IntegrationBase {
         throw new RuntimeException("Get token message wasn't retrieved.");
     }
 
+    public static String getProfileFolder() throws Exception {
+        URL resource = IntegrationBase.class.getResource("/profiles");
+        String resourcesPath = Paths.get(resource.toURI()).toAbsolutePath().toString();
+        System.out.println("Resource path : " + resourcesPath);
+        return resourcesPath;
+    }
+
     @Before
     public void initBase() {
         properties = new ServerProperties();
@@ -146,15 +153,6 @@ public abstract class IntegrationBase {
 
         return new ClientPair(appClient, hardClient, token);
     }
-
-
-    public String getProfileFolder() throws Exception {
-        URL resource = this.getClass().getResource("/profiles");
-        String resourcesPath = Paths.get(resource.toURI()).toAbsolutePath().toString();
-        System.out.println("Resource path : " + resourcesPath);
-        return resourcesPath;
-    }
-
 
     public void initServerStructures() {
         holder = new Holder(properties);
