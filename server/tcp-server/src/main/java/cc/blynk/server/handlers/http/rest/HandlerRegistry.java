@@ -94,23 +94,30 @@ public class HandlerRegistry {
                 }
                 uriDecoder.pathData = pathData;
 
-                try {
-                    Object[] params = handlerHolder.fetchParams(uriDecoder);
-                    return (FullHttpResponse) handlerHolder.method.invoke(handlerHolder.handler, params);
-                } catch (Exception e) {
-                    if (e.getCause() != null) {
-                        log.error(e.getCause());
-                        return Response.serverError(e.getCause().getMessage());
-                    } else {
-                        log.error(e);
-                        return Response.serverError(e.getMessage());
-                    }
-                }
+                return invoke(handlerHolder, uriDecoder);
             }
         }
 
         log.error("Error resolving url. No path found.");
         return Response.notFound();
+    }
+
+    private static FullHttpResponse invoke(HandlerHolder handlerHolder, URIDecoder uriDecoder) {
+        try {
+            Object[] params = handlerHolder.fetchParams(uriDecoder);
+            return (FullHttpResponse) handlerHolder.method.invoke(handlerHolder.handler, params);
+        } catch (Exception e) {
+            if (e.getCause() != null) {
+                return logError(e.getCause());
+            } else {
+                return logError(e);
+            }
+        }
+    }
+
+    private static FullHttpResponse logError(Throwable t) {
+        log.error(t);
+        return Response.serverError(t.getMessage());
     }
 
 }
