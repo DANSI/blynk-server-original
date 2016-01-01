@@ -102,7 +102,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
     @Test
     public void testGetWithExistingPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/d8");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/D8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
