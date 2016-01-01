@@ -162,7 +162,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("Unexpected content type. Expecting application/json but got null", consumeText(response));
+            assertEquals("Unexpected content type. Expecting application/json.", consumeText(response));
         }
     }
 
@@ -228,7 +228,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("Unexpected content type. Expecting application/json but got null", consumeText(response));
+            assertEquals("Unexpected content type. Expecting application/json.", consumeText(response));
         }
     }
 
@@ -277,7 +277,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
-            assertEquals("Unexpected content type. Expecting application/json but got null", consumeText(response));
+            assertEquals("Unexpected content type. Expecting application/json.", consumeText(response));
         }
     }
 
