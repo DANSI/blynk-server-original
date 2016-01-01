@@ -288,7 +288,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("Email body is wrong. Missing/empty fields.", consumeText(response));
+            assertEquals("Email body is wrong. Missing or empty fields 'to', 'subj'.", consumeText(response));
         }
     }
 

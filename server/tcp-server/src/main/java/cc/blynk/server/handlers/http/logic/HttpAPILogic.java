@@ -173,15 +173,15 @@ public class HttpAPILogic {
         DashBoard dash = user.profile.getDashById(dashId);
 
         if (!dash.isActive) {
-            log.error("No active dashboard.");
-            return Response.badRequest("No active dashboard.");
+            log.error("Project is not active.");
+            return Response.badRequest("Project is not active.");
         }
 
         Notification notification = dash.getWidgetByType(Notification.class);
 
         if (notification == null || notification.hasNoToken()) {
             log.error("No notification tokens.");
-            return Response.badRequest("No notif widget or widget not initialized.");
+            return Response.badRequest("No notification widget or widget not initialized.");
         }
 
         log.trace("Sending push for user {}, with message : '{}'.", user.name, message.body);
@@ -212,18 +212,23 @@ public class HttpAPILogic {
 
         DashBoard dash = user.profile.getDashById(dashId);
 
+        if (!dash.isActive) {
+            log.error("Project is not active.");
+            return Response.badRequest("Project is not active.");
+        }
+
         Mail mail = dash.getWidgetByType(Mail.class);
 
-        if (mail == null || !dash.isActive) {
-            log.error("No active dashboard.");
-            return Response.badRequest("No active dashboard.");
+        if (mail == null) {
+            log.error("No email widget.");
+            return Response.badRequest("No email widget.");
         }
 
         if (message == null ||
                 message.subj == null || message.subj.equals("") ||
                 message.to == null || message.to.equals("")) {
             log.error("Email body empty. '{}'", message);
-            return Response.badRequest("Email body is wrong. Missing/empty fields.");
+            return Response.badRequest("Email body is wrong. Missing or empty fields 'to', 'subj'.");
         }
 
         log.trace("Sending Mail for user {}, with message : '{}'.", user.name, message.subj);
