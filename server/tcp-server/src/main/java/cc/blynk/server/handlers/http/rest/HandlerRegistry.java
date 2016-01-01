@@ -98,8 +98,13 @@ public class HandlerRegistry {
                     Object[] params = handlerHolder.fetchParams(uriDecoder);
                     return (FullHttpResponse) handlerHolder.method.invoke(handlerHolder.handler, params);
                 } catch (Exception e) {
-                    log.error(e.getCause());
-                    return Response.serverError();
+                    if (e.getCause() != null) {
+                        log.error(e.getCause());
+                        return Response.serverError(e.getCause().getMessage());
+                    } else {
+                        log.error(e);
+                        return Response.serverError(e.getMessage());
+                    }
                 }
             }
         }

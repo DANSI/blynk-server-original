@@ -30,15 +30,15 @@ import static cc.blynk.server.handlers.http.helpers.Response.*;
  * Created on 25.12.15.
  */
 @Path("/")
-public class HttpLogic {
+public class HttpAPILogic {
 
-    private static final Logger log = LogManager.getLogger(HttpLogic.class);
+    private static final Logger log = LogManager.getLogger(HttpAPILogic.class);
 
     private final UserDao userDao;
     private final BlockingIOProcessor blockingIOProcessor;
     private final SessionDao sessionDao;
 
-    public HttpLogic(UserDao userDao, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor) {
+    public HttpAPILogic(UserDao userDao, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor) {
         this.userDao = userDao;
         this.blockingIOProcessor = blockingIOProcessor;
         this.sessionDao = sessionDao;
@@ -53,14 +53,14 @@ public class HttpLogic {
 
         if (user == null) {
             log.error("Requested token {} not found.", token);
-            return Response.badRequest();
+            return Response.badRequest("Invalid token.");
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
             log.error("Dash id for token {} not found. User {}", token, user.name);
-            return Response.badRequest();
+            return Response.badRequest("Didn't find dash id for token.");
         }
 
         DashBoard dashBoard = user.profile.getDashById(dashId);
@@ -73,14 +73,14 @@ public class HttpLogic {
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException e) {
             log.error("Wrong pin format. {}", pinString);
-            return Response.badRequest();
+            return Response.badRequest("Wrong pin format.");
         }
 
         Widget widget = dashBoard.findWidgetByPin(pin, pinType);
 
         if (widget == null) {
             log.error("Requested pin {} not found. User {}", pinString, user.name);
-            return Response.badRequest();
+            return Response.badRequest("Requested pin not exists in app.");
         }
 
         return ok(widget.getJsonValue());
@@ -97,14 +97,14 @@ public class HttpLogic {
 
         if (user == null) {
             log.error("Requested token {} not found.", token);
-            return Response.badRequest();
+            return Response.badRequest("Invalid token.");
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
             log.error("Dash id for token {} not found. User {}", token, user.name);
-            return Response.badRequest();
+            return Response.badRequest("Didn't find dash id for token.");
         }
 
         DashBoard dashBoard = user.profile.getDashById(dashId);
@@ -117,14 +117,14 @@ public class HttpLogic {
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException e) {
             log.error("Wrong pin format. {}", pinString);
-            return Response.badRequest();
+            return Response.badRequest("Wrong pin format.");
         }
 
         Widget widget = dashBoard.findWidgetByPin(pin, pinType);
 
         if (widget == null) {
             log.error("Requested pin {} not found. User {}", pinString, user.name);
-            return Response.badRequest();
+            return Response.badRequest("Requested pin not exists in app.");
         }
 
         widget.updateIfSame(new HardwareBody(pinType, pin, pinValues));
@@ -155,33 +155,33 @@ public class HttpLogic {
 
         if (user == null) {
             log.error("Requested token {} not found.", token);
-            return Response.badRequest();
+            return Response.badRequest("Invalid token.");
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
             log.error("Dash id for token {} not found. User {}", token, user.name);
-            return Response.badRequest();
+            return Response.badRequest("Didn't find dash id for token.");
         }
 
         if (message == null || Notification.isWrongBody(message.body)) {
             log.error("Notification body is wrong. '{}'", message == null ? "" : message.body);
-            return Response.badRequest();
+            return Response.badRequest("Body is empty or larger than 255 chars.");
         }
 
         DashBoard dash = user.profile.getDashById(dashId);
 
         if (!dash.isActive) {
             log.error("No active dashboard.");
-            return Response.badRequest();
+            return Response.badRequest("No active dashboard.");
         }
 
         Notification notification = dash.getWidgetByType(Notification.class);
 
         if (notification == null || notification.hasNoToken()) {
             log.error("No notification tokens.");
-            return Response.badRequest();
+            return Response.badRequest("No notif widget or widget not initialized.");
         }
 
         log.trace("Sending push for user {}, with message : '{}'.", user.name, message.body);
@@ -200,14 +200,14 @@ public class HttpLogic {
 
         if (user == null) {
             log.error("Requested token {} not found.", token);
-            return Response.badRequest();
+            return Response.badRequest("Invalid token.");
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
             log.error("Dash id for token {} not found. User {}", token, user.name);
-            return Response.badRequest();
+            return Response.badRequest("Didn't find dash id for token.");
         }
 
         DashBoard dash = user.profile.getDashById(dashId);
@@ -216,14 +216,14 @@ public class HttpLogic {
 
         if (mail == null || !dash.isActive) {
             log.error("No active dashboard.");
-            return Response.badRequest();
+            return Response.badRequest("No active dashboard.");
         }
 
         if (message == null ||
                 message.subj == null || message.subj.equals("") ||
                 message.to == null || message.to.equals("")) {
             log.error("Email body empty. '{}'", message);
-            return Response.badRequest();
+            return Response.badRequest("Email body is wrong. Missing/empty fields.");
         }
 
         log.trace("Sending Mail for user {}, with message : '{}'.", user.name, message.subj);

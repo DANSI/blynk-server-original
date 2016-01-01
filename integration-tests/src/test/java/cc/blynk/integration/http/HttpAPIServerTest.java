@@ -65,6 +65,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("Invalid token.", consumeText(response));
         }
     }
 
@@ -83,6 +84,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("Wrong pin format.", consumeText(response));
         }
     }
 
@@ -92,6 +94,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("Requested pin not exists in app.", consumeText(response));
         }
     }
 
@@ -159,6 +162,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
+            assertEquals("Unexpected content type. Expecting application/json but got null", consumeText(response));
         }
     }
 
@@ -169,6 +173,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("Invalid token.", consumeText(response));
         }
     }
 
@@ -179,6 +184,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("Wrong pin format.", consumeText(response));
         }
     }
 
@@ -189,6 +195,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("Requested pin not exists in app.", consumeText(response));
         }
     }
 
@@ -221,6 +228,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
+            assertEquals("Unexpected content type. Expecting application/json but got null", consumeText(response));
         }
     }
 
@@ -231,6 +239,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("Body is empty or larger than 255 chars.", consumeText(response));
         }
     }
 
@@ -245,6 +254,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("Body is empty or larger than 255 chars.", consumeText(response));
         }
     }
 
@@ -267,6 +277,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
+            assertEquals("Unexpected content type. Expecting application/json but got null", consumeText(response));
         }
     }
 
@@ -277,6 +288,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("Email body is wrong. Missing/empty fields.", consumeText(response));
         }
     }
 
@@ -293,7 +305,12 @@ public class HttpAPIServerTest extends IntegrationBase {
 
     @SuppressWarnings("unchecked")
     private List<String> consumeJsonPinValues(CloseableHttpResponse response) throws IOException {
-        return JsonParser.readAny(EntityUtils.toString(response.getEntity()), List.class);
+        return JsonParser.readAny(consumeText(response), List.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String consumeText(CloseableHttpResponse response) throws IOException {
+        return EntityUtils.toString(response.getEntity());
     }
 
 

@@ -22,7 +22,7 @@ public class BodyMethodParam extends MethodParam {
     @Override
     Object get(URIDecoder uriDecoder) {
         if (uriDecoder.contentType == null || !uriDecoder.contentType.contains(expectedContentType)) {
-            throw new RuntimeException("Unexpected content type for handler. Expecting " + expectedContentType + " but got " + uriDecoder.contentType);
+            throw new RuntimeException("Unexpected content type. Expecting " + expectedContentType + " but got " + uriDecoder.contentType);
         }
         if (expectedContentType.equals(MediaType.APPLICATION_JSON)) {
             try {
