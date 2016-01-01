@@ -2,8 +2,8 @@ package cc.blynk.server.core.http;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.handlers.app.AppHttpHandler;
 import cc.blynk.server.handlers.http.HttpHandler;
+import cc.blynk.server.handlers.http.logic.HttpLogic;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -24,7 +24,7 @@ public class HttpAPIServer extends BaseServer {
     public HttpAPIServer(Holder holder) {
         super(holder.props.getIntProperty("http.port"), holder.transportType);
 
-        HandlerRegistry.register(new AppHttpHandler(holder.userDao, holder.sessionDao, holder.blockingIOProcessor));
+        HandlerRegistry.register(new HttpLogic(holder.userDao, holder.sessionDao, holder.blockingIOProcessor));
 
         log.info("Enabling HTTP API.");
 

@@ -2,8 +2,8 @@ package cc.blynk.server.core.http;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.handlers.app.AppHttpHandler;
 import cc.blynk.server.handlers.http.HttpHandler;
+import cc.blynk.server.handlers.http.logic.HttpLogic;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import cc.blynk.server.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
@@ -26,7 +26,7 @@ public class HttpsAPIServer extends BaseServer {
     public HttpsAPIServer(Holder holder) {
         super(holder.props.getIntProperty("https.port"), holder.transportType);
 
-        HandlerRegistry.register(new AppHttpHandler(holder.userDao, holder.sessionDao, holder.blockingIOProcessor));
+        HandlerRegistry.register(new HttpLogic(holder.userDao, holder.sessionDao, holder.blockingIOProcessor));
 
         log.info("Enabling HTTPS API.");
 

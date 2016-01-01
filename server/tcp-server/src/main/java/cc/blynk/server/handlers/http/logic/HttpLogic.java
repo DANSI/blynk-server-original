@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.app;
+package cc.blynk.server.handlers.http.logic;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.StringUtils;
@@ -30,15 +30,15 @@ import static cc.blynk.server.handlers.http.helpers.ResponseGenerator.*;
  * Created on 25.12.15.
  */
 @Path("/")
-public class AppHttpHandler {
+public class HttpLogic {
 
-    private static final Logger log = LogManager.getLogger(AppHttpHandler.class);
+    private static final Logger log = LogManager.getLogger(HttpLogic.class);
 
     private final UserDao userDao;
     private final BlockingIOProcessor blockingIOProcessor;
     private final SessionDao sessionDao;
 
-    public AppHttpHandler(UserDao userDao, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor) {
+    public HttpLogic(UserDao userDao, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor) {
         this.userDao = userDao;
         this.blockingIOProcessor = blockingIOProcessor;
         this.sessionDao = sessionDao;

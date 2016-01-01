@@ -16,7 +16,7 @@ public class HttpHandler extends BaseHttpAPIHandler {
     @Override
     public void process(ChannelHandlerContext ctx, HttpRequest request) {
         //a bit ugly code but it is ok for now. 2 branches. 1 fro static files, second for normal http api
-        if (request.getUri().equals("/favicon.ico")) {
+        if (request.getUri().equals("/faviconA.ico")) {
             request.setUri("/admin/static/favicon.ico");
             try {
                 fileHandler.channelRead(ctx, request);
