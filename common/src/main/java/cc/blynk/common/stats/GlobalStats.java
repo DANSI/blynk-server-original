@@ -1,7 +1,5 @@
 package cc.blynk.common.stats;
 
-import com.codahale.metrics.Meter;
-
 import java.util.concurrent.atomic.LongAdder;
 
 /**
