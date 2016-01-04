@@ -1,15 +1,14 @@
 package cc.blynk.server.reporting.average;
 
 import cc.blynk.server.model.enums.PinType;
-import org.apache.commons.io.FileUtils;
+import cc.blynk.server.utils.FileUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cc.blynk.server.utils.ReportingUtil.read;
-import static cc.blynk.server.utils.ReportingUtil.write;
+import static cc.blynk.server.utils.ReportingUtil.*;
 
 /**
  * The Blynk Project.
@@ -36,15 +35,15 @@ public class AverageAggregator {
 
         path = Paths.get(dataFolder, MINUTE_TEMP_FILENAME);
         this.minute = read(path);
-        FileUtils.deleteQuietly(path.toFile());
+        FileUtils.deleteQuietly(path);
 
         path = Paths.get(dataFolder, HOURLY_TEMP_FILENAME);
         this.hourly = read(path);
-        FileUtils.deleteQuietly(path.toFile());
+        FileUtils.deleteQuietly(path);
 
         path = Paths.get(dataFolder, DAILY_TEMP_FILENAME);
         this.daily = read(path);
-        FileUtils.deleteQuietly(path.toFile());
+        FileUtils.deleteQuietly(path);
     }
 
     private static void aggregate(Map<AggregationKey, AggregationValue> map, AggregationKey key, double value) {

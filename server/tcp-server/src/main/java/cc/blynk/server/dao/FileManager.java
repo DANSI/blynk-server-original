@@ -1,9 +1,9 @@
 package cc.blynk.server.dao;
 
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.utils.FileUtils;
 import cc.blynk.server.utils.JsonParser;
 import io.netty.util.CharsetUtil;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -76,7 +76,7 @@ public class FileManager {
 
     public boolean delete(String name) {
         Path file = generateFileName(name);
-        return FileUtils.deleteQuietly(file.toFile());
+        return FileUtils.deleteQuietly(file);
     }
 
     public void overrideUserFile(User user) throws IOException {

@@ -7,8 +7,8 @@ import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.graph.GraphKey;
 import cc.blynk.server.reporting.average.AverageAggregator;
+import cc.blynk.server.utils.FileUtils;
 import cc.blynk.server.utils.ReportingUtil;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -98,9 +98,9 @@ public class ReportingDao {
         Path userDataMinuteFile = Paths.get(dataFolder, username, format(REPORTING_MINUTE_FILE_NAME, dashId, pinType.pintTypeChar, pin));
         Path userDataHourlyFile = Paths.get(dataFolder, username, format(REPORTING_HOURLY_FILE_NAME, dashId, pinType.pintTypeChar, pin));
         Path userDataDailyFile = Paths.get(dataFolder, username, format(REPORTING_DAILY_FILE_NAME, dashId, pinType.pintTypeChar, pin));
-        FileUtils.deleteQuietly(userDataMinuteFile.toFile());
-        FileUtils.deleteQuietly(userDataHourlyFile.toFile());
-        FileUtils.deleteQuietly(userDataDailyFile.toFile());
+        FileUtils.deleteQuietly(userDataMinuteFile);
+        FileUtils.deleteQuietly(userDataHourlyFile);
+        FileUtils.deleteQuietly(userDataDailyFile);
     }
 
     public void process(String username, GraphKey key) {

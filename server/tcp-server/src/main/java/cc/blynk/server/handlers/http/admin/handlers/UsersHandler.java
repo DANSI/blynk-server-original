@@ -112,7 +112,7 @@ public class UsersHandler extends BaseHandler {
             return new Response(HTTP_1_1, NOT_FOUND);
         }
 
-        Session session = sessionDao.userSession.get(new User(name, null));
+        Session session = sessionDao.userSession.get(user);
         session.closeAll();
 
         log.info("User {} successfully removed.", name);
