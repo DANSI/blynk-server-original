@@ -1,10 +1,10 @@
-package cc.blynk.server.handlers.http.admin.handlers;
+package cc.blynk.server.admin.http.logic;
 
 import cc.blynk.common.stats.GlobalStats;
+import cc.blynk.server.admin.helpers.Response;
+import cc.blynk.server.admin.http.response.RequestPerSecondResponse;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
-import cc.blynk.server.handlers.http.admin.response.RequestPerSecondResponse;
-import cc.blynk.server.handlers.http.helpers.Response;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.stats.Stat;
@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static cc.blynk.server.handlers.http.helpers.Response.*;
+import static cc.blynk.server.admin.helpers.Response.*;
 
 /**
  * The Blynk Project.
@@ -25,13 +25,13 @@ import static cc.blynk.server.handlers.http.helpers.Response.*;
  * Created on 09.12.15.
  */
 @Path("/stats")
-public class StatsHandler extends BaseHandler {
+public class StatsLogic extends BaseLogic {
 
     private final GlobalStats stats;
     private final SessionDao sessionDao;
     private final UserDao userDao;
 
-    public StatsHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
+    public StatsLogic(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
         this.userDao = userDao;
         this.sessionDao = sessionDao;
         this.stats = globalStats;

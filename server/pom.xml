@@ -17,6 +17,7 @@
         <module>tcp-server</module>
         <module>reset-pass</module>
         <module>launcher</module>
+        <module>http-admin</module>
     </modules>
 
     <dependencies>

@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.http;
 
-import cc.blynk.server.handlers.http.admin.handlers.FileHandler;
+import cc.blynk.server.handlers.http.logic.FileLogic;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
@@ -11,7 +11,7 @@ import io.netty.handler.codec.http.HttpRequest;
  */
 public class HttpHandler extends BaseHttpAPIHandler {
 
-    private final FileHandler fileHandler = new FileHandler();
+    private final FileLogic fileLogic = new FileLogic();
 
     @Override
     public void process(ChannelHandlerContext ctx, HttpRequest request) {
@@ -19,7 +19,7 @@ public class HttpHandler extends BaseHttpAPIHandler {
         if (request.getUri().equals("/favicon.ico")) {
             request.setUri("/admin/static/favicon.ico");
             try {
-                fileHandler.channelRead(ctx, request);
+                fileLogic.channelRead(ctx, request);
             } catch (Exception e) {
                 log.error("Error handling static file.", e);
             }

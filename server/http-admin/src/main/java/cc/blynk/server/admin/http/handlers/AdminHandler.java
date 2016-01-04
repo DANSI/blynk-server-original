@@ -1,7 +1,7 @@
-package cc.blynk.server.handlers.http.admin;
+package cc.blynk.server.admin.http.handlers;
 
 import cc.blynk.server.handlers.http.BaseHttpAPIHandler;
-import cc.blynk.server.handlers.http.admin.handlers.FileHandler;
+import cc.blynk.server.handlers.http.logic.FileLogic;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
@@ -12,12 +12,12 @@ import io.netty.handler.codec.http.HttpRequest;
  */
 public class AdminHandler extends BaseHttpAPIHandler {
 
-    private final FileHandler fileHandler;
+    private final FileLogic fileHandler;
     private final String rootPath;
 
     public AdminHandler(String rootPath) {
         this.rootPath = rootPath;
-        this.fileHandler = new FileHandler();
+        this.fileHandler = new FileLogic();
     }
 
     @Override

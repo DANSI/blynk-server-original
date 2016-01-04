@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.http.admin.handlers;
+package cc.blynk.server.handlers.http.logic;
 
 import cc.blynk.common.utils.ServerProperties;
 import io.netty.buffer.Unpooled;
@@ -23,7 +23,7 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.12.15.
  */
-public class FileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+public class FileLogic extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";

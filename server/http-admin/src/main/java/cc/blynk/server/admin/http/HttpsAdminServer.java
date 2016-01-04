@@ -1,11 +1,11 @@
-package cc.blynk.server.core.http.admin;
+package cc.blynk.server.admin.http;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.admin.http.handlers.AdminHandler;
+import cc.blynk.server.admin.http.handlers.IpFilterHandler;
+import cc.blynk.server.admin.http.logic.StatsLogic;
+import cc.blynk.server.admin.http.logic.UsersLogic;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.handlers.http.admin.AdminHandler;
-import cc.blynk.server.handlers.http.admin.IpFilterHandler;
-import cc.blynk.server.handlers.http.admin.handlers.StatsHandler;
-import cc.blynk.server.handlers.http.admin.handlers.UsersHandler;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import cc.blynk.server.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
@@ -33,8 +33,8 @@ public class HttpsAdminServer extends BaseServer {
 
         final String rootPath = holder.props.getProperty("admin.rootPath", "/admin");
 
-        HandlerRegistry.register(rootPath, new UsersHandler(holder.userDao, holder.sessionDao, holder.fileManager));
-        HandlerRegistry.register(rootPath, new StatsHandler(holder.userDao, holder.sessionDao, holder.stats));
+        HandlerRegistry.register(rootPath, new UsersLogic(holder.userDao, holder.sessionDao, holder.fileManager));
+        HandlerRegistry.register(rootPath, new StatsLogic(holder.userDao, holder.sessionDao, holder.stats));
 
         final String[] allowedIPsArray = holder.props.getCommaSeparatedList("allowed.administrator.ips");
         final Set<String> allowedIPs;

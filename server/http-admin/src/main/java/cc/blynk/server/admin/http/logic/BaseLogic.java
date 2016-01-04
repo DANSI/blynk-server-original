@@ -1,6 +1,6 @@
-package cc.blynk.server.handlers.http.admin.handlers;
+package cc.blynk.server.admin.http.logic;
 
-import cc.blynk.server.handlers.http.admin.response.NameCountResponse;
+import cc.blynk.server.admin.http.response.NameCountResponse;
 import cc.blynk.server.utils.GenericComparator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-public abstract class BaseHandler {
+public abstract class BaseLogic {
 
-    static final Logger log = LogManager.getLogger(BaseHandler.class);
+    static final Logger log = LogManager.getLogger(BaseLogic.class);
 
     static List<?> sort(List<?> list, String field, String order, boolean nameAsInt) {
         if (list.size() == 0) {
