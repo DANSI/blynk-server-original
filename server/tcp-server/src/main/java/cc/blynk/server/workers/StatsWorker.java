@@ -52,7 +52,7 @@ public class StatsWorker implements Runnable {
         int active = 0;
         int active3 = 0;
         long now = System.currentTimeMillis();
-        for (Map.Entry<User, Session> entry: sessionDao.getUserSession().entrySet()) {
+        for (Map.Entry<User, Session> entry: sessionDao.userSession.entrySet()) {
             Session session = entry.getValue();
 
             if (session.hardwareChannels.size() > 0 && session.appChannels.size() > 0) {

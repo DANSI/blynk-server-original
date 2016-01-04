@@ -48,7 +48,7 @@ public class StatsHandler extends BaseHandler {
     public Response getRequestPerUser(@QueryParam("_sortField") String sortField,
                                           @QueryParam("_sortDir") String sortOrder) {
         List<RequestPerSecondResponse> res = new ArrayList<>();
-        for (Map.Entry<User, Session> entry : sessionDao.getUserSession().entrySet()) {
+        for (Map.Entry<User, Session> entry : sessionDao.userSession.entrySet()) {
             Session session = entry.getValue();
 
             int appReqRate = session.getAppRequestRate();

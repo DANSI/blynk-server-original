@@ -1,12 +1,16 @@
 package cc.blynk.server.handlers.app.main;
 
 import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
+import cc.blynk.server.model.auth.Session;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.ReadTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
  * The Blynk Project.
@@ -28,8 +32,14 @@ public class AppChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        sessionDao.removeAppFromSession(ctx.channel());
-        log.trace("Application channel disconnect. {}", ctx.channel());
+        AppStateHolder state = getAppState(ctx.channel());
+        if (state != null) {
+            Session session = sessionDao.userSession.get(state.user);
+            if (session != null) {
+                session.appChannels.remove(ctx.channel());
+                log.trace("Application channel disconnect. {}", ctx.channel());
+            }
+        }
     }
 
     @Override

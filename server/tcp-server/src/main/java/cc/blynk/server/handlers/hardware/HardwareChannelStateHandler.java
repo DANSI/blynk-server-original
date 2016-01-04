@@ -41,9 +41,15 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        sessionDao.removeHardFromSession(ctx.channel());
-        log.trace("Hardware channel disconnect.");
-        sentOfflineMessage(ctx.channel());
+        HardwareStateHolder state = getHardState(ctx.channel());
+        if (state != null) {
+            Session session = sessionDao.userSession.get(state.user);
+            if (session != null) {
+                session.hardwareChannels.remove(ctx.channel());
+                log.trace("Hardware channel disconnect.");
+                sentOfflineMessage(ctx.channel());
+            }
+        }
     }
 
     @Override

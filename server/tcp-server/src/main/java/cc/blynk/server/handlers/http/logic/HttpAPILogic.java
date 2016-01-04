@@ -132,7 +132,7 @@ public class HttpAPILogic {
         String body = widget.makeHardwareBody();
 
         if (body != null) {
-            Session session = sessionDao.getUserSession().get(user);
+            Session session = sessionDao.userSession.get(user);
             if (session == null) {
                 log.error("No session for user {}.", user.name);
                 return Response.ok();
