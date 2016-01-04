@@ -6,9 +6,9 @@ import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.utils.ArrayUtil;
 import cc.blynk.server.utils.JsonParser;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,7 +60,7 @@ public class CreateDashLogic {
             }
         }
 
-        user.profile.dashBoards = ArrayUtils.add(user.profile.dashBoards, newDash);
+        user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newDash);
         user.lastModifiedTs = System.currentTimeMillis();
 
         ctx.writeAndFlush(produce(message.id, OK));

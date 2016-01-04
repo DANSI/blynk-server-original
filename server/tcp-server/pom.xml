@@ -71,12 +71,6 @@
             <version>2.5.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.4</version>
-        </dependency>
-
         <!-- Needed for ASync log4j2 -->
         <dependency>
             <groupId>com.lmax</groupId>
@@ -115,6 +109,13 @@
             <groupId>cc.blynk.server.notifications</groupId>
             <artifactId>twitter</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

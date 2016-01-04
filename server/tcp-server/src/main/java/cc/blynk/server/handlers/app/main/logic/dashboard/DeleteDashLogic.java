@@ -3,8 +3,8 @@ package cc.blynk.server.handlers.app.main.logic.dashboard;
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,7 +28,7 @@ public class DeleteDashLogic {
 
         log.info("Deleting dashboard {}.", dashId);
 
-        user.profile.dashBoards = ArrayUtils.remove(user.profile.dashBoards, index);
+        user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
         user.lastModifiedTs = System.currentTimeMillis();
 
         ctx.writeAndFlush(produce(message.id, OK));
