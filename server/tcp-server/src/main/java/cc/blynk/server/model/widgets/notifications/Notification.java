@@ -3,6 +3,7 @@ package cc.blynk.server.model.widgets.notifications;
 import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.widgets.Widget;
+import cc.blynk.server.notifications.push.enums.Priority;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package cc.blynk.server.notifications;
+package cc.blynk.server.notifications.push;
 
 /**
  * The Blynk Project.
@@ -7,10 +7,10 @@ package cc.blynk.server.notifications;
  */
 public class GCMResponseMessage {
 
-    int success;
+    public int success;
 
-    int failure;
+    public int failure;
 
-    GCMResult[] results;
+    public GCMResult[] results;
 
 }

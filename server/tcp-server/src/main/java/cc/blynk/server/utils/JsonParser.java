@@ -4,9 +4,6 @@ import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.notifications.AndroidGCMMessage;
-import cc.blynk.server.notifications.GCMResponseMessage;
-import cc.blynk.server.notifications.IOSGCMMessage;
 import cc.blynk.server.workers.Stat;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -36,13 +33,11 @@ public final class JsonParser {
     private static final ObjectReader userReader = mapper.reader(User.class);
     private static final ObjectReader profileReader = mapper.reader(Profile.class);
     private static final ObjectReader dashboardReader = mapper.reader(DashBoard.class);
-    private static final ObjectReader gcmResponseReader = mapper.reader(GCMResponseMessage.class);
 
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
     private static final ObjectWriter dashboardWriter = mapper.writerFor(DashBoard.class);
-    private static final ObjectWriter gcmWriter = mapper.writerFor(AndroidGCMMessage.class);
-    private static final ObjectWriter iOSGCMWriter = mapper.writerFor(IOSGCMMessage.class);
+
     private static final ObjectWriter statWriter = init().writerWithDefaultPrettyPrinter().forType(Stat.class);
 
     private static ObjectMapper init() {
@@ -56,14 +51,6 @@ public final class JsonParser {
 
     public static String toJson(User user) {
         return toJson(userWriter, user);
-    }
-
-    public static String toJson(AndroidGCMMessage message) {
-        return toJson(gcmWriter, message);
-    }
-
-    public static String toJson(IOSGCMMessage message) {
-        return toJson(iOSGCMWriter, message);
     }
 
     public static String toJson(Profile profile) {
@@ -107,10 +94,6 @@ public final class JsonParser {
 
     public static User parseUserFromFile(File userFile) throws IOException {
         return userReader.readValue(userFile);
-    }
-
-    public static GCMResponseMessage parseGCMResponse(String reader) throws IOException {
-        return gcmResponseReader.readValue(reader);
     }
 
     public static DashBoard parseDashboard(String reader, int id) {

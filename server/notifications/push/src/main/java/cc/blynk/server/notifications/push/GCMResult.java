@@ -1,4 +1,4 @@
-package cc.blynk.server.notifications;
+package cc.blynk.server.notifications.push;
 
 /**
  * The Blynk Project.
@@ -7,6 +7,6 @@ package cc.blynk.server.notifications;
  */
 public class GCMResult {
 
-    String error;
+    public String error;
 
 }

@@ -1,7 +1,8 @@
-package cc.blynk.server.notifications;
+package cc.blynk.server.notifications.push;
 
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.utils.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -25,6 +26,7 @@ public class GCMWrapper {
     private final String API_KEY;
     private final CloseableHttpClient httpclient;
     private final URI gcmURI;
+    private final ObjectReader gcmResponseReader = new ObjectMapper().reader(GCMResponseMessage.class);
 
     public GCMWrapper() {
         ServerProperties props = new ServerProperties(filePropertiesName);
@@ -45,7 +47,7 @@ public class GCMWrapper {
 
         HttpPost httpPost = new HttpPost(gcmURI);
         httpPost.setHeader("Authorization", API_KEY);
-        httpPost.setEntity(new StringEntity(messageBase.toString(), ContentType.APPLICATION_JSON));
+        httpPost.setEntity(new StringEntity(messageBase.toJson(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(httpPost)) {
             HttpEntity entity = response.getEntity();
@@ -54,7 +56,7 @@ public class GCMWrapper {
                 EntityUtils.consume(entity);
                 throw new Exception(errorMsg);
             } else {
-                GCMResponseMessage gcmResponseMessage = JsonParser.parseGCMResponse(errorMsg);
+                GCMResponseMessage gcmResponseMessage = gcmResponseReader.readValue(errorMsg);
                 if (gcmResponseMessage.failure == 1) {
                     if (gcmResponseMessage.results != null && gcmResponseMessage.results.length > 0) {
                         throw new Exception("Error sending push. Problem : " + gcmResponseMessage.results[0].error);
@@ -67,4 +69,5 @@ public class GCMWrapper {
             httpPost.releaseConnection();
         }
     }
+
 }

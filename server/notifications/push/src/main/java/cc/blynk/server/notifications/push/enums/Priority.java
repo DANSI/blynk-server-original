@@ -1,4 +1,4 @@
-package cc.blynk.server.model.widgets.notifications;
+package cc.blynk.server.notifications.push.enums;
 
 /**
  * The Blynk Project.

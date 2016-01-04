@@ -7,7 +7,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>mail-notifications</artifactId>
+    <artifactId>email</artifactId>
 
     <dependencies>
 
