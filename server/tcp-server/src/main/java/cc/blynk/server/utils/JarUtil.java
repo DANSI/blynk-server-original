@@ -1,7 +1,6 @@
 package cc.blynk.server.utils;
 
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.ServerLauncher;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -33,7 +32,7 @@ public class JarUtil {
         List<String> staticResources = find(staticFolder);
 
         for (String staticFile : staticResources) {
-            try (InputStream is = ServerLauncher.class.getResourceAsStream("/" + staticFile)) {
+            try (InputStream is = JarUtil.class.getResourceAsStream("/" + staticFile)) {
                 Path newStaticFile = ServerProperties.getFileInCurrentDir(staticFile);
 
                 Files.deleteIfExists(newStaticFile);
@@ -52,7 +51,7 @@ public class JarUtil {
      * @throws Exception
      */
     public static List<String> find(String staticResourcesFolder) throws Exception {
-        CodeSource src = ServerLauncher.class.getProtectionDomain().getCodeSource();
+        CodeSource src = JarUtil.class.getProtectionDomain().getCodeSource();
         List<String> staticResources = new ArrayList<>();
 
         if (src != null) {

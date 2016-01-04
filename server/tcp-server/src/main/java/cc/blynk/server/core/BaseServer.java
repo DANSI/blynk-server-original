@@ -1,7 +1,6 @@
 package cc.blynk.server.core;
 
 import cc.blynk.server.TransportTypeHolder;
-import cc.blynk.server.core.hardware.HardwareServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -20,7 +19,7 @@ import org.apache.logging.log4j.Logger;
  */
 public abstract class BaseServer {
 
-    protected static final Logger log = LogManager.getLogger(HardwareServer.class);
+    protected static final Logger log = LogManager.getLogger(BaseServer.class);
     protected final int port;
     private final TransportTypeHolder transportTypeHolder;
     private EventLoopGroup bossGroup;
