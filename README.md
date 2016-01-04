@@ -100,25 +100,51 @@ save and exit.
 
 + Change your ethernet sketch from
 
-        Blynk.begin(auth);
-        to
-        Blynk.begin(auth, "your_host");
-        or to 
-        Blynk.begin(auth, IPAddress(xxx,xxx,xxx,xxx));
+    ```
+    Blynk.begin(auth);
+    ```
+    
+    to
+    
+    ```
+    Blynk.begin(auth, "your_host");
+    ```
+    
+    or to
+    
+    ```
+    Blynk.begin(auth, IPAddress(xxx,xxx,xxx,xxx));
+    ```
         
 + Change your WIFI sketch from
         
-        Blynk.begin(auth, SSID, pass));
-        to
-        Blynk.begin(auth, SSID, pass, "your_host");
-        or to
-        Blynk.begin(auth, SSID, pass, IPAddress(XXX,XXX,XXX,XXX));
+    ```
+    Blynk.begin(auth, SSID, pass));
+    ```
+   
+    to
+    
+    ```
+    Blynk.begin(auth, SSID, pass, "your_host");
+    ```
+    
+    or to
+    
+    ```
+    Blynk.begin(auth, SSID, pass, IPAddress(XXX,XXX,XXX,XXX));
+    ```
         
 + Change your rasp PI javascript from
 
-        var blynk = new Blynk.Blynk(AUTH, options = {connector : new Blynk.TcpClient()});
-        to
-        var blynk = new Blynk.Blynk(AUTH, options= {addr:"xxx.xxx.xxx.xxx"});
+    ```
+    var blynk = new Blynk.Blynk(AUTH, options = {connector : new Blynk.TcpClient()});
+    ```
+    
+    to
+    
+    ```
+    var blynk = new Blynk.Blynk(AUTH, options= {addr:"xxx.xxx.xxx.xxx"});
+    ```
         
 + or in case of USB when running blynk-ser.sh provide '-s' option with address of your local server
 
