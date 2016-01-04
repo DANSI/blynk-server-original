@@ -1,10 +1,10 @@
 package cc.blynk.server.handlers.http.rest;
 
 import cc.blynk.server.handlers.http.helpers.Response;
+import cc.blynk.server.utils.UriTemplate;
 import io.netty.handler.codec.http.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.glassfish.jersey.uri.UriTemplate;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
@@ -15,9 +15,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The Blynk Project.
@@ -82,17 +80,16 @@ public class HandlerRegistry {
 
     public static FullHttpResponse process(HttpRequest req) {
         URIDecoder uriDecoder = new URIDecoder(req.getUri());
-        Map<String, String> pathData = new HashMap<>();
         for (HandlerHolder handlerHolder : processors) {
             if (handlerHolder.httpMethod == req.getMethod() &&
-                    handlerHolder.uriTemplate.match(uriDecoder.path(), pathData)) {
+                    handlerHolder.uriTemplate.matches(uriDecoder.path())) {
                 if (req.getMethod() == HttpMethod.PUT || req.getMethod() == HttpMethod.POST) {
                     if (req instanceof HttpContent) {
                         uriDecoder.bodyData = ((HttpContent) req).content();
                         uriDecoder.contentType = req.headers().get(HttpHeaders.Names.CONTENT_TYPE);
                     }
                 }
-                uriDecoder.pathData = pathData;
+                uriDecoder.pathData = handlerHolder.uriTemplate.match(uriDecoder.path());
 
                 return invoke(handlerHolder, uriDecoder);
             }

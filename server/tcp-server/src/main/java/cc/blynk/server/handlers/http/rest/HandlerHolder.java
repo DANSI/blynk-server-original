@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.http.rest;
 
+import cc.blynk.server.utils.UriTemplate;
 import io.netty.handler.codec.http.HttpMethod;
-import org.glassfish.jersey.uri.UriTemplate;
 
 import javax.ws.rs.*;
 import java.lang.reflect.Method;
