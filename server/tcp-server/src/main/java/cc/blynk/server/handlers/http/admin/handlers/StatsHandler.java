@@ -7,7 +7,7 @@ import cc.blynk.server.handlers.http.admin.response.RequestPerSecondResponse;
 import cc.blynk.server.handlers.http.helpers.Response;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.workers.StatsWorker;
+import cc.blynk.server.stats.Stat;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -40,7 +40,7 @@ public class StatsHandler extends BaseHandler {
     @GET
     @Path("/realtime")
     public Response getReatime() {
-       return ok(Collections.singletonList(StatsWorker.calcStats(sessionDao, userDao, stats, false)));
+       return ok(Collections.singletonList(Stat.calcStats(sessionDao, userDao, stats, false)));
     }
 
     @GET
@@ -65,7 +65,7 @@ public class StatsHandler extends BaseHandler {
     @Path("/messages")
     public Response getMessages(@QueryParam("_sortField") String sortField,
                                     @QueryParam("_sortDir") String sortOrder) {
-        return ok(sort(convertMapToPair(StatsWorker.calcStats(sessionDao, userDao, stats, false).messages), sortField, sortOrder));
+        return ok(sort(convertMapToPair(Stat.calcStats(sessionDao, userDao, stats, false).messages), sortField, sortOrder));
     }
 
     @GET

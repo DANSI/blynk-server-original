@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 
-import static cc.blynk.server.dao.ReportingDao.generateFilename;
+import static cc.blynk.server.dao.ReportingDao.*;
 
 /**
  * The Blynk Project.

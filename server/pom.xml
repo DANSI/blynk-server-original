@@ -16,6 +16,7 @@
         <module>notifications</module>
         <module>tcp-server</module>
         <module>reset-pass</module>
+        <module>launcher</module>
     </modules>
 
     <dependencies>

@@ -4,7 +4,6 @@ import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.workers.Stat;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -38,9 +37,7 @@ public final class JsonParser {
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
     private static final ObjectWriter dashboardWriter = mapper.writerFor(DashBoard.class);
 
-    private static final ObjectWriter statWriter = init().writerWithDefaultPrettyPrinter().forType(Stat.class);
-
-    private static ObjectMapper init() {
+    public static ObjectMapper init() {
         return new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL)
@@ -61,11 +58,7 @@ public final class JsonParser {
         return toJson(dashboardWriter, dashBoard);
     }
 
-    public static String toJson(Stat stat) {
-        return toJson(statWriter, stat);
-    }
-
-    private static String toJson(ObjectWriter writer, Object o) {
+    public static String toJson(ObjectWriter writer, Object o) {
         try {
             return writer.writeValueAsString(o);
         } catch (Exception e) {

@@ -1,16 +1,16 @@
-package cc.blynk.server;
+package cc.blynk.server.launcher;
 
 import cc.blynk.common.utils.Config;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.reporting.average.AverageAggregator;
+import cc.blynk.server.utils.ReportingUtil;
 import cc.blynk.server.workers.*;
 import cc.blynk.server.workers.timer.TimerWorker;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import static cc.blynk.server.utils.ReportingUtil.getReportingFolder;
 
 /**
  * Launches a bunch of separate jobs/schedulers responsible for different aspects of business logic
@@ -26,7 +26,7 @@ public class JobLauncher {
 
         long startDelay;
 
-        StorageWorker storageWorker = new StorageWorker(holder.averageAggregator, getReportingFolder(holder.props.getProperty("data.folder")));
+        StorageWorker storageWorker = new StorageWorker(holder.averageAggregator, ReportingUtil.getReportingFolder(holder.props.getProperty("data.folder")));
 
         //to start at the beggining of an minute
         startDelay = AverageAggregator.MINUTE - (System.currentTimeMillis() % AverageAggregator.MINUTE);

@@ -1,4 +1,4 @@
-package cc.blynk.server.workers;
+package cc.blynk.server.stats;
 
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.stats.GlobalStats;
@@ -6,34 +6,36 @@ import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import cc.blynk.server.utils.JsonParser;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
+import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
- * Worker responsible for logging current request rate,
- * methods invocation statistic and active channels count.
- *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
- * Created on 18.04.15.
+ * Created on 19.07.15.
  */
-public class StatsWorker implements Runnable {
+public class Stat {
 
-    private static final Logger log = LogManager.getLogger(StatsWorker.class);
     private final static long ONE_DAY = 24 * 60 * 60 * 1000;
     private final static long THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
-    private final GlobalStats stats;
-    private final SessionDao sessionDao;
-    private final UserDao userDao;
 
-    public StatsWorker(GlobalStats stats, SessionDao sessionDao, UserDao userDao) {
-        this.stats = stats;
-        this.sessionDao = sessionDao;
-        this.userDao = userDao;
-    }
+    private static final ObjectWriter statWriter = JsonParser.init().writerWithDefaultPrettyPrinter().forType(Stat.class);
+
+    public final Map<String, Long> messages = new HashMap<>();
+    //2015-07-20T20:15:03.954+03:00
+    String ts = OffsetDateTime.now().toString();
+    long oneMinRate;
+    long total;
+    long active;
+    long active3;
+    long connected;
+    long onlineApps;
+    long onlineHards;
 
     public static Stat calcStats(SessionDao sessionDao, UserDao userDao, GlobalStats localStats, boolean reset) {
         Stat stat = new Stat();
@@ -83,11 +85,7 @@ public class StatsWorker implements Runnable {
         return stat;
     }
 
-    @Override
-    public void run() {
-        Stat stat = calcStats(sessionDao, userDao, stats, true);
-        log.info(stat.toString());
+    public String toJson() {
+        return JsonParser.toJson(statWriter, this);
     }
-
 }
-
