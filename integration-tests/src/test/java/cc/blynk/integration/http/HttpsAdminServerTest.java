@@ -85,7 +85,7 @@ public class HttpsAdminServerTest extends IntegrationBase {
     @Test
     public void testChangePassNoUser() throws Exception {
         String testUser = "dima@dima.ua";
-        HttpPut request = new HttpPut(httpsServerUrl + testUser + "/changePass");
+        HttpPut request = new HttpPut(httpsServerUrl + "changePass/" + testUser);
         request.setEntity(new StringEntity(new ResponseUserEntity("123").toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -96,7 +96,7 @@ public class HttpsAdminServerTest extends IntegrationBase {
     @Test
     public void testChangePassCorrect() throws Exception {
         String testUser = "dmitriy@blynk.cc";
-        HttpPut request = new HttpPut(httpsServerUrl + testUser + "/changePass");
+        HttpPut request = new HttpPut(httpsServerUrl + "changePass/" + testUser);
         request.setEntity(new StringEntity(new ResponseUserEntity("123").toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {

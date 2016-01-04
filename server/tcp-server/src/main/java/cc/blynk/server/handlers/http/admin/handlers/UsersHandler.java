@@ -84,7 +84,7 @@ public class UsersHandler extends BaseHandler {
 
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Path("/{name}/changePass")
+    @Path("/changePass/{name}")
     public Response updateUser(@PathParam("name") String name,
                                UserPassPojo userPassPojo) {
 
