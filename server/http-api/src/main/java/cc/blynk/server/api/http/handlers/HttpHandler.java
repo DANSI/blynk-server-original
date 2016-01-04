@@ -1,5 +1,6 @@
-package cc.blynk.server.handlers.http;
+package cc.blynk.server.api.http.handlers;
 
+import cc.blynk.server.handlers.http.BaseHttpAPIHandler;
 import cc.blynk.server.handlers.http.logic.FileLogic;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;

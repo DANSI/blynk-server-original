@@ -1,9 +1,9 @@
-package cc.blynk.server.core.http;
+package cc.blynk.server.api.http;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.handlers.HttpHandler;
+import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.handlers.http.HttpHandler;
-import cc.blynk.server.handlers.http.logic.HttpAPILogic;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

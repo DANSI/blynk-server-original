@@ -24,10 +24,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cc.blynk.server.dao.ReportingDao.generateFilename;
-import static cc.blynk.server.utils.ReportingUtil.getReportingFolder;
+import static cc.blynk.server.dao.ReportingDao.*;
+import static cc.blynk.server.utils.ReportingUtil.*;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.

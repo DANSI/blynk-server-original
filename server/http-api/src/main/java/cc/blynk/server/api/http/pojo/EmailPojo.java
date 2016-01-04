@@ -1,4 +1,4 @@
-package cc.blynk.server.admin.http.pojo;
+package cc.blynk.server.api.http.pojo;
 
 /**
  * The Blynk Project.

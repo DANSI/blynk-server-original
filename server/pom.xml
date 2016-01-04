@@ -18,6 +18,7 @@
         <module>reset-pass</module>
         <module>launcher</module>
         <module>http-admin</module>
+        <module>http-api</module>
     </modules>
 
     <dependencies>

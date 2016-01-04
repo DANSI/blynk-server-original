@@ -1,9 +1,9 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.IntegrationBase;
-import cc.blynk.server.admin.http.pojo.EmailPojo;
-import cc.blynk.server.admin.http.pojo.PushMessagePojo;
-import cc.blynk.server.core.http.HttpAPIServer;
+import cc.blynk.server.api.http.HttpAPIServer;
+import cc.blynk.server.api.http.pojo.EmailPojo;
+import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;

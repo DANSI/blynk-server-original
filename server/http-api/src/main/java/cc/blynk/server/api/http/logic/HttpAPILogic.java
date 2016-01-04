@@ -1,10 +1,10 @@
-package cc.blynk.server.handlers.http.logic;
+package cc.blynk.server.api.http.logic;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.admin.helpers.Response;
-import cc.blynk.server.admin.http.pojo.EmailPojo;
-import cc.blynk.server.admin.http.pojo.PushMessagePojo;
+import cc.blynk.server.api.http.pojo.EmailPojo;
+import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.model.DashBoard;
