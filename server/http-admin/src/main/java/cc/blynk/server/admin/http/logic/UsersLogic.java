@@ -2,7 +2,6 @@ package cc.blynk.server.admin.http.logic;
 
 import cc.blynk.common.utils.SHA256Util;
 import cc.blynk.server.admin.helpers.Response;
-import cc.blynk.server.admin.http.Filter;
 import cc.blynk.server.admin.http.pojo.UserPassPojo;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionDao;

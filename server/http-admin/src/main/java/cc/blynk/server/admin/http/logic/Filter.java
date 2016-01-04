@@ -1,4 +1,4 @@
-package cc.blynk.server.admin.http;
+package cc.blynk.server.admin.http.logic;
 
 /**
  * The Blynk Project.
