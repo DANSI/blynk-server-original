@@ -9,7 +9,7 @@ import cc.blynk.server.handlers.app.main.auth.AppLoginHandler;
 import cc.blynk.server.handlers.app.main.auth.RegisterHandler;
 import cc.blynk.server.handlers.app.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
-import cc.blynk.server.utils.AppSslUtil;
+import cc.blynk.utils.AppSslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;

@@ -1,4 +1,4 @@
-package cc.blynk.server.utils;
+package cc.blynk.utils;
 
 /**
  * The Blynk Project.

@@ -8,11 +8,9 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import static cc.blynk.server.reporting.average.AverageAggregator.DAY;
-import static cc.blynk.server.reporting.average.AverageAggregator.HOUR;
-import static cc.blynk.server.utils.ReportingUtil.getReportingFolder;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static cc.blynk.server.reporting.average.AverageAggregator.*;
+import static cc.blynk.utils.ReportingUtil.*;
+import static org.junit.Assert.*;
 
 /**
  * The Blynk Project.

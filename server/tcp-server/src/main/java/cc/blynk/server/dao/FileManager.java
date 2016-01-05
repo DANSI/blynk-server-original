@@ -1,8 +1,8 @@
 package cc.blynk.server.dao;
 
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.utils.FileUtils;
-import cc.blynk.server.utils.JsonParser;
+import cc.blynk.utils.FileUtils;
+import cc.blynk.utils.JsonParser;
 import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

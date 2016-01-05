@@ -1,4 +1,4 @@
-package cc.blynk.server.utils;
+package cc.blynk.utils;
 
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.application.AppSslContext;
@@ -10,7 +10,7 @@ import javax.net.ssl.SSLException;
 import java.io.File;
 import java.security.cert.CertificateException;
 
-import static cc.blynk.server.utils.SslUtil.*;
+import static cc.blynk.utils.SslUtil.*;
 
 /**
  * The Blynk Project.

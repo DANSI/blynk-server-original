@@ -1,7 +1,7 @@
 package cc.blynk.server.admin.http.logic;
 
 import cc.blynk.server.admin.http.response.NameCountResponse;
-import cc.blynk.server.utils.GenericComparator;
+import cc.blynk.utils.GenericComparator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

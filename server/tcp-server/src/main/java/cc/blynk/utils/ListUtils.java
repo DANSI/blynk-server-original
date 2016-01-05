@@ -1,4 +1,4 @@
-package cc.blynk.server.utils;
+package cc.blynk.utils;
 
 import java.util.Collection;
 import java.util.List;

@@ -1,4 +1,4 @@
-package cc.blynk.server.utils;
+package cc.blynk.utils;
 
 import cc.blynk.server.reporting.average.AggregationKey;
 import cc.blynk.server.reporting.average.AggregationValue;

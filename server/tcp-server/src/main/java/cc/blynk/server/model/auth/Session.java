@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Set;
 
 import static cc.blynk.common.model.messages.MessageFactory.*;
-import static cc.blynk.server.utils.StateHolderUtil.*;
+import static cc.blynk.utils.StateHolderUtil.*;
 
 /**
  * The Blynk Project.

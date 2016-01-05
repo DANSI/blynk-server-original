@@ -7,8 +7,8 @@ import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.graph.GraphKey;
 import cc.blynk.server.reporting.GraphPinRequest;
 import cc.blynk.server.reporting.average.AverageAggregator;
-import cc.blynk.server.utils.FileUtils;
-import cc.blynk.server.utils.ReportingUtil;
+import cc.blynk.utils.FileUtils;
+import cc.blynk.utils.ReportingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -21,7 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-import static cc.blynk.server.utils.ReportingUtil.*;
+import static cc.blynk.utils.ReportingUtil.*;
 import static java.lang.String.*;
 
 /**

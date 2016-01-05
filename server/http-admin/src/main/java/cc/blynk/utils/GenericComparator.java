@@ -1,4 +1,4 @@
-package cc.blynk.server.utils;
+package cc.blynk.utils;
 
 import java.lang.reflect.Field;
 import java.util.Comparator;

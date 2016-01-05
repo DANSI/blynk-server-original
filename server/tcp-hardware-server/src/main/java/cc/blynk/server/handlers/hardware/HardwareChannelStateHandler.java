@@ -17,7 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.server.utils.StateHolderUtil.*;
+import static cc.blynk.utils.StateHolderUtil.*;
 
 /**
  * The Blynk Project.

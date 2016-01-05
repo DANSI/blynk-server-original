@@ -4,7 +4,7 @@ import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.utils.ByteUtils;
+import cc.blynk.utils.ByteUtils;
 import io.netty.channel.ChannelHandlerContext;
 
 /**

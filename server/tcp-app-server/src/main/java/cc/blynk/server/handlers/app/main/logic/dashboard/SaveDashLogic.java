@@ -7,7 +7,7 @@ import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.notifications.Notification;
-import cc.blynk.server.utils.JsonParser;
+import cc.blynk.utils.JsonParser;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

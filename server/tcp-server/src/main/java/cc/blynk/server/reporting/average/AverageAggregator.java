@@ -1,14 +1,14 @@
 package cc.blynk.server.reporting.average;
 
 import cc.blynk.server.model.enums.PinType;
-import cc.blynk.server.utils.FileUtils;
+import cc.blynk.utils.FileUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cc.blynk.server.utils.ReportingUtil.*;
+import static cc.blynk.utils.ReportingUtil.*;
 
 /**
  * The Blynk Project.

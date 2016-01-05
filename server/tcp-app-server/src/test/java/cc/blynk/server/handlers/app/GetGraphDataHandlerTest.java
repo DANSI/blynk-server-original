@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.app;
 
 import cc.blynk.server.model.graph.GraphKey;
-import cc.blynk.server.utils.ByteUtils;
+import cc.blynk.utils.ByteUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.zip.InflaterInputStream;
 
-import static cc.blynk.server.utils.ByteUtils.*;
+import static cc.blynk.utils.ByteUtils.*;
 import static org.junit.Assert.*;
 
 /**

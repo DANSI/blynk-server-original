@@ -6,7 +6,7 @@ import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.utils.JsonParser;
+import cc.blynk.utils.JsonParser;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.time.OffsetDateTime;

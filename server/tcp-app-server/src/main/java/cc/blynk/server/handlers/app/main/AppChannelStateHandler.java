@@ -10,7 +10,7 @@ import io.netty.handler.timeout.ReadTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.utils.AppStateHolderUtil.*;
+import static cc.blynk.utils.AppStateHolderUtil.*;
 
 /**
  * The Blynk Project.

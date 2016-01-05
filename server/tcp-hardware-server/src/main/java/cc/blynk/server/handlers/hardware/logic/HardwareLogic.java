@@ -12,7 +12,7 @@ import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.graph.GraphKey;
-import cc.blynk.server.utils.PinUtil;
+import cc.blynk.utils.PinUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.*;
-import static cc.blynk.server.utils.StateHolderUtil.*;
+import static cc.blynk.utils.StateHolderUtil.*;
 
 /**
  * Bridge handler responsible for forwarding messages between different hardware via Blynk Server.

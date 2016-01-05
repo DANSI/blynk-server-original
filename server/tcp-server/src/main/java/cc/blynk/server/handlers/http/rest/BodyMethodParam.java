@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.http.rest;
 
-import cc.blynk.server.utils.JsonParser;
+import cc.blynk.utils.JsonParser;
 import io.netty.util.CharsetUtil;
 
 import javax.ws.rs.core.MediaType;

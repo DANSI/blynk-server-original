@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.*;
-import static cc.blynk.server.utils.ByteUtils.*;
+import static cc.blynk.utils.ByteUtils.*;
 
 /**
  * The Blynk Project.

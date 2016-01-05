@@ -11,7 +11,7 @@ import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.reporting.average.AverageAggregator;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 
-import static cc.blynk.server.utils.ReportingUtil.getReportingFolder;
+import static cc.blynk.utils.ReportingUtil.*;
 
 /**
  * Just a holder for all necessary objects for server instance creation.

@@ -1,4 +1,4 @@
-package cc.blynk.server.utils;
+package cc.blynk.utils;
 
 import cc.blynk.server.handlers.app.main.AppHandler;
 import cc.blynk.server.handlers.app.main.auth.AppStateHolder;

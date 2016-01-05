@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.*;
-import static cc.blynk.server.utils.AppStateHolderUtil.*;
+import static cc.blynk.utils.AppStateHolderUtil.*;
 
 /**
  * The Blynk Project.

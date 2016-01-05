@@ -2,7 +2,7 @@ package cc.blynk.server.model.auth;
 
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.Profile;
-import cc.blynk.server.utils.JsonParser;
+import cc.blynk.utils.JsonParser;
 
 import java.io.Serializable;
 import java.util.HashMap;

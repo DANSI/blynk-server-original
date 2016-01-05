@@ -14,7 +14,7 @@ import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.handlers.app.main.logic.reporting.GraphPinRequestData;
 import cc.blynk.server.reporting.GraphPinRequest;
-import cc.blynk.server.utils.ByteUtils;
+import cc.blynk.utils.ByteUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import org.apache.commons.io.FileUtils;

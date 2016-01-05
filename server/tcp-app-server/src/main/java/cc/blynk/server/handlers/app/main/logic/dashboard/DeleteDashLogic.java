@@ -3,7 +3,7 @@ package cc.blynk.server.handlers.app.main.logic.dashboard;
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.utils.ArrayUtil;
+import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

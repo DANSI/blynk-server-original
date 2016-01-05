@@ -7,7 +7,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareLoginHandler;
-import cc.blynk.server.utils.SslUtil;
+import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;

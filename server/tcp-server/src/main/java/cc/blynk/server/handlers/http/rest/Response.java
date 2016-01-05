@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.http.rest;
 
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.utils.JsonParser;
+import cc.blynk.utils.JsonParser;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -10,7 +10,7 @@ import io.netty.handler.codec.http.HttpVersion;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
-import static cc.blynk.server.utils.ListUtils.*;
+import static cc.blynk.utils.ListUtils.*;
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.*;

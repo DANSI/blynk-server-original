@@ -7,7 +7,7 @@ import cc.blynk.server.admin.http.logic.StatsLogic;
 import cc.blynk.server.admin.http.logic.UsersLogic;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
-import cc.blynk.server.utils.SslUtil;
+import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;

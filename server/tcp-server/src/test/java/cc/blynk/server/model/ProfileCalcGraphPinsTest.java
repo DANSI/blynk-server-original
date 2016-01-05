@@ -2,7 +2,7 @@ package cc.blynk.server.model;
 
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.graph.GraphKey;
-import cc.blynk.server.utils.JsonParser;
+import cc.blynk.utils.JsonParser;
 import org.junit.Test;
 
 import java.io.InputStream;

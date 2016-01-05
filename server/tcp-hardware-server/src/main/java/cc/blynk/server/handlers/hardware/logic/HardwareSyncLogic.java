@@ -9,7 +9,7 @@ import cc.blynk.server.model.Pin;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.controls.SyncWidget;
-import cc.blynk.server.utils.PinUtil;
+import cc.blynk.utils.PinUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.time.Instant;

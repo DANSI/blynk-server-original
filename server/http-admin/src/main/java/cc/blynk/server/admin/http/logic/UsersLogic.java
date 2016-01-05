@@ -8,7 +8,7 @@ import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.http.rest.Response;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.utils.JsonParser;
+import cc.blynk.utils.JsonParser;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

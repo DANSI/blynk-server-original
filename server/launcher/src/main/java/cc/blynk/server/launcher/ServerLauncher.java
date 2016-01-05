@@ -9,8 +9,8 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import cc.blynk.server.core.hardware.ssl.HardwareSSLServer;
-import cc.blynk.server.utils.JarUtil;
-import cc.blynk.server.utils.LoggerUtil;
+import cc.blynk.utils.JarUtil;
+import cc.blynk.utils.LoggerUtil;
 
 import java.io.File;
 import java.net.BindException;

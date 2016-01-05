@@ -4,7 +4,7 @@ import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.widgets.controls.Button;
 import cc.blynk.server.model.widgets.controls.RGB;
-import cc.blynk.server.utils.JsonParser;
+import cc.blynk.utils.JsonParser;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
 

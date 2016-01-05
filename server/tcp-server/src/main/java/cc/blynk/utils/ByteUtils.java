@@ -1,4 +1,4 @@
-package cc.blynk.server.utils;
+package cc.blynk.utils;
 
 import cc.blynk.server.exceptions.GetGraphDataException;
 import cc.blynk.server.exceptions.NoDataException;
