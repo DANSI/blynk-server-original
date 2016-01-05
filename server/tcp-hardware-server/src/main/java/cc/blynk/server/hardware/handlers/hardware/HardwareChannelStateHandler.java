@@ -71,7 +71,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                     for (Channel appChannel : session.appChannels) {
                         appChannel.writeAndFlush(
                                 new ResponseWithBodyMessage(
-                                        0, Command.RESPONSE, DEVICE_WENT_OFFLINE_2, state.dashId
+                                        0, Command.RESPONSE, DEVICE_WENT_OFFLINE, state.dashId
                                 )
                         );
                     }

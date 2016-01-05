@@ -43,7 +43,7 @@ public class ClientMessageDecoder extends ByteToMessageDecoder implements Defaul
         MessageBase message;
         if (command == Command.RESPONSE) {
             int responseCode = in.readUnsignedShort();
-            if (responseCode == Response.DEVICE_WENT_OFFLINE_2) {
+            if (responseCode == Response.DEVICE_WENT_OFFLINE) {
                 message = new ResponseWithBodyMessage(messageId, Command.RESPONSE, responseCode, in.readInt());
             } else {
                 message = produce(messageId, responseCode);
