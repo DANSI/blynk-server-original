@@ -88,7 +88,7 @@ public class HandlerRegistry {
                         uriDecoder.contentType = req.headers().get(HttpHeaders.Names.CONTENT_TYPE);
                     }
                 }
-                uriDecoder.pathData = handlerHolder.uriTemplate.match(uriDecoder.path());
+                uriDecoder.pathData = handlerHolder.uriTemplate.extractParameters();
 
                 return invoke(handlerHolder, uriDecoder);
             }

@@ -1,164 +1,87 @@
 package cc.blynk.utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Copy/paste from
- * https://github.com/spring-projects/spring-framework/blob/master/spring-web/src/main/java/org/springframework/web/util/UriTemplate.java
- */
 public class UriTemplate {
 
-    private final List<String> variableNames;
+    // Finds parameters in the URL pattern string.
+    private static final String URL_PARAM_REGEX = "\\{(\\w*?)\\}";
 
-    private final Pattern matchPattern;
+    // Replaces parameter names in the URL pattern string to match parameters in URLs.
+    private static final String URL_PARAM_MATCH_REGEX = "\\([%\\\\w-.\\\\~!\\$&'\\\\(\\\\)\\\\*\\\\+,;=:\\\\[\\\\]@]+?\\)";
 
-    private final String uriTemplate;
+    // Pattern to match URL pattern parameter names.
+    private static final Pattern URL_PARAM_PATTERN = Pattern.compile(URL_PARAM_REGEX);
 
+    // Finds the 'format' portion of the URL pattern string.
+    private static final String URL_FORMAT_REGEX = "(?:\\.\\{format\\})$";
 
-    /**
-     * Construct a new {@code UriTemplate} with the given URI String.
-     * @param uriTemplate the URI template string
-     */
-    public UriTemplate(String uriTemplate) {
-        this.uriTemplate = uriTemplate;
+    // Replaces the format parameter name in the URL pattern string to match the format specifier in URLs. Appended to the end of the regex string
+    // when a URL pattern contains a format parameter.
+    private static final String URL_FORMAT_MATCH_REGEX = "(?:\\\\.\\([\\\\w%]+?\\))?";
 
-        TemplateInfo info = TemplateInfo.parse(uriTemplate);
-        this.variableNames = Collections.unmodifiableList(info.getVariableNames());
-        this.matchPattern = info.getMatchPattern();
+    // Finds the query string portion within a URL. Appended to the end of the built-up regex string.
+    private static final String URL_QUERY_STRING_REGEX = "(?:\\?.*?)?$";
+
+    private String urlPattern;
+
+    private Pattern compiledUrl;
+
+    private Matcher matcher;
+
+    private List<String> parameterNames = new ArrayList<>();
+
+    public UriTemplate(String pattern) {
+        super();
+        setUrlPattern(pattern);
+        compile();
     }
 
-
-    /**
-     * Return the names of the variables in the template, in order.
-     * @return the template variable names
-     */
-    public List<String> getVariableNames() {
-        return this.variableNames;
+    private String getUrlPattern() {
+        return urlPattern;
     }
 
+    private void setUrlPattern(String pattern)
+    {
+        this.urlPattern = pattern;
+    }
 
-    /**
-     * Indicate whether the given URI matches this template.
-     * @param uri the URI to match to
-     * @return {@code true} if it matches; {@code false} otherwise
-     */
-    public boolean matches(String uri) {
-        if (uri == null) {
-            return false;
-        }
-        Matcher matcher = this.matchPattern.matcher(uri);
+    public boolean matches(String url) {
+        this.matcher = compiledUrl.matcher(url);
         return matcher.matches();
     }
 
-    /**
-     * Match the given URI to a map of variable values. Keys in the returned map are variable names,
-     * values are variable values, as occurred in the given URI.
-     * <p>Example:
-     * <pre class="code">
-     * UriTemplate template = new UriTemplate("http://example.com/hotels/{hotel}/bookings/{booking}");
-     * System.out.println(template.match("http://example.com/hotels/1/bookings/42"));
-     * </pre>
-     * will print: <blockquote>{@code {hotel=1, booking=42}}</blockquote>
-     * @param uri the URI to match to
-     * @return a map of variable values
-     */
-    public Map<String, String> match(String uri) {
-        Map<String, String> result = new LinkedHashMap<>(this.variableNames.size());
-        Matcher matcher = this.matchPattern.matcher(uri);
-        if (matcher.find()) {
-            for (int i = 1; i <= matcher.groupCount(); i++) {
-                String name = this.variableNames.get(i - 1);
-                String value = matcher.group(i);
-                result.put(name, value);
-            }
-        }
-        return result;
+    public void compile() {
+        acquireParameterNames();
+        String parsedPattern = getUrlPattern().replaceFirst(URL_FORMAT_REGEX, URL_FORMAT_MATCH_REGEX);
+        parsedPattern = parsedPattern.replaceAll(URL_PARAM_REGEX, URL_PARAM_MATCH_REGEX);
+        this.compiledUrl = Pattern.compile(parsedPattern + URL_QUERY_STRING_REGEX);
     }
 
-    @Override
-    public String toString() {
-        return this.uriTemplate;
-    }
+    private void acquireParameterNames() {
+        Matcher m = URL_PARAM_PATTERN.matcher(getUrlPattern());
 
-
-    /**
-     * Helper to extract variable names and regex for matching to actual URLs.
-     */
-    private static class TemplateInfo {
-
-        private final List<String> variableNames;
-
-        private final Pattern pattern;
-
-
-        private TemplateInfo(List<String> vars, Pattern pattern) {
-            this.variableNames = vars;
-            this.pattern = pattern;
-        }
-
-        private static TemplateInfo parse(String uriTemplate) {
-            int level = 0;
-            List<String> variableNames = new ArrayList<String>();
-            StringBuilder pattern = new StringBuilder();
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0 ; i < uriTemplate.length(); i++) {
-                char c = uriTemplate.charAt(i);
-                if (c == '{') {
-                    level++;
-                    if (level == 1) {
-                        // start of URI variable
-                        pattern.append(quote(builder));
-                        builder = new StringBuilder();
-                        continue;
-                    }
-                }
-                else if (c == '}') {
-                    level--;
-                    if (level == 0) {
-                        // end of URI variable
-                        String variable = builder.toString();
-                        int idx = variable.indexOf(':');
-                        if (idx == -1) {
-                            pattern.append("(.*)");
-                            variableNames.add(variable);
-                        }
-                        else {
-                            if (idx + 1 == variable.length()) {
-                                throw new IllegalArgumentException(
-                                        "No custom regular expression specified after ':' " +
-                                                "in \"" + variable + "\"");
-                            }
-                            String regex = variable.substring(idx + 1, variable.length());
-                            pattern.append('(');
-                            pattern.append(regex);
-                            pattern.append(')');
-                            variableNames.add(variable.substring(0, idx));
-                        }
-                        builder = new StringBuilder();
-                        continue;
-                    }
-                }
-                builder.append(c);
-            }
-            if (builder.length() > 0) {
-                pattern.append(quote(builder));
-            }
-            return new TemplateInfo(variableNames, Pattern.compile(pattern.toString()));
-        }
-
-        private static String quote(StringBuilder builder) {
-            return builder.length() != 0 ? Pattern.quote(builder.toString()) : "";
-        }
-
-        public List<String> getVariableNames() {
-            return this.variableNames;
-        }
-
-        public Pattern getMatchPattern() {
-            return this.pattern;
+        while (m.find()) {
+            parameterNames.add(m.group(1));
         }
     }
 
+    public Map<String, String> extractParameters() {
+        Map<String, String> values = new HashMap<>();
+
+        for (int i = 0; i < matcher.groupCount(); i++) {
+            String value = matcher.group(i + 1);
+
+            if (value != null) {
+                values.put(parameterNames.get(i), value);
+            }
+        }
+
+        return values;
+    }
 }
