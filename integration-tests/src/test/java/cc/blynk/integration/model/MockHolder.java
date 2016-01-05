@@ -2,7 +2,7 @@ package cc.blynk.integration.model;
 
 
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
-import cc.blynk.server.core.protocol.model.messages.MessageFactory;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 
 import static org.mockito.Mockito.*;
 
@@ -20,12 +20,12 @@ public class MockHolder {
     }
 
     public MockHolder check(int responseMessageCode) throws Exception {
-        verify(mock).channelRead(any(), eq(MessageFactory.produce(1, responseMessageCode)));
+        verify(mock).channelRead(any(), eq(new ResponseMessage(1, responseMessageCode)));
         return this;
     }
 
     public MockHolder check(int times, int responseMessageCode) throws Exception {
-        verify(mock, times(times)).channelRead(any(), eq(MessageFactory.produce(1, responseMessageCode)));
+        verify(mock, times(times)).channelRead(any(), eq(new ResponseMessage(1, responseMessageCode)));
         return this;
     }
 

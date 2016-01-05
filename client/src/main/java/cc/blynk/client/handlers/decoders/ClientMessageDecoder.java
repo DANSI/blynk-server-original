@@ -4,6 +4,7 @@ import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataBinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
@@ -46,7 +47,7 @@ public class ClientMessageDecoder extends ByteToMessageDecoder implements Defaul
             if (responseCode == Response.DEVICE_WENT_OFFLINE) {
                 message = new ResponseWithBodyMessage(messageId, Command.RESPONSE, responseCode, in.readInt());
             } else {
-                message = produce(messageId, responseCode);
+                message = new ResponseMessage(messageId, responseCode);
             }
         } else {
             int length = in.readUnsignedShort();

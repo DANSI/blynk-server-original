@@ -3,6 +3,7 @@ package cc.blynk.server.core.protocol.handlers.decoders;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -46,7 +47,7 @@ public class MessageDecoder extends ByteToMessageDecoder implements DefaultExcep
 
         MessageBase message;
         if (command == Command.RESPONSE) {
-            message = produce(messageId, codeOrLength);
+            message = new ResponseMessage(messageId, codeOrLength);
         } else {
             if (in.readableBytes() < codeOrLength) {
                 in.resetReaderIndex();

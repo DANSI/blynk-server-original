@@ -7,6 +7,7 @@ import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.utils.JsonParser;
@@ -22,7 +23,6 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -146,7 +146,7 @@ public abstract class IntegrationBase {
         String token = getGetTokenMessage(arguments).body;
 
         hardClient.send("login " + token);
-        verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, OK)));
+        verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         appClient.reset();
         hardClient.reset();

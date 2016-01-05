@@ -2,6 +2,7 @@ package cc.blynk.integration;
 
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestHardClient;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.StringUtils;
 import org.apache.commons.io.FileUtils;
@@ -14,7 +15,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.OngoingStubbing;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -54,17 +54,17 @@ public class HardProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testInvalidHardwareTokenException() throws Exception {
-        makeCommands("login 123").check(produce(1, INVALID_TOKEN));
+        makeCommands("login 123").check(new ResponseMessage(1, INVALID_TOKEN));
     }
 
     @Test
     public void testInvalidCommandAppLoginOnHardChannel() throws Exception {
-        makeCommands("login dima@dima.ua 1").check(produce(1, INVALID_TOKEN));
+        makeCommands("login dima@dima.ua 1").check(new ResponseMessage(1, INVALID_TOKEN));
 
         String body = "dima@dima.ua 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING);
-        makeCommands("login " + body).check(produce(1, INVALID_TOKEN));
+        makeCommands("login " + body).check(new ResponseMessage(1, INVALID_TOKEN));
 
-        makeCommands("login").check(produce(1, INVALID_TOKEN));
+        makeCommands("login").check(new ResponseMessage(1, INVALID_TOKEN));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class HardProtocolCommandsTest extends IntegrationBase {
     public void testInvalidTweetBody() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 1", "tweet").check(OK).check(produce(1, NOTIFICATION_INVALID_BODY_EXCEPTION));
+        makeCommands("login dmitriy@mail.ua 1", "tweet").check(OK).check(new ResponseMessage(1, NOTIFICATION_INVALID_BODY_EXCEPTION));
     }
 
     /**

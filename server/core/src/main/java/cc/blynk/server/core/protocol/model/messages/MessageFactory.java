@@ -79,8 +79,4 @@ public class MessageFactory {
         }
     }
 
-    public static ResponseMessage produce(int messageId, int responseCode) {
-        return new ResponseMessage(messageId, responseCode);
-    }
-
 }

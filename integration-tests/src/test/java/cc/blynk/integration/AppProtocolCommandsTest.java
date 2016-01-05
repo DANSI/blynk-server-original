@@ -4,6 +4,7 @@ import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.ReflectionUtil;
@@ -98,13 +99,13 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testAppNotRegistered() throws Exception {
-        makeCommands("login dmitriy@mail.ua 1").check(produce(1, USER_NOT_REGISTERED));
+        makeCommands("login dmitriy@mail.ua 1").check(new ResponseMessage(1, USER_NOT_REGISTERED));
     }
 
 
     @Test
     public void testIllegalCommandForHardLoginOnAppChannel() throws Exception {
-        makeCommands("login dasdsadasdasdasdasdas").check(produce(1, ILLEGAL_COMMAND));
+        makeCommands("login dasdsadasdasdasdasdas").check(new ResponseMessage(1, ILLEGAL_COMMAND));
     }
 
     @Test
@@ -118,7 +119,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     public void testLogin2TimesAndWork() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands(2, "login dmitriy@mail.ua 1", "login dmitriy@mail.ua 1", "getToken 1").check(1, OK).check(produce(1, ILLEGAL_COMMAND));
+        makeCommands(2, "login dmitriy@mail.ua 1", "login dmitriy@mail.ua 1", "getToken 1").check(1, OK).check(new ResponseMessage(1, ILLEGAL_COMMAND));
     }
 
 
@@ -126,7 +127,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     public void testGetTokenForNonExistentDashId() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 1", "getToken 1").check(OK).check(produce(1, ILLEGAL_COMMAND));
+        makeCommands("login dmitriy@mail.ua 1", "getToken 1").check(OK).check(new ResponseMessage(1, ILLEGAL_COMMAND));
     }
 
     @Test
@@ -150,21 +151,21 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         String userProfileString = readTestUserProfile("user_profile_json_many_dashes.txt");
 
-        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString).check(OK).check(produce(1, NOT_ALLOWED));
+        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString).check(OK).check(new ResponseMessage(1, NOT_ALLOWED));
     }
 
     @Test
     public void testPassNotValid() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 2").check(produce(1, USER_NOT_AUTHENTICATED));
+        makeCommands("login dmitriy@mail.ua 2").check(new ResponseMessage(1, USER_NOT_AUTHENTICATED));
     }
 
     @Test
     public void testActivateWrongFormat() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 1", "activate ").check(produce(1, ILLEGAL_COMMAND));
+        makeCommands("login dmitriy@mail.ua 1", "activate ").check(new ResponseMessage(1, ILLEGAL_COMMAND));
     }
 
     @Test
@@ -182,7 +183,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "activate 2").check(2, OK).check(produce(1, ILLEGAL_COMMAND));
+        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "activate 2").check(2, OK).check(new ResponseMessage(1, ILLEGAL_COMMAND));
     }
 
 
@@ -192,7 +193,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "activate xxx").check(2, OK).check(produce(1, ILLEGAL_COMMAND));
+        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "activate xxx").check(2, OK).check(new ResponseMessage(1, ILLEGAL_COMMAND));
     }
 
     @Test
@@ -211,7 +212,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     public void testTryHardLoginInAppChannel() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login adsadasdasdasdas").check(produce(1, ILLEGAL_COMMAND));
+        makeCommands("login adsadasdasdasdas").check(new ResponseMessage(1, ILLEGAL_COMMAND));
     }
 
 

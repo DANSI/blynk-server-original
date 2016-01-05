@@ -4,6 +4,7 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.Channel;
@@ -12,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static cc.blynk.utils.AppStateHolderUtil.*;
 
 /**
@@ -51,7 +51,7 @@ public class DeActivateDashboardLogic {
             }
         }
 
-        ctx.writeAndFlush(produce(message.id, OK));
+        ctx.writeAndFlush(new ResponseMessage(message.id, OK));
     }
 
 }

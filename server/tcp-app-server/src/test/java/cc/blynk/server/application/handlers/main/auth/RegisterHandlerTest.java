@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
 import io.netty.channel.ChannelHandlerContext;
 import org.junit.Test;
@@ -9,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -73,7 +73,7 @@ public class RegisterHandlerTest {
         registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + " 1"));
 
         verify(userDao, times(0)).add(eq(userName), eq("1"));
-        verify(ctx).writeAndFlush(eq(produce(1, NOT_ALLOWED)));
+        verify(ctx).writeAndFlush(eq(new ResponseMessage(1, NOT_ALLOWED)));
     }
 
     @Test

@@ -26,7 +26,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static cc.blynk.utils.ByteUtils.*;
 
 /**
@@ -85,7 +84,7 @@ public class BlockingIOProcessor {
             try {
                 mailWrapper.send(to, subj, body, null);
                 channel.eventLoop().execute(() -> {
-                    channel.writeAndFlush(produce(msgId, OK));
+                    channel.writeAndFlush(new ResponseMessage(msgId, OK));
                 });
             } catch (Exception e) {
                 log(channel, e.getMessage(), msgId, Response.NOTIFICATION_EXCEPTION);
@@ -108,7 +107,7 @@ public class BlockingIOProcessor {
             try {
                 twitterWrapper.send(token, secret, body);
                 channel.eventLoop().execute(() -> {
-                    channel.writeAndFlush(produce(msgId, OK));
+                    channel.writeAndFlush(new ResponseMessage(msgId, OK));
                 });
             } catch (Exception e) {
                 log(channel, e.getMessage(), msgId, Response.NOTIFICATION_EXCEPTION);
@@ -139,7 +138,7 @@ public class BlockingIOProcessor {
             try {
                 gcmWrapper.send(message);
                 channel.eventLoop().execute(() -> {
-                    channel.writeAndFlush(produce(msgId, OK));
+                    channel.writeAndFlush(new ResponseMessage(msgId, OK));
                 });
             } catch (Exception e) {
                 log(channel, e.getMessage(), msgId, Response.NOTIFICATION_EXCEPTION);

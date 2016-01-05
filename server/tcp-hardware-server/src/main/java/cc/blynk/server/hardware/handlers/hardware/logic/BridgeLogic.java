@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import io.netty.channel.Channel;
@@ -14,7 +15,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static cc.blynk.utils.StateHolderUtil.*;
 
 /**
@@ -53,7 +53,7 @@ public class BridgeLogic {
 
             sendToMap.put(pin, token);
 
-            ctx.writeAndFlush(produce(message.id, OK));
+            ctx.writeAndFlush(new ResponseMessage(message.id, OK));
         } else {
             if (sendToMap.size() == 0) {
                 throw new NotAllowedException("Bridge not initialized.", message.id);
@@ -73,10 +73,10 @@ public class BridgeLogic {
                     }
                 }
                 if (!messageWasSent) {
-                    ctx.writeAndFlush(produce(message.id, Response.DEVICE_NOT_IN_NETWORK));
+                    ctx.writeAndFlush(new ResponseMessage(message.id, Response.DEVICE_NOT_IN_NETWORK));
                 }
             } else {
-                ctx.writeAndFlush(produce(message.id, Response.DEVICE_NOT_IN_NETWORK));
+                ctx.writeAndFlush(new ResponseMessage(message.id, Response.DEVICE_NOT_IN_NETWORK));
             }
         }
     }

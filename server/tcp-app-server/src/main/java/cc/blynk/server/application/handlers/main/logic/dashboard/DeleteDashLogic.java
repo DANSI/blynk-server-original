@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard;
 
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.ParseUtil;
@@ -9,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 
 /**
  * The Blynk Project.
@@ -31,7 +31,7 @@ public class DeleteDashLogic {
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
         user.lastModifiedTs = System.currentTimeMillis();
 
-        ctx.writeAndFlush(produce(message.id, OK));
+        ctx.writeAndFlush(new ResponseMessage(message.id, OK));
     }
 
 }

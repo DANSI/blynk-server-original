@@ -1,5 +1,6 @@
 package cc.blynk.server.hardware.handlers;
 
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.HardwareInfoMessage;
 import cc.blynk.server.hardware.handlers.hardware.logic.HardwareInfoLogic;
 import cc.blynk.utils.ServerProperties;
@@ -12,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -40,7 +40,7 @@ public class HardwareInfoLogicTest {
 
         verify(pipeline).remove(ReadTimeoutHandler.class);
         verify(pipeline).addFirst(any(ReadTimeoutHandler.class));
-        verify(ctx).writeAndFlush(produce(1, OK));
+        verify(ctx).writeAndFlush(new ResponseMessage(1, OK));
     }
 
 }

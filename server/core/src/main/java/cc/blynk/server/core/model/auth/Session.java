@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.auth;
 
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -16,7 +17,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Set;
 
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static cc.blynk.utils.StateHolderUtil.*;
 
 /**
@@ -76,7 +76,7 @@ public class Session {
     public void sendMessageToHardware(ChannelHandlerContext ctx, int activeDashId, MessageBase message) {
         if (sendMessageToHardware(activeDashId, message)) {
             log.debug("No device in session.");
-            ctx.writeAndFlush(produce(message.id, Response.DEVICE_NOT_IN_NETWORK));
+            ctx.writeAndFlush(new ResponseMessage(message.id, Response.DEVICE_NOT_IN_NETWORK));
         }
     }
 

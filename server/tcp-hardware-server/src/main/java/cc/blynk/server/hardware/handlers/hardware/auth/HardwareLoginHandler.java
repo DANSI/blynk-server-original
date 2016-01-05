@@ -22,7 +22,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 
 /**
  * Handler responsible for managing hardware and apps login messages.
@@ -53,7 +52,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     private static void completeLogin(Channel channel, Session session, User user, Integer dashId, int msgId) {
         log.debug("completeLogin. {}", channel);
         session.hardwareChannels.add(channel);
-        channel.writeAndFlush(produce(msgId, OK));
+        channel.writeAndFlush(new ResponseMessage(msgId, OK));
         sendPinMode(channel, user, dashId, msgId);
         log.info("{} hardware joined.", user.name);
     }

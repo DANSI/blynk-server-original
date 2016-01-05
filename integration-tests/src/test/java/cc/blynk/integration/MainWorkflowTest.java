@@ -81,7 +81,7 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testHardwareDeviceWentOffline() throws Exception {
         String newProfile = readTestUserProfile("user_profile_json_3_dashes.txt");
         clientPair.appClient.send("saveProfile " + newProfile);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
@@ -92,7 +92,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testPingCommandWorks() throws Exception {
         clientPair.appClient.send("ping");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
     }
 
     //todo more tests for that case
@@ -118,35 +118,35 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testPingCommandOk() throws Exception {
         clientPair.appClient.send("ping");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.reset();
 
         clientPair.appClient.send("ping");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
     }
 
     @Test
     public void testDashCommands() throws Exception {
         clientPair.appClient.send("saveDash {\"id\":10, \"name\":\"test board update\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, ILLEGAL_COMMAND)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
 
         clientPair.appClient.send("createDash {\"id\":10, \"name\":\"test board\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         clientPair.appClient.send("createDash {\"id\":10, \"name\":\"test board\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, NOT_ALLOWED)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, NOT_ALLOWED)));
 
         clientPair.appClient.send("saveDash {\"id\":10, \"name\":\"test board update\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
 
         clientPair.hardwareClient.send("ping");
 
         clientPair.appClient.send("deleteDash 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(5, OK)));
 
         clientPair.appClient.send("deleteDash 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, ILLEGAL_COMMAND)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(6, ILLEGAL_COMMAND)));
 
         clientPair.appClient.send("loadProfile");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, LOAD_PROFILE, "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}")));
@@ -155,16 +155,16 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(8, LOAD_PROFILE, "{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}")));
 
         clientPair.appClient.send("loadProfile 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(9, ILLEGAL_COMMAND)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(9, ILLEGAL_COMMAND)));
 
         clientPair.appClient.send("activate 10");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(10, DEVICE_NOT_IN_NETWORK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(10, DEVICE_NOT_IN_NETWORK)));
 
         clientPair.appClient.send("loadProfile");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(11, LOAD_PROFILE, "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}")));
 
         clientPair.appClient.send("saveDash {\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(12, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(12, OK)));
 
         clientPair.appClient.send("loadProfile");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(11, LOAD_PROFILE, "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}")));
@@ -201,7 +201,7 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testDeleteGraphCommandWorks() throws Exception {
         clientPair.appClient.send("getgraphdata 1 d 8 del");
 
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
     }
 
     @Test
@@ -236,10 +236,10 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
 
         clientPair.appClient.send("deactivate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(2, NO_ACTIVE_DASHBOARD)));
+        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(new ResponseMessage(2, NO_ACTIVE_DASHBOARD)));
     }
 
     @Test
@@ -248,23 +248,23 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
 
         clientPair.appClient.send("deactivate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         String newProfile = readTestUserProfile("user_profile_json_3_dashes.txt");
         clientPair.appClient.send("saveProfile " + newProfile);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(2, NO_ACTIVE_DASHBOARD)));
+        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(new ResponseMessage(2, NO_ACTIVE_DASHBOARD)));
 
         clientPair.appClient.send("activate 2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, DEVICE_NOT_IN_NETWORK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, DEVICE_NOT_IN_NETWORK)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(3, NO_ACTIVE_DASHBOARD)));
+        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(new ResponseMessage(3, NO_ACTIVE_DASHBOARD)));
 
         clientPair.appClient.send("activate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
@@ -278,12 +278,12 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getToken 1");
         String token2 = getBody(clientPair.appClient.responseMock);
         hardClient2.send("login " + token2);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         hardClient2.send("info " + " ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100"
                 .replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
 
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
     }
 
     @Test
@@ -293,20 +293,20 @@ public class MainWorkflowTest extends IntegrationBase {
 
         String newProfile = readTestUserProfile("user_profile_json_3_dashes.txt");
         clientPair.appClient.send("saveProfile " + newProfile);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("activate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         clientPair.appClient.send("activate 2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, DEVICE_NOT_IN_NETWORK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, DEVICE_NOT_IN_NETWORK)));
 
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getToken 2");
         String token2 = getBody(clientPair.appClient.responseMock);
         hardClient2.send("login " + token2);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.reset();
 
@@ -318,10 +318,10 @@ public class MainWorkflowTest extends IntegrationBase {
 
 
         clientPair.appClient.send("deactivate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(2, NO_ACTIVE_DASHBOARD)));
+        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(new ResponseMessage(2, NO_ACTIVE_DASHBOARD)));
 
         hardClient2.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, "2 aw 1 1".replaceAll(" ", "\0"))));
@@ -345,7 +345,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testNoReadingWidgetOnPin() throws Exception {
         clientPair.appClient.send("hardware 1 ar 111");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, ILLEGAL_COMMAND_BODY)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
     }
 
     @Test
@@ -371,17 +371,17 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testActivateWorkflow() throws Exception {
         clientPair.appClient.send("activate 2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, ILLEGAL_COMMAND)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
 
         clientPair.appClient.send("deactivate 2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, ILLEGAL_COMMAND)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, ILLEGAL_COMMAND)));
 
         clientPair.appClient.send("hardware 1 ar 1 1");
         //todo check no response
-        verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(produce(3, OK)));
+        verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(new ResponseMessage(3, OK)));
 
         clientPair.appClient.send("activate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
 
         clientPair.appClient.send("hardware 1 ar 7");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, "ar 7".replaceAll(" ", "\0"))));
@@ -389,7 +389,7 @@ public class MainWorkflowTest extends IntegrationBase {
         String userProfileWithGraph = readTestUserProfile();
 
         clientPair.appClient.send("saveProfile " + userProfileWithGraph);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(6, OK)));
 
 
         clientPair.appClient.send("hardware 1 ar 7");
@@ -401,10 +401,10 @@ public class MainWorkflowTest extends IntegrationBase {
         reset(blockingIOProcessor);
 
         clientPair.hardwareClient.send("tweet");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, NOTIFICATION_INVALID_BODY_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOTIFICATION_INVALID_BODY_EXCEPTION)));
 
         clientPair.hardwareClient.send("tweet ");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, NOTIFICATION_INVALID_BODY_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NOTIFICATION_INVALID_BODY_EXCEPTION)));
 
         StringBuilder a = new StringBuilder();
         for (int i = 0; i < 141; i++) {
@@ -412,13 +412,13 @@ public class MainWorkflowTest extends IntegrationBase {
         }
 
         clientPair.hardwareClient.send("tweet " + a);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, NOTIFICATION_INVALID_BODY_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, NOTIFICATION_INVALID_BODY_EXCEPTION)));
 
         clientPair.appClient.send("deactivate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.hardwareClient.send("tweet yo");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, NOTIFICATION_NOT_AUTHORIZED_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, NOTIFICATION_NOT_AUTHORIZED_EXCEPTION)));
     }
 
     @Test
@@ -427,13 +427,13 @@ public class MainWorkflowTest extends IntegrationBase {
         String userProfileWithTwit = readTestUserProfile();
         clientPair.appClient.send("saveProfile " + userProfileWithTwit);
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.hardwareClient.send("tweet yo");
         verify(blockingIOProcessor, timeout(500)).twit(any(), eq("token"), eq("secret"), eq("yo"), eq(1));
 
         clientPair.hardwareClient.send("tweet yo");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, QUOTA_LIMIT_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, QUOTA_LIMIT_EXCEPTION)));
     }
 
     @Test
@@ -446,7 +446,7 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testAppSendWriteHardCommandForGraphAndBack() throws Exception {
         String userProfileWithGraph = readTestUserProfile();
         clientPair.appClient.send("saveProfile " + userProfileWithGraph);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         reset(clientPair.appClient.responseMock);
         clientPair.appClient.reset();
@@ -480,12 +480,12 @@ public class MainWorkflowTest extends IntegrationBase {
 
         String body = "pm 13 in";
         clientPair.appClient.send("hardware 1 " + body);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, DEVICE_NOT_IN_NETWORK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, DEVICE_NOT_IN_NETWORK)));
 
         TestHardClient hardClient = new TestHardClient(host, hardPort);
         hardClient.start(null);
         hardClient.send("login " + clientPair.token);
-        verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, OK)));
+        verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
         verify(hardClient.responseMock, times(2)).channelRead(any(), any());
     }
@@ -510,12 +510,12 @@ public class MainWorkflowTest extends IntegrationBase {
         assertTrue(channelFuture.isDone());
 
         clientPair.appClient.send("hardware 1 pm 13 in");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, DEVICE_NOT_IN_NETWORK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, DEVICE_NOT_IN_NETWORK)));
 
         TestHardClient hardClient = new TestHardClient(host, hardPort);
         hardClient.start(null);
         hardClient.send("login " + clientPair.token);
-        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, OK)));
+        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         //todo ping?
         //verify(hardClient.responseMock, times(1)).channelRead(any(), any());
@@ -540,13 +540,13 @@ public class MainWorkflowTest extends IntegrationBase {
         TestHardClient nonActiveDashHardClient = new TestHardClient(host, hardPort);
         nonActiveDashHardClient.start(null);
         nonActiveDashHardClient.send("login " + token);
-        verify(nonActiveDashHardClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, OK)));
+        verify(nonActiveDashHardClient.responseMock, timeout(2000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         nonActiveDashHardClient.reset();
 
 
         //sending hardware command from hardware that has no active dashboard
         nonActiveDashHardClient.send("hardware aw 1 1");
-        verify(nonActiveDashHardClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NO_ACTIVE_DASHBOARD)));
+        verify(nonActiveDashHardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, NO_ACTIVE_DASHBOARD)));
         verify(clientPair.appClient.responseMock, timeout(1000).times(0)).channelRead(any(), any());
 
         clientPair.hardwareClient.send("hardware aw 1 1");
@@ -640,7 +640,7 @@ public class MainWorkflowTest extends IntegrationBase {
             sleep(9);
         }
 
-        verify(clientPair.hardwareClient.responseMock, times(0)).channelRead(any(), eq(produce(1, QUOTA_LIMIT_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, times(0)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT_EXCEPTION)));
         verify(clientPair.appClient.responseMock, times(0)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
     }
 
@@ -655,7 +655,7 @@ public class MainWorkflowTest extends IntegrationBase {
             sleep(9);
         }
 
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, QUOTA_LIMIT_EXCEPTION)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT_EXCEPTION)));
         verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
 
         clientPair.appClient.reset();
@@ -669,7 +669,7 @@ public class MainWorkflowTest extends IntegrationBase {
             sleep(9);
         }
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, QUOTA_LIMIT_EXCEPTION)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT_EXCEPTION)));
         verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
 
     }

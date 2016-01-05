@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,7 +14,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 
 /**
  * Process register message.
@@ -52,7 +52,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         //expecting message with 2 parts, described above in comment.
         if (messageParts.length != 2) {
             log.error("Register Handler. Wrong income message format. {}", message);
-            ctx.writeAndFlush(produce(message.id, ILLEGAL_COMMAND));
+            ctx.writeAndFlush(new ResponseMessage(message.id, ILLEGAL_COMMAND));
             return;
         }
 
@@ -62,19 +62,19 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         if (!EmailValidator.getInstance().isValid(userName)) {
             log.error("Register Handler. Wrong email: {}", userName);
-            ctx.writeAndFlush(produce(message.id, ILLEGAL_COMMAND));
+            ctx.writeAndFlush(new ResponseMessage(message.id, ILLEGAL_COMMAND));
             return;
         }
 
         if (userDao.isUserExists(userName)) {
             log.warn("User with name {} already exists.", userName);
-            ctx.writeAndFlush(produce(message.id, USER_ALREADY_REGISTERED));
+            ctx.writeAndFlush(new ResponseMessage(message.id, USER_ALREADY_REGISTERED));
             return;
         }
 
         if (allowedUsers != null && !allowedUsers.contains(userName)) {
             log.warn("User with name {} not allowed to register.", userName);
-            ctx.writeAndFlush(produce(message.id, NOT_ALLOWED));
+            ctx.writeAndFlush(new ResponseMessage(message.id, NOT_ALLOWED));
             return;
         }
 
@@ -82,7 +82,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         log.info("Registered {}.", userName);
 
-        ctx.writeAndFlush(produce(message.id, OK));
+        ctx.writeAndFlush(new ResponseMessage(message.id, OK));
     }
 
     @Override

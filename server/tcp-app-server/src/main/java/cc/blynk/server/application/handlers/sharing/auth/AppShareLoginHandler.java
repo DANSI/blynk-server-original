@@ -21,7 +21,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 
 /**
  * Handler responsible for managing apps sharing login messages.
@@ -100,7 +99,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
     private void completeLogin(Channel channel, Session session, String userName, int msgId) {
         session.appChannels.add(channel);
-        channel.writeAndFlush(produce(msgId, OK));
+        channel.writeAndFlush(new ResponseMessage(msgId, OK));
         log.info("Shared {} app joined.", userName);
     }
 

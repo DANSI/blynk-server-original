@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.ByteUtils;
@@ -80,7 +81,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     @Test
     public void testGetShareTokenNoDashId() throws Exception {
         clientPair.appClient.send("getShareToken");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NOT_ALLOWED)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
     }
 
     @Test
@@ -119,7 +120,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         appClient2.start(null);
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("hardware 1 vw 1 1");
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, "1 vw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
@@ -167,7 +168,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         appClient2.start(null);
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("hardware 1 vw 1 1");
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, "1 vw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
@@ -236,10 +237,10 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         appClient2.start(null);
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("sharing 1 off");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, "1 off".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
     }
@@ -256,7 +257,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         appClient2.start(null);
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         //check from hard side
         clientPair.hardwareClient.send("hardware aw 3 151");
@@ -291,7 +292,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         appClient2.start(null);
         appClient2.send("shareLogin " + "dima@mail.ua " + token+"a" + " Android 24");
 
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NOT_ALLOWED)));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
     }
 
     @Test
@@ -306,7 +307,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         appClient2.start(null);
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, OK)));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.reset();
         appClient2.reset();
@@ -319,7 +320,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NOT_ALLOWED)));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
 
         assertFalse(clientPair.appClient.isClosed());
         assertTrue(appClient2.isClosed());
@@ -328,7 +329,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         appClient3.start(null);
         appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
-        verify(appClient3.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, OK)));
+        verify(appClient3.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
     }
 
     @Test
@@ -347,17 +348,17 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         appClient3.start(null);
         appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
-        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("deactivate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "1")));
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "1")));
 
         clientPair.appClient.send("activate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(3, ACTIVATE_DASHBOARD, "1")));
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(3, ACTIVATE_DASHBOARD, "1")));
@@ -375,7 +376,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         appClient2.start(null);
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.reset();
 
@@ -410,7 +411,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("getSharedDash " + token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, INVALID_TOKEN)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, INVALID_TOKEN)));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("getSharedDash " + refreshedToken);

@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.utils.ParseUtil;
@@ -15,7 +16,6 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.Arrays;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 
 /**
  * The Blynk Project.
@@ -44,7 +44,7 @@ public class GetGraphDataLogic {
         //special case for delete command
         if (messageParts.length == 4) {
             deleteGraphData(messageParts, user.name, message.id);
-            ctx.writeAndFlush(produce(message.id, OK));
+            ctx.writeAndFlush(new ResponseMessage(message.id, OK));
         } else {
             int dashId = ParseUtil.parseInt(messageParts[0], message.id);
             user.profile.validateDashId(dashId, message.id);
