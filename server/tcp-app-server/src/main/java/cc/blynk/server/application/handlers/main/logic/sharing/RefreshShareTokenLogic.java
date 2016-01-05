@@ -5,7 +5,6 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -51,7 +50,7 @@ public class RefreshShareTokenLogic {
         for (Channel appChannel : session.appChannels) {
             AppShareStateHolder state = getShareState(appChannel);
             if (state != null && state.dashId == dashId) {
-                ChannelFuture cf = appChannel.writeAndFlush(new ResponseMessage(message.id, Command.RESPONSE, Response.NOT_ALLOWED));
+                ChannelFuture cf = appChannel.writeAndFlush(new ResponseMessage(message.id, Response.NOT_ALLOWED));
                 cf.addListener(channelFuture -> appChannel.close());
             }
         }

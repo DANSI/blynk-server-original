@@ -3,7 +3,6 @@ package cc.blynk.server.core;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataBinaryMessage;
@@ -186,7 +185,7 @@ public class BlockingIOProcessor {
             log(user.name, errorMessage);
 
             channel.eventLoop().execute(() -> {
-                channel.writeAndFlush(new ResponseMessage(msgId, Command.RESPONSE, response));
+                channel.writeAndFlush(new ResponseMessage(msgId, response));
             });
         }
     }

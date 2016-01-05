@@ -1,6 +1,5 @@
 package cc.blynk.server.core.protocol.handlers;
 
-import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -28,7 +27,7 @@ public interface DefaultExceptionHandler {
             BaseServerException baseServerException = (BaseServerException) cause;
             //no need for stack trace for known exceptions
             log.error(baseServerException.getMessage());
-            ctx.writeAndFlush(new ResponseMessage(baseServerException.msgId, Command.RESPONSE, baseServerException.errorCode));
+            ctx.writeAndFlush(new ResponseMessage(baseServerException.msgId, baseServerException.errorCode));
         } else {
             handleUnexpectedException(ctx, cause);
         }

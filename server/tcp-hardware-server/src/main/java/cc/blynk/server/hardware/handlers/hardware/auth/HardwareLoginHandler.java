@@ -7,7 +7,6 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -75,7 +74,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         if (user == null) {
             log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(new ResponseMessage(message.id, Command.RESPONSE, Response.INVALID_TOKEN));
+            ctx.writeAndFlush(new ResponseMessage(message.id, Response.INVALID_TOKEN));
             return;
         }
 

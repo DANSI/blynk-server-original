@@ -10,8 +10,8 @@ import cc.blynk.server.core.protocol.enums.Response;
  */
 public class ResponseMessage extends MessageBase {
 
-    public ResponseMessage(int messageId, short command, int responseCode) {
-        super(messageId, command, responseCode);
+    public ResponseMessage(int messageId, int responseCode) {
+        super(messageId, Command.RESPONSE, responseCode);
     }
 
     @Override

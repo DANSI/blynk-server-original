@@ -9,7 +9,6 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -80,7 +79,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
         if (user == null || !user.name.equals(userName)) {
             log.debug("Share token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(new ResponseMessage(messageId, Command.RESPONSE, Response.NOT_ALLOWED));
+            ctx.writeAndFlush(new ResponseMessage(messageId, Response.NOT_ALLOWED));
             return;
         }
 
