@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.app;
+package cc.blynk.server.application.handlers;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;

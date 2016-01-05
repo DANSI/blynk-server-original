@@ -1,7 +1,6 @@
-package cc.blynk.server.handlers.app.main.auth;
+package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.common.model.messages.protocol.appllication.RegisterMessage;
-import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
 import cc.blynk.server.core.dao.UserDao;
 import io.netty.channel.ChannelHandlerContext;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.app;
+package cc.blynk.server.application.handlers;
 
 import cc.blynk.server.core.model.graph.GraphKey;
 import cc.blynk.utils.ByteUtils;

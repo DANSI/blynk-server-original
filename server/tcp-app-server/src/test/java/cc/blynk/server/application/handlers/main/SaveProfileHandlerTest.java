@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.common;
+package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.common.model.messages.protocol.appllication.SaveProfileMessage;
 import cc.blynk.common.utils.ServerProperties;
