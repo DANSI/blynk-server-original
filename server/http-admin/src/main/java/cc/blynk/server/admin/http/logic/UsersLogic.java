@@ -1,11 +1,11 @@
 package cc.blynk.server.admin.http.logic;
 
 import cc.blynk.common.utils.SHA256Util;
-import cc.blynk.server.admin.helpers.Response;
 import cc.blynk.server.admin.http.pojo.UserPassPojo;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
+import cc.blynk.server.handlers.http.rest.Response;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;
@@ -14,7 +14,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-import static cc.blynk.server.admin.helpers.Response.*;
+import static cc.blynk.server.handlers.http.rest.Response.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.*;
 

@@ -2,11 +2,11 @@ package cc.blynk.server.api.http.logic;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.StringUtils;
-import cc.blynk.server.admin.helpers.Response;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
+import cc.blynk.server.handlers.http.rest.Response;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.HardwareBody;
 import cc.blynk.server.model.auth.Session;
@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import static cc.blynk.server.admin.helpers.Response.*;
+import static cc.blynk.server.handlers.http.rest.Response.*;
 
 /**
  * The Blynk Project.

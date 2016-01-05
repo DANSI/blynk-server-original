@@ -1,10 +1,10 @@
 package cc.blynk.server.admin.http.logic;
 
 import cc.blynk.common.stats.GlobalStats;
-import cc.blynk.server.admin.helpers.Response;
 import cc.blynk.server.admin.http.response.RequestPerSecondResponse;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
+import cc.blynk.server.handlers.http.rest.Response;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.stats.Stat;
@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static cc.blynk.server.admin.helpers.Response.*;
+import static cc.blynk.server.handlers.http.rest.Response.*;
 
 /**
  * The Blynk Project.

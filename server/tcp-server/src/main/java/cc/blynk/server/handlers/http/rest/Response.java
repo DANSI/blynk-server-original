@@ -1,4 +1,4 @@
-package cc.blynk.server.admin.helpers;
+package cc.blynk.server.handlers.http.rest;
 
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;

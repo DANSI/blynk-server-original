@@ -1,6 +1,5 @@
 package cc.blynk.server.handlers.http.rest;
 
-import cc.blynk.server.admin.helpers.Response;
 import cc.blynk.server.utils.UriTemplate;
 import io.netty.handler.codec.http.*;
 import org.apache.logging.log4j.LogManager;
