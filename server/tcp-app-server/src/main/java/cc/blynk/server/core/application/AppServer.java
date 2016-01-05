@@ -9,7 +9,7 @@ import cc.blynk.server.handlers.app.main.auth.AppLoginHandler;
 import cc.blynk.server.handlers.app.main.auth.RegisterHandler;
 import cc.blynk.server.handlers.app.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
-import cc.blynk.server.utils.SslUtil;
+import cc.blynk.server.utils.AppSslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -39,7 +39,7 @@ public class AppServer extends BaseServer {
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 
         log.info("Enabling SSL for application.");
-        AppSslContext appSslContext = SslUtil.initMutualSslContext(holder.props);
+        AppSslContext appSslContext = AppSslUtil.initMutualSslContext(holder.props);
 
         int appTimeoutSecs = holder.props.getIntProperty("app.socket.idle.timeout", 0);
         log.debug("app.socket.idle.timeout = {}", appTimeoutSecs);

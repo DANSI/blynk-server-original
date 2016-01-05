@@ -15,7 +15,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.utils.StateHolderUtil.*;
+import static cc.blynk.server.utils.AppStateHolderUtil.*;
 
 /**
  * The Blynk Project.

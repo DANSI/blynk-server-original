@@ -1,7 +1,6 @@
 package cc.blynk.server.utils;
 
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.core.application.AppSslContext;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
@@ -30,17 +29,6 @@ public class SslUtil {
         return sslProvider;
     }
 
-    public static AppSslContext initMutualSslContext(ServerProperties props) {
-        SslProvider sslProvider = fetchSslProvider(props);
-
-        return initMutualSslContext(
-                props.getProperty("server.ssl.cert"),
-                props.getProperty("server.ssl.key"),
-                props.getProperty("server.ssl.key.pass"),
-                props.getProperty("client.ssl.cert"),
-                sslProvider);
-    }
-
     public static SslContext initSslContext(ServerProperties props) {
         SslProvider sslProvider = SslUtil.fetchSslProvider(props);
 
@@ -63,34 +51,6 @@ public class SslUtil {
             }
 
             return SslUtil.build(serverCert, serverKey, serverPass, sslProvider);
-        } catch (CertificateException | SSLException | IllegalArgumentException e) {
-            log.error("Error initializing ssl context. Reason : {}", e.getMessage());
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
-    private static AppSslContext initMutualSslContext(String serverCertPath, String serverKeyPath, String serverPass,
-                                                      String clientCertPath,
-                                                      SslProvider sslProvider) {
-        try {
-            File serverCert = new File(serverCertPath);
-            File serverKey = new File(serverKeyPath);
-            File clientCert = new File(clientCertPath);
-
-            if (!serverCert.exists() || !serverKey.exists()) {
-                log.warn("ATTENTION. Server certificate paths cert : '{}', key : '{}' - not valid. Using embedded server certs and one way ssl. This is not secure. Please replace it with your own certs.",
-                        serverCert.getAbsolutePath(), serverKey.getAbsolutePath());
-
-                return new AppSslContext(false, build(sslProvider));
-            }
-
-            if (!clientCert.exists()) {
-                log.warn("Found server certificates but no client certificate for '{}' path. Using one way ssl.", clientCert.getAbsolutePath());
-
-                return new AppSslContext(false, build(serverCert, serverKey, serverPass, sslProvider));
-            }
-
-            return new AppSslContext(true, build(serverCert, serverKey, serverPass, sslProvider, clientCert));
         } catch (CertificateException | SSLException | IllegalArgumentException e) {
             log.error("Error initializing ssl context. Reason : {}", e.getMessage());
             throw new RuntimeException(e.getMessage());

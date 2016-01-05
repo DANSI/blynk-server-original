@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.app.main.logic.reporting;
+package cc.blynk.server.reporting;
 
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;

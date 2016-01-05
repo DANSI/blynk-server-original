@@ -3,6 +3,7 @@ package cc.blynk.server.handlers.app.main.logic.reporting;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
+import cc.blynk.server.reporting.GraphPinRequest;
 
 /**
  * The Blynk Project.

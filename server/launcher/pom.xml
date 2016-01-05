@@ -20,6 +20,12 @@
 
         <dependency>
             <groupId>cc.blynk.server</groupId>
+            <artifactId>tcp-app-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cc.blynk.server</groupId>
             <artifactId>admin</artifactId>
             <version>${project.version}</version>
         </dependency>

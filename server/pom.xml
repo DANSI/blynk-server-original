@@ -19,6 +19,7 @@
         <module>launcher</module>
         <module>http-admin</module>
         <module>http-api</module>
+        <module>tcp-app-server</module>
     </modules>
 
     <dependencies>

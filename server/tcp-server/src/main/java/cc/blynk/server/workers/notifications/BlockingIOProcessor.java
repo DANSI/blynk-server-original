@@ -7,7 +7,6 @@ import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataBinaryMe
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.ReportingDao;
-import cc.blynk.server.handlers.app.main.logic.reporting.GraphPinRequest;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.notifications.Notification;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -16,6 +15,7 @@ import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
+import cc.blynk.server.reporting.GraphPinRequest;
 import io.netty.channel.Channel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -177,12 +177,13 @@ public class BlockingIOProcessor {
 
     private void log(Channel channel, String errorMessage, int msgId, int response) {
         User user = getStateUser(channel);
+        if (user != null) {
+            log(user.name, errorMessage);
 
-        log(user.name, errorMessage);
-
-        channel.eventLoop().execute(() -> {
-            channel.writeAndFlush(new ResponseMessage(msgId, Command.RESPONSE, response));
-        });
+            channel.eventLoop().execute(() -> {
+                channel.writeAndFlush(new ResponseMessage(msgId, Command.RESPONSE, response));
+            });
+        }
     }
 
     private void log(String username, String errorMessage) {

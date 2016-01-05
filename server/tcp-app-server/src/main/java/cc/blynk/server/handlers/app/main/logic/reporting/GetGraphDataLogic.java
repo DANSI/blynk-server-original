@@ -7,6 +7,7 @@ import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.enums.PinType;
+import cc.blynk.server.reporting.GraphPinRequest;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;

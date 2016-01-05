@@ -2,6 +2,7 @@ package cc.blynk.server.workers.notifications;
 
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.ReportingDao;
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.hardware.HardwareHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.auth.User;
@@ -46,7 +47,7 @@ public class NotificationsProcessorTest {
         when(channel.eventLoop()).thenReturn(eventLoop);
         when(channel.pipeline()).thenReturn(pipeline);
 
-        when(pipeline.get(HardwareHandler.class)).thenReturn(hardwareHandler);
+        when(pipeline.get(BaseSimpleChannelInboundHandler.class)).thenReturn(hardwareHandler);
 
         BlockingIOProcessor processor = new BlockingIOProcessor(5, "", reportingDao);
         processor.twit(channel, "token", "secret", "body", 1);

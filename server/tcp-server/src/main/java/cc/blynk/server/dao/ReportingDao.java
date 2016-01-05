@@ -2,10 +2,10 @@ package cc.blynk.server.dao;
 
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.exceptions.NoDataException;
-import cc.blynk.server.handlers.app.main.logic.reporting.GraphPinRequest;
 import cc.blynk.server.model.enums.GraphType;
 import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.graph.GraphKey;
+import cc.blynk.server.reporting.GraphPinRequest;
 import cc.blynk.server.reporting.average.AverageAggregator;
 import cc.blynk.server.utils.FileUtils;
 import cc.blynk.server.utils.ReportingUtil;
