@@ -23,16 +23,17 @@ public class AverageAggregator {
     public static final String MINUTE_TEMP_FILENAME = "minute_temp.bin";
     public static final String HOURLY_TEMP_FILENAME = "hourly_temp.bin";
     public static final String DAILY_TEMP_FILENAME = "daily_temp.bin";
+    public final String dataFolder;
     private final ConcurrentHashMap<AggregationKey, AggregationValue> minute;
     private final ConcurrentHashMap<AggregationKey, AggregationValue> hourly;
     private final ConcurrentHashMap<AggregationKey, AggregationValue> daily;
-    private final String dataFolder;
 
     public AverageAggregator(String dataFolder) {
         this.dataFolder = dataFolder;
 
         Path path;
 
+        //todo move this logic to separate class?
         path = Paths.get(dataFolder, MINUTE_TEMP_FILENAME);
         this.minute = read(path);
         FileUtils.deleteQuietly(path);

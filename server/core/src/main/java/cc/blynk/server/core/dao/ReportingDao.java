@@ -7,7 +7,6 @@ import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.utils.FileUtils;
-import cc.blynk.utils.ReportingUtil;
 import cc.blynk.utils.ServerProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,7 +41,7 @@ public class ReportingDao {
 
     public ReportingDao(AverageAggregator averageAggregator, ServerProperties serverProperties) {
         this.averageAggregator = averageAggregator;
-        this.dataFolder = ReportingUtil.getReportingFolder(serverProperties.getProperty("data.folder"));
+        this.dataFolder = averageAggregator.dataFolder;
         this.ENABLE_RAW_DATA_STORE = serverProperties.getBoolProperty("enable.raw.data.store");
     }
 
