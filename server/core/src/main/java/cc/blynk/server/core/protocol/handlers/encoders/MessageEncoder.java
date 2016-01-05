@@ -31,7 +31,7 @@ public class MessageEncoder extends MessageToByteEncoder<MessageBase> {
 
         if (message.command == Command.RESPONSE) {
             out.writeShort(message.length);
-            if (message.length == Response.DEVICE_WENT_OFFLINE_2) {
+            if (message.length == Response.DEVICE_WENT_OFFLINE) {
                 out.writeInt(((ResponseWithBodyMessage) message).dashId);
             }
         } else {
