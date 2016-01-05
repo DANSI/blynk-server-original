@@ -1,21 +1,21 @@
 package cc.blynk.server.hardware.handlers;
 
-import cc.blynk.common.enums.Command;
-import cc.blynk.common.model.messages.MessageFactory;
-import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.exceptions.NotificationBodyInvalidException;
-import cc.blynk.server.core.exceptions.QuotaLimitException;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
+import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.exceptions.NotificationBodyInvalidException;
+import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
+import cc.blynk.server.core.protocol.model.messages.MessageFactory;
+import cc.blynk.server.core.protocol.model.messages.hardware.TweetMessage;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.hardware.exceptions.NotifNotAuthorizedException;
 import cc.blynk.server.hardware.handlers.hardware.logic.TweetLogic;
+import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;

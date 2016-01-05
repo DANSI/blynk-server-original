@@ -22,10 +22,6 @@ import java.time.Instant;
  */
 public class HardwareSyncLogic {
 
-    public HardwareSyncLogic() {
-
-    }
-
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         final int dashId = state.dashId;
         DashBoard dash = state.user.profile.getDashById(dashId, message.id);

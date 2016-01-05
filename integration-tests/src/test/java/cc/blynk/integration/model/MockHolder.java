@@ -1,7 +1,8 @@
 package cc.blynk.integration.model;
 
-import cc.blynk.common.model.messages.MessageBase;
-import cc.blynk.common.model.messages.MessageFactory;
+
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.server.core.protocol.model.messages.MessageFactory;
 
 import static org.mockito.Mockito.*;
 

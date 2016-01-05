@@ -36,12 +36,12 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.hardware = new HardwareLogic(sessionDao, reportingDao);
         this.bridge = new BridgeLogic(sessionDao);
 
-        long defaultNotificationQuotaLimit = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
+        final long defaultNotificationQuotaLimit = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
         this.email = new MailLogic(blockingIOProcessor, defaultNotificationQuotaLimit);
         this.push = new PushLogic(blockingIOProcessor, defaultNotificationQuotaLimit);
         this.tweet = new TweetLogic(blockingIOProcessor, defaultNotificationQuotaLimit);
         this.sync = new HardwareSyncLogic();
-        this.info = new HardwareInfoLogic(props);
+        this.info = new HardwareInfoLogic(props.getIntProperty("hard.socket.idle.timeout", 0));
 
         this.state = stateHolder;
     }

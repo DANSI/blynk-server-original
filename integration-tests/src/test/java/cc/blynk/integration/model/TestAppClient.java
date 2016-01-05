@@ -2,9 +2,9 @@ package cc.blynk.integration.model;
 
 import cc.blynk.client.core.AppClient;
 import cc.blynk.client.handlers.decoders.ClientMessageDecoder;
-import cc.blynk.common.handlers.common.encoders.MessageEncoder;
-import cc.blynk.common.stats.GlobalStats;
-import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
+import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.utils.ServerProperties;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

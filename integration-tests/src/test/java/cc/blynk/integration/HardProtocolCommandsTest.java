@@ -1,9 +1,9 @@
 package cc.blynk.integration;
 
-import cc.blynk.common.utils.StringUtils;
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.utils.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -13,8 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.OngoingStubbing;
 
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -61,7 +61,7 @@ public class HardProtocolCommandsTest extends IntegrationBase {
     public void testInvalidCommandAppLoginOnHardChannel() throws Exception {
         makeCommands("login dima@dima.ua 1").check(produce(1, INVALID_TOKEN));
 
-        String body = "dima@dima.ua 1".replaceAll(" ",StringUtils.BODY_SEPARATOR_STRING);
+        String body = "dima@dima.ua 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING);
         makeCommands("login " + body).check(produce(1, INVALID_TOKEN));
 
         makeCommands("login").check(produce(1, INVALID_TOKEN));

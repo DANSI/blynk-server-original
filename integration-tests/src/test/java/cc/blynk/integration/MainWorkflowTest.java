@@ -1,20 +1,20 @@
 package cc.blynk.integration;
 
-import cc.blynk.common.enums.Command;
-import cc.blynk.common.model.messages.ResponseMessage;
-import cc.blynk.common.model.messages.ResponseWithBodyMessage;
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
-import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedBinaryMessage;
-import cc.blynk.common.utils.StringUtils;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.application.handlers.main.logic.reporting.GraphPinRequestData;
+import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.ByteUtils;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import org.apache.commons.io.FileUtils;
@@ -28,9 +28,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static cc.blynk.common.enums.Command.*;
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 

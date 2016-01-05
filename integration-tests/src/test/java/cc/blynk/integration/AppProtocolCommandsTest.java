@@ -1,13 +1,13 @@
 package cc.blynk.integration;
 
-import cc.blynk.common.enums.Command;
-import cc.blynk.common.stats.GlobalStats;
-import cc.blynk.common.utils.ReflectionUtil;
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.server.application.AppServer;
+import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.workers.ProfileSaverWorker;
+import cc.blynk.utils.ReflectionUtil;
+import cc.blynk.utils.ServerProperties;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -21,9 +21,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import static cc.blynk.common.enums.Command.*;
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static org.mockito.Mockito.*;
 
 /**

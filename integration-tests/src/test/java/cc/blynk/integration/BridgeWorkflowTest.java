@@ -1,9 +1,9 @@
 package cc.blynk.integration;
 
-import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.application.AppServer;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -15,9 +15,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static cc.blynk.common.enums.Command.*;
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static org.mockito.Mockito.*;
 
 /**

@@ -7,7 +7,6 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.JsonParser;
-import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,8 +26,8 @@ public class SaveDashLogic {
 
     private final int DASH_MAX_SIZE;
 
-    public SaveDashLogic(ServerProperties props) {
-        this.DASH_MAX_SIZE = props.getIntProperty("user.profile.max.size") * 1024;
+    public SaveDashLogic(int maxDashSize) {
+        this.DASH_MAX_SIZE = maxDashSize;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {

@@ -1,8 +1,5 @@
 package cc.blynk.integration;
 
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestAppClient;
@@ -10,7 +7,10 @@ import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.ServerProperties;
 import org.junit.Before;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -21,8 +21,8 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;

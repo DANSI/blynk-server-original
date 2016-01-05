@@ -3,7 +3,6 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareProfile;
-import cc.blynk.utils.ServerProperties;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
@@ -29,8 +28,8 @@ public class HardwareInfoLogic {
 
     private final int hardwareIdleTimeout;
 
-    public HardwareInfoLogic(ServerProperties props) {
-        this.hardwareIdleTimeout = props.getIntProperty("hard.socket.idle.timeout", 0);
+    public HardwareInfoLogic(int hardwareIdleTimeout) {
+        this.hardwareIdleTimeout = hardwareIdleTimeout;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {

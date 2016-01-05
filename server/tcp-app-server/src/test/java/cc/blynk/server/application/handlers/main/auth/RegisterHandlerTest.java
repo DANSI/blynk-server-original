@@ -1,15 +1,15 @@
 package cc.blynk.server.application.handlers.main.auth;
 
-import cc.blynk.common.model.messages.protocol.appllication.RegisterMessage;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
 import io.netty.channel.ChannelHandlerContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static org.mockito.Mockito.*;
 
 /**

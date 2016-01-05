@@ -1,7 +1,5 @@
 package cc.blynk.integration;
 
-import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedBinaryMessage;
-import cc.blynk.common.utils.StringUtils;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.server.application.AppServer;
@@ -10,9 +8,11 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
+import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -20,9 +20,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static cc.blynk.common.enums.Command.*;
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 

@@ -1,9 +1,9 @@
 package cc.blynk.server.workers;
 
-import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.stats.GlobalStats;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

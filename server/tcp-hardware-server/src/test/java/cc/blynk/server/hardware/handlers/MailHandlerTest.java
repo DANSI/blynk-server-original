@@ -1,20 +1,20 @@
 package cc.blynk.server.hardware.handlers;
 
-import cc.blynk.common.enums.Command;
-import cc.blynk.common.model.messages.MessageFactory;
-import cc.blynk.common.model.messages.protocol.hardware.MailMessage;
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.exceptions.IllegalCommandException;
-import cc.blynk.server.core.exceptions.NotAllowedException;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
+import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.model.messages.MessageFactory;
+import cc.blynk.server.core.protocol.model.messages.hardware.MailMessage;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.logic.MailLogic;
+import cc.blynk.utils.ServerProperties;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.junit.Test;

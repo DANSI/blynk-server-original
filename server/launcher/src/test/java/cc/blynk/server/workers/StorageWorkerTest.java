@@ -1,12 +1,12 @@
 package cc.blynk.server.workers;
 
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
+import cc.blynk.utils.ServerProperties;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;

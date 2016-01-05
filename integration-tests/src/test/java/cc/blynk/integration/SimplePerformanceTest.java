@@ -1,12 +1,12 @@
 package cc.blynk.integration;
 
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.utils.ServerProperties;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;

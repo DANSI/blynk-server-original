@@ -1,12 +1,12 @@
 package cc.blynk.server.workers.notifications;
 
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
+import cc.blynk.utils.ServerProperties;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoop;

@@ -87,7 +87,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         Integer dashId = UserDao.getDashIdByToken(user.dashShareTokens, token, messageId);
 
         cleanPipeline(ctx.pipeline());
-        ctx.pipeline().addLast(new AppShareHandler(props, userDao, sessionDao, reportingDao, blockingIOProcessor, new AppShareStateHolder(user, osType, version, token, dashId)));
+        ctx.pipeline().addLast(new AppShareHandler(props, sessionDao, reportingDao, blockingIOProcessor, new AppShareStateHolder(user, osType, version, token, dashId)));
 
         Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
 

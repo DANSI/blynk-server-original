@@ -49,7 +49,10 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
     public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, AppStateHolder state) {
         super(props, state);
-        this.saveProfile = new SaveProfileLogic(props);
+        this.saveProfile = new SaveProfileLogic(
+                props.getIntProperty("user.dashboard.max.limit"),
+                props.getIntProperty("user.profile.max.size") * 1024
+        );
         this.token = new GetTokenLogic(userDao);
         this.hardwareApp = new HardwareAppLogic(sessionDao);
         this.refreshToken = new RefreshTokenLogic(userDao);
@@ -58,8 +61,13 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.getShareTokenLogic = new GetShareTokenLogic(userDao);
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(userDao, sessionDao);
         this.getSharedDashLogic = new GetSharedDashLogic(userDao);
-        this.createDashLogic = new CreateDashLogic(props);
-        this.saveDashLogic = new SaveDashLogic(props);
+        this.createDashLogic = new CreateDashLogic(
+                props.getIntProperty("user.dashboard.max.limit"),
+                props.getIntProperty("user.profile.max.size") * 1024
+        );
+        this.saveDashLogic = new SaveDashLogic(
+                props.getIntProperty("user.profile.max.size") * 1024
+        );
         this.activateDashboardLogic = new ActivateDashboardLogic(sessionDao);
         this.deActivateDashboardLogic = new DeActivateDashboardLogic(sessionDao);
         this.shareLogic = new ShareLogic(sessionDao);

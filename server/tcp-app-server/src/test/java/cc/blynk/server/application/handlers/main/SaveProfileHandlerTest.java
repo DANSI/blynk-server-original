@@ -1,14 +1,14 @@
 package cc.blynk.server.application.handlers.main;
 
-import cc.blynk.common.model.messages.protocol.appllication.SaveProfileMessage;
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.application.handlers.main.logic.SaveProfileLogic;
-import cc.blynk.server.core.exceptions.IllegalCommandBodyException;
-import cc.blynk.server.core.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
+import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.model.messages.appllication.SaveProfileMessage;
+import cc.blynk.utils.ServerProperties;
 import org.junit.Test;
 
-import static cc.blynk.common.enums.Command.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 
 /**
  * The Blynk Project.
@@ -19,7 +19,7 @@ public class SaveProfileHandlerTest {
 
     ServerProperties props = new ServerProperties();
 
-    private SaveProfileLogic saveProfileHandler = new SaveProfileLogic(props);
+    private SaveProfileLogic saveProfileHandler = new SaveProfileLogic(10, props.getIntProperty("user.profile.max.size") * 1024);
 
     @Test(expected = NotAllowedException.class)
     public void testTooBigUserProfile() throws Exception {

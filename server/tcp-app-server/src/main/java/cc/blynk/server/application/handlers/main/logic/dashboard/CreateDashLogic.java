@@ -7,7 +7,6 @@ import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
-import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,9 +27,9 @@ public class CreateDashLogic {
     private final int DASH_MAX_LIMIT;
     private final int DASH_MAX_SIZE;
 
-    public CreateDashLogic(ServerProperties props) {
-        this.DASH_MAX_LIMIT = props.getIntProperty("user.dashboard.max.limit");
-        this.DASH_MAX_SIZE = props.getIntProperty("user.profile.max.size") * 1024;
+    public CreateDashLogic(int dashMaxLimit, int dashMaxSize) {
+        this.DASH_MAX_LIMIT = dashMaxLimit;
+        this.DASH_MAX_SIZE = dashMaxSize;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
