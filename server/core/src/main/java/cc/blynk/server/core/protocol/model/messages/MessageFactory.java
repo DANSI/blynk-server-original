@@ -1,7 +1,6 @@
 package cc.blynk.server.core.protocol.model.messages;
 
 import cc.blynk.server.core.protocol.enums.Command;
-import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
 import cc.blynk.server.core.protocol.model.messages.appllication.*;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.*;
@@ -83,10 +82,6 @@ public class MessageFactory {
 
     public static ResponseMessage produce(int messageId, int responseCode) {
         return new ResponseMessage(messageId, Command.RESPONSE, responseCode);
-    }
-
-    public static ResponseMessage produce(BaseServerException exception) {
-        return new ResponseMessage(exception.msgId, Command.RESPONSE, exception.errorCode);
     }
 
 }
