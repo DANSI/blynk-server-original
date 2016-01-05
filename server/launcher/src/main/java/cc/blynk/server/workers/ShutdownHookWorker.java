@@ -1,8 +1,8 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.reporting.average.AverageAggregator;
-import cc.blynk.server.workers.notifications.BlockingIOProcessor;
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.reporting.average.AverageAggregator;
 
 /**
  * Used to close and store all important info to disk.

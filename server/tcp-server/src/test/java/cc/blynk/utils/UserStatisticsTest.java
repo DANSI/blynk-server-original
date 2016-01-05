@@ -1,9 +1,9 @@
 package cc.blynk.utils;
 
-import cc.blynk.server.dao.FileManager;
-import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.Widget;
+import cc.blynk.server.core.dao.FileManager;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.widgets.Widget;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;

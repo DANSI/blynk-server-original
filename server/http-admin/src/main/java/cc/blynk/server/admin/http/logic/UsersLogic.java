@@ -2,12 +2,12 @@ package cc.blynk.server.admin.http.logic;
 
 import cc.blynk.common.utils.SHA256Util;
 import cc.blynk.server.admin.http.pojo.UserPassPojo;
-import cc.blynk.server.dao.FileManager;
-import cc.blynk.server.dao.SessionDao;
-import cc.blynk.server.dao.UserDao;
+import cc.blynk.server.core.dao.FileManager;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.handlers.http.rest.Response;
-import cc.blynk.server.model.auth.Session;
-import cc.blynk.server.model.auth.User;
 import cc.blynk.utils.JsonParser;
 
 import javax.ws.rs.*;

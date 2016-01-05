@@ -1,12 +1,12 @@
 package cc.blynk.server.handlers.app.main.logic.sharing;
 
 import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.server.dao.UserDao;
-import cc.blynk.server.exceptions.InvalidTokenException;
-import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.notifications.Notification;
-import cc.blynk.server.model.widgets.notifications.Twitter;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.exceptions.InvalidTokenException;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Map;

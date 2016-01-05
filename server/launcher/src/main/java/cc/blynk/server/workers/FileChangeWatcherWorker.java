@@ -2,7 +2,7 @@ package cc.blynk.server.workers;
 
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.FileLoaderUtil;
-import cc.blynk.server.workers.notifications.BlockingIOProcessor;
+import cc.blynk.server.core.BlockingIOProcessor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -2,10 +2,10 @@ package cc.blynk.server.handlers.app.main.logic;
 
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ParseUtil;
-import cc.blynk.server.exceptions.IllegalCommandBodyException;
-import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.auth.User;
-import cc.blynk.server.workers.notifications.BlockingIOProcessor;
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.exceptions.IllegalCommandBodyException;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

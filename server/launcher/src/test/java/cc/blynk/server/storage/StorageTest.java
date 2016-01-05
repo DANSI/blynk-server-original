@@ -1,7 +1,7 @@
 package cc.blynk.server.storage;
 
-import cc.blynk.server.model.graph.GraphKey;
-import cc.blynk.server.reporting.average.AverageAggregator;
+import cc.blynk.server.core.model.graph.GraphKey;
+import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.server.workers.StorageWorker;
 import org.junit.Ignore;
 import org.junit.Test;

@@ -3,7 +3,7 @@ package cc.blynk.server.handlers.app.main.logic;
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.model.messages.protocol.appllication.LoadProfileMessage;
 import cc.blynk.common.utils.ParseUtil;
-import cc.blynk.server.model.auth.User;
+import cc.blynk.server.core.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 
 /**

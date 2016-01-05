@@ -2,10 +2,10 @@ package cc.blynk.server.handlers.app.main.logic.dashboard;
 
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.exceptions.NotAllowedException;
-import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.auth.User;
+import cc.blynk.server.core.exceptions.IllegalCommandException;
+import cc.blynk.server.core.exceptions.NotAllowedException;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
 import io.netty.channel.ChannelHandlerContext;

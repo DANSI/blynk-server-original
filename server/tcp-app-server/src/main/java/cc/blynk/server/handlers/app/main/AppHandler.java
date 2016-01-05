@@ -2,9 +2,10 @@ package cc.blynk.server.handlers.app.main;
 
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.ReportingDao;
-import cc.blynk.server.dao.SessionDao;
-import cc.blynk.server.dao.UserDao;
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
 import cc.blynk.server.handlers.app.main.logic.*;
@@ -17,7 +18,6 @@ import cc.blynk.server.handlers.app.main.logic.sharing.GetSharedDashLogic;
 import cc.blynk.server.handlers.app.main.logic.sharing.RefreshShareTokenLogic;
 import cc.blynk.server.handlers.app.main.logic.sharing.ShareLogic;
 import cc.blynk.server.handlers.common.PingLogic;
-import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.ThreadContext;
 

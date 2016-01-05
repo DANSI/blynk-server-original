@@ -3,7 +3,7 @@ package cc.blynk.server.launcher;
 import cc.blynk.common.utils.Config;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.reporting.average.AverageAggregator;
+import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.server.workers.*;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ReportingUtil;

@@ -1,6 +1,6 @@
 package cc.blynk.utils;
 
-import cc.blynk.server.model.DashBoard;
+import cc.blynk.server.core.model.DashBoard;
 
 /**
  * The Blynk Project.

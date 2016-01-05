@@ -2,11 +2,11 @@ package cc.blynk.server.handlers.hardware.logic;
 
 import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.server.dao.SessionDao;
-import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.exceptions.NotAllowedException;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.exceptions.IllegalCommandException;
+import cc.blynk.server.core.exceptions.NotAllowedException;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
-import cc.blynk.server.model.auth.Session;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 

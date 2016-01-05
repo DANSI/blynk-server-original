@@ -3,10 +3,10 @@ package cc.blynk.server.handlers.app.main.logic;
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.common.utils.StringUtils;
-import cc.blynk.server.exceptions.NotAllowedException;
+import cc.blynk.server.core.exceptions.NotAllowedException;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
-import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.widgets.notifications.Notification;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.common.enums.Response.*;

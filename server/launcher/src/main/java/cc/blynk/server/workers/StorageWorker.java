@@ -1,9 +1,9 @@
 package cc.blynk.server.workers;
 
-import cc.blynk.server.model.enums.GraphType;
-import cc.blynk.server.reporting.average.AggregationKey;
-import cc.blynk.server.reporting.average.AggregationValue;
-import cc.blynk.server.reporting.average.AverageAggregator;
+import cc.blynk.server.core.model.enums.GraphType;
+import cc.blynk.server.core.reporting.average.AggregationKey;
+import cc.blynk.server.core.reporting.average.AggregationValue;
+import cc.blynk.server.core.reporting.average.AverageAggregator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 
-import static cc.blynk.server.dao.ReportingDao.*;
+import static cc.blynk.server.core.dao.ReportingDao.*;
 
 /**
  * The Blynk Project.

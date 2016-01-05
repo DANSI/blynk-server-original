@@ -2,11 +2,11 @@ package cc.blynk.server.handlers.app.main.logic.sharing;
 
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.StringUtils;
-import cc.blynk.server.dao.SessionDao;
-import cc.blynk.server.exceptions.IllegalCommandBodyException;
-import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.auth.Session;
-import cc.blynk.server.model.auth.User;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.exceptions.IllegalCommandBodyException;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.auth.User;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 

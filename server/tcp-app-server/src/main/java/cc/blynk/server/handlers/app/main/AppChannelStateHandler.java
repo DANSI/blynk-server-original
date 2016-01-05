@@ -1,8 +1,8 @@
 package cc.blynk.server.handlers.app.main;
 
-import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
-import cc.blynk.server.model.auth.Session;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

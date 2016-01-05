@@ -1,12 +1,12 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.ReportingDao;
-import cc.blynk.server.model.enums.GraphType;
-import cc.blynk.server.model.enums.PinType;
-import cc.blynk.server.reporting.average.AggregationKey;
-import cc.blynk.server.reporting.average.AggregationValue;
-import cc.blynk.server.reporting.average.AverageAggregator;
+import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.model.enums.GraphType;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.reporting.average.AggregationKey;
+import cc.blynk.server.core.reporting.average.AggregationValue;
+import cc.blynk.server.core.reporting.average.AverageAggregator;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cc.blynk.server.dao.ReportingDao.*;
+import static cc.blynk.server.core.dao.ReportingDao.*;
 import static cc.blynk.utils.ReportingUtil.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;

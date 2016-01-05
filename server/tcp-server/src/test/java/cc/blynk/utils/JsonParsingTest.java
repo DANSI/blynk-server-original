@@ -1,13 +1,13 @@
 package cc.blynk.utils;
 
-import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.Pin;
-import cc.blynk.server.model.Profile;
-import cc.blynk.server.model.enums.PinType;
-import cc.blynk.server.model.widgets.Widget;
-import cc.blynk.server.model.widgets.controls.Button;
-import cc.blynk.server.model.widgets.controls.RGB;
-import cc.blynk.server.model.widgets.controls.Timer;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.controls.Button;
+import cc.blynk.server.core.model.widgets.controls.RGB;
+import cc.blynk.server.core.model.widgets.controls.Timer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
 

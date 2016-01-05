@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.hardware.auth;
 
 import cc.blynk.server.core.StateHolder;
-import cc.blynk.server.model.auth.User;
+import cc.blynk.server.core.model.auth.User;
 
 /**
  * The Blynk Project.

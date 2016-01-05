@@ -2,8 +2,8 @@ package cc.blynk.server.handlers.app.main.logic;
 
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.model.messages.protocol.appllication.RefreshTokenMessage;
-import cc.blynk.server.dao.UserDao;
-import cc.blynk.server.model.auth.User;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.common.utils.ParseUtil.*;

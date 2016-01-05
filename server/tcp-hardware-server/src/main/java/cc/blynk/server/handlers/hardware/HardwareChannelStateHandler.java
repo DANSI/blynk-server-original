@@ -2,12 +2,12 @@ package cc.blynk.server.handlers.hardware;
 
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.ResponseWithBodyMessage;
-import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
-import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.auth.Session;
-import cc.blynk.server.model.widgets.notifications.Notification;
-import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

@@ -1,9 +1,9 @@
 package cc.blynk.server.handlers.app.main.logic.reporting;
 
-import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.model.enums.GraphType;
-import cc.blynk.server.model.enums.PinType;
-import cc.blynk.server.reporting.GraphPinRequest;
+import cc.blynk.server.core.exceptions.IllegalCommandException;
+import cc.blynk.server.core.model.enums.GraphType;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.reporting.GraphPinRequest;
 
 /**
  * The Blynk Project.

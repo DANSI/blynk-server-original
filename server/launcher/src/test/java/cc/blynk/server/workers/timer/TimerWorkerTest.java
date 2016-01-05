@@ -1,12 +1,12 @@
 package cc.blynk.server.workers.timer;
 
-import cc.blynk.server.dao.SessionDao;
-import cc.blynk.server.dao.UserDao;
-import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.Profile;
-import cc.blynk.server.model.auth.Session;
-import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.controls.Timer;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.widgets.controls.Timer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

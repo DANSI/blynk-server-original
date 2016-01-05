@@ -1,9 +1,9 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.common.stats.GlobalStats;
-import cc.blynk.server.dao.SessionDao;
-import cc.blynk.server.dao.UserDao;
-import cc.blynk.server.stats.Stat;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.stats.Stat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

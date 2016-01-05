@@ -2,13 +2,13 @@ package cc.blynk.server.handlers.hardware;
 
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.ReportingDao;
-import cc.blynk.server.dao.SessionDao;
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.handlers.hardware.logic.*;
-import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.ThreadContext;
 

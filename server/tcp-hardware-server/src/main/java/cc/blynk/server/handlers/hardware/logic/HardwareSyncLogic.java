@@ -3,12 +3,12 @@ package cc.blynk.server.handlers.hardware.logic;
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.StringUtils;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.controls.SyncWidget;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
-import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.Pin;
-import cc.blynk.server.model.enums.PinType;
-import cc.blynk.server.model.widgets.Widget;
-import cc.blynk.server.model.widgets.controls.SyncWidget;
 import cc.blynk.utils.PinUtil;
 import io.netty.channel.ChannelHandlerContext;
 

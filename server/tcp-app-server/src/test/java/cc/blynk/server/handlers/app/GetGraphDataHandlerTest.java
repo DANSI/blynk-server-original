@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.app;
 
-import cc.blynk.server.model.graph.GraphKey;
+import cc.blynk.server.core.model.graph.GraphKey;
 import cc.blynk.utils.ByteUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;

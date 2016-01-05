@@ -1,12 +1,12 @@
 package cc.blynk.server.handlers.hardware.logic;
 
 import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.server.exceptions.NotificationBodyInvalidException;
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.exceptions.NotificationBodyInvalidException;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
-import cc.blynk.server.model.DashBoard;
-import cc.blynk.server.model.widgets.notifications.Twitter;
 import cc.blynk.server.notifications.twitter.exceptions.NotifNotAuthorizedException;
-import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

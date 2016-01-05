@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers;
 
-import cc.blynk.server.model.auth.Session;
+import cc.blynk.server.core.model.auth.Session;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;

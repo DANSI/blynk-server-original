@@ -2,9 +2,9 @@ package cc.blynk.server.handlers.app.main.logic.sharing;
 
 import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.common.model.messages.protocol.appllication.sharing.GetShareTokenMessage;
-import cc.blynk.server.dao.UserDao;
-import cc.blynk.server.exceptions.NotAllowedException;
-import cc.blynk.server.model.auth.User;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.exceptions.NotAllowedException;
+import cc.blynk.server.core.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 
 /**

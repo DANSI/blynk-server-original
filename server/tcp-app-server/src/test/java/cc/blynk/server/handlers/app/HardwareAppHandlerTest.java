@@ -2,13 +2,13 @@ package cc.blynk.server.handlers.app;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.SessionDao;
-import cc.blynk.server.dao.UserDao;
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
 import cc.blynk.server.handlers.app.main.logic.HardwareAppLogic;
-import cc.blynk.server.model.Profile;
-import cc.blynk.server.model.auth.User;
-import cc.blynk.server.workers.notifications.BlockingIOProcessor;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.junit.Test;

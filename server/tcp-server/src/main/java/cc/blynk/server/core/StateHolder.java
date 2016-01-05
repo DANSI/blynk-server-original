@@ -1,6 +1,6 @@
 package cc.blynk.server.core;
 
-import cc.blynk.server.model.auth.User;
+import cc.blynk.server.core.model.auth.User;
 
 /**
  * The Blynk Project.

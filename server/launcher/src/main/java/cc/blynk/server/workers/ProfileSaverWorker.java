@@ -1,8 +1,8 @@
 package cc.blynk.server.workers;
 
-import cc.blynk.server.dao.FileManager;
-import cc.blynk.server.dao.UserDao;
-import cc.blynk.server.model.auth.User;
+import cc.blynk.server.core.dao.FileManager;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
