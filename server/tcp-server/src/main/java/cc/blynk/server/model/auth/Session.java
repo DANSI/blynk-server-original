@@ -4,8 +4,7 @@ import cc.blynk.common.enums.Response;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.model.messages.protocol.appllication.sharing.SyncMessage;
-import cc.blynk.server.handlers.app.main.AppHandler;
-import cc.blynk.server.handlers.hardware.HardwareHandler;
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.stats.metrics.InstanceLoadMeter;
 import io.netty.channel.Channel;
@@ -39,6 +38,18 @@ public class Session {
 
     public Session(EventLoop initialEventLoop) {
         this.initialEventLoop = initialEventLoop;
+    }
+
+    private static int getRequestRate(Set<Channel> channels) {
+        double sum = 0;
+        for (Channel c : channels) {
+            BaseSimpleChannelInboundHandler handler = c.pipeline().get(BaseSimpleChannelInboundHandler.class);
+            if (handler != null) {
+                InstanceLoadMeter loadMeter = handler.getQuotaMeter();
+                sum += loadMeter.getOneMinuteRateNoTick();
+            }
+        }
+        return (int) sum;
     }
 
     public boolean sendMessageToHardware(int activeDashId, MessageBase message) {
@@ -99,27 +110,11 @@ public class Session {
     }
 
     public int getAppRequestRate() {
-        double sum = 0;
-        for (Channel c : appChannels) {
-            AppHandler handler = c.pipeline().get(AppHandler.class);
-            if (handler != null) {
-                InstanceLoadMeter loadMeter = handler.getQuotaMeter();
-                sum += loadMeter.getOneMinuteRateNoTick();
-            }
-        }
-        return (int) sum;
+        return getRequestRate(appChannels);
     }
 
     public int getHardRequestRate() {
-        double sum = 0;
-        for (Channel c : hardwareChannels) {
-            HardwareHandler handler = c.pipeline().get(HardwareHandler.class);
-            if (handler != null) {
-                InstanceLoadMeter loadMeter = handler.getQuotaMeter();
-                sum += loadMeter.getOneMinuteRateNoTick();
-            }
-        }
-        return (int) sum;
+        return getRequestRate(hardwareChannels);
     }
 
     public void closeAll() {
