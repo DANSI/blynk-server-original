@@ -12,11 +12,20 @@
     <artifactId>tcp-app-server</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>cc.blynk.server</groupId>
             <artifactId>tcp-server</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- used for email validation -->
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+
     </dependencies>
 
 </project>
