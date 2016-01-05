@@ -15,7 +15,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.handlers.hardware.logic.TweetLogic;
-import cc.blynk.server.notifications.twitter.exceptions.NotifNotAuthorizedException;
+import cc.blynk.server.hardware.exceptions.NotifNotAuthorizedException;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;

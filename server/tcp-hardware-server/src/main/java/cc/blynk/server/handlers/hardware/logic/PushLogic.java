@@ -7,7 +7,7 @@ import cc.blynk.server.core.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
-import cc.blynk.server.notifications.twitter.exceptions.NotifNotAuthorizedException;
+import cc.blynk.server.hardware.exceptions.NotifNotAuthorizedException;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

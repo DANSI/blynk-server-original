@@ -1,6 +1,5 @@
 package cc.blynk.server.notifications.push;
 
-import cc.blynk.common.utils.ServerProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.http.HttpEntity;
@@ -13,6 +12,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.net.URI;
+import java.util.Properties;
 
 /**
  * The Blynk Project.
@@ -21,15 +21,14 @@ import java.net.URI;
  */
 public class GCMWrapper {
 
-    private static final String filePropertiesName = "gcm.properties";
+    public static final String GCM_PROPERTIES_FILENAME = "gcm.properties";
 
     private final String API_KEY;
     private final CloseableHttpClient httpclient;
     private final URI gcmURI;
     private final ObjectReader gcmResponseReader = new ObjectMapper().reader(GCMResponseMessage.class);
 
-    public GCMWrapper() {
-        ServerProperties props = new ServerProperties(filePropertiesName);
+    public GCMWrapper(Properties props) {
         this.API_KEY = "key=" + props.getProperty("gcm.api.key");
         this.httpclient = HttpClients.createDefault();
         String server = props.getProperty("gcm.server");

@@ -50,8 +50,8 @@
         </dependency>
 
         <dependency>
-            <groupId>cc.blynk.server.notifications</groupId>
-            <artifactId>email</artifactId>
+            <groupId>cc.blynk.server</groupId>
+            <artifactId>core</artifactId>
             <version>${project.version}</version>
         </dependency>
 

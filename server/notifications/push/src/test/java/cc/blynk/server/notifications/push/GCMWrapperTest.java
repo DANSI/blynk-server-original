@@ -19,14 +19,14 @@ public class GCMWrapperTest {
     @Test
     @Ignore
     public void testIOS() throws Exception {
-        GCMWrapper gcmWrapper = new GCMWrapper();
+        GCMWrapper gcmWrapper = new GCMWrapper(null);
         gcmWrapper.send(new IOSGCMMessage("to", Priority.normal, "yo!!!", 1));
     }
 
     @Test
     @Ignore
     public void testAndroid() throws Exception {
-        GCMWrapper gcmWrapper = new GCMWrapper();
+        GCMWrapper gcmWrapper = new GCMWrapper(null);
         gcmWrapper.send(new AndroidGCMMessage("", Priority.normal, "yo!!!", 1));
     }
 

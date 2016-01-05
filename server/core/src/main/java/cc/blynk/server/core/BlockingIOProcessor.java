@@ -50,7 +50,7 @@ public class BlockingIOProcessor {
     public BlockingIOProcessor(int maxQueueSize, String tokenBody, ReportingDao reportingDao) {
         this.twitterWrapper = new TwitterWrapper();
         this.mailWrapper = new MailWrapper(new ServerProperties(Config.MAIL_PROPERTIES_FILENAME));
-        this.gcmWrapper = new GCMWrapper();
+        this.gcmWrapper = new GCMWrapper(new ServerProperties(GCMWrapper.GCM_PROPERTIES_FILENAME));
         this.reportingDao = reportingDao;
         this.executor = new ThreadPoolExecutor(
                 NOTIFICATIONS_PROCESSORS, NOTIFICATIONS_PROCESSORS,
