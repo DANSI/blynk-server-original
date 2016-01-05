@@ -65,7 +65,7 @@ public class UsersLogic extends BaseLogic {
     public Response updateUser(@PathParam("name") String name,
                                    User updatedUser) {
 
-        log.debug("Deleting user {}", name);
+        log.debug("Updating user {}", name);
         User oldUser = userDao.getByName(name);
 
         //if pass was changed, cal hash.
