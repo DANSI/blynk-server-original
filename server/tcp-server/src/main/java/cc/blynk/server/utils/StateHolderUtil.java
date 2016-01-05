@@ -1,6 +1,6 @@
 package cc.blynk.server.utils;
 
-import cc.blynk.server.handlers.hardware.HardwareHandler;
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
@@ -17,8 +17,8 @@ public class StateHolderUtil {
     }
 
     private static HardwareStateHolder getHardState(ChannelPipeline pipeline) {
-        HardwareHandler handler = pipeline.get(HardwareHandler.class);
-        return handler == null ? null : handler.state;
+        BaseSimpleChannelInboundHandler handler = pipeline.get(BaseSimpleChannelInboundHandler.class);
+        return handler == null ? null : (HardwareStateHolder) handler.state;
     }
 
 }

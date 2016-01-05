@@ -1,6 +1,5 @@
 package cc.blynk.server.handlers.app;
 
-import cc.blynk.server.TestBase;
 import cc.blynk.server.model.graph.GraphKey;
 import cc.blynk.server.utils.ByteUtils;
 import org.junit.Test;
@@ -23,7 +22,7 @@ import static org.junit.Assert.*;
  * Created on 07.07.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class GetGraphDataHandlerTest extends TestBase {
+public class GetGraphDataHandlerTest {
 
     private static byte[] decompress(byte[] bytes) {
         InputStream in = new InflaterInputStream(new ByteArrayInputStream(bytes));

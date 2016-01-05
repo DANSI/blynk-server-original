@@ -2,12 +2,10 @@ package cc.blynk.server.handlers.app;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
 import cc.blynk.server.handlers.app.main.logic.HardwareAppLogic;
-import cc.blynk.server.handlers.hardware.logic.HardwareLogic;
 import cc.blynk.server.model.Profile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.workers.notifications.BlockingIOProcessor;
@@ -27,13 +25,10 @@ import static org.mockito.Mockito.*;
  * Created on 29.04.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HardwareAppHandlerTest extends TestBase {
+public class HardwareAppHandlerTest {
 
     @Mock
     private BlockingIOProcessor blockingIOProcessor;
-
-    @InjectMocks
-    private HardwareLogic hardwareHandler;
 
     @Mock
     private ChannelHandlerContext ctx;

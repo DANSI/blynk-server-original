@@ -1,7 +1,6 @@
 package cc.blynk.server.handlers.app.main.auth;
 
 import cc.blynk.common.model.messages.protocol.appllication.RegisterMessage;
-import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.UserDao;
 import io.netty.channel.ChannelHandlerContext;
 import org.junit.Test;
@@ -19,7 +18,7 @@ import static org.mockito.Mockito.*;
  * Created on 10.08.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class RegisterHandlerTest extends TestBase {
+public class RegisterHandlerTest {
 
     @Mock
     private ChannelHandlerContext ctx;

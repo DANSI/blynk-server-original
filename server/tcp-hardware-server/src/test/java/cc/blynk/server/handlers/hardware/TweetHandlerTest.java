@@ -4,7 +4,6 @@ import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.MessageFactory;
 import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.NotificationBodyInvalidException;
@@ -35,7 +34,7 @@ import static org.mockito.Mockito.*;
  * Created on 26.04.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TweetHandlerTest extends TestBase {
+public class TweetHandlerTest {
 
 	@Mock
 	private static ServerProperties props;

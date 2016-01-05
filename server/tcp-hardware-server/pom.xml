@@ -12,11 +12,20 @@
     <artifactId>tcp-hardware-server</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>cc.blynk.server</groupId>
             <artifactId>tcp-server</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

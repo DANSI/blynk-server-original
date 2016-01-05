@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.hardware;
 
 import cc.blynk.common.model.messages.protocol.hardware.HardwareInfoMessage;
-import cc.blynk.server.TestBase;
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.handlers.hardware.logic.HardwareInfoLogic;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -21,7 +21,9 @@ import static org.mockito.Mockito.*;
  * Created on 04.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HardwareInfoLogicTest extends TestBase {
+public class HardwareInfoLogicTest {
+
+    ServerProperties props = new ServerProperties();
 
     @Mock
     private ChannelHandlerContext ctx;

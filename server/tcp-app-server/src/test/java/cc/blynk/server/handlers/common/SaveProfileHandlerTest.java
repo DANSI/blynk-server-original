@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.common;
 
 import cc.blynk.common.model.messages.protocol.appllication.SaveProfileMessage;
-import cc.blynk.server.TestBase;
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.handlers.app.main.logic.SaveProfileLogic;
@@ -15,7 +15,9 @@ import static cc.blynk.common.model.messages.MessageFactory.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/26/2015.
  */
-public class SaveProfileHandlerTest extends TestBase {
+public class SaveProfileHandlerTest {
+
+    ServerProperties props = new ServerProperties();
 
     private SaveProfileLogic saveProfileHandler = new SaveProfileLogic(props);
 

@@ -4,7 +4,6 @@ import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.MessageFactory;
 import cc.blynk.common.model.messages.protocol.hardware.MailMessage;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.SessionDao;
 import cc.blynk.server.dao.UserDao;
 import cc.blynk.server.exceptions.IllegalCommandException;
@@ -31,7 +30,7 @@ import static org.mockito.Mockito.*;
  * Created on 07.04.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class MailHandlerTest extends TestBase {
+public class MailHandlerTest {
 
     @Mock
     private BlockingIOProcessor blockingIOProcessor;

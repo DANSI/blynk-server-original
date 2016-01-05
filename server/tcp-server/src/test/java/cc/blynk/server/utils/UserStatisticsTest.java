@@ -1,6 +1,5 @@
 package cc.blynk.server.utils;
 
-import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
@@ -21,7 +20,7 @@ import java.util.zip.InflaterInputStream;
  * Time: 8:07
  */
 @Ignore
-public class UserStatisticsTest extends TestBase {
+public class UserStatisticsTest {
 
     static FileManager fileManager;
     static Map<String, User> users;

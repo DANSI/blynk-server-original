@@ -1,6 +1,6 @@
 package cc.blynk.server.utils;
 
-import cc.blynk.server.TestBase;
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.model.auth.User;
 import org.junit.Before;
@@ -11,15 +11,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * User: ddumanskiy
  * Date: 09.12.13
  * Time: 8:07
  */
-public class FileManagerIntegrationTest extends TestBase {
+public class FileManagerIntegrationTest {
+
+    private String dataFolder = new ServerProperties().getProperty("data.folder");
 
     private User user1 = new User("name1", "pass1");
     private User user2 = new User("name2", "pass2");
