@@ -19,6 +19,7 @@ public class AppShareStateHolder extends AppStateHolder {
         this.dashId = dashId;
     }
 
+    @Override
     public boolean contains(String sharedToken) {
         return token.equals(sharedToken);
     }

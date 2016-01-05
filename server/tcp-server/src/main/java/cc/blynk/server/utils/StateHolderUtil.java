@@ -1,5 +1,6 @@
 package cc.blynk.server.utils;
 
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.app.main.AppHandler;
 import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
 import cc.blynk.server.handlers.app.sharing.AppShareHandler;
@@ -9,8 +10,6 @@ import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * The Blynk Project.
@@ -19,13 +18,11 @@ import org.apache.logging.log4j.Logger;
  */
 public class StateHolderUtil {
 
-    private static final Logger log = LogManager.getLogger(StateHolderUtil.class);
-
     public static HardwareStateHolder getHardState(Channel channel) {
         return getHardState(channel.pipeline());
     }
 
-    public static HardwareStateHolder getHardState(ChannelPipeline pipeline) {
+    private static HardwareStateHolder getHardState(ChannelPipeline pipeline) {
         HardwareHandler handler = pipeline.get(HardwareHandler.class);
         return handler == null ? null : handler.state;
     }
@@ -52,34 +49,14 @@ public class StateHolderUtil {
     }
 
     public static boolean needSync(Channel channel, String sharedToken) {
-        ChannelPipeline pipeline = channel.pipeline();
-        AppHandler appHandler = pipeline.get(AppHandler.class);
-        //means admin channel. shared check is done before.
-        if (appHandler != null) {
-            return true;
-        }
-
-        AppShareHandler appShareHandler = pipeline.get(AppShareHandler.class);
-        if (appShareHandler == null) {
-            log.error("Channel has no state. Should never happen.");
-            return false;
-        }
-        return appShareHandler.state.contains(sharedToken);
+        BaseSimpleChannelInboundHandler appHandler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
+        return appHandler != null && appHandler.state.contains(sharedToken);
     }
 
     //use only for rare cases
     public static User getStateUser(Channel channel) {
-        ChannelPipeline pipeline = channel.pipeline();
-        HardwareHandler hardwareHandler = pipeline.get(HardwareHandler.class);
-        if (hardwareHandler != null) {
-            return hardwareHandler.state.user;
-        }
-        AppHandler appHandler = pipeline.get(AppHandler.class);
-        if (appHandler != null) {
-            return appHandler.state.user;
-        }
-
-        return pipeline.get(AppShareHandler.class).state.user;
+        BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
+        return handler.state.user;
     }
 
 }

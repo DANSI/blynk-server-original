@@ -48,7 +48,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final ShareLogic shareLogic;
 
     public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, AppStateHolder state) {
-        super(props);
+        super(props, state);
         this.saveProfile = new SaveProfileLogic(props);
         this.token = new GetTokenLogic(userDao);
         this.hardwareApp = new HardwareAppLogic(sessionDao);

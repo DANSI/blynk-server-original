@@ -1,5 +1,6 @@
 package cc.blynk.server.handlers.app.main.auth;
 
+import cc.blynk.server.core.StateHolder;
 import cc.blynk.server.model.auth.User;
 
 /**
@@ -7,16 +8,19 @@ import cc.blynk.server.model.auth.User;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.09.15.
  */
-public class AppStateHolder {
+public class AppStateHolder extends StateHolder {
 
-    public final User user;
     public final String osType;
     public final String version;
 
     public AppStateHolder(User user, String osType, String version) {
-        this.user = user;
+        super(user);
         this.osType = osType;
         this.version = version;
     }
 
+    @Override
+    public boolean contains(String sharedToken) {
+        return true;
+    }
 }

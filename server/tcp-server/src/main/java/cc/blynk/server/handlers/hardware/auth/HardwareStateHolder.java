@@ -1,5 +1,6 @@
 package cc.blynk.server.handlers.hardware.auth;
 
+import cc.blynk.server.core.StateHolder;
 import cc.blynk.server.model.auth.User;
 
 /**
@@ -7,16 +8,19 @@ import cc.blynk.server.model.auth.User;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.09.15.
  */
-public class HardwareStateHolder {
+public class HardwareStateHolder extends StateHolder {
 
     public final int dashId;
-    public final User user;
     public final String token;
 
     public HardwareStateHolder(int dashId, User user, String token) {
+        super(user);
         this.dashId = dashId;
-        this.user = user;
         this.token = token;
     }
 
+    @Override
+    public boolean contains(String sharedToken) {
+        return false;
+    }
 }

@@ -3,6 +3,7 @@ package cc.blynk.server.handlers;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.server.core.StateHolder;
 import cc.blynk.server.exceptions.QuotaLimitException;
 import cc.blynk.server.stats.metrics.InstanceLoadMeter;
 import io.netty.channel.ChannelHandlerContext;
@@ -19,17 +20,19 @@ import org.apache.logging.log4j.ThreadContext;
  */
 public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
+    public final StateHolder state;
     protected final int USER_QUOTA_LIMIT_WARN_PERIOD;
     protected final int USER_QUOTA_LIMIT;
     private final TypeParameterMatcher matcher;
     private final InstanceLoadMeter quotaMeter;
     private long lastQuotaExceededTime;
 
-    protected BaseSimpleChannelInboundHandler(ServerProperties props) {
+    protected BaseSimpleChannelInboundHandler(ServerProperties props, StateHolder state) {
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
         this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit");
         this.USER_QUOTA_LIMIT_WARN_PERIOD = props.getIntProperty("user.message.quota.limit.exceeded.warning.period");
         this.quotaMeter = new InstanceLoadMeter();
+        this.state = state;
     }
 
     @Override

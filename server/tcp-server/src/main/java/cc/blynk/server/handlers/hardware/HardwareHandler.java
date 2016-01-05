@@ -32,7 +32,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
 
     public HardwareHandler(ServerProperties props, SessionDao sessionDao, ReportingDao reportingDao,
                            BlockingIOProcessor blockingIOProcessor, HardwareStateHolder stateHolder) {
-        super(props);
+        super(props, stateHolder);
         this.hardware = new HardwareLogic(sessionDao, reportingDao);
         this.bridge = new BridgeLogic(sessionDao);
 
