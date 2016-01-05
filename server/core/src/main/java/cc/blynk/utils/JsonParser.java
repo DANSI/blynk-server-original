@@ -1,9 +1,9 @@
 package cc.blynk.utils;
 
-import cc.blynk.server.core.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;

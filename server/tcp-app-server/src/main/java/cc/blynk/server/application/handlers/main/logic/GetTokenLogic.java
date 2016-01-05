@@ -1,10 +1,10 @@
 package cc.blynk.server.application.handlers.main.logic;
 
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
-import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
+import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 /**

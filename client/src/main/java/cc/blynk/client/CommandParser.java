@@ -1,6 +1,6 @@
 package cc.blynk.client;
 
-import static cc.blynk.common.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.*;
 
 /**
  * The Blynk Project.

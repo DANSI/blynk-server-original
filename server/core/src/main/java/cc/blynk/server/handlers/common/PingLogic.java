@@ -2,8 +2,8 @@ package cc.blynk.server.handlers.common;
 
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 
 /**
  * The Blynk Project.

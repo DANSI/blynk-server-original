@@ -1,9 +1,9 @@
 package cc.blynk.server.core.model.auth;
 
-import cc.blynk.common.enums.Response;
-import cc.blynk.common.model.messages.MessageBase;
-import cc.blynk.common.model.messages.protocol.HardwareMessage;
-import cc.blynk.common.model.messages.protocol.appllication.sharing.SyncMessage;
+import cc.blynk.server.core.protocol.enums.Response;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Set;
 
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static cc.blynk.utils.StateHolderUtil.*;
 
 /**

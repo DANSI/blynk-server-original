@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.common;
 
-import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

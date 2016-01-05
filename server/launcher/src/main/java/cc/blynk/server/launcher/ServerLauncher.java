@@ -1,6 +1,5 @@
 package cc.blynk.server.launcher;
 
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.HttpsAdminServer;
 import cc.blynk.server.api.http.HttpAPIServer;
@@ -11,6 +10,7 @@ import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.hardware.ssl.HardwareSSLServer;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
+import cc.blynk.utils.ServerProperties;
 
 import java.io.File;
 import java.net.BindException;

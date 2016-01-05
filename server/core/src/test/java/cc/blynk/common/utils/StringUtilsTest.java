@@ -1,5 +1,6 @@
 package cc.blynk.common.utils;
 
+import cc.blynk.utils.StringUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

@@ -1,11 +1,11 @@
 package cc.blynk.server.core.model;
 
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.server.core.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.outputs.FrequencyWidget;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.JsonParser;
 
 import java.util.ArrayList;

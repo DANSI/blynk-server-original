@@ -1,15 +1,15 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.model.messages.protocol.HardwareMessage;
-import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.SyncWidget;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.utils.PinUtil;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.time.Instant;

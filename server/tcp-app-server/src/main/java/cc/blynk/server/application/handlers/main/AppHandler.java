@@ -1,7 +1,5 @@
 package cc.blynk.server.application.handlers.main;
 
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.application.handlers.main.logic.*;
 import cc.blynk.server.application.handlers.main.logic.dashboard.CreateDashLogic;
@@ -16,12 +14,14 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
+import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.ThreadContext;
 
-import static cc.blynk.common.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.*;
 
 /**
  * The Blynk Project.

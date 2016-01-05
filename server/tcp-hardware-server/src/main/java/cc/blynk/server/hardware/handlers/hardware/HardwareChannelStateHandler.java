@@ -1,12 +1,12 @@
 package cc.blynk.server.hardware.handlers.hardware;
 
-import cc.blynk.common.enums.Command;
-import cc.blynk.common.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -16,7 +16,7 @@ import io.netty.handler.timeout.ReadTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.common.enums.Response.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.StateHolderUtil.*;
 
 /**

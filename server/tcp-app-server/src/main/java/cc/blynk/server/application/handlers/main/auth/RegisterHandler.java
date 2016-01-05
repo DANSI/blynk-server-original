@@ -1,8 +1,8 @@
 package cc.blynk.server.application.handlers.main.auth;
 
-import cc.blynk.common.handlers.DefaultExceptionHandler;
-import cc.blynk.common.model.messages.protocol.appllication.RegisterMessage;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
+import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -12,8 +12,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 
 /**
  * Process register message.

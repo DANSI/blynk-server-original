@@ -1,6 +1,5 @@
 package cc.blynk.utils;
 
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.application.AppSslContext;
 import io.netty.handler.ssl.SslProvider;
 import org.apache.logging.log4j.LogManager;

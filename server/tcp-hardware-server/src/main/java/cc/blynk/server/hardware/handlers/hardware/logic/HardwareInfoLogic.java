@@ -1,17 +1,17 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.common.utils.StringUtils;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareProfile;
+import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 
 /**
  *

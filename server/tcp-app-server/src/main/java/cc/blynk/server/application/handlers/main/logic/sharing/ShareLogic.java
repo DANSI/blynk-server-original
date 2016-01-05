@@ -1,18 +1,18 @@
 package cc.blynk.server.application.handlers.main.logic.sharing;
 
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.utils.ParseUtil;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
-import static cc.blynk.common.utils.ParseUtil.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static cc.blynk.utils.AppStateHolderUtil.*;
 
 /**
@@ -32,7 +32,7 @@ public class ShareLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] splitted = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
-        int dashId = parseInt(splitted[0], message.id);
+        int dashId = ParseUtil.parseInt(splitted[0], message.id);
         DashBoard dash = user.profile.getDashById(dashId, message.id);
 
         switch (splitted[1]) {

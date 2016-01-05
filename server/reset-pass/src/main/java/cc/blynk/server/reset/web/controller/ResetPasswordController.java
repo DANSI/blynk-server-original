@@ -1,11 +1,11 @@
 package cc.blynk.server.reset.web.controller;
 
-import cc.blynk.common.utils.Config;
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.reset.web.entities.ResponseUserEntity;
 import cc.blynk.server.reset.web.entities.TokenUser;
 import cc.blynk.server.reset.web.entities.TokensPool;
+import cc.blynk.utils.Config;
+import cc.blynk.utils.ServerProperties;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import org.apache.http.HttpEntity;

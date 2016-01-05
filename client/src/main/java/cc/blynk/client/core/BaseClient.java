@@ -1,10 +1,10 @@
 package cc.blynk.client.core;
 
 import cc.blynk.client.CommandParser;
-import cc.blynk.common.enums.Command;
-import cc.blynk.common.model.messages.MessageBase;
-import cc.blynk.common.utils.SHA256Util;
-import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.utils.SHA256Util;
+import cc.blynk.utils.ServerProperties;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.Random;
 
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 
 /**
  * The Blynk Project.

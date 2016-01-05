@@ -1,11 +1,11 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
-import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.exceptions.IllegalCommandException;
-import cc.blynk.server.core.exceptions.NotAllowedException;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;

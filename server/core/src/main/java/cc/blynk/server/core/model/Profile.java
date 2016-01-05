@@ -1,10 +1,10 @@
 package cc.blynk.server.core.model;
 
-import cc.blynk.server.core.exceptions.IllegalCommandException;
 import cc.blynk.server.core.model.graph.GraphKey;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.outputs.Graph;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.JsonParser;
 
 import java.util.*;

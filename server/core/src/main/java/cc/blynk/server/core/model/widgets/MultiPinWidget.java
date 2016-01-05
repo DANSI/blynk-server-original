@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.enums.PinType;
 
 import java.util.StringJoiner;
 
-import static cc.blynk.common.utils.StringUtils.*;
+import static cc.blynk.utils.StringUtils.*;
 
 /**
  * The Blynk Project.

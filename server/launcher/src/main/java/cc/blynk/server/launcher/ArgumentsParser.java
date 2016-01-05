@@ -1,6 +1,6 @@
 package cc.blynk.server.launcher;
 
-import cc.blynk.common.utils.ParseUtil;
+import cc.blynk.utils.ParseUtil;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;

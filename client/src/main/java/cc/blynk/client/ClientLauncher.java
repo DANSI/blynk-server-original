@@ -4,8 +4,8 @@ import cc.blynk.client.core.AppClient;
 import cc.blynk.client.core.BaseClient;
 import cc.blynk.client.core.HardwareClient;
 import cc.blynk.client.enums.ClientMode;
-import cc.blynk.common.model.messages.protocol.PingMessage;
-import cc.blynk.common.utils.ParseUtil;
+import cc.blynk.server.core.protocol.model.messages.common.PingMessage;
+import cc.blynk.utils.ParseUtil;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -42,7 +42,7 @@ public class ClientLauncher {
         ClientMode mode = ClientMode.parse(cmd.getOptionValue("mode", ClientMode.HARDWARE.name()));
         String host = cmd.getOptionValue("host", DEFAULT_HOST);
         int port = ParseUtil.parseInt(cmd.getOptionValue("port",
-            (mode == ClientMode.APP ? String.valueOf(DEFAULT_APPLICATION_PORT) : String.valueOf(DEFAULT_HARDWARE_PORT)))
+                        (mode == ClientMode.APP ? String.valueOf(DEFAULT_APPLICATION_PORT) : String.valueOf(DEFAULT_HARDWARE_PORT)))
         );
         BaseClient baseClient = mode == ClientMode.APP ? new AppClient(host, port) : new HardwareClient(host, port);
 

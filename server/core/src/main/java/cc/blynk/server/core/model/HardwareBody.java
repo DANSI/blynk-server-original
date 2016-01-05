@@ -1,8 +1,8 @@
 package cc.blynk.server.core.model;
 
-import cc.blynk.common.utils.ParseUtil;
-import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.utils.ParseUtil;
+import cc.blynk.utils.StringUtils;
 
 import java.util.Arrays;
 

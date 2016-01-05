@@ -1,17 +1,17 @@
 package cc.blynk.server.application.handlers.sharing.logic;
 
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.model.messages.protocol.HardwareMessage;
-import cc.blynk.common.model.messages.protocol.appllication.sharing.SyncMessage;
-import cc.blynk.common.utils.ParseUtil;
-import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.exceptions.NoActiveDashboardException;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.HardwareBody;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.widgets.outputs.FrequencyWidget;
+import cc.blynk.server.core.protocol.exceptions.NoActiveDashboardException;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
+import cc.blynk.utils.ParseUtil;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 

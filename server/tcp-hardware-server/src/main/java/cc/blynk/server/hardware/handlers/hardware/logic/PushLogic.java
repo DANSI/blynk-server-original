@@ -1,11 +1,11 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
-import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.exceptions.NoActiveDashboardException;
-import cc.blynk.server.core.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.protocol.exceptions.NoActiveDashboardException;
+import cc.blynk.server.core.protocol.exceptions.NotificationBodyInvalidException;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.server.hardware.exceptions.NotifNotAuthorizedException;
 import io.netty.channel.ChannelHandlerContext;

@@ -1,12 +1,12 @@
 package cc.blynk.client.handlers.decoders;
 
-import cc.blynk.common.enums.Command;
-import cc.blynk.common.enums.Response;
-import cc.blynk.common.handlers.DefaultExceptionHandler;
-import cc.blynk.common.model.messages.MessageBase;
-import cc.blynk.common.model.messages.ResponseWithBodyMessage;
-import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataBinaryMessage;
-import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedBinaryMessage;
+import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.enums.Response;
+import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataBinaryMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 
 /**
  * Decodes input byte array into java message.

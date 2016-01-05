@@ -1,21 +1,21 @@
 package cc.blynk.server.application.handlers.main.logic.reporting;
 
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
-import cc.blynk.server.core.exceptions.IllegalCommandBodyException;
-import cc.blynk.server.core.exceptions.IllegalCommandException;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
+import cc.blynk.utils.ParseUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Arrays;
 
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 
 /**
  * The Blynk Project.

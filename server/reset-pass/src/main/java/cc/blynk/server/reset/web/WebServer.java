@@ -1,8 +1,8 @@
 package cc.blynk.server.reset.web;
 
-import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.reset.web.entities.TokensPool;
 import cc.blynk.server.reset.web.handlers.ResetPasswordHandler;
+import cc.blynk.utils.ParseUtil;
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 

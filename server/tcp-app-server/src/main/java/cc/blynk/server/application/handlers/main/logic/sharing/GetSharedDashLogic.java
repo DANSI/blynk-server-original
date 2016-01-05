@@ -1,17 +1,17 @@
 package cc.blynk.server.application.handlers.main.logic.sharing;
 
-import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.exceptions.InvalidTokenException;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
+import cc.blynk.server.core.protocol.exceptions.InvalidTokenException;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Map;
 
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 
 /**
  * The Blynk Project.

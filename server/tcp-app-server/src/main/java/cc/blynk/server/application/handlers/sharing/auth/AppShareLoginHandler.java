@@ -1,10 +1,5 @@
 package cc.blynk.server.application.handlers.sharing.auth;
 
-import cc.blynk.common.enums.Command;
-import cc.blynk.common.enums.Response;
-import cc.blynk.common.model.messages.ResponseMessage;
-import cc.blynk.common.model.messages.protocol.appllication.sharing.ShareLoginMessage;
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
 import cc.blynk.server.application.handlers.sharing.AppShareHandler;
@@ -12,17 +7,22 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.exceptions.IllegalCommandException;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.enums.Response;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.utils.ServerProperties;
 import io.netty.channel.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 
 /**
  * Handler responsible for managing apps sharing login messages.

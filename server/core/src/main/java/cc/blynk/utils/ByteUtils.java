@@ -1,7 +1,7 @@
 package cc.blynk.utils;
 
-import cc.blynk.server.core.exceptions.GetGraphDataException;
-import cc.blynk.server.core.exceptions.NoDataException;
+import cc.blynk.server.core.protocol.exceptions.GetGraphDataException;
+import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import io.netty.util.CharsetUtil;
 
 import java.io.ByteArrayOutputStream;

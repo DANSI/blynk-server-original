@@ -1,7 +1,5 @@
 package cc.blynk.server.api.http.logic;
 
-import cc.blynk.common.model.messages.protocol.HardwareMessage;
-import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BlockingIOProcessor;
@@ -15,7 +13,9 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.handlers.http.rest.Response;
+import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

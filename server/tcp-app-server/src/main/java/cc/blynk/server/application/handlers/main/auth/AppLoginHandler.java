@@ -1,25 +1,26 @@
 package cc.blynk.server.application.handlers.main.auth;
 
-import cc.blynk.common.handlers.DefaultExceptionHandler;
-import cc.blynk.common.model.messages.protocol.appllication.LoginMessage;
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.application.handlers.main.AppHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.exceptions.IllegalCommandException;
-import cc.blynk.server.core.exceptions.UserNotAuthenticated;
-import cc.blynk.server.core.exceptions.UserNotRegistered;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.UserNotAuthenticated;
+import cc.blynk.server.core.protocol.exceptions.UserNotRegistered;
+import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
+import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.utils.ServerProperties;
 import io.netty.channel.*;
 
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
+
 
 /**
  * Handler responsible for managing apps login messages.

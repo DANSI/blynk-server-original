@@ -1,18 +1,18 @@
 package cc.blynk.server.application.handlers.main.logic;
 
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.core.exceptions.IllegalCommandException;
-import cc.blynk.server.core.exceptions.NotAllowedException;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 
 /**
  * The Blynk Project.

@@ -1,14 +1,12 @@
 package cc.blynk.server.core;
 
-import cc.blynk.common.enums.Command;
-import cc.blynk.common.enums.Response;
-import cc.blynk.common.model.messages.ResponseMessage;
-import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataBinaryMessage;
-import cc.blynk.common.utils.Config;
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.enums.Response;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataBinaryMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -17,6 +15,8 @@ import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
+import cc.blynk.utils.Config;
+import cc.blynk.utils.ServerProperties;
 import io.netty.channel.Channel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,8 +26,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static cc.blynk.utils.ByteUtils.*;
 
 /**

@@ -1,16 +1,16 @@
 package cc.blynk.server.application.handlers.main.logic.sharing;
 
-import cc.blynk.common.enums.Command;
-import cc.blynk.common.enums.Response;
-import cc.blynk.common.model.messages.ResponseMessage;
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.model.messages.protocol.appllication.sharing.RefreshShareTokenMessage;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.exceptions.NotAllowedException;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.enums.Response;
+import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.sharing.RefreshShareTokenMessage;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;

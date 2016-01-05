@@ -1,11 +1,11 @@
 package cc.blynk.server.admin.http.logic;
 
-import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.admin.http.response.RequestPerSecondResponse;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.Stat;
 import cc.blynk.server.handlers.http.rest.Response;
 

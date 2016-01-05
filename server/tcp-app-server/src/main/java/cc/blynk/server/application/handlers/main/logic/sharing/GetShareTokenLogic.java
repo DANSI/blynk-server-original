@@ -1,10 +1,10 @@
 package cc.blynk.server.application.handlers.main.logic.sharing;
 
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.model.messages.protocol.appllication.sharing.GetShareTokenMessage;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.exceptions.NotAllowedException;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.sharing.GetShareTokenMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 /**

@@ -1,7 +1,7 @@
 package cc.blynk.server.core.model.widgets.controls;
 
-import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 /**

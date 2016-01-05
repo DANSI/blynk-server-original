@@ -1,18 +1,18 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.model.messages.protocol.HardwareMessage;
-import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.exceptions.IllegalCommandException;
-import cc.blynk.server.core.exceptions.NoActiveDashboardException;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.HardwareBody;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.graph.GraphKey;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.NoActiveDashboardException;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import cc.blynk.utils.PinUtil;
+import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

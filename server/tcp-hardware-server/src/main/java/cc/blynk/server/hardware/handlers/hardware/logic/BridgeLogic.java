@@ -1,11 +1,11 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
-import cc.blynk.common.enums.Response;
-import cc.blynk.common.model.messages.StringMessage;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.exceptions.IllegalCommandException;
-import cc.blynk.server.core.exceptions.NotAllowedException;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.protocol.enums.Response;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,8 +13,8 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cc.blynk.common.enums.Response.*;
-import static cc.blynk.common.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static cc.blynk.utils.StateHolderUtil.*;
 
 /**

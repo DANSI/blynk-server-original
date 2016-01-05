@@ -1,10 +1,10 @@
 package cc.blynk.server.core.model;
 
-import cc.blynk.common.utils.StringUtils;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.RGB;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
 

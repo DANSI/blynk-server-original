@@ -1,14 +1,14 @@
 package cc.blynk.server.core.dao;
 
-import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.core.exceptions.NoDataException;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.graph.GraphKey;
+import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.ReportingUtil;
+import cc.blynk.utils.ServerProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;

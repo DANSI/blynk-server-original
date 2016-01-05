@@ -1,12 +1,11 @@
 package cc.blynk.server.application.handlers.main.logic;
 
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.model.messages.protocol.appllication.RefreshTokenMessage;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.RefreshTokenMessage;
+import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
-
-import static cc.blynk.common.utils.ParseUtil.*;
 
 /**
  * The Blynk Project.
@@ -25,7 +24,7 @@ public class RefreshTokenLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String dashBoardIdString = message.body;
 
-        int dashId = parseInt(dashBoardIdString, message.id);
+        int dashId = ParseUtil.parseInt(dashBoardIdString, message.id);
 
         user.profile.validateDashId(dashId, message.id);
 

@@ -1,11 +1,11 @@
 package cc.blynk.server.handlers;
 
-import cc.blynk.common.handlers.DefaultExceptionHandler;
-import cc.blynk.common.model.messages.MessageBase;
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.StateHolder;
-import cc.blynk.server.core.exceptions.QuotaLimitException;
+import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
+import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
+import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;

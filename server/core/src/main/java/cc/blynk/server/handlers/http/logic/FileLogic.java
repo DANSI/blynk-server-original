@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.http.logic;
 
-import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.utils.ServerProperties;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;

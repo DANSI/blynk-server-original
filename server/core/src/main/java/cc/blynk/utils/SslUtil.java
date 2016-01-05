@@ -1,6 +1,5 @@
 package cc.blynk.utils;
 
-import cc.blynk.common.utils.ServerProperties;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;

@@ -1,9 +1,9 @@
 package cc.blynk.server.application.handlers.main.logic;
 
-import cc.blynk.common.model.messages.StringMessage;
-import cc.blynk.common.model.messages.protocol.appllication.LoadProfileMessage;
-import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileMessage;
+import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 /**

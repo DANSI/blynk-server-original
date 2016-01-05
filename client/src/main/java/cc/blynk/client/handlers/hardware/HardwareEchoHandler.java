@@ -1,8 +1,8 @@
 package cc.blynk.client.handlers.hardware;
 
-import cc.blynk.common.enums.Command;
-import cc.blynk.common.model.messages.MessageFactory;
-import cc.blynk.common.model.messages.protocol.HardwareMessage;
+import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.model.messages.MessageFactory;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

@@ -1,6 +1,6 @@
 package cc.blynk.server;
 
-import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.utils.ServerProperties;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;

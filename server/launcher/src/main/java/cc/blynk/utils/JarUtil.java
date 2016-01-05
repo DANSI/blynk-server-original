@@ -1,7 +1,5 @@
 package cc.blynk.utils;
 
-import cc.blynk.common.utils.ServerProperties;
-
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;

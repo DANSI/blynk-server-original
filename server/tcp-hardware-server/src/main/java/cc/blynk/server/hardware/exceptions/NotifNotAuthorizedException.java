@@ -1,7 +1,7 @@
 package cc.blynk.server.hardware.exceptions;
 
-import cc.blynk.common.enums.Response;
-import cc.blynk.common.exceptions.BaseServerException;
+import cc.blynk.server.core.protocol.enums.Response;
+import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 
 /**
  * The Blynk Project.

@@ -1,6 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
-import cc.blynk.server.core.exceptions.QuotaLimitException;
+import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 
 /**
  * The Blynk Project.

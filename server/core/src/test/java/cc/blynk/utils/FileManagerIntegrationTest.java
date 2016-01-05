@@ -1,6 +1,5 @@
 package cc.blynk.utils;
 
-import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.model.auth.User;
 import org.junit.Before;

@@ -1,8 +1,8 @@
 package cc.blynk.client.core;
 
 import cc.blynk.client.handlers.ClientReplayingMessageDecoder;
-import cc.blynk.common.handlers.common.encoders.MessageEncoder;
-import cc.blynk.common.stats.GlobalStats;
+import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
+import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
