@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.exceptions.NoActiveDashboardException;
 import cc.blynk.server.core.protocol.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
+import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.exceptions.NotifNotAuthorizedException;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;

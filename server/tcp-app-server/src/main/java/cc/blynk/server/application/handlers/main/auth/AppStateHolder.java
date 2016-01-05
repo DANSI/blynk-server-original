@@ -1,7 +1,7 @@
 package cc.blynk.server.application.handlers.main.auth;
 
-import cc.blynk.server.core.StateHolder;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.session.StateHolder;
 
 /**
  * The Blynk Project.

@@ -1,4 +1,4 @@
-package cc.blynk.server.core;
+package cc.blynk.server.core.session;
 
 import cc.blynk.server.core.model.auth.User;
 

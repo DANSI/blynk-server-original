@@ -12,7 +12,7 @@ import cc.blynk.server.core.protocol.exceptions.NotificationBodyInvalidException
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.protocol.model.messages.MessageFactory;
 import cc.blynk.server.core.protocol.model.messages.hardware.TweetMessage;
-import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
+import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.exceptions.NotifNotAuthorizedException;
 import cc.blynk.server.hardware.handlers.hardware.logic.TweetLogic;
 import cc.blynk.utils.ServerProperties;

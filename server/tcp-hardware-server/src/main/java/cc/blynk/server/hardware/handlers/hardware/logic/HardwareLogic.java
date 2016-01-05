@@ -10,7 +10,7 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoActiveDashboardException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
-import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
+import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.PinUtil;
 import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;

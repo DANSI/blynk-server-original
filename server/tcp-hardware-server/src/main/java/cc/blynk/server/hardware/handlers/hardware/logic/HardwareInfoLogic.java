@@ -1,7 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.handlers.hardware.auth.HardwareStateHolder;
+import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareProfile;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;

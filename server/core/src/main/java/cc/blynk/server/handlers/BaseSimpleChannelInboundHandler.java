@@ -1,9 +1,9 @@
 package cc.blynk.server.handlers;
 
-import cc.blynk.server.core.StateHolder;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.server.core.session.StateHolder;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
