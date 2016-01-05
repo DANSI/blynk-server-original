@@ -23,7 +23,7 @@ public class AverageAggregator {
     public static final String MINUTE_TEMP_FILENAME = "minute_temp.bin";
     public static final String HOURLY_TEMP_FILENAME = "hourly_temp.bin";
     public static final String DAILY_TEMP_FILENAME = "daily_temp.bin";
-    public final String dataFolder;
+    private final String dataFolder;
     private final ConcurrentHashMap<AggregationKey, AggregationValue> minute;
     private final ConcurrentHashMap<AggregationKey, AggregationValue> hourly;
     private final ConcurrentHashMap<AggregationKey, AggregationValue> daily;

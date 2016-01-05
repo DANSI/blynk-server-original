@@ -48,8 +48,9 @@ public class Holder {
         this.sessionDao = new SessionDao();
         this.userDao = new UserDao(fileManager.deserialize());
         this.stats = new GlobalStats();
-        this.averageAggregator = new AverageAggregator(getReportingFolder(dataFolder));
-        this.reportingDao = new ReportingDao(averageAggregator, serverProperties);
+        final String reportingFolder = getReportingFolder(dataFolder);
+        this.averageAggregator = new AverageAggregator(reportingFolder);
+        this.reportingDao = new ReportingDao(reportingFolder, averageAggregator, serverProperties);
 
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),

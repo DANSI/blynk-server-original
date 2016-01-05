@@ -39,9 +39,9 @@ public class ReportingDao {
 
     private final boolean ENABLE_RAW_DATA_STORE;
 
-    public ReportingDao(AverageAggregator averageAggregator, ServerProperties serverProperties) {
+    public ReportingDao(String reportingFolder, AverageAggregator averageAggregator, ServerProperties serverProperties) {
         this.averageAggregator = averageAggregator;
-        this.dataFolder = averageAggregator.dataFolder;
+        this.dataFolder = reportingFolder;
         this.ENABLE_RAW_DATA_STORE = serverProperties.getBoolProperty("enable.raw.data.store");
     }
 
