@@ -47,7 +47,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             if (session != null) {
                 session.hardwareChannels.remove(ctx.channel());
                 log.trace("Hardware channel disconnect.");
-                sentOfflineMessage(ctx.channel());
+                sentOfflineMessage(state);
             }
         }
     }
@@ -61,32 +61,29 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private void sentOfflineMessage(Channel channel) {
-        HardwareStateHolder handlerState = getHardState(channel);
-        if (handlerState != null) {
-            DashBoard dashBoard = handlerState.user.profile.getDashById(handlerState.dashId, 0);
-            if (dashBoard.isActive) {
-                Notification notification = dashBoard.getWidgetByType(Notification.class);
-                if (notification == null || !notification.notifyWhenOffline) {
-                    Session session = sessionDao.userSession.get(handlerState.user);
-                    if (session.appChannels.size() > 0) {
-                        for (Channel appChannel : session.appChannels) {
-                            appChannel.writeAndFlush(
-                                    new ResponseWithBodyMessage(
-                                            0, Command.RESPONSE, DEVICE_WENT_OFFLINE_2, handlerState.dashId
-                                    )
-                            );
-                        }
+    private void sentOfflineMessage(HardwareStateHolder state) {
+        DashBoard dashBoard = state.user.profile.getDashById(state.dashId, 0);
+        if (dashBoard.isActive) {
+            Notification notification = dashBoard.getWidgetByType(Notification.class);
+            if (notification == null || !notification.notifyWhenOffline) {
+                Session session = sessionDao.userSession.get(state.user);
+                if (session.appChannels.size() > 0) {
+                    for (Channel appChannel : session.appChannels) {
+                        appChannel.writeAndFlush(
+                                new ResponseWithBodyMessage(
+                                        0, Command.RESPONSE, DEVICE_WENT_OFFLINE_2, state.dashId
+                                )
+                        );
                     }
-                } else {
-                    String boardType = dashBoard.boardType;
-                    String dashName = dashBoard.name;
-                    dashName = dashName == null ? "" : dashName;
-                    blockingIOProcessor.push(handlerState.user,
-                            notification,
-                            String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName),
-                            handlerState.dashId);
                 }
+            } else {
+                String boardType = dashBoard.boardType;
+                String dashName = dashBoard.name;
+                dashName = dashName == null ? "" : dashName;
+                blockingIOProcessor.push(state.user,
+                        notification,
+                        String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName),
+                        state.dashId);
             }
         }
     }
