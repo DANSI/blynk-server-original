@@ -53,6 +53,8 @@ public class HttpAPIServerTest extends IntegrationBase {
             httpServer.start();
             sleep(500);
 
+            int httpPort = holder.props.getIntProperty("http.port");
+
             httpsServerUrl = "http://localhost:" + httpPort + "/";
 
             httpclient = HttpClients.createDefault();

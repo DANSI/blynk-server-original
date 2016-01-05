@@ -42,9 +42,9 @@ public class HttpsAdminServerTest extends IntegrationBase {
         httpAdminServer.start();
         sleep(500);
 
+        int administrationHttpsPort = holder.props.getIntProperty("administration.https.port");
+
         httpsServerUrl = "https://localhost:" + administrationHttpsPort + "/admin/users/";
-
-
 
         SSLContext sslcontext = initUnsecuredSSLContext();
 
