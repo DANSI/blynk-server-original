@@ -4,13 +4,13 @@ import cc.blynk.common.model.messages.protocol.appllication.LoadProfileGzippedBi
 import cc.blynk.common.utils.StringUtils;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestAppClient;
-import cc.blynk.server.core.application.AppServer;
-import cc.blynk.server.core.hardware.HardwareServer;
+import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
+import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.JsonParser;
 import org.apache.commons.io.FileUtils;

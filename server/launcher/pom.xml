@@ -43,32 +43,29 @@
 
 
     <dependencies>
+
         <dependency>
             <groupId>cc.blynk.server</groupId>
             <artifactId>core</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>cc.blynk.server</groupId>
+            <groupId>cc.blynk.server.application</groupId>
             <artifactId>tcp-app-server</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>cc.blynk.server</groupId>
+            <groupId>cc.blynk.server.hardware</groupId>
             <artifactId>tcp-hardware-server</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>cc.blynk.server</groupId>
-            <artifactId>admin</artifactId>
+            <groupId>cc.blynk.server.admin</groupId>
+            <artifactId>http-admin</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>cc.blynk.server</groupId>
+            <groupId>cc.blynk.server.api</groupId>
             <artifactId>http-api</artifactId>
             <version>${project.version}</version>
         </dependency>

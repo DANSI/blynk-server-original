@@ -2,9 +2,9 @@ package cc.blynk.server.handlers.common;
 
 import cc.blynk.common.model.messages.protocol.appllication.SaveProfileMessage;
 import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.server.application.handlers.main.logic.SaveProfileLogic;
 import cc.blynk.server.core.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.exceptions.NotAllowedException;
-import cc.blynk.server.handlers.app.main.logic.SaveProfileLogic;
 import org.junit.Test;
 
 import static cc.blynk.common.enums.Command.*;

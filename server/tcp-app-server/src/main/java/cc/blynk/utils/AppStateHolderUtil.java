@@ -1,9 +1,9 @@
 package cc.blynk.utils;
 
-import cc.blynk.server.handlers.app.main.AppHandler;
-import cc.blynk.server.handlers.app.main.auth.AppStateHolder;
-import cc.blynk.server.handlers.app.sharing.AppShareHandler;
-import cc.blynk.server.handlers.app.sharing.auth.AppShareStateHolder;
+import cc.blynk.server.application.handlers.main.AppHandler;
+import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
+import cc.blynk.server.application.handlers.sharing.AppShareHandler;
+import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 

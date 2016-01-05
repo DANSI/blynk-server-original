@@ -5,10 +5,10 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.HttpsAdminServer;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.HttpsAPIServer;
+import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.application.AppServer;
-import cc.blynk.server.core.hardware.HardwareServer;
-import cc.blynk.server.core.hardware.ssl.HardwareSSLServer;
+import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.hardware.ssl.HardwareSSLServer;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
 
