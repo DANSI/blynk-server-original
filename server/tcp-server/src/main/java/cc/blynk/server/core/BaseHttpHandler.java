@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.http;
+package cc.blynk.server.core;
 
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import io.netty.channel.ChannelFutureListener;
@@ -17,9 +17,9 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 24.12.15.
  */
-public class BaseHttpAPIHandler extends ChannelInboundHandlerAdapter {
+public class BaseHttpHandler extends ChannelInboundHandlerAdapter {
 
-    protected static final Logger log = LogManager.getLogger(BaseHttpAPIHandler.class);
+    protected static final Logger log = LogManager.getLogger(BaseHttpHandler.class);
 
     protected static void send(ChannelHandlerContext ctx, HttpRequest req, FullHttpResponse response) {
         if (!HttpHeaders.isKeepAlive(req)) {

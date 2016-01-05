@@ -20,6 +20,7 @@
         <module>http-admin</module>
         <module>http-api</module>
         <module>tcp-app-server</module>
+        <module>tcp-hardware-server</module>
     </modules>
 
     <dependencies>

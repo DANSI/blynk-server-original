@@ -1,6 +1,6 @@
 package cc.blynk.server.admin.http.handlers;
 
-import cc.blynk.server.handlers.http.BaseHttpAPIHandler;
+import cc.blynk.server.core.BaseHttpHandler;
 import cc.blynk.server.handlers.http.logic.FileLogic;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
@@ -10,7 +10,7 @@ import io.netty.handler.codec.http.HttpRequest;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.12.15.
  */
-public class AdminHandler extends BaseHttpAPIHandler {
+public class AdminHandler extends BaseHttpHandler {
 
     private final FileLogic fileHandler;
     private final String rootPath;
