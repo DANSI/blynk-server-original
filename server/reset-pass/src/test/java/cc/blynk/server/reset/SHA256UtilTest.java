@@ -1,6 +1,6 @@
 package cc.blynk.server.reset;
 
-import cc.blynk.common.utils.SHA256Util;
+import cc.blynk.utils.SHA256Util;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
