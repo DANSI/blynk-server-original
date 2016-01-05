@@ -3,7 +3,9 @@ package cc.blynk.server.core.reporting.average;
 import cc.blynk.server.core.model.enums.PinType;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -19,7 +21,7 @@ import static org.junit.Assert.*;
  */
 public class AverageAggregatorTest {
 
-    private final String dataFolder = getReportingFolder(System.getProperty("java.io.tmpdir"));
+    private final String reportingFolder = getReportingFolder(System.getProperty("java.io.tmpdir"));
 
     private static long getMillis(int year, int month, int dayOfMonth, int hour, int minute) {
         LocalDateTime dateTime = LocalDateTime.of(year, month, dayOfMonth, hour, minute);
@@ -87,8 +89,13 @@ public class AverageAggregatorTest {
     }
 
     @Test
-    public void testTempFilesCreated() {
-        AverageAggregator averageAggregator = new AverageAggregator(dataFolder);
+    public void testTempFilesCreated() throws IOException {
+        Path dir = Paths.get(reportingFolder, "");
+        if (Files.notExists(dir)) {
+            Files.createDirectories(dir);
+        }
+
+        AverageAggregator averageAggregator = new AverageAggregator(reportingFolder);
 
         String username = "test";
         PinType pinType = PinType.VIRTUAL;
@@ -123,17 +130,17 @@ public class AverageAggregatorTest {
 
         averageAggregator.close();
 
-        assertTrue(Files.exists(Paths.get(dataFolder, AverageAggregator.HOURLY_TEMP_FILENAME)));
-        assertTrue(Files.exists(Paths.get(dataFolder, AverageAggregator.DAILY_TEMP_FILENAME)));
+        assertTrue(Files.exists(Paths.get(reportingFolder, AverageAggregator.HOURLY_TEMP_FILENAME)));
+        assertTrue(Files.exists(Paths.get(reportingFolder, AverageAggregator.DAILY_TEMP_FILENAME)));
 
-        averageAggregator = new AverageAggregator(dataFolder);
+        averageAggregator = new AverageAggregator(reportingFolder);
 
         assertEquals(24, averageAggregator.getHourly().size());
         assertEquals(1, averageAggregator.getDaily().size());
         assertEquals(expectedDailyAverage, averageAggregator.getDaily().get(new AggregationKey(username, dashId, pinType, pin, getMillis(2015, 8, 1, 0, 0) / DAY)).calcAverage(), 0);
 
-        assertTrue(Files.notExists(Paths.get(dataFolder, AverageAggregator.HOURLY_TEMP_FILENAME)));
-        assertTrue(Files.notExists(Paths.get(dataFolder, AverageAggregator.DAILY_TEMP_FILENAME)));
+        assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregator.HOURLY_TEMP_FILENAME)));
+        assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregator.DAILY_TEMP_FILENAME)));
     }
 
 }
