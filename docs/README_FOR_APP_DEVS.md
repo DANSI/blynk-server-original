@@ -157,7 +157,7 @@ Response message structure:
     RCT,
     TIMER
 
-[Or see the class itself](https://bitbucket.org/theblynk/blynk-server/src/251d68546b2ade6651c1393017bf3d1ec4787e6b/server/tcp-server/src/main/java/cc/blynk/server/model/enums/WidgetType.java?at=master)
+[Or see the class itself](https://bitbucket.org/theblynk/blynk-server/src/251d68546b2ade6651c1393017bf3d1ec4787e6b/server/core/src/main/java/cc/blynk/server/model/enums/WidgetType.java?at=master)
 
 ## Widgets JSON structure
 

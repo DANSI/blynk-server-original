@@ -14,7 +14,7 @@
 
     <modules>
         <module>notifications</module>
-        <module>tcp-server</module>
+        <module>core</module>
         <module>reset-pass</module>
         <module>launcher</module>
         <module>http-admin</module>

@@ -24,7 +24,7 @@
 
         <dependency>
             <groupId>cc.blynk.server</groupId>
-            <artifactId>tcp-server</artifactId>
+            <artifactId>core</artifactId>
             <version>${project.version}</version>
         </dependency>
 
