@@ -14,10 +14,6 @@ import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.widgets.outputs.FrequencyWidget;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
  * The Blynk Project.
@@ -26,8 +22,6 @@ import static cc.blynk.server.utils.StateHolderUtil.*;
  *
  */
 public class HardwareAppShareLogic {
-
-    private static final Logger log = LogManager.getLogger(HardwareAppShareLogic.class);
 
     private final SessionDao sessionDao;
 
@@ -56,7 +50,7 @@ public class HardwareAppShareLogic {
                 String sharedToken = state.user.dashShareTokens.get(dashId);
                 if (sharedToken != null) {
                     for (Channel appChannel : session.appChannels) {
-                        if (appChannel != ctx.channel() && needSync(appChannel, sharedToken)) {
+                        if (appChannel != ctx.channel() && Session.needSync(appChannel, sharedToken)) {
                             appChannel.writeAndFlush(new SyncMessage(message.id, message.body));
                         }
                     }

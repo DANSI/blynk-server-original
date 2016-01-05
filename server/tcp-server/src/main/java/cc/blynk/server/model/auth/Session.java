@@ -52,6 +52,11 @@ public class Session {
         return (int) sum;
     }
 
+    public static boolean needSync(Channel channel, String sharedToken) {
+        BaseSimpleChannelInboundHandler appHandler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
+        return appHandler != null && appHandler.state.contains(sharedToken);
+    }
+
     public boolean sendMessageToHardware(int activeDashId, MessageBase message) {
         boolean noActiveHardware = true;
         for (Channel channel : hardwareChannels) {

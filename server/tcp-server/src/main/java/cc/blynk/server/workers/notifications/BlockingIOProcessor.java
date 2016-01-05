@@ -7,6 +7,7 @@ import cc.blynk.common.model.messages.protocol.appllication.GetGraphDataBinaryMe
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.ReportingDao;
+import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.widgets.notifications.Notification;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -28,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.*;
 import static cc.blynk.server.utils.ByteUtils.*;
-import static cc.blynk.server.utils.StateHolderUtil.*;
 
 /**
  * The Blynk Project.
@@ -58,6 +58,11 @@ public class BlockingIOProcessor {
                 new ArrayBlockingQueue<>(maxQueueSize)
         );
         this.tokenBody = tokenBody;
+    }
+
+    public static User getStateUser(Channel channel) {
+        BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
+        return handler == null ? null : handler.state.user;
     }
 
     public void readGraphData(Channel channel, String name, GraphPinRequest[] requestedPins, int msgId) {
