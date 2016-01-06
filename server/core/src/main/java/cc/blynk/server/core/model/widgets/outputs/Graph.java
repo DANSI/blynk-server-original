@@ -30,4 +30,8 @@ public class Graph extends OnePinWidget implements FrequencyWidget {
         this.lastRequestTS = now;
     }
 
+    @Override
+    public String getModeType() {
+        return "in";
+    }
 }

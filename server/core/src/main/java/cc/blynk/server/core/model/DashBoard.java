@@ -1,12 +1,15 @@
 package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.MultiPinWidget;
+import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.outputs.FrequencyWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +52,16 @@ public class DashBoard {
      * without requiring user to activate/deactivate dashboard again.
      */
     public transient StringMessage pinModeMessage;
+
+    private static void append(StringBuilder sb, Byte pin, PinType pinType, String pinMode) {
+        if (pin == null || pin == -1 || pinMode == null || pinType == PinType.VIRTUAL) {
+            return;
+        }
+        sb.append(StringUtils.BODY_SEPARATOR)
+                .append(pin)
+                .append(StringUtils.BODY_SEPARATOR)
+                .append(pinMode);
+    }
 
     public List<Timer> getTimerWidgets() {
         if (widgets.length == 0) {
@@ -102,6 +115,22 @@ public class DashBoard {
             }
         }
         return null;
+    }
+
+    public String buildPMMessage() {
+        StringBuilder sb = new StringBuilder("pm");
+        for (Widget widget : widgets) {
+            if (widget instanceof OnePinWidget) {
+                OnePinWidget onePinWidget = (OnePinWidget) widget;
+                append(sb, onePinWidget.pin, onePinWidget.pinType, onePinWidget.getModeType());
+            } else if (widget instanceof MultiPinWidget) {
+                MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+                for (Pin pin : multiPinWidget.pins) {
+                    append(sb, pin.pin, pin.pinType, multiPinWidget.getModeType());
+                }
+            }
+        }
+        return sb.toString();
     }
 
     @Override

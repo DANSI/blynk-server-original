@@ -28,4 +28,8 @@ public class Gauge extends OnePinWidget implements FrequencyWidget {
         this.lastRequestTS = now;
     }
 
+    @Override
+    public String getModeType() {
+        return "in";
+    }
 }

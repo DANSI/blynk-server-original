@@ -17,4 +17,9 @@ public class Slider extends OnePinWidget implements SyncWidget {
             ctx.write(new HardwareMessage(msgId, makeHardwareBody()));
         }
     }
+
+    @Override
+    public String getModeType() {
+        return "out";
+    }
 }

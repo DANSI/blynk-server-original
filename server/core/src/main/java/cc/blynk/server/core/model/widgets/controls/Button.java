@@ -20,4 +20,8 @@ public class Button extends OnePinWidget implements SyncWidget {
         }
     }
 
+    @Override
+    public String getModeType() {
+        return "out";
+    }
 }

@@ -47,4 +47,9 @@ public class Twitter extends Widget {
     public String makeHardwareBody() {
         return null;
     }
+
+    @Override
+    public String getModeType() {
+        return null;
+    }
 }

@@ -488,8 +488,18 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    //todo resolve it.
-    //todo more tests for that
+    public void testClosedConnectionWhenNotLogged() throws Exception {
+        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        appClient2.start(null);
+        appClient2.send("getToken 1");
+        verify(appClient2.responseMock, after(400).never()).channelRead(any(), any());
+        assertTrue(appClient2.isClosed());
+
+        appClient2.send("login dima@mail.ua 1 Android 1RC7");
+        verify(appClient2.responseMock, after(200).never()).channelRead(any(), any());
+    }
+
+    @Test
     public void testSendPinModeCommandWhenHardwareGoesOnline() throws Exception {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
@@ -503,31 +513,20 @@ public class MainWorkflowTest extends IntegrationBase {
         TestHardClient hardClient = new TestHardClient(host, hardPort);
         hardClient.start(null);
         hardClient.send("login " + clientPair.token);
-        verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
         verify(hardClient.responseMock, times(2)).channelRead(any(), any());
     }
 
     @Test
-    public void testClosedConnectionWhenNotLogged() throws Exception {
-        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
-        appClient2.start(null);
-        appClient2.send("getToken 1");
-        verify(appClient2.responseMock, after(400).never()).channelRead(any(), any());
-        assertTrue(appClient2.isClosed());
-
-        appClient2.send("login dima@mail.ua 1 Android 1RC7");
-        verify(appClient2.responseMock, after(200).never()).channelRead(any(), any());
-    }
-
-    @Test
-    public void testSendEmptyPinModeCommandWhenHardwareGoesOnline() throws Exception {
+    public void testSendGeneratedPinModeCommandWhenHardwareGoesOnline() throws Exception {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
 
         assertTrue(channelFuture.isDone());
 
-        clientPair.appClient.send("hardware 1 pm 13 in");
+        clientPair.appClient.send("hardware 1 vw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, DEVICE_NOT_IN_NETWORK)));
 
         TestHardClient hardClient = new TestHardClient(host, hardPort);
@@ -535,8 +534,9 @@ public class MainWorkflowTest extends IntegrationBase {
         hardClient.send("login " + clientPair.token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        //todo ping?
-        //verify(hardClient.responseMock, times(1)).channelRead(any(), any());
+        String expectedBody = "pm 1 out 2 out 3 out 5 out 6 in 7 in 8 in";
+        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, expectedBody.replaceAll(" ", "\0"))));
+        verify(hardClient.responseMock, times(2)).channelRead(any(), any());
     }
 
     @Test

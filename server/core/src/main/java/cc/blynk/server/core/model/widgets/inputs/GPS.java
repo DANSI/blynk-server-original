@@ -20,4 +20,9 @@ public class GPS extends OnePinWidget {
     public int triggerRadius;
 
     public int accuracy;
+
+    @Override
+    public String getModeType() {
+        return "out";
+    }
 }

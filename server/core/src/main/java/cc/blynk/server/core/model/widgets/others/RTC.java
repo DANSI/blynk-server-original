@@ -9,4 +9,9 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  */
 public class RTC extends OnePinWidget {
 
+    @Override
+    public String getModeType() {
+        return null;
+    }
+
 }

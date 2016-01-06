@@ -83,4 +83,6 @@ public abstract class Widget {
 
     public abstract String makeHardwareBody();
 
+    public abstract String getModeType();
+
 }

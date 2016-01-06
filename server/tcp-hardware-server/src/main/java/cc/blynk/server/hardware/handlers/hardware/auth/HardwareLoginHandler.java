@@ -11,6 +11,7 @@ import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
@@ -51,19 +52,22 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
     private static void completeLogin(Channel channel, Session session, User user, Integer dashId, int msgId) {
         log.debug("completeLogin. {}", channel);
-        session.hardwareChannels.add(channel);
-        channel.writeAndFlush(new ResponseMessage(msgId, OK));
-        sendPinMode(channel, user, dashId, msgId);
-        log.info("{} hardware joined.", user.name);
-    }
 
-    //send Pin Mode command in case channel connected to active dashboard with Pin Mode command that
-    //was sent previously
-    private static void sendPinMode(Channel channel, User user, Integer dashId, int msgId) {
         DashBoard dash = user.profile.getDashById(dashId, msgId);
-        if (dash.isActive && dash.pinModeMessage != null) {
-            channel.writeAndFlush(dash.pinModeMessage);
+        if (dash.pinModeMessage == null) {
+            dash.pinModeMessage = new HardwareMessage(1, dash.buildPMMessage());
         }
+
+        session.hardwareChannels.add(channel);
+        channel.write(new ResponseMessage(msgId, OK));
+
+        if (dash.isActive && dash.pinModeMessage.length > 2) {
+            channel.write(dash.pinModeMessage);
+        }
+
+        channel.flush();
+
+        log.info("{} hardware joined.", user.name);
     }
 
     @Override

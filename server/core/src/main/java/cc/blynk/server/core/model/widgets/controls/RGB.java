@@ -32,4 +32,9 @@ public class RGB extends MultiPinWidget implements SyncWidget {
         }
     }
 
+    @Override
+    public String getModeType() {
+        return "out";
+    }
+
 }

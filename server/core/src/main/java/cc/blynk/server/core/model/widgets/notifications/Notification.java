@@ -69,4 +69,9 @@ public class Notification extends Widget {
                (iOSToken == null || iOSToken.equals("")) &&
                (iOSTokens.size() == 0 && androidTokens.size() == 0);
     }
+
+    @Override
+    public String getModeType() {
+        return null;
+    }
 }

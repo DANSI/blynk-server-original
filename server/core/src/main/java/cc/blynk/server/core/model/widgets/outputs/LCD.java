@@ -36,4 +36,8 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
         this.lastRequestTS = now;
     }
 
+    @Override
+    public String getModeType() {
+        return "in";
+    }
 }

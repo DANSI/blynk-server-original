@@ -18,4 +18,9 @@ public class Logger extends MultiPinWidget {
     @Override
     public void updateIfSame(HardwareBody body) {
     }
+
+    @Override
+    public String getModeType() {
+        return null;
+    }
 }

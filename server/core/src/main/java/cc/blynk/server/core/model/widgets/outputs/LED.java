@@ -29,4 +29,9 @@ public class LED extends OnePinWidget implements FrequencyWidget {
     public final void setLastRequestTS(long now) {
         this.lastRequestTS = now;
     }
+
+    @Override
+    public String getModeType() {
+        return "in";
+    }
 }

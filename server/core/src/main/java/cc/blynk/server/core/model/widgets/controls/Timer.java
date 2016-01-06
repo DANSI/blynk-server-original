@@ -17,4 +17,8 @@ public class Timer extends OnePinWidget {
 
     public String stopValue;
 
+    @Override
+    public String getModeType() {
+        return "out";
+    }
 }
