@@ -97,7 +97,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     //todo more tests for that case
     @Test
-    public void testHardSyncReturnHardwarCommands() throws Exception {
+    public void testHardSyncReturnHardwareCommands() throws Exception {
         clientPair.hardwareClient.send("hardsync");
         verify(clientPair.hardwareClient.responseMock, timeout(1000).times(4)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, "dw 1 1".replaceAll(" ", "\0"))));
@@ -107,12 +107,30 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    public void testHardSyncReturn1HardwarCommand() throws Exception {
-        clientPair.hardwareClient.send("hardsync " + "vr 1".replaceAll(" ", "\0"));
-        verify(clientPair.hardwareClient.responseMock, timeout(1000).times(1)).channelRead(any(), any());
+    public void testHardSyncReturnNothingNoWidgetOnPin() throws Exception {
+        clientPair.hardwareClient.send("hardsync " + "vr 22".replaceAll(" ", "\0"));
+        verify(clientPair.hardwareClient.responseMock, after(400).never()).channelRead(any(), any());
+    }
 
-        //todo think how to finish this.
-        //verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, "vw 1 1".replaceAll(" ", "\0"))));
+    @Test
+    public void testHardSyncReturn1HardwareCommand() throws Exception {
+        clientPair.hardwareClient.send("hardsync " + "vr 4".replaceAll(" ", "\0"));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "vw 4 244".replaceAll(" ", "\0"))));
+    }
+
+    @Test
+    public void testHardSyncReturn1RTC() throws Exception {
+        clientPair.hardwareClient.send("hardsync " + "vr 9".replaceAll(" ", "\0"));
+
+        ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
+
+        List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
+        StringMessage hardMessage = arguments.get(0);
+        assertEquals(1, hardMessage.id);
+        assertEquals(HARDWARE, hardMessage.command);
+        assertEquals(15, hardMessage.length);
+        assertTrue(hardMessage.body.startsWith("vw 9".replaceAll(" ", "\0")));
     }
 
     @Test
