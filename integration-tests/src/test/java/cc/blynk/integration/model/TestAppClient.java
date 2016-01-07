@@ -3,6 +3,7 @@ package cc.blynk.integration.model;
 import cc.blynk.client.core.AppClient;
 import cc.blynk.client.handlers.decoders.ClientMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.ServerProperties;
 import io.netty.bootstrap.Bootstrap;
@@ -11,10 +12,14 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.io.BufferedReader;
+import java.util.List;
 import java.util.Random;
+
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -42,6 +47,14 @@ public class TestAppClient extends AppClient {
         super(host, port, Mockito.mock(Random.class), properties);
         Mockito.when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
         this.nioEventLoopGroup = nioEventLoopGroup;
+    }
+
+    public String getBody() throws Exception {
+        ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
+        verify(responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
+        StringMessage getTokenMessage = arguments.get(0);
+        return getTokenMessage.body;
     }
 
     @Override

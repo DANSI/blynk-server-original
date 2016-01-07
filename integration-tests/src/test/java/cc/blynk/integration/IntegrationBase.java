@@ -1,14 +1,12 @@
 package cc.blynk.integration;
 
 import cc.blynk.integration.model.ClientPair;
-import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
@@ -70,14 +68,6 @@ public abstract class IntegrationBase {
 
     static String readTestUserProfile() {
         return readTestUserProfile(null);
-    }
-
-    public static String getBody(SimpleClientHandler responseMock) throws Exception {
-        ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
-        verify(responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
-        StringMessage getTokenMessage = arguments.get(0);
-        return getTokenMessage.body;
     }
 
     private static GetTokenMessage getGetTokenMessage(List<Object> arguments) {

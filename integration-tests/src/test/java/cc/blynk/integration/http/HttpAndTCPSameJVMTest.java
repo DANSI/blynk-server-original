@@ -84,7 +84,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         reset(clientPair.appClient.responseMock);
 
         clientPair.appClient.send("getToken 1");
-        String token = getBody(clientPair.appClient.responseMock);
+        String token = clientPair.appClient.getBody();
 
         HttpGet request = new HttpGet(httpsServerUrl + token + "/pin/v4");
 
@@ -110,7 +110,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     public void testChangePinValueViaHttpAPI() throws Exception {
         ClientPair clientPair = initAppAndHardPair();
         clientPair.appClient.send("getToken 1");
-        String token = getBody(clientPair.appClient.responseMock);
+        String token = clientPair.appClient.getBody();
 
         HttpPut request = new HttpPut(httpsServerUrl + token + "/pin/v4");
         HttpGet getRequest = new HttpGet(httpsServerUrl + token + "/pin/v4");

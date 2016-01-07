@@ -191,7 +191,7 @@ public class MainWorkflowTest extends IntegrationBase {
     public void loadGzippedProfile() throws Exception{
         clientPair.appClient.send("loadprofile");
 
-        String profileString = getBody(clientPair.appClient.responseMock);
+        String profileString = clientPair.appClient.getBody();
 
         byte[] data = ByteUtils.compress(profileString, 2);
         clientPair.appClient.send("loadProfileGzipped");
@@ -293,7 +293,7 @@ public class MainWorkflowTest extends IntegrationBase {
         hardClient2.start(null);
 
         clientPair.appClient.send("getToken 1");
-        String token2 = getBody(clientPair.appClient.responseMock);
+        String token2 = clientPair.appClient.getBody();
         hardClient2.send("login " + token2);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
@@ -321,7 +321,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getToken 2");
-        String token2 = getBody(clientPair.appClient.responseMock);
+        String token2 = clientPair.appClient.getBody();
         hardClient2.send("login " + token2);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
