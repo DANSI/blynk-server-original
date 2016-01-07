@@ -72,7 +72,7 @@ public abstract class IntegrationBase {
         return readTestUserProfile(null);
     }
 
-    static String getBody(SimpleClientHandler responseMock) throws Exception {
+    public static String getBody(SimpleClientHandler responseMock) throws Exception {
         ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
         verify(responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
         List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
@@ -104,7 +104,7 @@ public abstract class IntegrationBase {
         host = "localhost";
     }
 
-    ClientPair initAppAndHardPair() throws Exception {
+    public ClientPair initAppAndHardPair() throws Exception {
         return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties);
     }
 
@@ -112,7 +112,7 @@ public abstract class IntegrationBase {
         return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", jsonProfile, properties);
     }
 
-    ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
+    public ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
                                   ServerProperties properties) throws Exception {
 
         TestAppClient appClient = new TestAppClient(host, appPort, properties);
@@ -121,7 +121,7 @@ public abstract class IntegrationBase {
         return initAppAndHardPair(appClient, hardClient, user, jsonProfile);
     }
 
-    ClientPair initAppAndHardPair(TestAppClient appClient, TestHardClient hardClient, String user,
+    public ClientPair initAppAndHardPair(TestAppClient appClient, TestHardClient hardClient, String user,
                                   String jsonProfile) throws Exception {
 
         appClient.start(null);
