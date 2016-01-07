@@ -57,9 +57,7 @@ public class HttpAPIServerTest extends IntegrationBase {
 
             httpsServerUrl = "http://localhost:" + httpPort + "/";
 
-            httpclient = HttpClients.custom()
-                    .setConnectionReuseStrategy((response, context) -> true)
-                    .setKeepAliveStrategy((response, context) -> 10000000).build();
+            httpclient = HttpClients.createDefault();
         }
     }
 
@@ -315,10 +313,7 @@ public class HttpAPIServerTest extends IntegrationBase {
         String url = httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14";
 
         HttpPut request = new HttpPut(url);
-        request.setHeader("Connection", "keep-alive");
-
         HttpGet getRequest = new HttpGet(url);
-        getRequest.setHeader("Connection", "keep-alive");
 
         for (int i = 0; i < 100; i++) {
             request.setEntity(new StringEntity("[\""+ i + "\"]", ContentType.APPLICATION_JSON));
