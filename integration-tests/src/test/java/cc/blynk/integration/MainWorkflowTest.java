@@ -5,6 +5,7 @@ import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.application.handlers.main.logic.reporting.GraphPinRequestData;
+import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
@@ -43,8 +44,8 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class MainWorkflowTest extends IntegrationBase {
 
-    private AppServer appServer;
-    private HardwareServer hardwareServer;
+    private BaseServer appServer;
+    private BaseServer hardwareServer;
     private ClientPair clientPair;
 
     @Before
@@ -53,10 +54,8 @@ public class MainWorkflowTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
 
-        hardwareServer = new HardwareServer(holder);
-        appServer = new AppServer(holder);
-        hardwareServer.start();
-        appServer.start();
+        hardwareServer = new HardwareServer(holder).start();
+        appServer = new AppServer(holder).start();
 
         //todo improve this
         //wait util server starts.

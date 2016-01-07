@@ -3,6 +3,7 @@ package cc.blynk.integration;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.server.application.AppServer;
+import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -37,8 +38,8 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ShareProfileWorkflowTest extends IntegrationBase {
 
-    private AppServer appServer;
-    private HardwareServer hardwareServer;
+    private BaseServer appServer;
+    private BaseServer hardwareServer;
     private ClientPair clientPair;
 
     private static OnePinWidget getWidgetByPin(Profile profile, int pin) {
@@ -59,10 +60,8 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
 
-        hardwareServer = new HardwareServer(holder);
-        appServer = new AppServer(holder);
-        hardwareServer.start();
-        appServer.start();
+        hardwareServer = new HardwareServer(holder).start();
+        appServer = new AppServer(holder).start();
 
         //todo improve this
         //wait util server starts.

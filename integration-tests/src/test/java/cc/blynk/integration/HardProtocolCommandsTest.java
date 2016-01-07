@@ -2,6 +2,7 @@ package cc.blynk.integration;
 
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestHardClient;
+import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.StringUtils;
@@ -30,7 +31,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class HardProtocolCommandsTest extends IntegrationBase {
 
-    private HardwareServer hardwareServer;
+    private BaseServer hardwareServer;
 
     @Before
     public void init() throws Exception {
@@ -38,9 +39,7 @@ public class HardProtocolCommandsTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
 
-        hardwareServer = new HardwareServer(holder);
-
-        hardwareServer.start();
+        hardwareServer = new HardwareServer(holder).start();
 
         //wait util servers start.
         //todo fix.

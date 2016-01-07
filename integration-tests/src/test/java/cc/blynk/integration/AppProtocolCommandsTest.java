@@ -3,6 +3,7 @@ package cc.blynk.integration;
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestAppClient;
 import cc.blynk.server.application.AppServer;
+import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -39,7 +40,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class AppProtocolCommandsTest extends IntegrationBase {
 
-    private AppServer appServer;
+    private BaseServer appServer;
 
     @Before
     public void init() throws Exception {
@@ -48,10 +49,9 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
 
-        appServer = new AppServer(holder);
+        appServer = new AppServer(holder).start();
 
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager);
-        appServer.start();
         new Thread(profileSaverWorker).start();
 
         //wait util servers start.

@@ -3,6 +3,7 @@ package cc.blynk.integration;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.application.AppServer;
+import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.hardware.HardwareServer;
@@ -30,8 +31,8 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class BridgeWorkflowTest extends IntegrationBase {
 
-    private AppServer appServer;
-    private HardwareServer hardwareServer;
+    private BaseServer appServer;
+    private BaseServer hardwareServer;
     private ClientPair clientPair;
 
     @Before
@@ -40,10 +41,8 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
 
-        hardwareServer = new HardwareServer(holder);
-        appServer = new AppServer(holder);
-        hardwareServer.start();
-        appServer.start();
+        hardwareServer = new HardwareServer(holder).start();
+        appServer = new AppServer(holder).start();
 
         //todo improve this
         //wait util server starts.

@@ -30,7 +30,7 @@ public abstract class BaseServer {
         this.transportTypeHolder = transportTypeHolder;
     }
 
-    public void start() throws Exception {
+    public BaseServer start() throws Exception {
         if (transportTypeHolder.epollEnabled) {
             log.warn("Native epoll transport for {} server enabled.", getServerName());
         }
@@ -39,6 +39,8 @@ public abstract class BaseServer {
                 transportTypeHolder.workerGroup,
                 transportTypeHolder.channelClass
         );
+
+        return this;
     }
 
     private void buildServerAndRun(EventLoopGroup bossGroup, EventLoopGroup workerGroup,
