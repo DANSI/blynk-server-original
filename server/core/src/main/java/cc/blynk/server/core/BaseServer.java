@@ -2,10 +2,7 @@ package cc.blynk.server.core;
 
 import cc.blynk.server.TransportTypeHolder;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.ServerChannel;
+import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,6 +21,7 @@ public abstract class BaseServer {
     private final TransportTypeHolder transportTypeHolder;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
+    private ChannelFuture cf;
 
     protected BaseServer(int port, TransportTypeHolder transportTypeHolder) {
         this.port = port;
@@ -53,7 +51,7 @@ public abstract class BaseServer {
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childHandler(getChannelInitializer());
 
-            b.bind(port).sync();
+            this.cf = b.bind(port).sync();
 
             this.bossGroup = bossGroup;
             this.workerGroup = workerGroup;
@@ -68,6 +66,8 @@ public abstract class BaseServer {
     protected abstract String getServerName();
 
     public void stop() {
+        cf.channel().close().awaitUninterruptibly();
+
         if (bossGroup != null) {
             bossGroup.shutdownGracefully();
         }
