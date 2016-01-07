@@ -79,27 +79,39 @@ public class HandlerRegistry {
 
     public static FullHttpResponse process(HttpRequest req) {
         URIDecoder uriDecoder = new URIDecoder(req.getUri());
-        for (HandlerHolder handlerHolder : processors) {
-            if (handlerHolder.httpMethod == req.getMethod() &&
-                    handlerHolder.uriTemplate.matches(uriDecoder.path())) {
-                if (req.getMethod() == HttpMethod.PUT || req.getMethod() == HttpMethod.POST) {
-                    if (req instanceof HttpContent) {
-                        uriDecoder.bodyData = ((HttpContent) req).content();
-                        uriDecoder.contentType = req.headers().get(HttpHeaders.Names.CONTENT_TYPE);
-                    }
-                }
-                uriDecoder.pathData = handlerHolder.uriTemplate.extractParameters();
+        HandlerHolder handlerHolder = findHandler(req.getMethod(), uriDecoder.path());
 
-                return invoke(handlerHolder, uriDecoder);
-            }
+        if (handlerHolder != null) {
+            populateBody(req, uriDecoder);
+            return invoke(handlerHolder, uriDecoder);
         }
 
         log.error("Error resolving url. No path found.");
         return Response.notFound();
     }
 
+    private static void populateBody(HttpRequest req, URIDecoder uriDecoder) {
+        if (req.getMethod() == HttpMethod.PUT || req.getMethod() == HttpMethod.POST) {
+            if (req instanceof HttpContent) {
+                uriDecoder.bodyData = ((HttpContent) req).content();
+                uriDecoder.contentType = req.headers().get(HttpHeaders.Names.CONTENT_TYPE);
+            }
+        }
+    }
+
+    private static HandlerHolder findHandler(HttpMethod httpMethod, String path) {
+        for (HandlerHolder handlerHolder : processors) {
+            if (handlerHolder.httpMethod == httpMethod && handlerHolder.uriTemplate.matches(path)) {
+                return handlerHolder;
+            }
+        }
+
+        return null;
+    }
+
     private static FullHttpResponse invoke(HandlerHolder handlerHolder, URIDecoder uriDecoder) {
         try {
+            uriDecoder.pathData = handlerHolder.uriTemplate.extractParameters();
             Object[] params = handlerHolder.fetchParams(uriDecoder);
             return (FullHttpResponse) handlerHolder.method.invoke(handlerHolder.handler, params);
         } catch (Exception e) {
