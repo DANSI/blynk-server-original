@@ -2,6 +2,7 @@ package cc.blynk.integration.http;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.server.api.http.HttpAPIServer;
+import cc.blynk.server.core.BaseServer;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -30,7 +31,7 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class HttpAPIKeepAliveServerTest extends IntegrationBase {
 
-    private static HttpAPIServer httpServer;
+    private static BaseServer httpServer;
     private static CloseableHttpClient httpclient;
     private static String httpsServerUrl;
 
@@ -46,13 +47,10 @@ public class HttpAPIKeepAliveServerTest extends IntegrationBase {
             properties.setProperty("data.folder", getProfileFolder());
             initServerStructures();
 
-            httpServer = new HttpAPIServer(holder);
-            httpServer.start();
+            httpServer = new HttpAPIServer(holder).start();
             sleep(500);
 
-            int httpPort = holder.props.getIntProperty("http.port");
-
-            httpsServerUrl = "http://localhost:" + httpPort + "/";
+            httpsServerUrl = "http://localhost:" + properties.getIntProperty("http.port") + "/";
 
             //this http client doesn't close HTTP connection.
             httpclient = HttpClients.custom()

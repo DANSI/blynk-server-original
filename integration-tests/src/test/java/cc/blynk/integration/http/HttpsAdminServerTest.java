@@ -3,6 +3,7 @@ package cc.blynk.integration.http;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.http.ResponseUserEntity;
 import cc.blynk.server.admin.http.HttpsAdminServer;
+import cc.blynk.server.core.BaseServer;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -30,7 +31,7 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class HttpsAdminServerTest extends IntegrationBase {
 
-    private HttpsAdminServer httpAdminServer;
+    private BaseServer httpAdminServer;
     private CloseableHttpClient httpclient;
     private String httpsServerUrl;
 
@@ -38,13 +39,10 @@ public class HttpsAdminServerTest extends IntegrationBase {
     public void init() throws Exception {
         properties.setProperty("data.folder", getProfileFolder());
         initServerStructures();
-        this.httpAdminServer = new HttpsAdminServer(holder);
-        httpAdminServer.start();
+        this.httpAdminServer = new HttpsAdminServer(holder).start();
         sleep(500);
 
-        int administrationHttpsPort = holder.props.getIntProperty("administration.https.port");
-
-        httpsServerUrl = "https://localhost:" + administrationHttpsPort + "/admin/users/";
+        httpsServerUrl = "https://localhost:" + properties.getIntProperty("administration.https.port") + "/admin/users/";
 
         SSLContext sslcontext = initUnsecuredSSLContext();
 
