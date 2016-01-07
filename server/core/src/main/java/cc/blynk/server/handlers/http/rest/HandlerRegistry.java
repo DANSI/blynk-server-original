@@ -13,8 +13,8 @@ import javax.ws.rs.core.MediaType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The Blynk Project.
@@ -25,7 +25,7 @@ public class HandlerRegistry {
 
     private static final Logger log = LogManager.getLogger(HandlerRegistry.class);
 
-    private final static List<HandlerHolder> processors = new ArrayList<>();
+    private final static Set<HandlerHolder> processors = new HashSet<>();
 
     public static void register(String rootPath, Object o) {
         registerHandler(rootPath, o);
@@ -72,6 +72,8 @@ public class HandlerRegistry {
                     }
                 }
 
+                //todo throw exception on duplicate...
+                processors.remove(handlerHolder);
                 processors.add(handlerHolder);
             }
         }

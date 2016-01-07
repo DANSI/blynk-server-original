@@ -1,4 +1,4 @@
-package cc.blynk.integration.http;
+package cc.blynk.integration.https;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.http.ResponseUserEntity;

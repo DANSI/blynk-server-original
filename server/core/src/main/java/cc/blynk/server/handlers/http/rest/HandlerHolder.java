@@ -59,4 +59,24 @@ public class HandlerHolder {
         return res;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HandlerHolder that = (HandlerHolder) o;
+
+        if (uriTemplate != null ? !uriTemplate.equals(that.uriTemplate) : that.uriTemplate != null) return false;
+        if (httpMethod != null ? !httpMethod.equals(that.httpMethod) : that.httpMethod != null) return false;
+        return !(method != null ? !method.equals(that.method) : that.method != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = uriTemplate != null ? uriTemplate.hashCode() : 0;
+        result = 31 * result + (httpMethod != null ? httpMethod.hashCode() : 0);
+        result = 31 * result + (method != null ? method.hashCode() : 0);
+        return result;
+    }
 }

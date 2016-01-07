@@ -45,6 +45,7 @@ public class HttpAPIKeepAliveServerTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         properties.setProperty("data.folder", getProfileFolder());
+
         Holder holder = new Holder(properties);
         holder.setBlockingIOProcessor(blockingIOProcessor);
 

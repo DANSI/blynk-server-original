@@ -84,4 +84,20 @@ public class UriTemplate {
 
         return values;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UriTemplate that = (UriTemplate) o;
+
+        return !(urlPattern != null ? !urlPattern.equals(that.urlPattern) : that.urlPattern != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return urlPattern != null ? urlPattern.hashCode() : 0;
+    }
 }
