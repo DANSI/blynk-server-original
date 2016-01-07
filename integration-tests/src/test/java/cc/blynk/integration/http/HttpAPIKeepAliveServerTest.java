@@ -1,6 +1,7 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.IntegrationBase;
+import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.utils.JsonParser;
@@ -12,7 +13,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,37 +32,37 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class HttpAPIKeepAliveServerTest extends IntegrationBase {
 
-    private static BaseServer httpServer;
-    private static CloseableHttpClient httpclient;
-    private static String httpsServerUrl;
+    private BaseServer httpServer;
+    private CloseableHttpClient httpclient;
+    private String httpServerUrl;
 
-    @AfterClass
-    public static void shutdown() throws Exception {
+    @After
+    public void shutdown() throws Exception {
         httpclient.close();
         httpServer.stop();
     }
 
     @Before
     public void init() throws Exception {
-        if (httpServer == null) {
-            properties.setProperty("data.folder", getProfileFolder());
-            initServerStructures();
+        properties.setProperty("data.folder", getProfileFolder());
+        Holder holder = new Holder(properties);
+        holder.setBlockingIOProcessor(blockingIOProcessor);
 
-            httpServer = new HttpAPIServer(holder).start();
-            sleep(500);
+        httpServer = new HttpAPIServer(holder).start();
+        sleep(500);
 
-            httpsServerUrl = "http://localhost:" + properties.getIntProperty("http.port") + "/";
+        httpServerUrl = "http://localhost:" + properties.getIntProperty("http.port") + "/";
 
-            //this http client doesn't close HTTP connection.
-            httpclient = HttpClients.custom()
-                    .setConnectionReuseStrategy((response, context) -> true)
-                    .setKeepAliveStrategy((response, context) -> 10000000).build();
-        }
+        //this http client doesn't close HTTP connection.
+        httpclient = HttpClients.custom()
+                .setConnectionReuseStrategy((response, context) -> true)
+                .setKeepAliveStrategy((response, context) -> 10000000).build();
+
     }
 
     @Test
     public void testKeepAlive() throws Exception {
-        String url = httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14";
+        String url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14";
 
         HttpPut request = new HttpPut(url);
         request.setHeader("Connection", "keep-alive");
