@@ -59,7 +59,7 @@ public class HttpsAdminServer extends BaseServer {
                 pipeline.addLast(new HttpServerCodec());
                 pipeline.addLast(new HttpObjectAggregator(65536));
                 pipeline.addLast(new ChunkedWriteHandler());
-                pipeline.addLast(new AdminHandler(rootPath));
+                pipeline.addLast(new AdminHandler(holder.userDao, holder.sessionDao, rootPath));
             }
         };
 

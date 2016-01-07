@@ -1,6 +1,8 @@
 package cc.blynk.server.admin.http.handlers;
 
 import cc.blynk.server.core.BaseHttpHandler;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.handlers.http.logic.FileLogic;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
@@ -15,7 +17,8 @@ public class AdminHandler extends BaseHttpHandler {
     private final FileLogic fileHandler;
     private final String rootPath;
 
-    public AdminHandler(String rootPath) {
+    public AdminHandler(UserDao userDao, SessionDao sessionDao, String rootPath) {
+        super(userDao, sessionDao);
         this.rootPath = rootPath;
         this.fileHandler = new FileLogic();
     }

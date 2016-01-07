@@ -35,7 +35,7 @@ public class HttpAPIServer extends BaseServer {
                 pipeline.addLast(new HttpServerCodec());
                 pipeline.addLast(new HttpObjectAggregator(65536));
                 pipeline.addLast(new ChunkedWriteHandler());
-                pipeline.addLast(new HttpHandler());
+                pipeline.addLast(new HttpHandler(holder.userDao, holder.sessionDao));
             }
         };
 

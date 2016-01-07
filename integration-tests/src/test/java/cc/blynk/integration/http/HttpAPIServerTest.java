@@ -57,7 +57,9 @@ public class HttpAPIServerTest extends IntegrationBase {
 
             httpsServerUrl = "http://localhost:" + httpPort + "/";
 
-            httpclient = HttpClients.createDefault();
+            httpclient = HttpClients.custom()
+                    .setConnectionReuseStrategy((response, context) -> true)
+                    .setKeepAliveStrategy((response, context) -> 10000000).build();
         }
     }
 
@@ -312,17 +314,23 @@ public class HttpAPIServerTest extends IntegrationBase {
     public void testSync() throws Exception {
         String url = httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14";
 
+        HttpPut request = new HttpPut(url);
+        request.setHeader("Connection", "keep-alive");
+
+        HttpGet getRequest = new HttpGet(url);
+        getRequest.setHeader("Connection", "keep-alive");
+
         for (int i = 0; i < 100; i++) {
-            HttpPut request = new HttpPut(url);
             request.setEntity(new StringEntity("[\""+ i + "\"]", ContentType.APPLICATION_JSON));
+
             try (CloseableHttpResponse response = httpclient.execute(request)) {
                 assertEquals(200, response.getStatusLine().getStatusCode());
+                EntityUtils.consume(response.getEntity());
             }
 
-            HttpGet getRequest = new HttpGet(url);
-            try (CloseableHttpResponse response = httpclient.execute(getRequest)) {
-                assertEquals(200, response.getStatusLine().getStatusCode());
-                List<String> values = consumeJsonPinValues(response);
+            try (CloseableHttpResponse response2 = httpclient.execute(getRequest)) {
+                assertEquals(200, response2.getStatusLine().getStatusCode());
+                List<String> values = consumeJsonPinValues(response2);
                 assertEquals(1, values.size());
                 assertEquals(String.valueOf(i), values.get(0));
             }

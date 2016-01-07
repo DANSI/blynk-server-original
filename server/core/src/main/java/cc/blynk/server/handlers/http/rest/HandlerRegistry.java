@@ -78,11 +78,12 @@ public class HandlerRegistry {
     }
 
     public static FullHttpResponse process(HttpRequest req) {
-        URIDecoder uriDecoder = new URIDecoder(req.getUri());
-        HandlerHolder handlerHolder = findHandler(req.getMethod(), uriDecoder.path());
+        HandlerHolder handlerHolder = findHandler(req.getMethod(), path(req.getUri()));
 
+        URIDecoder uriDecoder = new URIDecoder(req.getUri());
         if (handlerHolder != null) {
             populateBody(req, uriDecoder);
+            uriDecoder.pathData = handlerHolder.uriTemplate.extractParameters();
             return invoke(handlerHolder, uriDecoder);
         }
 
@@ -90,7 +91,7 @@ public class HandlerRegistry {
         return Response.notFound();
     }
 
-    private static void populateBody(HttpRequest req, URIDecoder uriDecoder) {
+    public static void populateBody(HttpRequest req, URIDecoder uriDecoder) {
         if (req.getMethod() == HttpMethod.PUT || req.getMethod() == HttpMethod.POST) {
             if (req instanceof HttpContent) {
                 uriDecoder.bodyData = ((HttpContent) req).content();
@@ -99,7 +100,7 @@ public class HandlerRegistry {
         }
     }
 
-    private static HandlerHolder findHandler(HttpMethod httpMethod, String path) {
+    public static HandlerHolder findHandler(HttpMethod httpMethod, String path) {
         for (HandlerHolder handlerHolder : processors) {
             if (handlerHolder.httpMethod == httpMethod && handlerHolder.uriTemplate.matches(path)) {
                 return handlerHolder;
@@ -109,9 +110,8 @@ public class HandlerRegistry {
         return null;
     }
 
-    private static FullHttpResponse invoke(HandlerHolder handlerHolder, URIDecoder uriDecoder) {
+    public static FullHttpResponse invoke(HandlerHolder handlerHolder, URIDecoder uriDecoder) {
         try {
-            uriDecoder.pathData = handlerHolder.uriTemplate.extractParameters();
             Object[] params = handlerHolder.fetchParams(uriDecoder);
             return (FullHttpResponse) handlerHolder.method.invoke(handlerHolder.handler, params);
         } catch (Exception e) {
@@ -120,6 +120,15 @@ public class HandlerRegistry {
             } else {
                 return logError(e);
             }
+        }
+    }
+
+    public static String path(String uri) {
+        int pathEndPos = uri.indexOf('?');
+        if (pathEndPos < 0) {
+            return uri;
+        } else {
+            return uri.substring(0, pathEndPos);
         }
     }
 

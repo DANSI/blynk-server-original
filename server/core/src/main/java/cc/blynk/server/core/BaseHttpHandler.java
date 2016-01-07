@@ -1,7 +1,15 @@
 package cc.blynk.server.core;
 
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.handlers.DefaultReregisterHandler;
+import cc.blynk.server.handlers.http.rest.HandlerHolder;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
-import io.netty.channel.ChannelFutureListener;
+import cc.blynk.server.handlers.http.rest.Response;
+import cc.blynk.server.handlers.http.rest.URIDecoder;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -17,17 +25,26 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 24.12.15.
  */
-public class BaseHttpHandler extends ChannelInboundHandlerAdapter {
+public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements DefaultReregisterHandler {
 
     protected static final Logger log = LogManager.getLogger(BaseHttpHandler.class);
 
-    protected static void send(ChannelHandlerContext ctx, HttpRequest req, FullHttpResponse response) {
-        if (!HttpHeaders.isKeepAlive(req)) {
-            ctx.write(response).addListener(ChannelFutureListener.CLOSE);
-        } else {
-            response.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
-            ctx.write(response);
-        }
+    private final UserDao userDao;
+    private final SessionDao sessionDao;
+
+    public BaseHttpHandler(UserDao userDao, SessionDao sessionDao) {
+        this.userDao = userDao;
+        this.sessionDao = sessionDao;
+    }
+
+    private static void send(ChannelHandlerContext ctx, FullHttpResponse response) {
+        response.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+        ctx.writeAndFlush(response);
+    }
+
+    private static void send(Channel channel, FullHttpResponse response) {
+        response.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+        channel.writeAndFlush(response);
     }
 
     @Override
@@ -43,14 +60,37 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter {
         process(ctx, req);
     }
 
-    public void process(ChannelHandlerContext ctx, HttpRequest request) {
-        FullHttpResponse response = HandlerRegistry.process(request);
-        send(ctx, request, response);
-    }
+    public void process(ChannelHandlerContext ctx, HttpRequest req) {
+        HandlerHolder handlerHolder = HandlerRegistry.findHandler(req.getMethod(), HandlerRegistry.path(req.getUri()));
 
-    @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) {
-        ctx.flush();
+        if (handlerHolder == null) {
+            log.error("Error resolving url. No path found.");
+            send(ctx, Response.notFound());
+        } else {
+            URIDecoder uriDecoder = new URIDecoder(req.getUri());
+            HandlerRegistry.populateBody(req, uriDecoder);
+            uriDecoder.pathData = handlerHolder.uriTemplate.extractParameters();
+
+            //reregister logic
+            String tokenPathParam = uriDecoder.pathData.get("token");
+            if (tokenPathParam != null) {
+                User user = userDao.tokenManager.getUserByToken(tokenPathParam);
+                if (user != null) {
+                    Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
+                    if (session.initialEventLoop != ctx.channel().eventLoop()) {
+                        log.debug("Re registering http channel. {}", ctx.channel());
+                        reRegisterChannel(ctx, session, channelFuture -> send(channelFuture.channel(), HandlerRegistry.invoke(handlerHolder, uriDecoder)));
+                    } else {
+                        send(ctx, HandlerRegistry.invoke(handlerHolder, uriDecoder));
+                    }
+                } else {
+                    log.error("Requested token {} not found.", tokenPathParam);
+                    send(ctx, Response.badRequest("Invalid token."));
+                }
+            } else {
+                send(ctx, HandlerRegistry.invoke(handlerHolder, uriDecoder));
+            }
+        }
     }
 
     @Override
