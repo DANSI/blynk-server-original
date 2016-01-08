@@ -38,8 +38,4 @@ public class SessionDao {
         return group;
     }
 
-    //for test only
-    public Map<User, Session> getUserSession() {
-        return userSession;
-    }
 }

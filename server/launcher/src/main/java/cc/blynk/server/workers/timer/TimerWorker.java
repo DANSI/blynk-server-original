@@ -2,8 +2,10 @@ package cc.blynk.server.workers.timer;
 
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +42,6 @@ public class TimerWorker implements Runnable {
     @Override
     public void run() {
         log.trace("Starting timer...");
-        int allTimers = 0;
         tickedTimers = 0;
         onlineTimers = 0;
 
@@ -49,23 +50,33 @@ public class TimerWorker implements Runnable {
         long curTime = localDateTime.getSecond() + localDateTime.getMinute() * 60 + localDateTime.getHour() * 3600;
 
         for (User user : userDao.getUsers().values()) {
-            for (Timer timer : user.profile.getActiveTimerWidgets()) {
-                allTimers++;
-                sendMessageIfTicked(user, curTime, timer.startTime, timer.startValue);
-                sendMessageIfTicked(user, curTime, timer.stopTime, timer.stopValue);
+            for (DashBoard dashBoard : user.profile.dashBoards) {
+                if (dashBoard.isActive) {
+                    for (Widget widget : dashBoard.widgets) {
+                        if (widget instanceof Timer) {
+                            Timer timer = (Timer) widget;
+                            send(user, timer, curTime);
+                        }
+                    }
+                }
             }
         }
 
         //logging only events when timers ticked.
         if (onlineTimers > 0) {
-            log.info("Timer finished. Processed {}/{}/{} timers.", onlineTimers, tickedTimers, allTimers);
+            log.info("Timer finished. Processed {}/{} timers.", onlineTimers, tickedTimers);
         }
     }
 
+    private void send(User user, Timer timer, long curTime) {
+        sendMessageIfTicked(user, curTime, timer.startTime, timer.startValue);
+        sendMessageIfTicked(user, curTime, timer.stopTime, timer.stopValue);
+    }
+
     private void sendMessageIfTicked(User user, long curTime, Long time, String value) {
-        if (timerTick(curTime, time)) {
+        if (time != null && value != null && !value.equals("") && curTime == time) {
             tickedTimers++;
-            Session session = sessionDao.getUserSession().get(user);
+            Session session = sessionDao.userSession.get(user);
             if (session != null) {
                 onlineTimers++;
                 if (session.hardwareChannels.size() > 0) {
@@ -73,15 +84,6 @@ public class TimerWorker implements Runnable {
                 }
             }
         }
-    }
-
-    protected boolean timerTick(long curTime, Long timerStart) {
-        if (timerStart == null) {
-            log.error("Timer start field is empty. Shouldn't happen. REPORT!");
-            return false;
-        }
-
-        return curTime == timerStart;
     }
 
 }

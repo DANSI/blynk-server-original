@@ -6,6 +6,10 @@ import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.application.handlers.main.logic.reporting.GraphPinRequestData;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
@@ -14,6 +18,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
@@ -27,7 +32,11 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.core.protocol.enums.Response.*;
@@ -659,6 +668,43 @@ public class MainWorkflowTest extends IntegrationBase {
 
         verify(clientPair.hardwareClient.responseMock, times(0)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT_EXCEPTION)));
         verify(clientPair.appClient.responseMock, times(0)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
+    }
+
+    @Test
+    public void testTimerWidgetTriggered() throws Exception {
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(
+                new TimerWorker(holder.userDao, holder.sessionDao), 0, 1000, TimeUnit.MILLISECONDS);
+
+        clientPair.appClient.send("deactivate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        Timer timer = new Timer();
+        timer.id = 1;
+        timer.x = 1;
+        timer.y = 1;
+        timer.pinType = PinType.DIGITAL;
+        timer.pin = 5;
+        timer.startValue = "dw 5 1";
+        timer.stopValue = "dw 5 0";
+        LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
+        long curTime = localDateTime.getSecond() + localDateTime.getMinute() * 60 + localDateTime.getHour() * 3600;
+        timer.startTime = curTime + 1;
+        timer.stopTime = curTime + 2;
+
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 1;
+        dashBoard.name = "Test";
+        dashBoard.widgets = new Widget[] {timer};
+
+        clientPair.appClient.send("saveDash " + dashBoard.toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
+
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 1")));
+        clientPair.hardwareClient.reset();
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 0")));
     }
 
     @Test
