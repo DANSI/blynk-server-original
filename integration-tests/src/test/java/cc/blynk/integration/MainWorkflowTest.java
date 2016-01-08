@@ -708,6 +708,59 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testTimerWidgetTriggeredAndSendCommandToCorrectDevice() throws Exception {
+        TestHardClient hardClient2 = new TestHardClient(host, hardPort);
+        hardClient2.start(null);
+
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(
+                new TimerWorker(holder.userDao, holder.sessionDao), 0, 1000, TimeUnit.MILLISECONDS);
+
+        clientPair.appClient.send("deactivate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        Timer timer = new Timer();
+        timer.id = 1;
+        timer.x = 1;
+        timer.y = 1;
+        timer.pinType = PinType.DIGITAL;
+        timer.pin = 5;
+        timer.startValue = "dw 5 1";
+        timer.stopValue = "dw 5 0";
+        LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
+        long curTime = localDateTime.getSecond() + localDateTime.getMinute() * 60 + localDateTime.getHour() * 3600;
+        timer.startTime = curTime + 1;
+        timer.stopTime = curTime + 2;
+
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 1;
+        dashBoard.name = "Test";
+        dashBoard.widgets = new Widget[] {timer};
+
+        clientPair.appClient.send("saveDash " + dashBoard.toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+
+        dashBoard.id = 2;
+        clientPair.appClient.send("createDash " + dashBoard.toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("getToken 2");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
+        hardClient2.send("login " + clientPair.appClient.getBody());
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        hardClient2.reset();
+
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 1")));
+        clientPair.hardwareClient.reset();
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 0")));
+
+        verify(hardClient2.responseMock, never()).channelRead(any(), any());
+    }
+
+    @Test
     @Ignore("hard to test this case...")
     public void testTryReachQuotaLimitAndWarningExceededLimit() throws Exception {
         String body = "1 ar 100 100";
