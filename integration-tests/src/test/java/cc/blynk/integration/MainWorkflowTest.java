@@ -310,6 +310,7 @@ public class MainWorkflowTest extends IntegrationBase {
                 .replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
 
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        hardClient2.stop().awaitUninterruptibly();
     }
 
     @Test
@@ -351,6 +352,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         hardClient2.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, "2 aw 1 1".replaceAll(" ", "\0"))));
+        hardClient2.stop().awaitUninterruptibly();
     }
 
     @Test
@@ -525,12 +527,13 @@ public class MainWorkflowTest extends IntegrationBase {
 
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
         verify(hardClient.responseMock, times(2)).channelRead(any(), any());
+        hardClient.stop().awaitUninterruptibly();
     }
 
     @Test
     public void testSendGeneratedPinModeCommandWhenHardwareGoesOnline() throws Exception {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
-        channelFuture.await();
+        channelFuture.awaitUninterruptibly();
 
         assertTrue(channelFuture.isDone());
 
@@ -545,6 +548,7 @@ public class MainWorkflowTest extends IntegrationBase {
         String expectedBody = "pm 1 out 2 out 3 out 5 out 6 in 7 in 8 in";
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, expectedBody.replaceAll(" ", "\0"))));
         verify(hardClient.responseMock, times(2)).channelRead(any(), any());
+        hardClient.stop().awaitUninterruptibly();
     }
 
     @Test
@@ -578,7 +582,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.hardwareClient.responseMock, timeout(1000).times(0)).channelRead(any(), any());
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
-
+        nonActiveDashHardClient.stop().awaitUninterruptibly();
     }
 
     @Test
@@ -758,6 +762,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 0")));
 
         verify(hardClient2.responseMock, never()).channelRead(any(), any());
+        hardClient2.stop().awaitUninterruptibly();
     }
 
     @Test
