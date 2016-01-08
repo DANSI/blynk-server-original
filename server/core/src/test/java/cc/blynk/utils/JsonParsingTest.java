@@ -12,6 +12,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -149,10 +151,44 @@ public class JsonParsingTest {
 
         assertNotNull(userProfileString);
         assertTrue(userProfileString.contains("dashBoards"));
-        List<Timer> timers = profile.getActiveTimerWidgets();
+        List<Timer> timers = getActiveTimerWidgets(profile);
         assertNotNull(timers);
         assertEquals(1, timers.size());
     }
+
+    private List<Timer> getActiveTimerWidgets(Profile profile) {
+        if (profile.dashBoards.length == 0) {
+            return Collections.emptyList();
+        }
+
+        List<Timer> activeTimers = new ArrayList<>();
+        for (DashBoard dashBoard : profile.dashBoards) {
+            if (dashBoard.isActive) {
+                activeTimers.addAll(getTimerWidgets(dashBoard));
+            }
+        }
+        return activeTimers;
+    }
+
+    private List<Timer> getTimerWidgets(DashBoard dashBoard) {
+        if (dashBoard.widgets.length == 0) {
+            return Collections.emptyList();
+        }
+
+        List<Timer> timerWidgets = new ArrayList<>();
+        for (Widget widget : dashBoard.widgets) {
+            if (widget instanceof Timer) {
+                Timer timer = (Timer) widget;
+                if ((timer.startTime != -1 && timer.startValue != null && !timer.startValue.equals("")) ||
+                        (timer.stopTime != -1 && timer.stopValue != null && !timer.stopValue.equals(""))) {
+                    timerWidgets.add(timer);
+                }
+            }
+        }
+
+        return timerWidgets;
+    }
+
 
     @Test
     public void correctSerializedObject() throws JsonProcessingException {

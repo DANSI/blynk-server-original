@@ -4,17 +4,13 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.outputs.FrequencyWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * User: ddumanskiy
@@ -61,25 +57,6 @@ public class DashBoard {
                 .append(pin)
                 .append(StringUtils.BODY_SEPARATOR)
                 .append(pinMode);
-    }
-
-    public List<Timer> getTimerWidgets() {
-        if (widgets.length == 0) {
-            return Collections.emptyList();
-        }
-
-        List<Timer> timerWidgets = new ArrayList<>();
-        for (Widget widget : widgets) {
-            if (widget instanceof Timer) {
-                Timer timer = (Timer) widget;
-                if ((timer.startTime != null && timer.startValue != null && !timer.startValue.equals("")) ||
-                    (timer.stopTime != null && timer.stopValue != null && !timer.stopValue.equals(""))) {
-                    timerWidgets.add(timer);
-                }
-            }
-        }
-
-        return timerWidgets;
     }
 
     public void update(HardwareBody hardwareBody) {

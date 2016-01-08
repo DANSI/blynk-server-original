@@ -2,12 +2,13 @@ package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.graph.GraphKey;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.outputs.Graph;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.JsonParser;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -64,20 +65,6 @@ public class Profile {
             }
         }
         return null;
-    }
-
-    public List<Timer> getActiveTimerWidgets() {
-        if (dashBoards.length == 0) {
-            return Collections.emptyList();
-        }
-
-        List<Timer> activeTimers = new ArrayList<>();
-        for (DashBoard dashBoard : dashBoards) {
-            if (dashBoard.isActive) {
-                activeTimers.addAll(dashBoard.getTimerWidgets());
-            }
-        }
-        return activeTimers;
     }
 
     public void calcGraphPins() {

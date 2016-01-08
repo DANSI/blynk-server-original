@@ -73,8 +73,8 @@ public class TimerWorker implements Runnable {
         sendMessageIfTicked(user, curTime, timer.stopTime, timer.stopValue, dashId);
     }
 
-    private void sendMessageIfTicked(User user, long curTime, Long time, String value, int dashId) {
-        if (time != null && value != null && !value.equals("") && curTime == time) {
+    private void sendMessageIfTicked(User user, long curTime, long time, String value, int dashId) {
+        if (time != -1 && value != null && !value.equals("") && curTime == time) {
             tickedTimers++;
             Session session = sessionDao.userSession.get(user);
             if (session != null) {

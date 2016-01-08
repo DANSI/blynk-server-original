@@ -9,11 +9,11 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  */
 public class Timer extends OnePinWidget {
 
-    public Long startTime;
+    public long startTime = -1;
 
     public String startValue;
 
-    public Long stopTime;
+    public long stopTime = -1;
 
     public String stopValue;
 
