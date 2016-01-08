@@ -55,7 +55,7 @@ public class TimerWorker implements Runnable {
                     for (Widget widget : dashBoard.widgets) {
                         if (widget instanceof Timer) {
                             Timer timer = (Timer) widget;
-                            send(user, timer, curTime);
+                            send(user, timer, curTime, dashBoard.id);
                         }
                     }
                 }
@@ -68,19 +68,19 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    private void send(User user, Timer timer, long curTime) {
-        sendMessageIfTicked(user, curTime, timer.startTime, timer.startValue);
-        sendMessageIfTicked(user, curTime, timer.stopTime, timer.stopValue);
+    private void send(User user, Timer timer, long curTime, int dashId) {
+        sendMessageIfTicked(user, curTime, timer.startTime, timer.startValue, dashId);
+        sendMessageIfTicked(user, curTime, timer.stopTime, timer.stopValue, dashId);
     }
 
-    private void sendMessageIfTicked(User user, long curTime, Long time, String value) {
+    private void sendMessageIfTicked(User user, long curTime, Long time, String value, int dashId) {
         if (time != null && value != null && !value.equals("") && curTime == time) {
             tickedTimers++;
             Session session = sessionDao.userSession.get(user);
             if (session != null) {
                 onlineTimers++;
                 if (session.hardwareChannels.size() > 0) {
-                    session.sendMessageToHardware(new HardwareMessage(7777, value));
+                    session.sendMessageToHardware(dashId, new HardwareMessage(7777, value));
                 }
             }
         }
