@@ -3,8 +3,9 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.protocol.exceptions.NoActiveDashboardException;
+import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.NotificationBodyInvalidException;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.exceptions.NotifNotAuthorizedException;
@@ -40,7 +41,9 @@ public class PushLogic extends NotificationBase {
         DashBoard dash = state.user.profile.getDashById(state.dashId, message.id);
 
         if (!dash.isActive) {
-            throw new NoActiveDashboardException(message.id);
+            log.debug("No active dashboard.");
+            ctx.writeAndFlush(new ResponseMessage(message.id, Response.NO_ACTIVE_DASHBOARD));
+            return;
         }
 
         Notification widget = dash.getWidgetByType(Notification.class);

@@ -6,13 +6,15 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.HardwareBody;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.graph.GraphKey;
+import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.NoActiveDashboardException;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.PinUtil;
 import cc.blynk.utils.StringUtils;
+import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,7 +40,7 @@ public class HardwareLogic {
         this.reportingDao = reportingDao;
     }
 
-    public void messageReceived(HardwareStateHolder state, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
         if (message.body.length() < 4) {
@@ -67,11 +69,12 @@ public class HardwareLogic {
             dash.update(new HardwareBody(body, message.id));
         }
 
-        if (!dash.isActive) {
-            throw new NoActiveDashboardException(message.id);
+        if (dash.isActive) {
+            session.sendToApps(new HardwareMessage(message.id, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
+        } else {
+            log.debug("No active dashboard.");
+            ctx.writeAndFlush(new ResponseMessage(message.id, Response.NO_ACTIVE_DASHBOARD));
         }
-
-        session.sendToApps(new HardwareMessage(message.id, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
     }
 
 }
