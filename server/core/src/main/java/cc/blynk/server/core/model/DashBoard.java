@@ -102,8 +102,10 @@ public class DashBoard {
                 append(sb, onePinWidget.pin, onePinWidget.pinType, onePinWidget.getModeType());
             } else if (widget instanceof MultiPinWidget) {
                 MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-                for (Pin pin : multiPinWidget.pins) {
-                    append(sb, pin.pin, pin.pinType, multiPinWidget.getModeType());
+                if (multiPinWidget.pins != null) {
+                    for (Pin pin : multiPinWidget.pins) {
+                        append(sb, pin.pin, pin.pinType, multiPinWidget.getModeType());
+                    }
                 }
             }
         }
