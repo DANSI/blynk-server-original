@@ -50,10 +50,9 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         this.blockingIOProcessor = blockingIOProcessor;
     }
 
-    private static void completeLogin(Channel channel, Session session, User user, Integer dashId, int msgId) {
+    private static void completeLogin(Channel channel, Session session, User user, DashBoard dash, int msgId) {
         log.debug("completeLogin. {}", channel);
 
-        DashBoard dash = user.profile.getDashById(dashId, msgId);
         if (dash.pinModeMessage == null) {
             dash.pinModeMessage = new HardwareMessage(1, dash.buildPMMessage());
         }
@@ -83,6 +82,14 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         final Integer dashId = UserDao.getDashIdByToken(user.dashTokens, token, message.id);
 
+        //todo find out why this happen
+        DashBoard dash = user.profile.getDashById(dashId);
+        if (dash == null) {
+            log.error("User : {} requested token {} for non-existing {} dash id.", user.name, token, dashId);
+            ctx.writeAndFlush(new ResponseMessage(message.id, Response.INVALID_TOKEN));
+            return;
+        }
+
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(UserNotLoggedHandler.class);
         ctx.pipeline().addLast(new HardwareHandler(props, sessionDao, reportingDao, blockingIOProcessor, new HardwareStateHolder(dashId, user, token)));
@@ -91,9 +98,9 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering hard channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, dashId, message.id));
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, dash, message.id));
         } else {
-            completeLogin(ctx.channel(), session, user, dashId, message.id);
+            completeLogin(ctx.channel(), session, user, dash, message.id);
         }
     }
 
