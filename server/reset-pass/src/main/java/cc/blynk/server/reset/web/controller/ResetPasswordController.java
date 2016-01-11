@@ -69,9 +69,9 @@ public class ResetPasswordController {
         request.setEntity(new StringEntity(new ResponseUserEntity(password).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            HttpEntity entity = response.getEntity();
-            String errorMsg = EntityUtils.toString(entity);
             if (response.getStatusLine().getStatusCode() != 200) {
+                HttpEntity entity = response.getEntity();
+                String errorMsg = EntityUtils.toString(entity);
                 EntityUtils.consume(entity);
                 throw new IOException(errorMsg);
             }
