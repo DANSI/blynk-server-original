@@ -49,7 +49,7 @@ public class CreateDashLogic {
 
         log.info("Creating new dashboard.");
 
-        if (user.profile.dashBoards.length > DASH_MAX_LIMIT) {
+        if (user.profile.dashBoards.length >= DASH_MAX_LIMIT) {
             throw new NotAllowedException("Dashboards limit reached.", message.id);
         }
 
