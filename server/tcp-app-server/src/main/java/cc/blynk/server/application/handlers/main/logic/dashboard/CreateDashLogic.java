@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
@@ -50,7 +51,7 @@ public class CreateDashLogic {
         log.info("Creating new dashboard.");
 
         if (user.profile.dashBoards.length >= DASH_MAX_LIMIT) {
-            throw new NotAllowedException("Dashboards limit reached.", message.id);
+            throw new QuotaLimitException("Dashboards limit reached.", message.id);
         }
 
         for (DashBoard dashBoard : user.profile.dashBoards) {
