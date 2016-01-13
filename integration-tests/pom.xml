@@ -41,6 +41,11 @@
             <artifactId>client</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cc.blynk.server.websocket</groupId>
+            <artifactId>web-socket</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>commons-io</groupId>

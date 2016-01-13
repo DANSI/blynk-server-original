@@ -122,7 +122,7 @@ public abstract class BaseClient {
         }
     }
 
-    public void send(MessageBase msg) {
+    public void send(Object msg) {
         channel.writeAndFlush(msg);
     }
 
