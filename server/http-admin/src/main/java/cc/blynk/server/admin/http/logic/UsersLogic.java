@@ -91,6 +91,7 @@ public class UsersLogic extends BaseLogic {
         User user = userDao.getByName(name);
 
         if (user == null) {
+            log.debug("No user with such name {}", name);
             return new Response(HTTP_1_1, NOT_FOUND);
         }
 
