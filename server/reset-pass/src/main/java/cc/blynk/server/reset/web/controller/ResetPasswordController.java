@@ -8,7 +8,6 @@ import cc.blynk.utils.Config;
 import cc.blynk.utils.ServerProperties;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -77,13 +76,13 @@ public class ResetPasswordController {
         request.setEntity(new StringEntity(new ResponseUserEntity(password).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            if (response.getStatusLine().getStatusCode() != 200) {
-                HttpEntity entity = response.getEntity();
-                String errorMsg = EntityUtils.toString(entity);
-                EntityUtils.consume(entity);
-                throw new IOException(errorMsg);
+            EntityUtils.consume(response.getEntity());
+            if (response.getStatusLine().getStatusCode() == 200) {
+                //do nothing all is ok;
+            } else if (response.getStatusLine().getStatusCode() == 404) {
+                throw new IOException("User not exists.");
             } else {
-                EntityUtils.consume(response.getEntity());
+                throw new IOException("Unexpected error.");
             }
         }
     }
