@@ -11,6 +11,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -98,7 +99,8 @@ public class HttpsAdminServerTest extends IntegrationBase {
         request.setEntity(new StringEntity(new ResponseUserEntity("123").toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(200, response.getStatusLine().getStatusCode() );
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            EntityUtils.consume(response.getEntity());
         }
     }
 

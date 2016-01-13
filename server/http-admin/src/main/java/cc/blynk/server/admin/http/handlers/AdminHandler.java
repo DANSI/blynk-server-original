@@ -24,7 +24,7 @@ public class AdminHandler extends BaseHttpHandler {
     }
 
     @Override
-    public void process(ChannelHandlerContext ctx, HttpRequest req) {
+    public void processHttp(ChannelHandlerContext ctx, HttpRequest req) {
         //a bit ugly code but it is ok for now. 2 branches. 1 fro static files, second for normal http api
         if (req.getUri().equals(rootPath)) {
             req.setUri("/admin/static/admin.html");
@@ -38,7 +38,7 @@ public class AdminHandler extends BaseHttpHandler {
                 log.error("Error handling static file.", e);
             }
         } else {
-            super.process(ctx, req);
+            super.processHttp(ctx, req);
         }
     }
 

@@ -14,6 +14,8 @@ import io.netty.handler.codec.http.HttpRequest;
  */
 public class HttpHandler extends BaseHttpHandler {
 
+    private static final String FAV_ICON_PATH = "/favicon.ico";
+
     private final FileLogic fileLogic;
 
     public HttpHandler(UserDao userDao, SessionDao sessionDao) {
@@ -22,17 +24,20 @@ public class HttpHandler extends BaseHttpHandler {
     }
 
     @Override
-    public void process(ChannelHandlerContext ctx, HttpRequest request) {
+    public void processHttp(ChannelHandlerContext ctx, HttpRequest req) {
         //a bit ugly code but it is ok for now. 2 branches. 1 fro static files, second for normal http api
-        if (request.getUri().equals("/favicon.ico")) {
-            request.setUri("/admin/static/favicon.ico");
-            try {
-                fileLogic.channelRead(ctx, request);
-            } catch (Exception e) {
-                log.error("Error handling static file.", e);
-            }
-        } else {
-            super.process(ctx, request);
+        switch (req.getUri()) {
+            case FAV_ICON_PATH :
+                req.setUri("/admin/static/favicon.ico");
+                try {
+                    fileLogic.channelRead(ctx, req);
+                } catch (Exception e) {
+                    log.error("Error handling static file.", e);
+                }
+                break;
+            default:
+                super.processHttp(ctx, req);
         }
     }
+
 }
