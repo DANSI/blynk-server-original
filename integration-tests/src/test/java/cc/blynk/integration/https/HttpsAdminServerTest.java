@@ -93,6 +93,31 @@ public class HttpsAdminServerTest extends IntegrationBase {
     }
 
     @Test
+    public void testServerResetPass() throws Exception {
+        for (int i = 0; i < 100; i++) {
+            String name = "dima@dima.ua";
+            HttpPut request = new HttpPut(httpsServerUrl + "changePass/" + name);
+            request.setEntity(new StringEntity(new ResponseUserEntity("pass").toString(), ContentType.APPLICATION_JSON));
+
+            try (CloseableHttpResponse response = httpclient.execute(request)) {
+                EntityUtils.consume(response.getEntity());
+                assertEquals(404, response.getStatusLine().getStatusCode());
+            }
+        }
+
+        for (int i = 0; i < 100; i++) {
+            String name = "dmitriy@blynk.cc";
+            HttpPut request = new HttpPut(httpsServerUrl + "changePass/" + name);
+            request.setEntity(new StringEntity(new ResponseUserEntity("pass").toString(), ContentType.APPLICATION_JSON));
+
+            try (CloseableHttpResponse response = httpclient.execute(request)) {
+                EntityUtils.consume(response.getEntity());
+                assertEquals(200, response.getStatusLine().getStatusCode());
+            }
+        }
+    }
+
+    @Test
     public void testChangePassCorrect() throws Exception {
         String testUser = "dmitriy@blynk.cc";
         HttpPut request = new HttpPut(httpsServerUrl + "changePass/" + testUser);
