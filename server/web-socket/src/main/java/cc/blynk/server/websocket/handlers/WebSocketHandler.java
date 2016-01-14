@@ -62,8 +62,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<Object> {
             return;
         }
         if (frame instanceof BinaryWebSocketFrame) {
-            // Echo the frame
-            ctx.write(frame.retain());
+            ctx.fireChannelRead(frame.retain().content());
         }
     }
 

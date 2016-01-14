@@ -19,6 +19,11 @@
             <artifactId>core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cc.blynk.server.hardware</groupId>
+            <artifactId>tcp-hardware-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

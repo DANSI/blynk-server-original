@@ -16,7 +16,7 @@
 package cc.blynk.integration.websocket.client;
 
 import cc.blynk.client.core.BaseClient;
-import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.websocket.handlers.WebSocketHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
@@ -56,6 +56,18 @@ public final class WebSocketClient extends BaseClient {
                                 uri, WebSocketVersion.V13, null, false, new DefaultHttpHeaders()));
     }
 
+    private static WebSocketFrame produceWebSocketFrame(MessageBase msg) {
+        ByteBuffer bb = ByteBuffer.allocate(5 + msg.length);
+        bb.put((byte) msg.command);
+        bb.putShort((short) msg.id);
+        bb.putShort((short) msg.length);
+        byte[] data = msg.getBytes();
+        if (data != null) {
+            bb.put(data);
+        }
+        return new BinaryWebSocketFrame(Unpooled.wrappedBuffer(bb.array()));
+    }
+
     @Override
     protected ChannelInitializer<SocketChannel> getChannelInitializer() {
         return new ChannelInitializer<SocketChannel> () {
@@ -65,7 +77,8 @@ public final class WebSocketClient extends BaseClient {
                 p.addLast(
                         new HttpClientCodec(),
                         new HttpObjectAggregator(8192),
-                        handler);
+                        handler
+                );
             }
         };
     }
@@ -96,12 +109,8 @@ public final class WebSocketClient extends BaseClient {
 
             }
         } else {
-            ByteBuffer bb = ByteBuffer.allocate(5);
-            bb.put((byte) Command.PING);
-            bb.putShort((short) 1);
-            bb.putShort((short) 0);
-            WebSocketFrame frame = new BinaryWebSocketFrame(Unpooled.wrappedBuffer(bb.array()));
-            send(frame);
+            send(produceWebSocketFrame(produceMessageBaseOnUserInput(line, ++msgId)));
+            return this;
         }
         return this;
     }

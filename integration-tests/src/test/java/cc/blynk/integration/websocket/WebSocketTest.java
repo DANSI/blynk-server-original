@@ -22,7 +22,9 @@ public class WebSocketTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         if (webSocketServer == null) {
+            properties.setProperty("data.folder", getProfileFolder());
             initServerStructures();
+
             webSocketServer = new WebSocketServer(holder).start();
 
             sleep(500);
@@ -34,6 +36,7 @@ public class WebSocketTest extends IntegrationBase {
         WebSocketClient webSocketClient = new WebSocketClient("localhost", properties.getIntProperty("tcp.web-socket.port"), false);
         webSocketClient.start(null);
         webSocketClient.send("handshake");
+        webSocketClient.send("login 4ae3851817194e2596cf1b7103603ef8");
         webSocketClient.send("ping");
         sleep(600);
     }
