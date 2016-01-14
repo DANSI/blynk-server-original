@@ -40,13 +40,14 @@ public class ResetPasswordController {
     private final String body;
     private final String pageContent;
     private final CloseableHttpClient httpclient;
+    private final String serverUrl;
 
     public ResetPasswordController(String url, int port, TokensPool tokensPool) throws Exception {
-        this(url, port, tokensPool, new MailWrapper(new ServerProperties(Config.MAIL_PROPERTIES_FILENAME)));
+        this(url, port, tokensPool, new ServerProperties(Config.MAIL_PROPERTIES_FILENAME));
     }
 
-    public ResetPasswordController(String url, int port, TokensPool tokensPool, MailWrapper mailWrapper) throws Exception {
-        this.mailWrapper = mailWrapper;
+    public ResetPasswordController(String url, int port, TokensPool tokensPool, ServerProperties serverProperties) throws Exception {
+        this.mailWrapper = new MailWrapper(serverProperties);
         this.url = url;
         this.port = port;
 
@@ -60,6 +61,7 @@ public class ResetPasswordController {
         // Allow TLSv1 protocol only
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new MyHostVerifier());
         this.httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
+        this.serverUrl = serverProperties.getProperty("server.url");
     }
 
     public void sendResetPasswordEmail(String email, String token) throws Exception {
@@ -72,7 +74,7 @@ public class ResetPasswordController {
     }
 
     public void invoke(String email, String password) throws IOException {
-        HttpPut request = new HttpPut("https://cloud.blynk.cc:7443/admino4ka/users/changePass/" + email);
+        HttpPut request = new HttpPut(serverUrl + email);
         request.setEntity(new StringEntity(new ResponseUserEntity(password).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
