@@ -7,7 +7,6 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
@@ -35,12 +34,13 @@ public class HttpsAPIServer extends BaseServer {
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ChannelPipeline pipeline = ch.pipeline();
-                pipeline.addLast(sslCtx.newHandler(ch.alloc()));
-                pipeline.addLast(new HttpServerCodec());
-                pipeline.addLast(new HttpObjectAggregator(65536));
-                pipeline.addLast(new ChunkedWriteHandler());
-                pipeline.addLast(new HttpHandler(holder.userDao, holder.sessionDao));
+                ch.pipeline().addLast(
+                        sslCtx.newHandler(ch.alloc()),
+                        new HttpServerCodec(),
+                        new HttpObjectAggregator(65536),
+                        new ChunkedWriteHandler(),
+                        new HttpHandler(holder.userDao, holder.sessionDao)
+                );
             }
         };
 

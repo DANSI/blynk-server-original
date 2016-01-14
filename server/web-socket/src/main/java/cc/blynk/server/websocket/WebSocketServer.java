@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.websocket.handlers.WebSocketHandler;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
@@ -26,10 +25,11 @@ public class WebSocketServer extends BaseServer {
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ChannelPipeline pipeline = ch.pipeline();
-                pipeline.addLast(new HttpServerCodec());
-                pipeline.addLast(new HttpObjectAggregator(65536));
-                pipeline.addLast(new WebSocketHandler());
+                ch.pipeline().addLast(
+                        new HttpServerCodec(),
+                        new HttpObjectAggregator(65536),
+                        new WebSocketHandler()
+                );
             }
         };
 

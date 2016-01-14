@@ -38,13 +38,12 @@ public class HardwareServer extends BaseServer {
                 if (hardTimeoutSecs > 0) {
                     pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
                 }
-                pipeline.addLast(hardwareChannelStateHandler);
-                pipeline.addLast(new MessageDecoder(holder.stats));
-                pipeline.addLast(new MessageEncoder(holder.stats));
-
-                //sharable business logic handlers
-                pipeline.addLast(hardwareLoginHandler);
-                pipeline.addLast(userNotLoggedHandler);
+                pipeline.addLast(hardwareChannelStateHandler,
+                        new MessageDecoder(holder.stats),
+                        new MessageEncoder(holder.stats),
+                        hardwareLoginHandler,
+                        userNotLoggedHandler
+                );
             }
         };
 

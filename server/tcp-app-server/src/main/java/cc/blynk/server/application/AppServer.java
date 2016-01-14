@@ -53,23 +53,21 @@ public class AppServer extends BaseServer {
                     pipeline.addLast(new ReadTimeoutHandler(appTimeoutSecs));
                 }
 
-                SSLEngine engine = appSslContext.sslContext.newEngine(ch.alloc());
+                final SSLEngine engine = appSslContext.sslContext.newEngine(ch.alloc());
                 if (appSslContext.isMutualSSL) {
                     engine.setUseClientMode(false);
                     engine.setNeedClientAuth(true);
                 }
-                pipeline.addLast(new SslHandler(engine));
-
-                //non-sharable handlers
-                pipeline.addLast(appChannelStateHandler);
-                pipeline.addLast(new MessageDecoder(holder.stats));
-                pipeline.addLast(new MessageEncoder(holder.stats));
-
-                //sharable business logic handlers initialized previously
-                pipeline.addLast(registerHandler);
-                pipeline.addLast(appLoginHandler);
-                pipeline.addLast(appShareLoginHandler);
-                pipeline.addLast(userNotLoggedHandler);
+                pipeline.addLast(
+                    new SslHandler(engine),
+                    appChannelStateHandler,
+                    new MessageDecoder(holder.stats),
+                    new MessageEncoder(holder.stats),
+                    registerHandler,
+                    appLoginHandler,
+                    appShareLoginHandler,
+                    userNotLoggedHandler
+                );
             }
         };
 

@@ -43,14 +43,14 @@ public class HardwareSSLServer extends BaseServer {
                 if (hardTimeoutSecs > 0) {
                     pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
                 }
-                pipeline.addLast(sslCtx.newHandler(ch.alloc()));
-
-                pipeline.addLast(hardwareChannelStateHandler);
-                pipeline.addLast(new MessageDecoder(holder.stats));
-                pipeline.addLast(new MessageEncoder(holder.stats));
-
-                pipeline.addLast(hardwareLoginHandler);
-                pipeline.addLast(userNotLoggedHandler);
+                pipeline.addLast(
+                        sslCtx.newHandler(ch.alloc()),
+                        hardwareChannelStateHandler,
+                        new MessageDecoder(holder.stats),
+                        new MessageEncoder(holder.stats),
+                        hardwareLoginHandler,
+                        userNotLoggedHandler
+                );
             }
         };
 
