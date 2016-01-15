@@ -1,7 +1,7 @@
 package cc.blynk.integration;
 
-import cc.blynk.integration.model.ClientPair;
-import cc.blynk.integration.model.TestHardClient;
+import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -129,7 +129,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
     public void testCorrectWorkflow2HardsSameToken() throws Exception {
         //creating 1 new hard client
         TestHardClient hardClient1 = new TestHardClient(host, hardPort);
-        hardClient1.start(null);
+        hardClient1.start();
         hardClient1.send("login " + clientPair.token);
         verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         hardClient1.reset();
@@ -152,7 +152,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
         //creating 1 new hard client
         TestHardClient hardClient1 = new TestHardClient(host, hardPort);
-        hardClient1.start(null);
+        hardClient1.start();
         hardClient1.send("login " + token2);
         verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         hardClient1.reset();
@@ -175,13 +175,13 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
         //creating 2 new hard clients
         TestHardClient hardClient1 = new TestHardClient(host, hardPort);
-        hardClient1.start(null);
+        hardClient1.start();
         hardClient1.send("login " + token2);
         verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         hardClient1.reset();
 
         TestHardClient hardClient2 = new TestHardClient(host, hardPort);
-        hardClient2.start(null);
+        hardClient2.start();
         hardClient2.send("login " + token2);
         verify(hardClient2.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         hardClient2.reset();
@@ -210,19 +210,19 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
         //creating 2 new hard clients
         TestHardClient hardClient1 = new TestHardClient(host, hardPort);
-        hardClient1.start(null);
+        hardClient1.start();
         hardClient1.send("login " + token2);
         verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         hardClient1.reset();
 
         TestHardClient hardClient2 = new TestHardClient(host, hardPort);
-        hardClient2.start(null);
+        hardClient2.start();
         hardClient2.send("login " + token2);
         verify(hardClient2.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         hardClient2.reset();
 
         TestHardClient hardClient3 = new TestHardClient(host, hardPort);
-        hardClient3.start(null);
+        hardClient3.start();
         hardClient3.send("login " + token3);
         verify(hardClient3.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         hardClient3.reset();

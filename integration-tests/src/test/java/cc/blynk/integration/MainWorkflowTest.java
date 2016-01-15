@@ -1,8 +1,8 @@
 package cc.blynk.integration;
 
-import cc.blynk.integration.model.ClientPair;
-import cc.blynk.integration.model.TestAppClient;
-import cc.blynk.integration.model.TestHardClient;
+import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestAppClient;
+import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.application.handlers.main.logic.reporting.GraphPinRequestData;
 import cc.blynk.server.core.BaseServer;
@@ -299,7 +299,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testHardwareLoginWithInfo() throws Exception {
         TestHardClient hardClient2 = new TestHardClient(host, hardPort);
-        hardClient2.start(null);
+        hardClient2.start();
 
         clientPair.appClient.send("getToken 1");
         String token2 = clientPair.appClient.getBody();
@@ -316,7 +316,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testActive2AndDeactivate1() throws Exception {
         TestHardClient hardClient2 = new TestHardClient(host, hardPort);
-        hardClient2.start(null);
+        hardClient2.start();
 
         String newProfile = readTestUserProfile("user_profile_json_3_dashes.txt");
         clientPair.appClient.send("saveProfile " + newProfile);
@@ -500,7 +500,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testClosedConnectionWhenNotLogged() throws Exception {
         TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
-        appClient2.start(null);
+        appClient2.start();
         appClient2.send("getToken 1");
         verify(appClient2.responseMock, after(400).never()).channelRead(any(), any());
         assertTrue(appClient2.isClosed());
@@ -521,7 +521,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, DEVICE_NOT_IN_NETWORK)));
 
         TestHardClient hardClient = new TestHardClient(host, hardPort);
-        hardClient.start(null);
+        hardClient.start();
         hardClient.send("login " + clientPair.token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
@@ -541,7 +541,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, DEVICE_NOT_IN_NETWORK)));
 
         TestHardClient hardClient = new TestHardClient(host, hardPort);
-        hardClient.start(null);
+        hardClient.start();
         hardClient.send("login " + clientPair.token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
@@ -568,7 +568,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         //connecting separate hardware to non active dashboard
         TestHardClient nonActiveDashHardClient = new TestHardClient(host, hardPort);
-        nonActiveDashHardClient.start(null);
+        nonActiveDashHardClient.start();
         nonActiveDashHardClient.send("login " + token);
         verify(nonActiveDashHardClient.responseMock, timeout(2000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         nonActiveDashHardClient.reset();
@@ -714,7 +714,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testTimerWidgetTriggeredAndSendCommandToCorrectDevice() throws Exception {
         TestHardClient hardClient2 = new TestHardClient(host, hardPort);
-        hardClient2.start(null);
+        hardClient2.start();
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(
                 new TimerWorker(holder.userDao, holder.sessionDao), 0, 1000, TimeUnit.MILLISECONDS);

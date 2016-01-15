@@ -1,4 +1,4 @@
-package cc.blynk.integration.model;
+package cc.blynk.integration.model.tcp;
 
 /**
  * The Blynk Project.

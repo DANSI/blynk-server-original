@@ -1,9 +1,9 @@
 package cc.blynk.integration;
 
-import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.SimpleClientHandler;
-import cc.blynk.integration.model.TestAppClient;
-import cc.blynk.integration.model.TestHardClient;
+import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestAppClient;
+import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.hardware.HardwareServer;
@@ -65,7 +65,7 @@ public class SimplePerformanceTest extends IntegrationBase {
     @Ignore
     public void emulateSlider() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", 8443);
-        appClient.start(null);
+        appClient.start();
 
         appClient.send("login dima@dima.ua 1");
 

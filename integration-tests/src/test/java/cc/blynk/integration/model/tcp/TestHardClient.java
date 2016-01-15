@@ -1,7 +1,8 @@
-package cc.blynk.integration.model;
+package cc.blynk.integration.model.tcp;
 
 import cc.blynk.client.core.HardwareClient;
 import cc.blynk.client.handlers.decoders.ClientMessageDecoder;
+import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.bootstrap.Bootstrap;
@@ -11,7 +12,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.mockito.Mockito;
 
-import java.io.BufferedReader;
 import java.util.Random;
 
 /**
@@ -38,22 +38,17 @@ public class TestHardClient extends HardwareClient {
         this.msgId = 0;
     }
 
-    @Override
-    public void start(BufferedReader commandInputStream) {
-        if (commandInputStream == null) {
-            nioEventLoopGroup = new NioEventLoopGroup();
+    public void start() {
+        nioEventLoopGroup = new NioEventLoopGroup();
 
-            Bootstrap b = new Bootstrap();
-            b.group(nioEventLoopGroup).channel(NioSocketChannel.class).handler(getChannelInitializer());
+        Bootstrap b = new Bootstrap();
+        b.group(nioEventLoopGroup).channel(NioSocketChannel.class).handler(getChannelInitializer());
 
-            try {
-                // Start the connection attempt.
-                this.channel = b.connect(host, port).sync().channel();
-            } catch (InterruptedException e) {
-                log.error(e);
-            }
-        } else {
-            super.start(commandInputStream);
+        try {
+            // Start the connection attempt.
+            this.channel = b.connect(host, port).sync().channel();
+        } catch (InterruptedException e) {
+            log.error(e);
         }
     }
 

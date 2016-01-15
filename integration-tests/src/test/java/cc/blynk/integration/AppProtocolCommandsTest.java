@@ -1,7 +1,7 @@
 package cc.blynk.integration;
 
 import cc.blynk.integration.model.MockHolder;
-import cc.blynk.integration.model.TestAppClient;
+import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.enums.Command;

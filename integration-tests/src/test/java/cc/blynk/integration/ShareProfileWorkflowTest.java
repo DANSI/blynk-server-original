@@ -1,7 +1,7 @@
 package cc.blynk.integration;
 
-import cc.blynk.integration.model.ClientPair;
-import cc.blynk.integration.model.TestAppClient;
+import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
@@ -116,7 +116,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
 
         TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
-        appClient2.start(null);
+        appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -164,7 +164,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
-        appClient2.start(null);
+        appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -233,7 +233,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
-        appClient2.start(null);
+        appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -253,7 +253,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
-        appClient2.start(null);
+        appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -288,7 +288,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
-        appClient2.start(null);
+        appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token+"a" + " Android 24");
 
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
@@ -303,7 +303,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
-        appClient2.start(null);
+        appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -325,7 +325,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertTrue(appClient2.isClosed());
 
         TestAppClient appClient3 = new TestAppClient(host, appPort, properties);
-        appClient3.start(null);
+        appClient3.start();
         appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
         verify(appClient3.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -340,11 +340,11 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
-        appClient2.start(null);
+        appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
         TestAppClient appClient3 = new TestAppClient(host, appPort, properties);
-        appClient3.start(null);
+        appClient3.start();
         appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -372,7 +372,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
-        appClient2.start(null);
+        appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));

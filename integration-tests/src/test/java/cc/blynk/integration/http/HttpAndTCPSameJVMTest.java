@@ -1,7 +1,7 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.IntegrationBase;
-import cc.blynk.integration.model.ClientPair;
+import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;

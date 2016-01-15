@@ -1,7 +1,7 @@
 package cc.blynk.integration;
 
 import cc.blynk.integration.model.MockHolder;
-import cc.blynk.integration.model.TestHardClient;
+import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;

@@ -1,8 +1,8 @@
 package cc.blynk.integration;
 
-import cc.blynk.integration.model.ClientPair;
-import cc.blynk.integration.model.TestAppClient;
-import cc.blynk.integration.model.TestHardClient;
+import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestAppClient;
+import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.Profile;
@@ -114,8 +114,8 @@ public abstract class IntegrationBase {
     public ClientPair initAppAndHardPair(TestAppClient appClient, TestHardClient hardClient, String user,
                                   String jsonProfile) throws Exception {
 
-        appClient.start(null);
-        hardClient.start(null);
+        appClient.start();
+        hardClient.start();
 
         String userProfileString = readTestUserProfile(jsonProfile);
         int dashId = JsonParser.parseProfile(userProfileString, 1).dashBoards[0].id;
