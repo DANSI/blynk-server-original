@@ -16,7 +16,10 @@
 package cc.blynk.integration.websocket.client;
 
 import cc.blynk.client.core.BaseClient;
+import cc.blynk.integration.model.SimpleClientHandler;
+import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.websocket.handlers.WebSocketHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
@@ -32,6 +35,7 @@ import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
+import org.mockito.Mockito;
 
 import java.io.BufferedReader;
 import java.net.URI;
@@ -40,6 +44,7 @@ import java.util.Random;
 
 public final class WebSocketClient extends BaseClient {
 
+    public final SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
     private final boolean isSSL;
     private final WebSocketClientHandler handler;
     protected int msgId = 0;
@@ -77,7 +82,8 @@ public final class WebSocketClient extends BaseClient {
                 p.addLast(
                         new HttpClientCodec(),
                         new HttpObjectAggregator(8192),
-                        handler
+                        handler,
+                        new MessageDecoder(new GlobalStats())
                 );
             }
         };
@@ -95,23 +101,24 @@ public final class WebSocketClient extends BaseClient {
         try {
             // Start the connection attempt.
             this.channel = b.connect(host, port).sync().channel();
+            startHandshake();
         } catch (InterruptedException e) {
             log.error(e);
         }
     }
 
-    public WebSocketClient send(String line) {
-        if (line.endsWith("handshake")) {
-            handler.startHandshake(channel);
-            try {
-                handler.handshakeFuture().sync();
-            } catch (Exception e) {
-
-            }
-        } else {
-            send(produceWebSocketFrame(produceMessageBaseOnUserInput(line, ++msgId)));
-            return this;
+    private void startHandshake() {
+        handler.startHandshake(channel);
+        try {
+            handler.handshakeFuture().sync();
+            this.channel.pipeline().addLast(responseMock);
+        } catch (Exception e) {
+            log.error(e);
         }
+    }
+
+    public WebSocketClient send(String line) {
+        send(produceWebSocketFrame(produceMessageBaseOnUserInput(line, ++msgId)));
         return this;
     }
 }
