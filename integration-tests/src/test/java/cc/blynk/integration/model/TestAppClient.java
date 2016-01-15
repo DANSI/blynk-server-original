@@ -8,7 +8,6 @@ import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.ServerProperties;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -30,9 +29,6 @@ public class TestAppClient extends AppClient {
 
     public final SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
     protected int msgId = 0;
-
-    private ChannelPipeline pipeline;
-
 
     public TestAppClient(String host, int port) {
         super(host, port, Mockito.mock(Random.class), props);
@@ -80,13 +76,12 @@ public class TestAppClient extends AppClient {
         return new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ChannelPipeline pipeline = ch.pipeline();
-                TestAppClient.this.pipeline = pipeline;
-
-                pipeline.addLast(sslCtx.newHandler(ch.alloc(), host, port));
-                pipeline.addLast(new ClientMessageDecoder());
-                pipeline.addLast(new MessageEncoder(new GlobalStats()));
-                pipeline.addLast(responseMock);
+                ch.pipeline().addLast(
+                        sslCtx.newHandler(ch.alloc(), host, port),
+                        new ClientMessageDecoder(),
+                        new MessageEncoder(new GlobalStats()),
+                        responseMock
+                );
             }
         };
     }
@@ -107,8 +102,8 @@ public class TestAppClient extends AppClient {
     }
 
     public void replace(SimpleClientHandler simpleClientHandler) {
-        pipeline.removeLast();
-        pipeline.addLast(simpleClientHandler);
+        this.channel.pipeline().removeLast();
+        this.channel.pipeline().addLast(simpleClientHandler);
     }
 
 }

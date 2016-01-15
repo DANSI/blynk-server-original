@@ -6,7 +6,6 @@ import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -23,7 +22,6 @@ import java.util.Random;
 public class TestHardClient extends HardwareClient {
 
     public final SimpleClientHandler responseMock;
-    private ChannelPipeline pipeline;
 
     private int msgId;
 
@@ -64,12 +62,11 @@ public class TestHardClient extends HardwareClient {
         return new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ChannelPipeline pipeline = ch.pipeline();
-                TestHardClient.this.pipeline = pipeline;
-
-                pipeline.addLast(new ClientMessageDecoder());
-                pipeline.addLast(new MessageEncoder(new GlobalStats()));
-                pipeline.addLast(responseMock);
+                ch.pipeline().addLast(
+                        new ClientMessageDecoder(),
+                        new MessageEncoder(new GlobalStats()),
+                        responseMock
+                );
             }
         };
     }
@@ -85,8 +82,8 @@ public class TestHardClient extends HardwareClient {
     }
 
     public void replace(SimpleClientHandler simpleClientHandler) {
-        pipeline.removeLast();
-        pipeline.addLast(simpleClientHandler);
+        this.channel.pipeline().removeLast();
+        this.channel.pipeline().addLast(simpleClientHandler);
     }
 
 }
