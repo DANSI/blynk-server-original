@@ -35,7 +35,7 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //THE SOFTWARE.
 
-package cc.blynk.integration.websocket.client;
+package cc.blynk.integration.model.websocket;
 
 import io.netty.channel.*;
 import io.netty.handler.codec.http.FullHttpResponse;

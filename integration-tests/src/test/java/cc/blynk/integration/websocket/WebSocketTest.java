@@ -1,7 +1,7 @@
 package cc.blynk.integration.websocket;
 
 import cc.blynk.integration.IntegrationBase;
-import cc.blynk.integration.websocket.client.WebSocketClient;
+import cc.blynk.integration.model.websocket.WebSocketClient;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.websocket.WebSocketServer;
