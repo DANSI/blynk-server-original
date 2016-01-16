@@ -49,16 +49,17 @@ public class HardwareLogic {
 
         String body = message.body;
 
-        final int dashId = state.dashId;
+        int dashId = state.dashId;
         DashBoard dash = state.user.profile.getDashById(dashId, message.id);
 
         if (PinUtil.isWriteOperation(body)) {
-            GraphKey key = new GraphKey(dashId, body.split(StringUtils.BODY_SEPARATOR_STRING), System.currentTimeMillis());
+            String[] splitBody = body.split(StringUtils.BODY_SEPARATOR_STRING);
+            GraphKey key = new GraphKey(dashId, splitBody , System.currentTimeMillis());
 
             //storing to DB and aggregating
             reportingDao.process(state.user.name, key);
 
-            dash.update(new HardwareBody(body, message.id));
+            dash.update(new HardwareBody(splitBody, message.id));
         }
 
         if (dash.isActive) {
