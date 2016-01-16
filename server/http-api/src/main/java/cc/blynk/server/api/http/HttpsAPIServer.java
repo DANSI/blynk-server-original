@@ -11,7 +11,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.SslContext;
-import io.netty.handler.stream.ChunkedWriteHandler;
 
 /**
  * The Blynk Project.
@@ -38,7 +37,6 @@ public class HttpsAPIServer extends BaseServer {
                         sslCtx.newHandler(ch.alloc()),
                         new HttpServerCodec(),
                         new HttpObjectAggregator(65536),
-                        new ChunkedWriteHandler(),
                         new HttpHandler(holder.userDao, holder.sessionDao)
                 );
             }

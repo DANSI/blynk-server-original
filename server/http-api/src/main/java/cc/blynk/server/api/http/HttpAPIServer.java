@@ -9,7 +9,6 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.stream.ChunkedWriteHandler;
 
 /**
  * The Blynk Project.
@@ -33,7 +32,6 @@ public class HttpAPIServer extends BaseServer {
                 ch.pipeline().addLast(
                         new HttpServerCodec(),
                         new HttpObjectAggregator(65536),
-                        new ChunkedWriteHandler(),
                         new HttpHandler(holder.userDao, holder.sessionDao)
                 );
             }
