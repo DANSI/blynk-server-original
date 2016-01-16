@@ -33,14 +33,13 @@ public class TestHardClient extends HardwareClient {
     public TestHardClient(String host, int port, NioEventLoopGroup nioEventLoopGroup) {
         super(host, port, Mockito.mock(Random.class));
         Mockito.when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
+        this.nioEventLoopGroup = nioEventLoopGroup;
 
         this.responseMock = Mockito.mock(SimpleClientHandler.class);
         this.msgId = 0;
     }
 
     public void start() {
-        nioEventLoopGroup = new NioEventLoopGroup();
-
         Bootstrap b = new Bootstrap();
         b.group(nioEventLoopGroup).channel(NioSocketChannel.class).handler(getChannelInitializer());
 
