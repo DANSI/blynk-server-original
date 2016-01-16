@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.widgets;
 
-import cc.blynk.server.core.model.HardwareBody;
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
 
@@ -18,11 +17,11 @@ public abstract class MultiPinWidget extends Widget {
     public Pin[] pins;
 
     @Override
-    public void updateIfSame(HardwareBody body) {
+    public void updateIfSame(byte pin, PinType type, String[] values) {
         if (pins != null) {
             for (int i = 0; i < pins.length; i++) {
-                if (pins[i].isSame(body.pin, body.type)) {
-                    pins[i].value = (body.value.length > 1 ? body.value[i] : body.value[0]);
+                if (pins[i].isSame(pin, type)) {
+                    pins[i].value = (values.length > 1 ? values[i] : values[0]);
                 }
             }
         }

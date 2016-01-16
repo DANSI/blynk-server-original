@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.widgets.others;
 
-import cc.blynk.server.core.model.HardwareBody;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 
@@ -12,7 +11,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 public class Bridge extends Widget {
 
     @Override
-    public void updateIfSame(HardwareBody body) {
+    public void updateIfSame(byte pin, PinType type, String[] values) {
 
     }
 

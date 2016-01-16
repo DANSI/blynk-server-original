@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.widgets;
 
-import cc.blynk.server.core.model.HardwareBody;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.*;
 import cc.blynk.server.core.model.widgets.inputs.GPS;
@@ -73,7 +72,7 @@ public abstract class Widget {
 
     public String label;
 
-    public abstract void updateIfSame(HardwareBody body);
+    public abstract void updateIfSame(byte pin, PinType type, String[] values);
 
     public abstract boolean isSame(byte pin, PinType type);
 

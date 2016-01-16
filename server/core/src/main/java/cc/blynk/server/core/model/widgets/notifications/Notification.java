@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.widgets.notifications;
 
-import cc.blynk.server.core.model.HardwareBody;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.notifications.push.enums.Priority;
@@ -40,7 +39,7 @@ public class Notification extends Widget {
     }
 
     @Override
-    public void updateIfSame(HardwareBody body) {
+    public void updateIfSame(byte pin, PinType type, String[] values) {
 
     }
 

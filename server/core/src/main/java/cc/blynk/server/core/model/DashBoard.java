@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.widgets.outputs.FrequencyWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 
 import java.util.Arrays;
@@ -64,17 +65,25 @@ public class DashBoard {
     }
 
     public void update(String[] splitted, int msgId) {
-        HardwareBody hardwareBody = new HardwareBody(splitted, msgId);
+        PinType type = PinType.getPingType(splitted[0].charAt(0));
+        byte pin = ParseUtil.parseByte(splitted[1], msgId);
+        String[] value = Arrays.copyOfRange(splitted, 2, splitted.length);
         for (Widget widget : widgets) {
-            widget.updateIfSame(hardwareBody);
+            widget.updateIfSame(pin, type, value);
         }
         this.updatedAt = System.currentTimeMillis();
     }
 
     public FrequencyWidget findReadingWidget(String body, int msgId) {
-        final HardwareBody hardwareBody = new HardwareBody(body, msgId);
+        return findReadingWidget(body.split(StringUtils.BODY_SEPARATOR_STRING), msgId);
+    }
+
+    private FrequencyWidget findReadingWidget(String[] splitted, int msgId) {
+        PinType type = PinType.getPingType(splitted[0].charAt(0));
+        byte pin = ParseUtil.parseByte(splitted[1], msgId);
+
         for (Widget widget : widgets) {
-            if (widget instanceof FrequencyWidget && widget.isSame(hardwareBody.pin, hardwareBody.type)) {
+            if (widget instanceof FrequencyWidget && widget.isSame(pin, type)) {
                 return (FrequencyWidget) widget;
             }
         }

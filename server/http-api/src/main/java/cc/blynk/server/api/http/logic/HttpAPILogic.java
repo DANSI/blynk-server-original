@@ -6,7 +6,6 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.HardwareBody;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
@@ -127,7 +126,7 @@ public class HttpAPILogic {
             return Response.badRequest("Requested pin not exists in app.");
         }
 
-        widget.updateIfSame(new HardwareBody(pinType, pin, pinValues));
+        widget.updateIfSame(pin, pinType, pinValues);
 
         String body = widget.makeHardwareBody();
 

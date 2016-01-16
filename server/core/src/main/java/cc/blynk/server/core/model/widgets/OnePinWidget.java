@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.widgets;
 
-import cc.blynk.server.core.model.HardwareBody;
 import cc.blynk.server.core.model.enums.PinType;
 
 import static cc.blynk.utils.StringUtils.*;
@@ -38,9 +37,9 @@ public abstract class OnePinWidget extends Widget {
         return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
-    public void updateIfSame(HardwareBody body) {
-        if (isSame(body.pin, body.type)) {
-            value = body.value[0];
+    public void updateIfSame(byte pin, PinType type, String[] values) {
+        if (isSame(pin, type)) {
+            this.value = values[0];
         }
     }
 
