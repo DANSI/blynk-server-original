@@ -492,8 +492,8 @@ public class MainWorkflowTest extends IntegrationBase {
         StringMessage hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
         assertEquals(HARDWARE, hardMessage.command);
-        //"aw 11 333".length + ts.length + separator
-        assertEquals(("1 " + body).length() + 14, hardMessage.length);
+        //"aw 11 333".length
+        assertEquals(("1 " + body).length(), hardMessage.length);
         assertTrue(hardMessage.body.startsWith(("1 " + body).replaceAll(" ", "\0")));
     }
 

@@ -48,22 +48,15 @@ public class HardwareLogic {
         }
 
         String body = message.body;
-        long ts = System.currentTimeMillis();
 
         final int dashId = state.dashId;
         DashBoard dash = state.user.profile.getDashById(dashId, message.id);
 
         if (PinUtil.isWriteOperation(body)) {
-            GraphKey key = new GraphKey(dashId, body.split(StringUtils.BODY_SEPARATOR_STRING), ts);
+            GraphKey key = new GraphKey(dashId, body.split(StringUtils.BODY_SEPARATOR_STRING), System.currentTimeMillis());
 
             //storing to DB and aggregating
             reportingDao.process(state.user.name, key);
-
-            //in case message is for graph - attaching ts.
-            //todo remove this after adding support in apps
-            if (state.user.profile.hasGraphPin(key)) {
-                body += StringUtils.BODY_SEPARATOR_STRING + ts;
-            }
 
             dash.update(new HardwareBody(body, message.id));
         }

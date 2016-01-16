@@ -1,14 +1,9 @@
 package cc.blynk.server.core.model;
 
-import cc.blynk.server.core.model.graph.GraphKey;
-import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.Graph;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.JsonParser;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 
 /**
@@ -18,12 +13,9 @@ import java.util.Set;
  */
 public class Profile {
 
-    public final transient Set<GraphKey> graphPins;
-
     public DashBoard[] dashBoards;
 
     public Profile() {
-        this.graphPins = new HashSet<>();
         this.dashBoards = new DashBoard[0];
     }
 
@@ -65,23 +57,6 @@ public class Profile {
             }
         }
         return null;
-    }
-
-    public void calcGraphPins() {
-        for (DashBoard dashBoard : dashBoards) {
-            for (Widget widget : dashBoard.widgets) {
-                if (widget instanceof Graph) {
-                    Graph graph = (Graph) widget;
-                    if (graph.pin != null) {
-                        graphPins.add(new GraphKey(dashBoard.id, graph.pin, graph.pinType));
-                    }
-                }
-            }
-        }
-    }
-
-    public boolean hasGraphPin(GraphKey key) {
-        return graphPins != null && key != null && graphPins.contains(key);
     }
 
     @Override

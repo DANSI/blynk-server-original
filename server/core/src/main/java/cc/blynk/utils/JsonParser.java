@@ -100,9 +100,7 @@ public final class JsonParser {
 
     public static Profile parseProfile(String reader, int id) {
         try {
-            Profile profile = profileReader.readValue(reader);
-            profile.calcGraphPins();
-            return profile;
+            return profileReader.readValue(reader);
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new IllegalCommandBodyException("Error parsing user profile.", id);
@@ -112,9 +110,7 @@ public final class JsonParser {
     //only for tests
     public static Profile parseProfile(InputStream reader) {
         try {
-            Profile profile = profileReader.readValue(reader);
-            profile.calcGraphPins();
-            return profile;
+            return profileReader.readValue(reader);
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new IllegalCommandBodyException("Error parsing user profile.", 1);
