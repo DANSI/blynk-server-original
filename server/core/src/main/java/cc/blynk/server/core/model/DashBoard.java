@@ -65,11 +65,15 @@ public class DashBoard {
     }
 
     public void update(String[] splitted, int msgId) {
-        PinType type = PinType.getPingType(splitted[0].charAt(0));
-        byte pin = ParseUtil.parseByte(splitted[1], msgId);
-        String[] value = Arrays.copyOfRange(splitted, 2, splitted.length);
+        final PinType type = PinType.getPingType(splitted[0].charAt(0));
+        final byte pin = ParseUtil.parseByte(splitted[1], msgId);
+        final String[] values = Arrays.copyOfRange(splitted, 2, splitted.length);
+        update(pin, type, values);
+    }
+
+    private void update(final byte pin, final PinType type, final String[] values) {
         for (Widget widget : widgets) {
-            widget.updateIfSame(pin, type, value);
+            widget.updateIfSame(pin, type, values);
         }
         this.updatedAt = System.currentTimeMillis();
     }
@@ -79,9 +83,12 @@ public class DashBoard {
     }
 
     private FrequencyWidget findReadingWidget(String[] splitted, int msgId) {
-        PinType type = PinType.getPingType(splitted[0].charAt(0));
-        byte pin = ParseUtil.parseByte(splitted[1], msgId);
+        final PinType type = PinType.getPingType(splitted[0].charAt(0));
+        final byte pin = ParseUtil.parseByte(splitted[1], msgId);
+        return findReadingWidget(pin, type, msgId);
+    }
 
+    private FrequencyWidget findReadingWidget(byte pin, PinType type, int msgId) {
         for (Widget widget : widgets) {
             if (widget instanceof FrequencyWidget && widget.isSame(pin, type)) {
                 return (FrequencyWidget) widget;
