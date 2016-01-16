@@ -54,8 +54,7 @@ public class HardwareLogic {
         DashBoard dash = state.user.profile.getDashById(dashId, message.id);
 
         if (PinUtil.isWriteOperation(body)) {
-            String[] bodyParts = body.split(StringUtils.BODY_SEPARATOR_STRING);
-            GraphKey key = new GraphKey(dashId, bodyParts, ts);
+            GraphKey key = new GraphKey(dashId, body.split(StringUtils.BODY_SEPARATOR_STRING), ts);
 
             //storing to DB and aggregating
             reportingDao.process(state.user.name, key);

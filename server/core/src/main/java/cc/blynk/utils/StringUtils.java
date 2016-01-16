@@ -37,4 +37,37 @@ public class StringUtils {
         return body.substring(START_INDEX, i);
     }
 
+    /*
+    private static final int LIMIT3 = 3;
+    public static String[] split3(String body) {
+        String[] s = new String[LIMIT3];
+        int counter = 0;
+        int i = 2;
+        int prev = -1;
+        while (i < body.length() && counter < LIMIT3 - 1) {
+            if (body.charAt(i) == BODY_SEPARATOR) {
+                s[counter++] = body.substring(prev + 1, i);
+                prev = i;
+            }
+            i++;
+        }
+        s[counter] = body.substring(prev + 1, body.length());
+        return s;
+    }
+    */
+
+    public static String[] split3(String body) {
+        final int i1 = body.indexOf(BODY_SEPARATOR, 2);
+        if (i1 == -1) {
+            return new String[] {body};
+        }
+
+        final int i2 = body.indexOf(BODY_SEPARATOR, i1 + 1);
+        if (i2 == -1) {
+            return new String[] {body.substring(0, i1), body.substring(i1, body.length())};
+        }
+
+        return new String[] {body.substring(0, i1), body.substring(i1 + 1, i2), body.substring(i2 + 1, body.length())};
+    }
+
 }
