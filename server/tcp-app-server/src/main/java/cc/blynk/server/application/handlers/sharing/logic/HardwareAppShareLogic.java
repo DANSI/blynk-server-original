@@ -3,7 +3,6 @@ package cc.blynk.server.application.handlers.sharing.logic;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.HardwareBody;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.widgets.outputs.FrequencyWidget;
 import cc.blynk.server.core.protocol.enums.Response;
@@ -53,7 +52,7 @@ public class HardwareAppShareLogic {
 
         switch (operation) {
             case 'w':
-                dash.update(new HardwareBody(split[1], message.id));
+                dash.update(split[1], message.id);
 
                 String sharedToken = state.user.dashShareTokens.get(dashId);
                 if (sharedToken != null) {

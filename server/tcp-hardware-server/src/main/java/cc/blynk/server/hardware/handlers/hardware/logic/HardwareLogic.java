@@ -3,7 +3,6 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.HardwareBody;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.graph.GraphKey;
 import cc.blynk.server.core.protocol.enums.Response;
@@ -59,7 +58,7 @@ public class HardwareLogic {
             //storing to DB and aggregating
             reportingDao.process(state.user.name, key);
 
-            dash.update(new HardwareBody(splitBody, message.id));
+            dash.update(splitBody, message.id);
         }
 
         if (dash.isActive) {

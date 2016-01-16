@@ -59,7 +59,12 @@ public class DashBoard {
                 .append(pinMode);
     }
 
-    public void update(HardwareBody hardwareBody) {
+    public void update(String body, int msgId) {
+        update(body.split(StringUtils.BODY_SEPARATOR_STRING), msgId);
+    }
+
+    public void update(String[] splitted, int msgId) {
+        HardwareBody hardwareBody = new HardwareBody(splitted, msgId);
         for (Widget widget : widgets) {
             widget.updateIfSame(hardwareBody);
         }
