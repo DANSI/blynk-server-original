@@ -1,6 +1,7 @@
 package cc.blynk.server.websocket.handlers;
 
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
@@ -17,8 +18,16 @@ import java.util.List;
 public class WebSocketEncoder extends MessageToMessageEncoder<MessageBase> {
 
 
+    private final GlobalStats stats;
+
+    public WebSocketEncoder(GlobalStats stats) {
+        this.stats = stats;
+    }
+
     @Override
     protected void encode(ChannelHandlerContext ctx, MessageBase msg, List<Object> out) throws Exception {
+        stats.mark(msg.command);
+
         //todo finish and optimize.
         ByteBuffer bb = ByteBuffer.allocate(5 + msg.length);
         bb.put((byte) msg.command);

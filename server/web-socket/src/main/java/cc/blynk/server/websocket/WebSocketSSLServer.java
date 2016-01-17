@@ -54,7 +54,7 @@ public class WebSocketSSLServer extends BaseServer {
                         //hardware handlers
                         hardwareChannelStateHandler,
                         new MessageDecoder(holder.stats),
-                        new WebSocketEncoder(),
+                        new WebSocketEncoder(holder.stats),
                         hardwareLoginHandler,
                         userNotLoggedHandler
                 );
