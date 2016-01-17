@@ -61,11 +61,11 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
 
         log.info("{} : {}", req.getMethod().name(), req.getUri());
 
+        globalStats.mark(Command.HTTP_TOTAL);
         processHttp(ctx, req);
     }
 
     public void processHttp(ChannelHandlerContext ctx, HttpRequest req) {
-        globalStats.mark(Command.HTTP_TOTAL);
         HandlerHolder handlerHolder = HandlerRegistry.findHandler(req.getMethod(), HandlerRegistry.path(req.getUri()));
 
         if (handlerHolder == null) {
