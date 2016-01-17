@@ -97,6 +97,10 @@ public final class Command {
                 put(HARDWARE_SYNC, HardwareSyncMessage.class.getSimpleName());
                 put(HARDWARE_INFO, HardwareInfoMessage.class.getSimpleName());
                 put(ADD_PUSH_TOKEN, AddPushToken.class.getSimpleName());
+                put(HTTP_GET_PIN_DATA, "HttpGetPinData");
+                put(HTTP_UPDATE_PIN_DATA, "HttpUpdatePinData");
+                put(HTTP_NOTIFY, "HttpNotify");
+                put(HTTP_EMAIL, "HttpEmail");
             }
     };
 
