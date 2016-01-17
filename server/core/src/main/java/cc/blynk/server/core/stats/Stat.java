@@ -26,6 +26,7 @@ public class Stat {
     private static final ObjectWriter statWriter = JsonParser.init().writerWithDefaultPrettyPrinter().forType(Stat.class);
 
     public final Map<String, Long> messages = new HashMap<>();
+    public final Map<String, Long> http = new HashMap<>();
     //2015-07-20T20:15:03.954+03:00
     String ts = OffsetDateTime.now().toString();
     long oneMinRate;
@@ -44,7 +45,12 @@ public class Stat {
         //but we don't care, cause this is just for general monitoring
         for (Map.Entry<Short, String> counterEntry : Command.valuesName.entrySet()) {
             LongAdder longAdder = localStats.specificCounters[counterEntry.getKey()];
-            stat.messages.put(counterEntry.getValue(), reset ? longAdder.sumThenReset() : longAdder.sum());
+            String key = counterEntry.getValue();
+            if (key.startsWith("Http")) {
+                stat.http.put(key, reset ? longAdder.sumThenReset() : longAdder.sum());
+            } else {
+                stat.messages.put(key, reset ? longAdder.sumThenReset() : longAdder.sum());
+            }
         }
 
         int connectedSessions = 0;
