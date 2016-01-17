@@ -39,7 +39,7 @@ public class WebSocketTest extends IntegrationBase {
 
     @Test
     public void testBasicWebSocketCommandsOk() throws Exception{
-        WebSocketClient webSocketClient = new WebSocketClient("localhost", properties.getIntProperty("tcp.web-socket.port"), false);
+        WebSocketClient webSocketClient = new WebSocketClient("localhost", properties.getIntProperty("tcp.websocket.port"), false);
         webSocketClient.start();
         webSocketClient.send("login 4ae3851817194e2596cf1b7103603ef8");
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));

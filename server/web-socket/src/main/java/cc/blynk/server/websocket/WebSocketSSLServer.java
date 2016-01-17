@@ -8,11 +8,13 @@ import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.websocket.handlers.WebSocketEncoder;
 import cc.blynk.server.websocket.handlers.WebSocketHandler;
+import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
 /**
@@ -20,20 +22,21 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
  * Created by Dmitriy Dumanskiy.
  * Created on 13/01/2016.
  */
-public class WebSocketServer extends BaseServer {
+public class WebSocketSSLServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public WebSocketServer(Holder holder) {
-        super(holder.props.getIntProperty("tcp.websocket.port"), holder.transportType);
+    public WebSocketSSLServer(Holder holder) {
+        super(holder.props.getIntProperty("ssl.websocket.port"), holder.transportType);
 
-        log.info("Enabling Web Sockets.");
+        log.info("Enabling Web SSL Sockets.");
 
         final int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.blockingIOProcessor);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 
+        SslContext sslCtx = SslUtil.initSslContext(holder.props);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -43,6 +46,7 @@ public class WebSocketServer extends BaseServer {
                     pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
                 }
                 ch.pipeline().addLast(
+                        sslCtx.newHandler(ch.alloc()),
                         new HttpServerCodec(),
                         new HttpObjectAggregator(65536),
                         new WebSocketHandler(),
@@ -57,7 +61,7 @@ public class WebSocketServer extends BaseServer {
             }
         };
 
-        log.info("Web Sockets port {}.", port);
+        log.info("Web SSL Sockets port {}.", port);
     }
 
     @Override
@@ -67,12 +71,12 @@ public class WebSocketServer extends BaseServer {
 
     @Override
     protected String getServerName() {
-        return "Web Sockets";
+        return "Web SSL Sockets";
     }
 
     @Override
     public void stop() {
-        System.out.println("Shutting down Web Sockets server...");
+        System.out.println("Shutting down Web SSL Sockets server...");
         super.stop();
     }
 
