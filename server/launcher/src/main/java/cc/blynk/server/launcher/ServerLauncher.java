@@ -8,6 +8,8 @@ import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.hardware.ssl.HardwareSSLServer;
+import cc.blynk.server.websocket.WebSocketSSLServer;
+import cc.blynk.server.websocket.WebSocketServer;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
 import cc.blynk.utils.ServerProperties;
@@ -49,7 +51,9 @@ public class ServerLauncher {
                 new AppServer(holder),
                 new HttpAPIServer(holder),
                 new HttpsAPIServer(holder),
-                new HttpsAdminServer(holder)
+                new HttpsAdminServer(holder),
+                new WebSocketServer(holder),
+                new WebSocketSSLServer(holder)
         };
     }
 
