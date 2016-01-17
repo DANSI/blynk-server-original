@@ -37,7 +37,7 @@ public class HttpAPIServer extends BaseServer {
             }
         };
 
-        log.info("HTTP for app port {}.", port);
+        log.info("HTTP API port {}.", port);
     }
 
     @Override
