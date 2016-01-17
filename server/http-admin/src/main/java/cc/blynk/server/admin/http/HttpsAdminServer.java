@@ -58,7 +58,7 @@ public class HttpsAdminServer extends BaseServer {
                     new HttpServerCodec(),
                     new HttpObjectAggregator(65536),
                     new ChunkedWriteHandler(),
-                    new AdminHandler(holder.userDao, holder.sessionDao, rootPath)
+                    new AdminHandler(holder.userDao, holder.sessionDao, holder.stats, rootPath)
                 );
             }
         };

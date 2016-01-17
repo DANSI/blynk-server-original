@@ -4,6 +4,8 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.http.rest.HandlerHolder;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
@@ -31,10 +33,12 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
 
     private final UserDao userDao;
     private final SessionDao sessionDao;
+    private final GlobalStats globalStats;
 
-    public BaseHttpHandler(UserDao userDao, SessionDao sessionDao) {
+    public BaseHttpHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
         this.userDao = userDao;
         this.sessionDao = sessionDao;
+        this.globalStats = globalStats;
     }
 
     private static void send(ChannelHandlerContext ctx, FullHttpResponse response) {
@@ -61,6 +65,7 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
     }
 
     public void processHttp(ChannelHandlerContext ctx, HttpRequest req) {
+        globalStats.mark(Command.HTTP_TOTAL);
         HandlerHolder handlerHolder = HandlerRegistry.findHandler(req.getMethod(), HandlerRegistry.path(req.getUri()));
 
         if (handlerHolder == null) {

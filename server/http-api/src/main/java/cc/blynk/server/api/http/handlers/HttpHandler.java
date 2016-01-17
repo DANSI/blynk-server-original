@@ -3,6 +3,7 @@ package cc.blynk.server.api.http.handlers;
 import cc.blynk.server.core.BaseHttpHandler;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.http.logic.FileLogic;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
@@ -18,8 +19,8 @@ public class HttpHandler extends BaseHttpHandler {
 
     private final FileLogic fileLogic;
 
-    public HttpHandler(UserDao userDao, SessionDao sessionDao) {
-        super(userDao, sessionDao);
+    public HttpHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
+        super(userDao, sessionDao, globalStats);
         this.fileLogic = new FileLogic();
     }
 

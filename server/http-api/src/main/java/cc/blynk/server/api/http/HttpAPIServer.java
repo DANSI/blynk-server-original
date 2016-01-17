@@ -32,7 +32,7 @@ public class HttpAPIServer extends BaseServer {
                 ch.pipeline().addLast(
                         new HttpServerCodec(),
                         new HttpObjectAggregator(65536),
-                        new HttpHandler(holder.userDao, holder.sessionDao)
+                        new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );
             }
         };
