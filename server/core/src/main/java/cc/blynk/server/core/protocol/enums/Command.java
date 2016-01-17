@@ -57,6 +57,13 @@ public final class Command {
     public static final short HARDWARE = 20;
     //------------------------------------------
 
+    //http codes. Used oonly for stats
+    public static final short HTTP_GET_PIN_DATA = 35;
+    public static final short HTTP_UPDATE_PIN_DATA = 36;
+    public static final short HTTP_NOTIFY = 37;
+    public static final short HTTP_EMAIL = 38;
+
+
     //all this code just to make logging more user-friendly
     public static final Map<Short, String> valuesName = new HashMap<Short, String>() {
             {

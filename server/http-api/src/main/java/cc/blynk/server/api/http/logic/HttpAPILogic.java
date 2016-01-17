@@ -13,6 +13,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.http.rest.Response;
 import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -21,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.handlers.http.rest.Response.*;
 
 /**
@@ -36,17 +38,21 @@ public class HttpAPILogic {
     private final UserDao userDao;
     private final BlockingIOProcessor blockingIOProcessor;
     private final SessionDao sessionDao;
+    private final GlobalStats globalStats;
 
-    public HttpAPILogic(UserDao userDao, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor) {
+    public HttpAPILogic(UserDao userDao, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor, GlobalStats globalStats) {
         this.userDao = userDao;
         this.blockingIOProcessor = blockingIOProcessor;
         this.sessionDao = sessionDao;
+        this.globalStats = globalStats;
     }
 
     @GET
     @Path("{token}/pin/{pin}")
     public Response getWidgetPinData(@PathParam("token") String token,
                                      @PathParam("pin") String pinString) {
+
+        globalStats.mark(HTTP_GET_PIN_DATA);
 
         User user = userDao.tokenManager.getUserByToken(token);
 
@@ -91,6 +97,8 @@ public class HttpAPILogic {
     public Response updateWidgetPinData(@PathParam("token") String token,
                                         @PathParam("pin") String pinString,
                                         String[] pinValues) {
+
+        globalStats.mark(HTTP_UPDATE_PIN_DATA);
 
         User user = userDao.tokenManager.getUserByToken(token);
 
@@ -147,8 +155,10 @@ public class HttpAPILogic {
     @POST
     @Path("{token}/notify")
     @Consumes(value = MediaType.APPLICATION_JSON)
-    public Response updateWidgetPinData(@PathParam("token") String token,
+    public Response notify(@PathParam("token") String token,
                                         PushMessagePojo message) {
+
+        globalStats.mark(HTTP_NOTIFY);
 
         User user = userDao.tokenManager.getUserByToken(token);
 
@@ -192,8 +202,10 @@ public class HttpAPILogic {
     @POST
     @Path("{token}/email")
     @Consumes(value = MediaType.APPLICATION_JSON)
-    public Response updateWidgetPinData(@PathParam("token") String token,
+    public Response email(@PathParam("token") String token,
                                         EmailPojo message) {
+
+        globalStats.mark(HTTP_EMAIL);
 
         User user = userDao.tokenManager.getUserByToken(token);
 

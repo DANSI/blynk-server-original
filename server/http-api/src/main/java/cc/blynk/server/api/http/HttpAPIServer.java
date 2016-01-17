@@ -22,7 +22,7 @@ public class HttpAPIServer extends BaseServer {
     public HttpAPIServer(Holder holder) {
         super(holder.props.getIntProperty("http.port"), holder.transportType);
 
-        HandlerRegistry.register(new HttpAPILogic(holder.userDao, holder.sessionDao, holder.blockingIOProcessor));
+        HandlerRegistry.register(new HttpAPILogic(holder.userDao, holder.sessionDao, holder.blockingIOProcessor, holder.stats));
 
         log.info("Enabling HTTP API.");
 
