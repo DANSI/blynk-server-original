@@ -43,7 +43,7 @@ public class AppClient extends BaseClient {
                         .build();
             } else {
                 log.info("Enabling mutual auth.");
-                String clientPass = props.getProperty("server.ssl.key.pass");
+                String clientPass = props.getProperty("client.ssl.key.pass");
                 this.sslCtx = SslContextBuilder.forClient()
                         .sslProvider(SslProvider.JDK)
                         .trustManager(serverCert)
