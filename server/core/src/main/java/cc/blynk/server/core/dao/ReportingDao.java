@@ -2,7 +2,6 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.graph.GraphKey;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
@@ -102,14 +101,19 @@ public class ReportingDao {
         FileUtils.deleteQuietly(userDataDailyFile);
     }
 
-    public void process(String username, GraphKey key) {
+    public void process(String username, int dashId, String[] bodyParts) {
+        PinType pinType = PinType.getPingType(bodyParts[0].charAt(0));
+        byte pin = Byte.parseByte(bodyParts[1]);
+        String value = bodyParts[2]; //in case of multi pins logging only first value
+        long ts = System.currentTimeMillis();
+
         if (ENABLE_RAW_DATA_STORE) {
-            ThreadContext.put("dashId", Integer.toString(key.dashId));
-            ThreadContext.put("pin", String.valueOf(key.pinType.pintTypeChar) + key.pin);
-            log.info(key.toCSV());
+            ThreadContext.put("dashId", Integer.toString(dashId));
+            ThreadContext.put("pin", String.valueOf(pinType.pintTypeChar) + pin);
+            log.info("{},{}", value, ts);
         }
 
-        averageAggregator.collect(username, key.dashId, key.pinType, key.pin, key.ts, key.value);
+        averageAggregator.collect(username, dashId, pinType, pin, ts, value);
     }
 
     public byte[][] getAllFromDisk(String username, GraphPinRequest[] requestedPins, int msgId) {

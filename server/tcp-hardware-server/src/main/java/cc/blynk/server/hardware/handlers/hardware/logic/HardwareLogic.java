@@ -4,7 +4,6 @@ import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
-import cc.blynk.server.core.model.graph.GraphKey;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -53,10 +52,9 @@ public class HardwareLogic {
 
         if (PinUtil.isWriteOperation(body)) {
             String[] splitBody = body.split(StringUtils.BODY_SEPARATOR_STRING);
-            GraphKey key = new GraphKey(dashId, splitBody , System.currentTimeMillis());
 
             //storing to DB and aggregating
-            reportingDao.process(state.user.name, key);
+            reportingDao.process(state.user.name, dashId, splitBody);
 
             dash.update(splitBody, message.id);
         }
