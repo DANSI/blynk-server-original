@@ -23,7 +23,12 @@ import static io.netty.handler.codec.http.HttpVersion.*;
 public class WebSocketHandler extends SimpleChannelInboundHandler<Object> {
 
     public static final String WEBSOCKET_PATH = "/websocket";
+    private final String protocol;
     private WebSocketServerHandshaker handshaker;
+
+    public WebSocketHandler(boolean isSecured) {
+        this.protocol = isSecured ? "wss://" : "ws://";
+    }
 
     private static void sendHttpResponse(ChannelHandlerContext ctx, FullHttpRequest req, FullHttpResponse res) {
         // Generate an error page if response getStatus code is not OK (200).
@@ -41,9 +46,8 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<Object> {
         }
     }
 
-    private static String getWebSocketLocation(HttpRequest req) {
-        String location =  req.headers().get(HOST) + WEBSOCKET_PATH;
-        return "ws://" + location;
+    private String getWebSocketLocation(HttpRequest req) {
+        return protocol + req.headers().get(HOST) + WEBSOCKET_PATH;
     }
 
     @Override

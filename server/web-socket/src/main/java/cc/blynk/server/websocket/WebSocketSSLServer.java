@@ -49,7 +49,7 @@ public class WebSocketSSLServer extends BaseServer {
                         sslCtx.newHandler(ch.alloc()),
                         new HttpServerCodec(),
                         new HttpObjectAggregator(65536),
-                        new WebSocketHandler(),
+                        new WebSocketHandler(true),
 
                         //hardware handlers
                         hardwareChannelStateHandler,

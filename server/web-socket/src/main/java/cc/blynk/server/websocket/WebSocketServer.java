@@ -45,7 +45,7 @@ public class WebSocketServer extends BaseServer {
                 ch.pipeline().addLast(
                         new HttpServerCodec(),
                         new HttpObjectAggregator(65536),
-                        new WebSocketHandler(),
+                        new WebSocketHandler(false),
 
                         //hardware handlers
                         hardwareChannelStateHandler,

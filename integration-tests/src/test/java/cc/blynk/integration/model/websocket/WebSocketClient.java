@@ -35,6 +35,9 @@ import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.mockito.Mockito;
 
 import java.io.BufferedReader;
@@ -45,16 +48,21 @@ import java.util.Random;
 public final class WebSocketClient extends BaseClient {
 
     public final SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
-    private final boolean isSSL;
+    final SslContext sslCtx;
     private final WebSocketClientHandler handler;
     protected int msgId = 0;
 
     public WebSocketClient(String host, int port, boolean isSSL) throws Exception {
         super(host, port, new Random());
-        this.isSSL = isSSL;
 
         String scheme = isSSL ? "wss://" : "ws://";
         URI uri = new URI(scheme + host + ":" + port + WebSocketHandler.WEBSOCKET_PATH);
+
+        if (isSSL) {
+            sslCtx = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+        } else {
+            sslCtx = null;
+        }
 
         this.handler = new WebSocketClientHandler(
                         WebSocketClientHandshakerFactory.newHandshaker(
@@ -79,6 +87,9 @@ public final class WebSocketClient extends BaseClient {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline p = ch.pipeline();
+                if (sslCtx != null) {
+                    p.addLast(sslCtx.newHandler(ch.alloc(), host, port));
+                }
                 p.addLast(
                         new HttpClientCodec(),
                         new HttpObjectAggregator(8192),
