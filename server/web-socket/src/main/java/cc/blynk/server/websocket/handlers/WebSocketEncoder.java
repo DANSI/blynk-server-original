@@ -1,5 +1,6 @@
 package cc.blynk.server.websocket.handlers;
 
+import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.buffer.Unpooled;
@@ -29,7 +30,12 @@ public class WebSocketEncoder extends MessageToMessageEncoder<MessageBase> {
         stats.mark(msg.command);
 
         //todo finish and optimize.
-        ByteBuffer bb = ByteBuffer.allocate(5 + msg.length);
+        ByteBuffer bb;
+        if (msg.command == Command.RESPONSE) {
+            bb = ByteBuffer.allocate(5);
+        } else {
+            bb = ByteBuffer.allocate(5 + msg.length);
+        }
         bb.put((byte) msg.command);
         bb.putShort((short) msg.id);
         bb.putShort((short) msg.length);
