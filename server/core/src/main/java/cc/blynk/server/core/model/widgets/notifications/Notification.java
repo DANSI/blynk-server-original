@@ -20,11 +20,6 @@ public class Notification extends Widget {
 
     public Map<String, String> iOSTokens = new HashMap<>();
 
-    //todo remove this field when ready
-    public String token;
-    //todo remove this field when ready
-    public String iOSToken;
-
     public boolean notifyWhenOffline;
 
     public Priority priority = Priority.normal;
@@ -34,8 +29,8 @@ public class Notification extends Widget {
     }
 
     public void cleanPrivateData() {
-        token = null;
-        iOSToken = null;
+        androidTokens = new HashMap<>();
+        iOSTokens = new HashMap<>();
     }
 
     @Override
@@ -64,9 +59,7 @@ public class Notification extends Widget {
     }
 
     public boolean hasNoToken() {
-        return (token == null || token.equals("")) &&
-               (iOSToken == null || iOSToken.equals("")) &&
-               (iOSTokens.size() == 0 && androidTokens.size() == 0);
+        return iOSTokens.size() == 0 && androidTokens.size() == 0;
     }
 
     @Override

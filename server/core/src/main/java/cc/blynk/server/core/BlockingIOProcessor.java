@@ -120,16 +120,12 @@ public class BlockingIOProcessor {
             for (String token : widget.androidTokens.values()) {
                 push(channel, new AndroidGCMMessage(token, widget.priority, body, dashId), msgId);
             }
-        } else if (widget.token != null && !widget.token.equals("")) {
-            push(channel, new AndroidGCMMessage(widget.token, widget.priority, body, dashId), msgId);
         }
 
         if (widget.iOSTokens.size() != 0) {
             for (String token : widget.iOSTokens.values()) {
                 push(channel, new IOSGCMMessage(token, widget.priority, body, dashId), msgId);
             }
-        } else if (widget.iOSToken != null && !widget.iOSToken.equals("")) {
-            push(channel, new IOSGCMMessage(widget.iOSToken, widget.priority, body, dashId), msgId);
         }
     }
 
@@ -151,16 +147,12 @@ public class BlockingIOProcessor {
             for (String token : widget.androidTokens.values()) {
                 push(user, new AndroidGCMMessage(token, widget.priority, body, dashId));
             }
-        } else if (widget.token != null && !widget.token.equals("")) {
-            push(user, new AndroidGCMMessage(widget.token,  widget.priority, body, dashId));
         }
 
         if (widget.iOSTokens.size() != 0) {
             for (String token : widget.iOSTokens.values()) {
                 push(user, new IOSGCMMessage(token, widget.priority, body, dashId));
             }
-        } else if (widget.iOSToken != null && !widget.iOSToken.equals("")) {
-            push(user, new IOSGCMMessage(widget.iOSToken, widget.priority, body, dashId));
         }
     }
 
