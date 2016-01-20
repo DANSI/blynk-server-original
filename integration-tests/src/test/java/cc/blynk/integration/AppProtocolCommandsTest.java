@@ -9,8 +9,6 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.ReflectionUtil;
-import cc.blynk.utils.ServerProperties;
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -44,11 +42,6 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        properties = new ServerProperties();
-        initServerStructures();
-
-        FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
-
         appServer = new AppServer(holder).start();
 
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager);

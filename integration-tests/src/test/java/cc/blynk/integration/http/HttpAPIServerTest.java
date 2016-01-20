@@ -48,7 +48,6 @@ public class HttpAPIServerTest extends IntegrationBase {
     public void init() throws Exception {
         if (httpServer == null) {
             properties.setProperty("data.folder", getProfileFolder());
-            initServerStructures();
 
             httpServer = new HttpAPIServer(holder).start();
             sleep(500);

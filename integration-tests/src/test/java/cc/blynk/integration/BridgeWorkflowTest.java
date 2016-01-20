@@ -7,7 +7,6 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.hardware.HardwareServer;
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,10 +36,6 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        initServerStructures();
-
-        FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
-
         hardwareServer = new HardwareServer(holder).start();
         appServer = new AppServer(holder).start();
 

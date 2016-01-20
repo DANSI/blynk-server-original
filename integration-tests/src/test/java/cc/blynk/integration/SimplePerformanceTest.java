@@ -9,7 +9,6 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.ServerProperties;
 import io.netty.channel.nio.NioEventLoopGroup;
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -43,10 +42,6 @@ public class SimplePerformanceTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         this.sharedNioEventLoopGroup = new NioEventLoopGroup();
-
-        initServerStructures();
-
-        FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
 
         hardwareServer = new HardwareServer(holder).start();
         appServer = new AppServer(holder).start();

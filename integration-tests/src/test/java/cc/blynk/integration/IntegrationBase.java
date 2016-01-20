@@ -10,6 +10,7 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -86,23 +87,7 @@ public abstract class IntegrationBase {
         return resourcesPath;
     }
 
-    @Before
-    public void initBase() {
-        properties = new ServerProperties();
-        appPort = properties.getIntProperty("app.ssl.port");
-        hardPort = properties.getIntProperty("hardware.default.port");
-        host = "localhost";
-    }
-
-    public ClientPair initAppAndHardPair() throws Exception {
-        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties);
-    }
-
-    public ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
-        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", jsonProfile, properties);
-    }
-
-    public ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
+    public static ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
                                   ServerProperties properties) throws Exception {
 
         TestAppClient appClient = new TestAppClient(host, appPort, properties);
@@ -111,7 +96,7 @@ public abstract class IntegrationBase {
         return initAppAndHardPair(appClient, hardClient, user, jsonProfile);
     }
 
-    public ClientPair initAppAndHardPair(TestAppClient appClient, TestHardClient hardClient, String user,
+    public static ClientPair initAppAndHardPair(TestAppClient appClient, TestHardClient hardClient, String user,
                                   String jsonProfile) throws Exception {
 
         appClient.start();
@@ -141,8 +126,23 @@ public abstract class IntegrationBase {
         return new ClientPair(appClient, hardClient, token);
     }
 
-    public void initServerStructures() {
+    @Before
+    public void initBase() throws Exception {
+        properties = new ServerProperties();
+        appPort = properties.getIntProperty("app.ssl.port");
+        hardPort = properties.getIntProperty("hardware.default.port");
+        host = "localhost";
         holder = new Holder(properties);
         holder.setBlockingIOProcessor(blockingIOProcessor);
+        FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
     }
+
+    public ClientPair initAppAndHardPair() throws Exception {
+        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties);
+    }
+
+    public ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
+        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", jsonProfile, properties);
+    }
+
 }

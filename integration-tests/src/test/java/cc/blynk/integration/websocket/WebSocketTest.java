@@ -29,7 +29,6 @@ public class WebSocketTest extends IntegrationBase {
     public void init() throws Exception {
         if (webSocketServer == null) {
             properties.setProperty("data.folder", getProfileFolder());
-            initServerStructures();
 
             webSocketServer = new WebSocketServer(holder).start();
 

@@ -6,7 +6,6 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.StringUtils;
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -35,10 +34,6 @@ public class HardProtocolCommandsTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        initServerStructures();
-
-        FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
-
         hardwareServer = new HardwareServer(holder).start();
 
         //wait util servers start.

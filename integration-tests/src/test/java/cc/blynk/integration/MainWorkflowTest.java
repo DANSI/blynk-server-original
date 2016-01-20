@@ -23,7 +23,6 @@ import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -59,10 +58,6 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        initServerStructures();
-
-        FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
-
         hardwareServer = new HardwareServer(holder).start();
         appServer = new AppServer(holder).start();
 

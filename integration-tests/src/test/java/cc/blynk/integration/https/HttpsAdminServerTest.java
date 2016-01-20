@@ -39,7 +39,7 @@ public class HttpsAdminServerTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         properties.setProperty("data.folder", getProfileFolder());
-        initServerStructures();
+
         this.httpAdminServer = new HttpsAdminServer(holder).start();
         sleep(500);
 

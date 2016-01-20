@@ -58,7 +58,6 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     public void init() throws Exception {
         if (httpServer == null) {
             properties.setProperty("data.folder", getProfileFolder());
-            initServerStructures();
 
             httpServer = new HttpAPIServer(holder).start();
             hardwareServer = new HardwareServer(holder).start();

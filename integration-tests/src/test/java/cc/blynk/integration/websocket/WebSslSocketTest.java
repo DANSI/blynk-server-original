@@ -29,7 +29,6 @@ public class WebSslSocketTest extends IntegrationBase {
     public void init() throws Exception {
         if (webSocketServer == null) {
             properties.setProperty("data.folder", getProfileFolder());
-            initServerStructures();
 
             webSocketServer = new WebSocketSSLServer(holder).start();
 
