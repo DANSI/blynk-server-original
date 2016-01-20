@@ -1,7 +1,7 @@
 package cc.blynk.integration.http;
 
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.IntegrationBase;
-import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.utils.JsonParser;
@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  * Created on 07.01.16.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpAPIKeepAliveServerTest extends IntegrationBase {
+public class HttpAPIKeepAliveServerTest extends BaseTest {
 
     private BaseServer httpServer;
     private CloseableHttpClient httpclient;
@@ -44,21 +44,18 @@ public class HttpAPIKeepAliveServerTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        properties.setProperty("data.folder", getProfileFolder());
-
-        Holder holder = new Holder(properties);
-        holder.setBlockingIOProcessor(blockingIOProcessor);
-
         httpServer = new HttpAPIServer(holder).start();
-        sleep(500);
-
-        httpServerUrl = "http://localhost:" + properties.getIntProperty("http.port") + "/";
+        httpServerUrl = String.format("http://localhost:%s/", httpPort);
 
         //this http client doesn't close HTTP connection.
         httpclient = HttpClients.custom()
                 .setConnectionReuseStrategy((response, context) -> true)
                 .setKeepAliveStrategy((response, context) -> 10000000).build();
+    }
 
+    @Override
+    public String getDataFolder() {
+        return IntegrationBase.getProfileFolder();
     }
 
     @Test

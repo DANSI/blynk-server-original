@@ -1,5 +1,6 @@
-package cc.blynk.integration;
+package cc.blynk.integration.tcp;
 
+import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.BaseServer;
@@ -11,8 +12,11 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.OngoingStubbing;
+
+import java.io.BufferedReader;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
 import static org.mockito.Matchers.any;
@@ -30,20 +34,18 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class HardProtocolCommandsTest extends IntegrationBase {
 
+    @Mock
+    public BufferedReader bufferedReader;
     private BaseServer hardwareServer;
 
     @Before
     public void init() throws Exception {
-        hardwareServer = new HardwareServer(holder).start();
-
-        //wait util servers start.
-        //todo fix.
-        Thread.sleep(500);
+        this.hardwareServer = new HardwareServer(holder).start();
     }
 
     @After
     public void shutdown() {
-        hardwareServer.stop();
+        this.hardwareServer.stop();
     }
 
     @Test
@@ -63,7 +65,7 @@ public class HardProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testNoRegisterHandlerNoResponse() throws Exception {
-        TestHardClient hardClient = new TestHardClient(host, hardPort);
+        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine()).thenReturn("register dima@dima.ua 1");
         ongoingStubbing.thenAnswer(invocation -> {
             //todo think how to avoid this
@@ -92,7 +94,7 @@ public class HardProtocolCommandsTest extends IntegrationBase {
      * 5) Closing socket.
      */
     private MockHolder makeCommands(String... commands) throws Exception {
-        TestHardClient hardClient = new TestHardClient(host, hardPort);
+        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
 
         OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
         for (String cmd : commands) {

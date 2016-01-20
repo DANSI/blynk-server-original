@@ -1,5 +1,6 @@
-package cc.blynk.integration;
+package cc.blynk.integration.tcp;
 
+import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.application.AppServer;
@@ -55,21 +56,16 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        hardwareServer = new HardwareServer(holder).start();
-        appServer = new AppServer(holder).start();
-
-        //todo improve this
-        //wait util server starts.
-        sleep(500);
-
-        clientPair = initAppAndHardPair();
+        this.hardwareServer = new HardwareServer(holder).start();
+        this.appServer = new AppServer(holder).start();
+        this.clientPair = initAppAndHardPair();
     }
 
     @After
     public void shutdown() {
-        appServer.stop();
-        hardwareServer.stop();
-        clientPair.stop();
+        this.appServer.stop();
+        this.hardwareServer.stop();
+        this.clientPair.stop();
     }
 
     @Test
@@ -86,7 +82,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        ClientPair clientPair2 = initAppAndHardPair("localhost", appPort, hardPort, "dima2@mail.ua 1", "user_profile_json_2.txt", properties);
+        ClientPair clientPair2 = initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "dima2@mail.ua 1", "user_profile_json_2.txt", properties);
         clientPair2.appClient.send("getSharedDash " + token);
 
         String dashboard = clientPair2.appClient.getBody();
@@ -110,7 +106,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
 
-        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -158,7 +154,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -227,7 +223,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -247,7 +243,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -282,7 +278,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token+"a" + " Android 24");
 
@@ -297,7 +293,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -319,7 +315,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertFalse(clientPair.appClient.isClosed());
         assertTrue(appClient2.isClosed());
 
-        TestAppClient appClient3 = new TestAppClient(host, appPort, properties);
+        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient3.start();
         appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -334,11 +330,11 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
-        TestAppClient appClient3 = new TestAppClient(host, appPort, properties);
+        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient3.start();
         appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -366,7 +362,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -390,7 +386,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        ClientPair clientPair2 = initAppAndHardPair("localhost", appPort, hardPort, "dima2@mail.ua 1", "user_profile_json_2.txt", properties);
+        ClientPair clientPair2 = initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "dima2@mail.ua 1", "user_profile_json_2.txt", properties);
         clientPair2.appClient.send("getSharedDash " + token);
 
         String dashboard = clientPair2.appClient.getBody();

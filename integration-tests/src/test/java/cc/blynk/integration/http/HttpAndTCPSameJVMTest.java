@@ -1,5 +1,6 @@
 package cc.blynk.integration.http;
 
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.api.http.HttpAPIServer;
@@ -24,6 +25,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.util.List;
 
+import static cc.blynk.integration.IntegrationBase.*;
 import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static org.junit.Assert.*;
@@ -37,7 +39,7 @@ import static org.mockito.Mockito.*;
  * Created on 07.01.16.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpAndTCPSameJVMTest extends IntegrationBase {
+public class HttpAndTCPSameJVMTest extends BaseTest {
 
     private static BaseServer httpServer;
     private static BaseServer hardwareServer;
@@ -57,25 +59,22 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         if (httpServer == null) {
-            properties.setProperty("data.folder", getProfileFolder());
-
             httpServer = new HttpAPIServer(holder).start();
             hardwareServer = new HardwareServer(holder).start();
             appServer = new AppServer(holder).start();
-
-            sleep(500);
-
-            int httpPort = holder.props.getIntProperty("http.port");
-
-            httpsServerUrl = "http://localhost:" + httpPort + "/";
-
+            httpsServerUrl = String.format("http://localhost:%s/", httpPort);
             httpclient = HttpClients.createDefault();
         }
     }
 
+    @Override
+    public String getDataFolder() {
+        return IntegrationBase.getProfileFolder();
+    }
+
     @Test
     public void testChangePinValueViaAppAndHardware() throws Exception {
-        ClientPair clientPair = initAppAndHardPair();
+        ClientPair clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
 
         clientPair.hardwareClient.send("hardware vw 4 200");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "1 vw 4 200".replaceAll(" ", "\0"))));
@@ -107,7 +106,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void testChangePinValueViaHttpAPI() throws Exception {
-        ClientPair clientPair = initAppAndHardPair();
+        ClientPair clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 

@@ -1,5 +1,6 @@
 package cc.blynk.integration.https;
 
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.http.ResponseUserEntity;
 import cc.blynk.server.admin.http.HttpsAdminServer;
@@ -30,7 +31,7 @@ import static org.junit.Assert.*;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpsAdminServerTest extends IntegrationBase {
+public class HttpsAdminServerTest extends BaseTest {
 
     private BaseServer httpAdminServer;
     private CloseableHttpClient httpclient;
@@ -38,18 +39,20 @@ public class HttpsAdminServerTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        properties.setProperty("data.folder", getProfileFolder());
-
         this.httpAdminServer = new HttpsAdminServer(holder).start();
-        sleep(500);
 
-        httpsServerUrl = "https://localhost:" + properties.getIntProperty("administration.https.port") + "/admin/users/";
+        httpsServerUrl = String.format("https://localhost:%s/admin/users/", administrationPort);
 
         SSLContext sslcontext = initUnsecuredSSLContext();
 
         // Allow TLSv1 protocol only
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new MyHostVerifier());
         this.httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
+    }
+
+    @Override
+    public String getDataFolder() {
+        return IntegrationBase.getProfileFolder();
     }
 
     private SSLContext initUnsecuredSSLContext() throws NoSuchAlgorithmException, KeyManagementException {

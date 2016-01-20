@@ -1,5 +1,6 @@
-package cc.blynk.integration;
+package cc.blynk.integration.tcp;
 
+import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.application.AppServer;
@@ -14,9 +15,11 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.OngoingStubbing;
 
+import java.io.BufferedReader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -38,23 +41,21 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class AppProtocolCommandsTest extends IntegrationBase {
 
+    @Mock
+    public BufferedReader bufferedReader;
     private BaseServer appServer;
 
     @Before
     public void init() throws Exception {
-        appServer = new AppServer(holder).start();
+        this.appServer = new AppServer(holder).start();
 
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager);
         new Thread(profileSaverWorker).start();
-
-        //wait util servers start.
-        //todo fix.
-        Thread.sleep(500);
     }
 
     @After
     public void shutdown() {
-        appServer.stop();
+        this.appServer.stop();
     }
 
     @Test
@@ -95,7 +96,6 @@ public class AppProtocolCommandsTest extends IntegrationBase {
         makeCommands("login dmitriy@mail.ua 1").check(new ResponseMessage(1, USER_NOT_REGISTERED));
     }
 
-
     @Test
     public void testIllegalCommandForHardLoginOnAppChannel() throws Exception {
         makeCommands("login dasdsadasdasdasdasdas").check(new ResponseMessage(1, ILLEGAL_COMMAND));
@@ -114,7 +114,6 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         makeCommands(2, "login dmitriy@mail.ua 1", "login dmitriy@mail.ua 1", "getToken 1").check(1, OK).check(new ResponseMessage(1, ILLEGAL_COMMAND));
     }
-
 
     @Test
     public void testGetTokenForNonExistentDashId() throws Exception {
@@ -136,7 +135,6 @@ public class AppProtocolCommandsTest extends IntegrationBase {
                 .check(OK);
                 //.check(2, produce(1, REFRESH_TOKEN, "12345678901234567890123456789012"));
     }
-
 
     @Test
     public void testProfileWithManyDashes() throws Exception {
@@ -179,7 +177,6 @@ public class AppProtocolCommandsTest extends IntegrationBase {
         makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "activate 2").check(2, OK).check(new ResponseMessage(1, ILLEGAL_COMMAND));
     }
 
-
     @Test
     public void testActivateBadId() throws Exception {
         String userProfileString = readTestUserProfile();
@@ -208,7 +205,6 @@ public class AppProtocolCommandsTest extends IntegrationBase {
         makeCommands("login adsadasdasdasdas").check(new ResponseMessage(1, ILLEGAL_COMMAND));
     }
 
-
     @Test
     //all commands together cause all operations requires register and then login =(.
     public void testPingOk() throws Exception {
@@ -225,7 +221,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
      * 5) Closing socket.
      */
     private MockHolder makeCommands(int expected, String... commands) throws Exception {
-        TestAppClient appClient = new TestAppClient(host, appPort);
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort);
 
         OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
         for (String cmd : commands) {

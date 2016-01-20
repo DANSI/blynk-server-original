@@ -1,5 +1,6 @@
-package cc.blynk.integration;
+package cc.blynk.integration.tcp;
 
+import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
@@ -58,21 +59,17 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        hardwareServer = new HardwareServer(holder).start();
-        appServer = new AppServer(holder).start();
+        this.hardwareServer = new HardwareServer(holder).start();
+        this.appServer = new AppServer(holder).start();
 
-        //todo improve this
-        //wait util server starts.
-        sleep(500);
-
-        clientPair = initAppAndHardPair();
+        this.clientPair = initAppAndHardPair();
     }
 
     @After
     public void shutdown() {
-        appServer.stop();
-        hardwareServer.stop();
-        clientPair.stop();
+        this.appServer.stop();
+        this.hardwareServer.stop();
+        this.clientPair.stop();
     }
 
     @Test
@@ -228,7 +225,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testSendEmail() throws Exception {
         blockingIOProcessor.tokenBody = "Auth Token for %s project";
-        ClientPair clientPair = initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties);
+        ClientPair clientPair = initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "dima@mail.ua 1", null, properties);
         clientPair.appClient.send("email 1");
         verify(blockingIOProcessor, timeout(1000)).mail(any(), eq("dima@mail.ua"), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"), eq(1));
     }
@@ -293,7 +290,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardwareLoginWithInfo() throws Exception {
-        TestHardClient hardClient2 = new TestHardClient(host, hardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
         clientPair.appClient.send("getToken 1");
@@ -310,7 +307,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testActive2AndDeactivate1() throws Exception {
-        TestHardClient hardClient2 = new TestHardClient(host, hardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
         String newProfile = readTestUserProfile("user_profile_json_3_dashes.txt");
@@ -494,7 +491,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testClosedConnectionWhenNotLogged() throws Exception {
-        TestAppClient appClient2 = new TestAppClient(host, appPort, properties);
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
         appClient2.send("getToken 1");
         verify(appClient2.responseMock, after(400).never()).channelRead(any(), any());
@@ -515,7 +512,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("hardware 1 " + body);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, DEVICE_NOT_IN_NETWORK)));
 
-        TestHardClient hardClient = new TestHardClient(host, hardPort);
+        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
         hardClient.send("login " + clientPair.token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -535,7 +532,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("hardware 1 vw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, DEVICE_NOT_IN_NETWORK)));
 
-        TestHardClient hardClient = new TestHardClient(host, hardPort);
+        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
         hardClient.send("login " + clientPair.token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -562,7 +559,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         //connecting separate hardware to non active dashboard
-        TestHardClient nonActiveDashHardClient = new TestHardClient(host, hardPort);
+        TestHardClient nonActiveDashHardClient = new TestHardClient("localhost", tcpHardPort);
         nonActiveDashHardClient.start();
         nonActiveDashHardClient.send("login " + token);
         verify(nonActiveDashHardClient.responseMock, timeout(2000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -619,7 +616,7 @@ public class MainWorkflowTest extends IntegrationBase {
     //todo one more test here
     public void test2ClientPairsWorkCorrectly() throws Exception {
         final int ITERATIONS = 100;
-        ClientPair clientPair2 = initAppAndHardPair("localhost", appPort, hardPort, "dima2@mail.ua 1", null, properties);
+        ClientPair clientPair2 = initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "dima2@mail.ua 1", null, properties);
 
         String body = "ar 7";
         for (int i = 1; i <= ITERATIONS; i++) {
@@ -708,7 +705,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testTimerWidgetTriggeredAndSendCommandToCorrectDevice() throws Exception {
-        TestHardClient hardClient2 = new TestHardClient(host, hardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(

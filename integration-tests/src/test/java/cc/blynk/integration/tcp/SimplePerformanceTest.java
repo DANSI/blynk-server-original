@@ -1,5 +1,6 @@
-package cc.blynk.integration;
+package cc.blynk.integration.tcp;
 
+import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
@@ -11,7 +12,6 @@ import cc.blynk.utils.ServerProperties;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -23,7 +23,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -42,34 +41,15 @@ public class SimplePerformanceTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         this.sharedNioEventLoopGroup = new NioEventLoopGroup();
-
-        hardwareServer = new HardwareServer(holder).start();
-        appServer = new AppServer(holder).start();
-        //wait util server starts.
-        sleep(500);
+        this.hardwareServer = new HardwareServer(holder).start();
+        this.appServer = new AppServer(holder).start();
     }
 
 
     @After
     public void shutdown() {
-        appServer.stop();
-        hardwareServer.stop();
-    }
-
-    @Test
-    @Ignore
-    public void emulateSlider() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", 8443);
-        appClient.start();
-
-        appClient.send("login dima@dima.ua 1");
-
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), any());
-
-        for (int i = 0; i < 255; i++) {
-            appClient.send("hardware aw 9 " + i);
-            sleep(5);
-        }
+        this.appServer.stop();
+        this.hardwareServer.stop();
     }
 
     @Test
@@ -85,7 +65,7 @@ public class SimplePerformanceTest extends IntegrationBase {
             String usernameAndPass = "dima" + i +  "@mail.ua 1";
 
             Future<ClientPair> future = executorService.submit(
-                    () -> initClientsWithSharedNio("localhost", appPort, hardPort, usernameAndPass, null, properties)
+                    () -> initClientsWithSharedNio("localhost", tcpAppPort, tcpHardPort, usernameAndPass, null, properties)
             );
             futures.add(future);
         }

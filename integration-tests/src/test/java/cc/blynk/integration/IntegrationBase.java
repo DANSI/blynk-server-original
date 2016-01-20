@@ -3,20 +3,15 @@ package cc.blynk.integration;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
@@ -31,34 +26,9 @@ import static org.mockito.Mockito.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/4/2015.
  */
-public abstract class IntegrationBase {
+public abstract class IntegrationBase extends BaseTest {
 
-    static int appPort;
-    public ServerProperties properties;
-    public int hardPort;
-    public String host;
-
-    @Mock
-    public BufferedReader bufferedReader;
-
-    @Mock
-    public BufferedReader bufferedReader2;
-
-    @Mock
-    public BlockingIOProcessor blockingIOProcessor;
-
-    public Holder holder;
-
-    public static void sleep(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            //we can ignore it
-        }
-
-    }
-
-    static String readTestUserProfile(String fileName) {
+    public static String readTestUserProfile(String fileName) {
         if (fileName == null) {
             fileName = "user_profile_json.txt";
         }
@@ -67,7 +37,7 @@ public abstract class IntegrationBase {
         return profile.toString();
     }
 
-    static String readTestUserProfile() {
+    public static String readTestUserProfile() {
         return readTestUserProfile(null);
     }
 
@@ -80,9 +50,14 @@ public abstract class IntegrationBase {
         throw new RuntimeException("Get token message wasn't retrieved.");
     }
 
-    public static String getProfileFolder() throws Exception {
+    public static String getProfileFolder() {
         URL resource = IntegrationBase.class.getResource("/profiles");
-        String resourcesPath = Paths.get(resource.toURI()).toAbsolutePath().toString();
+        URI uri = null;
+        try {
+            uri = resource.toURI();
+        } catch (Exception e) {
+        }
+        String resourcesPath = Paths.get(uri).toAbsolutePath().toString();
         System.out.println("Resource path : " + resourcesPath);
         return resourcesPath;
     }
@@ -126,23 +101,16 @@ public abstract class IntegrationBase {
         return new ClientPair(appClient, hardClient, token);
     }
 
-    @Before
-    public void initBase() throws Exception {
-        properties = new ServerProperties();
-        appPort = properties.getIntProperty("app.ssl.port");
-        hardPort = properties.getIntProperty("hardware.default.port");
-        host = "localhost";
-        holder = new Holder(properties);
-        holder.setBlockingIOProcessor(blockingIOProcessor);
-        FileUtils.deleteDirectory(holder.fileManager.getDataDir().toFile());
+    public static ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {
+        return initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, "dima@mail.ua 1", null, properties);
     }
 
     public ClientPair initAppAndHardPair() throws Exception {
-        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", null, properties);
+        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "dima@mail.ua 1", null, properties);
     }
 
     public ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
-        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1", jsonProfile, properties);
+        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "dima@mail.ua 1", jsonProfile, properties);
     }
 
 }

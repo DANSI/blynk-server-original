@@ -1,5 +1,6 @@
 package cc.blynk.integration.http;
 
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.pojo.EmailPojo;
@@ -32,7 +33,7 @@ import static org.junit.Assert.*;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpAPIServerTest extends IntegrationBase {
+public class HttpAPIServerTest extends BaseTest {
 
     private static BaseServer httpServer;
     private static CloseableHttpClient httpclient;
@@ -47,15 +48,15 @@ public class HttpAPIServerTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         if (httpServer == null) {
-            properties.setProperty("data.folder", getProfileFolder());
-
             httpServer = new HttpAPIServer(holder).start();
-            sleep(500);
-
-            httpsServerUrl = "http://localhost:" + properties.getIntProperty("http.port") + "/";
-
+            httpsServerUrl = String.format("http://localhost:%s/", httpPort);
             httpclient = HttpClients.createDefault();
         }
+    }
+
+    @Override
+    public String getDataFolder() {
+        return IntegrationBase.getProfileFolder();
     }
 
     //----------------------------GET METHODS SECTION

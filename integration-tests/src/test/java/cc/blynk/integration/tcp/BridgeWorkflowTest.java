@@ -1,5 +1,6 @@
-package cc.blynk.integration;
+package cc.blynk.integration.tcp;
 
+import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
@@ -36,21 +37,16 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        hardwareServer = new HardwareServer(holder).start();
-        appServer = new AppServer(holder).start();
-
-        //todo improve this
-        //wait util server starts.
-        sleep(500);
-
-        clientPair = initAppAndHardPair("user_profile_json_3_dashes.txt");
+        this.hardwareServer = new HardwareServer(holder).start();
+        this.appServer = new AppServer(holder).start();
+        this.clientPair = initAppAndHardPair("user_profile_json_3_dashes.txt");
     }
 
     @After
     public void shutdown() {
-        appServer.stop();
-        hardwareServer.stop();
-        clientPair.stop();
+        this.appServer.stop();
+        this.hardwareServer.stop();
+        this.clientPair.stop();
     }
 
     @Test
@@ -123,7 +119,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
     @Test
     public void testCorrectWorkflow2HardsSameToken() throws Exception {
         //creating 1 new hard client
-        TestHardClient hardClient1 = new TestHardClient(host, hardPort);
+        TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
         hardClient1.send("login " + clientPair.token);
         verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -146,7 +142,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         String token2 = ((StringMessage) arguments.get(0)).body;
 
         //creating 1 new hard client
-        TestHardClient hardClient1 = new TestHardClient(host, hardPort);
+        TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
         hardClient1.send("login " + token2);
         verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -169,13 +165,13 @@ public class BridgeWorkflowTest extends IntegrationBase {
         String token2 = ((StringMessage) arguments.get(0)).body;
 
         //creating 2 new hard clients
-        TestHardClient hardClient1 = new TestHardClient(host, hardPort);
+        TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
         hardClient1.send("login " + token2);
         verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         hardClient1.reset();
 
-        TestHardClient hardClient2 = new TestHardClient(host, hardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
         hardClient2.send("login " + token2);
         verify(hardClient2.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -204,19 +200,19 @@ public class BridgeWorkflowTest extends IntegrationBase {
         String token3 = ((StringMessage) arguments.get(1)).body;
 
         //creating 2 new hard clients
-        TestHardClient hardClient1 = new TestHardClient(host, hardPort);
+        TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
         hardClient1.send("login " + token2);
         verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         hardClient1.reset();
 
-        TestHardClient hardClient2 = new TestHardClient(host, hardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
         hardClient2.send("login " + token2);
         verify(hardClient2.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         hardClient2.reset();
 
-        TestHardClient hardClient3 = new TestHardClient(host, hardPort);
+        TestHardClient hardClient3 = new TestHardClient("localhost", tcpHardPort);
         hardClient3.start();
         hardClient3.send("login " + token3);
         verify(hardClient3.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
