@@ -30,7 +30,7 @@ public class HttpAPIServer extends BaseServer {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(
-                        new HttpServerCodec(),
+                        new HttpServerCodec(200, 200, 1024),
                         new HttpObjectAggregator(1024, true),
                         new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );
