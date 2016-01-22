@@ -2,8 +2,6 @@ package cc.blynk.server.handlers.http.rest;
 
 import cc.blynk.utils.UriTemplate;
 import io.netty.handler.codec.http.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
@@ -22,8 +20,6 @@ import java.util.Set;
  * Created on 09.12.15.
  */
 public class HandlerRegistry {
-
-    private static final Logger log = LogManager.getLogger(HandlerRegistry.class);
 
     private final static Set<HandlerHolder> processors = new HashSet<>();
 
@@ -79,20 +75,6 @@ public class HandlerRegistry {
         }
     }
 
-    public static FullHttpResponse process(HttpRequest req) {
-        HandlerHolder handlerHolder = findHandler(req.getMethod(), path(req.getUri()));
-
-        URIDecoder uriDecoder = new URIDecoder(req.getUri());
-        if (handlerHolder != null) {
-            populateBody(req, uriDecoder);
-            uriDecoder.pathData = handlerHolder.uriTemplate.extractParameters();
-            return invoke(handlerHolder, uriDecoder);
-        }
-
-        log.error("Error resolving url. No path found.");
-        return Response.notFound();
-    }
-
     public static void populateBody(HttpRequest req, URIDecoder uriDecoder) {
         if (req.getMethod() == HttpMethod.PUT || req.getMethod() == HttpMethod.POST) {
             if (req instanceof HttpContent) {
@@ -118,9 +100,9 @@ public class HandlerRegistry {
             return (FullHttpResponse) handlerHolder.method.invoke(handlerHolder.handler, params);
         } catch (Exception e) {
             if (e.getCause() != null) {
-                return logError(e.getCause());
+                return Response.serverError((e.getCause().getMessage()));
             } else {
-                return logError(e);
+                return Response.serverError(e.getMessage());
             }
         }
     }
@@ -132,11 +114,6 @@ public class HandlerRegistry {
         } else {
             return uri.substring(0, pathEndPos);
         }
-    }
-
-    private static FullHttpResponse logError(Throwable t) {
-        log.error(t);
-        return Response.serverError(t.getMessage());
     }
 
 }

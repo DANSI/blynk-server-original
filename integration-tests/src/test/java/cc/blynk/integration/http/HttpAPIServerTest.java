@@ -183,6 +183,7 @@ public class HttpAPIServerTest extends BaseTest {
     public void testPutWithWrongPin() throws Exception {
         HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/x8");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
+        request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
@@ -194,6 +195,7 @@ public class HttpAPIServerTest extends BaseTest {
     public void testPutWithNonExistingPin() throws Exception {
         HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
+        request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
@@ -220,6 +222,27 @@ public class HttpAPIServerTest extends BaseTest {
         }
     }
 
+    @Test
+    public void testPutWithExistingPinWrongBody() throws Exception {
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14");
+        request.setEntity(new StringEntity("\"100\"", ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(500, response.getStatusLine().getStatusCode());
+            assertEquals("Error parsing body param. \"100\"", consumeText(response));
+        }
+    }
+
+    @Test
+    public void testPutWithExistingPinWrongBody2() throws Exception {
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14");
+        request.setEntity(new StringEntity("", ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(500, response.getStatusLine().getStatusCode());
+            assertEquals("Error parsing body param. ", consumeText(response));
+        }
+    }
 
     //----------------------------NOTIFICATION POST METHODS SECTION
 
@@ -240,8 +263,8 @@ public class HttpAPIServerTest extends BaseTest {
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("Body is empty or larger than 255 chars.", consumeText(response));
+            assertEquals(500, response.getStatusLine().getStatusCode());
+            assertEquals("Error parsing body param. ", consumeText(response));
         }
     }
 
@@ -289,8 +312,8 @@ public class HttpAPIServerTest extends BaseTest {
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("Email body is wrong. Missing or empty fields 'to', 'subj'.", consumeText(response));
+            assertEquals(500, response.getStatusLine().getStatusCode());
+            assertEquals("Error parsing body param. ", consumeText(response));
         }
     }
 
