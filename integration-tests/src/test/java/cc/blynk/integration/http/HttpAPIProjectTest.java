@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpAPIDashboardTest extends BaseTest {
+public class HttpAPIProjectTest extends BaseTest {
 
     private static BaseServer httpServer;
     private static CloseableHttpClient httpclient;
@@ -59,7 +59,7 @@ public class HttpAPIDashboardTest extends BaseTest {
     @Test
     public void testGetWithFakeToken() throws Exception {
         String token = "4ae3851817194e2596cf1b7103603ef8";
-        HttpGet request = new HttpGet(httpsServerUrl + token + "/dashboard");
+        HttpGet request = new HttpGet(httpsServerUrl + token + "/project");
 
         InputStream is = getClass().getResourceAsStream("/profiles/u_dmitriy@blynk.cc.user");
         User user = JsonParser.mapper.readValue(is, User.class);

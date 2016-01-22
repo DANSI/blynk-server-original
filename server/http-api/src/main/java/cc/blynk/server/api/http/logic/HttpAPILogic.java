@@ -48,9 +48,9 @@ public class HttpAPILogic {
     }
 
     @GET
-    @Path("{token}/dashboard")
+    @Path("{token}/project")
     public Response getDashboard(@PathParam("token") String token) {
-        globalStats.mark(HTTP_GET_DASHBOARD);
+        globalStats.mark(HTTP_GET_PROJECT);
 
         User user = userDao.tokenManager.getUserByToken(token);
 

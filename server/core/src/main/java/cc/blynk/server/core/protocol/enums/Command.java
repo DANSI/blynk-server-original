@@ -62,7 +62,7 @@ public final class Command {
     public static final short HTTP_UPDATE_PIN_DATA = 36;
     public static final short HTTP_NOTIFY = 37;
     public static final short HTTP_EMAIL = 38;
-    public static final short HTTP_GET_DASHBOARD = 39;
+    public static final short HTTP_GET_PROJECT = 39;
     public static final short HTTP_TOTAL = 40;
 
 
@@ -103,7 +103,7 @@ public final class Command {
                 put(HTTP_UPDATE_PIN_DATA, "HttpUpdatePinData");
                 put(HTTP_NOTIFY, "HttpNotify");
                 put(HTTP_EMAIL, "HttpEmail");
-                put(HTTP_GET_DASHBOARD, "HttpGetDashboard");
+                put(HTTP_GET_PROJECT, "HttpGetProject");
                 put(HTTP_TOTAL, "HttpTotal");
             }
     };
