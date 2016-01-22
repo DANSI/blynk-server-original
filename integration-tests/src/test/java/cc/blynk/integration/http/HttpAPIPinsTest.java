@@ -22,7 +22,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -33,7 +32,7 @@ import static org.junit.Assert.*;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpAPIServerTest extends BaseTest {
+public class HttpAPIPinsTest extends BaseTest {
 
     private static BaseServer httpServer;
     private static CloseableHttpClient httpclient;
@@ -352,16 +351,5 @@ public class HttpAPIServerTest extends BaseTest {
             }
         }
     }
-
-    @SuppressWarnings("unchecked")
-    private List<String> consumeJsonPinValues(CloseableHttpResponse response) throws IOException {
-        return JsonParser.readAny(consumeText(response), List.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    private String consumeText(CloseableHttpResponse response) throws IOException {
-        return EntityUtils.toString(response.getEntity());
-    }
-
 
 }

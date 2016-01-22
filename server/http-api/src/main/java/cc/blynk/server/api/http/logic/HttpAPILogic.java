@@ -48,6 +48,30 @@ public class HttpAPILogic {
     }
 
     @GET
+    @Path("{token}/dashboard")
+    public Response getDashboard(@PathParam("token") String token) {
+        globalStats.mark(HTTP_GET_DASHBOARD);
+
+        User user = userDao.tokenManager.getUserByToken(token);
+
+        if (user == null) {
+            log.error("Requested token {} not found.", token);
+            return Response.badRequest("Invalid token.");
+        }
+
+        Integer dashId = user.getDashIdByToken(token);
+
+        if (dashId == null) {
+            log.error("Dash id for token {} not found. User {}", token, user.name);
+            return Response.badRequest("Didn't find dash id for token.");
+        }
+
+        DashBoard dashBoard = user.profile.getDashById(dashId);
+
+        return ok(dashBoard.toString());
+    }
+
+    @GET
     @Path("{token}/pin/{pin}")
     public Response getWidgetPinData(@PathParam("token") String token,
                                      @PathParam("pin") String pinString) {

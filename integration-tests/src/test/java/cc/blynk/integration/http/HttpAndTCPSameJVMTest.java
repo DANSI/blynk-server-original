@@ -7,7 +7,6 @@ import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -15,14 +14,12 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.IOException;
 import java.util.List;
 
 import static cc.blynk.integration.IntegrationBase.*;
@@ -129,16 +126,6 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
                 assertEquals(i, Integer.valueOf(values.get(0)).intValue());
             }
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<String> consumeJsonPinValues(CloseableHttpResponse response) throws IOException {
-        return JsonParser.readAny(consumeText(response), List.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    private String consumeText(CloseableHttpResponse response) throws IOException {
-        return EntityUtils.toString(response.getEntity());
     }
 
 }

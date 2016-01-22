@@ -2,9 +2,15 @@ package cc.blynk.integration;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.junit.Before;
 import org.mockito.Mock;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * The Blynk Project.
@@ -66,6 +72,16 @@ public abstract class BaseTest {
 
     public String getDataFolder() {
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> consumeJsonPinValues(CloseableHttpResponse response) throws IOException {
+        return JsonParser.readAny(consumeText(response), List.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public String consumeText(CloseableHttpResponse response) throws IOException {
+        return EntityUtils.toString(response.getEntity());
     }
 
 }

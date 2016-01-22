@@ -4,7 +4,6 @@ import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -19,7 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -83,16 +81,6 @@ public class HttpAPIKeepAliveServerTest extends BaseTest {
                 assertEquals(String.valueOf(i), values.get(0));
             }
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<String> consumeJsonPinValues(CloseableHttpResponse response) throws IOException {
-        return JsonParser.readAny(consumeText(response), List.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    private String consumeText(CloseableHttpResponse response) throws IOException {
-        return EntityUtils.toString(response.getEntity());
     }
 
 }
