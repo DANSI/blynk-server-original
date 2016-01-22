@@ -36,7 +36,7 @@ public class HttpsAPIServer extends BaseServer {
                 ch.pipeline().addLast(
                         sslCtx.newHandler(ch.alloc()),
                         new HttpServerCodec(),
-                        new HttpObjectAggregator(65536),
+                        new HttpObjectAggregator(1024, true),
                         new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );
             }
