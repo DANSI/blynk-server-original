@@ -90,6 +90,25 @@ add the following line
         
 save and exit.
 
+## Update instruction
+
+In order to update your server with new version you need to kill old process and start new one.
+
++ Find process id of Blynk server
+
+        ps -aux | grep java
+        
++ You will see something like that
+ 
+        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.12.4.jar   
+        
++ Kill old process
+
+        kill 10539
+        
+10539 - blynk server process id from command output above.
+ 
++ Start new server [as usual](https://github.com/blynkkk/blynk-server#quick-local-server-setup)
                 
 ## App and sketch changes
 
