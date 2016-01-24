@@ -100,11 +100,6 @@ public class ServerLauncher {
         //Launching all background jobs.
         JobLauncher.start(holder, servers);
 
-        try {
-            Thread.sleep(500);
-        } catch (Exception e) {
-        }
-
         System.out.println();
         System.out.println("Blynk Server successfully started.");
         System.out.println("All server output is stored in folder '" + new File(System.getProperty("logs.folder")).getAbsolutePath() + "' file.");
