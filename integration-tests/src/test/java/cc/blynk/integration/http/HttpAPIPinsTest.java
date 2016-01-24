@@ -191,14 +191,36 @@ public class HttpAPIPinsTest extends BaseTest {
     }
 
     @Test
-    public void testPutWithNonExistingPin() throws Exception {
+    public void testPutWithNoWidget() throws Exception {
         HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testPutWithNoWidgetNoPinData() throws Exception {
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
+        request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
+        request.setEntity(new StringEntity("[]", ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("Requested pin not exists in app.", consumeText(response));
+            assertEquals("No pin for update provided.", consumeText(response));
+        }
+    }
+
+    @Test
+    public void testPutWithNoWidgetMultivalue() throws Exception {
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
+        request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
+        request.setEntity(new StringEntity("[\"100\", \"101\", \"102\"]", ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
         }
     }
 

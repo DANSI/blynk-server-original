@@ -128,4 +128,37 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         }
     }
 
+    @Test
+    public void testChangePinValueViaHttpAPIAndNoWidgetSinglePinValue() throws Exception {
+        ClientPair clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+
+        HttpPut request = new HttpPut(httpsServerUrl + token + "/pin/v31");
+
+        request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, ("vw 31 100").replaceAll(" ", "\0"))));
+    }
+
+
+    @Test
+    public void testChangePinValueViaHttpAPIAndNoWidgetMultiPinValue() throws Exception {
+        ClientPair clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+
+        HttpPut request = new HttpPut(httpsServerUrl + token + "/pin/v31");
+
+        request.setEntity(new StringEntity("[\"100\",\"101\",\"102\"]", ContentType.APPLICATION_JSON));
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, ("vw 31 100 101 102").replaceAll(" ", "\0"))));
+    }
+
 }

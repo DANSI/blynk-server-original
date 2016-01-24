@@ -6,6 +6,7 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
@@ -124,6 +125,11 @@ public class HttpAPILogic {
 
         globalStats.mark(HTTP_UPDATE_PIN_DATA);
 
+        if (pinValues.length == 0) {
+            log.error("No pin for update provided.");
+            return Response.badRequest("No pin for update provided.");
+        }
+
         User user = userDao.tokenManager.getUserByToken(token);
 
         if (user == null) {
@@ -152,15 +158,14 @@ public class HttpAPILogic {
         }
 
         Widget widget = dashBoard.findWidgetByPin(pin, pinType);
+        String body;
 
         if (widget == null) {
-            log.error("Requested pin {} not found. User {}", pinString, user.name);
-            return Response.badRequest("Requested pin not exists in app.");
+            body = Pin.makeHardwareBody(pinType, pin, pinValues);
+        } else {
+            widget.updateIfSame(pin, pinType, pinValues);
+            body = widget.makeHardwareBody();
         }
-
-        widget.updateIfSame(pin, pinType, pinValues);
-
-        String body = widget.makeHardwareBody();
 
         if (body != null) {
             Session session = sessionDao.userSession.get(user);
