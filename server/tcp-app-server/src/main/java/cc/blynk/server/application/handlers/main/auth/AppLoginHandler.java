@@ -63,19 +63,18 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             osType = messageParts[2];
             version = messageParts[3];
         }
-        appLogin(ctx, message.id, messageParts[0], messageParts[1], osType, version);
+        appLogin(ctx, message.id, messageParts[0].toLowerCase(), messageParts[1], osType, version);
     }
 
     private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String pass, String osType, String version) {
-        String userName = username.toLowerCase();
-        User user = userDao.getByName(userName);
+        User user = userDao.getByName(username);
 
         if (user == null) {
-            throw new UserNotRegistered(String.format("User not registered. Username '%s', %s", userName, ctx.channel().remoteAddress()), messageId);
+            throw new UserNotRegistered(String.format("User not registered. Username '%s', %s", username, ctx.channel().remoteAddress()), messageId);
         }
 
         if (!user.pass.equals(pass)) {
-            throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel().remoteAddress()), messageId);
+            throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", username, ctx.channel().remoteAddress()), messageId);
         }
 
         AppStateHolder appStateHolder = new AppStateHolder(user, osType, version);
