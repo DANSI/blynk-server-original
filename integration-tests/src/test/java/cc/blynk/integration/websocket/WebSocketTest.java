@@ -46,7 +46,6 @@ public class WebSocketTest extends BaseTest {
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         webSocketClient.send("ping");
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
-        sleep(600);
     }
 
 }
