@@ -2,6 +2,9 @@ package cc.blynk.server.core.model.widgets.outputs;
 
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -19,7 +22,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
 
     private int frequency;
 
-    private transient long lastRequestTS;
+    private transient Map<String, Long> lastRequestTS = new HashMap<>();
 
     @Override
     public final int getFrequency() {
@@ -27,13 +30,13 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     }
 
     @Override
-    public final long getLastRequestTS() {
-        return lastRequestTS;
+    public final long getLastRequestTS(String body) {
+        return lastRequestTS.getOrDefault(body, 0L);
     }
 
     @Override
-    public final void setLastRequestTS(long now) {
-        this.lastRequestTS = now;
+    public final void setLastRequestTS(String body, long now) {
+        this.lastRequestTS.put(body, now);
     }
 
     @Override

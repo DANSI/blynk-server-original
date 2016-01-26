@@ -19,12 +19,12 @@ public class Digit4Display extends OnePinWidget implements FrequencyWidget {
     }
 
     @Override
-    public final long getLastRequestTS() {
+    public final long getLastRequestTS(String body) {
         return lastRequestTS;
     }
 
     @Override
-    public final void setLastRequestTS(long now) {
+    public final void setLastRequestTS(String body, long now) {
         this.lastRequestTS = now;
     }
 

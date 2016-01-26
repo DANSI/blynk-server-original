@@ -16,7 +16,34 @@
                 {"id":8, "x":1, "y":1, "label":"Some Text", "type":"GRAPH",          "pinType":"ANALOG", "pin":8},
                 {"id":9, "x":1, "y":1, "type":"NOTIFICATION", "notifyWhenOffline":true, "androidTokens":{"uid":"token"}},
                 {"id":10, "x":1, "y":1, "token":"token", "secret":"secret", "type":"TWITTER"},
-                {"id":11, "x":1, "y":1, "type":"RTC", "pinType":"VIRTUAL", "pin":9}
+                {"id":11, "x":1, "y":1, "type":"RTC", "pinType":"VIRTUAL", "pin":9},
+                {"id":12, "x":0, "y":0, "color":-1, "width":8, "height":2,
+                    "type":"LCD",
+                    "pins": [
+                                {
+                                    "pin":0,
+                                    "pwmMode":false,
+                                    "rangeMappingOn":false,
+                                    "pinType":"VIRTUAL",
+                                    "value":"89.888037459418",
+                                    "min":-100,
+                                    "max":100
+                                },
+                                {   "pin":1,
+                                    "pwmMode":false,
+                                    "rangeMappingOn":false,
+                                    "pinType":"VIRTUAL",
+                                    "value":"-58.74774244674501",
+                                    "min":-100,
+                                    "max":100
+                                }
+                            ],
+                    "advancedMode":false,
+                    "textFormatLine1":"pin1 : /pin0/",
+                    "textFormatLine2":"pin2 : /pin1/",
+                    "textLight":false,
+                    "frequency":1000
+                }
              ],
              "boardType":"UNO"
             }

@@ -9,14 +9,14 @@ public interface FrequencyWidget {
 
     int getFrequency();
 
-    long getLastRequestTS();
+    long getLastRequestTS(String body);
 
-    void setLastRequestTS(long now);
+    void setLastRequestTS(String body, long now);
 
-    default boolean isTicked() {
+    default boolean isTicked(String body) {
         final long now = System.currentTimeMillis();
-        if (getFrequency() > 0 && now > getLastRequestTS() + getFrequency()) {
-            setLastRequestTS(now);
+        if (getFrequency() > 0 && now > getLastRequestTS(body) + getFrequency()) {
+            setLastRequestTS(body, now);
             return true;
         }
         return false;

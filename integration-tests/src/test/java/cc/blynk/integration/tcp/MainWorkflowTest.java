@@ -613,6 +613,27 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testSendReadCommandsForLCD() throws Exception {
+        clientPair.appClient.send("hardware 1 vr 0");
+        clientPair.appClient.send("hardware 1 vr 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(2)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "vr 0".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, "vr 1".replaceAll(" ", "\0"))));
+
+        clientPair.hardwareClient.reset();
+        clientPair.appClient.send("hardware 1 vr 0");
+        clientPair.appClient.send("hardware 1 vr 1");
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), any());
+
+        sleep(501);
+        clientPair.appClient.send("hardware 1 vr 0");
+        clientPair.appClient.send("hardware 1 vr 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(2)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, "vr 0".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, HARDWARE, "vr 1".replaceAll(" ", "\0"))));
+    }
+
+    @Test
     //todo one more test here
     public void test2ClientPairsWorkCorrectly() throws Exception {
         final int ITERATIONS = 100;

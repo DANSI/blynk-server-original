@@ -78,11 +78,7 @@ public class DashBoard {
         this.updatedAt = System.currentTimeMillis();
     }
 
-    public FrequencyWidget findReadingWidget(String body, int msgId) {
-        return findReadingWidget(body.split(StringUtils.BODY_SEPARATOR_STRING), msgId);
-    }
-
-    private FrequencyWidget findReadingWidget(String[] splitted, int msgId) {
+    public FrequencyWidget findReadingWidget(String[] splitted, int msgId) {
         final PinType type = PinType.getPingType(splitted[0].charAt(0));
         final byte pin = ParseUtil.parseByte(splitted[1], msgId);
         return findReadingWidget(pin, type, msgId);

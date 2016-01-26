@@ -69,8 +69,8 @@ public class HardwareAppLogic {
                 session.sendMessageToHardware(ctx, dashId, new HardwareMessage(message.id, split[1]));
                 break;
             case 'r' :
-                FrequencyWidget frequencyWidget = dash.findReadingWidget(split[1], message.id);
-                if (frequencyWidget.isTicked()) {
+                FrequencyWidget frequencyWidget = dash.findReadingWidget(split[1].split(StringUtils.BODY_SEPARATOR_STRING), message.id);
+                if (frequencyWidget.isTicked(split[1])) {
                     session.sendMessageToHardware(ctx, dashId, new HardwareMessage(message.id, split[1]));
                 }
                 break;
