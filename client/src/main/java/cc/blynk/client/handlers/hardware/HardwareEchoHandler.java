@@ -58,14 +58,19 @@ public class HardwareEchoHandler extends SimpleChannelInboundHandler<HardwareMes
             if (pin == 3) {
                 value = String.valueOf(ThreadLocalRandom.current().nextDouble(-100, 100));
             }
+            if (pin == 11) {
+                ctx.writeAndFlush(MessageFactory.produce(msgId, Command.PUSH_NOTIFICATION, "You pressed button on V11"));
+            }
 
         }
 
-        StringBuilder sb = new StringBuilder()
-                .append(pinType.pintTypeChar).append('w')
-                .append('\0').append(pin)
-                .append('\0').append(value);
-        ctx.writeAndFlush(MessageFactory.produce(msgId, Command.HARDWARE, sb.toString()));
+        if (!"".equals(value)) {
+            StringBuilder sb = new StringBuilder()
+                    .append(pinType.pintTypeChar).append('w')
+                    .append('\0').append(pin)
+                    .append('\0').append(value);
+            ctx.writeAndFlush(MessageFactory.produce(msgId, Command.HARDWARE, sb.toString()));
+        }
     }
 
 }
