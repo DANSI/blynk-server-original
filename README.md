@@ -254,7 +254,7 @@ server.properties options:
 
         admin.rootPath=/admin
         
-+ Comma separated list of administrator IPs. Allow access to admin UI only for those IPs. Leave empty in order to allow for all. By default allow access from local host.
++ Comma separated list of administrator IPs. Allow access to admin UI only for those IPs. You may set it for 0.0.0.0/0 to allow access for all. You may use CIDR notation. For instance, 192.168.0.53/24.
         
         allowed.administrator.ips=127.0.0.1
         
@@ -274,7 +274,7 @@ You can change it with next options :
         
         admin.rootPath
         allowed.administrator.ips
-        https.port
+        administration.https.port
         
 ## HTTP RESTful
 Blynk HTTP RESTful API allows to easily read and write values to/from Pins in Blynk apps and Hardware. 
