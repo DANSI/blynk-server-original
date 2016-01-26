@@ -26,7 +26,7 @@ public class AppClient extends BaseClient {
     protected SslContext sslCtx;
 
     public AppClient(String host, int port) {
-        this(host, port, new Random(), props);
+        super(host, port, new Random());
     }
 
     protected AppClient(String host, int port, Random msgIdGenerator, ServerProperties properties) {

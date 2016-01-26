@@ -1,10 +1,9 @@
 package cc.blynk.client;
 
+import cc.blynk.client.core.ActiveHardwareClient;
 import cc.blynk.client.core.AppClient;
-import cc.blynk.client.core.BaseClient;
 import cc.blynk.client.core.HardwareClient;
 import cc.blynk.client.enums.ClientMode;
-import cc.blynk.server.core.protocol.model.messages.common.PingMessage;
 import cc.blynk.utils.ParseUtil;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -13,8 +12,6 @@ import org.apache.commons.cli.ParseException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * The Blynk Project.
@@ -33,7 +30,7 @@ public class ClientLauncher {
         options.addOption("host", true, "Server host or ip.")
                .addOption("port", true, "Port client should connect to.")
                .addOption("mode", true, "Client mode. 'hardware' or 'app'.")
-               .addOption("disableAppSsl", false, "Disables SSL for app mode.");
+               .addOption("tokens", true, "Tokens");
     }
 
     public static void main(String[] args) throws ParseException {
@@ -44,14 +41,24 @@ public class ClientLauncher {
         int port = ParseUtil.parseInt(cmd.getOptionValue("port",
                         (mode == ClientMode.APP ? String.valueOf(DEFAULT_APPLICATION_PORT) : String.valueOf(DEFAULT_HARDWARE_PORT)))
         );
-        BaseClient baseClient = mode == ClientMode.APP ? new AppClient(host, port) : new HardwareClient(host, port);
 
-        //pinging for hardware client to avoid closing from server side for inactivity
-        if (mode == ClientMode.HARDWARE) {
-            Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> baseClient.send(new PingMessage(777)), 12, 12, TimeUnit.SECONDS);
+        switch (mode) {
+            case APP :
+                new AppClient(host, port).start(new BufferedReader(new InputStreamReader(System.in)));
+                break;
+            case HARDWARE :
+                new HardwareClient(host, port).start(new BufferedReader(new InputStreamReader(System.in)));
+                break;
+            default :
+                String tokensFullString = cmd.getOptionValue("tokens");
+                if (tokensFullString == null) {
+                    throw new RuntimeException("Tokens required for TEST mode.");
+                }
+                String[] tokens = tokensFullString.split(",");
+                for (String token : tokens) {
+                    new ActiveHardwareClient(host, port).start(token);
+                }
         }
-
-        baseClient.start(new BufferedReader(new InputStreamReader(System.in)));
     }
 
 }

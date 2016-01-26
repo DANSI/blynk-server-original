@@ -1,5 +1,6 @@
 package cc.blynk.client.handlers.hardware;
 
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.MessageFactory;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
@@ -19,15 +20,52 @@ public class HardwareEchoHandler extends SimpleChannelInboundHandler<HardwareMes
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HardwareMessage msg) throws Exception {
-        if (msg.body.charAt(1) == 'r') {
-            StringBuilder sb = new StringBuilder(msg.body);
-            sb.setCharAt(1, 'w');
-            int random = ThreadLocalRandom.current().nextInt(100);
-            sb.append('\0').append(random);
-            ctx.writeAndFlush(MessageFactory.produce(msg.id, Command.HARDWARE, sb.toString()));
+        if (msg.body.charAt(1) == 'm') {
+            return;
         }
 
+        String[] split = msg.body.split("\0");
+
+        PinType pinType = PinType.getPingType(split[0].charAt(0));
+
+        byte pin = Byte.parseByte(split[1]);
+        //String value = split[2];
+
+        switch (msg.body.charAt(1)) {
+            case 'r' :
+                read(ctx, pinType, pin, msg.id);
+                break;
+            case 'w' :
+                //write();
+                break;
+            default:
+                break;
+        }
     }
 
+    private void read(ChannelHandlerContext ctx, PinType pinType, byte pin, int msgId) {
+        String value = "";
+        if (pinType == PinType.VIRTUAL) {
+            if (pin == 0) {
+                value = String.valueOf(ThreadLocalRandom.current().nextDouble(100));
+            }
+            if (pin == 1) {
+                value = String.valueOf(ThreadLocalRandom.current().nextInt(-100, 0));
+            }
+            if (pin == 2) {
+                value = String.valueOf(ThreadLocalRandom.current().nextInt(100));
+            }
+            if (pin == 3) {
+                value = String.valueOf(ThreadLocalRandom.current().nextDouble(-100, 100));
+            }
+
+        }
+
+        StringBuilder sb = new StringBuilder()
+                .append(pinType.pintTypeChar).append('w')
+                .append('\0').append(pin)
+                .append('\0').append(value);
+        ctx.writeAndFlush(MessageFactory.produce(msgId, Command.HARDWARE, sb.toString()));
+    }
 
 }

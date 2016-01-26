@@ -21,13 +21,10 @@ import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.websocket.handlers.WebSocketHandler;
-import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -40,7 +37,6 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.mockito.Mockito;
 
-import java.io.BufferedReader;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.Random;
@@ -100,22 +96,10 @@ public final class WebSocketClient extends BaseClient {
         };
     }
 
-    public void start() {
-        start(null);
-    }
-
     @Override
-    public void start(BufferedReader commandInputStream) {
-        Bootstrap b = new Bootstrap();
-        b.group(new NioEventLoopGroup()).channel(NioSocketChannel.class).handler(getChannelInitializer());
-
-        try {
-            // Start the connection attempt.
-            this.channel = b.connect(host, port).sync().channel();
-            startHandshake();
-        } catch (InterruptedException e) {
-            log.error(e);
-        }
+    public void start() {
+        super.start();
+        startHandshake();
     }
 
     private void startHandshake() {

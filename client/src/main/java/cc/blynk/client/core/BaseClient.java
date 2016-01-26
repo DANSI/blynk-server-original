@@ -28,7 +28,8 @@ import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 public abstract class BaseClient {
 
     protected static final Logger log = LogManager.getLogger(BaseClient.class);
-    protected static ServerProperties props = new ServerProperties();
+
+    protected final ServerProperties props;
     protected final String host;
     protected final int port;
     protected final Random random;
@@ -36,16 +37,23 @@ public abstract class BaseClient {
     protected NioEventLoopGroup nioEventLoopGroup;
 
     public BaseClient(String host, int port, Random messageIdGenerator) {
-        this.host = host;
-        this.port = port;
-        this.random = messageIdGenerator;
+        this(host, port, messageIdGenerator, new NioEventLoopGroup(1));
     }
 
-    BaseClient(String host, int port, Random messageIdGenerator, ServerProperties properties) {
+    public BaseClient(String host, int port, Random messageIdGenerator, ServerProperties serverProperties) {
         this.host = host;
         this.port = port;
         this.random = messageIdGenerator;
-        props = properties;
+        this.props = serverProperties;
+        this.nioEventLoopGroup = new NioEventLoopGroup(1);
+    }
+
+    public BaseClient(String host, int port, Random messageIdGenerator, NioEventLoopGroup nioEventLoopGroup) {
+        this.host = host;
+        this.port = port;
+        this.random = messageIdGenerator;
+        this.props = new ServerProperties();
+        this.nioEventLoopGroup = nioEventLoopGroup;
     }
 
     public static MessageBase produceMessageBaseOnUserInput(String line, int msgId) {
@@ -98,6 +106,18 @@ public abstract class BaseClient {
         } finally {
             // The connection is closed automatically on shutdown.
             nioEventLoopGroup.shutdownGracefully();
+        }
+    }
+
+    public void start() {
+        Bootstrap b = new Bootstrap();
+        b.group(nioEventLoopGroup).channel(NioSocketChannel.class).handler(getChannelInitializer());
+
+        try {
+            // Start the connection attempt.
+            this.channel = b.connect(host, port).sync().channel();
+        } catch (InterruptedException e) {
+            log.error(e);
         }
     }
 

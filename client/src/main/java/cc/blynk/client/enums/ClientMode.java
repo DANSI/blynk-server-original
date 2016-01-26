@@ -7,7 +7,7 @@ package cc.blynk.client.enums;
  */
 public enum ClientMode {
 
-    APP, HARDWARE;
+    APP, HARDWARE, TEST;
 
     public static ClientMode parse(String val) {
         for (ClientMode clientMode : values()) {

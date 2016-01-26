@@ -7,11 +7,9 @@ import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.ServerProperties;
-import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
@@ -31,7 +29,7 @@ public class TestAppClient extends AppClient {
     protected int msgId = 0;
 
     public TestAppClient(String host, int port) {
-        super(host, port, Mockito.mock(Random.class), props);
+        super(host, port, Mockito.mock(Random.class), new ServerProperties());
         Mockito.when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
     }
 
@@ -51,18 +49,6 @@ public class TestAppClient extends AppClient {
         List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
         StringMessage getTokenMessage = arguments.get(0);
         return getTokenMessage.body;
-    }
-
-    public void start() {
-        Bootstrap b = new Bootstrap();
-        b.group(nioEventLoopGroup).channel(NioSocketChannel.class).handler(getChannelInitializer());
-
-        try {
-            // Start the connection attempt.
-            this.channel = b.connect(host, port).sync().channel();
-        } catch (InterruptedException e) {
-            log.error(e);
-        }
     }
 
     @Override
