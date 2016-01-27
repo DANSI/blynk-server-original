@@ -4,14 +4,19 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.AppStateHolderUtil.*;
@@ -38,16 +43,28 @@ public class ActivateDashboardLogic {
         int dashId = ParseUtil.parseInt(dashBoardIdString, message.id);
 
         log.debug("Activating dash {} for user {}", dashBoardIdString, user.name);
-        DashBoard dashBoard = user.profile.getDashById(dashId, message.id);
-        dashBoard.activate();
+        DashBoard dash = user.profile.getDashById(dashId, message.id);
+        dash.activate();
         user.lastModifiedTs = System.currentTimeMillis();
 
         Session session = sessionDao.userSession.get(user);
 
+        List<SyncMessage> syncMessages = new ArrayList<>();
+        for (Widget widget : dash.widgets) {
+            String body = widget.makeHardwareBody();
+            if (body != null) {
+                syncMessages.add(new SyncMessage(1111, body));
+            }
+        }
+
         for (Channel appChannel : session.appChannels) {
             if (appChannel != ctx.channel() && getAppState(appChannel) != null) {
-                appChannel.writeAndFlush(message);
+                appChannel.write(message);
             }
+            for (SyncMessage syncMessage : syncMessages) {
+                appChannel.write(syncMessage);
+            }
+            appChannel.flush();
         }
 
         if (session.hasHardwareOnline(dashId)) {

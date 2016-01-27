@@ -4,10 +4,12 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.StringUtils;
 import org.mockito.ArgumentCaptor;
 
 import java.io.InputStream;
@@ -78,7 +80,16 @@ public abstract class IntegrationBase extends BaseTest {
         hardClient.start();
 
         String userProfileString = readTestUserProfile(jsonProfile);
-        int dashId = JsonParser.parseProfile(userProfileString, 1).dashBoards[0].id;
+        Profile profile = JsonParser.parseProfile(userProfileString, 1);
+
+        int expectedSyncCommandsCount = 0;
+        for (Widget widget : profile.dashBoards[0].widgets) {
+            if (widget.makeHardwareBody() != null) {
+                expectedSyncCommandsCount++;
+            }
+        }
+
+        int dashId = profile.dashBoards[0].id;
 
         appClient.send("register " + user)
                  .send("login " + user + " Android 1RC7")
@@ -87,7 +98,7 @@ public abstract class IntegrationBase extends BaseTest {
                  .send("getToken " + dashId);
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(appClient.responseMock, timeout(2000).times(5)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(appClient.responseMock, timeout(2000).times(5 + expectedSyncCommandsCount)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Object> arguments = objectArgumentCaptor.getAllValues();
         String token = getGetTokenMessage(arguments).body;
@@ -103,6 +114,10 @@ public abstract class IntegrationBase extends BaseTest {
 
     public static ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {
         return initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, "dima@mail.ua 1", null, properties);
+    }
+
+    public static String b(String body) {
+        return body.replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING);
     }
 
     public ClientPair initAppAndHardPair() throws Exception {
