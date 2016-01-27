@@ -5,6 +5,7 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -93,6 +94,12 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         twitter.cleanPrivateData();
         Notification notification = profile.dashBoards[0].getWidgetByType(Notification.class);
         notification.cleanPrivateData();
+
+        //one field update, cause it is hard to compare.
+        DashBoard temp = JsonParser.parseDashboard(dashboard, 1);
+        profile.dashBoards[0].updatedAt = temp.updatedAt;
+
+
         assertEquals(profile.dashBoards[0].toString(), dashboard);
         //System.out.println(dashboard);
     }
@@ -414,6 +421,11 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         twitter.cleanPrivateData();
         Notification notification = profile.dashBoards[0].getWidgetByType(Notification.class);
         notification.cleanPrivateData();
+
+        //one field update, cause it is hard to compare.
+        DashBoard temp = JsonParser.parseDashboard(dashboard, 1);
+        profile.dashBoards[0].updatedAt = temp.updatedAt;
+
         assertEquals(profile.dashBoards[0].toString(), dashboard);
         //System.out.println(dashboard);
     }

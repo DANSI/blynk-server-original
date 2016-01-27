@@ -8,6 +8,7 @@ import cc.blynk.server.application.AppServer;
 import cc.blynk.server.application.handlers.main.logic.reporting.GraphPinRequestData;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
@@ -21,6 +22,7 @@ import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ByteUtils;
+import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -178,19 +180,22 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("activate 10");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(10, DEVICE_NOT_IN_NETWORK)));
 
+        clientPair.appClient.reset();
         clientPair.appClient.send("loadProfile");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(11, LOAD_PROFILE, "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}")));
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        String expectedDash = String.format("{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":%d,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}", profile.dashBoards[0].updatedAt);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, LOAD_PROFILE, expectedDash)));
 
         clientPair.appClient.send("saveDash {\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(12, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         clientPair.appClient.send("loadProfile");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(11, LOAD_PROFILE, "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, LOAD_PROFILE, "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}")));
     }
 
     @Test
     public void loadGzippedProfile() throws Exception{
-        clientPair.appClient.send("loadprofile");
+        clientPair.appClient.send("loadProfile");
 
         String profileString = clientPair.appClient.getBody();
 
