@@ -21,7 +21,8 @@ import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.websocket.handlers.WebSocketHandler;
-import io.netty.buffer.Unpooled;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -38,7 +39,6 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.mockito.Mockito;
 
 import java.net.URI;
-import java.nio.ByteBuffer;
 import java.util.Random;
 
 public final class WebSocketClient extends BaseClient {
@@ -46,7 +46,7 @@ public final class WebSocketClient extends BaseClient {
     public final SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
     final SslContext sslCtx;
     private final WebSocketClientHandler handler;
-    protected int msgId = 0;
+    public int msgId = 0;
 
     public WebSocketClient(String host, int port, boolean isSSL) throws Exception {
         super(host, port, new Random());
@@ -66,15 +66,15 @@ public final class WebSocketClient extends BaseClient {
     }
 
     private static WebSocketFrame produceWebSocketFrame(MessageBase msg) {
-        ByteBuffer bb = ByteBuffer.allocate(5 + msg.length);
-        bb.put((byte) msg.command);
-        bb.putShort((short) msg.id);
-        bb.putShort((short) msg.length);
+        ByteBuf bb = PooledByteBufAllocator.DEFAULT.heapBuffer(5 + msg.length);
+        bb.writeByte(msg.command);
+        bb.writeShort(msg.id);
+        bb.writeShort(msg.length);
         byte[] data = msg.getBytes();
         if (data != null) {
-            bb.put(data);
+            bb.writeBytes(data);
         }
-        return new BinaryWebSocketFrame(Unpooled.wrappedBuffer(bb.array()));
+        return new BinaryWebSocketFrame(bb);
     }
 
     @Override

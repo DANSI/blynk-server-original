@@ -7,6 +7,7 @@ import cc.blynk.integration.model.websocket.WebSocketClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.websocket.WebSocketServer;
 import org.junit.AfterClass;
@@ -93,13 +94,16 @@ public class WebSocketTest extends BaseTest {
         webSocketClient2.start();
         webSocketClient2.send("login " + token);
         verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 8 in"))));
+        webSocketClient2.msgId = 1000;
 
         for (int i = 1; i <= 10; i++) {
             clientPair.appClient.send("hardware 1 vw 4 " + i);
             verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE, b("vw 4 " + i))));
             verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE, b("vw 4 " + i))));
-            webSocketClient2.send("hardsync " + b("vr 4"));
             verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE, b("vw 4 " + i))));
+            webSocketClient2.send("hardsync " + b("vr 4"));
+            verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1000 + i, HARDWARE, b("vw 4 " + i))));
         }
     }
 
