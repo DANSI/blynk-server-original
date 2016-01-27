@@ -89,11 +89,17 @@ public class WebSocketTest extends BaseTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 4 3"))));
 
         clientPair.appClient.reset();
+        WebSocketClient webSocketClient2 = new WebSocketClient("localhost", tcpWebSocketPort, false);
+        webSocketClient2.start();
+        webSocketClient2.send("login " + token);
+        verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        for (int i = 1; i <= 100; i++) {
+        for (int i = 1; i <= 10; i++) {
             clientPair.appClient.send("hardware 1 vw 4 " + i);
             verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE, b("vw 4 " + i))));
             verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE, b("vw 4 " + i))));
+            webSocketClient2.send("hardsync " + b("vr 4"));
+            verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE, b("vw 4 " + i))));
         }
     }
 
