@@ -41,11 +41,6 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
         this.globalStats = globalStats;
     }
 
-    private static void send(ChannelHandlerContext ctx, FullHttpResponse response) {
-        response.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
-        ctx.writeAndFlush(response);
-    }
-
     private static void send(Channel channel, FullHttpResponse response) {
         response.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
         channel.writeAndFlush(response);
@@ -70,31 +65,34 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
 
         if (handlerHolder == null) {
             log.error("Error resolving url. No path found.");
-            send(ctx, Response.notFound());
-        } else {
-            URIDecoder uriDecoder = new URIDecoder(req.getUri());
-            HandlerRegistry.populateBody(req, uriDecoder);
-            uriDecoder.pathData = handlerHolder.uriTemplate.extractParameters();
+            ctx.writeAndFlush(Response.notFound());
+            return;
+        }
 
-            //reregister logic
-            String tokenPathParam = uriDecoder.pathData.get("token");
-            if (tokenPathParam != null) {
-                User user = userDao.tokenManager.getUserByToken(tokenPathParam);
-                if (user != null) {
-                    Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
-                    if (session.initialEventLoop != ctx.channel().eventLoop()) {
-                        log.debug("Re registering http channel. {}", ctx.channel());
-                        reRegisterChannel(ctx, session, channelFuture -> send(channelFuture.channel(), HandlerRegistry.invoke(handlerHolder, uriDecoder)));
-                    } else {
-                        send(ctx, HandlerRegistry.invoke(handlerHolder, uriDecoder));
-                    }
-                } else {
-                    log.error("Requested token {} not found.", tokenPathParam);
-                    send(ctx, Response.badRequest("Invalid token."));
-                }
-            } else {
-                send(ctx, HandlerRegistry.invoke(handlerHolder, uriDecoder));
-            }
+        URIDecoder uriDecoder = new URIDecoder(req.getUri());
+        HandlerRegistry.populateBody(req, uriDecoder);
+        uriDecoder.pathData = handlerHolder.uriTemplate.extractParameters();
+
+        String tokenPathParam = uriDecoder.pathData.get("token");
+        if (tokenPathParam == null) {
+            ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, uriDecoder));
+            return;
+        }
+
+        //reregister logic
+        User user = userDao.tokenManager.getUserByToken(tokenPathParam);
+        if (user == null) {
+            log.error("Requested token {} not found.", tokenPathParam);
+            ctx.writeAndFlush(Response.badRequest("Invalid token."));
+            return;
+        }
+
+        Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
+        if (session.initialEventLoop != ctx.channel().eventLoop()) {
+            log.debug("Re registering http channel. {}", ctx.channel());
+            reRegisterChannel(ctx, session, channelFuture -> send(channelFuture.channel(), HandlerRegistry.invoke(handlerHolder, uriDecoder)));
+        } else {
+            ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, uriDecoder));
         }
     }
 

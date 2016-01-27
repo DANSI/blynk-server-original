@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.JsonParser;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 
@@ -27,12 +28,14 @@ public class Response extends DefaultFullHttpResponse {
 
     public Response(HttpVersion version, HttpResponseStatus status, String content, String contentType) {
         super(version, status, (content == null ? Unpooled.EMPTY_BUFFER : Unpooled.copiedBuffer(content, StandardCharsets.UTF_8)));
+        headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
         headers().set(CONTENT_TYPE, contentType);
         headers().set(CONTENT_LENGTH, content().readableBytes());
     }
 
     public Response(HttpVersion version, HttpResponseStatus status) {
         super(version, status);
+        headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
     }
     
     public static Response ok() {
