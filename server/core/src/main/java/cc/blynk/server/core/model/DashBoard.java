@@ -78,6 +78,16 @@ public class DashBoard {
         this.updatedAt = System.currentTimeMillis();
     }
 
+    public void activate() {
+        isActive = true;
+        updatedAt = System.currentTimeMillis();
+    }
+
+    public void deactivate() {
+        isActive = false;
+        updatedAt = System.currentTimeMillis();
+    }
+
     public FrequencyWidget findReadingWidget(String[] splitted, int msgId) {
         final PinType type = PinType.getPingType(splitted[0].charAt(0));
         final byte pin = ParseUtil.parseByte(splitted[1], msgId);

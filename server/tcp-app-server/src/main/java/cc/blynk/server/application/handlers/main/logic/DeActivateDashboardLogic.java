@@ -36,10 +36,10 @@ public class DeActivateDashboardLogic {
             log.debug("DeActivating dash {} for user {}", message.body, user.name);
             int dashId = ParseUtil.parseInt(message.body, message.id);
             DashBoard dashBoard = user.profile.getDashById(dashId, message.id);
-            dashBoard.isActive = false;
+            dashBoard.deactivate();
         } else {
             for (DashBoard dashBoard : user.profile.dashBoards) {
-                dashBoard.isActive = false;
+                dashBoard.deactivate();
             }
         }
         user.lastModifiedTs = System.currentTimeMillis();
