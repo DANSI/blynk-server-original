@@ -3,12 +3,12 @@ package cc.blynk.server.websocket.handlers;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
-import io.netty.buffer.Unpooled;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -17,7 +17,6 @@ import java.util.List;
  * Created on 15.01.16.
  */
 public class WebSocketEncoder extends MessageToMessageEncoder<MessageBase> {
-
 
     private final GlobalStats stats;
 
@@ -30,20 +29,20 @@ public class WebSocketEncoder extends MessageToMessageEncoder<MessageBase> {
         stats.mark(msg.command);
 
         //todo finish and optimize.
-        ByteBuffer bb;
+        ByteBuf bb;
         if (msg.command == Command.RESPONSE) {
-            bb = ByteBuffer.allocate(5);
+            bb = PooledByteBufAllocator.DEFAULT.heapBuffer(5);
         } else {
-            bb = ByteBuffer.allocate(5 + msg.length);
+            bb = PooledByteBufAllocator.DEFAULT.heapBuffer(5  + msg.length);
         }
-        bb.put((byte) msg.command);
-        bb.putShort((short) msg.id);
-        bb.putShort((short) msg.length);
-        byte[] data = msg.getBytes();
+        bb.writeByte(msg.command);
+        bb.writeShort(msg.id);
+        bb.writeShort(msg.length);
+        final byte[] data = msg.getBytes();
         if (data != null) {
-            bb.put(data);
+            bb.writeBytes(data);
         }
 
-        out.add(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(bb.array())));
+        out.add(new BinaryWebSocketFrame(bb));
     }
 }
