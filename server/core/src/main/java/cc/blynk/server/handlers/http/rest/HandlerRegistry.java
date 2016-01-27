@@ -68,7 +68,6 @@ public class HandlerRegistry {
                     }
                 }
 
-                //todo throw exception on duplicate...
                 processors.remove(handlerHolder);
                 processors.add(handlerHolder);
             }

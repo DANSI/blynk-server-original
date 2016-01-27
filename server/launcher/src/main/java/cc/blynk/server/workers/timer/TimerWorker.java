@@ -21,7 +21,6 @@ import java.time.ZoneId;
  *
  * Simplest possible timer implementation.
  *
- * //todo optimize!!! Could handle only ~10k timers per second.
  */
 public class TimerWorker implements Runnable {
 

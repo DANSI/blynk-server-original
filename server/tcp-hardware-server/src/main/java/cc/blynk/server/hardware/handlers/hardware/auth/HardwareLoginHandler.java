@@ -82,7 +82,6 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         final Integer dashId = UserDao.getDashIdByToken(user.dashTokens, token, message.id);
 
-        //todo find out why this happen
         DashBoard dash = user.profile.getDashById(dashId);
         if (dash == null) {
             log.error("User : {} requested token {} for non-existing {} dash id.", user.name, token, dashId);
