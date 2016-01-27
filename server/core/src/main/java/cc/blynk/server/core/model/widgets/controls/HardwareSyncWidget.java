@@ -10,7 +10,7 @@ import io.netty.channel.ChannelHandlerContext;
  * Created by Dmitriy Dumanskiy.
  * Created on 03.12.15.
  */
-public interface SyncWidget {
+public interface HardwareSyncWidget {
 
     void send(ChannelHandlerContext ctx, int msgId);
 

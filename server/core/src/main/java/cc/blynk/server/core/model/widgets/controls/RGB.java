@@ -10,7 +10,7 @@ import io.netty.channel.ChannelHandlerContext;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class RGB extends MultiPinWidget implements SyncWidget {
+public class RGB extends MultiPinWidget implements HardwareSyncWidget {
 
     public boolean splitMode;
 

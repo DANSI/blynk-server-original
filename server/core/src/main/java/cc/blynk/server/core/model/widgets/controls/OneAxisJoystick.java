@@ -9,7 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class OneAxisJoystick extends OnePinWidget implements SyncWidget {
+public class OneAxisJoystick extends OnePinWidget implements HardwareSyncWidget {
 
     public boolean autoReturn;
 

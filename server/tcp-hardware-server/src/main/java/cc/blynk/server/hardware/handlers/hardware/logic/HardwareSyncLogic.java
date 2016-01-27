@@ -4,7 +4,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.controls.SyncWidget;
+import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
 import cc.blynk.server.core.model.widgets.others.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
@@ -30,8 +30,8 @@ public class HardwareSyncLogic {
         if (message.length == 0) {
             //return all widgets state
             for (Widget widget : dash.widgets) {
-                if (widget instanceof SyncWidget) {
-                    ((SyncWidget) widget).send(ctx, message.id);
+                if (widget instanceof HardwareSyncWidget) {
+                    ((HardwareSyncWidget) widget).send(ctx, message.id);
                 }
             }
 
@@ -47,8 +47,8 @@ public class HardwareSyncLogic {
                 if (widget instanceof RTC)  {
                     long now = Instant.now().getEpochSecond();
                     ctx.writeAndFlush(new HardwareMessage(message.id, Pin.makeHardwareBody(pinType, pin, String.valueOf(now))));
-                } else if (widget instanceof SyncWidget) {
-                    ((SyncWidget) widget).send(ctx, message.id);
+                } else if (widget instanceof HardwareSyncWidget) {
+                    ((HardwareSyncWidget) widget).send(ctx, message.id);
                     ctx.flush();
                 }
             }
