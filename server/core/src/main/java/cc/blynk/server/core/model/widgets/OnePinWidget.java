@@ -34,6 +34,9 @@ public abstract class OnePinWidget extends Widget {
 
     @Override
     public String makeHardwareBody() {
+        if (pin == -1 || value == null) {
+            return null;
+        }
         return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 

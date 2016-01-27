@@ -17,8 +17,9 @@ public class OneAxisJoystick extends OnePinWidget implements HardwareSyncWidget 
 
     @Override
     public void send(ChannelHandlerContext ctx, int msgId) {
-        if (pin != -1) {
-            ctx.write(new HardwareMessage(msgId, makeHardwareBody()));
+        String body = makeHardwareBody();
+        if (body != null) {
+            ctx.write(new HardwareMessage(msgId, body));
         }
     }
 
