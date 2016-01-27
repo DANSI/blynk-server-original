@@ -28,7 +28,6 @@ public class WebSocketEncoder extends MessageToMessageEncoder<MessageBase> {
     protected void encode(ChannelHandlerContext ctx, MessageBase msg, List<Object> out) throws Exception {
         stats.mark(msg.command);
 
-        //todo finish and optimize.
         ByteBuf bb;
         if (msg.command == Command.RESPONSE) {
             bb = PooledByteBufAllocator.DEFAULT.heapBuffer(5);

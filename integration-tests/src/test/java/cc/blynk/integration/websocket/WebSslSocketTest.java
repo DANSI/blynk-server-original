@@ -6,6 +6,7 @@ import cc.blynk.integration.model.websocket.WebSocketClient;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.websocket.WebSocketSSLServer;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,11 @@ import static org.mockito.Mockito.*;
 public class WebSslSocketTest extends BaseTest {
 
     private static BaseServer webSocketServer;
+
+    @AfterClass
+    public static void shutdown() throws Exception {
+        webSocketServer.stop();
+    }
 
     @Before
     public void init() throws Exception {

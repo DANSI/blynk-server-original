@@ -44,8 +44,12 @@ import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.util.CharsetUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
+
+    private static final Logger log = LogManager.getLogger(WebSocketClientHandler.class);
 
     private final WebSocketClientHandshaker handshaker;
     private ChannelPromise handshakeFuture;
@@ -73,7 +77,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         Channel ch = ctx.channel();
         if (!handshaker.isHandshakeComplete()) {
             handshaker.finishHandshake(ch, (FullHttpResponse) msg);
-            System.out.println("WebSocket Client connected!");
+            log.debug("WebSocket Client connected!");
             handshakeFuture.setSuccess();
             return;
         }
@@ -88,10 +92,10 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         WebSocketFrame frame = (WebSocketFrame) msg;
         if (frame instanceof BinaryWebSocketFrame) {
             BinaryWebSocketFrame binaryFrame = (BinaryWebSocketFrame) frame;
-            System.out.println("WebSocket Client received message: " + binaryFrame.content());
+            log.debug("WebSocket Client received message: " + binaryFrame.content());
             ctx.fireChannelRead(binaryFrame.retain().content());
         } else if (frame instanceof CloseWebSocketFrame) {
-            System.out.println("WebSocket Client received closing");
+            log.debug("WebSocket Client received closing");
             ch.close();
         }
     }
