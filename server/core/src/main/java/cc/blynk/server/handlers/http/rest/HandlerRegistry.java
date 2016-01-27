@@ -94,16 +94,11 @@ public class HandlerRegistry {
         return null;
     }
 
-    public static FullHttpResponse invoke(HandlerHolder handlerHolder, URIDecoder uriDecoder) {
+    public static FullHttpResponse invoke(HandlerHolder handlerHolder, Object[] params) {
         try {
-            Object[] params = handlerHolder.fetchParams(uriDecoder);
             return (FullHttpResponse) handlerHolder.method.invoke(handlerHolder.handler, params);
         } catch (Exception e) {
-            if (e.getCause() != null) {
-                return Response.serverError((e.getCause().getMessage()));
-            } else {
-                return Response.serverError(e.getMessage());
-            }
+            return Response.serverError(e.getMessage());
         }
     }
 

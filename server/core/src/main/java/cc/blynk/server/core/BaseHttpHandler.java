@@ -17,6 +17,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.util.ReferenceCountUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,7 +58,11 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
         log.info("{} : {}", req.getMethod().name(), req.getUri());
 
         globalStats.mark(Command.HTTP_TOTAL);
-        processHttp(ctx, req);
+        try {
+            processHttp(ctx, req);
+        } finally {
+            ReferenceCountUtil.release(msg);
+        }
     }
 
     public void processHttp(ChannelHandlerContext ctx, HttpRequest req) {
@@ -73,9 +78,17 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
         HandlerRegistry.populateBody(req, uriDecoder);
         uriDecoder.pathData = handlerHolder.uriTemplate.extractParameters();
 
+        Object[] params;
+        try {
+            params = handlerHolder.fetchParams(uriDecoder);
+        } catch (Exception e) {
+            ctx.writeAndFlush(Response.serverError(e.getMessage()));
+            return;
+        }
+
         String tokenPathParam = uriDecoder.pathData.get("token");
         if (tokenPathParam == null) {
-            ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, uriDecoder));
+            ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, params));
             return;
         }
 
@@ -90,9 +103,9 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
         Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering http channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> send(channelFuture.channel(), HandlerRegistry.invoke(handlerHolder, uriDecoder)));
+            reRegisterChannel(ctx, session, channelFuture -> send(channelFuture.channel(), HandlerRegistry.invoke(handlerHolder, params)));
         } else {
-            ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, uriDecoder));
+            ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, params));
         }
     }
 

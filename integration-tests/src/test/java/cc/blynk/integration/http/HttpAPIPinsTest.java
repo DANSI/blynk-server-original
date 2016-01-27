@@ -171,6 +171,7 @@ public class HttpAPIPinsTest extends BaseTest {
     public void testPutFakeToken() throws Exception {
         HttpPut request = new HttpPut(httpsServerUrl + "dsadasddasdasdasdasdasdas/pin/d8");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
+        request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
