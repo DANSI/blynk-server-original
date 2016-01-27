@@ -24,7 +24,6 @@ import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.JsonParser;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import org.junit.After;
@@ -103,27 +102,27 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testHardSyncReturnHardwareCommands() throws Exception {
         clientPair.hardwareClient.send("hardsync");
         verify(clientPair.hardwareClient.responseMock, timeout(1000).times(4)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, "dw 1 1".replaceAll(" ", "\0"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, "dw 2 1".replaceAll(" ", "\0"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, "aw 3 0".replaceAll(" ", "\0"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, "vw 4 244".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 1 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 2 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 3 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 244"))));
     }
 
     @Test
     public void testHardSyncReturnNothingNoWidgetOnPin() throws Exception {
-        clientPair.hardwareClient.send("hardsync " + "vr 22".replaceAll(" ", "\0"));
+        clientPair.hardwareClient.send("hardsync " + b("vr 22"));
         verify(clientPair.hardwareClient.responseMock, after(400).never()).channelRead(any(), any());
     }
 
     @Test
     public void testHardSyncReturn1HardwareCommand() throws Exception {
-        clientPair.hardwareClient.send("hardsync " + "vr 4".replaceAll(" ", "\0"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "vw 4 244".replaceAll(" ", "\0"))));
+        clientPair.hardwareClient.send("hardsync " + b("vr 4"));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 244"))));
     }
 
     @Test
     public void testHardSyncReturn1RTC() throws Exception {
-        clientPair.hardwareClient.send("hardsync " + "vr 9".replaceAll(" ", "\0"));
+        clientPair.hardwareClient.send("hardsync " + b("vr 9"));
 
         ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
@@ -133,7 +132,7 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals(1, hardMessage.id);
         assertEquals(HARDWARE, hardMessage.command);
         assertEquals(15, hardMessage.length);
-        assertTrue(hardMessage.body.startsWith("vw 9".replaceAll(" ", "\0")));
+        assertTrue(hardMessage.body.startsWith(b("vw 9")));
     }
 
     @Test
@@ -239,7 +238,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testAppSendAnyHardCommandAndBack() throws Exception {
         clientPair.appClient.send("hardware 1 dw 1 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "dw 1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 1 1"))));
 
         clientPair.hardwareClient.send("hardware ar 1");
 
@@ -251,13 +250,13 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals(1, hardMessage.id);
         assertEquals(HARDWARE, hardMessage.command);
         assertEquals(6, hardMessage.length);
-        assertEquals("1 ar 1".replaceAll(" ", "\0"), hardMessage.body);
+        assertEquals(b("1 ar 1"), hardMessage.body);
     }
 
     @Test
     public void testAppNoActiveDashForHard() throws Exception {
         clientPair.hardwareClient.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 aw 1 1"))));
 
         clientPair.appClient.send("deactivate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -269,7 +268,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testAppChangeActiveDash() throws Exception {
         clientPair.hardwareClient.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 aw 1 1"))));
 
         clientPair.appClient.send("deactivate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -291,7 +290,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, HARDWARE, b("1 aw 1 1"))));
     }
 
     @Test
@@ -304,8 +303,7 @@ public class MainWorkflowTest extends IntegrationBase {
         hardClient2.send("login " + token2);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        hardClient2.send("info " + " ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100"
-                .replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        hardClient2.send("info " + b(" ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100"));
 
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
         hardClient2.stop().awaitUninterruptibly();
@@ -336,10 +334,10 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.hardwareClient.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 aw 1 1"))));
 
         hardClient2.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, "2 aw 1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("2 aw 1 1"))));
 
 
         clientPair.appClient.send("deactivate 1");
@@ -349,7 +347,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(new ResponseMessage(2, NO_ACTIVE_DASHBOARD)));
 
         hardClient2.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, "2 aw 1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("2 aw 1 1"))));
         hardClient2.stop().awaitUninterruptibly();
     }
 
@@ -377,7 +375,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testAppSendWriteHardCommandNotGraphAndBack() throws Exception {
         clientPair.appClient.send("hardware 1 ar 7");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "ar 7".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("ar 7"))));
 
         String body = "aw 7 255";
         clientPair.hardwareClient.send("hardware " + body);
@@ -390,7 +388,7 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals(1, hardMessage.id);
         assertEquals(HARDWARE, hardMessage.command);
         assertEquals(("1 " + body).length(), hardMessage.length);
-        assertTrue(hardMessage.body.startsWith(("1 " + body).replaceAll(" ", "\0")));
+        assertTrue(hardMessage.body.startsWith(b("1 " + body)));
     }
 
 
@@ -410,7 +408,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
 
         clientPair.appClient.send("hardware 1 ar 7");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, "ar 7".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, b("ar 7"))));
 
         String userProfileWithGraph = readTestUserProfile();
 
@@ -419,7 +417,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
 
         clientPair.appClient.send("hardware 1 ar 7");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, HARDWARE, "ar 7".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, HARDWARE, b("ar 7"))));
     }
 
     @Test
@@ -481,7 +479,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testWrongCommandForAggregation() throws Exception {
         clientPair.hardwareClient.send("hardware vw 10 aaaa");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "1 vw 10 aaaa".replaceAll(" ", "\0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 10 aaaa"))));
     }
 
     @Test
@@ -494,7 +492,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("hardware 1 ar 7");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "ar 7".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("ar 7"))));
 
         String body = "aw 8 333";
         clientPair.hardwareClient.send("hardware " + body);
@@ -508,7 +506,7 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals(HARDWARE, hardMessage.command);
         //"aw 11 333".length
         assertEquals(("1 " + body).length(), hardMessage.length);
-        assertTrue(hardMessage.body.startsWith(("1 " + body).replaceAll(" ", "\0")));
+        assertTrue(hardMessage.body.startsWith(b("1 " + body)));
     }
 
     @Test
@@ -539,7 +537,7 @@ public class MainWorkflowTest extends IntegrationBase {
         hardClient.send("login " + clientPair.token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
+        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b(body))));
         verify(hardClient.responseMock, times(2)).channelRead(any(), any());
         hardClient.stop().awaitUninterruptibly();
     }
@@ -560,7 +558,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         String expectedBody = "pm 1 out 2 out 3 out 5 out 6 in 7 in 8 in";
-        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, expectedBody.replaceAll(" ", "\0"))));
+        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b(expectedBody))));
         verify(hardClient.responseMock, times(2)).channelRead(any(), any());
         hardClient.stop().awaitUninterruptibly();
     }
@@ -595,7 +593,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.hardwareClient.responseMock, timeout(1000).times(0)).channelRead(any(), any());
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, "1 aw 1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("1 aw 1 1"))));
         nonActiveDashHardClient.stop().awaitUninterruptibly();
     }
 
@@ -612,7 +610,7 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testSendReadCommandsForDifferentPins() throws Exception {
         clientPair.appClient.send("hardware 1 ar 7");
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "ar 7".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("ar 7"))));
 
         clientPair.hardwareClient.reset();
 
@@ -621,7 +619,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("hardware 1 ar 6");
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, "ar 6".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("ar 6"))));
 
         clientPair.hardwareClient.reset();
 
@@ -631,7 +629,7 @@ public class MainWorkflowTest extends IntegrationBase {
         Thread.sleep(100);
         clientPair.appClient.send("hardware 1 ar 6");
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, "ar 6".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, b("ar 6"))));
     }
 
     @Test
@@ -639,8 +637,8 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("hardware 1 vr 0");
         clientPair.appClient.send("hardware 1 vr 1");
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(2)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "vr 0".replaceAll(" ", "\0"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, "vr 1".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vr 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vr 1"))));
 
         clientPair.hardwareClient.reset();
         clientPair.appClient.send("hardware 1 vr 0");
@@ -651,8 +649,8 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("hardware 1 vr 0");
         clientPair.appClient.send("hardware 1 vr 1");
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(2)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, "vr 0".replaceAll(" ", "\0"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, HARDWARE, "vr 1".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, b("vr 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, HARDWARE, b("vr 1"))));
     }
 
     @Test
@@ -671,8 +669,8 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair2.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), any());
 
 
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
-        verify(clientPair2.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b(body))));
+        verify(clientPair2.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b(body))));
     }
 
     @Test
@@ -693,7 +691,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         //at least 100 iterations should be
         for (int i = 0; i < 100; i++) {
-            verify(clientPair.appClient.responseMock).channelRead(any(), eq(produce(i+1, HARDWARE, ("1 " + body).replaceAll(" ", "\0"))));
+            verify(clientPair.appClient.responseMock).channelRead(any(), eq(produce(i+1, HARDWARE, b("1 " + body))));
         }
 
         clientPair.appClient.reset();
@@ -706,7 +704,7 @@ public class MainWorkflowTest extends IntegrationBase {
         }
 
         verify(clientPair.hardwareClient.responseMock, times(0)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT_EXCEPTION)));
-        verify(clientPair.appClient.responseMock, times(0)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
+        verify(clientPair.appClient.responseMock, times(0)).channelRead(any(), eq(produce(1, HARDWARE, b(body))));
     }
 
     @Test
@@ -812,7 +810,7 @@ public class MainWorkflowTest extends IntegrationBase {
         }
 
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT_EXCEPTION)));
-        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE, b(body))));
 
         clientPair.appClient.reset();
         clientPair.hardwareClient.reset();
@@ -826,7 +824,7 @@ public class MainWorkflowTest extends IntegrationBase {
         }
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT_EXCEPTION)));
-        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE, body.replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE, b(body))));
 
     }
 

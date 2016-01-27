@@ -128,7 +128,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.send("bridge 1 i " + clientPair.token);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         clientPair.hardwareClient.send("bridge 1 aw 10 10");
-        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, "aw 10 10".replaceAll(" ", "\0"))));
+        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, b("aw 10 10"))));
     }
 
     @Test
@@ -151,7 +151,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.send("bridge 1 i " + token2);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         clientPair.hardwareClient.send("bridge 1 aw 11 11");
-        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, "aw 11 11".replaceAll(" ", "\0"))));
+        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, b("aw 11 11"))));
     }
 
     @Test
@@ -182,8 +182,8 @@ public class BridgeWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.hardwareClient.send("bridge 1 aw 11 11");
-        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, "aw 11 11".replaceAll(" ", "\0"))));
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, "aw 11 11".replaceAll(" ", "\0"))));
+        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, b("aw 11 11"))));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, b("aw 11 11"))));
 
     }
 
@@ -226,11 +226,11 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
 
         clientPair.hardwareClient.send("bridge 1 aw 11 11");
-        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(3, BRIDGE, "aw 11 11".replaceAll(" ", "\0"))));
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(3, BRIDGE, "aw 11 11".replaceAll(" ", "\0"))));
+        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(3, BRIDGE, b("aw 11 11"))));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(3, BRIDGE, b("aw 11 11"))));
 
         clientPair.hardwareClient.send("bridge 2 aw 13 13");
-        verify(hardClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(4, BRIDGE, "aw 13 13".replaceAll(" ", "\0"))));
+        verify(hardClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(4, BRIDGE, b("aw 13 13"))));
 
     }
 

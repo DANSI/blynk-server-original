@@ -74,7 +74,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         ClientPair clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
 
         clientPair.hardwareClient.send("hardware vw 4 200");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "1 vw 4 200".replaceAll(" ", "\0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 4 200"))));
 
         reset(clientPair.appClient.responseMock);
 
@@ -91,7 +91,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         }
 
         clientPair.appClient.send("hardware 1 vw 4 201");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, "vw 4 201".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 4 201"))));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -116,8 +116,8 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
                 assertEquals(200, response.getStatusLine().getStatusCode());
             }
 
-            clientPair.hardwareClient.send("hardsync " + "vr 4".replaceAll(" ", "\0"));
-            verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i + 1, HARDWARE, ("vw 4 " + i).replaceAll(" ", "\0"))));
+            clientPair.hardwareClient.send("hardsync " + b("vr 4"));
+            verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i + 1, HARDWARE, b("vw 4 " + i))));
 
             try (CloseableHttpResponse response = httpclient.execute(getRequest)) {
                 assertEquals(200, response.getStatusLine().getStatusCode());
@@ -141,7 +141,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, ("vw 31 100").replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 31 100"))));
     }
 
 
@@ -158,7 +158,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, ("vw 31 100 101 102").replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 31 100 101 102"))));
     }
 
 }

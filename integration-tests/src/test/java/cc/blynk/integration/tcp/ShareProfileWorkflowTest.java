@@ -16,7 +16,6 @@ import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzip
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.JsonParser;
-import cc.blynk.utils.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -120,10 +119,10 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("hardware 1 vw 1 1");
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, "1 vw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, b("1 vw 1 1"))));
 
         appClient2.send("hardware 1 vw 2 2");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, "1 vw 2 2".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, b("1 vw 2 2"))));
 
         clientPair.appClient.reset();
         clientPair.hardwareClient.reset();
@@ -131,11 +130,11 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         appClient2.send("hardware 1 ar 7");
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, "ar 7".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("ar 7"))));
 
         clientPair.appClient.send("hardware 1 ar 7");
         verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(produce(2, HARDWARE, "ar 7".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(produce(2, HARDWARE, b("ar 7"))));
 
         clientPair.hardwareClient.reset();
         clientPair.hardwareClient.send("ping");
@@ -146,11 +145,11 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("hardware 1 ar 7");
         verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, "ar 7".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("ar 7"))));
 
         clientPair.appClient.send("hardware 1 pm 2 2");
         verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, "pm 2 2".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("pm 2 2"))));
     }
 
     @Test
@@ -168,17 +167,17 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("hardware 1 vw 1 1");
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, "1 vw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, b("1 vw 1 1"))));
 
         appClient2.send("hardware 1 vw 2 2");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, "1 vw 2 2".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, b("1 vw 2 2"))));
 
         clientPair.appClient.reset();
         appClient2.reset();
 
         //check from master side
         clientPair.appClient.send("hardware 1 aw 3 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, "aw 3 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 3 1"))));
 
         clientPair.appClient.send("loadProfile");
         String profileString = clientPair.appClient.getBody();
@@ -193,7 +192,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         //check from slave side
         appClient2.send("hardware 1 aw 3 150");
-        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, "aw 3 150".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 3 150"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfile");
@@ -208,7 +207,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         //check from hard side
         clientPair.hardwareClient.send("hardware aw 3 151");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, "1 aw 3 151".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("1 aw 3 151"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfile");
@@ -239,7 +238,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("sharing 1 off");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, "1 off".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, b("1 off"))));
     }
 
     @Test
@@ -258,12 +257,12 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         //check from hard side
         clientPair.hardwareClient.send("hardware aw 3 151");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, "1 aw 3 151".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, "1 aw 3 151".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("1 aw 3 151"))));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("1 aw 3 151"))));
 
         clientPair.hardwareClient.send("hardware aw 3 152");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, HARDWARE, "1 aw 3 152".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, HARDWARE, "1 aw 3 152".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING))));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, HARDWARE, b("1 aw 3 152"))));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, HARDWARE, b("1 aw 3 152"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfile");

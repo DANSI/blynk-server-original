@@ -6,7 +6,6 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.utils.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -57,7 +56,7 @@ public class HardProtocolCommandsTest extends IntegrationBase {
     public void testInvalidCommandAppLoginOnHardChannel() throws Exception {
         makeCommands("login dima@dima.ua 1").check(new ResponseMessage(1, INVALID_TOKEN));
 
-        String body = "dima@dima.ua 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING);
+        String body = b("dima@dima.ua 1");
         makeCommands("login " + body).check(new ResponseMessage(1, INVALID_TOKEN));
 
         makeCommands("login").check(new ResponseMessage(1, INVALID_TOKEN));
