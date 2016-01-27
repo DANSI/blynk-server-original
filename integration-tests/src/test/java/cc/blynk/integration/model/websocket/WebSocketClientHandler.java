@@ -77,7 +77,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         Channel ch = ctx.channel();
         if (!handshaker.isHandshakeComplete()) {
             handshaker.finishHandshake(ch, (FullHttpResponse) msg);
-            log.debug("WebSocket Client connected!");
+            log.trace("WebSocket Client connected!");
             handshakeFuture.setSuccess();
             return;
         }
@@ -92,10 +92,10 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         WebSocketFrame frame = (WebSocketFrame) msg;
         if (frame instanceof BinaryWebSocketFrame) {
             BinaryWebSocketFrame binaryFrame = (BinaryWebSocketFrame) frame;
-            log.debug("WebSocket Client received message: " + binaryFrame.content());
+            log.trace("WebSocket Client received message: " + binaryFrame.content());
             ctx.fireChannelRead(binaryFrame.retain().content());
         } else if (frame instanceof CloseWebSocketFrame) {
-            log.debug("WebSocket Client received closing");
+            log.trace("WebSocket Client received closing");
             ch.close();
         }
     }

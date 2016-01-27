@@ -87,6 +87,14 @@ public class WebSocketTest extends BaseTest {
 
         clientPair.hardwareClient.send("hardware vw 4 3");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 4 3"))));
+
+        clientPair.appClient.reset();
+
+        for (int i = 1; i <= 100; i++) {
+            clientPair.appClient.send("hardware 1 vw 4 " + i);
+            verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE, b("vw 4 " + i))));
+            verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE, b("vw 4 " + i))));
+        }
     }
 
     @Test
