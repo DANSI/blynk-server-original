@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.http.rest.HandlerHolder;
@@ -28,7 +29,7 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 24.12.15.
  */
-public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements DefaultReregisterHandler {
+public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements DefaultReregisterHandler, DefaultExceptionHandler {
 
     protected static final Logger log = LogManager.getLogger(BaseHttpHandler.class);
 
@@ -69,7 +70,7 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
         HandlerHolder handlerHolder = HandlerRegistry.findHandler(req.getMethod(), HandlerRegistry.path(req.getUri()));
 
         if (handlerHolder == null) {
-            log.error("Error resolving url. No path found.");
+            log.error("Error resolving url. No path found. {} : {}", req.getMethod().name(), req.getUri());
             ctx.writeAndFlush(Response.notFound());
             return;
         }
@@ -111,8 +112,7 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.error("Error in http handler.", cause);
-        ctx.close();
+        handleUnexpectedException(ctx, cause);
     }
 
 }
