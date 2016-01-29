@@ -17,4 +17,9 @@ public class Terminal extends OnePinWidget {
     public String getModeType() {
         return "in";
     }
+
+    @Override
+    public String makeHardwareBody() {
+        return null;
+    }
 }

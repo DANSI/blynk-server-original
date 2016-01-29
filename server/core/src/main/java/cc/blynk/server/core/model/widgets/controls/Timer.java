@@ -21,4 +21,9 @@ public class Timer extends OnePinWidget {
     public String getModeType() {
         return "out";
     }
+
+    @Override
+    public String makeHardwareBody() {
+        return null;
+    }
 }

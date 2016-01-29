@@ -24,4 +24,9 @@ public class Logger extends MultiPinWidget {
     public String getModeType() {
         return null;
     }
+
+    @Override
+    public String makeHardwareBody() {
+        return null;
+    }
 }

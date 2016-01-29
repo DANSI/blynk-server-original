@@ -14,4 +14,8 @@ public class RTC extends OnePinWidget {
         return null;
     }
 
+    @Override
+    public String makeHardwareBody() {
+        return null;
+    }
 }
