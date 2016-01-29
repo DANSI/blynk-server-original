@@ -3,6 +3,7 @@ package cc.blynk.integration;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -65,7 +66,7 @@ public abstract class IntegrationBase extends BaseTest {
     }
 
     public static ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
-                                  ServerProperties properties) throws Exception {
+                                                ServerProperties properties) throws Exception {
 
         TestAppClient appClient = new TestAppClient(host, appPort, properties);
         TestHardClient hardClient = new TestHardClient(host, hardPort);
@@ -74,7 +75,7 @@ public abstract class IntegrationBase extends BaseTest {
     }
 
     public static ClientPair initAppAndHardPair(TestAppClient appClient, TestHardClient hardClient, String user,
-                                  String jsonProfile) throws Exception {
+                                                String jsonProfile) throws Exception {
 
         appClient.start();
         hardClient.start();
@@ -91,14 +92,16 @@ public abstract class IntegrationBase extends BaseTest {
 
         int dashId = profile.dashBoards[0].id;
 
-        appClient.send("register " + user)
-                 .send("login " + user + " Android 1RC7")
-                 .send("saveProfile " + userProfileString)
-                 .send("activate " + dashId)
-                 .send("getToken " + dashId);
+        appClient.send("register " + user);
+        appClient.send("login " + user + " Android 1RC7");
+
+        saveProfile(appClient, profile.dashBoards);
+
+        appClient.send("activate " + dashId);
+        appClient.send("getToken " + dashId);
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(appClient.responseMock, timeout(2000).times(5 + expectedSyncCommandsCount)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(appClient.responseMock, timeout(2000).times(4 + profile.dashBoards.length + expectedSyncCommandsCount)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Object> arguments = objectArgumentCaptor.getAllValues();
         String token = getGetTokenMessage(arguments).body;
@@ -110,6 +113,17 @@ public abstract class IntegrationBase extends BaseTest {
         hardClient.reset();
 
         return new ClientPair(appClient, hardClient, token);
+    }
+
+    public static void saveProfile(TestAppClient appClient, String profileString) {
+        Profile profile = JsonParser.parseProfile(profileString, 1);
+        saveProfile(appClient, profile.dashBoards);
+    }
+
+    public static void saveProfile(TestAppClient appClient, DashBoard... dashBoards) {
+        for (DashBoard dash : dashBoards) {
+            appClient.send("createDash " + dash.toString());
+        }
     }
 
     public static ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {

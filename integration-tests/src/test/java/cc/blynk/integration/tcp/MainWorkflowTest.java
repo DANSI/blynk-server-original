@@ -563,7 +563,9 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testSendHardwareCommandToNotActiveDashboard() throws Exception {
-        clientPair = initAppAndHardPair("user_profile_json_3_dashes.txt");
+        clientPair.appClient.send("createDash " + "{\"id\":2,\"name\":\"My Dashboard2\"}");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.reset();
 
         clientPair.appClient.send("getToken 2");
 
