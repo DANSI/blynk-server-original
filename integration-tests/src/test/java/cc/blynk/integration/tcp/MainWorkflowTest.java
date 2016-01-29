@@ -22,7 +22,6 @@ import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMes
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.workers.timer.TimerWorker;
-import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.JsonParser;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -199,12 +198,12 @@ public class MainWorkflowTest extends IntegrationBase {
 
         String profileString = clientPair.appClient.getBody();
 
-        byte[] data = ByteUtils.compress(profileString, 2);
+        LoadProfileGzippedBinaryMessage message = new LoadProfileGzippedBinaryMessage(2, profileString);
         clientPair.appClient.send("loadProfileGzipped");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(2, data)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(message));
 
-        assertTrue(profileString.length() > data.length);
-        System.out.println("Compression ratio : " + ((double) profileString.length() / data.length));
+        assertTrue(profileString.length() > message.length);
+        System.out.println("Compression ratio : " + ((double) profileString.length() / message.length));
     }
 
     @Test

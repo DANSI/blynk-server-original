@@ -3,7 +3,6 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
-import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -26,9 +25,7 @@ public class LoadProfileGzippedLogic {
             body = user.profile.getDashById(dashId, message.id).toString();
         }
 
-        byte[] compressed = ByteUtils.compress(body, message.id);
-
-        ctx.writeAndFlush(new LoadProfileGzippedBinaryMessage(message.id, compressed));
+        ctx.writeAndFlush(new LoadProfileGzippedBinaryMessage(message.id, body));
     }
 
 }
