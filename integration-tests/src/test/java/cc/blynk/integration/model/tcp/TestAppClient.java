@@ -4,8 +4,11 @@ import cc.blynk.client.core.AppClient;
 import cc.blynk.client.handlers.decoders.ClientMessageDecoder;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -44,11 +47,17 @@ public class TestAppClient extends AppClient {
     }
 
     public String getBody() throws Exception {
-        ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
+        ArgumentCaptor<MessageBase> objectArgumentCaptor = ArgumentCaptor.forClass(MessageBase.class);
         verify(responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
-        StringMessage getTokenMessage = arguments.get(0);
-        return getTokenMessage.body;
+        List<MessageBase> arguments = objectArgumentCaptor.getAllValues();
+        MessageBase messageBase = arguments.get(0);
+        if (messageBase instanceof StringMessage) {
+            return ((StringMessage) messageBase).body;
+        } else if (messageBase instanceof LoadProfileGzippedBinaryMessage) {
+            return new String(ByteUtils.decompress(messageBase.getBytes()));
+        }
+
+        throw new RuntimeException("Unexpected message");
     }
 
     @Override

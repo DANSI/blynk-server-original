@@ -8,11 +8,11 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.util.*;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
-import java.util.zip.InflaterInputStream;
 
 /**
  * User: ddumanskiy
@@ -30,24 +30,6 @@ public class UserStatisticsTest {
         fileManager = new FileManager("/home/doom369/test/root/data");
         long start = System.currentTimeMillis();
         users = fileManager.deserialize();
-    }
-
-    public static byte[] decompress(byte[] bytes) throws IOException {
-        InputStream in = new InflaterInputStream(new ByteArrayInputStream(bytes));
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            byte[] buffer = new byte[4096];
-            int len;
-            while ((len = in.read(buffer)) > 0) {
-                baos.write(buffer, 0, len);
-            }
-            return baos.toByteArray();
-        } catch (IOException e) {
-
-            throw new AssertionError(e);
-        } finally {
-            in.close();
-        }
     }
 
     public static byte[] compress(byte[] data) throws Exception {
@@ -232,7 +214,7 @@ public class UserStatisticsTest {
         System.out.println(res);
 
         byte[] data = Base64.getDecoder().decode(res);
-        byte[] decompressedData = decompress(data);
+        byte[] decompressedData = ByteUtils.decompress(data);
         System.out.println(new String(decompressedData));
     }
 

@@ -167,29 +167,34 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("deleteDash 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(6, ILLEGAL_COMMAND)));
 
-        clientPair.appClient.send("loadProfile");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, LOAD_PROFILE, "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}")));
+        String expectedDash;
 
-        clientPair.appClient.send("loadProfile 10");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(8, LOAD_PROFILE, "{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}")));
+        expectedDash = "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}";
+        clientPair.appClient.send("loadProfileGzipped");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(7, expectedDash)));
 
-        clientPair.appClient.send("loadProfile 1");
+        expectedDash = "{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}";
+        clientPair.appClient.send("loadProfileGzipped 10");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(8, expectedDash)));
+
+        clientPair.appClient.send("loadProfileGzipped 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(9, ILLEGAL_COMMAND)));
 
         clientPair.appClient.send("activate 10");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(10, DEVICE_NOT_IN_NETWORK)));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfile");
+        clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
-        String expectedDash = String.format("{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":%d,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}", profile.dashBoards[0].updatedAt);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, LOAD_PROFILE, expectedDash)));
+        expectedDash = String.format("{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":%d,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}", profile.dashBoards[0].updatedAt);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(1, expectedDash)));
 
         clientPair.appClient.send("saveDash {\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
-        clientPair.appClient.send("loadProfile");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, LOAD_PROFILE, "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}")));
+        expectedDash = "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}";
+        clientPair.appClient.send("loadProfileGzipped");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(3, expectedDash)));
     }
 
     @Test

@@ -4,10 +4,10 @@ import cc.blynk.server.core.protocol.exceptions.GetGraphDataException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import io.netty.util.CharsetUtil;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 /**
  * The Blynk Project.
@@ -69,4 +69,19 @@ public class ByteUtils {
     }
 
 
+    //for tests only
+    public static byte[] decompress(byte[] bytes) throws IOException {
+        try (InputStream in = new InflaterInputStream(new ByteArrayInputStream(bytes))) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[4096];
+            int len;
+            while ((len = in.read(buffer)) > 0) {
+                baos.write(buffer, 0, len);
+            }
+            return baos.toByteArray();
+        } catch (IOException e) {
+
+            throw new AssertionError(e);
+        }
+    }
 }
