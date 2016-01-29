@@ -10,6 +10,7 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
 import cc.blynk.utils.ParseUtil;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -53,7 +54,7 @@ public class ActivateDashboardLogic {
         for (Widget widget : dash.widgets) {
             String body = widget.makeHardwareBody();
             if (body != null) {
-                syncMessages.add(new SyncMessage(1111, body));
+                syncMessages.add(new SyncMessage(1111, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
             }
         }
 
