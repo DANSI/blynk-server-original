@@ -50,6 +50,13 @@ public class ActivateDashboardLogic {
 
         Session session = sessionDao.userSession.get(user);
 
+        if (session.hasHardwareOnline(dashId)) {
+            ctx.writeAndFlush(new ResponseMessage(message.id, OK));
+        } else {
+            log.debug("No device in session.");
+            ctx.writeAndFlush(new ResponseMessage(message.id, Response.DEVICE_NOT_IN_NETWORK));
+        }
+
         List<SyncMessage> syncMessages = new ArrayList<>();
         for (Widget widget : dash.widgets) {
             String body = widget.makeHardwareBody();
@@ -66,13 +73,6 @@ public class ActivateDashboardLogic {
                 appChannel.write(syncMessage);
             }
             appChannel.flush();
-        }
-
-        if (session.hasHardwareOnline(dashId)) {
-            ctx.writeAndFlush(new ResponseMessage(message.id, OK));
-        } else {
-            log.debug("No device in session.");
-            ctx.writeAndFlush(new ResponseMessage(message.id, Response.DEVICE_NOT_IN_NETWORK));
         }
     }
 
