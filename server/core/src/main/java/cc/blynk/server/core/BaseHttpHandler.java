@@ -16,13 +16,10 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.ReferenceCountUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import static io.netty.handler.codec.http.HttpHeaders.Names.*;
 
 /**
  * The Blynk Project.
@@ -41,11 +38,6 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
         this.userDao = userDao;
         this.sessionDao = sessionDao;
         this.globalStats = globalStats;
-    }
-
-    private static void send(Channel channel, FullHttpResponse response) {
-        response.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
-        channel.writeAndFlush(response);
     }
 
     @Override
@@ -104,10 +96,15 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
         Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering http channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> send(channelFuture.channel(), HandlerRegistry.invoke(handlerHolder, params)));
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), HandlerRegistry.invoke(handlerHolder, params)));
         } else {
-            ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, params));
+            completeLogin(ctx.channel(), HandlerRegistry.invoke(handlerHolder, params));
         }
+    }
+
+    private void completeLogin(Channel channel, FullHttpResponse response) {
+        channel.writeAndFlush(response);
+        log.debug("Re registering http channel finished.");
     }
 
     @Override
