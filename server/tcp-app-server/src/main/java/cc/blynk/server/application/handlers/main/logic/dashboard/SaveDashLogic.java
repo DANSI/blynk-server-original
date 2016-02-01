@@ -33,7 +33,6 @@ public class SaveDashLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String dashString = message.body;
 
-        //expecting message with 2 parts
         if (dashString == null || dashString.equals("")) {
             throw new IllegalCommandException("Income create dash message is empty.", message.id);
         }

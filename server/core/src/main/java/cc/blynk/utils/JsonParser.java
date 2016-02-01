@@ -3,6 +3,7 @@ package cc.blynk.utils;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -32,6 +33,7 @@ public final class JsonParser {
     private static final ObjectReader userReader = mapper.reader(User.class);
     private static final ObjectReader profileReader = mapper.reader(Profile.class);
     private static final ObjectReader dashboardReader = mapper.reader(DashBoard.class);
+    private static final ObjectReader widgetReader = mapper.reader(Widget.class);
 
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
@@ -104,6 +106,15 @@ public final class JsonParser {
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new IllegalCommandBodyException("Error parsing user profile.", id);
+        }
+    }
+
+    public static Widget parseWidget(String reader, int id) {
+        try {
+            return widgetReader.readValue(reader);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new IllegalCommandBodyException("Error parsing widget.", id);
         }
     }
 

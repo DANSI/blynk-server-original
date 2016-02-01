@@ -1,6 +1,7 @@
 package cc.blynk.utils;
 
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.widgets.Widget;
 
 /**
  * The Blynk Project.
@@ -15,8 +16,20 @@ public class ArrayUtil {
         return newArray;
     }
 
+    public static Widget[] add(final Widget[] array, final Widget element) {
+        Widget[] newArray = copyArrayGrow1(array);
+        newArray[newArray.length - 1] = element;
+        return newArray;
+    }
+
     private static DashBoard[] copyArrayGrow1(final DashBoard[] array) {
         final DashBoard[] newArray = new DashBoard[array.length + 1];
+        System.arraycopy(array, 0, newArray, 0, array.length);
+        return newArray;
+    }
+
+    private static Widget[] copyArrayGrow1(final Widget[] array) {
+        final Widget[] newArray = new Widget[array.length + 1];
         System.arraycopy(array, 0, newArray, 0, array.length);
         return newArray;
     }
