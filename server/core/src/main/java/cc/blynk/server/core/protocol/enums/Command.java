@@ -23,7 +23,7 @@ public final class Command {
     public static final short REGISTER = 1;
     public static final short LOGIN = 2;
     public static final short SAVE_PROFILE = 3;
-    public static final short LOAD_PROFILE = 4;
+
     public static final short GET_TOKEN = 5;
     public static final short PING = 6;
     public static final short ACTIVATE_DASHBOARD = 7;
@@ -73,7 +73,6 @@ public final class Command {
                 put(REGISTER, RegisterMessage.class.getSimpleName());
                 put(LOGIN, LoginMessage.class.getSimpleName());
                 put(SAVE_PROFILE, SaveProfileMessage.class.getSimpleName());
-                put(LOAD_PROFILE, LoadProfileMessage.class.getSimpleName());
                 put(LOAD_PROFILE_GZIPPED, LoadProfileGzippedBinaryMessage.class.getSimpleName());
                 put(SYNC, SyncMessage.class.getSimpleName());
                 put(SHARING, SharingMessage.class.getSimpleName());

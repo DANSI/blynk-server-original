@@ -26,7 +26,6 @@
                 "name":"My Dashboard3"
             }
         ],
-    "graphPins":{"1":[8]},
     "twitter" : {
         "token" : "123",
         "tokenSecret" : "123"

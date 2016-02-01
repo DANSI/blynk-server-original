@@ -178,7 +178,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("hardware 1 aw 3 1");
         verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 3 1"))));
 
-        clientPair.appClient.send("loadProfile");
+        clientPair.appClient.send("loadProfileGzipped");
         String profileString = clientPair.appClient.getBody();
         assertNotNull(profileString);
         Profile profile = JsonParser.parseProfile(profileString, 0);
@@ -194,7 +194,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 3 150"))));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfile");
+        clientPair.appClient.send("loadProfileGzipped");
         profileString = clientPair.appClient.getBody();
         assertNotNull(profileString);
         profile = JsonParser.parseProfile(profileString, 0);
@@ -209,7 +209,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("1 aw 3 151"))));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfile");
+        clientPair.appClient.send("loadProfileGzipped");
         profileString = clientPair.appClient.getBody();
         assertNotNull(profileString);
         profile = JsonParser.parseProfile(profileString, 0);
@@ -264,7 +264,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, HARDWARE, b("1 aw 3 152"))));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("loadProfile");
+        clientPair.appClient.send("loadProfileGzipped");
         String profileString = clientPair.appClient.getBody();
         assertNotNull(profileString);
         Profile profile = JsonParser.parseProfile(profileString, 0);
@@ -375,7 +375,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("loadProfile");
+        clientPair.appClient.send("loadProfileGzipped");
         String body = clientPair.appClient.getBody();
 
         appClient2.send("loadProfileGzipped");

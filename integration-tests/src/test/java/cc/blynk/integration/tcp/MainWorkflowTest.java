@@ -199,16 +199,14 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void loadGzippedProfile() throws Exception{
-        clientPair.appClient.send("loadProfile");
+        String expected = readTestUserProfile();
 
-        String profileString = clientPair.appClient.getBody();
-
-        LoadProfileGzippedBinaryMessage message = new LoadProfileGzippedBinaryMessage(2, profileString);
         clientPair.appClient.send("loadProfileGzipped");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(message));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
 
-        assertTrue(profileString.length() > message.length);
-        System.out.println("Compression ratio : " + ((double) profileString.length() / message.length));
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        profile.dashBoards[0].updatedAt = 0;
+        assertEquals(expected, profile.toString());
     }
 
     @Test

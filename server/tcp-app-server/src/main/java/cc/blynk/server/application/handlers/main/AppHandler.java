@@ -94,9 +94,6 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case DEACTIVATE_DASHBOARD :
                 deActivateDashboardLogic.messageReceived(ctx, state.user, msg);
                 break;
-            case LOAD_PROFILE :
-                LoadProfileLogic.messageReceived(ctx, state.user, msg);
-                break;
             case LOAD_PROFILE_GZIPPED :
                 LoadProfileGzippedLogic.messageReceived(ctx, state.user, msg);
                 break;

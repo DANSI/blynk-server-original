@@ -47,6 +47,5 @@
              ],
              "boardType":"UNO"
             }
-        ],
-    "graphPins":{"1":[8]}
+        ]
 }

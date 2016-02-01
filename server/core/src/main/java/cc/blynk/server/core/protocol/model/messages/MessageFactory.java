@@ -24,8 +24,6 @@ public class MessageFactory {
                 return new LoginMessage(messageId, body);
             case SAVE_PROFILE :
                 return new SaveProfileMessage(messageId, body);
-            case LOAD_PROFILE :
-                return new LoadProfileMessage(messageId, body);
             case LOAD_PROFILE_GZIPPED :
                 return new LoadProfileGzippedStringMessage(messageId, body);
             case SYNC :

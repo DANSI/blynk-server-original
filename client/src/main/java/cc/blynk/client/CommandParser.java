@@ -17,8 +17,6 @@ public class CommandParser {
                 return HARDWARE;
             case "ping" :
                 return PING;
-            case "loadprofile" :
-                return LOAD_PROFILE;
             case "loadprofilegzipped" :
                 return LOAD_PROFILE_GZIPPED;
             case "sync" :
