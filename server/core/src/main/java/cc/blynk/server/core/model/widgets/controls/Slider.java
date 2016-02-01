@@ -11,6 +11,8 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class Slider extends OnePinWidget implements HardwareSyncWidget {
 
+    public boolean sendOnReleaseOn;
+
     @Override
     public void send(ChannelHandlerContext ctx, int msgId) {
         String body = makeHardwareBody();
