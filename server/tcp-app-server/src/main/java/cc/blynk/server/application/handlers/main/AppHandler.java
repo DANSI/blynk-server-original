@@ -32,7 +32,6 @@ import static cc.blynk.server.core.protocol.enums.Command.*;
 public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
     public final AppStateHolder state;
-    private final SaveProfileLogic saveProfile;
     private final GetTokenLogic token;
     private final HardwareAppLogic hardwareApp;
     private final RefreshTokenLogic refreshToken;
@@ -49,10 +48,6 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
     public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, AppStateHolder state) {
         super(props, state);
-        this.saveProfile = new SaveProfileLogic(
-                props.getIntProperty("user.dashboard.max.limit"),
-                props.getIntProperty("user.profile.max.size") * 1024
-        );
         this.token = new GetTokenLogic(userDao);
         this.hardwareApp = new HardwareAppLogic(sessionDao);
         this.refreshToken = new RefreshTokenLogic(userDao);
@@ -84,9 +79,6 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         switch (msg.command) {
             case HARDWARE:
                 hardwareApp.messageReceived(ctx, state, msg);
-                break;
-            case SAVE_PROFILE :
-                saveProfile.messageReceived(ctx, state.user, msg);
                 break;
             case ACTIVATE_DASHBOARD :
                 activateDashboardLogic.messageReceived(ctx, state.user, msg);

@@ -23,8 +23,6 @@ public class CommandParser {
                 return SYNC;
             case "sharing" :
                 return SHARING;
-            case "saveprofile" :
-                return SAVE_PROFILE;
             case "gettoken" :
                 return GET_TOKEN;
             case "refreshtoken" :

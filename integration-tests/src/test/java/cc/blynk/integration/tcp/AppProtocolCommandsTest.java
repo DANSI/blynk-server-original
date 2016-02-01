@@ -5,10 +5,12 @@ import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.workers.ProfileSaverWorker;
+import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ReflectionUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -68,6 +70,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
     @Test
     //all commands together cause all operations requires register and then login =(.
+    //todo finish?
     public void testAllCommandOneByOneTestSuit() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
@@ -75,9 +78,9 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         //makeCommands("login dmitriy@mail.ua 1", "loadProfile").check(OK).check(produce(1, LOAD_PROFILE, "{}"));
 
-        String userProfileString = readTestUserProfile();
+        Profile profile = JsonParser.parseProfile(readTestUserProfile(), 1);
 
-        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString).check(2, OK);
+        makeCommands("login dmitriy@mail.ua 1", "createDash " + profile.dashBoards[0]).check(2, OK);
 
         //makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "loadProfile").check(2, OK).check(produce(1, LOAD_PROFILE, userProfileString));
 
@@ -125,9 +128,9 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     public void testRefreshToken() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        String userProfileString = readTestUserProfile();
+        Profile profile = JsonParser.parseProfile(readTestUserProfile(), 1);
 
-        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString).check(2, OK);
+        makeCommands("login dmitriy@mail.ua 1", "createDash " + profile.dashBoards[0]).check(2, OK);
 
         //todo fix?
         makeCommands("login dmitriy@mail.ua 1", "refreshToken 1", "refreshToken 1")
@@ -139,9 +142,15 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     public void testProfileWithManyDashes() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        String userProfileString = readTestUserProfile("user_profile_json_many_dashes.txt");
+        Profile profile = JsonParser.parseProfile(readTestUserProfile("user_profile_json_many_dashes.txt"), 1);
 
-        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString).check(OK).check(new ResponseMessage(1, NOT_ALLOWED));
+        String[] cmds = new String[profile.dashBoards.length + 1];
+        cmds[0] = "login dmitriy@mail.ua 1";
+        for (int i = 0; i < profile.dashBoards.length; i++) {
+            cmds[i + 1] = "createDash " + profile.dashBoards[i];
+        }
+
+        makeCommands(cmds).check(profile.dashBoards.length, OK).check(new ResponseMessage(1, QUOTA_LIMIT_EXCEPTION));
     }
 
     @Test
@@ -173,20 +182,20 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testActivateWrongDashId() throws Exception {
-        String userProfileString = readTestUserProfile();
+        Profile profile = JsonParser.parseProfile(readTestUserProfile(), 1);
 
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "activate 2").check(2, OK).check(new ResponseMessage(1, ILLEGAL_COMMAND));
+        makeCommands("login dmitriy@mail.ua 1", "createDash " + profile.dashBoards[0], "activate 2").check(2, OK).check(new ResponseMessage(1, ILLEGAL_COMMAND));
     }
 
     @Test
     public void testActivateBadId() throws Exception {
-        String userProfileString = readTestUserProfile();
+        Profile profile = JsonParser.parseProfile(readTestUserProfile(), 1);
 
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "activate xxx").check(2, OK).check(new ResponseMessage(1, ILLEGAL_COMMAND));
+        makeCommands("login dmitriy@mail.ua 1", "createDash " + profile.dashBoards[0], "activate xxx").check(2, OK).check(new ResponseMessage(1, ILLEGAL_COMMAND));
     }
 
     @Test

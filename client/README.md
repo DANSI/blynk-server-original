@@ -13,7 +13,7 @@
 
 + Save profile with simple dashboard
 
-        saveProfile {"dashBoards":[{"id":1, "name":"My Dashboard", "boardType":"UNO"}]}
+        createDash {"id":1, "name":"My Dashboard", "boardType":"UNO"}
 
 
 + Get the Auth Token for hardware (e.g Arduino)
