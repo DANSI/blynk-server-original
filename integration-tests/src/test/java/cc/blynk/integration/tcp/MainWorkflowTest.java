@@ -279,8 +279,8 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("deactivate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        String newProfile = readTestUserProfile("user_profile_json_3_dashes.txt");
-        clientPair.appClient.send("saveProfile " + newProfile);
+        Profile newProfile = JsonParser.parseProfile(readTestUserProfile("user_profile_json_3_dashes.txt"), 1);
+        clientPair.appClient.send("createDash " + newProfile.dashBoards[1]);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
@@ -320,8 +320,8 @@ public class MainWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        String newProfile = readTestUserProfile("user_profile_json_3_dashes.txt");
-        clientPair.appClient.send("saveProfile " + newProfile);
+        Profile newProfile = JsonParser.parseProfile(readTestUserProfile("user_profile_json_3_dashes.txt"), 1);
+        clientPair.appClient.send("createDash " + newProfile.dashBoards[1]);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("activate 1");
@@ -415,15 +415,6 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("hardware 1 ar 7");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, b("ar 7"))));
-
-        String userProfileWithGraph = readTestUserProfile();
-
-        clientPair.appClient.send("saveProfile " + userProfileWithGraph);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(6, OK)));
-
-
-        clientPair.appClient.send("hardware 1 ar 7");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, HARDWARE, b("ar 7"))));
     }
 
     @Test
@@ -469,10 +460,6 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testTweetWorks() throws Exception {
         reset(blockingIOProcessor);
-        String userProfileWithTwit = readTestUserProfile();
-        clientPair.appClient.send("saveProfile " + userProfileWithTwit);
-
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.hardwareClient.send("tweet yo");
         verify(blockingIOProcessor, timeout(500)).twit(any(), eq("token"), eq("secret"), eq("yo"), eq(1));
@@ -489,13 +476,6 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testAppSendWriteHardCommandForGraphAndBack() throws Exception {
-        String userProfileWithGraph = readTestUserProfile();
-        clientPair.appClient.send("saveProfile " + userProfileWithGraph);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-
-        reset(clientPair.appClient.responseMock);
-        clientPair.appClient.reset();
-
         clientPair.appClient.send("hardware 1 ar 7");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("ar 7"))));
 
