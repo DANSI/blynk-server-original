@@ -12,6 +12,7 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
+import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
@@ -80,8 +81,11 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardwareDeviceWentOffline() throws Exception {
-        String newProfile = readTestUserProfile("user_profile_json_3_dashes.txt");
-        clientPair.appClient.send("saveProfile " + newProfile);
+        Profile profile = JsonParser.parseProfile(readTestUserProfile(), 1);
+        Notification notification = profile.dashBoards[0].getWidgetByType(Notification.class);
+        notification.notifyWhenOffline = false;
+
+        clientPair.appClient.send("saveDash " + profile.dashBoards[0].toString());
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
