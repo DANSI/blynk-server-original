@@ -11,7 +11,7 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class OneAxisJoystick extends OnePinWidget implements HardwareSyncWidget {
 
-    public boolean autoReturn;
+    public boolean autoReturnOn;
 
     public boolean horizontal;
 
