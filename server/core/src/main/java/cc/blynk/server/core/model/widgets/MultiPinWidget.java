@@ -53,11 +53,15 @@ public abstract class MultiPinWidget extends Widget {
 
     @Override
     public String makeHardwareBody() {
-        StringBuilder sb = new StringBuilder(pins[0].makeHardwareBody());
-        for (int i = 1; i < pins.length; i++) {
-            sb.append(BODY_SEPARATOR).append(pins[i].value);
+        if (pins[0].notEmpty()) {
+            StringBuilder sb = new StringBuilder(pins[0].makeHardwareBody());
+            for (int i = 1; i < pins.length; i++) {
+                sb.append(BODY_SEPARATOR).append(pins[i].value);
+            }
+            return sb.toString();
+        } else {
+            return null;
         }
-        return sb.toString();
     }
 
     @Override

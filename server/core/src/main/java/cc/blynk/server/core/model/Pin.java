@@ -53,4 +53,7 @@ public class Pin {
         return makeHardwareBody(pwmMode, pinType, pin, value);
     }
 
+    public boolean notEmpty() {
+        return pinType != null && value != null && pin > -1;
+    }
 }

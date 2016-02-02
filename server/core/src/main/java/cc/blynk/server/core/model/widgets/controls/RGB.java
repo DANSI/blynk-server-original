@@ -23,12 +23,12 @@ public class RGB extends MultiPinWidget implements HardwareSyncWidget {
         }
         if (splitMode) {
             for (Pin pin : pins) {
-                if (pin.pin != -1 && pin.value != null) {
+                if (pin.notEmpty()) {
                     ctx.write(new HardwareMessage(msgId, pin.makeHardwareBody()));
                 }
             }
         } else {
-            if (pins[0].pin != -1 && pins[0].value != null) {
+            if (pins[0].notEmpty()) {
                 ctx.write(new HardwareMessage(msgId, makeHardwareBody()));
             }
         }
