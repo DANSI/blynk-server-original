@@ -63,9 +63,7 @@ public class HardwareAppLogic {
 
                 //if dash was shared. check for shared channels
                 String sharedToken = state.user.dashShareTokens.get(dashId);
-                if (sharedToken != null) {
-                    session.sendToSharedApps(ctx, sharedToken, new SyncMessage(message.id, message.body));
-                }
+                session.sendToSharedApps(ctx, sharedToken, new SyncMessage(message.id, message.body));
                 session.sendMessageToHardware(ctx, dashId, new HardwareMessage(message.id, split[1]));
                 break;
             case 'r' :

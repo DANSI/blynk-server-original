@@ -428,5 +428,20 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         //System.out.println(dashboard);
     }
 
+    @Test
+    public void testMasterMasterSyncWorksWithoutToken() throws Exception {
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.send("login " + "dima@mail.ua 1 Android 24");
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.appClient.send("hardware 1 vw 1 1");
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, SYNC, b("1 vw 1 1"))));
+
+        appClient2.send("hardware 1 vw 2 2");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, b("1 vw 2 2"))));
+    }
+
 
 }

@@ -21,7 +21,7 @@ public class AppShareStateHolder extends AppStateHolder {
 
     @Override
     public boolean contains(String sharedToken) {
-        return token.equals(sharedToken);
+        return sharedToken != null && token.equals(sharedToken);
     }
 
 }
