@@ -45,7 +45,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         for (Widget widget : profile.dashBoards[0].widgets) {
             if (widget instanceof OnePinWidget) {
                 OnePinWidget onePinWidget = (OnePinWidget) widget;
-                if (onePinWidget.pin != null && onePinWidget.pin == pin) {
+                if (onePinWidget.pin != -1 && onePinWidget.pin == pin) {
                     return onePinWidget;
                 }
             }

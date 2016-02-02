@@ -106,8 +106,8 @@ public class JsonParsingTest {
         assertNotNull(pin1);
         assertNotNull(pin2);
 
-        assertEquals(1, pin1.pin.byteValue());
-        assertEquals(2, pin2.pin.byteValue());
+        assertEquals(1, pin1.pin);
+        assertEquals(2, pin2.pin);
 
         assertEquals("1", pin1.value);
         assertEquals("2", pin2.value);

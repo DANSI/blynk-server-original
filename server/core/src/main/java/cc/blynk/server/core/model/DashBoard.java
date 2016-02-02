@@ -50,8 +50,8 @@ public class DashBoard {
      */
     public transient StringMessage pinModeMessage;
 
-    private static void append(StringBuilder sb, Byte pin, PinType pinType, String pinMode) {
-        if (pin == null || pin == -1 || pinMode == null || pinType == PinType.VIRTUAL) {
+    private static void append(StringBuilder sb, byte pin, PinType pinType, String pinMode) {
+        if (pin == -1 || pinMode == null || pinType == PinType.VIRTUAL) {
             return;
         }
         sb.append(StringUtils.BODY_SEPARATOR)

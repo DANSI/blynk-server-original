@@ -14,7 +14,7 @@ public abstract class OnePinWidget extends Widget {
 
     public PinType pinType;
 
-    public Byte pin;
+    public byte pin = -1;
 
     public boolean pwmMode;
 
@@ -47,7 +47,7 @@ public abstract class OnePinWidget extends Widget {
     }
 
     public boolean isSame(byte pin, PinType type) {
-        return this.pin != null && this.pin == pin && ((this.pwmMode && type == PinType.ANALOG) || (type == this.pinType));
+        return this.pin == pin && ((this.pwmMode && type == PinType.ANALOG) || (type == this.pinType));
     }
 
     public String getValue(byte pin, PinType type) {

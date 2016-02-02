@@ -11,7 +11,7 @@ import static cc.blynk.utils.StringUtils.*;
  */
 public class Pin {
 
-    public Byte pin;
+    public byte pin = -1;
 
     public boolean pwmMode;
 
@@ -46,7 +46,7 @@ public class Pin {
     }
 
     public boolean isSame(byte pin, PinType type) {
-        return this.pin != null && this.pin == pin && ((this.pwmMode && type == PinType.ANALOG) || (type == this.pinType));
+        return this.pin == pin && ((this.pwmMode && type == PinType.ANALOG) || (type == this.pinType));
     }
 
     public String makeHardwareBody() {

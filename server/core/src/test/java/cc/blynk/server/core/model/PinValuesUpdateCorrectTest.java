@@ -28,7 +28,7 @@ public class PinValuesUpdateCorrectTest {
         dash.isActive = true;
 
         Button button = dash.getWidgetByType(Button.class);
-        assertEquals(1, button.pin.byteValue());
+        assertEquals(1, button.pin);
         assertEquals(PinType.DIGITAL, button.pinType);
         assertEquals("1", button.value);
 
