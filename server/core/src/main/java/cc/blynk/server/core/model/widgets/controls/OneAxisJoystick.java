@@ -15,6 +15,8 @@ public class OneAxisJoystick extends OnePinWidget implements HardwareSyncWidget 
 
     public boolean horizontal;
 
+    public boolean sendOnReleaseOn;
+
     @Override
     public void send(ChannelHandlerContext ctx, int msgId) {
         String body = makeHardwareBody();

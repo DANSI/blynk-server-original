@@ -14,6 +14,8 @@ public class RGB extends MultiPinWidget implements HardwareSyncWidget {
 
     public boolean splitMode;
 
+    public boolean sendOnReleaseOn;
+
     @Override
     public void send(ChannelHandlerContext ctx, int msgId) {
         if (pins == null) {

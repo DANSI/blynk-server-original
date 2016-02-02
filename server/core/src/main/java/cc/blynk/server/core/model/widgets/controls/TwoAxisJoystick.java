@@ -18,6 +18,8 @@ public class TwoAxisJoystick extends MultiPinWidget implements HardwareSyncWidge
 
     public boolean portraitLocked;
 
+    public boolean sendOnReleaseOn;
+
     @Override
     public void send(ChannelHandlerContext ctx, int msgId) {
         if (pins == null) {
