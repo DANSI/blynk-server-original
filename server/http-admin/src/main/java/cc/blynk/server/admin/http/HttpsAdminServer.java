@@ -16,6 +16,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,7 +43,7 @@ public class HttpsAdminServer extends BaseServer {
                 allowedIPsArray[0] != null && !"".equals(allowedIPsArray[0])) {
             allowedIPs = new HashSet<>(Arrays.asList(allowedIPsArray));
         } else {
-            allowedIPs = null;
+            allowedIPs = Collections.emptySet();
         }
 
         log.info("Enabling HTTPS for admin UI.");
