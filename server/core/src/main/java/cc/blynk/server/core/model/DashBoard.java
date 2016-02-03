@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.FrequencyWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
@@ -110,6 +111,15 @@ public class DashBoard {
             }
         }
         return null;
+    }
+
+    public int getWidgetIndex(long id, int msgId) {
+        for (int i = 0; i < widgets.length; i++) {
+            if (widgets[i].id == id) {
+                return i;
+            }
+        }
+        throw new IllegalCommandException("Widget with passed id not found.", msgId);
     }
 
     public  <T> T getWidgetByType(Class<T> clazz) {

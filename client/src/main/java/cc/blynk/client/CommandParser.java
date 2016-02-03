@@ -51,6 +51,12 @@ public class CommandParser {
                 return SAVE_DASH;
             case "deletedash" :
                 return DELETE_DASH;
+            case "createwidget" :
+                return CREATE_WIDGET;
+            case "updatewidget" :
+                return UPDATE_WIDGET;
+            case "deletewidget" :
+                return DELETE_WIDGET;
             case "hardsync" :
                 return HARDWARE_SYNC;
             case "info" :

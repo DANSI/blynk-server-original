@@ -44,7 +44,7 @@ public class SaveDashLogic {
         log.debug("Trying to parse user dash : {}", dashString);
         DashBoard updatedDash = JsonParser.parseDashboard(dashString, message.id);
 
-        log.info("Saving dashboard.");
+        log.debug("Saving dashboard.");
 
         int index = user.profile.getDashIndex(updatedDash.id, message.id);
         //do not accept isActive field from "saveDash" command

@@ -58,18 +58,27 @@ public class MessageFactory {
                 return new GetSharedDashMessage(messageId, body);
             case HARDWARE :
                 return new HardwareMessage(messageId, body);
+
             case CREATE_DASH :
                 return new CreateDashMessage(messageId, body);
-            case DELETE_DASH :
-                return new DeleteDashMessage(messageId, body);
-            case ADD_PUSH_TOKEN :
-                return new AddPushToken(messageId, body);
             case SAVE_DASH :
                 return new SaveDashMessage(messageId, body);
+            case DELETE_DASH :
+                return new DeleteDashMessage(messageId, body);
+
+            case ADD_PUSH_TOKEN :
+                return new AddPushToken(messageId, body);
             case HARDWARE_SYNC :
                 return new HardwareSyncMessage(messageId, body);
             case HARDWARE_INFO :
                 return new HardwareInfoMessage(messageId, body);
+
+            case CREATE_WIDGET :
+                return new CreateWidget(messageId, body);
+            case UPDATE_WIDGET :
+                return new UpdateWidget(messageId, body);
+            case DELETE_WIDGET :
+                return new DeleteWidget(messageId, body);
 
             default: throw new UnsupportedCommandException(String.format("Command with code %d not supported message.", command), messageId);
         }

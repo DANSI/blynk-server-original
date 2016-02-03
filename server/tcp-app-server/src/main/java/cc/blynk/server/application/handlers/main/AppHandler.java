@@ -5,6 +5,9 @@ import cc.blynk.server.application.handlers.main.logic.*;
 import cc.blynk.server.application.handlers.main.logic.dashboard.CreateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.DeleteDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.SaveDashLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.CreateWidgetLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.DeleteWidgetLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.UpdateWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.GetGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.GetShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.GetSharedDashLogic;
@@ -128,6 +131,16 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case DELETE_DASH :
                 DeleteDashLogic.messageReceived(ctx, state.user, msg);
                 break;
+            case CREATE_WIDGET :
+                CreateWidgetLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case UPDATE_WIDGET :
+                UpdateWidgetLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case DELETE_WIDGET :
+                DeleteWidgetLogic.messageReceived(ctx, state.user, msg);
+                break;
+
         }
     }
 
