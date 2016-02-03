@@ -22,7 +22,7 @@ public final class ParseUtil {
         try {
             return Integer.parseInt(intProperty);
         } catch (NumberFormatException ex) {
-            throw new BaseServerException(String.format("Dash board id '%s' not valid.", intProperty), msgId, Response.ILLEGAL_COMMAND);
+            throw new BaseServerException(String.format("Id '%s' not valid.", intProperty), msgId, Response.ILLEGAL_COMMAND);
         }
     }
 
@@ -39,6 +39,14 @@ public final class ParseUtil {
             return Long.parseLong(longProperty);
         } catch (NumberFormatException nfe) {
             throw new RuntimeException(longProperty + " not a number. " + nfe.getMessage());
+        }
+    }
+
+    public static int parseLong(String longProperty, int msgId) {
+        try {
+            return Integer.parseInt(longProperty);
+        } catch (NumberFormatException ex) {
+            throw new BaseServerException(String.format("Id '%s' not valid.", longProperty), msgId, Response.ILLEGAL_COMMAND);
         }
     }
 

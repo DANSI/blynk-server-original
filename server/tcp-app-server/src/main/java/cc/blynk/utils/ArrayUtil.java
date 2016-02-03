@@ -35,11 +35,17 @@ public class ArrayUtil {
     }
 
     public static DashBoard[] remove(final DashBoard[] array, final int index) {
-        if (index < 0 || index >= array.length) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Length: " + array.length);
+        final DashBoard[] result = new DashBoard[array.length - 1];
+        System.arraycopy(array, 0, result, 0, index);
+        if (index < array.length - 1) {
+            System.arraycopy(array, index + 1, result, index, array.length - index - 1);
         }
 
-        final DashBoard[] result = new DashBoard[array.length - 1];
+        return result;
+    }
+
+    public static Widget[] remove(final Widget[] array, final int index) {
+        final Widget[] result = new Widget[array.length - 1];
         System.arraycopy(array, 0, result, 0, index);
         if (index < array.length - 1) {
             System.arraycopy(array, index + 1, result, index, array.length - index - 1);
