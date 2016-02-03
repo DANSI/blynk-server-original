@@ -92,13 +92,6 @@ public class Session {
         return false;
     }
 
-    public void sendMessageToHardware(MessageBase message) {
-        for (Channel channel : hardwareChannels) {
-            log.trace("Sending {} to hardware {}", message, channel);
-            channel.writeAndFlush(message);
-        }
-    }
-
     public void sendToApps(HardwareMessage message) {
         for (Channel channel : appChannels) {
             log.trace("Sending {} to app {}", message, channel);
