@@ -35,7 +35,8 @@ public class GetGraphDataLogic {
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         //warn: split may be optimized
-        String[] messageParts = message.body.split(" ");
+        //todo remove space after app migration
+        String[] messageParts = message.body.split(" |\0");
 
         if (messageParts.length < 3) {
             throw new IllegalCommandException("Wrong income message format.", message.id);
