@@ -29,6 +29,10 @@ public class CreateWidgetLogic {
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] split = message.body.split(BODY_SEPARATOR_STRING, 2);
 
+        if (split.length < 2) {
+            throw new IllegalCommandException("Wrong income message format.", message.id);
+        }
+
         int dashId = ParseUtil.parseInt(split[0], message.id) ;
         String widgetString = split[1];
 

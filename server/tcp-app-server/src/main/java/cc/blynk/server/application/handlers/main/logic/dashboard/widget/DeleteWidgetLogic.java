@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
@@ -24,6 +25,10 @@ public class DeleteWidgetLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] split = message.body.split(BODY_SEPARATOR_STRING, 2);
+
+        if (split.length < 2) {
+            throw new IllegalCommandException("Wrong income message format.", message.id);
+        }
 
         int dashId = ParseUtil.parseInt(split[0], message.id) ;
         long widgetId = ParseUtil.parseLong(split[1], message.id);
