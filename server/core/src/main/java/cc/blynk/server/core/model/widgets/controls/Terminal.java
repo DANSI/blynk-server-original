@@ -13,6 +13,8 @@ public class Terminal extends OnePinWidget {
 
     public boolean terminalInputOn;
 
+    public boolean textLightOn;
+
     @Override
     public String getModeType() {
         return "in";
