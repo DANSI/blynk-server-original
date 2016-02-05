@@ -302,9 +302,14 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testSendEmail() throws Exception {
         blockingIOProcessor.tokenBody = "Auth Token for %s project";
-        ClientPair clientPair = initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "dima@mail.ua 1", null, properties);
-        clientPair.appClient.send("email 1");
-        verify(blockingIOProcessor, timeout(1000)).mail(any(), eq("dima@mail.ua"), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"), eq(1));
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+        appClient.send("login dima@mail.ua 1");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        appClient.send("email 1");
+        verify(blockingIOProcessor, timeout(1000)).mail(any(), eq("dima@mail.ua"), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"), eq(2));
     }
 
     @Test
