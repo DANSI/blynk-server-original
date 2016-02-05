@@ -35,12 +35,14 @@ public class WebSocketTest extends BaseTest {
     private static BaseServer webSocketServer;
     private static BaseServer hardwareServer;
     private static BaseServer appServer;
+    private static ClientPair clientPair;
 
     @AfterClass
     public static void shutdown() throws Exception {
         webSocketServer.stop();
         appServer.stop();
         hardwareServer.stop();
+        clientPair.stop();
     }
 
     @Before
@@ -49,6 +51,7 @@ public class WebSocketTest extends BaseTest {
             webSocketServer = new WebSocketServer(holder).start();
             appServer = new AppServer(holder).start();
             hardwareServer = new HardwareServer(holder).start();
+            clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
         }
     }
 
@@ -69,8 +72,8 @@ public class WebSocketTest extends BaseTest {
 
     @Test
     public void testSyncBetweenWebSocketsAndAppWorks() throws Exception {
-        ClientPair clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
-
+        clientPair.appClient.reset();
+        clientPair.hardwareClient.reset();
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
