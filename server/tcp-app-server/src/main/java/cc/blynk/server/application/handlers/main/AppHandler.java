@@ -62,14 +62,14 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(userDao, sessionDao);
         this.getSharedDashLogic = new GetSharedDashLogic(userDao);
 
-        final int profileMaxSize = props.getIntProperty("user.profile.max.size") * 1024;
+        final int profileMaxSize = props.getIntProperty("user.profile.max.size", 10) * 1024;
         this.createDashLogic = new CreateDashLogic(props.getIntProperty("user.dashboard.max.limit"), profileMaxSize);
         this.saveDashLogic = new SaveDashLogic(profileMaxSize);
 
         this.activateDashboardLogic = new ActivateDashboardLogic(sessionDao);
         this.deActivateDashboardLogic = new DeActivateDashboardLogic(sessionDao);
 
-        final int widgetSize = props.getIntProperty("user.widget.max.size.limit") * 1024;
+        final int widgetSize = props.getIntProperty("user.widget.max.size.limit", 10) * 1024;
         this.createWidgetLogic = new CreateWidgetLogic(widgetSize);
         this.updateWidgetLogic = new UpdateWidgetLogic(widgetSize);
 
