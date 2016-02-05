@@ -45,12 +45,15 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
     private static CloseableHttpClient httpclient;
     private static String httpsServerUrl;
 
+    private static ClientPair clientPair;
+
     @AfterClass
     public static void shutdown() throws Exception {
         httpclient.close();
         httpServer.stop();
         hardwareServer.stop();
         appServer.stop();
+        clientPair.stop();
     }
 
     @Before
@@ -61,7 +64,10 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
             appServer = new AppServer(holder).start();
             httpsServerUrl = String.format("http://localhost:%s/", httpPort);
             httpclient = HttpClients.createDefault();
+            clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
         }
+        clientPair.hardwareClient.reset();
+        clientPair.appClient.reset();
     }
 
     @Override
@@ -71,8 +77,6 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
     @Test
     public void testChangePinValueViaAppAndHardware() throws Exception {
-        ClientPair clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
-
         clientPair.hardwareClient.send("hardware vw 4 200");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 4 200"))));
 
@@ -103,7 +107,6 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
     @Test
     public void testChangePinValueViaHttpAPI() throws Exception {
-        ClientPair clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
@@ -130,7 +133,6 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
     @Test
     public void testChangePinValueViaHttpAPIAndNoWidgetSinglePinValue() throws Exception {
-        ClientPair clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
@@ -147,7 +149,6 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
     @Test
     public void testChangePinValueViaHttpAPIAndNoWidgetMultiPinValue() throws Exception {
-        ClientPair clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
