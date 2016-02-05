@@ -47,6 +47,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final SaveDashLogic saveDashLogic;
     private final ActivateDashboardLogic activateDashboardLogic;
     private final DeActivateDashboardLogic deActivateDashboardLogic;
+    private final CreateWidgetLogic createWidgetLogic;
+    private final UpdateWidgetLogic updateWidgetLogic;
     private final ShareLogic shareLogic;
 
     public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, AppStateHolder state) {
@@ -59,15 +61,18 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.getShareTokenLogic = new GetShareTokenLogic(userDao);
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(userDao, sessionDao);
         this.getSharedDashLogic = new GetSharedDashLogic(userDao);
-        this.createDashLogic = new CreateDashLogic(
-                props.getIntProperty("user.dashboard.max.limit"),
-                props.getIntProperty("user.profile.max.size") * 1024
-        );
-        this.saveDashLogic = new SaveDashLogic(
-                props.getIntProperty("user.profile.max.size") * 1024
-        );
+
+        final int profileMaxSize = props.getIntProperty("user.profile.max.size") * 1024;
+        this.createDashLogic = new CreateDashLogic(props.getIntProperty("user.dashboard.max.limit"), profileMaxSize);
+        this.saveDashLogic = new SaveDashLogic(profileMaxSize);
+
         this.activateDashboardLogic = new ActivateDashboardLogic(sessionDao);
         this.deActivateDashboardLogic = new DeActivateDashboardLogic(sessionDao);
+
+        final int widgetSize = props.getIntProperty("user.widget.max.size.limit") * 1024;
+        this.createWidgetLogic = new CreateWidgetLogic(widgetSize);
+        this.updateWidgetLogic = new UpdateWidgetLogic(widgetSize);
+
         this.shareLogic = new ShareLogic(sessionDao);
         this.state = state;
     }
@@ -132,10 +137,10 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 DeleteDashLogic.messageReceived(ctx, state.user, msg);
                 break;
             case CREATE_WIDGET :
-                CreateWidgetLogic.messageReceived(ctx, state.user, msg);
+                createWidgetLogic.messageReceived(ctx, state.user, msg);
                 break;
             case UPDATE_WIDGET :
-                UpdateWidgetLogic.messageReceived(ctx, state.user, msg);
+                updateWidgetLogic.messageReceived(ctx, state.user, msg);
                 break;
             case DELETE_WIDGET :
                 DeleteWidgetLogic.messageReceived(ctx, state.user, msg);

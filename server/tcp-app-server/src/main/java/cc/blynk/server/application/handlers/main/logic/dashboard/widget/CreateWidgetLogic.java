@@ -26,7 +26,13 @@ public class CreateWidgetLogic {
 
     private static final Logger log = LogManager.getLogger(CreateWidgetLogic.class);
 
-    public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    private final int MAX_WIDGET_SIZE;
+
+    public CreateWidgetLogic(int maxWidgetSize) {
+        this.MAX_WIDGET_SIZE = maxWidgetSize;
+    }
+
+    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] split = message.body.split(BODY_SEPARATOR_STRING, 2);
 
         if (split.length < 2) {
@@ -40,8 +46,7 @@ public class CreateWidgetLogic {
             throw new IllegalCommandException("Income widget message is empty.", message.id);
         }
 
-        //todo move to properties
-        if (widgetString.length() > 10 * 1024) {
+        if (widgetString.length() > MAX_WIDGET_SIZE) {
             throw new NotAllowedException("Widget is larger then limit.", message.id);
         }
 
