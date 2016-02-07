@@ -48,6 +48,9 @@ public enum WidgetType {
     EVENTOR,
     RCT,
     BRIDGE,
-    BLUETOOTH
+    BLUETOOTH,
+
+    //UI
+    MENU
 
 }
