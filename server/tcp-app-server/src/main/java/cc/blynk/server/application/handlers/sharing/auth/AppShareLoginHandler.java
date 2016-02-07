@@ -7,6 +7,7 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.enums.Response;
@@ -78,12 +79,19 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         User user = userDao.sharedTokenManager.getUserByToken(token);
 
         if (user == null || !user.name.equals(userName)) {
-            log.debug("Share token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
+            log.debug("Share token is invalid. User : {}, token {}, {}", userName, token, ctx.channel().remoteAddress());
             ctx.writeAndFlush(new ResponseMessage(messageId, Response.NOT_ALLOWED));
             return;
         }
 
         Integer dashId = UserDao.getDashIdByToken(user.dashShareTokens, token, messageId);
+
+        DashBoard dash = user.profile.getDashById(dashId);
+        if (!dash.isShared) {
+            log.debug("Dashboard is not shared. User : {}, token {}, {}", userName, token, ctx.channel().remoteAddress());
+            ctx.writeAndFlush(new ResponseMessage(messageId, Response.NOT_ALLOWED));
+            return;
+        }
 
         cleanPipeline(ctx.pipeline());
         ctx.pipeline().addLast(new AppShareHandler(props, sessionDao, reportingDao, blockingIOProcessor, new AppShareStateHolder(user, osType, version, token, dashId)));

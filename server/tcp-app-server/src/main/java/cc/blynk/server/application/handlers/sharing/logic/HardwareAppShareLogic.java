@@ -47,6 +47,12 @@ public class HardwareAppShareLogic {
             return;
         }
 
+        if (!dashBoard.isShared) {
+            log.debug("Dashboard is not shared. User : {}, {}", state.user.name, ctx.channel().remoteAddress());
+            ctx.writeAndFlush(new ResponseMessage(message.id, Response.NOT_ALLOWED));
+            return;
+        }
+
         char operation = split[1].charAt(1);
         DashBoard dash = state.user.profile.getDashById(dashId, message.id);
 
