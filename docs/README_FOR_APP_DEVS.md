@@ -86,15 +86,9 @@ For commands (loadProfile, getToken) that request data back - message will be re
 [Here is the class with all of the codes](https://github.com/blynkkk/blynk-server/blob/master/server/core/src/main/java/cc/blynk/server/core/protocol/enums/Response.java#L12).
 Response message structure:
 
-	    	       BEFORE DECODE
-	+------------------+------------+----------------+
-	|       1 byte     |  2 bytes   |     2 bytes    |
-	+------------------+------------+----------------+
-	| Protocol Command |  MessageId |  Response code |
-	|       0x00       |   0x000A   |      0x0001    |
-	+------------------+------------+----------------+
-	|               always 5 bytes                   |
-	+------------------------------------------------+
+| Command       | Message Id    | Response code   |
+|:-------------:|:-------------:|:---------------:|
+| 1 byte        | 2 bytes       | 2 bytes         |
 
 
 ## Widget types
