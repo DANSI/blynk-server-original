@@ -1,11 +1,3 @@
-# TODO
-Describe Properties in config
-Hardware command body forming rules
-
-# Blynk server
-Is Netty based Java server responsible for message forwarding between mobile application and any hardware (e.g. Arduino, Raspberry Pi for now).
-Please read more detailed description [here](https://www.kickstarter.com/projects/167134865/blynk-build-an-app-for-your-arduino-project-in-5-m/description).
-
 # Protocol messages
 
 Every message consists of 2 parts.
@@ -33,49 +25,71 @@ So, message is always "1 byte + 2 bytes + 2 bytes + messageBody.length".
 
 ### Command field
 Unsigned byte.
-This is 1 byte field responsible for storing [command code](https://bitbucket.org/theblynk/blynk-server/src/a3861b0e9bcb9823bbb6dd2722500c55e197bbe6/common/src/main/java/cc/blynk/common/enums/Command.java?at=master) from client, like login, ping, etc...
+This is 1 byte field responsible for storing command code from client, like login, ping, etc. Codes:
+
+    RESPONSE = 0;  
+    REGISTER = 1;              
+    LOGIN = 2;                  
+    GET_TOKEN = 5; 
+    PING = 6;      
+    ACTIVATE_DASHBOARD = 7;
+    DEACTIVATE_DASHBOARD = 8;
+    REFRESH_TOKEN = 9;
+    HARDWARE = 20;
+    
+    CREATE_DASH = 21;
+    SAVE_DASH = 22;
+    DELETE_DASH = 23;
+    
+    LOAD_PROFILE_GZIPPED = 24;
+
+    CREATE_WIDGET = 33;
+    UPDATE_WIDGET = 34;
+    DELETE_WIDGET = 35;
+
+[Full list](https://github.com/blynkkk/blynk-server/blob/master/server/core/src/main/java/cc/blynk/server/core/protocol/enums/Command.java#L11) 
 
 ### Message Id field
 Unsigned short.
-Message Id field is a 2 bytes field for defining unique message identifier. It’s used in order to distinguish how to manage responses from hardware on mobile client. Message ID field should be generated on client’s side.
-Any ‘read’ protocol command should always have same messageId for the same widget. Let's say, you have a Graph_1 widget which is configured to read data from the analog pin.
-After you reconfigured Graph_1 to read another pin, load command will still look the same, and messageID will be an ID of the widget to display results at.
+Message Id field is a 2 bytes field for defining unique message identifier. It’s used in order to distinguish 
+how to manage responses from hardware on mobile client. Message ID field should be generated on client’s side.
 
 ### Length field
 Unsigned short.
-Length field is a 2 bytes field for defining body length. Could be 0 if body is empty or missing.
-
-
-
-#### Protocol command codes
-
-		0 - response; After every message client sends to server it retrieves response message back (exception commands are: LoadProfile, GetToken, Ping commands).
-        1 - register; Must have 2 space-separated params as a content field (username and password) : “username@example.com UserPassword”
-        2 - login:
-            a) Mobile client must send send 2 space-separated parameters as a content field (username and password) : "username@example.com UserPassword"
-            b) Hardware client must send 1 parameter, which is user Authentication Token : "6a7a3151cb044cd893a92033dd65f655"
-        3 - save profile; Must have 1 parameter as content string : "{...}"
-        4 - load profile; Doesn’t have any parameters
-        5 - getToken; Must have 1 signed int (4 bytes) parameter, Dashboard ID : "1". NOTE : number of dashboards is limited per user by 10 and token request should request token for id of existing dashboard, that saved via saveProfile
-        6 - ping; Sends request from client to server, then from server to hardware, than back to server and back to the client.
-        7 - activate dashboard. "activate DASH_ID";
-        8 - deactivate dashboard. "deactivate";
-        9 - refresh token. Generates new token for dashboard; "refreshToken DASH_ID".
-        12 - tweet; Sends tweet request from hardware to server. 140 chars max. 
-        20 - hardware; Command for hardware. Every Widget forms it's own body message for hardware command.
-
-
-#### Hardware command body forming rules
-//todo
-
-
+Length field is a 2 bytes field for defining body length. Could be 0 if body is empty.
 
 ## Response Codes
+
+    OK = 200;
+    QUOTA_LIMIT_EXCEPTION = 1;
+    ILLEGAL_COMMAND = 2;
+    USER_NOT_REGISTERED = 3;
+    USER_ALREADY_REGISTERED = 4;
+    USER_NOT_AUTHENTICATED = 5;
+    NOT_ALLOWED = 6;
+    DEVICE_NOT_IN_NETWORK = 7;
+    NO_ACTIVE_DASHBOARD = 8;
+    INVALID_TOKEN = 9;
+    ILLEGAL_COMMAND_BODY = 11;
+    GET_GRAPH_DATA_EXCEPTION = 12;
+    
+    NOTIFICATION_INVALID_BODY_EXCEPTION = 13;
+    NOTIFICATION_NOT_AUTHORIZED_EXCEPTION = 14;
+    NOTIFICATION_EXCEPTION = 15;
+    
+    //reserved
+     BLYNK_TIMEOUT_EXCEPTION = 16;
+     
+    NO_DATA_EXCEPTION = 17;
+    DEVICE_WENT_OFFLINE = 18;
+    SERVER_EXCEPTION = 19;
+    NOT_SUPPORTED_VERSION = 20;
+
 Client sends commands to the server and gets response for every command sent.
 For commands (register, login, saveProfile, hardware) that doesn't request any data back - 'response' (command field 0x00) message is returned.
-For commands (loadProfile, getToken, ping) that request data back - message will be returned with same command code. In case you sent 'loadProfile' you will receive 'loadProfile' command back with filled body.
+For commands (loadProfile, getToken) that request data back - message will be returned with same command code. In case you sent 'loadProfile' you will receive 'loadProfile' command back with filled body.
 
-[Here is the class with all of the codes](https://bitbucket.org/theblynk/blynk-server/src/251d68546b2ade6651c1393017bf3d1ec4787e6b/common/src/main/java/cc/blynk/common/enums/Response.java?at=master).
+[Here is the class with all of the codes](https://github.com/blynkkk/blynk-server/blob/master/server/core/src/main/java/cc/blynk/server/core/protocol/enums/Response.java#L12).
 Response message structure:
 
 	    	       BEFORE DECODE
@@ -90,22 +104,6 @@ Response message structure:
 
     200 - message was successfully processed/passed to the server
 
-    1 - too many requests.
-    2 - command is badly formed, check syntax and passed params
-    3 - user is not registered
-    4 - user with this name has been registered already
-    5 - user hasn’t made login command
-    6 - user is not allowed to perform this operation (most probably is not logged or socket has been closed)
-    7 - hardware is offline
-    8 - no active dashboard. User has to activated dashboard.
-    9 - token is invalid
-    10 - hardware channel went offline.
-    11 - user is already logged in. Happens in cases when same user tries to login for more than one time.
-    13 - tweet body invalid exception; body is empty or larger than 140 chars;
-    14 - user has no twitter access token provided.
-    15 - server busy exception happens in case of some server limit was reached. usually shouldn't happen.
-    500 - server error. something went wrong on server
-
 ## User Profile JSON structure
 	{ "dashBoards" : 
 		[ 
@@ -119,11 +117,12 @@ Response message structure:
 
 ## Widget types
 
-    //output
+    //controls
     BUTTON,
-    TOGGLE_BUTTON,
     SLIDER,
+    VERTICAL_SLIDER,
     KNOB,
+    TIMER,
     ROTARY_KNOB,
     RGB,
     TWO_WAY_ARROW,
@@ -133,42 +132,91 @@ Response message structure:
     GAMEPAD,
     KEYPAD,
 
-    //input
+    //outputs
     LED,
+    LOGGER, //history_graph
     DIGIT4_DISPLAY, //same as NUMERICAL_DISPLAY
     GAUGE,
     LCD_DISPLAY,
     GRAPH,
     LEVEL_DISPLAY,
+    TERMINAL,
 
-    //sensors
+    //inputs
     MICROPHONE,
     GYROSCOPE,
     ACCELEROMETER,
     GPS,
 
-    //other
-    TERMINAL,
+    //notifications
     TWITTER,
     EMAIL,
     NOTIFICATION,
+
+    //other
     SD_CARD,
     EVENTOR,
     RCT,
-    TIMER
+    BRIDGE,
+    BLUETOOTH,
 
-[Or see the class itself](https://bitbucket.org/theblynk/blynk-server/src/251d68546b2ade6651c1393017bf3d1ec4787e6b/server/core/src/main/java/cc/blynk/server/model/enums/WidgetType.java?at=master)
+    //UI
+    MENU
 
-## Widgets JSON structure
 
-	Button				: {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"BUTTON",         "pinType":"NONE", "pin":13, "value":"1"   } -- sends HIGH on digital pin 13. Possible values 1|0.
-	Slider				: {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"SLIDER",         "pinType":"ANALOG",  "pin":18, "value":"244" } -- sends 244 on analog pin 18. Possible values -9999 to 9999
-	Timer				: {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"TIMER",          "pinType":"DIGITAL", "pin":13, "startTime" : 1111111111, "stopInterval" : 111111111} -- startTime is time in UTC when to start timer (milliseconds are ignored), stopInterval interval in milliseconds after which stop timer.
+[List is here](https://github.com/blynkkk/blynk-server/blob/master/server/core/src/main/java/cc/blynk/server/core/model/enums/WidgetType.java#L8).
 
-	//pin reading widgets
-	LED					: {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"LED",            "pinType":"DIGITAL", "pin":10} - sends READ pin to server
-	Digit Display		: {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"DIGIT4_DISPLAY", "pinType":"DIGITAL", "pin":10} - sends READ pin to server
-	Graph				: {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"GRAPH",          "pinType":"DIGITAL", "pin":10, "readingFrequency":1000} - sends READ pin to server. Frequency in microseconds
+## JSON structure
 
-## Commands order processing
-Server guarantees that commands will be processed in same order in which they were send.
+    {
+        "dashBoards" :
+            [
+                {
+                 "id":1,
+                 "name":"My Dashboard",
+                 "isActive" : true,
+                 "isShared" : true,
+                 "widgets"  : [
+                    {"id":1, "x":1, "y":1, "label":"Some Text", "type":"BUTTON",         "pinType":"DIGITAL", "pin":1, "value":"1"},
+                    {"id":2, "x":1, "y":1, "label":"Some Text", "type":"SLIDER",  "pinType":"DIGITAL", "pin":2, "value":"1", "state":"ON"},
+                    {"id":3, "x":1, "y":1, "label":"Some Text", "type":"SLIDER",  "pinType":"ANALOG", "pin":3, "value":"0", "state":"OFF"},
+                    {"id":4, "x":1, "y":1, "label":"Some Text", "type":"SLIDER",         "pinType":"VIRTUAL", "pin":4, "value":"244" },
+                    {"id":5, "x":1, "y":1, "label":"Some Text", "type":"TIMER",          "pinType":"DIGITAL", "pin":5, "value":"1", "startTime":0},
+                    {"id":6, "x":1, "y":1, "label":"Some Text", "type":"LED",            "pinType":"ANALOG", "pin":6, "frequency" : 100},
+                    {"id":7, "x":1, "y":1, "label":"Some Text", "type":"DIGIT4_DISPLAY", "pinType":"ANALOG", "pin":7, "frequency" : 1000},
+                    {"id":8, "x":1, "y":1, "label":"Some Text", "type":"GRAPH",          "pinType":"ANALOG", "pin":8},
+                    {"id":9, "x":1, "y":1, "type":"NOTIFICATION", "notifyWhenOffline":true, "androidTokens":{"uid":"token"}},
+                    {"id":10, "x":1, "y":1, "token":"token", "secret":"secret", "type":"TWITTER"},
+                    {"id":11, "x":1, "y":1, "type":"RTC", "pinType":"VIRTUAL", "pin":9},
+                    {"id":12, "x":0, "y":0, "color":-1, "width":8, "height":2,
+                        "type":"LCD",
+                        "pins": [
+                                    {
+                                        "pin":0,
+                                        "pwmMode":false,
+                                        "rangeMappingOn":false,
+                                        "pinType":"VIRTUAL",
+                                        "value":"89.888037459418",
+                                        "min":-100,
+                                        "max":100
+                                    },
+                                    {   "pin":1,
+                                        "pwmMode":false,
+                                        "rangeMappingOn":false,
+                                        "pinType":"VIRTUAL",
+                                        "value":"-58.74774244674501",
+                                        "min":-100,
+                                        "max":100
+                                    }
+                                ],
+                        "advancedMode":false,
+                        "textFormatLine1":"pin1 : /pin0/",
+                        "textFormatLine2":"pin2 : /pin1/",
+                        "textLight":false,
+                        "frequency":1000
+                    }
+                 ],
+                 "boardType":"UNO"
+                }
+            ]
+    }
