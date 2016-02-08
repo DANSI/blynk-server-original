@@ -102,18 +102,6 @@ Response message structure:
 	|               always 5 bytes                   |
 	+------------------------------------------------+
 
-    200 - message was successfully processed/passed to the server
-
-## User Profile JSON structure
-	{ "dashBoards" : 
-		[ 
-			{
-			 "id":1, "name":"My Dashboard", "isActive":true, "timestamp":333333,
-			 "widgets"  : [...], 
-			 "boardType":"UNO"
-			}
-		]
-	}
 
 ## Widget types
 
@@ -220,3 +208,8 @@ Response message structure:
                 }
             ]
     }
+    
+## Command workflow
+
+For better understanding of how commands should be processed, please have a look in integration test 
+it is easy understand what is going on there. You may start from [this](https://github.com/blynkkk/blynk-server/blob/master/integration-tests/src/test/java/cc/blynk/integration/tcp/MainWorkflowTest.java#L78) test.
