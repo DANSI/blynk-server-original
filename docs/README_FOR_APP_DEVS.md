@@ -9,17 +9,11 @@ Every message consists of 2 parts.
 
 + Body : string (could be up to 2^15 bytes).
 
-Scheme:
+Blynk transfers binary messages with the following structure:
 
-	            	BEFORE DECODE (8 bytes)
-	+------------------+------------+---------+------------------------+
-	|       1 byte     |  2 bytes   | 2 bytes |    Variable length     |
-	+------------------+------------+---------+------------------------+
-	| Protocol Command |  MessageId |  Length |  Message body (String) |
-	|       0x01       |   0x000A   |  0x0003 |         "1 2"          |
-	+------------------+------------+---------+------------------------+
-	                                          |        3 bytes         |
-    	                                      +------------------------+
+| Command       | Message Id    | Length/Status   | Body     |
+|:-------------:|:-------------:|:---------------:|:--------:|
+| 1 byte        | 2 bytes       | 2 bytes         | Variable |
 
 So, message is always "1 byte + 2 bytes + 2 bytes + messageBody.length".
 
@@ -208,6 +202,10 @@ Response message structure:
                 }
             ]
     }
+    
+## Hardware command description
+    
+Could be found [here](https://github.com/blynkkk/blynk-library/blob/master/docs/Implementing.md#hardwarebridge-command-body).
     
 ## Command workflow
 
