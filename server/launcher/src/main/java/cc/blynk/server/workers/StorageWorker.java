@@ -63,20 +63,16 @@ public class StorageWorker implements Runnable {
             if (key.ts < nowTruncatedToPeriod) {
                 AggregationValue value = map.get(key);
 
-                double average = value.calcAverage();
-                long eventTS = key.ts * type.period;
-
-                String fileName = generateFilename(key.dashId, key.pinType, key.pin, type);
-
                 Path reportingPath = Paths.get(dataFolder, key.username);
                 try {
                     if (Files.notExists(reportingPath)) {
                         Files.createDirectories(reportingPath);
                     }
 
+                    String fileName = generateFilename(key.dashId, key.pinType, key.pin, type);
                     Path filePath = Paths.get(reportingPath.toString(), fileName);
 
-                    write(filePath, average, eventTS);
+                    write(filePath, value.calcAverage(), key.ts * type.period);
 
                     //removing only if no error
                     map.remove(key);
