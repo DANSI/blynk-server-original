@@ -10,7 +10,6 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.utils.PinUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -38,19 +37,23 @@ public class HardwareLogic {
         this.reportingDao = reportingDao;
     }
 
+    private static boolean isWriteOperation(String body) {
+        return body.charAt(1) == 'w';
+    }
+
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
-        if (message.body.length() < 4) {
+        final String body = message.body;
+
+        if (body.length() < 4) {
             throw new IllegalCommandException("HardwareLogic command body too short.", message.id);
         }
-
-        String body = message.body;
 
         int dashId = state.dashId;
         DashBoard dash = state.user.profile.getDashById(dashId, message.id);
 
-        if (PinUtil.isWriteOperation(body)) {
+        if (isWriteOperation(body)) {
             String[] splitBody = body.split(StringUtils.BODY_SEPARATOR_STRING);
 
             //storing to DB and aggregating

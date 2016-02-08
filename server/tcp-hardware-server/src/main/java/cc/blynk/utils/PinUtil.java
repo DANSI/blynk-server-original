@@ -7,14 +7,6 @@ package cc.blynk.utils;
  */
 public class PinUtil {
 
-    public static boolean pinModeMessage(String body) {
-        return body.length() > 0 && body.charAt(0) == 'p';
-    }
-
-    public static boolean isWriteOperation(String body) {
-        return body.length() > 1 && body.charAt(1) == 'w';
-    }
-
     public static boolean isReadOperation(String body) {
         return body.length() > 1 && body.charAt(1) == 'r';
     }
