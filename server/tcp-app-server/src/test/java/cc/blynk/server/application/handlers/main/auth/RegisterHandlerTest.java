@@ -29,7 +29,7 @@ public class RegisterHandlerTest {
 
     @Test
     public void testRegisterOk() throws Exception {
-        RegisterHandler registerHandler = new RegisterHandler(userDao, null);
+        RegisterHandler registerHandler = new RegisterHandler(userDao, null, "");
 
         String userName = "test@gmail.com";
 
@@ -41,7 +41,7 @@ public class RegisterHandlerTest {
 
     @Test
     public void testRegisterOk2() throws Exception {
-        RegisterHandler registerHandler = new RegisterHandler(userDao, null);
+        RegisterHandler registerHandler = new RegisterHandler(userDao, null, "");
 
         String userName = "test@gmail.com";
 
@@ -53,7 +53,7 @@ public class RegisterHandlerTest {
 
     @Test
     public void testAllowedUsersSingleUserWork() throws Exception {
-        RegisterHandler registerHandler = new RegisterHandler(userDao, new String[] {"test@gmail.com"});
+        RegisterHandler registerHandler = new RegisterHandler(userDao, new String[] {"test@gmail.com"}, "");
 
         String userName = "test@gmail.com";
 
@@ -65,7 +65,7 @@ public class RegisterHandlerTest {
 
     @Test
     public void testAllowedUsersSingleUserNotWork() throws Exception {
-        RegisterHandler registerHandler = new RegisterHandler(userDao, new String[] {"test@gmail.com"});
+        RegisterHandler registerHandler = new RegisterHandler(userDao, new String[] {"test@gmail.com"}, "");
 
         String userName = "test2@gmail.com";
 
@@ -78,7 +78,7 @@ public class RegisterHandlerTest {
 
     @Test
     public void testAllowedUsersSingleUserWork2() throws Exception {
-        RegisterHandler registerHandler = new RegisterHandler(userDao, new String[] {"test@gmail.com", "test2@gmail.com"});
+        RegisterHandler registerHandler = new RegisterHandler(userDao, new String[] {"test@gmail.com", "test2@gmail.com"}, "");
 
         String userName = "test2@gmail.com";
 

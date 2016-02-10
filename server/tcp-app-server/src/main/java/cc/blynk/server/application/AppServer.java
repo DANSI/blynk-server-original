@@ -10,6 +10,7 @@ import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.utils.AppSslUtil;
+import cc.blynk.utils.ReportingUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -32,7 +33,7 @@ public class AppServer extends BaseServer {
     public AppServer(Holder holder) {
         super(holder.props.getIntProperty("app.ssl.port"));
 
-        final RegisterHandler registerHandler = new RegisterHandler(holder.userDao, holder.props.getCommaSeparatedList("allowed.users.list"));
+        final RegisterHandler registerHandler = new RegisterHandler(holder.userDao, holder.props.getCommaSeparatedList("allowed.users.list"), ReportingUtil.getReportingFolder(holder.props.getProperty("data.folder")));
         final AppLoginHandler appLoginHandler = new AppLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
         final AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
         final AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);

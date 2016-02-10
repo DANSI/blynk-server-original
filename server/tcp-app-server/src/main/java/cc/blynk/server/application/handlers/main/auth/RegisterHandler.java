@@ -9,6 +9,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.commons.validator.routines.EmailValidator;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,8 +36,9 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
     private final UserDao userDao;
     private final Set<String> allowedUsers;
+    private final String reportingFolder;
 
-    public RegisterHandler(UserDao userDao, String[] allowedUsersArray) {
+    public RegisterHandler(UserDao userDao, String[] allowedUsersArray, String reportingFolder) {
         this.userDao = userDao;
         if (allowedUsersArray != null && allowedUsersArray.length > 0 &&
                 allowedUsersArray[0] != null && !"".equals(allowedUsersArray[0])) {
@@ -42,6 +47,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         } else {
             allowedUsers = null;
         }
+        this.reportingFolder = reportingFolder;
     }
 
     @Override
@@ -80,9 +86,22 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         userDao.add(userName, pass);
 
+        createReportingFolder(userName);
+
         log.info("Registered {}.", userName);
 
         ctx.writeAndFlush(new ResponseMessage(message.id, OK));
+    }
+
+    private void createReportingFolder(String username) {
+        Path reportingPath = Paths.get(reportingFolder, username);
+        if (Files.notExists(reportingPath)) {
+            try {
+                Files.createDirectories(reportingPath);
+            } catch (IOException ioe) {
+                log.error("Error creating report folder. {}", reportingPath);
+            }
+        }
     }
 
     @Override

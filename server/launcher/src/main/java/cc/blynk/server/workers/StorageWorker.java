@@ -28,11 +28,11 @@ public class StorageWorker implements Runnable {
     private static final Comparator<AggregationKey> AGGREGATION_KEY_COMPARATOR = (o1, o2) -> (int) (o1.ts - o2.ts);
 
     private final AverageAggregator averageAggregator;
-    private final String dataFolder;
+    private final String reportingPath;
 
-    public StorageWorker(AverageAggregator averageAggregator, String dataFolder) {
+    public StorageWorker(AverageAggregator averageAggregator, String reportingPath) {
         this.averageAggregator = averageAggregator;
-        this.dataFolder = dataFolder;
+        this.reportingPath = reportingPath;
     }
 
     public static void write(Path reportingPath, double value, long ts) throws IOException {
@@ -63,14 +63,9 @@ public class StorageWorker implements Runnable {
             if (key.ts < nowTruncatedToPeriod) {
                 AggregationValue value = map.get(key);
 
-                Path reportingPath = Paths.get(dataFolder, key.username);
                 try {
-                    if (Files.notExists(reportingPath)) {
-                        Files.createDirectories(reportingPath);
-                    }
-
                     String fileName = generateFilename(key.dashId, key.pinType, key.pin, type);
-                    Path filePath = Paths.get(reportingPath.toString(), fileName);
+                    Path filePath = Paths.get(reportingPath, key.username, fileName);
 
                     write(filePath, value.calcAverage(), key.ts * type.period);
 
