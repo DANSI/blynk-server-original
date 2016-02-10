@@ -30,7 +30,7 @@ public class AppServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public AppServer(Holder holder) {
-        super(holder.props.getIntProperty("app.ssl.port"), holder.transportType);
+        super(holder.props.getIntProperty("app.ssl.port"));
 
         final RegisterHandler registerHandler = new RegisterHandler(holder.userDao, holder.props.getCommaSeparatedList("allowed.users.list"));
         final AppLoginHandler appLoginHandler = new AppLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);

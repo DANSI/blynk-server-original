@@ -1,6 +1,7 @@
 package cc.blynk.integration;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
@@ -22,6 +23,8 @@ public abstract class BaseTest {
     public ServerProperties properties;
 
     public Holder holder;
+
+    public TransportTypeHolder transportTypeHolder;
 
     //tcp app/hardware ports
     public int tcpAppPort;
@@ -56,6 +59,7 @@ public abstract class BaseTest {
             this.properties.setProperty("data.folder", getDataFolder());
         }
         this.holder = new Holder(this.properties);
+        this.transportTypeHolder = new TransportTypeHolder(this.properties);
         this.holder.setBlockingIOProcessor(this.blockingIOProcessor);
 
         this.tcpAppPort = this.properties.getIntProperty("app.ssl.port");

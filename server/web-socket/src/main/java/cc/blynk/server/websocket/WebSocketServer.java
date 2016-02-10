@@ -25,7 +25,7 @@ public class WebSocketServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public WebSocketServer(Holder holder) {
-        super(holder.props.getIntProperty("tcp.websocket.port"), holder.transportType);
+        super(holder.props.getIntProperty("tcp.websocket.port"));
 
         log.info("Enabling Web Sockets.");
 

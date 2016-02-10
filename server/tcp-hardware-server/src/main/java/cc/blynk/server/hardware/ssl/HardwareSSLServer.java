@@ -24,7 +24,7 @@ public class HardwareSSLServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HardwareSSLServer(Holder holder) {
-        super(holder.props.getIntProperty("hardware.ssl.port"), holder.transportType);
+        super(holder.props.getIntProperty("hardware.ssl.port"));
 
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.blockingIOProcessor);

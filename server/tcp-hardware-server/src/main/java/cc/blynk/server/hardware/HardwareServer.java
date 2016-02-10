@@ -22,7 +22,7 @@ public class HardwareServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HardwareServer(Holder holder) {
-        super(holder.props.getIntProperty("hardware.default.port"), holder.transportType);
+        super(holder.props.getIntProperty("hardware.default.port"));
 
         final int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);

@@ -27,7 +27,7 @@ public class WebSocketSSLServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public WebSocketSSLServer(Holder holder) {
-        super(holder.props.getIntProperty("ssl.websocket.port"), holder.transportType);
+        super(holder.props.getIntProperty("ssl.websocket.port"));
 
         log.info("Enabling Web SSL Sockets.");
 

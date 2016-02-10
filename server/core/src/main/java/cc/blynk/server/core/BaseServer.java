@@ -17,18 +17,17 @@ import org.apache.logging.log4j.Logger;
 public abstract class BaseServer {
 
     protected static final Logger log = LogManager.getLogger(BaseServer.class);
+
     protected final int port;
-    private final TransportTypeHolder transportTypeHolder;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     private ChannelFuture cf;
 
-    protected BaseServer(int port, TransportTypeHolder transportTypeHolder) {
+    protected BaseServer(int port) {
         this.port = port;
-        this.transportTypeHolder = transportTypeHolder;
     }
 
-    public BaseServer start() throws Exception {
+    public BaseServer start(TransportTypeHolder transportTypeHolder) throws Exception {
         if (transportTypeHolder.epollEnabled) {
             log.warn("Native epoll transport for {} server enabled.", getServerName());
         }

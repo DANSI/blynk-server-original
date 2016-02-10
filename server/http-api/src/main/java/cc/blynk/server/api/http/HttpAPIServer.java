@@ -20,7 +20,7 @@ public class HttpAPIServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HttpAPIServer(Holder holder) {
-        super(holder.props.getIntProperty("http.port"), holder.transportType);
+        super(holder.props.getIntProperty("http.port"));
 
         HandlerRegistry.register(new HttpAPILogic(holder.userDao, holder.sessionDao, holder.blockingIOProcessor, holder.stats));
 

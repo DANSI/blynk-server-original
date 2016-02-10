@@ -41,8 +41,8 @@ public class SimplePerformanceTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         this.sharedNioEventLoopGroup = new NioEventLoopGroup();
-        this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
+        this.hardwareServer = new HardwareServer(holder).start(transportTypeHolder);
+        this.appServer = new AppServer(holder).start(transportTypeHolder);
     }
 
 

@@ -22,7 +22,7 @@ public class HttpsAPIServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HttpsAPIServer(Holder holder) {
-        super(holder.props.getIntProperty("https.port"), holder.transportType);
+        super(holder.props.getIntProperty("https.port"));
 
         HandlerRegistry.register(new HttpAPILogic(holder.userDao, holder.sessionDao, holder.blockingIOProcessor, holder.stats));
 

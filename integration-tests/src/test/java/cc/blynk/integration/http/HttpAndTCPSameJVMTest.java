@@ -59,9 +59,9 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
     @Before
     public void init() throws Exception {
         if (httpServer == null) {
-            httpServer = new HttpAPIServer(holder).start();
-            hardwareServer = new HardwareServer(holder).start();
-            appServer = new AppServer(holder).start();
+            httpServer = new HttpAPIServer(holder).start(transportTypeHolder);
+            hardwareServer = new HardwareServer(holder).start(transportTypeHolder);
+            appServer = new AppServer(holder).start(transportTypeHolder);
             httpsServerUrl = String.format("http://localhost:%s/", httpPort);
             httpclient = HttpClients.createDefault();
             clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);

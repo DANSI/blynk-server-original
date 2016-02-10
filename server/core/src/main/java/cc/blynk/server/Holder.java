@@ -22,8 +22,6 @@ import static cc.blynk.utils.ReportingUtil.*;
  */
 public class Holder {
 
-    public final TransportTypeHolder transportType;
-
     public final FileManager fileManager;
 
     public final SessionDao sessionDao;
@@ -43,7 +41,6 @@ public class Holder {
 
         String dataFolder = serverProperties.getProperty("data.folder");
 
-        this.transportType = new TransportTypeHolder(serverProperties);
         this.fileManager = new FileManager(dataFolder);
         this.sessionDao = new SessionDao();
         this.userDao = new UserDao(fileManager.deserialize());

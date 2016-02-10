@@ -48,9 +48,9 @@ public class WebSocketTest extends BaseTest {
     @Before
     public void init() throws Exception {
         if (webSocketServer == null) {
-            webSocketServer = new WebSocketServer(holder).start();
-            appServer = new AppServer(holder).start();
-            hardwareServer = new HardwareServer(holder).start();
+            webSocketServer = new WebSocketServer(holder).start(transportTypeHolder);
+            appServer = new AppServer(holder).start(transportTypeHolder);
+            hardwareServer = new HardwareServer(holder).start(transportTypeHolder);
             clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
         }
     }

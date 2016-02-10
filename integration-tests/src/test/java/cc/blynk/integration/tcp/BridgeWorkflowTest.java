@@ -37,8 +37,8 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
+        this.hardwareServer = new HardwareServer(holder).start(transportTypeHolder);
+        this.appServer = new AppServer(holder).start(transportTypeHolder);
         this.clientPair = initAppAndHardPair("user_profile_json_3_dashes.txt");
     }
 

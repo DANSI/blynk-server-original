@@ -39,7 +39,7 @@ public class HardProtocolCommandsTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        this.hardwareServer = new HardwareServer(holder).start();
+        this.hardwareServer = new HardwareServer(holder).start(transportTypeHolder);
     }
 
     @After

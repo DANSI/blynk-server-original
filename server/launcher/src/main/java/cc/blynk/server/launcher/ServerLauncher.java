@@ -1,6 +1,7 @@
 package cc.blynk.server.launcher;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.admin.http.HttpsAdminServer;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.HttpsAPIServer;
@@ -38,25 +39,6 @@ import java.net.BindException;
  */
 public class ServerLauncher {
 
-    private final BaseServer[] servers;
-
-    private final Holder holder;
-
-    private ServerLauncher(ServerProperties serverProperties) {
-        this.holder = new Holder(serverProperties);
-
-        servers = new BaseServer[] {
-                new HardwareServer(holder),
-                new HardwareSSLServer(holder),
-                new AppServer(holder),
-                new HttpAPIServer(holder),
-                new HttpsAPIServer(holder),
-                new HttpsAdminServer(holder),
-                new WebSocketServer(holder),
-                new WebSocketSSLServer(holder)
-        };
-    }
-
     public static void main(String[] args) throws Exception {
         ServerProperties serverProperties = new ServerProperties();
 
@@ -77,16 +59,38 @@ public class ServerLauncher {
 
         JarUtil.unpackStaticFiles("admin");
 
-        new ServerLauncher(serverProperties).run();
+        start(serverProperties);
     }
 
+    private static void start(ServerProperties serverProperties) {
+        final Holder holder = new Holder(serverProperties);
 
+        final BaseServer[] servers = new BaseServer[] {
+                new HardwareServer(holder),
+                new HardwareSSLServer(holder),
+                new AppServer(holder),
+                new HttpAPIServer(holder),
+                new HttpsAPIServer(holder),
+                new HttpsAdminServer(holder),
+                new WebSocketServer(holder),
+                new WebSocketSSLServer(holder)
+        };
 
-    private void run() {
+        startServers(servers, new TransportTypeHolder(serverProperties));
+
+        //Launching all background jobs.
+        JobLauncher.start(holder, servers);
+
+        System.out.println();
+        System.out.println("Blynk Server successfully started.");
+        System.out.println("All server output is stored in folder '" + new File(System.getProperty("logs.folder")).getAbsolutePath() + "' file.");
+    }
+
+    private static void startServers(BaseServer[] servers, TransportTypeHolder transportType) {
         //start servers
         try {
             for (BaseServer server : servers) {
-                server.start();
+                server.start(transportType);
             }
         } catch (BindException bindException) {
             System.out.println("Server ports are busy. Most probably server already launched. See " +
@@ -96,13 +100,6 @@ public class ServerLauncher {
             System.out.println("Error starting Blynk server. Stopping.");
             System.exit(0);
         }
-
-        //Launching all background jobs.
-        JobLauncher.start(holder, servers);
-
-        System.out.println();
-        System.out.println("Blynk Server successfully started.");
-        System.out.println("All server output is stored in folder '" + new File(System.getProperty("logs.folder")).getAbsolutePath() + "' file.");
     }
 
 }
