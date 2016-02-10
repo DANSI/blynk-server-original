@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
+import cc.blynk.utils.ReportingUtil;
 import cc.blynk.utils.ServerProperties;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class StorageWorkerTest {
 
-    private final String dataFolder = getReportingFolder(System.getProperty("java.io.tmpdir"));
+    private final String reportingFolder = getReportingFolder(System.getProperty("java.io.tmpdir"));
 
     @Mock
     public AverageAggregator averageAggregator;
@@ -46,23 +47,19 @@ public class StorageWorkerTest {
     public ServerProperties properties;
 
     @Before
-    public void cleanup() {
-        Path dataFolder1 = Paths.get(dataFolder, "test");
-        try {
-            FileUtils.deleteDirectory(dataFolder1.toFile());
-        } catch (IOException e) {
-        }
+    public void cleanup() throws IOException {
+        Path dataFolder1 = Paths.get(reportingFolder, "test");
+        FileUtils.deleteDirectory(dataFolder1.toFile());
+        ReportingUtil.createReportingFolder(reportingFolder, "test");
 
-        Path dataFolder2 = Paths.get(dataFolder, "test2");
-        try {
-            FileUtils.deleteDirectory(dataFolder2.toFile());
-        } catch (IOException e){
-        }
+        Path dataFolder2 = Paths.get(reportingFolder, "test2");
+        FileUtils.deleteDirectory(dataFolder2.toFile());
+        ReportingUtil.createReportingFolder(reportingFolder, "test2");
     }
 
     @Test
     public void testStore() throws IOException {
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, dataFolder);
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder);
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -88,10 +85,10 @@ public class StorageWorkerTest {
 
         storageWorker.run();
 
-        assertTrue(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
-        assertTrue(Files.exists(Paths.get(dataFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
 
-        byte[] data = ReportingDao.getAllFromDisk(dataFolder, "test", 1, PinType.ANALOG, (byte) 1, 2, GraphType.HOURLY);
+        byte[] data = ReportingDao.getAllFromDisk(reportingFolder, "test", 1, PinType.ANALOG, (byte) 1, 2, GraphType.HOURLY);
         ByteBuffer byteBuffer = ByteBuffer.wrap(data);
         assertNotNull(data);
         assertEquals(32, data.length);
@@ -102,7 +99,7 @@ public class StorageWorkerTest {
         assertEquals(100.0, byteBuffer.getDouble(), 0.001);
         assertEquals(ts * AverageAggregator.HOUR, byteBuffer.getLong());
 
-        data = ReportingDao.getAllFromDisk(dataFolder, "test2", 2, PinType.ANALOG, (byte) 2, 1, GraphType.HOURLY);
+        data = ReportingDao.getAllFromDisk(reportingFolder, "test2", 2, PinType.ANALOG, (byte) 2, 1, GraphType.HOURLY);
         byteBuffer = ByteBuffer.wrap(data);
         assertNotNull(data);
         assertEquals(16, data.length);
@@ -112,7 +109,7 @@ public class StorageWorkerTest {
 
     @Test
     public void testStore2() throws IOException {
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, dataFolder);
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder);
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -138,10 +135,10 @@ public class StorageWorkerTest {
 
         storageWorker.run();
 
-        assertTrue(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
 
         //take less
-        byte[] data = ReportingDao.getAllFromDisk(dataFolder, "test", 1, PinType.ANALOG, (byte) 1, 1, GraphType.HOURLY);
+        byte[] data = ReportingDao.getAllFromDisk(reportingFolder, "test", 1, PinType.ANALOG, (byte) 1, 1, GraphType.HOURLY);
         ByteBuffer byteBuffer = ByteBuffer.wrap(data);
         assertNotNull(data);
         assertEquals(16, data.length);
@@ -151,7 +148,7 @@ public class StorageWorkerTest {
 
 
         //take more
-        data = ReportingDao.getAllFromDisk(dataFolder, "test", 1, PinType.ANALOG, (byte) 1, 24, GraphType.HOURLY);
+        data = ReportingDao.getAllFromDisk(reportingFolder, "test", 1, PinType.ANALOG, (byte) 1, 24, GraphType.HOURLY);
         byteBuffer = ByteBuffer.wrap(data);
         assertNotNull(data);
         assertEquals(48, data.length);
@@ -169,7 +166,7 @@ public class StorageWorkerTest {
 
     @Test
     public void testDeleteCommand() throws IOException {
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, dataFolder);
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder);
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -196,11 +193,11 @@ public class StorageWorkerTest {
 
         storageWorker.run();
 
-        assertTrue(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
-        assertTrue(Files.exists(Paths.get(dataFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
 
-        new ReportingDao(dataFolder, null, properties).delete("test", 1, PinType.ANALOG, (byte) 1);
-        assertFalse(Files.exists(Paths.get(dataFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
+        new ReportingDao(reportingFolder, null, properties).delete("test", 1, PinType.ANALOG, (byte) 1);
+        assertFalse(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
     }
 
     private long getTS() {

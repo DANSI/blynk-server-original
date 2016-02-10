@@ -4,15 +4,12 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
+import cc.blynk.utils.ReportingUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.commons.validator.routines.EmailValidator;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -86,22 +83,11 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         userDao.add(userName, pass);
 
-        createReportingFolder(userName);
+        ReportingUtil.createReportingFolder(reportingFolder, userName);
 
         log.info("Registered {}.", userName);
 
         ctx.writeAndFlush(new ResponseMessage(message.id, OK));
-    }
-
-    private void createReportingFolder(String username) {
-        Path reportingPath = Paths.get(reportingFolder, username);
-        if (Files.notExists(reportingPath)) {
-            try {
-                Files.createDirectories(reportingPath);
-            } catch (IOException ioe) {
-                log.error("Error creating report folder. {}", reportingPath);
-            }
-        }
     }
 
     @Override
