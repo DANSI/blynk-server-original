@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class JobLauncher {
 
-    public static void start(Holder holder, BaseServer... servers) {
+    public static void start(Holder holder, BaseServer[] servers) {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
         long startDelay;
