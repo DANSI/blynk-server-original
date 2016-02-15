@@ -174,8 +174,11 @@ public class HttpAPILogic {
                 return Response.ok();
             }
             session.sendMessageToHardware(dashId, new HardwareMessage(111, body));
-            //todo check for shared apps? to minimize load...
-            session.sendToApps(new HardwareMessage(111, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
+
+            if (dashBoard.isActive) {
+                //todo check for shared apps? to minimize load...
+                session.sendToApps(new HardwareMessage(111, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
+            }
         }
 
         return Response.ok();

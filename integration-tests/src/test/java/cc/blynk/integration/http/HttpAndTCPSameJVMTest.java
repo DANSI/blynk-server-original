@@ -6,6 +6,7 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import static cc.blynk.integration.IntegrationBase.*;
 import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -132,6 +134,29 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
     }
 
     @Test
+    public void testChangePinValueViaHttpAPIAndNoActiveProject() throws Exception {
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("deactivate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        HttpPut request = new HttpPut(httpsServerUrl + token + "/pin/v31");
+
+        request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 31 100"))));
+        verify(clientPair.appClient.responseMock, after(400).never()).channelRead(any(), eq(produce(111, HARDWARE, b("1 vw 31 100"))));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+    }
+
+    @Test
     public void testChangePinValueViaHttpAPIAndNoWidgetSinglePinValue() throws Exception {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
@@ -144,6 +169,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         }
 
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 31 100"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1 vw 31 100"))));
     }
 
 
