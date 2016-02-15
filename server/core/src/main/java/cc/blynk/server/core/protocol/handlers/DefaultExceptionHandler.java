@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.SSLException;
 import java.io.IOException;
+import java.nio.channels.ClosedChannelException;
 
 /**
  * The Blynk Project.
@@ -60,7 +61,11 @@ public interface DefaultExceptionHandler {
                     log.debug("Client goes offline. Reason : {}", cause.getMessage());
                     break;
                 default:
-                    log.error("Blynk server IOException.", cause);
+                    if (cause.getCause() != null && cause.getCause() instanceof ClosedChannelException) {
+                        log.debug("Blynk server IOException.", cause.getCause());
+                    } else {
+                        log.error("Blynk server IOException.", cause);
+                    }
                     break;
             }
 
