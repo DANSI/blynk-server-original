@@ -1,9 +1,29 @@
-DROP KEYSPACE mykeyspace;
-CREATE KEYSPACE mykeyspace WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+DROP KEYSPACE IF EXISTS reporting;
+CREATE KEYSPACE reporting WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy' };
 
-USE mykeyspace;
+USE reporting;
 
-CREATE TABLE report_average_minute (
+CREATE TABLE average_minute (
+  username text,
+  project_id int,
+  pin int,
+  pinType ascii,
+  ts bigint,
+  value double,
+  PRIMARY KEY ((username, project_id, pin, pinType), ts)
+) WITH CLUSTERING ORDER BY (ts DESC);
+
+CREATE TABLE average_hourly (
+  username text,
+  project_id int,
+  pin int,
+  pinType ascii,
+  ts bigint,
+  value double,
+  PRIMARY KEY ((username, project_id, pin, pinType), ts)
+) WITH CLUSTERING ORDER BY (ts DESC);
+
+CREATE TABLE average_daily (
   username text,
   project_id int,
   pin int,
