@@ -4,7 +4,13 @@
 
         <File name="admin" fileName="${sys:logs.folder}/admin.log">
             <PatternLayout>
-                <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern>
+                <pattern>%d{yyyy-MM-dd} %d{HH:mm:ss.SSS} - %msg%n</pattern>
+            </PatternLayout>
+        </File>
+
+        <File name="postgresDBLog" fileName="${sys:logs.folder}/postgres.log">
+            <PatternLayout>
+                <pattern>%d{yyyy-MM-dd} %d{HH:mm:ss.SSS} - %msg%n</pattern>
             </PatternLayout>
         </File>
 
@@ -56,7 +62,7 @@
             </Routes>
         </Routing>
 
-        <Routing name="dataStorage">
+        <Routing name="csvDataStorage">
             <Routes pattern="$${ctx:user}_$${ctx:dashId}_$${ctx:pin}">
 
                 <!-- This route is chosen if ThreadContext has a value for "user"
@@ -94,7 +100,10 @@
             <appender-ref ref="admin"/>
         </Logger>
         <Logger name="cc.blynk.server.core.dao.ReportingDao" level="info" additivity="false">
-            <appender-ref ref="dataStorage"/>
+            <appender-ref ref="csvDataStorage"/>
+        </Logger>
+        <Logger name="cc.blynk.server.db.DBManager" level="debug" additivity="false">
+            <appender-ref ref="postgresDBLog"/>
         </Logger>
 
         <Root level="debug">

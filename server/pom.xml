@@ -15,7 +15,7 @@
     <modules>
         <module>notifications</module>
         <module>core</module>
-
+        <module>db-postgres</module>
         <module>reset-pass</module>
         <module>launcher</module>
         <module>http-admin</module>

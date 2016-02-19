@@ -44,7 +44,7 @@ public class CassandraTestBase {
             long minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
             for (int i = 0; i < 100; i++) {
                 String newUserName = userName.replace("{}", String.valueOf(i));
-                ResultSet resultSet = client.session.execute(client.reporting.insertIntoReportingMinute.bind(newUserName, 1, 0, "v", minute, (double) i));
+                client.session.execute(client.reporting.insertIntoReportingMinute.bind(newUserName, 1, 0, "v", minute, (double) i));
                 minute += AverageAggregator.MINUTE;
                 a++;
             }
