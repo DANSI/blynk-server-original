@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import static cc.blynk.server.db.DBManager.*;
 import static org.junit.Assert.*;
@@ -47,24 +48,45 @@ public class DBManagerTest {
         for (int count = 0; count < 1000; count++) {
             long start = System.currentTimeMillis();
             try (Connection connection = dbManager.getConnection();
-                 PreparedStatement preparedStatement = connection.prepareStatement(DBManager.insertMinute)) {
+                 PreparedStatement ps = connection.prepareStatement(DBManager.insertMinute)) {
 
                 String userName = "test{}@gmail.com";
                 long minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
                 for (int i = count * 1000; i < (count + 1) * 1000; i++) {
                     String newUserName = userName.replace("{}", String.valueOf(i));
-                    prepareReportingInsert(preparedStatement, newUserName, 1, (byte) 0, 'v', minute, (double) i);
-                    preparedStatement.addBatch();
+                    prepareReportingInsert(ps, newUserName, 1, (byte) 0, 'v', minute, (double) i);
+                    ps.addBatch();
                     minute += AverageAggregator.MINUTE;
                     a++;
                 }
 
-                preparedStatement.executeBatch();
+                ps.executeBatch();
                 connection.commit();
             } catch (Exception e) {
                 e.printStackTrace();
             }
             System.out.println("Finished : " + (System.currentTimeMillis() - start)  + " millis. Executed : " + a);
+        }
+
+    }
+
+    @Test
+    public void testSelect() {
+        long ts = 1455924480000L;
+        try (Connection connection = dbManager.getConnection();
+             PreparedStatement ps = connection.prepareStatement(DBManager.selectMinute)) {
+
+             prepareReportingSelect(ps, ts, 2);
+             ResultSet rs = ps.executeQuery();
+
+
+            while(rs.next()) {
+                System.out.println(rs.getLong("ts") + " " + rs.getDouble("value"));
+            }
+
+            rs.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
