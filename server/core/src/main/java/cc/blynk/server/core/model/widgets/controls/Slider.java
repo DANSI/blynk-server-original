@@ -25,4 +25,9 @@ public class Slider extends OnePinWidget implements HardwareSyncWidget {
     public String getModeType() {
         return "out";
     }
+
+    @Override
+    public boolean isPWMSupported() {
+        return pwmMode;
+    }
 }

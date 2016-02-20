@@ -108,6 +108,35 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
     }
 
     @Test
+    public void testChangePinValueViaAppAndHardwareForWrongPWMButton() throws Exception {
+        clientPair.appClient.send("createWidget 1\0{\"type\":\"BUTTON\",\"id\":1000,\"x\":0,\"y\":0,\"color\":616861439,\"width\":2,\"height\":2,\"label\":\"Relay\",\"pinType\":\"DIGITAL\",\"pin\":18,\"pwmMode\":true,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"pushMode\":false}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+
+        HttpGet requestGET = new HttpGet(httpsServerUrl + token + "/pin/d18");
+
+        try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("1", values.get(0));
+        }
+
+        HttpPut requestPUT = new HttpPut(httpsServerUrl + token + "/pin/d18");
+        requestPUT.setEntity(new StringEntity("[\"0\"]", ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(requestPUT)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("dw 18 0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1 dw 18 0"))));
+    }
+
+    @Test
     public void testChangePinValueViaHttpAPI() throws Exception {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
