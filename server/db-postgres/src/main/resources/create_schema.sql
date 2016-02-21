@@ -1,3 +1,10 @@
+CREATE DATABASE blynk;
+
+CREATE TABLE users (
+  username text PRIMARY KEY,
+  json text
+);
+
 CREATE TABLE reporting_average_minute (
   username text,
   project_id int4,

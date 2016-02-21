@@ -4,11 +4,13 @@ import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.utils.ServerProperties;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
 import static cc.blynk.server.db.DBManager.*;
 import static org.junit.Assert.*;
@@ -18,14 +20,21 @@ import static org.junit.Assert.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 19.02.16.
  */
+@Ignore("Requires real DB for test")
 public class DBManagerTest {
 
     private static DBManager dbManager;
 
     @BeforeClass
-    public static void init() throws Exception{
-        dbManager = new DBManager(new ServerProperties("db.properties"));
+    public static void init() throws Exception {
+        dbManager = new DBManager(new ServerProperties("db-test.properties"));
         assertNotNull(dbManager.getConnection());
+
+        //copy paste from create_schema.sql
+        dbManager.executeSQL("DELETE FROM users");
+        dbManager.executeSQL("DELETE FROM reporting_average_minute");
+        dbManager.executeSQL("DELETE FROM reporting_average_hourly");
+        dbManager.executeSQL("DELETE FROM reporting_average_daily");
     }
 
     @AfterClass
@@ -34,40 +43,57 @@ public class DBManagerTest {
     }
 
     @Test
-    public void test() {
-
+    public void test() throws Exception {
+        assertNotNull(dbManager.getConnection());
     }
 
-
     @Test
-    public void testInsertMinute() throws Exception {
+    public void testInsert1000RecordsAndSelect() throws Exception {
         System.out.println("Starting");
 
         int a = 0;
 
-        for (int count = 0; count < 1000; count++) {
-            long start = System.currentTimeMillis();
-            try (Connection connection = dbManager.getConnection();
-                 PreparedStatement ps = connection.prepareStatement(DBManager.insertMinute)) {
+        long startMinute = 0;
+        long start = System.currentTimeMillis();
+        try (Connection connection = dbManager.getConnection();
+             PreparedStatement ps = connection.prepareStatement(DBManager.insertMinute)) {
 
-                String userName = "test{}@gmail.com";
-                long minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
-                for (int i = count * 1000; i < (count + 1) * 1000; i++) {
-                    String newUserName = userName.replace("{}", String.valueOf(i));
-                    prepareReportingInsert(ps, newUserName, 1, (byte) 0, 'v', minute, (double) i);
-                    ps.addBatch();
-                    minute += AverageAggregator.MINUTE;
-                    a++;
-                }
-
-                ps.executeBatch();
-                connection.commit();
-            } catch (Exception e) {
-                e.printStackTrace();
+            String userName = "test{}@gmail.com";
+            long minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
+            startMinute = minute;
+            for (int i = 0; i < 1000; i++) {
+                String newUserName = userName.replace("{}", "" + i);
+                prepareReportingInsert(ps, newUserName, 1, (byte) 0, 'v', minute, (double) i);
+                ps.addBatch();
+                minute += AverageAggregator.MINUTE;
+                a++;
             }
-            System.out.println("Finished : " + (System.currentTimeMillis() - start)  + " millis. Executed : " + a);
-        }
 
+            ps.executeBatch();
+            connection.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("Finished : " + (System.currentTimeMillis() - start)  + " millis. Executed : " + a);
+
+
+        try (Connection connection = dbManager.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery("select * from reporting_average_minute order by ts ASC")) {
+
+            int i = 0;
+            String userName = "test{}@gmail.com";
+            while (rs.next()) {
+                assertEquals(userName.replace("{}", "" + i), rs.getString("username"));
+                assertEquals(1, rs.getInt("project_id"));
+                assertEquals(0, rs.getByte("pin"));
+                assertEquals("v", rs.getString("pinType"));
+                assertEquals(startMinute, rs.getLong("ts"));
+                assertEquals((double) i, rs.getDouble("value"), 0.0001);
+                startMinute += AverageAggregator.MINUTE;
+                i++;
+            }
+        }
     }
 
     @Test

@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * The Blynk Project.
@@ -59,6 +60,14 @@ public class DBManager {
     public static void prepareReportingSelect(PreparedStatement ps, long ts, int limit) throws SQLException {
         ps.setLong(1, ts);
         ps.setInt(2, limit);
+    }
+
+    public void executeSQL(String sql) throws Exception {
+        try (Connection connection = getConnection();
+             Statement statement = connection.createStatement()) {
+            statement.execute(sql);
+            connection.commit();
+        }
     }
 
     public Connection getConnection() throws Exception {
