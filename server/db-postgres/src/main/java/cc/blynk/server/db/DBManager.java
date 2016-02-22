@@ -45,6 +45,9 @@ public class DBManager {
         ServerProperties serverProperties;
         try {
             serverProperties = new ServerProperties(propsFilename);
+            if (serverProperties.size() == 0) {
+                throw new RuntimeException();
+            }
         } catch (RuntimeException e) {
             log.warn("No {} file found. Separate DB storage disabled.", propsFilename);
             this.ds = null;
