@@ -36,7 +36,7 @@ public class AppChannelStateHandler extends ChannelInboundHandlerAdapter {
         if (state != null) {
             Session session = sessionDao.userSession.get(state.user);
             if (session != null) {
-                session.appChannels.remove(ctx.channel());
+                session.removeAppChannel(ctx.channel());
                 log.trace("Application channel disconnect. {}", ctx.channel());
             }
         }

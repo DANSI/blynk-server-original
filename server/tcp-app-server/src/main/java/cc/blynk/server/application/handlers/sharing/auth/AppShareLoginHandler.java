@@ -107,7 +107,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
     }
 
     private void completeLogin(Channel channel, Session session, String userName, int msgId) {
-        session.appChannels.add(channel);
+        session.addAppChannel(channel);
         channel.writeAndFlush(new ResponseMessage(msgId, OK));
         log.info("Shared {} app joined.", userName);
     }

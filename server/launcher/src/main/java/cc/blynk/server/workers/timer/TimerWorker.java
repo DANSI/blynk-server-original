@@ -78,7 +78,7 @@ public class TimerWorker implements Runnable {
             Session session = sessionDao.userSession.get(user);
             if (session != null) {
                 onlineTimers++;
-                if (session.hardwareChannels.size() > 0) {
+                if (session.getHardwareChannels().size() > 0) {
                     session.sendMessageToHardware(dashId, new HardwareMessage(7777, value));
                 }
             }

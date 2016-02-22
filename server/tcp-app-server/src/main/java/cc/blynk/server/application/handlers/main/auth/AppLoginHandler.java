@@ -99,7 +99,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     }
 
     private void completeLogin(Channel channel, Session session, String userName, int msgId) {
-        session.appChannels.add(channel);
+        session.addAppChannel(channel);
         channel.writeAndFlush(new ResponseMessage(msgId, OK));
         log.info("{} app joined.", userName);
     }

@@ -8,7 +8,6 @@ import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.utils.JsonParser;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
@@ -27,8 +26,7 @@ public class Stat {
 
     public final Map<String, Long> messages = new HashMap<>();
     public final Map<String, Long> http = new HashMap<>();
-    //2015-07-20T20:15:03.954+03:00
-    String ts = OffsetDateTime.now().toString();
+
     long oneMinRate;
     long total;
     long active;

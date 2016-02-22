@@ -45,7 +45,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         if (state != null) {
             Session session = sessionDao.userSession.get(state.user);
             if (session != null) {
-                session.hardwareChannels.remove(ctx.channel());
+                session.removeHardChannel(ctx.channel());
                 log.trace("Hardware channel disconnect.");
                 sentOfflineMessage(state);
             }
@@ -67,8 +67,8 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             Notification notification = dashBoard.getWidgetByType(Notification.class);
             if (notification == null || !notification.notifyWhenOffline) {
                 Session session = sessionDao.userSession.get(state.user);
-                if (session.appChannels.size() > 0) {
-                    for (Channel appChannel : session.appChannels) {
+                if (session.getAppChannels().size() > 0) {
+                    for (Channel appChannel : session.getAppChannels()) {
                         appChannel.writeAndFlush(
                                 new ResponseWithBodyMessage(
                                         0, Command.RESPONSE, DEVICE_WENT_OFFLINE, state.dashId

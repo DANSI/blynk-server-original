@@ -45,7 +45,7 @@ public class DeActivateDashboardLogic {
         user.lastModifiedTs = System.currentTimeMillis();
 
         Session session = sessionDao.userSession.get(user);
-        for (Channel appChannel : session.appChannels) {
+        for (Channel appChannel : session.getAppChannels()) {
             if (appChannel != ctx.channel() && getAppState(appChannel) != null) {
                 appChannel.writeAndFlush(message);
             }

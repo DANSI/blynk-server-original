@@ -62,10 +62,10 @@ public class BridgeLogic {
             final String pin = split[0];
             final String token = sendToMap.get(pin);
 
-            if (session.hardwareChannels.size() > 1) {
+            if (session.getHardwareChannels().size() > 1) {
                 boolean messageWasSent = false;
                 message.body = message.body.substring(message.body.indexOf("\0") + 1);
-                for (Channel channel : session.hardwareChannels) {
+                for (Channel channel : session.getHardwareChannels()) {
                     HardwareStateHolder hardwareState = getHardState(channel);
                     if (hardwareState != null && token.equals(hardwareState.token) && channel != ctx.channel()) {
                         messageWasSent = true;

@@ -62,7 +62,7 @@ public class HardwareAppShareLogic {
 
                 String sharedToken = state.user.dashShareTokens.get(dashId);
                 if (sharedToken != null) {
-                    for (Channel appChannel : session.appChannels) {
+                    for (Channel appChannel : session.getAppChannels()) {
                         if (appChannel != ctx.channel() && Session.needSync(appChannel, sharedToken)) {
                             appChannel.writeAndFlush(new SyncMessage(message.id, message.body));
                         }
