@@ -364,4 +364,4 @@ If you want to run Blynk server behind WiFi-router and want it to be accessible 
 Currently server handles 20k req/sec with SSL and 40k req/sec without SSL hardware messages on VM with 2-cores of Intel(R) Xeon(R) CPU E5-2660 @ 2.20GHz. With high load - memory consumption could be up to 1 GB of RAM.
 
 ## Licensing
-[MIT license](https://github.com/blynkkk/blynk-server/blob/master/license.txt)
+[GNU GPL license](https://github.com/blynkkk/blynk-server/blob/master/license.txt)
