@@ -4,6 +4,7 @@ import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.server.db.DBManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -34,7 +35,7 @@ public class ProfileSaverWorkerTest {
 
     @Test
     public void testCorrectProfilesAreSaved() throws IOException {
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager());
 
         User user1 = new User("1", "");
         User user2 = new User("2", "");
@@ -72,7 +73,7 @@ public class ProfileSaverWorkerTest {
 
         Thread.sleep(1);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager());
 
         when(userDao.getUsers()).thenReturn(userMap);
         profileSaverWorker.run();

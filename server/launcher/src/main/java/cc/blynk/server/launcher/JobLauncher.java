@@ -27,17 +27,19 @@ public class JobLauncher {
 
         long startDelay;
 
+        final DBManager dbManager = new DBManager();
+
         StorageWorker storageWorker = new StorageWorker(
                 holder.averageAggregator,
                 ReportingUtil.getReportingFolder(holder.props.getProperty("data.folder")),
-                new DBManager()
+                dbManager
         );
 
         //to start at the beggining of an minute
         startDelay = AverageAggregator.MINUTE - (System.currentTimeMillis() % AverageAggregator.MINUTE);
         scheduler.scheduleAtFixedRate(storageWorker, startDelay, AverageAggregator.MINUTE, TimeUnit.MILLISECONDS);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, dbManager);
         scheduler.scheduleAtFixedRate(profileSaverWorker, 1000,
                 holder.props.getIntProperty("profile.save.worker.period"), TimeUnit.MILLISECONDS);
 

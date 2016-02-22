@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ReflectionUtil;
@@ -50,7 +51,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     public void init() throws Exception {
         this.appServer = new AppServer(holder).start(transportTypeHolder);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, new DBManager());
         new Thread(profileSaverWorker).start();
     }
 

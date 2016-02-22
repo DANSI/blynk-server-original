@@ -3,10 +3,13 @@ package cc.blynk.server.workers;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.db.DBManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Background thread that once a minute stores all user DB to disk in case profile was changed since last saving.
@@ -22,11 +25,13 @@ public class ProfileSaverWorker implements Runnable {
     //1 min
     private final UserDao userDao;
     private final FileManager fileManager;
+    private final DBManager dbManager;
     private long lastStart;
 
-    public ProfileSaverWorker(UserDao userDao, FileManager fileManager) {
+    public ProfileSaverWorker(UserDao userDao, FileManager fileManager, DBManager dbManager) {
         this.userDao = userDao;
         this.fileManager = fileManager;
+        this.dbManager = dbManager;
         this.lastStart = System.currentTimeMillis();
     }
 
@@ -36,16 +41,21 @@ public class ProfileSaverWorker implements Runnable {
         int count = 0;
         long newStart = System.currentTimeMillis();
 
+        List<User> users = new ArrayList<>();
+
         for (User user : userDao.getUsers().values()) {
             if (lastStart <= user.lastModifiedTs) {
                 try {
                     fileManager.overrideUserFile(user);
+                    users.add(user);
                     count++;
                 } catch (IOException e) {
                     log.error("Error saving : {}.", user);
                 }
             }
         }
+
+        dbManager.saveUsers(users);
 
         lastStart = newStart;
 

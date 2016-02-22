@@ -1,5 +1,6 @@
 package cc.blynk.server.db;
 
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
@@ -14,6 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +24,8 @@ import java.util.Map;
  * Created on 19.02.16.
  */
 public class DBManager {
+
+    public static final String upsertUser = "INSERT INTO users VALUES (?, ?) ON CONFLICT (username) DO UPDATE SET json = EXCLUDED.json";
 
     public static final String insertMinute = "INSERT INTO reporting_average_minute VALUES (?, ?, ?, ?, ?, ?)";
     public static final String insertHourly = "INSERT INTO reporting_average_hourly VALUES (?, ?, ?, ?, ?, ?)";
@@ -98,6 +102,30 @@ public class DBManager {
         ps.setInt(2, limit);
     }
 
+    public void saveUsers(List<User> users) {
+        long start = System.currentTimeMillis();
+        log.info("Storing users...");
+        if (!isDBEnabled() || users.size() == 0) {
+            return;
+        }
+
+        try (Connection connection = getConnection();
+             PreparedStatement ps = connection.prepareStatement(upsertUser)) {
+
+            for (User user : users) {
+                ps.setString(1, user.name);
+                ps.setString(2, user.toString());
+                ps.addBatch();
+            }
+
+            ps.executeBatch();
+            connection.commit();
+        } catch (Exception e) {
+            log.error("Error upserting users in DB.", e);
+        }
+        log.info("Storing users finished. Time {}", System.currentTimeMillis() - start);
+    }
+
     public void insertReporting(Map<AggregationKey, AggregationValue> map, GraphType graphType) {
         if (!isDBEnabled() || map.size() == 0) {
             return;
@@ -116,7 +144,7 @@ public class DBManager {
             ps.executeBatch();
             connection.commit();
         } catch (Exception e) {
-           log.error("Error inserting data in DB.", e);
+           log.error("Error inserting reporting data in DB.", e);
         }
     }
 

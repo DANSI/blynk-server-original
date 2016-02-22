@@ -60,7 +60,7 @@ public class StorageWorkerTest {
 
     @Test
     public void testStore() throws IOException {
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager(null));
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager());
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -110,7 +110,7 @@ public class StorageWorkerTest {
 
     @Test
     public void testStore2() throws IOException {
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager(null));
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager());
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -167,7 +167,7 @@ public class StorageWorkerTest {
 
     @Test
     public void testDeleteCommand() throws IOException {
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager(null));
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager());
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 

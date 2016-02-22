@@ -1,5 +1,6 @@
 package cc.blynk.server.db;
 
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
 import org.junit.AfterClass;
@@ -11,6 +12,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import static cc.blynk.server.db.DBManager.*;
 import static org.junit.Assert.*;
@@ -92,6 +95,21 @@ public class DBManagerTest {
                 assertEquals((double) i, rs.getDouble("value"), 0.0001);
                 startMinute += AverageAggregator.MINUTE;
                 i++;
+            }
+        }
+    }
+
+    @Test
+    public void testUpsertUser() throws Exception {
+        List<User> users = new ArrayList<>();
+        users.add(new User("test@gmail.com", "pass"));
+        dbManager.saveUsers(users);
+
+        try (Connection connection = dbManager.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery("select * from users where username = 'test@gmail.com'")) {
+            while (rs.next()) {
+                assertEquals("test@gmail.com", rs.getString("username"));
             }
         }
     }
