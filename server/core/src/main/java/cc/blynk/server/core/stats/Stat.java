@@ -35,7 +35,9 @@ public class Stat {
     long active3;
     long connected;
     long onlineApps;
+    long totalOnlineApps;
     long onlineHards;
+    long totalOnlineHards;
 
     public static Stat calcStats(SessionDao sessionDao, UserDao userDao, GlobalStats localStats, boolean reset) {
         Stat stat = new Stat();
@@ -54,22 +56,30 @@ public class Stat {
         }
 
         int connectedSessions = 0;
+
         int hardActive = 0;
+        int totalOnlineHards = 0;
+
         int appActive = 0;
+        int totalOnlineApps = 0;
+
         int active = 0;
         int active3 = 0;
+
         long now = System.currentTimeMillis();
         for (Map.Entry<User, Session> entry: sessionDao.userSession.entrySet()) {
             Session session = entry.getValue();
 
-            if (session.hardwareChannels.size() > 0 && session.appChannels.size() > 0) {
+            if (session.getHardwareChannels().size() > 0 && session.getAppChannels().size() > 0) {
                 connectedSessions++;
             }
-            if (session.hardwareChannels.size() > 0) {
+            if (session.getHardwareChannels().size() > 0) {
                 hardActive++;
+                totalOnlineHards += session.getHardwareChannels().size();
             }
-            if (session.appChannels.size() > 0) {
+            if (session.getAppChannels().size() > 0) {
                 appActive++;
+                totalOnlineApps += session.getAppChannels().size();
             }
             if (now - entry.getKey().lastModifiedTs < ONE_DAY) {
                 active++;
@@ -82,7 +92,10 @@ public class Stat {
 
         stat.connected = connectedSessions;
         stat.onlineApps = appActive;
+        stat.totalOnlineApps = totalOnlineApps;
         stat.onlineHards = hardActive;
+        stat.totalOnlineHards = totalOnlineHards;
+
         stat.active = active;
         stat.active3 = active3;
         stat.total = userDao.getUsers().size();
