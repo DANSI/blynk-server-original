@@ -74,7 +74,7 @@ public class ResetPasswordController {
     }
 
     public void invoke(String email, String password) throws IOException {
-        HttpPut request = new HttpPut(serverUrl + email);
+        HttpPut request = new HttpPut(serverUrl + email.toLowerCase());
         request.setEntity(new StringEntity(new ResponseUserEntity(password).toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {

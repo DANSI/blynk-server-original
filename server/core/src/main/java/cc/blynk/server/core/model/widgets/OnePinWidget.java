@@ -37,7 +37,7 @@ public abstract class OnePinWidget extends Widget {
         if (pin == -1 || value == null || pinType == null) {
             return null;
         }
-        return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
+        return isPWMSupported() ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
     public void updateIfSame(byte pin, PinType type, String[] values) {
@@ -47,7 +47,7 @@ public abstract class OnePinWidget extends Widget {
     }
 
     public boolean isSame(byte pin, PinType type) {
-        return this.pin == pin && ((this.pwmMode && type == PinType.ANALOG) || (type == this.pinType));
+        return this.pin == pin && ((this.isPWMSupported() && type == PinType.ANALOG) || (type == this.pinType));
     }
 
     public String getValue(byte pin, PinType type) {
@@ -60,6 +60,10 @@ public abstract class OnePinWidget extends Widget {
             return "[]";
         }
         return "[\"" + value + "\"]";
+    }
+
+    public boolean isPWMSupported() {
+        return false;
     }
 
 }

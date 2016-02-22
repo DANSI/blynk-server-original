@@ -29,4 +29,9 @@ public class OneAxisJoystick extends OnePinWidget implements HardwareSyncWidget 
     public String getModeType() {
         return "out";
     }
+
+    @Override
+    public boolean isPWMSupported() {
+        return pwmMode;
+    }
 }

@@ -27,10 +27,6 @@ public class Pin {
 
     public String label;
 
-    private static String makeHardwareBody(boolean pwmMode, PinType pinType, byte pin, String value) {
-        return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
-    }
-
     public static String makeHardwareBody(PinType pinType, byte pin, String value) {
         return "" + pinType.pintTypeChar + 'w'
                 + BODY_SEPARATOR_STRING + pin
@@ -50,7 +46,7 @@ public class Pin {
     }
 
     public String makeHardwareBody() {
-        return makeHardwareBody(pwmMode, pinType, pin, value);
+        return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
     public boolean notEmpty() {

@@ -115,7 +115,7 @@ public class UserDao {
             for (DashBoard dashBoard : user.profile.dashBoards) {
                 int sum = 0;
                 for (Widget widget : dashBoard.widgets) {
-                    if (widget.height == null || widget.width == null) {
+                    if (widget.height < 0 || widget.width < 0) {
                         //log.error("Widget without length fields. User : {}", user.name);
                         continue;
                     }

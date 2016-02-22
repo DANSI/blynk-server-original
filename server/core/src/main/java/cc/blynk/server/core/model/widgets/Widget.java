@@ -68,11 +68,11 @@ public abstract class Widget {
 
     public int y;
 
-    public Integer color;
+    public int color;
 
-    public Integer width;
+    public int width;
 
-    public Integer height;
+    public int height;
 
     public String label;
 

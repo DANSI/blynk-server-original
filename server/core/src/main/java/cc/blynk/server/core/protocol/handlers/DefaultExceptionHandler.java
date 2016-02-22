@@ -37,11 +37,14 @@ public interface DefaultExceptionHandler {
         if (cause instanceof ReadTimeoutException) {
             log.trace("Channel was inactive for a long period. Closing...");
             //channel is already closed here by ReadTimeoutHandler
-        } else if (cause instanceof DecoderException && cause.getCause() instanceof UnsupportedCommandException) {
-            log.error("Input command is invalid. Closing socket. Reason {}. Address {}", cause.getMessage(), ctx.channel().remoteAddress());
-            ctx.close();
-        } else if (cause instanceof DecoderException && cause.getCause() instanceof SSLException) {
-            log.error("WARNING. Unsecured connection attempt. Channel : {}. Reason : {}", ctx.channel().remoteAddress(), cause.getMessage());
+        } else if (cause instanceof DecoderException) {
+            if (cause.getCause() instanceof UnsupportedCommandException) {
+                log.error("Input command is invalid. Closing socket. Reason {}. Address {}", cause.getMessage(), ctx.channel().remoteAddress());
+            } else if (cause.getCause() instanceof SSLException) {
+                log.error("Unsecured connection attempt. Channel : {}. Reason : {}", ctx.channel().remoteAddress(), cause.getMessage());
+            } else {
+                log.error("DecoderException.", cause);
+            }
             ctx.close();
         } else if (cause instanceof NotSslRecordException) {
             log.error("Not secure connection attempt detected. {}. IP {}", cause.getMessage(), ctx.channel().remoteAddress());
@@ -50,20 +53,7 @@ public interface DefaultExceptionHandler {
             log.error("SSL exception. {}.", cause.getMessage());
             ctx.close();
         } else if (cause instanceof IOException) {
-            String errorMessage = cause.getMessage() == null ? "" : cause.getMessage();
-            //all this are expected when user goes offline without closing socket correctly...
-            switch (errorMessage) {
-                case "Connection reset by peer" :
-                case "No route to host" :
-                case "Connection timed out" :
-                case "syscall:read(...)() failed: Connection reset by peer" : //epoll connection time out, should be fixed on netty
-                    log.debug("Client goes offline. Reason : {}", cause.getMessage());
-                    break;
-                default:
-                    log.error("Blynk server IOException.", cause);
-                    break;
-            }
-
+            log.debug("Blynk server IOException.", cause);
         } else {
             log.error("Unexpected error!!!", cause);
             log.error("Handler class : {}. Name : {}", ctx.handler().getClass(), ctx.name());
