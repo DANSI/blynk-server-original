@@ -12,9 +12,11 @@ public enum PinType {
     ANALOG('a');
 
     public char pintTypeChar;
+    public String pinTypeString;
 
     PinType(char pinType) {
         this.pintTypeChar = pinType;
+        this.pinTypeString = String.valueOf(pinType);
     }
 
     public static PinType getPingType(char pinTypeChar) {

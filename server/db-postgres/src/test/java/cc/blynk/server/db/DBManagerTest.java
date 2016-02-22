@@ -1,7 +1,7 @@
 package cc.blynk.server.db;
 
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
-import cc.blynk.utils.ServerProperties;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -27,7 +27,7 @@ public class DBManagerTest {
 
     @BeforeClass
     public static void init() throws Exception {
-        dbManager = new DBManager(new ServerProperties("db-test.properties"));
+        dbManager = new DBManager("db-test.properties");
         assertNotNull(dbManager.getConnection());
 
         //copy paste from create_schema.sql
@@ -63,7 +63,7 @@ public class DBManagerTest {
             startMinute = minute;
             for (int i = 0; i < 1000; i++) {
                 String newUserName = userName.replace("{}", "" + i);
-                prepareReportingInsert(ps, newUserName, 1, (byte) 0, 'v', minute, (double) i);
+                prepareReportingInsert(ps, newUserName, 1, (byte) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
                 minute += AverageAggregator.MINUTE;
                 a++;

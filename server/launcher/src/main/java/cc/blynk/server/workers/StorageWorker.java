@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
+import cc.blynk.server.db.DBManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,10 +30,12 @@ public class StorageWorker implements Runnable {
 
     private final AverageAggregator averageAggregator;
     private final String reportingPath;
+    private final DBManager dbManager;
 
-    public StorageWorker(AverageAggregator averageAggregator, String reportingPath) {
+    public StorageWorker(AverageAggregator averageAggregator, String reportingPath, DBManager dbManager) {
         this.averageAggregator = averageAggregator;
         this.reportingPath = reportingPath;
+        this.dbManager = dbManager;
     }
 
     public static void write(Path reportingPath, double value, long ts) throws IOException {
@@ -46,36 +49,47 @@ public class StorageWorker implements Runnable {
 
     @Override
     public void run() {
-        process(averageAggregator.getMinute(), GraphType.MINUTE);
-        process(averageAggregator.getHourly(), GraphType.HOURLY);
-        process(averageAggregator.getDaily(), GraphType.DAILY);
+        Map<AggregationKey, AggregationValue> removedKeys;
+
+        removedKeys = process(averageAggregator.getMinute(), GraphType.MINUTE);
+        dbManager.insertReporting(removedKeys, GraphType.MINUTE);
+
+        removedKeys = process(averageAggregator.getHourly(), GraphType.HOURLY);
+        dbManager.insertReporting(removedKeys, GraphType.HOURLY);
+
+        removedKeys = process(averageAggregator.getDaily(), GraphType.DAILY);
+        dbManager.insertReporting(removedKeys, GraphType.DAILY);
+
     }
 
-    private void process(Map<AggregationKey, AggregationValue> map, GraphType type) {
+    private Map<AggregationKey, AggregationValue>  process(Map<AggregationKey, AggregationValue> map, GraphType type) {
         long nowTruncatedToPeriod = System.currentTimeMillis() / type.period;
 
         List<AggregationKey> keys = new ArrayList<>(map.keySet());
         Collections.sort(keys, AGGREGATION_KEY_COMPARATOR);
 
+        Map<AggregationKey, AggregationValue> removedKeys = new HashMap<>();
 
-        for (AggregationKey key : keys) {
+        for (AggregationKey keyToRemove : keys) {
             //if prev hour
-            if (key.ts < nowTruncatedToPeriod) {
-                AggregationValue value = map.get(key);
+            if (keyToRemove.ts < nowTruncatedToPeriod) {
+                AggregationValue value = map.get(keyToRemove);
 
                 try {
-                    String fileName = generateFilename(key.dashId, key.pinType, key.pin, type);
-                    Path filePath = Paths.get(reportingPath, key.username, fileName);
+                    String fileName = generateFilename(keyToRemove.dashId, keyToRemove.pinType, keyToRemove.pin, type);
+                    Path filePath = Paths.get(reportingPath, keyToRemove.username, fileName);
 
-                    write(filePath, value.calcAverage(), key.ts * type.period);
+                    write(filePath, value.calcAverage(), keyToRemove.ts * type.period);
 
-                    //removing only if no error
-                    map.remove(key);
+                    final AggregationValue removedValue = map.remove(keyToRemove);
+                    removedKeys.put(keyToRemove, removedValue);
                 } catch (IOException ioe) {
                     log.error("Error open user data reporting file. Reason : {}", ioe.getMessage());
                 }
             }
         }
+
+        return removedKeys;
     }
 
 }

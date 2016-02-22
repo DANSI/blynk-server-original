@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.ReportingUtil;
 import cc.blynk.utils.ServerProperties;
 import org.apache.commons.io.FileUtils;
@@ -59,7 +60,7 @@ public class StorageWorkerTest {
 
     @Test
     public void testStore() throws IOException {
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder);
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager(null));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -109,7 +110,7 @@ public class StorageWorkerTest {
 
     @Test
     public void testStore2() throws IOException {
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder);
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager(null));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -166,7 +167,7 @@ public class StorageWorkerTest {
 
     @Test
     public void testDeleteCommand() throws IOException {
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder);
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager(null));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 

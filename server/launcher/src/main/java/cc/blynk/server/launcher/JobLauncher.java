@@ -3,6 +3,7 @@ package cc.blynk.server.launcher;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.server.workers.*;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.Config;
@@ -26,7 +27,11 @@ public class JobLauncher {
 
         long startDelay;
 
-        StorageWorker storageWorker = new StorageWorker(holder.averageAggregator, ReportingUtil.getReportingFolder(holder.props.getProperty("data.folder")));
+        StorageWorker storageWorker = new StorageWorker(
+                holder.averageAggregator,
+                ReportingUtil.getReportingFolder(holder.props.getProperty("data.folder")),
+                new DBManager()
+        );
 
         //to start at the beggining of an minute
         startDelay = AverageAggregator.MINUTE - (System.currentTimeMillis() % AverageAggregator.MINUTE);
