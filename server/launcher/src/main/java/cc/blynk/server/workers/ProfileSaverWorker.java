@@ -2,6 +2,7 @@ package cc.blynk.server.workers;
 
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.db.DBManager;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +36,19 @@ public class ProfileSaverWorker implements Runnable {
         this.lastStart = System.currentTimeMillis();
     }
 
+    private static boolean isUpdated(long lastStart, User user) {
+        return (lastStart <= user.lastModifiedTs) || isDashUpdated(lastStart, user);
+    }
+
+    private static boolean isDashUpdated(long lastStart, User user) {
+        for (DashBoard dashBoard : user.profile.dashBoards) {
+            if (lastStart <= dashBoard.updatedAt) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void run() {
         log.debug("Starting saving user db.");
@@ -44,7 +58,7 @@ public class ProfileSaverWorker implements Runnable {
         List<User> users = new ArrayList<>();
 
         for (User user : userDao.getUsers().values()) {
-            if (lastStart <= user.lastModifiedTs) {
+            if (isUpdated(lastStart, user)) {
                 try {
                     fileManager.overrideUserFile(user);
                     users.add(user);
@@ -61,6 +75,5 @@ public class ProfileSaverWorker implements Runnable {
 
         log.debug("Saving user db finished. Modified {} users.", count);
     }
-
 
 }
