@@ -1,7 +1,10 @@
 package cc.blynk.server.db;
 
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.reporting.average.AggregationKey;
+import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -13,7 +16,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static cc.blynk.server.db.DBManager.*;
 import static org.junit.Assert.*;
@@ -97,6 +102,22 @@ public class DBManagerTest {
                 i++;
             }
         }
+    }
+
+    @Test
+    public void testManyConnections() throws Exception {
+        Map<AggregationKey, AggregationValue> map = new HashMap<>();
+        AggregationValue value = new AggregationValue();
+        value.update(1);
+        for (int i = 0; i < 60; i++) {
+            map.clear();
+            map.put(new AggregationKey("test@test.com", i, PinType.ANALOG, (byte) 1, 0), value);
+            dbManager.insertReporting(map, GraphType.MINUTE);
+            dbManager.insertReporting(map, GraphType.HOURLY);
+            dbManager.insertReporting(map, GraphType.DAILY);
+            Thread.sleep(60000);
+        }
+
     }
 
     @Test
