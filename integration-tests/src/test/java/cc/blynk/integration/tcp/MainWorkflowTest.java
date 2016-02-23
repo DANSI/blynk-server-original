@@ -170,11 +170,12 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testHardSyncReturnHardwareCommands() throws Exception {
         clientPair.hardwareClient.send("hardsync");
-        verify(clientPair.hardwareClient.responseMock, timeout(1000).times(4)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(1000).times(5)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 2 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 3 0"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 244"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 7 3"))));
     }
 
     @Test
@@ -492,7 +493,7 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testActivateAndGetSync() throws Exception {
         clientPair.appClient.send("activate 1");
 
-        verify(clientPair.appClient.responseMock, timeout(500).times(6)).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, timeout(500).times(7)).channelRead(any(), any());
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
@@ -500,6 +501,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 dw 2 1"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 aw 3 0"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 4 244"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 aw 7 3"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 0 89.888037459418 -58.74774244674501"))));
     }
 
