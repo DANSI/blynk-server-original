@@ -107,10 +107,11 @@ public class DBManager {
 
     public void saveUsers(List<User> users) {
         long start = System.currentTimeMillis();
-        log.info("Storing users...");
+
         if (!isDBEnabled() || users.size() == 0) {
             return;
         }
+        log.info("Storing users...");
 
         try (Connection connection = getConnection();
              PreparedStatement ps = connection.prepareStatement(upsertUser)) {
@@ -126,7 +127,7 @@ public class DBManager {
         } catch (Exception e) {
             log.error("Error upserting users in DB.", e);
         }
-        log.info("Storing users finished. Time {}", System.currentTimeMillis() - start);
+        log.info("Storing users finished. Time {}. Users saved {}", System.currentTimeMillis() - start, users.size());
     }
 
     public void insertReporting(Map<AggregationKey, AggregationValue> map, GraphType graphType) {
