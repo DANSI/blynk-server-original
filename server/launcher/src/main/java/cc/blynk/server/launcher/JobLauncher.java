@@ -59,7 +59,7 @@ public class JobLauncher {
 
         //shutdown hook thread catcher
         Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(holder.averageAggregator, profileSaverWorker,
-                holder.blockingIOProcessor, servers)));
+                holder.blockingIOProcessor, dbManager, servers)));
     }
 
 

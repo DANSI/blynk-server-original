@@ -57,12 +57,23 @@ public class DBManager {
         HikariConfig config = new HikariConfig(serverProperties);
         config.setAutoCommit(false);
         config.setConnectionTimeout(5000);
+        config.setMaximumPoolSize(2);
 
         log.info("DB host : {}", serverProperties.getProperty("dataSource.serverName"));
         log.info("DB name : {}", serverProperties.getProperty("dataSource.databaseName"));
         log.info("DB user : {}", serverProperties.getProperty("dataSource.user"));
         log.info("Connecting to DB...");
-        this.ds = new HikariDataSource(config);
+
+        HikariDataSource hikariDataSource;
+        try {
+            hikariDataSource = new HikariDataSource(config);
+        } catch (Exception e) {
+            log.error("Not able connect to DB. Skipping.", e);
+            this.ds = null;
+            return;
+        }
+        this.ds = hikariDataSource;
+
         log.info("Connected to database successfully.");
     }
 
@@ -152,7 +163,7 @@ public class DBManager {
         }
     }
 
-    private boolean isDBEnabled() {
+    public boolean isDBEnabled() {
         return ds != null;
     }
 
