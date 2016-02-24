@@ -105,6 +105,9 @@
         <Logger name="cc.blynk.server.db.DBManager" level="debug" additivity="false">
             <appender-ref ref="postgresDBLog"/>
         </Logger>
+        <Logger name="com.zaxxer.hikari" level="debug" additivity="false">
+            <appender-ref ref="postgresDBLog"/>
+        </Logger>
 
         <Root level="debug">
             <AppenderRef ref="userLog"/>

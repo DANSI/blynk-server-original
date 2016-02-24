@@ -106,6 +106,10 @@ public class DBManagerTest {
 
     @Test
     public void testManyConnections() throws Exception {
+        List<User> users = new ArrayList<>();
+        User user = new User("test@test", "1");
+        users.add(user);
+
         Map<AggregationKey, AggregationValue> map = new HashMap<>();
         AggregationValue value = new AggregationValue();
         value.update(1);
@@ -115,7 +119,8 @@ public class DBManagerTest {
             dbManager.insertReporting(map, GraphType.MINUTE);
             dbManager.insertReporting(map, GraphType.HOURLY);
             dbManager.insertReporting(map, GraphType.DAILY);
-            Thread.sleep(60000);
+            dbManager.saveUsers(users);
+            Thread.sleep(1000);
         }
 
     }

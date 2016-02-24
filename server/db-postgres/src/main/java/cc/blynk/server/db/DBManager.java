@@ -56,8 +56,10 @@ public class DBManager {
 
         HikariConfig config = new HikariConfig(serverProperties);
         config.setAutoCommit(false);
-        config.setConnectionTimeout(5000);
-        config.setMaximumPoolSize(2);
+        config.setConnectionTimeout(15000);
+        config.setMaximumPoolSize(3);
+        config.setMaxLifetime(0);
+        config.setConnectionTestQuery("SELECT 1");
 
         log.info("DB host : {}", serverProperties.getProperty("dataSource.serverName"));
         log.info("DB name : {}", serverProperties.getProperty("dataSource.databaseName"));
@@ -142,9 +144,13 @@ public class DBManager {
     }
 
     public void insertReporting(Map<AggregationKey, AggregationValue> map, GraphType graphType) {
+        long start = System.currentTimeMillis();
+
         if (!isDBEnabled() || map.size() == 0) {
             return;
         }
+
+        log.info("Storing reporting...");
 
         String insertSQL = getSQL(graphType);
 
@@ -161,6 +167,8 @@ public class DBManager {
         } catch (Exception e) {
            log.error("Error inserting reporting data in DB.", e);
         }
+
+        log.info("Storing reporting finished. Time {}. Records saved {}", System.currentTimeMillis() - start, map.size());
     }
 
     public boolean isDBEnabled() {
