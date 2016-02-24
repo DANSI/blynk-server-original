@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -102,6 +103,31 @@ public class DBManagerTest {
                 i++;
             }
         }
+    }
+
+    @Test
+    public void testDeleteWorksAsExpected() throws Exception {
+        long minute = 0;
+        try (Connection connection = dbManager.getConnection();
+             PreparedStatement ps = connection.prepareStatement(DBManager.insertMinute)) {
+
+            minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
+
+            for (int i = 0; i < 370; i++) {
+                prepareReportingInsert(ps, "test1111@gmail.com", 1, (byte) 0, PinType.VIRTUAL, minute, (double) i);
+                ps.addBatch();
+                minute += AverageAggregator.MINUTE;
+            }
+
+            ps.executeBatch();
+            connection.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Instant now = Instant.ofEpochMilli(minute);
+        dbManager.cleanOldReportingRecords(now);
+
     }
 
     @Test

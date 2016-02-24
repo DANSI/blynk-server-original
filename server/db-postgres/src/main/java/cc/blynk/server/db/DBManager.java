@@ -15,6 +15,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -30,9 +32,15 @@ public class DBManager {
     public static final String insertMinute = "INSERT INTO reporting_average_minute VALUES (?, ?, ?, ?, ?, ?)";
     public static final String insertHourly = "INSERT INTO reporting_average_hourly VALUES (?, ?, ?, ?, ?, ?)";
     public static final String insertDaily = "INSERT INTO reporting_average_daily VALUES (?, ?, ?, ?, ?, ?)";
+
     public static final String selectMinute = "SELECT ts, value FROM reporting_average_minute WHERE ts > ? ORDER BY ts DESC limit ?";
     public static final String selectHourly = "SELECT ts, value FROM reporting_average_hourly WHERE ts > ? ORDER BY ts DESC limit ?";
     public static final String selectDaily = "SELECT ts, value FROM reporting_average_daily WHERE ts > ? ORDER BY ts DESC limit ?";
+
+    public static final String deleteMinute = "DELETE FROM reporting_average_minute WHERE ts < ?";
+    public static final String deleteHour = "DELETE FROM reporting_average_hourly WHERE ts < ?";
+    public static final String deleteDaily = "DELETE FROM reporting_average_daily WHERE ts < ?";
+
     private static final Logger log = LogManager.getLogger(DBManager.class);
     private static final String DB_PROPERTIES_FILENAME = "db.properties";
     private final HikariDataSource ds;
@@ -153,7 +161,7 @@ public class DBManager {
             return;
         }
 
-        log.info("Storing reporting...");
+        log.info("Storing {} reporting...", graphType.name());
 
         String insertSQL = getSQL(graphType);
 
@@ -171,7 +179,35 @@ public class DBManager {
            log.error("Error inserting reporting data in DB.", e);
         }
 
-        log.info("Storing reporting finished. Time {}. Records saved {}", System.currentTimeMillis() - start, map.size());
+        log.info("Storing {} reporting finished. Time {}. Records saved {}", graphType.name(), System.currentTimeMillis() - start, map.size());
+    }
+
+    public void cleanOldReportingRecords(Instant now) {
+        if (!isDBEnabled()) {
+            return;
+        }
+
+        log.info("Removing old reporting records...");
+
+        int minuteRecordsRemoved = 0;
+        int hourRecordsRemoved = 0;
+
+        try (Connection connection = getConnection();
+             PreparedStatement psMinute = connection.prepareStatement(deleteMinute);
+             PreparedStatement psHour = connection.prepareStatement(deleteHour)) {
+
+            psMinute.setLong(1, now.minus(360, ChronoUnit.MINUTES).toEpochMilli());
+            psHour.setLong(1, now.minus(168, ChronoUnit.HOURS).toEpochMilli());
+
+            minuteRecordsRemoved = psMinute.executeUpdate();
+            hourRecordsRemoved = psHour.executeUpdate();
+
+            connection.commit();
+        } catch (Exception e) {
+            log.error("Error inserting reporting data in DB.", e);
+        }
+        log.info("Removing finished. Minute records {}, hour records {}. Time {}",
+                minuteRecordsRemoved, hourRecordsRemoved, System.currentTimeMillis() - now.toEpochMilli());
     }
 
     public boolean isDBEnabled() {

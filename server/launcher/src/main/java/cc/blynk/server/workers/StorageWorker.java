@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.Instant;
 import java.util.*;
 
 import static cc.blynk.server.core.dao.ReportingDao.*;
@@ -60,6 +61,7 @@ public class StorageWorker implements Runnable {
         removedKeys = process(averageAggregator.getDaily(), GraphType.DAILY);
         dbManager.insertReporting(removedKeys, GraphType.DAILY);
 
+        dbManager.cleanOldReportingRecords(Instant.now());
     }
 
     private Map<AggregationKey, AggregationValue>  process(Map<AggregationKey, AggregationValue> map, GraphType type) {
