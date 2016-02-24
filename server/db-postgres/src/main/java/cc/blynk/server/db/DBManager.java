@@ -54,16 +54,19 @@ public class DBManager {
             return;
         }
 
-        HikariConfig config = new HikariConfig(serverProperties);
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(serverProperties.getProperty("jdbc.url"));
+        config.setUsername(serverProperties.getProperty("user"));
+        config.setPassword(serverProperties.getProperty("password"));
+
         config.setAutoCommit(false);
         config.setConnectionTimeout(15000);
         config.setMaximumPoolSize(3);
         config.setMaxLifetime(0);
         config.setConnectionTestQuery("SELECT 1");
 
-        log.info("DB host : {}", serverProperties.getProperty("dataSource.serverName"));
-        log.info("DB name : {}", serverProperties.getProperty("dataSource.databaseName"));
-        log.info("DB user : {}", serverProperties.getProperty("dataSource.user"));
+        log.info("DB url : {}", config.getJdbcUrl());
+        log.info("DB user : {}", config.getUsername());
         log.info("Connecting to DB...");
 
         HikariDataSource hikariDataSource;
