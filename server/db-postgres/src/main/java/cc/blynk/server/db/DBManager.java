@@ -196,8 +196,8 @@ public class DBManager {
              PreparedStatement psMinute = connection.prepareStatement(deleteMinute);
              PreparedStatement psHour = connection.prepareStatement(deleteHour)) {
 
-            psMinute.setLong(1, now.minus(360, ChronoUnit.MINUTES).toEpochMilli());
-            psHour.setLong(1, now.minus(168, ChronoUnit.HOURS).toEpochMilli());
+            psMinute.setLong(1, now.minus(360 + 1, ChronoUnit.MINUTES).toEpochMilli());
+            psHour.setLong(1, now.minus(168 + 1, ChronoUnit.HOURS).toEpochMilli());
 
             minuteRecordsRemoved = psMinute.executeUpdate();
             hourRecordsRemoved = psHour.executeUpdate();
