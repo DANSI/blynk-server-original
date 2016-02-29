@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public class DBManager {
 
-    public static final String upsertUser = "INSERT INTO users VALUES (?, ?) ON CONFLICT (username) DO UPDATE SET json = EXCLUDED.json";
+    public static final String upsertUser = "INSERT INTO users VALUES (?, ?, ?) ON CONFLICT (username) DO UPDATE SET json = EXCLUDED.json, region = EXCLUDED.region";
 
     public static final String insertMinute = "INSERT INTO reporting_average_minute VALUES (?, ?, ?, ?, ?, ?)";
     public static final String insertHourly = "INSERT INTO reporting_average_hourly VALUES (?, ?, ?, ?, ?, ?)";
@@ -142,7 +142,8 @@ public class DBManager {
 
             for (User user : users) {
                 ps.setString(1, user.name);
-                ps.setString(2, user.toString());
+                ps.setString(2, null);
+                ps.setString(3, user.toString());
                 ps.addBatch();
             }
 

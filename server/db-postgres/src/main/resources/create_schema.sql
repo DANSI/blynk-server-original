@@ -1,7 +1,10 @@
 CREATE DATABASE blynk;
 
+\connect blynk
+
 CREATE TABLE users (
   username text PRIMARY KEY,
+  region text,
   json text
 );
 
@@ -34,3 +37,7 @@ CREATE TABLE reporting_average_daily (
   value float8,
   PRIMARY KEY (username, project_id, pin, pinType, ts)
 );
+
+create user test with password 'test';
+GRANT CONNECT ON DATABASE blynk TO test;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO test;

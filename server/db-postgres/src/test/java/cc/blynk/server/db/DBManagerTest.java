@@ -162,6 +162,7 @@ public class DBManagerTest {
              ResultSet rs = statement.executeQuery("select * from users where username = 'test@gmail.com'")) {
             while (rs.next()) {
                 assertEquals("test@gmail.com", rs.getString("username"));
+                assertNull("region", rs.getString("region"));
             }
         }
     }
