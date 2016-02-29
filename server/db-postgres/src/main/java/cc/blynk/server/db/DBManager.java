@@ -68,7 +68,7 @@ public class DBManager {
         config.setPassword(serverProperties.getProperty("password"));
 
         config.setAutoCommit(false);
-        config.setConnectionTimeout(15000);
+        config.setConnectionTimeout(serverProperties.getLongProperty("connection.timeout.millis"));
         config.setMaximumPoolSize(3);
         config.setMaxLifetime(0);
         config.setConnectionTestQuery("SELECT 1");
