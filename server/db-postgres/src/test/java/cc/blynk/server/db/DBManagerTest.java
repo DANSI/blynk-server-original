@@ -155,6 +155,8 @@ public class DBManagerTest {
     public void testUpsertUser() throws Exception {
         List<User> users = new ArrayList<>();
         users.add(new User("test@gmail.com", "pass"));
+        users.add(new User("test@gmail.com", "pass2"));
+        users.add(new User("test2@gmail.com", "pass2"));
         dbManager.saveUsers(users);
 
         try (Connection connection = dbManager.getConnection();
@@ -164,7 +166,9 @@ public class DBManagerTest {
                 assertEquals("test@gmail.com", rs.getString("username"));
                 assertNull("region", rs.getString("region"));
             }
+            connection.commit();
         }
+
     }
 
     @Test
