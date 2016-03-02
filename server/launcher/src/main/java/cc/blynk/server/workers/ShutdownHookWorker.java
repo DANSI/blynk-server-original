@@ -24,7 +24,7 @@ public class ShutdownHookWorker implements Runnable {
                               ProfileSaverWorker profileSaverWorker,
                               BlockingIOProcessor blockingIOProcessor,
                               DBManager dbManager,
-                              BaseServer... servers) {
+                              BaseServer[] servers) {
         this.averageAggregator = averageAggregator;
         this.profileSaverWorker = profileSaverWorker;
         this.blockingIOProcessor = blockingIOProcessor;
