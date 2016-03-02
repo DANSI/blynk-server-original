@@ -38,7 +38,7 @@ public class ShutdownHookWorker implements Runnable {
         System.out.println("Stopping BlockingIOProcessor...");
         blockingIOProcessor.close();
         System.out.println("Saving user profiles...");
-        profileSaverWorker.run();
+        profileSaverWorker.close();
 
         System.out.println("Stopping servers...");
         for (BaseServer server : servers) {
