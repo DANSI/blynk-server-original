@@ -37,7 +37,7 @@ public class HttpAPIKeepAliveServerTest extends BaseTest {
     @After
     public void shutdown() throws Exception {
         httpclient.close();
-        httpServer.stop();
+        httpServer.close();
     }
 
     @Before

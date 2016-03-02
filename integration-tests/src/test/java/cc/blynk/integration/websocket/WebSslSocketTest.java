@@ -29,7 +29,7 @@ public class WebSslSocketTest extends BaseTest {
 
     @AfterClass
     public static void shutdown() throws Exception {
-        webSocketServer.stop();
+        webSocketServer.close();
     }
 
     @Before

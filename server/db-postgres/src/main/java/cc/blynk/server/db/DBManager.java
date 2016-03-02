@@ -11,6 +11,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -25,7 +26,7 @@ import java.util.Map;
  * Created by Dmitriy Dumanskiy.
  * Created on 19.02.16.
  */
-public class DBManager {
+public class DBManager implements Closeable {
 
     public static final String upsertUser = "INSERT INTO users VALUES (?, ?, ?) ON CONFLICT (username) DO UPDATE SET json = EXCLUDED.json, region = EXCLUDED.region";
 
@@ -227,6 +228,7 @@ public class DBManager {
         return ds.getConnection();
     }
 
+    @Override
     public void close() {
         if (ds != null) {
             ds.close();

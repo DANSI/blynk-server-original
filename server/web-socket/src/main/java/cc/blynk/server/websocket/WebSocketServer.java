@@ -71,9 +71,9 @@ public class WebSocketServer extends BaseServer {
     }
 
     @Override
-    public void stop() {
+    public void close() {
         System.out.println("Shutting down Web Sockets server...");
-        super.stop();
+        super.close();
     }
 
 }

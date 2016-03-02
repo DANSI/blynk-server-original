@@ -44,7 +44,7 @@ public class HardProtocolCommandsTest extends IntegrationBase {
 
     @After
     public void shutdown() {
-        this.hardwareServer.stop();
+        this.hardwareServer.close();
     }
 
     @Test

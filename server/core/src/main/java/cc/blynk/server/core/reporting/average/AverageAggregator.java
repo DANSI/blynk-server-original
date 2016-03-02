@@ -3,6 +3,7 @@ package cc.blynk.server.core.reporting.average;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.utils.FileUtils;
 
+import java.io.Closeable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -15,7 +16,7 @@ import static cc.blynk.utils.ReportingUtil.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.08.15.
  */
-public class AverageAggregator {
+public class AverageAggregator implements Closeable {
 
     public static final long MINUTE = 1000 * 60;
     public static final long HOUR = 1000 * 60 * 60;
@@ -83,6 +84,7 @@ public class AverageAggregator {
         return daily;
     }
 
+    @Override
     public void close() {
         write(Paths.get(dataFolder, MINUTE_TEMP_FILENAME), minute);
         write(Paths.get(dataFolder, HOURLY_TEMP_FILENAME), hourly);

@@ -81,7 +81,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @After
     public void shutdown() {
-        this.httpAdminServer.stop();
+        this.httpAdminServer.close();
     }
 
     @Test

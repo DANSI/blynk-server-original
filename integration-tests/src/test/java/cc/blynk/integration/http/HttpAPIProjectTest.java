@@ -37,7 +37,7 @@ public class HttpAPIProjectTest extends BaseTest {
     @AfterClass
     public static void shutdown() throws Exception {
         httpclient.close();
-        httpServer.stop();
+        httpServer.close();
     }
 
     @Before

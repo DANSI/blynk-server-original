@@ -48,8 +48,8 @@ public class SimplePerformanceTest extends IntegrationBase {
 
     @After
     public void shutdown() {
-        this.appServer.stop();
-        this.hardwareServer.stop();
+        this.appServer.close();
+        this.hardwareServer.close();
     }
 
     @Test

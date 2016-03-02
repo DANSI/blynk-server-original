@@ -85,9 +85,9 @@ public class AppServer extends BaseServer {
     }
 
     @Override
-    public void stop() {
+    public void close() {
         System.out.println("Shutting down application SSL server...");
-        super.stop();
+        super.close();
     }
 
 }

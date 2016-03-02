@@ -39,9 +39,9 @@ public class WebSocketTest extends BaseTest {
 
     @AfterClass
     public static void shutdown() throws Exception {
-        webSocketServer.stop();
-        appServer.stop();
-        hardwareServer.stop();
+        webSocketServer.close();
+        appServer.close();
+        hardwareServer.close();
         clientPair.stop();
     }
 

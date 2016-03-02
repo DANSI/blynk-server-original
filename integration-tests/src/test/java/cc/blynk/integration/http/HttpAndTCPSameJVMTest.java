@@ -52,9 +52,9 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
     @AfterClass
     public static void shutdown() throws Exception {
         httpclient.close();
-        httpServer.stop();
-        hardwareServer.stop();
-        appServer.stop();
+        httpServer.close();
+        hardwareServer.close();
+        appServer.close();
         clientPair.stop();
     }
 

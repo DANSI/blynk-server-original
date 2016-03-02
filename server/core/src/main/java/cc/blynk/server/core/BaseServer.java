@@ -7,6 +7,8 @@ import io.netty.channel.socket.SocketChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.Closeable;
+
 /**
  * Base server abstraction. Class responsible for Netty EventLoops creation.
  *
@@ -14,7 +16,7 @@ import org.apache.logging.log4j.Logger;
  * Created by Dmitriy Dumanskiy.
  * Created on 3/10/2015.
  */
-public abstract class BaseServer {
+public abstract class BaseServer implements Closeable {
 
     protected static final Logger log = LogManager.getLogger(BaseServer.class);
 
@@ -64,7 +66,8 @@ public abstract class BaseServer {
 
     protected abstract String getServerName();
 
-    public void stop() {
+    @Override
+    public void close() {
         cf.channel().close().awaitUninterruptibly();
 
         if (bossGroup != null) {

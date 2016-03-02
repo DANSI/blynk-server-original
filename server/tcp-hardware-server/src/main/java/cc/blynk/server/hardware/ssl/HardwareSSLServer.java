@@ -68,9 +68,9 @@ public class HardwareSSLServer extends BaseServer {
     }
 
     @Override
-    public void stop() {
+    public void close() {
         System.out.println("Shutting down ssl hardware server...");
-        super.stop();
+        super.close();
     }
 
 }

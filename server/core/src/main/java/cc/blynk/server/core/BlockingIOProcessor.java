@@ -21,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 
+import java.io.Closeable;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +34,7 @@ import static cc.blynk.utils.ByteUtils.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 07.04.15.
  */
-public class BlockingIOProcessor {
+public class BlockingIOProcessor implements Closeable {
 
     //todo move to properties
     private static final int NOTIFICATIONS_PROCESSORS = 5;
@@ -166,7 +167,8 @@ public class BlockingIOProcessor {
         });
     }
 
-    public void stop() {
+    @Override
+    public void close() {
         executor.shutdown();
     }
 

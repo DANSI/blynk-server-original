@@ -56,9 +56,9 @@ public class HttpsAPIServer extends BaseServer {
     }
 
     @Override
-    public void stop() {
+    public void close() {
         System.out.println("Shutting down HTTPS API server...");
-        super.stop();
+        super.close();
     }
 
 }

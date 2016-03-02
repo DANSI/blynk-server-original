@@ -57,7 +57,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
     @After
     public void shutdown() {
-        this.appServer.stop();
+        this.appServer.close();
     }
 
     @Test
