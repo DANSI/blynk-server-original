@@ -78,8 +78,13 @@ public class StorageWorker implements Runnable {
                 AggregationValue value = map.get(keyToRemove);
 
                 try {
+                    final Path userReportFolder = Paths.get(reportingPath, keyToRemove.username);
+                    if (Files.notExists(userReportFolder)) {
+                        Files.createDirectories(userReportFolder);
+                    }
+
                     String fileName = generateFilename(keyToRemove.dashId, keyToRemove.pinType, keyToRemove.pin, type);
-                    Path filePath = Paths.get(reportingPath, keyToRemove.username, fileName);
+                    Path filePath = Paths.get(userReportFolder.toString(), fileName);
 
                     write(filePath, value.calcAverage(), keyToRemove.ts * type.period);
 

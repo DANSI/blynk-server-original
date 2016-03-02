@@ -4,7 +4,6 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
-import cc.blynk.utils.ReportingUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -33,9 +32,8 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
     private final UserDao userDao;
     private final Set<String> allowedUsers;
-    private final String reportingFolder;
 
-    public RegisterHandler(UserDao userDao, String[] allowedUsersArray, String reportingFolder) {
+    public RegisterHandler(UserDao userDao, String[] allowedUsersArray) {
         this.userDao = userDao;
         if (allowedUsersArray != null && allowedUsersArray.length > 0 &&
                 allowedUsersArray[0] != null && !"".equals(allowedUsersArray[0])) {
@@ -44,7 +42,6 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         } else {
             allowedUsers = null;
         }
-        this.reportingFolder = reportingFolder;
     }
 
     @Override
@@ -82,8 +79,6 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         }
 
         userDao.add(userName, pass);
-
-        ReportingUtil.createReportingFolder(reportingFolder, userName);
 
         log.info("Registered {}.", userName);
 
