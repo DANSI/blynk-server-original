@@ -3,6 +3,7 @@ package cc.blynk.server.core.protocol.model.messages;
 import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
 import cc.blynk.server.core.protocol.model.messages.appllication.*;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.*;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.protocol.model.messages.common.PingMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.*;
@@ -58,6 +59,8 @@ public class MessageFactory {
                 return new GetSharedDashMessage(messageId, body);
             case HARDWARE :
                 return new HardwareMessage(messageId, body);
+            case HARDWARE_CONNECTED :
+                return new HardwareConnectedMessage(messageId, body);
 
             case CREATE_DASH :
                 return new CreateDashMessage(messageId, body);

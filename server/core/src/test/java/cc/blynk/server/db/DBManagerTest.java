@@ -168,12 +168,34 @@ public class DBManagerTest {
     }
 
     @Test
-    public void testRedeem() throws Exception  {
+    public void testRedeem() throws Exception {
         assertNull(dbManager.selectRedeemByToken("123"));
         String token = UUID.randomUUID().toString().replace("-", "");
         dbManager.executeSQL("insert into redeem (token) values('" + token + "')");
         assertNotNull(dbManager.selectRedeemByToken(token));
         assertNull(dbManager.selectRedeemByToken("123"));
+    }
+
+    @Test
+    public void testOptimisticLockingRedeem() throws Exception {
+        String token = UUID.randomUUID().toString().replace("-", "");
+        dbManager.executeSQL("insert into redeem (token) values('" + token + "')");
+
+        Redeem redeem = dbManager.selectRedeemByToken(token);
+        assertNotNull(redeem);
+        assertEquals(redeem.token, token);
+        assertFalse(redeem.isRedeemed);
+        assertEquals(1, redeem.version);
+
+        assertTrue(dbManager.updateRedeem("user@user.com", token));
+        assertFalse(dbManager.updateRedeem("user@user.com", token));
+
+        redeem = dbManager.selectRedeemByToken(token);
+        assertNotNull(redeem);
+        assertEquals(redeem.token, token);
+        assertTrue(redeem.isRedeemed);
+        assertEquals(2, redeem.version);
+        assertEquals("user@user.com", redeem.username);
     }
 
     @Test

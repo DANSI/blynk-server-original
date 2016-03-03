@@ -39,22 +39,22 @@ public class RedeemLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String redeemToken = message.body;
 
-        blockingIOProcessor.execute(() -> ctx.writeAndFlush(verifyToken(ctx, user, message, redeemToken)));
-    }
-
-    private ResponseMessage verifyToken(ChannelHandlerContext ctx, User user, StringMessage message, String redeemToken) {
         if (isAlreadyUnlocked(user)) {
-            return new ResponseMessage(message.id, OK);
+            ctx.writeAndFlush(new ResponseMessage(message.id, OK));
+            return;
         }
 
+        blockingIOProcessor.execute(() -> ctx.writeAndFlush(verifyToken(message, redeemToken, user.name)));
+    }
+
+    private ResponseMessage verifyToken(StringMessage message, String redeemToken, String username) {
         try {
             Redeem redeem = dbManager.selectRedeemByToken(redeemToken);
-            if (redeem != null && !redeem.isRedeemed) {
+            if (redeem != null && !redeem.isRedeemed && dbManager.updateRedeem(username, redeemToken)) {
                 unlockContent();
-                //dbManager.updateRedeem();
-
             }
         } catch (Exception e) {
+            log.debug("Error redeeming token.", e);
         }
 
         return new ResponseMessage(message.id, NOT_ALLOWED);

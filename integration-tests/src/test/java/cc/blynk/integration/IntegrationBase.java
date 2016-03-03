@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
 import cc.blynk.utils.StringUtils;
@@ -108,6 +109,7 @@ public abstract class IntegrationBase extends BaseTest {
 
         hardClient.send("login " + token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(appClient.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareConnectedMessage(1, String.valueOf(dashId))));
 
         appClient.reset();
         hardClient.reset();

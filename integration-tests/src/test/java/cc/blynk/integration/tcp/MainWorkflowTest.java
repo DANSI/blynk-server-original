@@ -20,6 +20,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -649,7 +650,8 @@ public class MainWorkflowTest extends IntegrationBase {
         //sending hardware command from hardware that has no active dashboard
         nonActiveDashHardClient.send("hardware aw 1 1");
         verify(nonActiveDashHardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, NO_ACTIVE_DASHBOARD)));
-        verify(clientPair.appClient.responseMock, timeout(1000).times(0)).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), eq(new HardwareConnectedMessage(1, "2")));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.hardwareClient.responseMock, timeout(1000).times(0)).channelRead(any(), any());

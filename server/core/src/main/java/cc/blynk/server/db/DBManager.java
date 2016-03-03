@@ -40,6 +40,7 @@ public class DBManager implements Closeable {
     public static final String deleteDaily = "DELETE FROM reporting_average_daily WHERE ts < ?";
 
     public static final String selectRedeemToken = "SELECT * from redeem where token = ?";
+    public static final String updateRedeemToken = "UPDATE redeem SET username = ?, version = 2, isRedeemed = true WHERE token = ? and version = 1";
 
     private static final Logger log = LogManager.getLogger(DBManager.class);
     private static final String DB_PROPERTIES_FILENAME = "db.properties";
@@ -228,6 +229,8 @@ public class DBManager implements Closeable {
             return null;
         }
 
+        log.info("Redeem select for {}", token);
+
         ResultSet rs = null;
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(selectRedeemToken)) {
@@ -249,6 +252,18 @@ public class DBManager implements Closeable {
         }
 
         return null;
+    }
+
+    public boolean updateRedeem(String username, String token) throws Exception {
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(updateRedeemToken)) {
+
+            statement.setString(1, username);
+            statement.setString(2, token);
+            int updatedRows = statement.executeUpdate();
+            connection.commit();
+            return updatedRows == 1;
+        }
     }
 
     public Connection getConnection() throws Exception {

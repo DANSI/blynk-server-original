@@ -4,7 +4,6 @@ import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
@@ -124,7 +123,7 @@ public class Session {
         return false;
     }
 
-    public void sendToApps(HardwareMessage message) {
+    public void sendToApps(MessageBase message) {
         for (Channel channel : appChannels) {
             log.trace("Sending {} to app {}", message, channel);
             channel.writeAndFlush(message);

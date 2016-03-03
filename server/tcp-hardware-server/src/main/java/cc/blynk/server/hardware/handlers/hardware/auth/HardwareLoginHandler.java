@@ -11,6 +11,7 @@ import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
@@ -65,6 +66,8 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         }
 
         channel.flush();
+
+        session.sendToApps(new HardwareConnectedMessage(msgId, String.valueOf(dash.id)));
 
         log.info("{} hardware joined.", user.name);
     }

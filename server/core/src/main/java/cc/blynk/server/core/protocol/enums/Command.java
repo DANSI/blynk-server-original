@@ -16,7 +16,7 @@ public final class Command {
     public static final short REGISTER = 1;
     public static final short LOGIN = 2;
     public static final short REDEEM = 3;
-    public static final short DEVICE_CONNECTED = 4;
+    public static final short HARDWARE_CONNECTED = 4;
 
     public static final short GET_TOKEN = 5;
     public static final short PING = 6;
@@ -66,7 +66,7 @@ public final class Command {
             {
                 put(RESPONSE, "Response");
                 put(REDEEM, "Redeem");
-                put(DEVICE_CONNECTED, "DeviceConnected");
+                put(HARDWARE_CONNECTED, "HardwareConnected");
                 put(REGISTER, "Register");
                 put(LOGIN, "Login");
                 put(LOAD_PROFILE_GZIPPED, "LoadProfile");
