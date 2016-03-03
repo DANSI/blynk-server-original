@@ -3,7 +3,6 @@ package cc.blynk.server.launcher;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
-import cc.blynk.server.db.DBManager;
 import cc.blynk.server.workers.*;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.Config;
@@ -27,19 +26,17 @@ public class JobLauncher {
 
         long startDelay;
 
-        final DBManager dbManager = new DBManager();
-
         StorageWorker storageWorker = new StorageWorker(
                 holder.averageAggregator,
                 ReportingUtil.getReportingFolder(holder.props.getProperty("data.folder")),
-                dbManager
+                holder.dbManager
         );
 
         //to start at the beggining of an minute
         startDelay = AverageAggregator.MINUTE - (System.currentTimeMillis() % AverageAggregator.MINUTE);
         scheduler.scheduleAtFixedRate(storageWorker, startDelay, AverageAggregator.MINUTE, TimeUnit.MILLISECONDS);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, dbManager);
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
         scheduler.scheduleAtFixedRate(profileSaverWorker, 1000,
                 holder.props.getIntProperty("profile.save.worker.period"), TimeUnit.MILLISECONDS);
 
@@ -59,7 +56,7 @@ public class JobLauncher {
 
         //shutdown hook thread catcher
         Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(holder.averageAggregator, profileSaverWorker,
-                holder.blockingIOProcessor, dbManager, servers)));
+                holder.blockingIOProcessor, holder.dbManager, servers)));
     }
 
 

@@ -157,6 +157,10 @@ public class BlockingIOProcessor implements Closeable {
         }
     }
 
+    public void execute(Runnable task) {
+        executor.execute(task);
+    }
+
     private void push(User user, GCMMessage message) {
         executor.execute(() -> {
             try {

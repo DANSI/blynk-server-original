@@ -14,6 +14,7 @@ import cc.blynk.server.core.protocol.exceptions.UserNotRegistered;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.utils.ServerProperties;
@@ -39,13 +40,17 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     private final SessionDao sessionDao;
     private final ReportingDao reportingDao;
     private final BlockingIOProcessor blockingIOProcessor;
+    private final DBManager dbManager;
 
-    public AppLoginHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor) {
+    public AppLoginHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao,
+                           ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor,
+                           DBManager dbManager) {
         this.props = props;
         this.userDao = userDao;
         this.sessionDao = sessionDao;
         this.reportingDao = reportingDao;
         this.blockingIOProcessor = blockingIOProcessor;
+        this.dbManager = dbManager;
     }
 
     @Override
@@ -85,7 +90,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         //}
 
         cleanPipeline(ctx.pipeline());
-        ctx.pipeline().addLast(new AppHandler(props, userDao, sessionDao, reportingDao, blockingIOProcessor, appStateHolder));
+        ctx.pipeline().addLast(new AppHandler(props, userDao, sessionDao, reportingDao, blockingIOProcessor, dbManager, appStateHolder));
 
         Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
         user.lastLoggedAt = System.currentTimeMillis();

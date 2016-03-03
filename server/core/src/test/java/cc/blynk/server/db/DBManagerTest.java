@@ -16,10 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static cc.blynk.server.db.DBManager.*;
 import static org.junit.Assert.*;
@@ -65,7 +62,7 @@ public class DBManagerTest {
         long startMinute = 0;
         long start = System.currentTimeMillis();
         try (Connection connection = dbManager.getConnection();
-             PreparedStatement ps = connection.prepareStatement(DBManager.insertMinute)) {
+             PreparedStatement ps = connection.prepareStatement(insertMinute)) {
 
             String userName = "test{}@gmail.com";
             long minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
@@ -109,7 +106,7 @@ public class DBManagerTest {
     public void testDeleteWorksAsExpected() throws Exception {
         long minute = 0;
         try (Connection connection = dbManager.getConnection();
-             PreparedStatement ps = connection.prepareStatement(DBManager.insertMinute)) {
+             PreparedStatement ps = connection.prepareStatement(insertMinute)) {
 
             minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
 
@@ -168,14 +165,22 @@ public class DBManagerTest {
             }
             connection.commit();
         }
+    }
 
+    @Test
+    public void testRedeem() throws Exception  {
+        assertNull(dbManager.selectRedeemByToken("123"));
+        String token = UUID.randomUUID().toString().replace("-", "");
+        dbManager.executeSQL("insert into redeem (token) values('" + token + "')");
+        assertNotNull(dbManager.selectRedeemByToken(token));
+        assertNull(dbManager.selectRedeemByToken("123"));
     }
 
     @Test
     public void testSelect() {
         long ts = 1455924480000L;
         try (Connection connection = dbManager.getConnection();
-             PreparedStatement ps = connection.prepareStatement(DBManager.selectMinute)) {
+             PreparedStatement ps = connection.prepareStatement(selectMinute)) {
 
              prepareReportingSelect(ps, ts, 2);
              ResultSet rs = ps.executeQuery();

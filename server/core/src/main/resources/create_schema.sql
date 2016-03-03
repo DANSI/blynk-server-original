@@ -8,6 +8,14 @@ CREATE TABLE users (
   json text
 );
 
+CREATE TABLE redeem (
+  token character(32) PRIMARY KEY,
+  company text,
+  isRedeemed boolean DEFAULT FALSE,
+  username text,
+  version integer NOT NULL DEFAULT 1
+);
+
 CREATE TABLE reporting_average_minute (
   username text,
   project_id int4,

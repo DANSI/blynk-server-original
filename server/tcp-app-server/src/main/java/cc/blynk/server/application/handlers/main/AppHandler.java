@@ -18,6 +18,7 @@ import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.utils.ServerProperties;
@@ -50,8 +51,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final CreateWidgetLogic createWidgetLogic;
     private final UpdateWidgetLogic updateWidgetLogic;
     private final ShareLogic shareLogic;
+    private final RedeemLogic redeemLogic;
 
-    public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, AppStateHolder state) {
+    public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, DBManager dbManager, AppStateHolder state) {
         super(props, state);
         this.token = new GetTokenLogic(userDao);
         this.hardwareApp = new HardwareAppLogic(sessionDao);
@@ -74,6 +76,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.updateWidgetLogic = new UpdateWidgetLogic(widgetSize);
 
         this.shareLogic = new ShareLogic(sessionDao);
+        this.redeemLogic = new RedeemLogic(dbManager, blockingIOProcessor);
+
         this.state = state;
     }
 
@@ -145,7 +149,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case DELETE_WIDGET :
                 DeleteWidgetLogic.messageReceived(ctx, state.user, msg);
                 break;
-
+            case REDEEM :
+                redeemLogic.messageReceived(ctx, state.user, msg);
+                break;
         }
     }
 

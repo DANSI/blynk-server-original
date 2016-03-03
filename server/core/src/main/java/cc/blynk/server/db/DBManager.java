@@ -12,10 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.Closeable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -41,6 +38,8 @@ public class DBManager implements Closeable {
     public static final String deleteMinute = "DELETE FROM reporting_average_minute WHERE ts < ?";
     public static final String deleteHour = "DELETE FROM reporting_average_hourly WHERE ts < ?";
     public static final String deleteDaily = "DELETE FROM reporting_average_daily WHERE ts < ?";
+
+    public static final String selectRedeemToken = "SELECT * from redeem where token = ?";
 
     private static final Logger log = LogManager.getLogger(DBManager.class);
     private static final String DB_PROPERTIES_FILENAME = "db.properties";
@@ -222,6 +221,34 @@ public class DBManager implements Closeable {
             statement.execute(sql);
             connection.commit();
         }
+    }
+
+    public Redeem selectRedeemByToken(String token) throws Exception {
+        if (!isDBEnabled()) {
+            return null;
+        }
+
+        ResultSet rs = null;
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(selectRedeemToken)) {
+
+            statement.setString(1, token);
+            rs = statement.executeQuery();
+            connection.commit();
+
+            if (rs.next()) {
+                return new Redeem(rs.getString("token"), rs.getString("company"),
+                        rs.getBoolean("isRedeemed"), rs.getString("username"),
+                        rs.getInt("version")
+                );
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+        }
+
+        return null;
     }
 
     public Connection getConnection() throws Exception {

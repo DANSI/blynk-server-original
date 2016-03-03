@@ -7,6 +7,7 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.Config;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.ServerProperties;
@@ -30,6 +31,8 @@ public class Holder {
 
     public final ReportingDao reportingDao;
 
+    public final DBManager dbManager;
+
     public final GlobalStats stats;
 
     public final ServerProperties props;
@@ -48,6 +51,7 @@ public class Holder {
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);
         this.reportingDao = new ReportingDao(reportingFolder, averageAggregator, serverProperties);
+        this.dbManager = new DBManager();
 
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
