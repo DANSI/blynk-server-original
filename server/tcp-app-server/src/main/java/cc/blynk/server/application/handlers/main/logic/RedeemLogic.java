@@ -50,8 +50,13 @@ public class RedeemLogic {
     private ResponseMessage verifyToken(StringMessage message, String redeemToken, String username) {
         try {
             Redeem redeem = dbManager.selectRedeemByToken(redeemToken);
-            if (redeem != null && !redeem.isRedeemed && dbManager.updateRedeem(username, redeemToken)) {
-                unlockContent();
+            if (redeem != null) {
+                if (redeem.isRedeemed && redeem.username.equals(username)) {
+                    return new ResponseMessage(message.id, OK);
+                } else if (!redeem.isRedeemed && dbManager.updateRedeem(username, redeemToken)) {
+                    unlockContent();
+                    return new ResponseMessage(message.id, OK);
+                }
             }
         } catch (Exception e) {
             log.debug("Error redeeming token.", e);
