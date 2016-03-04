@@ -61,6 +61,8 @@ public class MessageFactory {
                 return new HardwareMessage(messageId, body);
             case HARDWARE_CONNECTED :
                 return new HardwareConnectedMessage(messageId, body);
+            case REDEEM :
+                return new RedeemMessage(messageId, body);
 
             case CREATE_DASH :
                 return new CreateDashMessage(messageId, body);
