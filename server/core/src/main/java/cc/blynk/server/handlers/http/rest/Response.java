@@ -36,6 +36,7 @@ public class Response extends DefaultFullHttpResponse {
     public Response(HttpVersion version, HttpResponseStatus status) {
         super(version, status);
         headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+        headers().set(CONTENT_LENGTH, 0);
     }
     
     public static Response ok() {
