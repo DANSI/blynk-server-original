@@ -4,7 +4,9 @@ import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.FrequencyWidget;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
@@ -67,8 +69,17 @@ public class HardwareAppLogic {
                 session.sendMessageToHardware(ctx, dashId, new HardwareMessage(message.id, split[1]));
                 break;
             case 'r' :
-                FrequencyWidget frequencyWidget = dash.findReadingWidget(split[1].split(StringUtils.BODY_SEPARATOR_STRING), message.id);
-                if (frequencyWidget.isTicked(split[1])) {
+                Widget widget = dash.findWidgetByPin(split[1].split(StringUtils.BODY_SEPARATOR_STRING), message.id);
+                if (widget == null) {
+                    throw new IllegalCommandBodyException("No frequency widget for read command.", message.id);
+                }
+
+                if (widget instanceof FrequencyWidget) {
+                    if (((FrequencyWidget) widget).isTicked(split[1])) {
+                        session.sendMessageToHardware(ctx, dashId, new HardwareMessage(message.id, split[1]));
+                    }
+                } else {
+                    //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
                     session.sendMessageToHardware(ctx, dashId, new HardwareMessage(message.id, split[1]));
                 }
                 break;

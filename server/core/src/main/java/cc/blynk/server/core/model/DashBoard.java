@@ -4,8 +4,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.FrequencyWidget;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.JsonParser;
@@ -89,19 +87,10 @@ public class DashBoard {
         updatedAt = System.currentTimeMillis();
     }
 
-    public FrequencyWidget findReadingWidget(String[] splitted, int msgId) {
+    public Widget findWidgetByPin(String[] splitted, int msgId) {
         final PinType type = PinType.getPingType(splitted[0].charAt(0));
         final byte pin = ParseUtil.parseByte(splitted[1], msgId);
-        return findReadingWidget(pin, type, msgId);
-    }
-
-    private FrequencyWidget findReadingWidget(byte pin, PinType type, int msgId) {
-        for (Widget widget : widgets) {
-            if (widget instanceof FrequencyWidget && widget.isSame(pin, type)) {
-                return (FrequencyWidget) widget;
-            }
-        }
-        throw new IllegalCommandBodyException("No frequency widget for read command.", msgId);
+        return findWidgetByPin(pin, type);
     }
 
     public Widget findWidgetByPin(byte pin, PinType pinType) {
