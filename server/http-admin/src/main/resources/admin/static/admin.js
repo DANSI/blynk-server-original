@@ -36,6 +36,11 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                     nga.field('id'),
                     nga.field('name'),
                     nga.field('timestamp'),
+                    nga.field('theme', 'choice')
+                        .choices([
+                            {value: 'Blynk', label: 'Blynk'},
+                            {value: 'SparkFun', label: 'SparkFun'}
+                        ]),
                     nga.field('boardType', 'choice')
                         .choices([
                             {value: 'Arduino Due', label: 'Arduino Due'},
