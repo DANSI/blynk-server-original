@@ -35,7 +35,7 @@ public class HttpsAPIServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(
                         sslCtx.newHandler(ch.alloc()),
-                        new HttpServerCodec(200, 200, 200),
+                        new HttpServerCodec(),
                         new HttpObjectAggregator(1024, true),
                         new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );
