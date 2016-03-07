@@ -10,13 +10,20 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.postgresql.copy.CopyManager;
+import org.postgresql.core.BaseConnection;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.Instant;
 import java.util.*;
+import java.util.zip.GZIPOutputStream;
 
 import static cc.blynk.server.db.DBManager.*;
 import static org.junit.Assert.*;
@@ -100,6 +107,48 @@ public class DBManagerTest {
                 i++;
             }
         }
+    }
+
+    @Test
+    public void testCopy100RecordsIntoFile() throws Exception {
+        System.out.println("Starting");
+
+        int a = 0;
+
+        long start = System.currentTimeMillis();
+        try (Connection connection = dbManager.getConnection();
+             PreparedStatement ps = connection.prepareStatement(insertMinute)) {
+
+            String userName = "test@gmail.com";
+            long minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
+
+            for (int i = 0; i < 100; i++) {
+                prepareReportingInsert(ps, userName, 1, (byte) 0, PinType.VIRTUAL, minute, (double) i);
+                ps.addBatch();
+                minute += AverageAggregator.MINUTE;
+                a++;
+            }
+
+            ps.executeBatch();
+            connection.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("Finished : " + (System.currentTimeMillis() - start)  + " millis. Executed : " + a);
+
+
+        try (Connection connection = dbManager.getConnection();
+             Writer gzipWriter = new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(new File("/home/doom369/output.csv.gz"))), "UTF-8")) {
+
+            CopyManager copyManager = new CopyManager(connection.unwrap(BaseConnection.class));
+
+
+            String selectQuery = "select pintype || pin, ts, value from reporting_average_minute where project_id = 1 and username = 'test@gmail.com'";
+            long res = copyManager.copyOut("COPY (" + selectQuery + " ) TO STDOUT WITH (FORMAT CSV)", gzipWriter);
+            System.out.println(res);
+        }
+
+
     }
 
     @Test
