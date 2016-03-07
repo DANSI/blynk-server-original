@@ -45,6 +45,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                         .choices([
                             {value: 'Arduino Due', label: 'Arduino Due'},
                             {value: 'Arduino Leonardo', label: 'Arduino Leonardo'},
+                            {value: 'Arduino Mega', label: 'Arduino Mega'},
                             {value: 'Arduino Micro', label: 'Arduino Micro'},
                             {value: 'Arduino Mini', label: 'Arduino Mini'},
                             {value: 'Arduino Nano', label: 'Arduino Nano'},
@@ -57,6 +58,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                             {value: 'Intel Edison', label: 'Intel Edison'},
                             {value: 'Intel Galileo', label: 'Intel Galileo'},
                             {value: 'LinkIt ONE', label: 'LinkIt ONE'},
+                            {value: 'NodeMCU', label: 'NodeMCU'},
                             {value: 'Particle Core', label: 'Particle Core'},
                             {value: 'Particle Photon', label: 'Particle Photon'},
                             {value: 'Raspberry Pi 2/A+/B+', label: 'Raspberry Pi 2/A+/B+'},
@@ -68,6 +70,8 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                             {value: 'TI CC3200-LaunchXL', label: 'TI CC3200-LaunchXL'},
                             {value: 'TI Tiva C Connected', label: 'TI Tiva C Connected'},
                             {value: 'TinyDuino', label: 'TinyDuino'},
+                            {value: 'WeMos D1', label: 'WeMos D1'},
+                            {value: 'WeMos D1 mini', label: 'WeMos D1 mini'},
                             {value: 'Wildfire v2', label: 'Wildfire v2'},
                             {value: 'Wildfire v3', label: 'Wildfire v3'},
                             {value: 'WiPy', label: 'WiPy'}
