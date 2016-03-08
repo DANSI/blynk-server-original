@@ -23,6 +23,8 @@ import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMes
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
+import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.JsonParser;
 import io.netty.channel.Channel;
@@ -435,14 +437,24 @@ public class MainWorkflowTest extends IntegrationBase {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
 
-        verify(blockingIOProcessor, timeout(500)).push(any(), any(), eq("Your UNO went offline. \"My Dashboard\" project is disconnected."), eq(1));
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture());
+        AndroidGCMMessage message = objectArgumentCaptor.getValue();
+
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your UNO went offline. \"My Dashboard\" project is disconnected.", 1).toJson();
+        assertEquals(expectedJson, message.toJson());
     }
 
     @Test
     public void testPushHandler() throws Exception {
         clientPair.hardwareClient.send("push Yo!");
 
-        verify(blockingIOProcessor, timeout(500)).push(any(), any(), eq("Yo!"), eq(1), eq(1));
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture());
+        AndroidGCMMessage message = objectArgumentCaptor.getValue();
+
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Yo!", 1).toJson();
+        assertEquals(expectedJson, message.toJson());
     }
 
     @Test

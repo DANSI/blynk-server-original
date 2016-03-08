@@ -34,7 +34,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
 
         final long defaultNotificationQuotaLimit = holder.props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
         this.email = new MailLogic(holder.blockingIOProcessor, holder.mailWrapper, defaultNotificationQuotaLimit);
-        this.push = new PushLogic(holder.blockingIOProcessor, defaultNotificationQuotaLimit);
+        this.push = new PushLogic(holder.blockingIOProcessor, holder.gcmWrapper, defaultNotificationQuotaLimit);
         this.tweet = new TweetLogic(holder.blockingIOProcessor, holder.twitterWrapper, defaultNotificationQuotaLimit);
         this.sync = new HardwareSyncLogic();
         this.info = new HardwareInfoLogic(holder.props.getIntProperty("hard.socket.idle.timeout", 0));

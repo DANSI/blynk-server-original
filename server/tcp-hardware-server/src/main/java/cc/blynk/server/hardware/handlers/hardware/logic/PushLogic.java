@@ -9,9 +9,16 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.exceptions.NotifNotAuthorizedException;
+import cc.blynk.server.notifications.push.GCMMessage;
+import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
+import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import static cc.blynk.server.core.protocol.enums.Response.*;
 
 /**
  * Handler sends push notifications to Applications. Initiation is on hardware side.
@@ -27,10 +34,12 @@ public class PushLogic extends NotificationBase {
     private static final Logger log = LogManager.getLogger(PushLogic.class);
 
     private final BlockingIOProcessor blockingIOProcessor;
+    private final GCMWrapper gcmWrapper;
 
-    public PushLogic(BlockingIOProcessor blockingIOProcessor, long notificationQuotaLimit) {
+    public PushLogic(BlockingIOProcessor blockingIOProcessor, GCMWrapper gcmWrapper, long notificationQuotaLimit) {
         super(notificationQuotaLimit);
         this.blockingIOProcessor = blockingIOProcessor;
+        this.gcmWrapper = gcmWrapper;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
@@ -55,8 +64,33 @@ public class PushLogic extends NotificationBase {
         checkIfNotificationQuotaLimitIsNotReached(message.id);
 
         log.trace("Sending push for user {}, with message : '{}'.", state.user.name, message.body);
-        blockingIOProcessor.push(ctx.channel(), widget, message.body, state.dashId, message.id);
+        push(ctx.channel(), state.user.name, widget, message.body, state.dashId, message.id);
     }
 
+    private void push(Channel channel, String username, Notification widget, String body, int dashId, int msgId) {
+        if (widget.androidTokens.size() != 0) {
+            for (String token : widget.androidTokens.values()) {
+                push(channel, username, new AndroidGCMMessage(token, widget.priority, body, dashId), msgId);
+            }
+        }
+
+        if (widget.iOSTokens.size() != 0) {
+            for (String token : widget.iOSTokens.values()) {
+                push(channel, username, new IOSGCMMessage(token, widget.priority, body, dashId), msgId);
+            }
+        }
+    }
+
+    private void push(Channel channel, String username, GCMMessage message, int msgId) {
+        blockingIOProcessor.execute(() -> {
+            try {
+                gcmWrapper.send(message);
+                channel.writeAndFlush(new ResponseMessage(msgId, OK));
+            } catch (Exception e) {
+                log.error("Error sending push notification from hardware. For user {}.",  username, e);
+                channel.writeAndFlush(new ResponseMessage(msgId, Response.NOTIFICATION_EXCEPTION));
+            }
+        });
+    }
 
 }

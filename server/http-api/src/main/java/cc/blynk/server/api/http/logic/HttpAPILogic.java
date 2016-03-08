@@ -18,6 +18,10 @@ import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.http.rest.Response;
 import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.server.notifications.push.GCMMessage;
+import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
+import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
 import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,18 +47,20 @@ public class HttpAPILogic {
     private final SessionDao sessionDao;
     private final GlobalStats globalStats;
     private final MailWrapper mailWrapper;
+    private final GCMWrapper gcmWrapper;
 
     public HttpAPILogic(Holder holder) {
-        this(holder.userDao, holder.sessionDao, holder.blockingIOProcessor, holder.mailWrapper, holder.stats);
+        this(holder.userDao, holder.sessionDao, holder.blockingIOProcessor, holder.mailWrapper, holder.gcmWrapper, holder.stats);
     }
 
     private HttpAPILogic(UserDao userDao, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor,
-                         MailWrapper mailWrapper, GlobalStats globalStats) {
+                         MailWrapper mailWrapper, GCMWrapper gcmWrapper, GlobalStats globalStats) {
         this.userDao = userDao;
         this.blockingIOProcessor = blockingIOProcessor;
         this.sessionDao = sessionDao;
         this.globalStats = globalStats;
         this.mailWrapper = mailWrapper;
+        this.gcmWrapper = gcmWrapper;
     }
 
     @GET
@@ -235,9 +241,33 @@ public class HttpAPILogic {
         }
 
         log.trace("Sending push for user {}, with message : '{}'.", user.name, message.body);
-        blockingIOProcessor.push(user, notification, message.body, 1);
+        push(user, notification, message.body, 1);
 
         return Response.ok();
+    }
+
+    private void push(User user, Notification widget, String body, int dashId) {
+        if (widget.androidTokens.size() != 0) {
+            for (String token : widget.androidTokens.values()) {
+                push(user, new AndroidGCMMessage(token, widget.priority, body, dashId));
+            }
+        }
+
+        if (widget.iOSTokens.size() != 0) {
+            for (String token : widget.iOSTokens.values()) {
+                push(user, new IOSGCMMessage(token, widget.priority, body, dashId));
+            }
+        }
+    }
+
+    private void push(User user, GCMMessage message) {
+        blockingIOProcessor.execute(() -> {
+            try {
+                gcmWrapper.send(message);
+            } catch (Exception e) {
+                log.error("Error sending push notification on offline hardware. For user {}", user.name, e);
+            }
+        });
     }
 
     @POST

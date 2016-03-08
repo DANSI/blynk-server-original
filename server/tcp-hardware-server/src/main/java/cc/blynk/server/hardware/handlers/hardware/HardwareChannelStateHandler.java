@@ -4,10 +4,15 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.notifications.push.GCMMessage;
+import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
+import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -33,10 +38,12 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     private final SessionDao sessionDao;
     private final BlockingIOProcessor blockingIOProcessor;
+    private final GCMWrapper gcmWrapper;
 
-    public HardwareChannelStateHandler(SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor) {
+    public HardwareChannelStateHandler(SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor, GCMWrapper gcmWrapper) {
         this.sessionDao = sessionDao;
         this.blockingIOProcessor = blockingIOProcessor;
+        this.gcmWrapper = gcmWrapper;
     }
 
     @Override
@@ -80,13 +87,35 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                 String boardType = dashBoard.boardType;
                 String dashName = dashBoard.name;
                 dashName = dashName == null ? "" : dashName;
-                blockingIOProcessor.push(state.user,
-                        notification,
+                push(state.user, notification,
                         String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName),
                         state.dashId);
             }
         }
     }
 
+    private void push(User user, Notification widget, String body, int dashId) {
+        if (widget.androidTokens.size() != 0) {
+            for (String token : widget.androidTokens.values()) {
+                push(user, new AndroidGCMMessage(token, widget.priority, body, dashId));
+            }
+        }
+
+        if (widget.iOSTokens.size() != 0) {
+            for (String token : widget.iOSTokens.values()) {
+                push(user, new IOSGCMMessage(token, widget.priority, body, dashId));
+            }
+        }
+    }
+
+    private void push(User user, GCMMessage message) {
+        blockingIOProcessor.execute(() -> {
+            try {
+                gcmWrapper.send(message);
+            } catch (Exception e) {
+                log.error("Error sending push notification on offline hardware. For user {}", user.name, e);
+            }
+        });
+    }
 
 }
