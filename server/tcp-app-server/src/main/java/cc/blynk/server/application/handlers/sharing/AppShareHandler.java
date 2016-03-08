@@ -1,17 +1,14 @@
 package cc.blynk.server.application.handlers.sharing;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.LoadProfileGzippedLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.GetGraphDataLogic;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.application.handlers.sharing.logic.HardwareAppShareLogic;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingDao;
-import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
-import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.ThreadContext;
 
@@ -29,10 +26,10 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final HardwareAppShareLogic hardwareApp;
     private final GetGraphDataLogic graphData;
 
-    public AppShareHandler(ServerProperties props, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, AppShareStateHolder state) {
-        super(props, state);
-        this.hardwareApp = new HardwareAppShareLogic(sessionDao);
-        this.graphData = new GetGraphDataLogic(reportingDao, blockingIOProcessor);
+    public AppShareHandler(Holder holder, AppShareStateHolder state) {
+        super(holder.props, state);
+        this.hardwareApp = new HardwareAppShareLogic(holder.sessionDao);
+        this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.state = state;
     }
 

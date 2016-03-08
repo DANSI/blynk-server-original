@@ -1,16 +1,11 @@
 package cc.blynk.server.hardware.handlers.hardware;
 
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingDao;
-import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.*;
-import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.twitter.TwitterWrapper;
-import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.ThreadContext;
 
@@ -32,19 +27,17 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final HardwareSyncLogic sync;
     private final HardwareInfoLogic info;
 
-    public HardwareHandler(ServerProperties props, SessionDao sessionDao, ReportingDao reportingDao,
-                           BlockingIOProcessor blockingIOProcessor, TwitterWrapper twitterWrapper, MailWrapper mailWrapper,
-                           HardwareStateHolder stateHolder) {
-        super(props, stateHolder);
-        this.hardware = new HardwareLogic(sessionDao, reportingDao);
-        this.bridge = new BridgeLogic(sessionDao);
+    public HardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
+        super(holder.props, stateHolder);
+        this.hardware = new HardwareLogic(holder.sessionDao, holder.reportingDao);
+        this.bridge = new BridgeLogic(holder.sessionDao);
 
-        final long defaultNotificationQuotaLimit = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
-        this.email = new MailLogic(blockingIOProcessor, mailWrapper, defaultNotificationQuotaLimit);
-        this.push = new PushLogic(blockingIOProcessor, defaultNotificationQuotaLimit);
-        this.tweet = new TweetLogic(blockingIOProcessor, twitterWrapper, defaultNotificationQuotaLimit);
+        final long defaultNotificationQuotaLimit = holder.props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
+        this.email = new MailLogic(holder.blockingIOProcessor, holder.mailWrapper, defaultNotificationQuotaLimit);
+        this.push = new PushLogic(holder.blockingIOProcessor, defaultNotificationQuotaLimit);
+        this.tweet = new TweetLogic(holder.blockingIOProcessor, holder.twitterWrapper, defaultNotificationQuotaLimit);
         this.sync = new HardwareSyncLogic();
-        this.info = new HardwareInfoLogic(props.getIntProperty("hard.socket.idle.timeout", 0));
+        this.info = new HardwareInfoLogic(holder.props.getIntProperty("hard.socket.idle.timeout", 0));
 
         this.state = stateHolder;
     }

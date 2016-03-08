@@ -35,7 +35,7 @@ public class AppServer extends BaseServer {
         final RegisterHandler registerHandler = new RegisterHandler(holder.userDao, holder.props.getCommaSeparatedList("allowed.users.list"));
         final AppLoginHandler appLoginHandler = new AppLoginHandler(holder);
         final AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
-        final AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
+        final AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 
         log.info("Enabling SSL for application.");

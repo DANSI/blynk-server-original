@@ -1,11 +1,9 @@
 package cc.blynk.server.application.handlers.sharing.auth;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
 import cc.blynk.server.application.handlers.sharing.AppShareHandler;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingDao;
-import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -16,7 +14,6 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
-import cc.blynk.utils.ServerProperties;
 import io.netty.channel.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,18 +33,10 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
     private static final Logger log = LogManager.getLogger(AppShareLoginHandler.class);
 
-    private final ServerProperties props;
-    private final UserDao userDao;
-    private final SessionDao sessionDao;
-    private final ReportingDao reportingDao;
-    private final BlockingIOProcessor blockingIOProcessor;
+    private final Holder holder;
 
-    public AppShareLoginHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor) {
-        this.props = props;
-        this.userDao = userDao;
-        this.sessionDao = sessionDao;
-        this.reportingDao = reportingDao;
-        this.blockingIOProcessor = blockingIOProcessor;
+    public AppShareLoginHandler(Holder holder) {
+        this.holder = holder;
     }
 
     @Override
@@ -76,7 +65,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
     private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String token, String osType, String version, String uid) {
         String userName = username.toLowerCase();
 
-        User user = userDao.sharedTokenManager.getUserByToken(token);
+        User user = holder.userDao.sharedTokenManager.getUserByToken(token);
 
         if (user == null || !user.name.equals(userName)) {
             log.debug("Share token is invalid. User : {}, token {}, {}", userName, token, ctx.channel().remoteAddress());
@@ -94,9 +83,9 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         }
 
         cleanPipeline(ctx.pipeline());
-        ctx.pipeline().addLast(new AppShareHandler(props, sessionDao, reportingDao, blockingIOProcessor, new AppShareStateHolder(user, osType, version, token, dashId)));
+        ctx.pipeline().addLast(new AppShareHandler(holder, new AppShareStateHolder(user, osType, version, token, dashId)));
 
-        Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
+        Session session = holder.sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering app channel. {}", ctx.channel());

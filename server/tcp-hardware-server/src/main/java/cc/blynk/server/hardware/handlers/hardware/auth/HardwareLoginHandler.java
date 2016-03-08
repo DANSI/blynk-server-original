@@ -1,9 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.auth;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingDao;
-import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -18,9 +15,6 @@ import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
-import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.twitter.TwitterWrapper;
-import cc.blynk.utils.ServerProperties;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -40,30 +34,10 @@ import static cc.blynk.server.core.protocol.enums.Response.*;
 @ChannelHandler.Sharable
 public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler, DefaultReregisterHandler {
 
-    private final UserDao userDao;
-    private final SessionDao sessionDao;
-    private final ServerProperties props;
-    private final ReportingDao reportingDao;
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final TwitterWrapper twitterWrapper;
-    private final MailWrapper mailWrapper;
+    private final Holder holder;
 
     public HardwareLoginHandler(Holder holder) {
-        this(holder.props, holder.userDao, holder.sessionDao,
-             holder.reportingDao, holder.blockingIOProcessor, holder.twitterWrapper,
-             holder.mailWrapper);
-    }
-
-    private HardwareLoginHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao,
-                                 ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor,
-                                 TwitterWrapper twitterWrapper, MailWrapper mailWrapper) {
-        this.props = props;
-        this.userDao = userDao;
-        this.sessionDao = sessionDao;
-        this.reportingDao = reportingDao;
-        this.blockingIOProcessor = blockingIOProcessor;
-        this.twitterWrapper = twitterWrapper;
-        this.mailWrapper = mailWrapper;
+        this.holder = holder;
     }
 
     private static void completeLogin(Channel channel, Session session, User user, DashBoard dash, int msgId) {
@@ -90,7 +64,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
         String token = message.body.trim();
-        User user = userDao.tokenManager.getUserByToken(token);
+        User user = holder.userDao.tokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
@@ -109,9 +83,9 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(UserNotLoggedHandler.class);
-        ctx.pipeline().addLast(new HardwareHandler(props, sessionDao, reportingDao, blockingIOProcessor, twitterWrapper, mailWrapper, new HardwareStateHolder(dashId, user, token)));
+        ctx.pipeline().addLast(new HardwareHandler(holder, new HardwareStateHolder(dashId, user, token)));
 
-        Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
+        Session session = holder.sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering hard channel. {}", ctx.channel());
