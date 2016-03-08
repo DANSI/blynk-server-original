@@ -7,7 +7,6 @@ import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataBinaryMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMMessage;
 import cc.blynk.server.notifications.push.GCMWrapper;
@@ -16,6 +15,7 @@ import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.Config;
 import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.StateHolderUtil;
 import io.netty.channel.Channel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,11 +62,6 @@ public class BlockingIOProcessor implements Closeable {
                 new ArrayBlockingQueue<>(maxQueueSize)
         );
         this.tokenBody = tokenBody;
-    }
-
-    public static User getStateUser(Channel channel) {
-        BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
-        return handler == null ? null : handler.state.user;
     }
 
     public void readGraphData(Channel channel, String name, GraphPinRequest[] requestedPins, int msgId) {
@@ -182,7 +177,7 @@ public class BlockingIOProcessor implements Closeable {
     }
 
     private void log(Channel channel, String errorMessage, int msgId, int response) {
-        User user = getStateUser(channel);
+        User user = StateHolderUtil.getStateUser(channel);
         if (user != null) {
             log(user.name, errorMessage);
 
