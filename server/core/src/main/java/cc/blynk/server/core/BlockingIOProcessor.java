@@ -30,6 +30,11 @@ import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.ByteUtils.*;
 
 /**
+ * Wrapper around ThreadPoolExecutor that should perform blocking IO operations.
+ * Due to async nature of netty performing Blocking operations withing netty pipeline
+ * will cause performance issues. So Blocking operations should always
+ * executed via this wrapper.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 07.04.15.
