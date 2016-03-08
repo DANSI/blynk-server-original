@@ -35,23 +35,23 @@ public class ShutdownHookWorker implements Runnable {
     @Override
     public void run() {
         System.out.println("Catch shutdown hook.");
-        System.out.println("Stopping BlockingIOProcessor...");
-        blockingIOProcessor.close();
-        System.out.println("Saving user profiles...");
-        profileSaverWorker.close();
 
         System.out.println("Stopping servers...");
         for (BaseServer server : servers) {
             server.close();
         }
 
-        if (dbManager.isDBEnabled()) {
-            System.out.println("Closing DB...");
-            dbManager.close();
-        }
+        System.out.println("Stopping BlockingIOProcessor...");
+        blockingIOProcessor.close();
+
+        System.out.println("Saving user profiles...");
+        profileSaverWorker.close();
 
         System.out.println("Stopping aggregator...");
         averageAggregator.close();
+
+        dbManager.close();
+
         System.out.println("Done.");
     }
 

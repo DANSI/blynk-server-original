@@ -272,7 +272,8 @@ public class DBManager implements Closeable {
 
     @Override
     public void close() {
-        if (ds != null) {
+        if (isDBEnabled()) {
+            System.out.println("Closing DB...");
             ds.close();
         }
     }
