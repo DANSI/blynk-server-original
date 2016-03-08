@@ -536,7 +536,7 @@ public class MainWorkflowTest extends IntegrationBase {
         reset(blockingIOProcessor);
 
         clientPair.hardwareClient.send("tweet yo");
-        verify(blockingIOProcessor, timeout(500)).twit(any(), eq("token"), eq("secret"), eq("yo"), eq(1));
+        verify(twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("yo"));
 
         clientPair.hardwareClient.send("tweet yo");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, QUOTA_LIMIT_EXCEPTION)));

@@ -8,6 +8,7 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.Config;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.ServerProperties;
@@ -36,8 +37,12 @@ public class Holder {
     public final GlobalStats stats;
 
     public final ServerProperties props;
+
     public final AverageAggregator averageAggregator;
-    public BlockingIOProcessor blockingIOProcessor;
+
+    public final BlockingIOProcessor blockingIOProcessor;
+
+    public final TwitterWrapper twitterWrapper;
 
     public Holder(ServerProperties serverProperties) {
         this.props = serverProperties;
@@ -53,6 +58,8 @@ public class Holder {
         this.reportingDao = new ReportingDao(reportingFolder, averageAggregator, serverProperties);
         this.dbManager = new DBManager();
 
+        this.twitterWrapper = new TwitterWrapper();
+
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
                 FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY),
@@ -61,7 +68,27 @@ public class Holder {
     }
 
     //for tests only
-    public void setBlockingIOProcessor(BlockingIOProcessor blockingIOProcessor) {
-        this.blockingIOProcessor = blockingIOProcessor;
+    public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper) {
+        this.props = serverProperties;
+
+        String dataFolder = serverProperties.getProperty("data.folder");
+
+        this.fileManager = new FileManager(dataFolder);
+        this.sessionDao = new SessionDao();
+        this.userDao = new UserDao(fileManager.deserialize());
+        this.stats = new GlobalStats();
+        final String reportingFolder = getReportingFolder(dataFolder);
+        this.averageAggregator = new AverageAggregator(reportingFolder);
+        this.reportingDao = new ReportingDao(reportingFolder, averageAggregator, serverProperties);
+        this.dbManager = new DBManager();
+
+        this.twitterWrapper = twitterWrapper;
+
+        this.blockingIOProcessor = new BlockingIOProcessor(
+                serverProperties.getIntProperty("notifications.queue.limit", 10000),
+                FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY),
+                reportingDao
+        );
     }
+
 }

@@ -26,7 +26,7 @@ public class HardwareSSLServer extends BaseServer {
     public HardwareSSLServer(Holder holder) {
         super(holder.props.getIntProperty("hardware.ssl.port"));
 
-        final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder.props, holder.userDao, holder.sessionDao, holder.reportingDao, holder.blockingIOProcessor);
+        final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder);
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.blockingIOProcessor);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 

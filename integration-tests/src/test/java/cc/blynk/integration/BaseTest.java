@@ -3,6 +3,7 @@ package cc.blynk.integration;
 import cc.blynk.server.Holder;
 import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -44,6 +45,9 @@ public abstract class BaseTest {
     @Mock
     public BlockingIOProcessor blockingIOProcessor;
 
+    @Mock
+    public TwitterWrapper twitterWrapper;
+
     public static void sleep(int ms) {
         try {
             Thread.sleep(ms);
@@ -58,9 +62,8 @@ public abstract class BaseTest {
         if (getDataFolder() != null) {
             this.properties.setProperty("data.folder", getDataFolder());
         }
-        this.holder = new Holder(this.properties);
+        this.holder = new Holder(this.properties, this.twitterWrapper);
         this.transportTypeHolder = new TransportTypeHolder(this.properties);
-        this.holder.setBlockingIOProcessor(this.blockingIOProcessor);
 
         this.tcpAppPort = this.properties.getIntProperty("app.ssl.port");
         this.tcpHardPort = this.properties.getIntProperty("hardware.default.port");

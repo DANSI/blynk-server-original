@@ -12,7 +12,6 @@ import cc.blynk.server.notifications.push.GCMMessage;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
-import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.Config;
 import cc.blynk.utils.ServerProperties;
 import cc.blynk.utils.StateHolderUtil;
@@ -43,7 +42,7 @@ public class BlockingIOProcessor implements Closeable {
 
     //todo move to properties
     private static final int NOTIFICATIONS_PROCESSORS = 5;
-    private final TwitterWrapper twitterWrapper;
+
     private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
     private final ReportingDao reportingDao;
@@ -52,7 +51,6 @@ public class BlockingIOProcessor implements Closeable {
     public volatile String tokenBody;
 
     public BlockingIOProcessor(int maxQueueSize, String tokenBody, ReportingDao reportingDao) {
-        this.twitterWrapper = new TwitterWrapper();
         this.mailWrapper = new MailWrapper(new ServerProperties(Config.MAIL_PROPERTIES_FILENAME));
         this.gcmWrapper = new GCMWrapper(new ServerProperties(GCMWrapper.GCM_PROPERTIES_FILENAME));
         this.reportingDao = reportingDao;
@@ -99,19 +97,6 @@ public class BlockingIOProcessor implements Closeable {
                 mailWrapper.send(to, subj, body, null);
             } catch (Exception e) {
                 log(user.name, e.getMessage());
-            }
-        });
-    }
-
-    public void twit(Channel channel, String token, String secret, String body, int msgId) {
-        executor.execute(() -> {
-            try {
-                twitterWrapper.send(token, secret, body);
-                channel.eventLoop().execute(() -> {
-                    channel.writeAndFlush(new ResponseMessage(msgId, OK));
-                });
-            } catch (Exception e) {
-                log(channel, e.getMessage(), msgId, Response.NOTIFICATION_EXCEPTION);
             }
         });
     }

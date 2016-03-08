@@ -15,6 +15,7 @@ import cc.blynk.server.core.protocol.model.messages.hardware.TweetMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.exceptions.NotifNotAuthorizedException;
 import cc.blynk.server.hardware.handlers.hardware.logic.TweetLogic;
+import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -41,6 +42,9 @@ public class TweetHandlerTest {
 
 	@Mock
 	private BlockingIOProcessor blockingIOProcessor;
+
+	@Mock
+	private TwitterWrapper twitterWrapper;
 
 	@Mock
 	private ChannelHandlerContext ctx;
@@ -75,7 +79,7 @@ public class TweetHandlerTest {
 	public void testTweetMessageWithEmptyBody() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "");
         state.user.profile = profile;
-		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, 60);
+		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, twitterWrapper, 60);
 		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
@@ -84,14 +88,14 @@ public class TweetHandlerTest {
 		final String longBody = RandomStringUtils.random(150);
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, longBody);
         state.user.profile = profile;
-		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, 60);
+		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, twitterWrapper, 60);
 		tweetHandler.messageReceived(ctx, state, tweetMessage);
 	}
 
 	@Test(expected = NotifNotAuthorizedException.class)
 	public void testTweetMessageWithNoTwitterAccessToken() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
-		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, 60);
+		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, twitterWrapper, 60);
         state.user.profile = profile;
         when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
         when(dash.getWidgetByType(Twitter.class)).thenReturn(null);
@@ -101,7 +105,7 @@ public class TweetHandlerTest {
 	@Test(expected = NotifNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterTokenNull() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
-		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, 60);
+		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, twitterWrapper, 60);
         state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = null;
@@ -114,7 +118,7 @@ public class TweetHandlerTest {
 	@Test(expected = NotifNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterTokenEmpty() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
-		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, 60);
+		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, twitterWrapper, 60);
         state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = null;
@@ -127,7 +131,7 @@ public class TweetHandlerTest {
 	@Test(expected = NotifNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterSecretTokenNull() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
-		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, 60);
+		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, twitterWrapper, 60);
         state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
@@ -140,7 +144,7 @@ public class TweetHandlerTest {
 	@Test(expected = NotifNotAuthorizedException.class)
 	public void testTweetMessageWithTwitterSecretTokenEmpty() {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
-		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, 60);
+		TweetLogic tweetHandler = new TweetLogic(blockingIOProcessor, twitterWrapper, 60);
         state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
@@ -153,7 +157,7 @@ public class TweetHandlerTest {
 	@Test(expected = QuotaLimitException.class)
 	public void testSendQuotaLimitationException() throws InterruptedException {
 		TweetMessage tweetMessage = (TweetMessage) MessageFactory.produce(1, Command.TWEET, "this is a test tweet");
-		TweetLogic tweetHandler = spy(new TweetLogic(blockingIOProcessor, 60));
+		TweetLogic tweetHandler = spy(new TweetLogic(blockingIOProcessor, twitterWrapper, 60));
         state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
@@ -172,7 +176,7 @@ public class TweetHandlerTest {
 		ServerProperties props = new ServerProperties();
 		props.setProperty("notifications.frequency.user.quota.limit", "1");
 		final long defaultQuotaTime = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
-		TweetLogic tweetHandler = spy(new TweetLogic(blockingIOProcessor, 60));
+		TweetLogic tweetHandler = spy(new TweetLogic(blockingIOProcessor, twitterWrapper, 60));
 		state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
