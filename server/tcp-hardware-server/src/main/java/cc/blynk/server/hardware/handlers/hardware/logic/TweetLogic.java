@@ -65,7 +65,7 @@ public class TweetLogic extends NotificationBase {
                 twitterWrapper.send(token, secret, body);
                 channel.writeAndFlush(new ResponseMessage(msgId, OK));
             } catch (Exception e) {
-                log.error("Error performing blocking IO. For user {}.",  username, e);
+                log.error("Error sending twit. For user {}.",  username, e);
                 channel.writeAndFlush(new ResponseMessage(msgId, Response.NOTIFICATION_EXCEPTION));
             }
         });
