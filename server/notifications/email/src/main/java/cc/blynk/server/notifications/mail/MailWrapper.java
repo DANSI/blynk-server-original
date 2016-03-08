@@ -40,6 +40,10 @@ public class MailWrapper {
         }
     }
 
+    public void send(String to, String subj, String body) throws MessagingException {
+        send(to, subj, body, null);
+    }
+
     public void send(String to, String subj, String body, String contentType) throws MessagingException {
         Message message = new MimeMessage(session);
         message.setFrom(from);

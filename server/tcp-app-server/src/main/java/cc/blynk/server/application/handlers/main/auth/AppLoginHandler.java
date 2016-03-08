@@ -1,11 +1,8 @@
 package cc.blynk.server.application.handlers.main.auth;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.AppHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingDao;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -14,10 +11,8 @@ import cc.blynk.server.core.protocol.exceptions.UserNotRegistered;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
-import cc.blynk.server.db.DBManager;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
-import cc.blynk.utils.ServerProperties;
 import io.netty.channel.*;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
@@ -35,22 +30,10 @@ import static cc.blynk.server.core.protocol.enums.Response.*;
 @ChannelHandler.Sharable
 public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler, DefaultReregisterHandler {
 
-    private final ServerProperties props;
-    private final UserDao userDao;
-    private final SessionDao sessionDao;
-    private final ReportingDao reportingDao;
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final DBManager dbManager;
+    private final Holder holder;
 
-    public AppLoginHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao,
-                           ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor,
-                           DBManager dbManager) {
-        this.props = props;
-        this.userDao = userDao;
-        this.sessionDao = sessionDao;
-        this.reportingDao = reportingDao;
-        this.blockingIOProcessor = blockingIOProcessor;
-        this.dbManager = dbManager;
+    public AppLoginHandler(Holder holder) {
+       this.holder = holder;
     }
 
     @Override
@@ -73,7 +56,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     }
 
     private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String pass, String osType, String version) {
-        User user = userDao.getByName(username);
+        User user = holder.userDao.getByName(username);
 
         if (user == null) {
             throw new UserNotRegistered(String.format("User not registered. Username '%s', %s", username, ctx.channel().remoteAddress()), messageId);
@@ -83,16 +66,16 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", username, ctx.channel().remoteAddress()), messageId);
         }
 
-        AppStateHolder appStateHolder = new AppStateHolder(user, osType, version);
+        final AppStateHolder appStateHolder = new AppStateHolder(user, osType, version);
         //todo finish.
         //if (appStateHolder.isOldAPI()) {
         //    throw new NotSupportedVersion(messageId);
         //}
 
         cleanPipeline(ctx.pipeline());
-        ctx.pipeline().addLast(new AppHandler(props, userDao, sessionDao, reportingDao, blockingIOProcessor, dbManager, appStateHolder));
+        ctx.pipeline().addLast(new AppHandler(holder, appStateHolder));
 
-        Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
+        Session session = holder.sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
         user.lastLoggedAt = System.currentTimeMillis();
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {

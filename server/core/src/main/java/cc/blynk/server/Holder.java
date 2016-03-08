@@ -8,6 +8,7 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.Config;
 import cc.blynk.utils.FileLoaderUtil;
@@ -43,6 +44,7 @@ public class Holder {
     public final BlockingIOProcessor blockingIOProcessor;
 
     public final TwitterWrapper twitterWrapper;
+    public final MailWrapper mailWrapper;
 
     public Holder(ServerProperties serverProperties) {
         this.props = serverProperties;
@@ -59,6 +61,7 @@ public class Holder {
         this.dbManager = new DBManager();
 
         this.twitterWrapper = new TwitterWrapper();
+        this.mailWrapper = new MailWrapper(new ServerProperties(Config.MAIL_PROPERTIES_FILENAME));
 
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
@@ -68,7 +71,7 @@ public class Holder {
     }
 
     //for tests only
-    public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper) {
+    public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper, MailWrapper mailWrapper) {
         this.props = serverProperties;
 
         String dataFolder = serverProperties.getProperty("data.folder");
@@ -83,6 +86,7 @@ public class Holder {
         this.dbManager = new DBManager();
 
         this.twitterWrapper = twitterWrapper;
+        this.mailWrapper = mailWrapper;
 
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),

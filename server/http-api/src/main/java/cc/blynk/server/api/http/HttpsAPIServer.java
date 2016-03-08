@@ -24,7 +24,7 @@ public class HttpsAPIServer extends BaseServer {
     public HttpsAPIServer(Holder holder) {
         super(holder.props.getIntProperty("https.port"));
 
-        HandlerRegistry.register(new HttpAPILogic(holder.userDao, holder.sessionDao, holder.blockingIOProcessor, holder.stats));
+        HandlerRegistry.register(new HttpAPILogic(holder));
 
         log.info("Enabling HTTPS API.");
 

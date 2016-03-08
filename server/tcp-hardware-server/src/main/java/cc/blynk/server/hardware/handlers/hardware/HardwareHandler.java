@@ -8,6 +8,7 @@ import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.*;
+import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
@@ -32,13 +33,14 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final HardwareInfoLogic info;
 
     public HardwareHandler(ServerProperties props, SessionDao sessionDao, ReportingDao reportingDao,
-                           BlockingIOProcessor blockingIOProcessor, TwitterWrapper twitterWrapper, HardwareStateHolder stateHolder) {
+                           BlockingIOProcessor blockingIOProcessor, TwitterWrapper twitterWrapper, MailWrapper mailWrapper,
+                           HardwareStateHolder stateHolder) {
         super(props, stateHolder);
         this.hardware = new HardwareLogic(sessionDao, reportingDao);
         this.bridge = new BridgeLogic(sessionDao);
 
         final long defaultNotificationQuotaLimit = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
-        this.email = new MailLogic(blockingIOProcessor, defaultNotificationQuotaLimit);
+        this.email = new MailLogic(blockingIOProcessor, mailWrapper, defaultNotificationQuotaLimit);
         this.push = new PushLogic(blockingIOProcessor, defaultNotificationQuotaLimit);
         this.tweet = new TweetLogic(blockingIOProcessor, twitterWrapper, defaultNotificationQuotaLimit);
         this.sync = new HardwareSyncLogic();

@@ -3,6 +3,7 @@ package cc.blynk.integration;
 import cc.blynk.server.Holder;
 import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
@@ -48,6 +49,9 @@ public abstract class BaseTest {
     @Mock
     public TwitterWrapper twitterWrapper;
 
+    @Mock
+    public MailWrapper mailWrapper;
+
     public static void sleep(int ms) {
         try {
             Thread.sleep(ms);
@@ -62,19 +66,19 @@ public abstract class BaseTest {
         if (getDataFolder() != null) {
             this.properties.setProperty("data.folder", getDataFolder());
         }
-        this.holder = new Holder(this.properties, this.twitterWrapper);
+        this.holder = new Holder(properties, twitterWrapper, mailWrapper);
         this.transportTypeHolder = new TransportTypeHolder(this.properties);
 
-        this.tcpAppPort = this.properties.getIntProperty("app.ssl.port");
-        this.tcpHardPort = this.properties.getIntProperty("hardware.default.port");
+        this.tcpAppPort = properties.getIntProperty("app.ssl.port");
+        this.tcpHardPort = properties.getIntProperty("hardware.default.port");
 
-        this.httpPort = this.properties.getIntProperty("http.port");
-        this.httpsPort = this.properties.getIntProperty("https.port");
+        this.httpPort = properties.getIntProperty("http.port");
+        this.httpsPort = properties.getIntProperty("https.port");
 
-        this.administrationPort = this.properties.getIntProperty("administration.https.port");
+        this.administrationPort = properties.getIntProperty("administration.https.port");
 
-        this.tcpWebSocketPort = this.properties.getIntProperty("tcp.websocket.port");
-        this.sslWebSocketPort = this.properties.getIntProperty("ssl.websocket.port");
+        this.tcpWebSocketPort = properties.getIntProperty("tcp.websocket.port");
+        this.sslWebSocketPort = properties.getIntProperty("ssl.websocket.port");
     }
 
     public String getDataFolder() {

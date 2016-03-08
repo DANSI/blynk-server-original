@@ -1,5 +1,6 @@
 package cc.blynk.server.api.http.logic;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BlockingIOProcessor;
@@ -16,6 +17,7 @@ import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.http.rest.Response;
+import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,12 +42,19 @@ public class HttpAPILogic {
     private final BlockingIOProcessor blockingIOProcessor;
     private final SessionDao sessionDao;
     private final GlobalStats globalStats;
+    private final MailWrapper mailWrapper;
 
-    public HttpAPILogic(UserDao userDao, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor, GlobalStats globalStats) {
+    public HttpAPILogic(Holder holder) {
+        this(holder.userDao, holder.sessionDao, holder.blockingIOProcessor, holder.mailWrapper, holder.stats);
+    }
+
+    private HttpAPILogic(UserDao userDao, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor,
+                         MailWrapper mailWrapper, GlobalStats globalStats) {
         this.userDao = userDao;
         this.blockingIOProcessor = blockingIOProcessor;
         this.sessionDao = sessionDao;
         this.globalStats = globalStats;
+        this.mailWrapper = mailWrapper;
     }
 
     @GET
@@ -275,9 +284,19 @@ public class HttpAPILogic {
         }
 
         log.trace("Sending Mail for user {}, with message : '{}'.", user.name, message.subj);
-        blockingIOProcessor.mail(user, message.to, message.subj, message.title);
+        mail(user.name, message.to, message.subj, message.title);
 
         return Response.ok();
+    }
+
+    private void mail(String username, String to, String subj, String body) {
+        blockingIOProcessor.execute(() -> {
+            try {
+                mailWrapper.send(to, subj, body);
+            } catch (Exception e) {
+                log.error("Error sending email from HTTP. For user {}", username, e);
+            }
+        });
     }
 
 }

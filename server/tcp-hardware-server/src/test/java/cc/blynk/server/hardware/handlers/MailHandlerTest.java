@@ -14,6 +14,7 @@ import cc.blynk.server.core.protocol.model.messages.MessageFactory;
 import cc.blynk.server.core.protocol.model.messages.hardware.MailMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.logic.MailLogic;
+import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.ServerProperties;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -35,7 +36,10 @@ public class MailHandlerTest {
     @Mock
     private BlockingIOProcessor blockingIOProcessor;
 
-    private MailLogic mailHandler = new MailLogic(blockingIOProcessor, 1);
+    @Mock
+    private MailWrapper mailWrapper;
+
+    private MailLogic mailHandler = new MailLogic(blockingIOProcessor, mailWrapper, 1);
 
 	@Mock
 	private ChannelHandlerContext ctx;

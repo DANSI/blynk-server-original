@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.application.handlers.main.logic.*;
 import cc.blynk.server.application.handlers.main.logic.dashboard.CreateDashLogic;
@@ -13,15 +14,9 @@ import cc.blynk.server.application.handlers.main.logic.sharing.GetShareTokenLogi
 import cc.blynk.server.application.handlers.main.logic.sharing.GetSharedDashLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.RefreshShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.ShareLogic;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingDao;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.db.DBManager;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
-import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.ThreadContext;
 
@@ -53,30 +48,30 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final ShareLogic shareLogic;
     private final RedeemLogic redeemLogic;
 
-    public AppHandler(ServerProperties props, UserDao userDao, SessionDao sessionDao, ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, DBManager dbManager, AppStateHolder state) {
-        super(props, state);
-        this.token = new GetTokenLogic(userDao);
-        this.hardwareApp = new HardwareAppLogic(sessionDao);
-        this.refreshToken = new RefreshTokenLogic(userDao);
-        this.graphData = new GetGraphDataLogic(reportingDao, blockingIOProcessor);
-        this.appMailLogic = new AppMailLogic(blockingIOProcessor);
-        this.getShareTokenLogic = new GetShareTokenLogic(userDao);
-        this.refreshShareTokenLogic = new RefreshShareTokenLogic(userDao, sessionDao);
-        this.getSharedDashLogic = new GetSharedDashLogic(userDao);
+    public AppHandler(Holder holder, AppStateHolder state) {
+        super(holder.props, state);
+        this.token = new GetTokenLogic(holder.userDao);
+        this.hardwareApp = new HardwareAppLogic(holder.sessionDao);
+        this.refreshToken = new RefreshTokenLogic(holder.userDao);
+        this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
+        this.appMailLogic = new AppMailLogic(holder.blockingIOProcessor, holder.mailWrapper);
+        this.getShareTokenLogic = new GetShareTokenLogic(holder.userDao);
+        this.refreshShareTokenLogic = new RefreshShareTokenLogic(holder.userDao, holder.sessionDao);
+        this.getSharedDashLogic = new GetSharedDashLogic(holder.userDao);
 
-        final int profileMaxSize = props.getIntProperty("user.profile.max.size", 10) * 1024;
-        this.createDashLogic = new CreateDashLogic(props.getIntProperty("user.dashboard.max.limit"), profileMaxSize);
+        final int profileMaxSize = holder.props.getIntProperty("user.profile.max.size", 10) * 1024;
+        this.createDashLogic = new CreateDashLogic(holder.props.getIntProperty("user.dashboard.max.limit"), profileMaxSize);
         this.saveDashLogic = new SaveDashLogic(profileMaxSize);
 
-        this.activateDashboardLogic = new ActivateDashboardLogic(sessionDao);
-        this.deActivateDashboardLogic = new DeActivateDashboardLogic(sessionDao);
+        this.activateDashboardLogic = new ActivateDashboardLogic(holder.sessionDao);
+        this.deActivateDashboardLogic = new DeActivateDashboardLogic(holder.sessionDao);
 
-        final int widgetSize = props.getIntProperty("user.widget.max.size.limit", 10) * 1024;
+        final int widgetSize = holder.props.getIntProperty("user.widget.max.size.limit", 10) * 1024;
         this.createWidgetLogic = new CreateWidgetLogic(widgetSize);
         this.updateWidgetLogic = new UpdateWidgetLogic(widgetSize);
 
-        this.shareLogic = new ShareLogic(sessionDao);
-        this.redeemLogic = new RedeemLogic(dbManager, blockingIOProcessor);
+        this.shareLogic = new ShareLogic(holder.sessionDao);
+        this.redeemLogic = new RedeemLogic(holder.dbManager, holder.blockingIOProcessor);
 
         this.state = state;
     }

@@ -3,13 +3,19 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
+import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.notifications.mail.MailWrapper;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import static cc.blynk.server.core.protocol.enums.Response.*;
 
 /**
  * Sends email from received from hardware. Via google smtp server.
@@ -24,10 +30,12 @@ public class MailLogic extends NotificationBase {
     private static final Logger log = LogManager.getLogger(MailLogic.class);
 
     private final BlockingIOProcessor blockingIOProcessor;
+    private final MailWrapper mailWrapper;
 
-    public MailLogic(BlockingIOProcessor blockingIOProcessor, long notificationQuotaLimit) {
+    public MailLogic(BlockingIOProcessor blockingIOProcessor, MailWrapper mailWrapper, long notificationQuotaLimit) {
         super(notificationQuotaLimit);
         this.blockingIOProcessor = blockingIOProcessor;
+        this.mailWrapper = mailWrapper;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
@@ -56,7 +64,19 @@ public class MailLogic extends NotificationBase {
         checkIfNotificationQuotaLimitIsNotReached(message.id);
 
         log.trace("Sending Mail for user {}, with message : '{}'.", state.user.name, message.body);
-        blockingIOProcessor.mail(ctx.channel(), to, subj, body, message.id);
+        mail(ctx.channel(), state.user.name, to, subj, body, message.id);
+    }
+
+    private void mail(Channel channel, String username, String to, String subj, String body, int msgId) {
+        blockingIOProcessor.execute(() -> {
+            try {
+                mailWrapper.send(to, subj, body);
+                channel.writeAndFlush(new ResponseMessage(msgId, OK));
+            } catch (Exception e) {
+                log.error("Error sending mail from hardware. For user {}.",  username, e);
+                channel.writeAndFlush(new ResponseMessage(msgId, Response.NOTIFICATION_EXCEPTION));
+            }
+        });
     }
 
 }

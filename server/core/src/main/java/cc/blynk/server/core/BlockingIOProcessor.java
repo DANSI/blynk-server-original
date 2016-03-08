@@ -7,12 +7,10 @@ import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataBinaryMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
-import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMMessage;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
-import cc.blynk.utils.Config;
 import cc.blynk.utils.ServerProperties;
 import cc.blynk.utils.StateHolderUtil;
 import io.netty.channel.Channel;
@@ -43,7 +41,6 @@ public class BlockingIOProcessor implements Closeable {
     //todo move to properties
     private static final int NOTIFICATIONS_PROCESSORS = 5;
 
-    private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
     private final ReportingDao reportingDao;
     private final ThreadPoolExecutor executor;
@@ -51,7 +48,6 @@ public class BlockingIOProcessor implements Closeable {
     public volatile String tokenBody;
 
     public BlockingIOProcessor(int maxQueueSize, String tokenBody, ReportingDao reportingDao) {
-        this.mailWrapper = new MailWrapper(new ServerProperties(Config.MAIL_PROPERTIES_FILENAME));
         this.gcmWrapper = new GCMWrapper(new ServerProperties(GCMWrapper.GCM_PROPERTIES_FILENAME));
         this.reportingDao = reportingDao;
         this.executor = new ThreadPoolExecutor(
@@ -74,29 +70,6 @@ public class BlockingIOProcessor implements Closeable {
                 });
             } catch (Exception e) {
                 log(channel, e.getMessage(), msgId, Response.NO_DATA_EXCEPTION);
-            }
-        });
-    }
-
-    public void mail(Channel channel, String to, String subj, String body, int msgId) {
-        executor.execute(() -> {
-            try {
-                mailWrapper.send(to, subj, body, null);
-                channel.eventLoop().execute(() -> {
-                    channel.writeAndFlush(new ResponseMessage(msgId, OK));
-                });
-            } catch (Exception e) {
-                log(channel, e.getMessage(), msgId, Response.NOTIFICATION_EXCEPTION);
-            }
-        });
-    }
-
-    public void mail(User user, String to, String subj, String body) {
-        executor.execute(() -> {
-            try {
-                mailWrapper.send(to, subj, body, null);
-            } catch (Exception e) {
-                log(user.name, e.getMessage());
             }
         });
     }

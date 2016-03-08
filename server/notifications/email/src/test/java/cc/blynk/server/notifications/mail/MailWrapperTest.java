@@ -25,7 +25,7 @@ public class MailWrapperTest {
 
         String to = "";
         MailWrapper mailWrapper = new MailWrapper(properties);
-        mailWrapper.send(to, "Hello", "Body!", null);
+        mailWrapper.send(to, "Hello", "Body!");
     }
 
 }
