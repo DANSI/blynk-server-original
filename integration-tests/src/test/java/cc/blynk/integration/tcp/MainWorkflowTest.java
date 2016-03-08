@@ -27,7 +27,6 @@ import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.JsonParser;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import org.junit.After;
 import org.junit.Before;
@@ -292,8 +291,7 @@ public class MainWorkflowTest extends IntegrationBase {
         };
 
         //todo find how to check arrays
-        verify(blockingIOProcessor, timeout(1000)).readGraphData(any(Channel.class), eq("dima@mail.ua"), any(GraphPinRequest[].class), eq(1));
-        //verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, NO_DATA_EXCEPTION)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA_EXCEPTION)));
     }
 
     @Test

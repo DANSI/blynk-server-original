@@ -68,8 +68,7 @@ public class Holder {
 
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
-                FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY),
-                reportingDao
+                FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY)
         );
     }
 
@@ -94,8 +93,7 @@ public class Holder {
 
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
-                FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY),
-                reportingDao
+                FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY)
         );
     }
 
