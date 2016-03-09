@@ -51,7 +51,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     public void init() throws Exception {
         this.appServer = new AppServer(holder).start(transportTypeHolder);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, new DBManager());
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, new DBManager(blockingIOProcessor));
         new Thread(profileSaverWorker).start();
     }
 
