@@ -73,7 +73,7 @@ public class RegisterHandlerTest {
         registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + " 1"));
 
         verify(userDao, times(0)).add(eq(userName), eq("1"));
-        verify(ctx).writeAndFlush(eq(new ResponseMessage(1, NOT_ALLOWED)));
+        verify(ctx).writeAndFlush(eq(new ResponseMessage(1, NOT_ALLOWED)), any());
     }
 
     @Test
