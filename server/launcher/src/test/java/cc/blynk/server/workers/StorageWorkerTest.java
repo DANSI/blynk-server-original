@@ -1,5 +1,6 @@
 package cc.blynk.server.workers;
 
+import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
@@ -47,8 +48,11 @@ public class StorageWorkerTest {
     @Mock
     public ServerProperties properties;
 
+    private BlockingIOProcessor blockingIOProcessor;
+
     @Before
     public void cleanup() throws IOException {
+        blockingIOProcessor = new BlockingIOProcessor(1, 1, null);
         Path dataFolder1 = Paths.get(reportingFolder, "test");
         FileUtils.deleteDirectory(dataFolder1.toFile());
         ReportingUtil.createReportingFolder(reportingFolder, "test");
@@ -60,7 +64,7 @@ public class StorageWorkerTest {
 
     @Test
     public void testStore() throws IOException {
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager());
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager(blockingIOProcessor));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -110,7 +114,7 @@ public class StorageWorkerTest {
 
     @Test
     public void testStore2() throws IOException {
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager());
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager(blockingIOProcessor));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -167,7 +171,7 @@ public class StorageWorkerTest {
 
     @Test
     public void testDeleteCommand() throws IOException {
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager());
+        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager(blockingIOProcessor));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
