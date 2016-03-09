@@ -40,7 +40,7 @@ public class Digit4Display extends OnePinWidget implements FrequencyWidget, Hard
     public void send(ChannelHandlerContext ctx, int msgId) {
         final String body = makeHardwareBody();
         if (body != null) {
-            ctx.write(new HardwareMessage(msgId, body));
+            ctx.write(new HardwareMessage(msgId, body), ctx.voidPromise());
         }
     }
 

@@ -51,10 +51,10 @@ public class ActivateDashboardLogic {
         Session session = sessionDao.userSession.get(user);
 
         if (session.hasHardwareOnline(dashId)) {
-            ctx.writeAndFlush(new ResponseMessage(message.id, OK));
+            ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
         } else {
             log.debug("No device in session.");
-            ctx.writeAndFlush(new ResponseMessage(message.id, Response.DEVICE_NOT_IN_NETWORK));
+            ctx.writeAndFlush(new ResponseMessage(message.id, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
         }
 
         List<SyncMessage> syncMessages = new ArrayList<>();

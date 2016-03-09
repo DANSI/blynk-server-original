@@ -53,7 +53,7 @@ public class GetGraphDataLogic {
         //special case for delete command
         if (messageParts.length == 4) {
             deleteGraphData(messageParts, user.name, message.id);
-            ctx.writeAndFlush(new ResponseMessage(message.id, OK));
+            ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
         } else {
             int dashId = ParseUtil.parseInt(messageParts[0], message.id);
             user.profile.validateDashId(dashId, message.id);
@@ -79,12 +79,12 @@ public class GetGraphDataLogic {
                 byte[][] data = reportingDao.getAllFromDisk(username, requestedPins, msgId);
                 byte[] compressed = compress(requestedPins[0].dashId, data, msgId);
 
-                channel.writeAndFlush(new GetGraphDataBinaryMessage(msgId, compressed));
+                channel.writeAndFlush(new GetGraphDataBinaryMessage(msgId, compressed), channel.voidPromise());
             } catch (NoDataException noDataException) {
-                channel.writeAndFlush(new ResponseMessage(msgId, Response.NO_DATA_EXCEPTION));
+                channel.writeAndFlush(new ResponseMessage(msgId, Response.NO_DATA_EXCEPTION), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error reading reporting data. For user {}", username);
-                channel.writeAndFlush(new ResponseMessage(msgId, Response.SERVER_EXCEPTION));
+                channel.writeAndFlush(new ResponseMessage(msgId, Response.SERVER_EXCEPTION), channel.voidPromise());
             }
         });
     }

@@ -55,6 +55,6 @@ public class RefreshShareTokenLogic {
             }
         }
 
-        ctx.writeAndFlush(new RefreshShareTokenMessage(message.id, token));
+        ctx.writeAndFlush(new RefreshShareTokenMessage(message.id, token), ctx.voidPromise());
     }
 }

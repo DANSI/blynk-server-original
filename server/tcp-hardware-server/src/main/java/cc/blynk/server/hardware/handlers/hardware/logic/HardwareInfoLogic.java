@@ -47,7 +47,7 @@ public class HardwareInfoLogic {
             ctx.pipeline().addFirst(new ReadTimeoutHandler(newReadTimeout));
         }
 
-        ctx.writeAndFlush(new ResponseMessage(message.id, OK));
+        ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
     }
 
 }

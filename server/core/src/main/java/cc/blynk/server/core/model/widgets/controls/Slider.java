@@ -17,7 +17,7 @@ public class Slider extends OnePinWidget implements HardwareSyncWidget {
     public void send(ChannelHandlerContext ctx, int msgId) {
         String body = makeHardwareBody();
         if (body != null) {
-            ctx.write(new HardwareMessage(msgId, body));
+            ctx.write(new HardwareMessage(msgId, body), ctx.voidPromise());
         }
     }
 

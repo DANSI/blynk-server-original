@@ -14,7 +14,7 @@ import static cc.blynk.server.core.protocol.enums.Response.*;
 public class PingLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, int messageId) {
-        ctx.writeAndFlush(new ResponseMessage(messageId, OK));
+        ctx.writeAndFlush(new ResponseMessage(messageId, OK), ctx.voidPromise());
     }
 
 }

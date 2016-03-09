@@ -40,11 +40,11 @@ public class RedeemLogic {
         String redeemToken = message.body;
 
         if (isAlreadyUnlocked(user)) {
-            ctx.writeAndFlush(new ResponseMessage(message.id, OK));
+            ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
             return;
         }
 
-        blockingIOProcessor.execute(() -> ctx.writeAndFlush(verifyToken(message, redeemToken, user.name)));
+        blockingIOProcessor.execute(() -> ctx.writeAndFlush(verifyToken(message, redeemToken, user.name), ctx.voidPromise()));
     }
 
     private ResponseMessage verifyToken(StringMessage message, String redeemToken, String username) {

@@ -67,7 +67,7 @@ public class GetSharedDashLogic {
         DashBoard dashBoard = userThatShared.profile.getDashById(dashId, message.id);
         cleanPrivateData(dashBoard);
 
-        ctx.writeAndFlush(produce(message.id, message.command, dashBoard.toString()));
+        ctx.writeAndFlush(produce(message.id, message.command, dashBoard.toString()), ctx.voidPromise());
     }
 
 }

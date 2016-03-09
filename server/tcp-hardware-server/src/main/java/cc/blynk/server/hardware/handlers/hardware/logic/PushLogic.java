@@ -51,7 +51,7 @@ public class PushLogic extends NotificationBase {
 
         if (!dash.isActive) {
             log.debug("No active dashboard.");
-            ctx.writeAndFlush(new ResponseMessage(message.id, Response.NO_ACTIVE_DASHBOARD));
+            ctx.writeAndFlush(new ResponseMessage(message.id, Response.NO_ACTIVE_DASHBOARD), ctx.voidPromise());
             return;
         }
 
@@ -85,10 +85,10 @@ public class PushLogic extends NotificationBase {
         blockingIOProcessor.execute(() -> {
             try {
                 gcmWrapper.send(message);
-                channel.writeAndFlush(new ResponseMessage(msgId, OK));
+                channel.writeAndFlush(new ResponseMessage(msgId, OK), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending push notification from hardware. For user {}.",  username, e);
-                channel.writeAndFlush(new ResponseMessage(msgId, Response.NOTIFICATION_EXCEPTION));
+                channel.writeAndFlush(new ResponseMessage(msgId, Response.NOTIFICATION_EXCEPTION), channel.voidPromise());
             }
         });
     }

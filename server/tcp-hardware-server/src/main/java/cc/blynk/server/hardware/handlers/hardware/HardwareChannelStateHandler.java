@@ -79,7 +79,8 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                         appChannel.writeAndFlush(
                                 new ResponseWithBodyMessage(
                                         0, Command.RESPONSE, DEVICE_WENT_OFFLINE, state.dashId
-                                )
+                                ),
+                                appChannel.voidPromise()
                         );
                     }
                 }

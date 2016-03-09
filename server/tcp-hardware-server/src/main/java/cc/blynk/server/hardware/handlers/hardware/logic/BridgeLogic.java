@@ -53,7 +53,7 @@ public class BridgeLogic {
 
             sendToMap.put(pin, token);
 
-            ctx.writeAndFlush(new ResponseMessage(message.id, OK));
+            ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
         } else {
             if (sendToMap.size() == 0) {
                 throw new NotAllowedException("Bridge not initialized.", message.id);
@@ -69,14 +69,14 @@ public class BridgeLogic {
                     HardwareStateHolder hardwareState = getHardState(channel);
                     if (hardwareState != null && token.equals(hardwareState.token) && channel != ctx.channel()) {
                         messageWasSent = true;
-                        channel.writeAndFlush(message);
+                        channel.writeAndFlush(message, channel.voidPromise());
                     }
                 }
                 if (!messageWasSent) {
-                    ctx.writeAndFlush(new ResponseMessage(message.id, Response.DEVICE_NOT_IN_NETWORK));
+                    ctx.writeAndFlush(new ResponseMessage(message.id, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
                 }
             } else {
-                ctx.writeAndFlush(new ResponseMessage(message.id, Response.DEVICE_NOT_IN_NETWORK));
+                ctx.writeAndFlush(new ResponseMessage(message.id, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
             }
         }
     }

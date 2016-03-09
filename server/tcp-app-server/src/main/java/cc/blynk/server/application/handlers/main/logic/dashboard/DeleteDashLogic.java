@@ -31,7 +31,7 @@ public class DeleteDashLogic {
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
         user.lastModifiedTs = System.currentTimeMillis();
 
-        ctx.writeAndFlush(new ResponseMessage(message.id, OK));
+        ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
     }
 
 }

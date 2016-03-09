@@ -35,6 +35,6 @@ public class GetShareTokenLogic {
 
         String token = userDao.sharedTokenManager.getToken(user, dashId);
 
-        ctx.writeAndFlush(new GetShareTokenMessage(message.id, token));
+        ctx.writeAndFlush(new GetShareTokenMessage(message.id, token), ctx.voidPromise());
     }
 }

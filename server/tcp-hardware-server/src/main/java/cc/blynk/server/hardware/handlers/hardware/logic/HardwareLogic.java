@@ -66,7 +66,7 @@ public class HardwareLogic {
             session.sendToApps(new HardwareMessage(message.id, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
         } else {
             log.debug("No active dashboard.");
-            ctx.writeAndFlush(new ResponseMessage(message.id, Response.NO_ACTIVE_DASHBOARD));
+            ctx.writeAndFlush(new ResponseMessage(message.id, Response.NO_ACTIVE_DASHBOARD), ctx.voidPromise());
         }
     }
 

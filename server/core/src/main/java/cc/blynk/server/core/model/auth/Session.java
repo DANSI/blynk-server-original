@@ -96,7 +96,7 @@ public class Session {
                 if (hardwareState.dashId == activeDashId) {
                     noActiveHardware = false;
                     log.trace("Sending {} to hardware {}", message, channel);
-                    channel.writeAndFlush(message);
+                    channel.writeAndFlush(message, channel.voidPromise());
                 }
             }
         }
@@ -107,7 +107,7 @@ public class Session {
     public void sendMessageToHardware(ChannelHandlerContext ctx, int activeDashId, MessageBase message) {
         if (sendMessageToHardware(activeDashId, message)) {
             log.debug("No device in session.");
-            ctx.writeAndFlush(new ResponseMessage(message.id, Response.DEVICE_NOT_IN_NETWORK));
+            ctx.writeAndFlush(new ResponseMessage(message.id, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
         }
     }
 
@@ -126,14 +126,14 @@ public class Session {
     public void sendToApps(MessageBase message) {
         for (Channel channel : appChannels) {
             log.trace("Sending {} to app {}", message, channel);
-            channel.writeAndFlush(message);
+            channel.writeAndFlush(message, channel.voidPromise());
         }
     }
 
     public void sendToSharedApps(ChannelHandlerContext ctx, String sharedToken, SyncMessage message) {
         for (Channel appChannel : appChannels) {
             if (appChannel != ctx.channel() && needSync(appChannel, sharedToken)) {
-                appChannel.writeAndFlush(message);
+                appChannel.writeAndFlush(message, appChannel.voidPromise());
             }
         }
     }

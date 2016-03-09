@@ -27,7 +27,7 @@ public interface DefaultExceptionHandler {
             BaseServerException baseServerException = (BaseServerException) cause;
             //no need for stack trace for known exceptions
             log.error(baseServerException.getMessage());
-            ctx.writeAndFlush(new ResponseMessage(baseServerException.msgId, baseServerException.errorCode));
+            ctx.writeAndFlush(new ResponseMessage(baseServerException.msgId, baseServerException.errorCode), ctx.voidPromise());
         } else {
             handleUnexpectedException(ctx, cause);
         }

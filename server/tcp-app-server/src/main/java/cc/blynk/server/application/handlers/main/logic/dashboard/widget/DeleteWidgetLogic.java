@@ -42,7 +42,7 @@ public class DeleteWidgetLogic {
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
 
-        ctx.writeAndFlush(new ResponseMessage(message.id, OK));
+        ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
     }
 
 }

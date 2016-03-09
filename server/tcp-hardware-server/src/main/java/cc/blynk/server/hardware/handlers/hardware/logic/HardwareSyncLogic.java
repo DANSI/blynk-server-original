@@ -46,7 +46,7 @@ public class HardwareSyncLogic {
                 Widget widget = dash.findWidgetByPin(pin, pinType);
                 if (widget instanceof RTC)  {
                     long now = Instant.now().getEpochSecond();
-                    ctx.writeAndFlush(new HardwareMessage(message.id, Pin.makeHardwareBody(pinType, pin, String.valueOf(now))));
+                    ctx.writeAndFlush(new HardwareMessage(message.id, Pin.makeHardwareBody(pinType, pin, String.valueOf(now))), ctx.voidPromise());
                 } else if (widget instanceof HardwareSyncWidget) {
                     ((HardwareSyncWidget) widget).send(ctx, message.id);
                     ctx.flush();

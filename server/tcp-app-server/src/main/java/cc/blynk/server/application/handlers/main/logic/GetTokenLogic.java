@@ -30,6 +30,6 @@ public class GetTokenLogic {
 
         String token = userDao.tokenManager.getToken(user, dashId);
 
-        ctx.writeAndFlush(new GetTokenMessage(message.id, token));
+        ctx.writeAndFlush(new GetTokenMessage(message.id, token), ctx.voidPromise());
     }
 }

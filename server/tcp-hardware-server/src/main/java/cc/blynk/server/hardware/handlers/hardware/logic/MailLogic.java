@@ -71,10 +71,10 @@ public class MailLogic extends NotificationBase {
         blockingIOProcessor.execute(() -> {
             try {
                 mailWrapper.send(to, subj, body);
-                channel.writeAndFlush(new ResponseMessage(msgId, OK));
+                channel.writeAndFlush(new ResponseMessage(msgId, OK), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending mail from hardware. For user {}.",  username, e);
-                channel.writeAndFlush(new ResponseMessage(msgId, Response.NOTIFICATION_EXCEPTION));
+                channel.writeAndFlush(new ResponseMessage(msgId, Response.NOTIFICATION_EXCEPTION), channel.voidPromise());
             }
         });
     }

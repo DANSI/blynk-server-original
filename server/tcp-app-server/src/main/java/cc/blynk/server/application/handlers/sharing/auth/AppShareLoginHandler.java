@@ -69,7 +69,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
         if (user == null || !user.name.equals(userName)) {
             log.debug("Share token is invalid. User : {}, token {}, {}", userName, token, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(new ResponseMessage(messageId, Response.NOT_ALLOWED));
+            ctx.writeAndFlush(new ResponseMessage(messageId, Response.NOT_ALLOWED), ctx.voidPromise());
             return;
         }
 
@@ -78,7 +78,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         DashBoard dash = user.profile.getDashById(dashId);
         if (!dash.isShared) {
             log.debug("Dashboard is not shared. User : {}, token {}, {}", userName, token, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(new ResponseMessage(messageId, Response.NOT_ALLOWED));
+            ctx.writeAndFlush(new ResponseMessage(messageId, Response.NOT_ALLOWED), ctx.voidPromise());
             return;
         }
 
@@ -97,7 +97,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
     private void completeLogin(Channel channel, Session session, String userName, int msgId) {
         session.addAppChannel(channel);
-        channel.writeAndFlush(new ResponseMessage(msgId, OK));
+        channel.writeAndFlush(new ResponseMessage(msgId, OK), channel.voidPromise());
         log.info("Shared {} app joined.", userName);
     }
 

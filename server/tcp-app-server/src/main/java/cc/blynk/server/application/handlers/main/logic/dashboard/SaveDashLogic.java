@@ -62,7 +62,7 @@ public class SaveDashLogic {
         user.profile.dashBoards[index] = updatedDash;
         user.lastModifiedTs = System.currentTimeMillis();
 
-        ctx.writeAndFlush(new ResponseMessage(message.id, OK));
+        ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
     }
 
 }

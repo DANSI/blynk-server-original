@@ -49,11 +49,11 @@ public class ShareLogic {
         Session session = sessionDao.userSession.get(user);
         for (Channel appChannel : session.getAppChannels()) {
             if (appChannel != ctx.channel() && getAppState(appChannel) != null) {
-                appChannel.writeAndFlush(message);
+                appChannel.writeAndFlush(message, appChannel.voidPromise());
             }
         }
 
-        ctx.writeAndFlush(new ResponseMessage(message.id, OK));
+        ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
     }
 
 }

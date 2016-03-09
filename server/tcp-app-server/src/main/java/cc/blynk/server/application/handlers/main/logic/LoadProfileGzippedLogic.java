@@ -25,7 +25,7 @@ public class LoadProfileGzippedLogic {
             body = user.profile.getDashById(dashId, message.id).toString();
         }
 
-        ctx.writeAndFlush(new LoadProfileGzippedBinaryMessage(message.id, body));
+        ctx.writeAndFlush(new LoadProfileGzippedBinaryMessage(message.id, body), ctx.voidPromise());
     }
 
 }

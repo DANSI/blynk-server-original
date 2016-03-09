@@ -45,13 +45,13 @@ public class HardwareAppShareLogic {
 
         if (!dashBoard.isActive) {
             log.debug("No active dashboard.");
-            ctx.writeAndFlush(new ResponseMessage(message.id, Response.NO_ACTIVE_DASHBOARD));
+            ctx.writeAndFlush(new ResponseMessage(message.id, Response.NO_ACTIVE_DASHBOARD), ctx.voidPromise());
             return;
         }
 
         if (!dashBoard.isShared) {
             log.debug("Dashboard is not shared. User : {}, {}", state.user.name, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(new ResponseMessage(message.id, Response.NOT_ALLOWED));
+            ctx.writeAndFlush(new ResponseMessage(message.id, Response.NOT_ALLOWED), ctx.voidPromise());
             return;
         }
 
@@ -66,7 +66,7 @@ public class HardwareAppShareLogic {
                 if (sharedToken != null) {
                     for (Channel appChannel : session.getAppChannels()) {
                         if (appChannel != ctx.channel() && Session.needSync(appChannel, sharedToken)) {
-                            appChannel.writeAndFlush(new SyncMessage(message.id, message.body));
+                            appChannel.writeAndFlush(new SyncMessage(message.id, message.body), appChannel.voidPromise());
                         }
                     }
                 }

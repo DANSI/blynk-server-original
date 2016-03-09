@@ -41,6 +41,6 @@ public class AddPushLogic {
             notification.iOSTokens.put(uid, token);
         }
 
-        ctx.writeAndFlush(new ResponseMessage(message.id, OK));
+        ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
     }
 }
