@@ -102,7 +102,7 @@
         <Logger name="cc.blynk.server.core.dao.ReportingDao" level="info" additivity="false">
             <appender-ref ref="csvDataStorage"/>
         </Logger>
-        <Logger name="cc.blynk.server.db.DBManager" level="debug" additivity="false">
+        <Logger name="cc.blynk.server.db" level="debug" additivity="false">
             <appender-ref ref="postgresDBLog"/>
         </Logger>
         <Logger name="com.zaxxer.hikari" level="debug" additivity="false">

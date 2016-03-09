@@ -1,5 +1,6 @@
 package cc.blynk.server.db;
 
+import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
@@ -25,7 +26,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.zip.GZIPOutputStream;
 
-import static cc.blynk.server.db.DBManager.*;
 import static org.junit.Assert.*;
 
 /**
@@ -40,7 +40,8 @@ public class DBManagerTest {
 
     @BeforeClass
     public static void init() throws Exception {
-        dbManager = new DBManager("db-test.properties");
+        BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(1, 10, null);
+        dbManager = new DBManager("db-test.properties", blockingIOProcessor);
         assertNotNull(dbManager.getConnection());
 
         //copy paste from create_schema.sql
@@ -69,14 +70,14 @@ public class DBManagerTest {
         long startMinute = 0;
         long start = System.currentTimeMillis();
         try (Connection connection = dbManager.getConnection();
-             PreparedStatement ps = connection.prepareStatement(insertMinute)) {
+             PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
 
             String userName = "test{}@gmail.com";
             long minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
             startMinute = minute;
             for (int i = 0; i < 1000; i++) {
                 String newUserName = userName.replace("{}", "" + i);
-                prepareReportingInsert(ps, newUserName, 1, (byte) 0, PinType.VIRTUAL, minute, (double) i);
+                ReportingDBDao.prepareReportingInsert(ps, newUserName, 1, (byte) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
                 minute += AverageAggregator.MINUTE;
                 a++;
@@ -117,13 +118,13 @@ public class DBManagerTest {
 
         long start = System.currentTimeMillis();
         try (Connection connection = dbManager.getConnection();
-             PreparedStatement ps = connection.prepareStatement(insertMinute)) {
+             PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
 
             String userName = "test@gmail.com";
             long minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
 
             for (int i = 0; i < 100; i++) {
-                prepareReportingInsert(ps, userName, 1, (byte) 0, PinType.VIRTUAL, minute, (double) i);
+                ReportingDBDao.prepareReportingInsert(ps, userName, 1, (byte) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
                 minute += AverageAggregator.MINUTE;
                 a++;
@@ -155,12 +156,12 @@ public class DBManagerTest {
     public void testDeleteWorksAsExpected() throws Exception {
         long minute = 0;
         try (Connection connection = dbManager.getConnection();
-             PreparedStatement ps = connection.prepareStatement(insertMinute)) {
+             PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
 
             minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
 
             for (int i = 0; i < 370; i++) {
-                prepareReportingInsert(ps, "test1111@gmail.com", 1, (byte) 0, PinType.VIRTUAL, minute, (double) i);
+                ReportingDBDao.prepareReportingInsert(ps, "test1111@gmail.com", 1, (byte) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
                 minute += AverageAggregator.MINUTE;
             }
@@ -251,9 +252,9 @@ public class DBManagerTest {
     public void testSelect() {
         long ts = 1455924480000L;
         try (Connection connection = dbManager.getConnection();
-             PreparedStatement ps = connection.prepareStatement(selectMinute)) {
+             PreparedStatement ps = connection.prepareStatement(ReportingDBDao.selectMinute)) {
 
-             prepareReportingSelect(ps, ts, 2);
+            ReportingDBDao.prepareReportingSelect(ps, ts, 2);
              ResultSet rs = ps.executeQuery();
 
 

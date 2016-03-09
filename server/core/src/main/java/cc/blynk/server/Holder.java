@@ -60,7 +60,6 @@ public class Holder {
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);
         this.reportingDao = new ReportingDao(reportingFolder, averageAggregator, serverProperties);
-        this.dbManager = new DBManager();
 
         this.twitterWrapper = new TwitterWrapper();
         this.mailWrapper = new MailWrapper(new ServerProperties(Config.MAIL_PROPERTIES_FILENAME));
@@ -71,6 +70,8 @@ public class Holder {
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
                 FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY)
         );
+
+        this.dbManager = new DBManager(blockingIOProcessor);
     }
 
     //for tests only
@@ -86,7 +87,6 @@ public class Holder {
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);
         this.reportingDao = new ReportingDao(reportingFolder, averageAggregator, serverProperties);
-        this.dbManager = new DBManager();
 
         this.twitterWrapper = twitterWrapper;
         this.mailWrapper = mailWrapper;
@@ -97,6 +97,8 @@ public class Holder {
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
                 FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY)
         );
+
+        this.dbManager = new DBManager(blockingIOProcessor);
     }
 
 }
