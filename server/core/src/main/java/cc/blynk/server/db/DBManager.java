@@ -72,6 +72,8 @@ public class DBManager implements Closeable {
         }
         this.ds = hikariDataSource;
         this.reportingDBDao = new ReportingDBDao(hikariDataSource);
+        this.userDBDao = new UserDBDao(hikariDataSource);
+        this.redeemDBDao = new RedeemDBDao(hikariDataSource);
         log.info("Connected to database successfully.");
     }
 
