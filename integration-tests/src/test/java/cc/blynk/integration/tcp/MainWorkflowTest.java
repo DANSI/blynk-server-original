@@ -681,27 +681,26 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testSendReadCommandsForDifferentPins() throws Exception {
         clientPair.appClient.send("hardware 1 ar 7");
-        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("ar 7"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(1000).times(1)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("ar 7"))));
 
         clientPair.hardwareClient.reset();
 
         clientPair.appClient.send("hardware 1 ar 7");
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, after(1000).never()).channelRead(any(), any());
 
         clientPair.appClient.send("hardware 1 ar 6");
-        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("ar 6"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(1000).times(1)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(3, HARDWARE, b("ar 6"))));
 
         clientPair.hardwareClient.reset();
 
         clientPair.appClient.send("hardware 1 ar 6");
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, after(1000).never()).channelRead(any(), any());
 
-        Thread.sleep(100);
         clientPair.appClient.send("hardware 1 ar 6");
-        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, b("ar 6"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(1000).times(1)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(5, HARDWARE, b("ar 6"))));
     }
 
     @Test
