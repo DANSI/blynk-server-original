@@ -19,7 +19,7 @@ public class UserNotLoggedHandler extends SimpleChannelInboundHandler<MessageBas
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageBase msg) throws Exception {
-        log.error("User not logged. {}. Closing.", ctx.channel().remoteAddress());
+        log.warn("User not logged. {}. Closing.", ctx.channel().remoteAddress());
         ctx.close();
     }
 }
