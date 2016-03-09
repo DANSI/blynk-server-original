@@ -40,7 +40,7 @@ public class HardwareInfoLogicTest {
 
         verify(pipeline).remove(ReadTimeoutHandler.class);
         verify(pipeline).addFirst(any(ReadTimeoutHandler.class));
-        verify(ctx).writeAndFlush(new ResponseMessage(1, OK));
+        verify(ctx).writeAndFlush(eq(new ResponseMessage(1, OK)), any());
     }
 
 }
