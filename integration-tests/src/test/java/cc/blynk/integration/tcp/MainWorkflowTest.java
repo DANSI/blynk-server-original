@@ -271,6 +271,37 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void deleteDashDeletesTokensAlso() throws Exception {
+        clientPair.appClient.send("createDash {\"id\":10, \"name\":\"test board\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("getToken 10");
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("getShareToken 10");
+        String sharedToken = clientPair.appClient.getBody();
+        assertNotNull(sharedToken);
+
+        clientPair.appClient.send("deleteDash 10");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+
+        //todo on delete also close existing connections?
+        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, INVALID_TOKEN)));
+
+        TestAppClient newAppClient = new TestAppClient("localhost", tcpAppPort, properties);
+        newAppClient.start();
+        newAppClient.send("shareLogin " + "dima@mail.ua " + sharedToken + " Android 24");
+
+        verify(newAppClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
+    }
+
+    @Test
     public void loadGzippedProfile() throws Exception{
         String expected = readTestUserProfile();
 

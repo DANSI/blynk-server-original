@@ -25,6 +25,15 @@ public class SharedTokenManager extends TokenManagerBase {
     }
 
     @Override
+    void deleteProject(User user, Integer projectId) {
+        String removedToken = user.dashShareTokens.remove(projectId);
+        if (removedToken != null) {
+            cache.remove(removedToken);
+            log.info("Deleted {} shared token.", removedToken);
+        }
+    }
+
+    @Override
     void printMessage(String username, Integer dashId, String token) {
         log.info("Generated shared token for user {} and dashId {} is {}.", username, dashId, token);
     }

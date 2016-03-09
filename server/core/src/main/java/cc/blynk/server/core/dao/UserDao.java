@@ -64,6 +64,11 @@ public class UserDao {
         return users.values().stream().filter(user -> user.name.contains(name)).collect(Collectors.toList());
     }
 
+    public void deleteProject(User user, Integer projectId) {
+        tokenManager.deleteProject(user, projectId);
+        sharedTokenManager.deleteProject(user, projectId);
+    }
+
     public User delete(String name) {
         return users.remove(name);
     }

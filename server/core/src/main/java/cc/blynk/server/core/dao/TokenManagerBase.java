@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public abstract class TokenManagerBase {
 
-    private final ConcurrentMap<String, User> cache;
+    protected final ConcurrentMap<String, User> cache;
 
     public TokenManagerBase(Iterable<User> users) {
         this.cache = initTokenCache(users);
@@ -65,6 +65,8 @@ public abstract class TokenManagerBase {
     }
 
     abstract Map<Integer, String> getTokens(User user);
+
+    abstract void deleteProject(User user, Integer projectId);
 
     abstract void printMessage(String username, Integer dashId, String token);
 

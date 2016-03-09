@@ -25,6 +25,15 @@ public class TokenManager extends TokenManagerBase {
     }
 
     @Override
+    void deleteProject(User user, Integer projectId) {
+        String removedToken = user.dashTokens.remove(projectId);
+        if (removedToken != null) {
+            cache.remove(removedToken);
+            log.info("Deleted {} token.", removedToken);
+        }
+    }
+
+    @Override
     void printMessage(String username, Integer dashId, String token) {
         log.info("Generated token for user {} and dashId {} is {}.", username, dashId, token);
     }

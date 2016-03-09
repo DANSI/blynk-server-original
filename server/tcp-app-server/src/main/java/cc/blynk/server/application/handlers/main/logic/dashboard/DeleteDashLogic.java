@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard;
 
+import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -21,7 +22,13 @@ public class DeleteDashLogic {
 
     private static final Logger log = LogManager.getLogger(DeleteDashLogic.class);
 
-    public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    private final UserDao userDao;
+
+    public DeleteDashLogic(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         int dashId = ParseUtil.parseInt(message.body, message.id);
 
         int index = user.profile.getDashIndex(dashId, message.id);
@@ -29,7 +36,7 @@ public class DeleteDashLogic {
         log.info("Deleting dashboard {}.", dashId);
 
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
-        log.info("Deleting token {}", user.dashTokens.remove(dashId));
+        userDao.deleteProject(user, dashId);
 
         user.lastModifiedTs = System.currentTimeMillis();
 
