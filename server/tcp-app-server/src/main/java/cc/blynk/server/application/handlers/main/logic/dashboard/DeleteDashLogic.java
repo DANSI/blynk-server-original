@@ -29,6 +29,8 @@ public class DeleteDashLogic {
         log.info("Deleting dashboard {}.", dashId);
 
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
+        log.info("Deleting token {}", user.dashTokens.remove(dashId));
+
         user.lastModifiedTs = System.currentTimeMillis();
 
         ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
