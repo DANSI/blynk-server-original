@@ -17,15 +17,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class BlockingIOProcessor implements Closeable {
 
-    //todo move to properties
-    private static final int NOTIFICATIONS_PROCESSORS = 5;
-
     private final ThreadPoolExecutor executor;
     public volatile String tokenBody;
 
-    public BlockingIOProcessor(int maxQueueSize, String tokenBody) {
+    public BlockingIOProcessor(int poolSize, int maxQueueSize, String tokenBody) {
         this.executor = new ThreadPoolExecutor(
-                NOTIFICATIONS_PROCESSORS, NOTIFICATIONS_PROCESSORS,
+                poolSize, poolSize,
                 0L, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<>(maxQueueSize)
         );

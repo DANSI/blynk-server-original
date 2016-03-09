@@ -67,6 +67,7 @@ public class Holder {
         this.gcmWrapper = new GCMWrapper(new ServerProperties(GCMWrapper.GCM_PROPERTIES_FILENAME));
 
         this.blockingIOProcessor = new BlockingIOProcessor(
+                serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
                 FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY)
         );
@@ -92,6 +93,7 @@ public class Holder {
         this.gcmWrapper = gcmWrapper;
 
         this.blockingIOProcessor = new BlockingIOProcessor(
+                serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
                 FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY)
         );

@@ -233,6 +233,10 @@ server.properties options:
 + Maximum allowed number of notification queue. Queue responsible for processing email, pushes, twits sending. Because of performance issue - those queue is processed in separate thread, this is required due to blocking nature of all above operations. Usually limit shouldn't be reached
         
         notifications.queue.limit=10000
+        
++ Number of threads for performing blocking operations - push, twits, emails, db queries. Recommended to hold this value low unless you have to perform a lot of blocking operations.
+
+        blocking.processor.thread.pool.limit=5
 
 + Period for flushing all user DB to disk. In millis
 
