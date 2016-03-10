@@ -1,6 +1,5 @@
 package cc.blynk.utils;
 
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import io.netty.channel.Channel;
@@ -17,8 +16,4 @@ public class StateHolderUtil {
         return handler == null ? null : (HardwareStateHolder) handler.state;
     }
 
-    public static User getStateUser(Channel channel) {
-        BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
-        return handler == null ? null : handler.state.user;
-    }
 }
