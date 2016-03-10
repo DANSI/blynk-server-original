@@ -1,5 +1,6 @@
 package cc.blynk.server.core.protocol.enums;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,7 +65,7 @@ public final class Command {
 
 
     //all this code just to make logging more user-friendly
-    public static final Map<Short, String> valuesName = new HashMap<Short, String>() {
+    public static final Map<Short, String> valuesName = Collections.unmodifiableMap(new HashMap<Short, String>() {
             {
                 put(RESPONSE, "Response");
                 put(REDEEM, "Redeem");
@@ -110,7 +111,7 @@ public final class Command {
                 put(HTTP_GET_PROJECT, "HttpGetProject");
                 put(HTTP_TOTAL, "HttpTotal");
             }
-    };
+    });
 
     public static String getNameByValue(short val) {
         return valuesName.get(val);

@@ -11,8 +11,8 @@ public enum GraphType {
     HOURLY('h', 60 * 60 * 1000),
     DAILY('d', 24 * 60 * 60 * 1000);
 
-    public char type;
-    public long period;
+    public final char type;
+    public final long period;
 
     GraphType(char type, long period) {
         this.type = type;

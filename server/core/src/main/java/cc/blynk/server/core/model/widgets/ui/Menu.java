@@ -42,9 +42,4 @@ public class Menu extends Widget {
         return null;
     }
 
-    private class Tab {
-
-        public String label;
-
-    }
 }

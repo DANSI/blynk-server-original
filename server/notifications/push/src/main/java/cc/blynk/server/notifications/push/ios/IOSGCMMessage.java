@@ -39,7 +39,7 @@ public class IOSGCMMessage implements GCMMessage {
         return writer.writeValueAsString(this);
     }
 
-    private class IOSBody {
+    private static class IOSBody {
         private final String title = "Blynk Notification";
         private final String body;
         private final int dashId;

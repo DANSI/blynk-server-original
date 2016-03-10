@@ -24,7 +24,7 @@ public class ByteUtils {
 
         try (OutputStream out = new DeflaterOutputStream(baos)) {
             out.write(stringData);
-        } catch (Exception ioe) {
+        } catch (IOException ioe) {
             //todo refactor exception
             throw new NoDataException(msgId);
         }
@@ -42,7 +42,7 @@ public class ByteUtils {
                 out.write(bb.array());
                 out.write(data);
             }
-        } catch (Exception ioe) {
+        } catch (IOException ioe) {
             //todo refactor exception
             throw new GetGraphDataException(msgId);
         }
@@ -61,7 +61,7 @@ public class ByteUtils {
                 out.write(bb.array());
                 out.write(data);
             }
-        } catch (Exception ioe) {
+        } catch (IOException ioe) {
             //todo refactor exception
             throw new GetGraphDataException(msgId);
         }

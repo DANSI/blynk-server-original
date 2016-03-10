@@ -39,7 +39,7 @@ public class AndroidGCMMessage implements GCMMessage {
         return writer.writeValueAsString(this);
     }
 
-    private class GCMData {
+    private static class GCMData {
         private final String message;
         private final int dashId;
 

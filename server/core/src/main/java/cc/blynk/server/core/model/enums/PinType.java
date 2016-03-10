@@ -11,8 +11,8 @@ public enum PinType {
     VIRTUAL('v'),
     ANALOG('a');
 
-    public char pintTypeChar;
-    public String pinTypeString;
+    public final char pintTypeChar;
+    public final String pinTypeString;
 
     PinType(char pinType) {
         this.pintTypeChar = pinType;

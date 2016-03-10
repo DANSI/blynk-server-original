@@ -117,7 +117,7 @@ public class ResetPasswordController {
         return pageContent.replace("{EMAIL}", email).replace("{TOKEN}", token);
     }
 
-    private class MyHostVerifier implements HostnameVerifier {
+    private static class MyHostVerifier implements HostnameVerifier {
         @Override
         public boolean verify(String s, SSLSession sslSession) {
             return true;
