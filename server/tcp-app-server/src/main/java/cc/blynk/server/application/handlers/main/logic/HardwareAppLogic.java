@@ -59,15 +59,15 @@ public class HardwareAppLogic {
                 if (split[1].length() > 3) {
                     dash.pinModeMessage = new HardwareMessage(message.id, split[1]);
                 }
-                session.sendMessageToHardware(ctx, dashId, message.id, HARDWARE, split[1]);
+                session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1]);
                 break;
             case 'w' :
                 dash.update(split[1], message.id);
 
                 //if dash was shared. check for shared channels
                 String sharedToken = state.user.dashShareTokens.get(dashId);
-                session.sendToSharedApps(ctx.channel(), sharedToken, message.id, SYNC, message.body);
-                session.sendMessageToHardware(ctx, dashId, message.id, HARDWARE, split[1]);
+                session.sendToSharedApps(ctx.channel(), sharedToken, SYNC, message.id, message.body);
+                session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1]);
                 break;
             case 'r' :
                 Widget widget = dash.findWidgetByPin(split[1].split(StringUtils.BODY_SEPARATOR_STRING), message.id);
@@ -77,11 +77,11 @@ public class HardwareAppLogic {
 
                 if (widget instanceof FrequencyWidget) {
                     if (((FrequencyWidget) widget).isTicked(split[1])) {
-                        session.sendMessageToHardware(ctx, dashId, message.id, HARDWARE, split[1]);
+                        session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1]);
                     }
                 } else {
                     //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
-                    session.sendMessageToHardware(ctx, dashId, message.id, HARDWARE, split[1]);
+                    session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1]);
                 }
                 break;
         }

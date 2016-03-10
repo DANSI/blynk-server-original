@@ -56,7 +56,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         channel.flush();
 
-        session.sendToApps(msgId, HARDWARE_CONNECTED, String.valueOf(dash.id));
+        session.sendToApps(HARDWARE_CONNECTED, msgId, String.valueOf(dash.id));
 
         log.info("{} hardware joined.", user.name);
     }

@@ -80,7 +80,7 @@ public class TimerWorker implements Runnable {
             if (session != null) {
                 onlineTimers++;
                 if (session.getHardwareChannels().size() > 0) {
-                    session.sendMessageToHardware(dashId, 7777, HARDWARE, value);
+                    session.sendMessageToHardware(dashId, HARDWARE, 7777, value);
                 }
             }
         }

@@ -21,7 +21,7 @@ public class ByteBufUtil {
                 .writeShort(response);
     }
 
-    public static ByteBuf makeStringMessage(Channel channel, int messageId, short cmd, String data) {
+    public static ByteBuf makeStringMessage(Channel channel, short cmd, int messageId, String data) {
         return channel.alloc().directBuffer(MessageBase.HEADER_LENGTH + data.length())
                 .writeByte(cmd)
                 .writeShort(messageId)

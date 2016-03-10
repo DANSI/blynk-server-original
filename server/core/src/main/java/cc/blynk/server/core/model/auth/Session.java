@@ -25,9 +25,11 @@ import static cc.blynk.utils.StateHolderUtil.*;
 public class Session {
 
     private static final Logger log = LogManager.getLogger(Session.class);
+
     public final EventLoop initialEventLoop;
     private final Set<Channel> appChannels = new ConcurrentSet<>();
     private final Set<Channel> hardwareChannels = new ConcurrentSet<>();
+
     private final ChannelFutureListener appRemover = new ChannelFutureListener() {
         @Override
         public void operationComplete(ChannelFuture future) throws Exception {
@@ -86,7 +88,7 @@ public class Session {
         }
     }
 
-    public boolean sendMessageToHardware(int activeDashId, int msgId, short cmd, String body) {
+    public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body) {
         boolean noActiveHardware = true;
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
@@ -94,7 +96,7 @@ public class Session {
                 if (hardwareState.dashId == activeDashId) {
                     noActiveHardware = false;
                     log.trace("Sending {} to hardware {}", body, channel);
-                    channel.writeAndFlush(makeStringMessage(channel, msgId, cmd, body), channel.voidPromise());
+                    channel.writeAndFlush(makeStringMessage(channel, cmd, msgId, body), channel.voidPromise());
                 }
             }
         }
@@ -102,8 +104,8 @@ public class Session {
         return noActiveHardware;
     }
 
-    public void sendMessageToHardware(ChannelHandlerContext ctx, int activeDashId, int msgId, short cmd, String body) {
-        if (sendMessageToHardware(activeDashId, msgId, cmd, body)) {
+    public void sendMessageToHardware(ChannelHandlerContext ctx, int activeDashId, short cmd, int msgId, String body) {
+        if (sendMessageToHardware(activeDashId, cmd, msgId, body)) {
             log.debug("No device in session.");
             ctx.writeAndFlush(makeResponse(ctx, msgId, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
         }
@@ -121,17 +123,17 @@ public class Session {
         return false;
     }
 
-    public void sendToApps(int msgId, short cmd, String body) {
+    public void sendToApps(short cmd, int msgId, String body) {
         for (Channel channel : appChannels) {
             log.trace("Sending {} to app {}", body, channel);
-            channel.writeAndFlush(makeStringMessage(channel, msgId, cmd, body), channel.voidPromise());
+            channel.writeAndFlush(makeStringMessage(channel, cmd, msgId, body), channel.voidPromise());
         }
     }
 
-    public void sendToSharedApps(Channel sendingChannel, String sharedToken, int msgId, short cmd, String body) {
+    public void sendToSharedApps(Channel sendingChannel, String sharedToken, short cmd, int msgId, String body) {
         for (Channel appChannel : appChannels) {
             if (appChannel != sendingChannel && needSync(appChannel, sharedToken)) {
-                appChannel.writeAndFlush(makeStringMessage(appChannel, msgId, cmd, body), appChannel.voidPromise());
+                appChannel.writeAndFlush(makeStringMessage(appChannel, cmd, msgId, body), appChannel.voidPromise());
             }
         }
     }

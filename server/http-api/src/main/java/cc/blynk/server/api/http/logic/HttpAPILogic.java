@@ -187,11 +187,11 @@ public class HttpAPILogic {
                 log.error("No session for user {}.", user.name);
                 return Response.ok();
             }
-            session.sendMessageToHardware(dashId, 111, HARDWARE, body);
+            session.sendMessageToHardware(dashId, HARDWARE, 111, body);
 
             if (dashBoard.isActive) {
                 //todo check for shared apps? to minimize load...
-                session.sendToApps(111, HARDWARE, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
+                session.sendToApps(HARDWARE, 111, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
             }
         }
 
