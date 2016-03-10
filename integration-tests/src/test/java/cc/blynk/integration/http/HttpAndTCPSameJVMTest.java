@@ -45,7 +45,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
     private static BaseServer appServer;
 
     private static CloseableHttpClient httpclient;
-    private static String httpsServerUrl;
+    private static String httpServerUrl;
 
     private static ClientPair clientPair;
 
@@ -64,8 +64,10 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
             httpServer = new HttpAPIServer(holder).start(transportTypeHolder);
             hardwareServer = new HardwareServer(holder).start(transportTypeHolder);
             appServer = new AppServer(holder).start(transportTypeHolder);
-            httpsServerUrl = String.format("http://localhost:%s/", httpPort);
+            httpServerUrl = String.format("http://localhost:%s/", httpPort);
             httpclient = HttpClients.createDefault();
+        }
+        if (clientPair == null) {
             clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
         }
         clientPair.hardwareClient.reset();
@@ -87,7 +89,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-        HttpGet request = new HttpGet(httpsServerUrl + token + "/pin/v4");
+        HttpGet request = new HttpGet(httpServerUrl + token + "/pin/v4");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -116,7 +118,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-        HttpGet requestGET = new HttpGet(httpsServerUrl + token + "/pin/d18");
+        HttpGet requestGET = new HttpGet(httpServerUrl + token + "/pin/d18");
 
         try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -125,7 +127,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
             assertEquals("1", values.get(0));
         }
 
-        HttpPut requestPUT = new HttpPut(httpsServerUrl + token + "/pin/d18");
+        HttpPut requestPUT = new HttpPut(httpServerUrl + token + "/pin/d18");
         requestPUT.setEntity(new StringEntity("[\"0\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(requestPUT)) {
@@ -141,8 +143,8 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-        HttpPut request = new HttpPut(httpsServerUrl + token + "/pin/v4");
-        HttpGet getRequest = new HttpGet(httpsServerUrl + token + "/pin/v4");
+        HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v4");
+        HttpGet getRequest = new HttpGet(httpServerUrl + token + "/pin/v4");
 
         for (int i = 0; i < 100; i++) {
             request.setEntity(new StringEntity("[\"" + i + "\"]", ContentType.APPLICATION_JSON));
@@ -163,6 +165,58 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
     }
 
     @Test
+    public void testIsHardwareAndAppConnected() throws Exception {
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+
+        HttpGet request = new HttpGet(httpServerUrl + token + "/isHardwareConnected");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String value = consumeText(response);
+            assertNotNull(value);
+            assertEquals("true", value);
+        }
+
+        request = new HttpGet(httpServerUrl + token + "/isAppConnected");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String value = consumeText(response);
+            assertNotNull(value);
+            assertEquals("true", value);
+        }
+    }
+
+    @Test
+    public void testIsHardwareAndAppDisconnected() throws Exception {
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+
+        clientPair.stop();
+
+        HttpGet request = new HttpGet(httpServerUrl + token + "/isHardwareConnected");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String value = consumeText(response);
+            assertNotNull(value);
+            assertEquals("false", value);
+        }
+
+        request = new HttpGet(httpServerUrl + token + "/isAppConnected");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String value = consumeText(response);
+            assertNotNull(value);
+            assertEquals("false", value);
+        }
+
+        clientPair = null;
+    }
+
+    @Test
     public void testChangePinValueViaHttpAPIAndNoActiveProject() throws Exception {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
@@ -171,7 +225,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         clientPair.appClient.send("deactivate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        HttpPut request = new HttpPut(httpsServerUrl + token + "/pin/v31");
+        HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v31");
 
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -190,7 +244,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-        HttpPut request = new HttpPut(httpsServerUrl + token + "/pin/v31");
+        HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v31");
 
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -207,7 +261,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-        HttpPut request = new HttpPut(httpsServerUrl + token + "/pin/v31");
+        HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v31");
 
         request.setEntity(new StringEntity("[\"100\",\"101\",\"102\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {

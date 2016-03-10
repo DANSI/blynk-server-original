@@ -138,6 +138,21 @@ public class Session {
         }
     }
 
+    public boolean isHardwareConnected(int dashId) {
+        for (Channel channel : hardwareChannels) {
+            HardwareStateHolder hardwareState = getHardState(channel);
+            if (hardwareState != null && hardwareState.dashId == dashId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public boolean isAppConnected() {
+        return appChannels.size() > 0;
+    }
+
     public int getAppRequestRate() {
         return getRequestRate(appChannels);
     }

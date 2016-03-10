@@ -53,6 +53,8 @@ public final class Command {
     //------------------------------------------
 
     //http codes. Used only for stats
+    public static final short HTTP_IS_HARDWARE_CONNECTED = 42;
+    public static final short HTTP_IS_APP_CONNECTED = 43;
     public static final short HTTP_GET_PIN_DATA = 44;
     public static final short HTTP_UPDATE_PIN_DATA = 45;
     public static final short HTTP_NOTIFY = 46;
@@ -99,6 +101,8 @@ public final class Command {
                 put(UPDATE_WIDGET, "UpdateWidget");
                 put(DELETE_WIDGET, "DeleteWidget");
 
+                put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
+                put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");
                 put(HTTP_GET_PIN_DATA, "HttpGetPinData");
                 put(HTTP_UPDATE_PIN_DATA, "HttpUpdatePinData");
                 put(HTTP_NOTIFY, "HttpNotify");

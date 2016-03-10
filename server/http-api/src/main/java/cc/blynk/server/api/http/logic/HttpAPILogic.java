@@ -87,6 +87,56 @@ public class HttpAPILogic {
     }
 
     @GET
+    @Path("{token}/isHardwareConnected")
+    public Response isHardwareConnected(@PathParam("token") String token) {
+        globalStats.mark(HTTP_IS_HARDWARE_CONNECTED);
+
+        User user = userDao.tokenManager.getUserByToken(token);
+
+        if (user == null) {
+            log.error("Requested token {} not found.", token);
+            return Response.badRequest("Invalid token.");
+        }
+
+        Integer dashId = user.getDashIdByToken(token);
+
+        if (dashId == null) {
+            log.error("Dash id for token {} not found. User {}", token, user.name);
+            return Response.badRequest("Didn't find dash id for token.");
+        }
+
+        final Session session = sessionDao.userSession.get(user);
+
+        return ok(session.isHardwareConnected(dashId));
+    }
+
+    @GET
+    @Path("{token}/isAppConnected")
+    public Response isAppConnected(@PathParam("token") String token) {
+        globalStats.mark(HTTP_IS_APP_CONNECTED);
+
+        User user = userDao.tokenManager.getUserByToken(token);
+
+        if (user == null) {
+            log.error("Requested token {} not found.", token);
+            return Response.badRequest("Invalid token.");
+        }
+
+        Integer dashId = user.getDashIdByToken(token);
+
+        if (dashId == null) {
+            log.error("Dash id for token {} not found. User {}", token, user.name);
+            return Response.badRequest("Didn't find dash id for token.");
+        }
+
+        final DashBoard dashBoard = user.profile.getDashById(dashId);
+
+        final Session session = sessionDao.userSession.get(user);
+
+        return ok(dashBoard.isActive && session.isAppConnected());
+    }
+
+    @GET
     @Path("{token}/pin/{pin}")
     public Response getWidgetPinData(@PathParam("token") String token,
                                      @PathParam("pin") String pinString) {
