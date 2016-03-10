@@ -7,12 +7,13 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.LocalTime;
 import java.time.ZoneId;
+
+import static cc.blynk.server.core.protocol.enums.Command.*;
 
 /**
  * The Blynk Project.
@@ -79,7 +80,7 @@ public class TimerWorker implements Runnable {
             if (session != null) {
                 onlineTimers++;
                 if (session.getHardwareChannels().size() > 0) {
-                    session.sendMessageToHardware(dashId, new HardwareMessage(7777, value));
+                    session.sendMessageToHardware(dashId, 7777, HARDWARE, value);
                 }
             }
         }

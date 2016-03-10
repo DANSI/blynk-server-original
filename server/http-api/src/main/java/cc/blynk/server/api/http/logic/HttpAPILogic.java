@@ -14,7 +14,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.http.rest.Response;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -188,11 +187,11 @@ public class HttpAPILogic {
                 log.error("No session for user {}.", user.name);
                 return Response.ok();
             }
-            session.sendMessageToHardware(dashId, new HardwareMessage(111, body));
+            session.sendMessageToHardware(dashId, 111, HARDWARE, body);
 
             if (dashBoard.isActive) {
                 //todo check for shared apps? to minimize load...
-                session.sendToApps(new HardwareMessage(111, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
+                session.sendToApps(111, HARDWARE, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
             }
         }
 

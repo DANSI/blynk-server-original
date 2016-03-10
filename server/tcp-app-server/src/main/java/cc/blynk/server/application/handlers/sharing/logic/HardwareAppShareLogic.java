@@ -11,13 +11,14 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import static cc.blynk.server.core.protocol.enums.Command.*;
 
 /**
  * The Blynk Project.
@@ -70,7 +71,7 @@ public class HardwareAppShareLogic {
                         }
                     }
                 }
-                session.sendMessageToHardware(ctx, dashId, new HardwareMessage(message.id, split[1]));
+                session.sendMessageToHardware(ctx, dashId, message.id, HARDWARE, split[1]);
                 break;
             case 'r':
                 Widget widget = dash.findWidgetByPin(split[1].split(StringUtils.BODY_SEPARATOR_STRING), message.id);
@@ -80,11 +81,11 @@ public class HardwareAppShareLogic {
 
                 if (widget instanceof FrequencyWidget) {
                     if (((FrequencyWidget) widget).isTicked(split[1])) {
-                        session.sendMessageToHardware(ctx, dashId, new HardwareMessage(message.id, split[1]));
+                        session.sendMessageToHardware(ctx, dashId, message.id, HARDWARE, split[1]);
                     }
                 } else {
                     //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
-                    session.sendMessageToHardware(ctx, dashId, new HardwareMessage(message.id, split[1]));
+                    session.sendMessageToHardware(ctx, dashId, message.id, HARDWARE,  split[1]);
                 }
                 break;
         }

@@ -8,6 +8,7 @@ import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.websocket.handlers.WebSocketEncoder;
 import cc.blynk.server.websocket.handlers.WebSocketHandler;
+import cc.blynk.server.websocket.handlers.WebSocketWrapperEncoder;
 import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -54,6 +55,7 @@ public class WebSocketSSLServer extends BaseServer {
                         //hardware handlers
                         hardwareChannelStateHandler,
                         new MessageDecoder(holder.stats),
+                        new WebSocketWrapperEncoder(),
                         new WebSocketEncoder(holder.stats),
                         hardwareLoginHandler,
                         userNotLoggedHandler

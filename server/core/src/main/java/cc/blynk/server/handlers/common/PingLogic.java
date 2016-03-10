@@ -1,9 +1,9 @@
 package cc.blynk.server.handlers.common;
 
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * The Blynk Project.
@@ -14,7 +14,7 @@ import static cc.blynk.server.core.protocol.enums.Response.*;
 public class PingLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, int messageId) {
-        ctx.writeAndFlush(new ResponseMessage(messageId, OK), ctx.voidPromise());
+        ctx.writeAndFlush(makeResponse(ctx, messageId, OK), ctx.voidPromise());
     }
 
 }
