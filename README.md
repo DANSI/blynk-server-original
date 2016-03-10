@@ -75,6 +75,8 @@ That's it!
 
         Blynk Server successfully started.
         All server output is stored in current folder in 'logs/blynk.log' file.
+       
+## Enabling server auto restart on unix-like systems
         
 + To enable server auto restart find /etc/init.d/rc.local file and add :
 
@@ -90,7 +92,19 @@ add the following line
         
 save and exit.
 
-## Update instruction
+## Enabling server auto restart on unix-like Windows
+
++ Create bat file :
+
+        start-blynk.bat
+
++ Put in it one line : 
+
+        java -jar server-0.13.2.jar -dataFolder /home/pi/Blynk
+        
++ Put bat file to windows startup folder
+
+## Update instruction for unix-like systems
 
 In order to update your server with new version you need to kill old process and start new one.
 
@@ -108,6 +122,16 @@ In order to update your server with new version you need to kill old process and
         
 10539 - blynk server process id from command output above.
  
++ Start new server [as usual](https://github.com/blynkkk/blynk-server#quick-local-server-setup)
+
+## Update instruction for Windows
+
++ Open Task Manager;
+
++ Find Java process;
+
++ Stop process;
+
 + Start new server [as usual](https://github.com/blynkkk/blynk-server#quick-local-server-setup)
                 
 ## App and sketch changes
