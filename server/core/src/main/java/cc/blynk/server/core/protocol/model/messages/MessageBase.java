@@ -21,7 +21,7 @@ public abstract class MessageBase {
 
     public final int id;
 
-    public int length;
+    public final int length;
 
     public MessageBase(int id, short command, int length) {
         this.command = command;

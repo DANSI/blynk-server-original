@@ -15,14 +15,14 @@ import io.netty.util.CharsetUtil;
 public class ByteBufUtil {
 
     public static ByteBuf makeResponse(ChannelHandlerContext ctx, int messageId, int response) {
-        return ctx.alloc().directBuffer(MessageBase.HEADER_LENGTH)
+        return ctx.alloc().ioBuffer(MessageBase.HEADER_LENGTH)
                 .writeByte(Command.RESPONSE)
                 .writeShort(messageId)
                 .writeShort(response);
     }
 
     public static ByteBuf makeStringMessage(Channel channel, short cmd, int messageId, String data) {
-        return channel.alloc().directBuffer(MessageBase.HEADER_LENGTH + data.length())
+        return channel.alloc().ioBuffer(MessageBase.HEADER_LENGTH + data.length())
                 .writeByte(cmd)
                 .writeShort(messageId)
                 .writeShort(data.length())

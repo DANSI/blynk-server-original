@@ -29,9 +29,9 @@ public class WebSocketEncoder extends MessageToMessageEncoder<MessageBase> {
 
         ByteBuf bb;
         if (msg.command == Command.RESPONSE) {
-            bb = ctx.alloc().directBuffer(5);
+            bb = ctx.alloc().ioBuffer(5);
         } else {
-            bb = ctx.alloc().directBuffer(5 + msg.length);
+            bb = ctx.alloc().ioBuffer(5 + msg.length);
         }
         bb.writeByte(msg.command);
         bb.writeShort(msg.id);
