@@ -208,7 +208,7 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    public void testPingCommandOk() throws Exception {
+    public void testApplicationPingCommandOk() throws Exception {
         clientPair.appClient.send("ping");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
@@ -216,6 +216,15 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("ping");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+    }
+
+    @Test
+    public void testHardPingCommandOk() throws Exception {
+        clientPair.hardwareClient.send("ping");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.hardwareClient.send("ping");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
     }
 
     @Test
