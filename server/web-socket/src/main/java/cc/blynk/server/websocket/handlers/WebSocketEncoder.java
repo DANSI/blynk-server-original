@@ -4,7 +4,6 @@ import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
@@ -30,9 +29,9 @@ public class WebSocketEncoder extends MessageToMessageEncoder<MessageBase> {
 
         ByteBuf bb;
         if (msg.command == Command.RESPONSE) {
-            bb = PooledByteBufAllocator.DEFAULT.heapBuffer(5);
+            bb = ctx.alloc().directBuffer(5);
         } else {
-            bb = PooledByteBufAllocator.DEFAULT.heapBuffer(5  + msg.length);
+            bb = ctx.alloc().directBuffer(5 + msg.length);
         }
         bb.writeByte(msg.command);
         bb.writeShort(msg.id);
