@@ -20,6 +20,9 @@ import java.util.*;
 import static cc.blynk.server.core.dao.ReportingDao.*;
 
 /**
+ * Worker that runs once a minute. During run - stores all aggregated reporting data
+ * to disk. Also sends all data in batches to RDBMS in case DBManager was initialized.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 10.08.15.
@@ -39,6 +42,15 @@ public class StorageWorker implements Runnable {
         this.dbManager = dbManager;
     }
 
+    /**
+     * Simply writes single reporting entry to disk (16 bytes).
+     * Reporting entry is value (double) and timestamp (long)
+     *
+     * @param reportingPath - path to user specific reporting file
+     * @param value - sensor data
+     * @param ts - time when entry was created
+     * @throws IOException
+     */
     public static void write(Path reportingPath, double value, long ts) throws IOException {
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(reportingPath, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
@@ -64,6 +76,14 @@ public class StorageWorker implements Runnable {
         dbManager.cleanOldReportingRecords(Instant.now());
     }
 
+    /**
+     * Iterates over all reporting entries that were created during last minute.
+     * And stores all entries one by one to disk.
+     *
+     * @param map - reporting entires that were created during last minute.
+     * @param type - type of reporting. Could be minute, hourly, daily.
+     * @return - returns list of reporting entries that were successfully flushed to disk.
+     */
     private Map<AggregationKey, AggregationValue>  process(Map<AggregationKey, AggregationValue> map, GraphType type) {
         long nowTruncatedToPeriod = System.currentTimeMillis() / type.period;
 

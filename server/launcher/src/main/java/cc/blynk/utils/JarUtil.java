@@ -12,7 +12,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * Utility class to work with jar file.
+ * Utility class to work with jar file. Used in order to find all static resources
+ * within jar file and helps extract them into file system.
  *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -69,6 +70,12 @@ public class JarUtil {
         return staticResources;
     }
 
+    /**
+     * Extension which defines what files are 'resources'.
+     *
+     * @param filename - name of file
+     * @return - true is this file is resource that should be unpacked
+     */
     private static boolean isResource(String filename) {
         return filename.endsWith(".js") ||
                filename.endsWith(".css") ||

@@ -8,6 +8,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
 
 /**
+ * Utility class that creates native netty buffers instead of java objects.
+ * This is done in order to allocate less java objects and reduce GC pauses and load.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 10.03.16.
