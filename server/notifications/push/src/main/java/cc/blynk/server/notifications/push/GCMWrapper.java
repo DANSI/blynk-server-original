@@ -1,5 +1,6 @@
 package cc.blynk.server.notifications.push;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.http.HttpEntity;
@@ -26,7 +27,9 @@ public class GCMWrapper {
     private final String API_KEY;
     private final CloseableHttpClient httpclient;
     private final URI gcmURI;
-    private final ObjectReader gcmResponseReader = new ObjectMapper().reader(GCMResponseMessage.class);
+    private final ObjectReader gcmResponseReader = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .reader(GCMResponseMessage.class);
 
     public GCMWrapper(Properties props) {
         this.API_KEY = "key=" + props.getProperty("gcm.api.key");

@@ -11,6 +11,8 @@ public class GCMResponseMessage {
 
     public int failure;
 
+    public long multicast_id;
+
     public GCMResult[] results;
 
 }
