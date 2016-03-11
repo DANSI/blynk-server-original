@@ -70,7 +70,7 @@ public class DashBoard {
         update(pin, type, values);
     }
 
-    private void update(final byte pin, final PinType type, final String[] values) {
+    public void update(final byte pin, final PinType type, final String[] values) {
         for (Widget widget : widgets) {
             widget.updateIfSame(pin, type, values);
         }

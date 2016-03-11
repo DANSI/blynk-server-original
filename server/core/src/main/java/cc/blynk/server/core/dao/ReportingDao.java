@@ -101,10 +101,9 @@ public class ReportingDao {
         FileUtils.deleteQuietly(userDataDailyFile);
     }
 
-    public void process(String username, int dashId, String[] bodyParts) {
-        PinType pinType = PinType.getPinType(bodyParts[0].charAt(0));
-        byte pin = Byte.parseByte(bodyParts[1]);
-        String value = bodyParts[2]; //in case of multi pins logging only first value
+    public void process(String username, int dashId, byte pin, PinType pinType, String[] bodyParts) {
+        //todo in case of multi pins logging only first value
+        String value = bodyParts[0];
         long ts = System.currentTimeMillis();
 
         if (ENABLE_RAW_DATA_STORE) {

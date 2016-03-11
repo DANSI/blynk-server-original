@@ -4,13 +4,17 @@ import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Arrays;
 
 import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.core.protocol.enums.Response.*;
@@ -47,6 +51,7 @@ public class HardwareLogic {
 
         final String body = message.body;
 
+        //minimum command - "ar 1"
         if (body.length() < 4) {
             throw new IllegalCommandException("HardwareLogic command body too short.", message.id);
         }
@@ -57,10 +62,14 @@ public class HardwareLogic {
         if (isWriteOperation(body)) {
             String[] splitBody = body.split(StringUtils.BODY_SEPARATOR_STRING);
 
-            //storing to DB and aggregating
-            reportingDao.process(state.user.name, dashId, splitBody);
+            final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
+            final byte pin = ParseUtil.parseByte(splitBody[1], message.id);
+            final String[] values = Arrays.copyOfRange(splitBody, 2, splitBody.length);
 
-            dash.update(splitBody, message.id);
+            //storing to DB and aggregating
+            reportingDao.process(state.user.name, dashId, pin, pinType, values);
+
+            dash.update(pin, pinType, values);
         }
 
         if (dash.isActive) {
