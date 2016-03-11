@@ -39,19 +39,17 @@ public class HardwareAppLogic {
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
-        //if no active dashboards at all - do nothing. this could happen only in case of app. bug
-        if (!state.user.hasActive()) {
-            //throw new NoActiveDashboardException(message.id);
-            return;
-        }
-
         String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING, 2);
         int dashId = ParseUtil.parseInt(split[0], message.id);
 
-        char operation = split[1].charAt(1);
-
         DashBoard dash = state.user.profile.getDashById(dashId, message.id);
 
+        //if no active dashboard - do nothing. this could happen only in case of app. bug
+        if (!dash.isActive) {
+            return;
+        }
+
+        final char operation = split[1].charAt(1);
         switch (operation) {
             case 'm' :
                 log.trace("Pin Mode message catch. Remembering.");
