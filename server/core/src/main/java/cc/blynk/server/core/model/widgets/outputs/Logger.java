@@ -21,6 +21,11 @@ public class Logger extends MultiPinWidget {
     }
 
     @Override
+    public void updateIfSame(byte pin, PinType type, String[] values) {
+        //logger has no data to display. so no need to update values
+    }
+
+    @Override
     public String getModeType() {
         return null;
     }
