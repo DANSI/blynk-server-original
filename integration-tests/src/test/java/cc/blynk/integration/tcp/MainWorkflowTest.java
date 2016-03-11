@@ -172,12 +172,13 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testHardSyncReturnHardwareCommands() throws Exception {
         clientPair.hardwareClient.send("hardsync");
-        verify(clientPair.hardwareClient.responseMock, timeout(1000).times(5)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(1000).times(6)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 2 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 3 0"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 244"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 7 3"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 30 3"))));
     }
 
     @Test
@@ -544,7 +545,7 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testActivateAndGetSync() throws Exception {
         clientPair.appClient.send("activate 1");
 
-        verify(clientPair.appClient.responseMock, timeout(500).times(7)).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, timeout(500).times(8)).channelRead(any(), any());
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
@@ -553,6 +554,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 aw 3 0"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 4 244"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 aw 7 3"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 aw 30 3"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 0 89.888037459418 -58.74774244674501"))));
     }
 
@@ -666,7 +668,7 @@ public class MainWorkflowTest extends IntegrationBase {
         hardClient.send("login " + clientPair.token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        String expectedBody = "pm 1 out 2 out 3 out 5 out 6 in 7 in 8 in";
+        String expectedBody = "pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in";
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b(expectedBody))));
         verify(hardClient.responseMock, times(2)).channelRead(any(), any());
         hardClient.stop().awaitUninterruptibly();

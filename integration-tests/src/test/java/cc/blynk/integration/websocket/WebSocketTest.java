@@ -97,7 +97,7 @@ public class WebSocketTest extends BaseTest {
         webSocketClient2.start();
         webSocketClient2.send("login " + token);
         verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-        verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 8 in"))));
+        verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in"))));
         webSocketClient2.msgId = 1000;
 
         for (int i = 1; i <= 10; i++) {

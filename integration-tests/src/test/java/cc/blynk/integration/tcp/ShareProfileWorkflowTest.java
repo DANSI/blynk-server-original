@@ -127,13 +127,13 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.reset();
         appClient2.reset();
 
-        appClient2.send("hardware 1 ar 7");
+        appClient2.send("hardware 1 ar 30");
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("ar 7"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("ar 30"))));
 
-        clientPair.appClient.send("hardware 1 ar 7");
+        clientPair.appClient.send("hardware 1 ar 30");
         verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(produce(2, HARDWARE, b("ar 7"))));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(produce(2, HARDWARE, b("ar 30"))));
 
         clientPair.hardwareClient.reset();
         clientPair.hardwareClient.send("ping");
@@ -142,9 +142,9 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock,  after(500).atMost(1)).channelRead(any(), any());
 
-        clientPair.appClient.send("hardware 1 ar 7");
+        clientPair.appClient.send("hardware 1 ar 30");
         verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("ar 7"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("ar 30"))));
 
         clientPair.appClient.send("hardware 1 pm 2 2");
         verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
