@@ -92,7 +92,7 @@ add the following line
         
 save and exit.
 
-## Enabling server auto restart on unix-like Windows
+## Enabling server auto restart on Windows
 
 + Create bat file :
 
