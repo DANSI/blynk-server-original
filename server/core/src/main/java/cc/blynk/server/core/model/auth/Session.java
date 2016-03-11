@@ -5,10 +5,10 @@ import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import io.netty.channel.*;
-import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static cc.blynk.utils.ByteBufUtil.*;
@@ -27,8 +27,8 @@ public class Session {
     private static final Logger log = LogManager.getLogger(Session.class);
 
     public final EventLoop initialEventLoop;
-    private final Set<Channel> appChannels = new ConcurrentSet<>();
-    private final Set<Channel> hardwareChannels = new ConcurrentSet<>();
+    private final Set<Channel> appChannels = new HashSet<>();
+    private final Set<Channel> hardwareChannels = new HashSet<>();
 
     private final ChannelFutureListener appRemover = new ChannelFutureListener() {
         @Override
