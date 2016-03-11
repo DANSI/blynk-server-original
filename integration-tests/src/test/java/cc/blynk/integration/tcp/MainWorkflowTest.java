@@ -738,13 +738,13 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, after(1000).never()).channelRead(any(), any());
 
         clientPair.appClient.send("hardware 1 ar 6");
+        clientPair.appClient.send("hardware 1 ar 6");
         verify(clientPair.hardwareClient.responseMock, timeout(1000).times(1)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(3, HARDWARE, b("ar 6"))));
 
         clientPair.hardwareClient.reset();
 
-        clientPair.appClient.send("hardware 1 ar 6");
-        verify(clientPair.hardwareClient.responseMock, after(1000).never()).channelRead(any(), any());
+        sleep(100);
 
         clientPair.appClient.send("hardware 1 ar 6");
         verify(clientPair.hardwareClient.responseMock, timeout(1000).times(1)).channelRead(any(), any());
