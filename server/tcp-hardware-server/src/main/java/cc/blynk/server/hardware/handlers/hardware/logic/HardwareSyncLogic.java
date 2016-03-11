@@ -39,7 +39,7 @@ public class HardwareSyncLogic {
         } else {
             //return specific widget state
             String[] bodyParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
-            PinType pinType = PinType.getPingType(bodyParts[0].charAt(0));
+            PinType pinType = PinType.getPinType(bodyParts[0].charAt(0));
             byte pin = Byte.parseByte(bodyParts[1]);
 
             if (PinUtil.isReadOperation(bodyParts[0])) {

@@ -92,7 +92,7 @@ public class GetGraphDataLogic {
     private void deleteGraphData(String[] messageParts, String username, int msgId) {
         try {
             int dashBoardId = Integer.parseInt(messageParts[0]);
-            PinType pinType = PinType.getPingType(messageParts[1].charAt(0));
+            PinType pinType = PinType.getPinType(messageParts[1].charAt(0));
             byte pin = Byte.parseByte(messageParts[2]);
             String cmd = messageParts[3];
             if (!"del".equals(cmd)) {

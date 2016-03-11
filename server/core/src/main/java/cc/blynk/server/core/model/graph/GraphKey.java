@@ -29,7 +29,7 @@ public class GraphKey {
 
     public GraphKey(int dashId, String[] bodyParts, long ts) {
         this.dashId = dashId;
-        this.pinType = PinType.getPingType(bodyParts[0].charAt(0));
+        this.pinType = PinType.getPinType(bodyParts[0].charAt(0));
         this.pin = Byte.parseByte(bodyParts[1]);
         this.value = bodyParts[2];
         this.ts = ts;

@@ -64,7 +64,7 @@ public class DashBoard {
     }
 
     public void update(String[] splitted, int msgId) {
-        final PinType type = PinType.getPingType(splitted[0].charAt(0));
+        final PinType type = PinType.getPinType(splitted[0].charAt(0));
         final byte pin = ParseUtil.parseByte(splitted[1], msgId);
         final String[] values = Arrays.copyOfRange(splitted, 2, splitted.length);
         update(pin, type, values);
@@ -88,7 +88,7 @@ public class DashBoard {
     }
 
     public Widget findWidgetByPin(String[] splitted, int msgId) {
-        final PinType type = PinType.getPingType(splitted[0].charAt(0));
+        final PinType type = PinType.getPinType(splitted[0].charAt(0));
         final byte pin = ParseUtil.parseByte(splitted[1], msgId);
         return findWidgetByPin(pin, type);
     }

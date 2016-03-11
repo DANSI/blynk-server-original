@@ -19,7 +19,7 @@ public enum PinType {
         this.pinTypeString = String.valueOf(pinType);
     }
 
-    public static PinType getPingType(char pinTypeChar) {
+    public static PinType getPinType(char pinTypeChar) {
         switch (pinTypeChar) {
             case 'a' :
             case 'A' :

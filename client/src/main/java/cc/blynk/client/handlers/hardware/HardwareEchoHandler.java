@@ -26,7 +26,7 @@ public class HardwareEchoHandler extends SimpleChannelInboundHandler<HardwareMes
 
         String[] split = msg.body.split("\0");
 
-        PinType pinType = PinType.getPingType(split[0].charAt(0));
+        PinType pinType = PinType.getPinType(split[0].charAt(0));
 
         byte pin = Byte.parseByte(split[1]);
         //String value = split[2];

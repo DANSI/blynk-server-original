@@ -102,7 +102,7 @@ public class ReportingDao {
     }
 
     public void process(String username, int dashId, String[] bodyParts) {
-        PinType pinType = PinType.getPingType(bodyParts[0].charAt(0));
+        PinType pinType = PinType.getPinType(bodyParts[0].charAt(0));
         byte pin = Byte.parseByte(bodyParts[1]);
         String value = bodyParts[2]; //in case of multi pins logging only first value
         long ts = System.currentTimeMillis();

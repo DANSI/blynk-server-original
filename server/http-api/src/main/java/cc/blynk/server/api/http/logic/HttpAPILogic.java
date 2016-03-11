@@ -163,7 +163,7 @@ public class HttpAPILogic {
         byte pin;
 
         try {
-            pinType = PinType.getPingType(pinString.charAt(0));
+            pinType = PinType.getPinType(pinString.charAt(0));
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException e) {
             log.error("Wrong pin format. {}", pinString);
@@ -214,7 +214,7 @@ public class HttpAPILogic {
         byte pin;
 
         try {
-            pinType = PinType.getPingType(pinString.charAt(0));
+            pinType = PinType.getPinType(pinString.charAt(0));
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException e) {
             log.error("Wrong pin format. {}", pinString);
