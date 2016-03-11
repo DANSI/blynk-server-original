@@ -202,9 +202,20 @@ migration issues.
 If you need more flexibility, you can extend server with more options by creating server.properties file in same folder as server.jar. Example could be found [here](https://github.com/blynkkk/blynk-server/blob/master/server/core/src/main/resources/server.properties).
 server.properties options:
 
-+ Application port
++ Application mutual ssl/tls port
 
         app.ssl.port=8443
+        
+        
++ Hardware plain tcp/ip port
+
+        hardware.default.port=8442
+        
+
++ Hardware ssl/tls port (for hardware that supports SSL/TLS sockets)
+
+        hardware.ssl.port=8441
+        
         
 + For simplicity Blynk already provides server jar with build-in SSL certificates, so you have working server out of the box via SSL/TLS sockets. But as certificate and it's private key are in public this is totally not secure. So in order to fix that you need to provide your own certificates. And change below properties with path to your cert. and private key and it's password. See how to generate self-signed certificates [here](https://github.com/blynkkk/blynk-server#generate-ssl-certificates)
 
@@ -213,82 +224,107 @@ server.properties options:
         server.ssl.cert=./server_embedded.crt
         server.ssl.key=./server_embedded.pem
         server.ssl.key.pass=pupkin123
+        
 
-+ Hardware port
-
-        hardware.default.port=8442
++ Web socket ssl/tls port
+        
+        ssl.websocket.port=8081
+      
+        
++ Web sockets plain tcp/ip port
+        
+        tcp.websocket.port=8082
+        
         
 + Https port
         
         https.port=9443
         
+        
 + Http port
         
         http.port=8080
         
+        
 + User profiles folder. Folder in which all users profiles will be stored. By default System.getProperty("java.io.tmpdir")/blynk used. Will be created if not exists
 
         data.folder=/tmp/blynk
+        
 
 + Folder for all application logs. Will be created if it doesn't exist. "." is dir from which you are running script.
 
         logs.folder=./logs
+        
 
 + Log debug level. Possible values: trace|debug|info|error. Defines how precise logging will be. From left to right -> maximum logging to minimum
 
         log.level=trace
+        
 
 + Maximum allowed number of user dashboards.
 
         user.dashboard.max.limit=10
+        
 
 + 100 Req/sec rate limit per user.
 
         user.message.quota.limit=100
+        
 
 + In case user exceeds quota limit - response error returned only once in specified period (in Millis).
 
         user.message.quota.limit.exceeded.warning.period=60000
+        
 
 + Maximum allowed user profile size. In Kb's.
 
         user.profile.max.size=128
+        
 
 + Maximum allowed number of notification queue. Queue responsible for processing email, pushes, twits sending. Because of performance issue - those queue is processed in separate thread, this is required due to blocking nature of all above operations. Usually limit shouldn't be reached
         
         notifications.queue.limit=10000
         
+        
 + Number of threads for performing blocking operations - push, twits, emails, db queries. Recommended to hold this value low unless you have to perform a lot of blocking operations.
 
         blocking.processor.thread.pool.limit=5
+        
 
 + Period for flushing all user DB to disk. In millis
 
         profile.save.worker.period=60000
+        
 
 + Specifies maximum period of time when application socket could be idle. After which socket will be closed due to non activity. In seconds. Leave it empty for infinity timeout
 
         app.socket.idle.timeout=600
+        
 
 + Specifies maximum period of time when hardware socket could be idle. After which socket will be closed due to non activity. In seconds. Leave it empty for infinity timeout
 
         hard.socket.idle.timeout=15
         
+        
 + Mostly required for local servers setup in case user want to log raw data in CSV format. See [raw data] (https://github.com/blynkkk/blynk-server#raw-data-storage) section for more info.
         
         enable.raw.data.store=true
+        
         
 + Administration UI https port
         
         administration.https.port=7443
         
+        
 + Url for opening admin page. Must start from "/". For "/admin" url path will look like that "https://localhost:7443/admin". 
 
         admin.rootPath=/admin
         
+        
 + Comma separated list of administrator IPs. Allow access to admin UI only for those IPs. You may set it for 0.0.0.0/0 to allow access for all. You may use CIDR notation. For instance, 192.168.0.53/24.
         
         allowed.administrator.ips=127.0.0.1
+        
         
 + Comma separated list of users allowed to create accounts. Leave it empty if no restriction required.
         
