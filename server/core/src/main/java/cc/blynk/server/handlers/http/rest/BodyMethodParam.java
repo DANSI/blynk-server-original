@@ -38,7 +38,7 @@ public class BodyMethodParam extends MethodParam {
                     data = uriDecoder.bodyData.toString(CharsetUtil.UTF_8);
                     return JsonParser.mapper.readValue(data, type);
                 } catch (JsonParseException | JsonMappingException jsonParseError) {
-                    log.error("Error parsing body '{}' param. {}.", uriDecoder.bodyData, data, jsonParseError);
+                    log.error("Error parsing body '{}' param. {}. Message {}", uriDecoder.bodyData, data, jsonParseError.getMessage());
                     throw new RuntimeException("Error parsing body param. " + data);
                 } catch (Exception e) {
                     log.error("Unexpected error during parsing body param.", e);
