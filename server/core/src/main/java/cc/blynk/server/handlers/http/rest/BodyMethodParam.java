@@ -30,20 +30,22 @@ public class BodyMethodParam extends MethodParam {
         if (uriDecoder.contentType == null || !uriDecoder.contentType.contains(expectedContentType)) {
             throw new RuntimeException("Unexpected content type. Expecting " + expectedContentType + ".");
         }
-        if (expectedContentType.equals(MediaType.APPLICATION_JSON)) {
-            String data = "";
-            try {
-                data = uriDecoder.bodyData.toString(CharsetUtil.UTF_8);
-                return JsonParser.mapper.readValue(data, type);
-            } catch (JsonParseException | JsonMappingException jsonParseError) {
-                log.error("Error parsing body '{}' param. {}.", uriDecoder.bodyData, data, jsonParseError);
-                throw new RuntimeException("Error parsing body param. " + data);
-            } catch (Exception e) {
-                log.error("Unexpected error during parsing body param.", e);
-                throw new RuntimeException("Unexpected error during parsing body param.", e);
-            }
-        } else {
-            return uriDecoder.bodyData.toString(CharsetUtil.UTF_8);
+
+        switch (expectedContentType) {
+            case MediaType.APPLICATION_JSON :
+                String data = "";
+                try {
+                    data = uriDecoder.bodyData.toString(CharsetUtil.UTF_8);
+                    return JsonParser.mapper.readValue(data, type);
+                } catch (JsonParseException | JsonMappingException jsonParseError) {
+                    log.error("Error parsing body '{}' param. {}.", uriDecoder.bodyData, data, jsonParseError);
+                    throw new RuntimeException("Error parsing body param. " + data);
+                } catch (Exception e) {
+                    log.error("Unexpected error during parsing body param.", e);
+                    throw new RuntimeException("Unexpected error during parsing body param.", e);
+                }
+            default :
+                return uriDecoder.bodyData.toString(CharsetUtil.UTF_8);
         }
     }
 

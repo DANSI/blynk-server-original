@@ -2,11 +2,9 @@ package cc.blynk.server.handlers.http.rest;
 
 import cc.blynk.utils.UriTemplate;
 import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.HttpMethod;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -63,7 +61,12 @@ public class HandlerRegistry {
                         handlerHolder.params[i] = new PathMethodParam(((PathParam) pathParamAnnotation).value(), parameter.getType());
                     }
 
-                    if (pathParamAnnotation == null && queryParamAnnotation == null) {
+                    Annotation formParamAnnotation = parameter.getAnnotation(FormParam.class);
+                    if (formParamAnnotation != null) {
+                        handlerHolder.params[i] = new FormMethodParam(((FormParam) formParamAnnotation).value(), parameter.getType());
+                    }
+
+                    if (pathParamAnnotation == null && queryParamAnnotation == null && formParamAnnotation == null) {
                         handlerHolder.params[i] = new BodyMethodParam(parameter.getName(), parameter.getType(), contentType);
                     }
                 }

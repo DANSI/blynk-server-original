@@ -1,4 +1,4 @@
-package cc.blynk.server.reset.web.entities;
+package cc.blynk.server.admin.http.pojo;
 
 /**
  * The Blynk project

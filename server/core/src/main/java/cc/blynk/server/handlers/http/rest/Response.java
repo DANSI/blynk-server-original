@@ -67,6 +67,10 @@ public class Response extends DefaultFullHttpResponse {
         return new Response(HTTP_1_1, OK, data, JSON);
     }
 
+    public static Response ok(String data, String contentType) {
+        return new Response(HTTP_1_1, OK, data, contentType);
+    }
+
     public static Response ok(boolean bool) {
         return new Response(HTTP_1_1, OK, String.valueOf(bool), JSON);
     }

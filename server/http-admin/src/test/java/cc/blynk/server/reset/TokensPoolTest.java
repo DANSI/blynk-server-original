@@ -1,13 +1,12 @@
 package cc.blynk.server.reset;
 
-import cc.blynk.server.reset.web.entities.TokenUser;
-import cc.blynk.server.reset.web.entities.TokensPool;
+import cc.blynk.server.admin.http.pojo.TokenUser;
+import cc.blynk.server.admin.http.pojo.TokensPool;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TokensPoolTest {
