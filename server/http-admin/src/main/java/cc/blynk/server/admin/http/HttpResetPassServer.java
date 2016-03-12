@@ -54,7 +54,7 @@ public class HttpResetPassServer extends BaseServer {
 
     @Override
     public void close() {
-        System.out.println("Shutting down http Reset Pass server...");
+        System.out.println("Shutting down HTTP Reset Pass server...");
         super.close();
     }
 

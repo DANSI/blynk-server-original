@@ -79,7 +79,7 @@ public class HttpsAdminServer extends BaseServer {
 
     @Override
     public void close() {
-        System.out.println("Shutting down https Admin UI server...");
+        System.out.println("Shutting down HTTPS Admin UI server...");
         super.close();
     }
 
