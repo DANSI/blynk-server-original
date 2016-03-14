@@ -26,8 +26,6 @@ public class ResetPassHandler extends BaseHttpHandler {
     public void processHttp(ChannelHandlerContext ctx, HttpRequest req) {
         if (req.getUri().equals("/favicon.ico")) {
             req.setUri("/admin/static/favicon.ico");
-        }
-        if (req.getUri().startsWith("/reset/static")) {
             try {
                 fileHandler.channelRead(ctx, req);
             } catch (Exception e) {
