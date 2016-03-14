@@ -32,6 +32,7 @@ public final class Response {
     public static final int NOTIFICATION_EXCEPTION = 15;
 
     public static final int NOT_SUPPORTED_VERSION = 20;
+    public static final int ENERGY_LIMIT = 21;
 
     //reserved
     public static final int BLYNK_TIMEOUT_EXCEPTION = 16;

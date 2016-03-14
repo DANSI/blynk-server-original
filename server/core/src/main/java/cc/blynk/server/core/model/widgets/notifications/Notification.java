@@ -66,4 +66,9 @@ public class Notification extends Widget {
     public String getModeType() {
         return null;
     }
+
+    @Override
+    public int getPrice() {
+        return 400;
+    }
 }

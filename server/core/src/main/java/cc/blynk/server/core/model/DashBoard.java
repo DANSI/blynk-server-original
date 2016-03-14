@@ -138,6 +138,10 @@ public class DashBoard {
         return sb.toString();
     }
 
+    public int getPrice() {
+        return 500;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

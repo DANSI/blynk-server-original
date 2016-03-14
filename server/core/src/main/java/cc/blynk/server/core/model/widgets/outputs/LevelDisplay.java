@@ -32,4 +32,9 @@ public class LevelDisplay extends OnePinWidget implements FrequencyWidget {
     public String getModeType() {
         return "in";
     }
+
+    @Override
+    public int getPrice() {
+        return 200;
+    }
 }

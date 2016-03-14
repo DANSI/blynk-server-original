@@ -38,11 +38,16 @@ public class DeleteWidgetLogic {
 
         log.debug("Removing widget with id {}.", widgetId);
 
+        delete(user, dash, existingWidgetIndex);
+
+        ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
+    }
+
+    private static void delete(User user, DashBoard dash, int existingWidgetIndex) {
+        user.addEnergy(dash.widgets[existingWidgetIndex].getPrice());
         dash.widgets = ArrayUtil.remove(dash.widgets, existingWidgetIndex);
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
-
-        ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
     }
 
 }

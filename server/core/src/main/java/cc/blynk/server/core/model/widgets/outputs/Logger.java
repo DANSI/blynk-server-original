@@ -34,4 +34,9 @@ public class Logger extends MultiPinWidget {
     public String makeHardwareBody() {
         return null;
     }
+
+    @Override
+    public int getPrice() {
+        return 900;
+    }
 }

@@ -44,4 +44,9 @@ public class Digit4Display extends OnePinWidget implements FrequencyWidget, Hard
         }
     }
 
+    @Override
+    public int getPrice() {
+        return 200;
+    }
+
 }

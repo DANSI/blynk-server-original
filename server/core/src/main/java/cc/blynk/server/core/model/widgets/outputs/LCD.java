@@ -46,4 +46,9 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     public String getModeType() {
         return "in";
     }
+
+    @Override
+    public int getPrice() {
+        return 400;
+    }
 }

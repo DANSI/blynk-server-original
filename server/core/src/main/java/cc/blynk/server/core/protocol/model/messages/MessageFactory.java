@@ -85,6 +85,11 @@ public class MessageFactory {
             case DELETE_WIDGET :
                 return new DeleteWidget(messageId, body);
 
+            case GET_ENERGY :
+                return new GetEnergy(messageId);
+            case ADD_ENERGY :
+                return new AddEnergy(messageId, body);
+
             default: throw new UnsupportedCommandException(String.format("Command with code %d not supported message.", command), messageId);
         }
     }

@@ -35,4 +35,9 @@ public class LED extends OnePinWidget implements FrequencyWidget {
     public String getModeType() {
         return "in";
     }
+
+    @Override
+    public int getPrice() {
+        return 100;
+    }
 }

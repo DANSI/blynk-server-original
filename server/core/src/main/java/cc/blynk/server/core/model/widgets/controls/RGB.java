@@ -39,4 +39,9 @@ public class RGB extends MultiPinWidget implements HardwareSyncWidget {
         return "out";
     }
 
+    @Override
+    public int getPrice() {
+        return 400;
+    }
+
 }

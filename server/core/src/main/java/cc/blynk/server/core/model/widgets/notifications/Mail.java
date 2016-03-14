@@ -39,4 +39,9 @@ public class Mail extends Widget {
     public String getModeType() {
         return null;
     }
+
+    @Override
+    public int getPrice() {
+        return 100;
+    }
 }

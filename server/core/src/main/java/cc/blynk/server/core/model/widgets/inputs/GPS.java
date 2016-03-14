@@ -25,4 +25,9 @@ public class GPS extends OnePinWidget {
     public String getModeType() {
         return "out";
     }
+
+    @Override
+    public int getPrice() {
+        return 400;
+    }
 }

@@ -24,4 +24,9 @@ public class Terminal extends OnePinWidget {
     public String makeHardwareBody() {
         return null;
     }
+
+    @Override
+    public int getPrice() {
+        return 200;
+    }
 }

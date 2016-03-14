@@ -149,6 +149,13 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case REDEEM :
                 redeemLogic.messageReceived(ctx, state.user, msg);
                 break;
+            case GET_ENERGY :
+                GetEnergyLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case ADD_ENERGY :
+                AddEnergyLogic.messageReceived(ctx, state.user, msg);
+                break;
+
         }
     }
 

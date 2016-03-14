@@ -2,6 +2,8 @@ package cc.blynk.server.core.model.auth;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.JsonParser;
 
 import java.io.Serializable;
@@ -16,6 +18,8 @@ import java.util.Map;
  */
 public class User implements Serializable {
 
+    public static final double RECYCLE_PRICE_RESTORE = 0.8;
+
 	private static final long serialVersionUID = 1L;
 
     public final Map<Integer, String> dashShareTokens;
@@ -29,14 +33,15 @@ public class User implements Serializable {
     public volatile long lastModifiedTs;
 
     public long lastLoggedAt;
-
     public Profile profile;
+    private int energy;
 
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
         this.profile = new Profile();
         this.dashShareTokens = new HashMap<>();
         this.dashTokens = new HashMap<>();
+        this.energy = 2000;
     }
 
     public User(String name, String pass) {
@@ -108,6 +113,29 @@ public class User implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    private void checkPrice(int price, int msgId) {
+        if (price > energy) {
+            throw new EnergyLimitException("Not enough energy.", msgId);
+        }
+    }
+
+    public void subtractEnergy(int price, int msgId) {
+        checkPrice(price, msgId);
+        this.energy -= price;
+    }
+
+    public void addEnergy(int price) {
+        this.energy += RECYCLE_PRICE_RESTORE * price;
+    }
+
+    public void addEnergy(DashBoard dash) {
+        int sum = 0;
+        for (Widget widget : dash.widgets) {
+            sum += widget.getPrice();
+        }
+        addEnergy(sum + dash.getPrice());
     }
 
     @Override

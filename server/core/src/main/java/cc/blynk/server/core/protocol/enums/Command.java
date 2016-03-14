@@ -51,6 +51,10 @@ public final class Command {
     public static final short CREATE_WIDGET = 33;
     public static final short UPDATE_WIDGET = 34;
     public static final short DELETE_WIDGET = 35;
+
+    //energy commands
+    public static final short GET_ENERGY = 36;
+    public static final short ADD_ENERGY = 37;
     //------------------------------------------
 
     //http codes. Used only for stats
@@ -82,9 +86,6 @@ public final class Command {
                 put(REFRESH_TOKEN, "RefreshToken");
                 put(GET_GRAPH_DATA, "GetGraphDataRequest");
                 put(GET_GRAPH_DATA_RESPONSE, "GetGraphDataResponse");
-                put(TWEET, "Tweet");
-                put(EMAIL, "Email");
-                put(PUSH_NOTIFICATION, "Push");
                 put(BRIDGE, "Bridge");
                 put(HARDWARE, "Hardware");
                 put(GET_SHARED_DASH, "GetSharedDash");
@@ -98,9 +99,16 @@ public final class Command {
                 put(HARDWARE_INFO, "HardwareInfo");
                 put(ADD_PUSH_TOKEN, "AddPushToken");
 
+                put(TWEET, "Tweet");
+                put(EMAIL, "Email");
+                put(PUSH_NOTIFICATION, "Push");
+
                 put(CREATE_WIDGET, "CreateWidget");
                 put(UPDATE_WIDGET, "UpdateWidget");
                 put(DELETE_WIDGET, "DeleteWidget");
+
+                put(ADD_ENERGY, "AddEnergy");
+                put(GET_ENERGY, "GetEnergy");
 
                 put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
                 put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");

@@ -88,4 +88,6 @@ public abstract class Widget {
 
     public abstract String getModeType();
 
+    public abstract int getPrice();
+
 }

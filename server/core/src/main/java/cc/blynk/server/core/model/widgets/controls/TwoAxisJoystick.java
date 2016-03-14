@@ -43,4 +43,9 @@ public class TwoAxisJoystick extends MultiPinWidget implements HardwareSyncWidge
         return "out";
     }
 
+
+    @Override
+    public int getPrice() {
+        return 400;
+    }
 }

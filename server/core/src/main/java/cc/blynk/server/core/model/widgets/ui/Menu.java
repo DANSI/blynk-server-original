@@ -42,4 +42,9 @@ public class Menu extends Widget {
         return null;
     }
 
+    @Override
+    public int getPrice() {
+        return 900;
+    }
+
 }

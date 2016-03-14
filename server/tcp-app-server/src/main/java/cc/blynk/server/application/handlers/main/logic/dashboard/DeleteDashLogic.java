@@ -35,6 +35,7 @@ public class DeleteDashLogic {
 
         log.info("Deleting dashboard {}.", dashId);
 
+        user.addEnergy(user.profile.dashBoards[index]);
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
         userDao.deleteProject(user, dashId);
 

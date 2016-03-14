@@ -25,4 +25,9 @@ public class Button extends OnePinWidget implements HardwareSyncWidget {
     public String getModeType() {
         return "out";
     }
+
+    @Override
+    public int getPrice() {
+        return 200;
+    }
 }
