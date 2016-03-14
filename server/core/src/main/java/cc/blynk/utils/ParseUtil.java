@@ -22,7 +22,7 @@ public final class ParseUtil {
         try {
             return Integer.parseInt(intProperty);
         } catch (NumberFormatException ex) {
-            throw new BaseServerException(String.format("Id '%s' not valid.", intProperty), msgId, Response.ILLEGAL_COMMAND);
+            throw new BaseServerException(String.format("'%s' not valid number.", intProperty), msgId, Response.ILLEGAL_COMMAND);
         }
     }
 
