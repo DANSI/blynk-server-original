@@ -30,6 +30,7 @@ public class SaveDashLogic {
         this.DASH_MAX_SIZE = maxDashSize;
     }
 
+    //todo should accept only dash info and ignore widgets.
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String dashString = message.body;
 
