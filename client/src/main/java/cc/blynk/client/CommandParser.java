@@ -62,6 +62,11 @@ public class CommandParser {
             case "info" :
                 return HARDWARE_INFO;
 
+            case "addenergy" :
+                return ADD_ENERGY;
+            case "getenergy" :
+                return GET_ENERGY;
+
             //sharing section
             case "sharelogin" :
                 return SHARE_LOGIN;

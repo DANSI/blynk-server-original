@@ -138,6 +138,10 @@ public class User implements Serializable {
         addEnergy(sum + dash.getPrice());
     }
 
+    public int getEnergy() {
+        return energy;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

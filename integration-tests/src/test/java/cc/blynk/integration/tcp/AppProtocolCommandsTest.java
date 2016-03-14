@@ -141,7 +141,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testProfileWithManyDashes() throws Exception {
-        makeCommands("register dmitriy@mail.ua 1").check(OK);
+        makeCommands("register dmitriy@mail.ua 1", "login dmitriy@mail.ua 1", "addEnergy 5000").check(3, OK);
 
         Profile profile = JsonParser.parseProfile(readTestUserProfile("user_profile_json_many_dashes.txt"), 1);
 

@@ -19,7 +19,7 @@ public class AddEnergyLogic {
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         int energyAmountToAdd = ParseUtil.parseInt(message.body, message.id);
 
-        user.energy += energyAmountToAdd;
+        user.addEnergy(energyAmountToAdd);
         ctx.writeAndFlush(makeResponse(ctx, message.id, OK), ctx.voidPromise());
     }
 
