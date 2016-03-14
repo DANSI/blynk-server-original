@@ -386,6 +386,15 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testHardwareSendsWrongCommand() throws Exception {
+        clientPair.hardwareClient.send("hardware aw 1 ");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
+
+        clientPair.hardwareClient.send("hardware aw 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, ILLEGAL_COMMAND)));
+    }
+
+    @Test
     public void testAppChangeActiveDash() throws Exception {
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 aw 1 1"))));

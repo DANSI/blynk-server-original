@@ -67,8 +67,11 @@ public class HardwareLogic {
             final String[] values = Arrays.copyOfRange(splitBody, 2, splitBody.length);
 
             //storing to DB and aggregating
-            reportingDao.process(state.user.name, dashId, pin, pinType, values);
+            if (values.length == 0) {
+                throw new IllegalCommandException("Hardware write command doesn't have value for pin.", message.id);
+            }
 
+            reportingDao.process(state.user.name, dashId, pin, pinType, values);
             dash.update(pin, pinType, values);
         }
 
