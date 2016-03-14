@@ -44,17 +44,17 @@ public class RedeemLogic {
             return;
         }
 
-        blockingIOProcessor.execute(() -> ctx.writeAndFlush(verifyToken(message, redeemToken, user.name), ctx.voidPromise()));
+        blockingIOProcessor.execute(() -> ctx.writeAndFlush(verifyToken(message, redeemToken, user), ctx.voidPromise()));
     }
 
-    private ResponseMessage verifyToken(StringMessage message, String redeemToken, String username) {
+    private ResponseMessage verifyToken(StringMessage message, String redeemToken, User user) {
         try {
             Redeem redeem = dbManager.selectRedeemByToken(redeemToken);
             if (redeem != null) {
-                if (redeem.isRedeemed && redeem.username.equals(username)) {
+                if (redeem.isRedeemed && redeem.username.equals(user.name)) {
                     return new ResponseMessage(message.id, OK);
-                } else if (!redeem.isRedeemed && dbManager.updateRedeem(username, redeemToken)) {
-                    unlockContent();
+                } else if (!redeem.isRedeemed && dbManager.updateRedeem(user.name, redeemToken)) {
+                    unlockContent(user);
                     return new ResponseMessage(message.id, OK);
                 }
             }
@@ -65,7 +65,8 @@ public class RedeemLogic {
         return new ResponseMessage(message.id, NOT_ALLOWED);
     }
 
-    private void unlockContent() {
+    private void unlockContent(User user) {
+        user.purchaseEnergy(15000);
         log.info("Unlocking content...");
     }
 
