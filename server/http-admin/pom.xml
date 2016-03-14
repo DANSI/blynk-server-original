@@ -18,9 +18,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.azakordonets</groupId>
-            <artifactId>fabricator_2.10</artifactId>
-            <version>1.0.4</version>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>${commons-validator.version}</version>
         </dependency>
 
         <dependency>

@@ -9,7 +9,6 @@ import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.ServerProperties;
-import fabricator.Fabricator;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.net.URISyntaxException;
+import java.util.UUID;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.*;
@@ -51,6 +51,10 @@ public class ResetPasswordLogic {
         this.pageContent = FileLoaderUtil.readFileAsString("reset/static/enterNewPassword.html");
     }
 
+    private static String generateToken() {
+        return (UUID.randomUUID().toString() + UUID.randomUUID().toString()).replace("-", "");
+    }
+
     @POST
     @Consumes(value = MediaType.APPLICATION_FORM_URLENCODED)
     @Path("resetPassword")
@@ -63,7 +67,7 @@ public class ResetPasswordLogic {
             return Response.badRequest(String.format("%s email has not valid format.", email));
         }
 
-        String token = Fabricator.alphaNumeric().hash(60);
+        String token = generateToken();
         log.info("{} trying to reset pass.", email);
         try {
             TokenUser user = new TokenUser(email);
