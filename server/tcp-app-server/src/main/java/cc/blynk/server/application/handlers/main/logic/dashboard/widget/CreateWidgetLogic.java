@@ -62,8 +62,8 @@ public class CreateWidgetLogic {
             }
         }
 
-        dash.widgets = ArrayUtil.add(dash.widgets, newWidget);
         user.subtractEnergy(newWidget.getPrice(), message.id);
+        dash.widgets = ArrayUtil.add(dash.widgets, newWidget);
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
 
