@@ -76,7 +76,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         DashBoard dash = user.profile.getDashById(dashId);
         if (dash == null) {
-            log.error("User : {} requested token {} for non-existing {} dash id.", user.name, token, dashId);
+            log.warn("User : {} requested token {} for non-existing {} dash id.", user.name, token, dashId);
             ctx.writeAndFlush(new ResponseMessage(message.id, Response.INVALID_TOKEN), ctx.voidPromise());
             return;
         }
