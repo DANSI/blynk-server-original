@@ -86,7 +86,7 @@ public class MessageFactory {
                 return new DeleteWidget(messageId, body);
 
             case GET_ENERGY :
-                return new GetEnergy(messageId);
+                return new GetEnergy(messageId, body);
             case ADD_ENERGY :
                 return new AddEnergy(messageId, body);
 

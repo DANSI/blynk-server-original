@@ -130,6 +130,10 @@ public class User implements Serializable {
         this.energy += RECYCLE_PRICE_RESTORE * price;
     }
 
+    public void purchaseEnergy(int price) {
+        this.energy += price;
+    }
+
     public void addEnergy(DashBoard dash) {
         int sum = 0;
         for (Widget widget : dash.widgets) {

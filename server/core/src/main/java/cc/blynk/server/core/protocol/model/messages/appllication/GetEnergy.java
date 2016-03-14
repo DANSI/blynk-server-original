@@ -11,8 +11,8 @@ import static cc.blynk.server.core.protocol.enums.Command.*;
  */
 public class GetEnergy extends StringMessage {
 
-    public GetEnergy(int messageId) {
-        super(messageId, GET_ENERGY, 0, "");
+    public GetEnergy(int messageId, String body) {
+        super(messageId, GET_ENERGY, body.length(), body);
     }
 
     @Override
