@@ -326,6 +326,16 @@ server.properties options:
         allowed.administrator.ips=127.0.0.1
         
         
++ Reset password server port. Separate API for password resetting.
+        
+        reset.pass.http.port=7444
+
+
++ Host for reset password redirect. By default current server IP is taken from "eth" network interface. Could be replaced with more friendly hostname. It is recommended to override this property with your server IP to avoid possible problems of host resolving.
+        
+        reset-pass.http.host=cloud.blynk.cc
+        
+        
 + Comma separated list of users allowed to create accounts. Leave it empty if no restriction required.
         
         allowed.users.list=allowed1@gmail.com,allowed2@gmail.com
