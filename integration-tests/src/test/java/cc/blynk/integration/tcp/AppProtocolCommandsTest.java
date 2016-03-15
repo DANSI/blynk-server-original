@@ -70,31 +70,6 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     }
 
     @Test
-    //all commands together cause all operations requires register and then login =(.
-    //todo finish?
-    public void testAllCommandOneByOneTestSuit() throws Exception {
-        makeCommands("register dmitriy@mail.ua 1").check(OK);
-
-        makeCommands("login dmitriy@mail.ua 1").check(OK);
-
-        //makeCommands("login dmitriy@mail.ua 1", "loadProfile").check(OK).check(produce(1, LOAD_PROFILE, "{}"));
-
-        Profile profile = JsonParser.parseProfile(readTestUserProfile(), 1);
-
-        makeCommands("login dmitriy@mail.ua 1", "createDash " + profile.dashBoards[0]).check(2, OK);
-
-        //makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "loadProfile").check(2, OK).check(produce(1, LOAD_PROFILE, userProfileString));
-
-        //waiting background thread to save profile.
-        sleep(200);
-
-        //todo fix?
-        makeCommands("login dmitriy@mail.ua 1", "getToken 1").check(OK);
-                //.check(produce(1, GET_TOKEN, "12345678901234567890123456789012"));
-
-    }
-
-    @Test
     public void testAppNotRegistered() throws Exception {
         makeCommands("login dmitriy@mail.ua 1").check(new ResponseMessage(1, USER_NOT_REGISTERED));
     }
