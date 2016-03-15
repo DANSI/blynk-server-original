@@ -75,7 +75,7 @@ public class ClientMessageDecoder extends ByteToMessageDecoder implements Defaul
 
         }
 
-        log.trace("Incoming {}", message);
+        log.trace("Incoming client {}", message);
 
         out.add(message);
     }

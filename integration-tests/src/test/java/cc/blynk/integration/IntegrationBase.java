@@ -95,6 +95,8 @@ public abstract class IntegrationBase extends BaseTest {
 
         appClient.send("register " + user);
         appClient.send("login " + user + " Android 1RC7");
+        //we should wait until login finished. Only after that we can send commands
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         saveProfile(appClient, profile.dashBoards);
 
