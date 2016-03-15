@@ -1,5 +1,6 @@
 package cc.blynk.utils;
 
+import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
@@ -73,6 +74,7 @@ public class SslUtil {
         return SslContextBuilder.forServer(serverCert, serverKey, serverPass)
                 .sslProvider(sslProvider)
                 .trustManager(clientCert)
+                .clientAuth(ClientAuth.REQUIRE)
                 .build();
     }
 

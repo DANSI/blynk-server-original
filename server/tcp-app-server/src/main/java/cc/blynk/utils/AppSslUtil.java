@@ -1,6 +1,6 @@
 package cc.blynk.utils;
 
-import cc.blynk.server.application.AppSslContext;
+import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +20,7 @@ public class AppSslUtil {
 
     private final static Logger log = LogManager.getLogger(AppSslUtil.class);
 
-    public static AppSslContext initMutualSslContext(ServerProperties props) {
+    public static SslContext initMutualSslContext(ServerProperties props) {
         SslProvider sslProvider = fetchSslProvider(props);
 
         return initMutualSslContext(
@@ -31,7 +31,7 @@ public class AppSslUtil {
                 sslProvider);
     }
 
-    private static AppSslContext initMutualSslContext(String serverCertPath, String serverKeyPath, String serverPass,
+    private static SslContext initMutualSslContext(String serverCertPath, String serverKeyPath, String serverPass,
                                                       String clientCertPath,
                                                       SslProvider sslProvider) {
         try {
@@ -43,16 +43,16 @@ public class AppSslUtil {
                 log.warn("ATTENTION. Server certificate paths cert : '{}', key : '{}' - not valid. Using embedded server certs and one way ssl. This is not secure. Please replace it with your own certs.",
                         serverCert.getAbsolutePath(), serverKey.getAbsolutePath());
 
-                return new AppSslContext(false, build(sslProvider));
+                return build(sslProvider);
             }
 
             if (!clientCert.exists()) {
                 log.warn("Found server certificates but no client certificate for '{}' path. Using one way ssl.", clientCert.getAbsolutePath());
 
-                return new AppSslContext(false, build(serverCert, serverKey, serverPass, sslProvider));
+                return build(serverCert, serverKey, serverPass, sslProvider);
             }
 
-            return new AppSslContext(true, build(serverCert, serverKey, serverPass, sslProvider, clientCert));
+            return build(serverCert, serverKey, serverPass, sslProvider, clientCert);
         } catch (CertificateException | SSLException | IllegalArgumentException e) {
             log.error("Error initializing ssl context. Reason : {}", e.getMessage());
             throw new RuntimeException(e.getMessage());

@@ -13,10 +13,8 @@ import cc.blynk.utils.AppSslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-
-import javax.net.ssl.SSLEngine;
 
 /**
  * Class responsible for handling all Application connections and netty pipeline initialization.
@@ -39,7 +37,7 @@ public class AppServer extends BaseServer {
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 
         log.info("Enabling SSL for application.");
-        AppSslContext appSslContext = AppSslUtil.initMutualSslContext(holder.props);
+        SslContext sslContext = AppSslUtil.initMutualSslContext(holder.props);
 
         int appTimeoutSecs = holder.props.getIntProperty("app.socket.idle.timeout", 0);
         log.debug("app.socket.idle.timeout = {}", appTimeoutSecs);
@@ -53,20 +51,15 @@ public class AppServer extends BaseServer {
                     pipeline.addLast(new ReadTimeoutHandler(appTimeoutSecs));
                 }
 
-                final SSLEngine engine = appSslContext.sslContext.newEngine(ch.alloc());
-                if (appSslContext.isMutualSSL) {
-                    engine.setUseClientMode(false);
-                    engine.setNeedClientAuth(true);
-                }
                 pipeline.addLast(
-                    new SslHandler(engine),
-                    appChannelStateHandler,
-                    new MessageDecoder(holder.stats),
-                    new MessageEncoder(holder.stats),
-                    registerHandler,
-                    appLoginHandler,
-                    appShareLoginHandler,
-                    userNotLoggedHandler
+                        sslContext.newHandler(ch.alloc()),
+                        appChannelStateHandler,
+                        new MessageDecoder(holder.stats),
+                        new MessageEncoder(holder.stats),
+                        registerHandler,
+                        appLoginHandler,
+                        appShareLoginHandler,
+                        userNotLoggedHandler
                 );
             }
         };
