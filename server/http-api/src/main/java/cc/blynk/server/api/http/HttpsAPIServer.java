@@ -10,7 +10,9 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.ssl.SniHandler;
 import io.netty.handler.ssl.SslContext;
+import io.netty.util.DomainNameMapping;
 
 /**
  * The Blynk Project.
@@ -28,13 +30,13 @@ public class HttpsAPIServer extends BaseServer {
 
         log.info("Enabling HTTPS API.");
 
-        SslContext sslCtx = SslUtil.initSslContext(holder.props);
+        final DomainNameMapping<SslContext> mappings = SslUtil.getDomainMappings(holder.props);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(
-                        sslCtx.newHandler(ch.alloc()),
+                        new SniHandler(mappings),
                         new HttpServerCodec(),
                         new HttpObjectAggregator(1024, true),
                         new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)

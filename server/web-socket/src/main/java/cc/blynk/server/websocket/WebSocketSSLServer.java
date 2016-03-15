@@ -15,8 +15,10 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.ssl.SniHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.util.DomainNameMapping;
 
 /**
  * The Blynk Project.
@@ -37,7 +39,7 @@ public class WebSocketSSLServer extends BaseServer {
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.blockingIOProcessor, holder.gcmWrapper);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 
-        SslContext sslCtx = SslUtil.initSslContext(holder.props);
+        final DomainNameMapping<SslContext> mappings = SslUtil.getDomainMappings(holder.props);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -47,7 +49,7 @@ public class WebSocketSSLServer extends BaseServer {
                     pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
                 }
                 ch.pipeline().addLast(
-                        sslCtx.newHandler(ch.alloc()),
+                        new SniHandler(mappings),
                         new HttpServerCodec(),
                         new HttpObjectAggregator(65536),
                         new WebSocketHandler(true),

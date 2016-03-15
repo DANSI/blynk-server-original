@@ -5,6 +5,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+import io.netty.util.DomainNameMapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,6 +22,82 @@ public class SslUtil {
 
     private final static Logger log = LogManager.getLogger(SslUtil.class);
 
+    public static DomainNameMapping<SslContext> getDomainMappingsMutual(ServerProperties props) {
+        SslContext primarySslContext = initMutualSslContext(
+                props.getProperty("server.ssl.cert"),
+                props.getProperty("server.ssl.key"),
+                props.getProperty("server.ssl.key.pass"),
+                props.getProperty("client.ssl.cert"),
+                fetchSslProvider(props));
+
+        final DomainNameMapping<SslContext> mapping = new DomainNameMapping<>(primarySslContext);
+        mapping.add(props.getProperty("server.host", "*"), primarySslContext);
+
+        if (props.getProperty("server2.host") != null) {
+            SslContext secondarySslContext = initMutualSslContext(
+                    props.getProperty("server2.ssl.cert"),
+                    props.getProperty("server2.ssl.key"),
+                    props.getProperty("server2.ssl.key.pass"),
+                    props.getProperty("client.ssl.cert"),
+                    fetchSslProvider(props));
+
+            mapping.add(props.getProperty("server2.host"), secondarySslContext);
+        }
+
+        return mapping;
+    }
+
+    public static DomainNameMapping<SslContext> getDomainMappings(ServerProperties props) {
+        SslContext primarySslContext = SslUtil.initSslContext(
+                props.getProperty("server.ssl.cert"),
+                props.getProperty("server.ssl.key"),
+                props.getProperty("server.ssl.key.pass"),
+                SslUtil.fetchSslProvider(props));
+
+        final DomainNameMapping<SslContext> mapping = new DomainNameMapping<>(primarySslContext);
+        mapping.add(props.getProperty("server.host", "*"), primarySslContext);
+
+        if (props.getProperty("server2.host") != null) {
+            SslContext secondarySslContext = SslUtil.initSslContext(
+                    props.getProperty("server2.ssl.cert"),
+                    props.getProperty("server2.ssl.key"),
+                    props.getProperty("server2.ssl.key.pass"),
+                    fetchSslProvider(props));
+
+            mapping.add(props.getProperty("server2.host"), secondarySslContext);
+        }
+
+        return mapping;
+    }
+
+    public static SslContext initMutualSslContext(String serverCertPath, String serverKeyPath, String serverPass,
+                                                  String clientCertPath,
+                                                  SslProvider sslProvider) {
+        try {
+            File serverCert = new File(serverCertPath);
+            File serverKey = new File(serverKeyPath);
+            File clientCert = new File(clientCertPath);
+
+            if (!serverCert.exists() || !serverKey.exists()) {
+                log.warn("ATTENTION. Server certificate paths cert : '{}', key : '{}' - not valid. Using embedded server certs and one way ssl. This is not secure. Please replace it with your own certs.",
+                        serverCert.getAbsolutePath(), serverKey.getAbsolutePath());
+
+                return build(sslProvider);
+            }
+
+            if (!clientCert.exists()) {
+                log.warn("Found server certificates but no client certificate for '{}' path. Using one way ssl.", clientCert.getAbsolutePath());
+
+                return build(serverCert, serverKey, serverPass, sslProvider);
+            }
+
+            return build(serverCert, serverKey, serverPass, sslProvider, clientCert);
+        } catch (CertificateException | SSLException | IllegalArgumentException e) {
+            log.error("Error initializing ssl context. Reason : {}", e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     public static SslProvider fetchSslProvider(ServerProperties props) {
         SslProvider sslProvider = props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK;
         if (sslProvider == SslProvider.OPENSSL) {
@@ -29,16 +106,7 @@ public class SslUtil {
         return sslProvider;
     }
 
-    public static SslContext initSslContext(ServerProperties props) {
-        SslProvider sslProvider = SslUtil.fetchSslProvider(props);
-
-        return initSslContext(props.getProperty("server.ssl.cert"),
-                props.getProperty("server.ssl.key"),
-                props.getProperty("server.ssl.key.pass"),
-                sslProvider);
-    }
-
-    private static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
+    public static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
                                             SslProvider sslProvider) {
         try {
             File serverCert =  new File(serverCertPath);

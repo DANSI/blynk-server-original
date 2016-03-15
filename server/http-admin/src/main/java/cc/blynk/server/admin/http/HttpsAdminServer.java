@@ -12,8 +12,10 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.ssl.SniHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import io.netty.util.DomainNameMapping;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,7 +49,7 @@ public class HttpsAdminServer extends BaseServer {
         }
 
         log.info("Enabling HTTPS for admin UI.");
-        SslContext sslCtx = SslUtil.initSslContext(holder.props);
+        final DomainNameMapping<SslContext> mappings = SslUtil.getDomainMappings(holder.props);
         final IpFilterHandler ipFilterHandler = new IpFilterHandler(allowedIPs);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
@@ -55,7 +57,7 @@ public class HttpsAdminServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(
                     ipFilterHandler,
-                    sslCtx.newHandler(ch.alloc()),
+                    new SniHandler(mappings),
                     new HttpServerCodec(),
                     new HttpObjectAggregator(65536),
                     new ChunkedWriteHandler(),

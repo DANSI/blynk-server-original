@@ -9,12 +9,14 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
-import cc.blynk.utils.AppSslUtil;
+import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.ssl.SniHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.util.DomainNameMapping;
 
 /**
  * Class responsible for handling all Application connections and netty pipeline initialization.
@@ -37,7 +39,8 @@ public class AppServer extends BaseServer {
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 
         log.info("Enabling SSL for application.");
-        SslContext sslContext = AppSslUtil.initMutualSslContext(holder.props);
+
+        final DomainNameMapping<SslContext> mappings = SslUtil.getDomainMappingsMutual(holder.props);
 
         int appTimeoutSecs = holder.props.getIntProperty("app.socket.idle.timeout", 0);
         log.debug("app.socket.idle.timeout = {}", appTimeoutSecs);
@@ -52,7 +55,7 @@ public class AppServer extends BaseServer {
                 }
 
                 pipeline.addLast(
-                        sslContext.newHandler(ch.alloc()),
+                        new SniHandler(mappings),
                         appChannelStateHandler,
                         new MessageDecoder(holder.stats),
                         new MessageEncoder(holder.stats),
