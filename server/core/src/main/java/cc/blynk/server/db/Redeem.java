@@ -15,16 +15,19 @@ public class Redeem {
 
     public String username;
 
+    public int reward;
+
     public int version;
 
     public Redeem() {
     }
 
-    public Redeem(String token, String company, boolean isRedeemed, String username, int version) {
+    public Redeem(String token, String company, boolean isRedeemed, String username, int reward, int version) {
         this.token = token;
         this.company = company;
         this.isRedeemed = isRedeemed;
         this.username = username;
+        this.reward = reward;
         this.version = version;
     }
 }

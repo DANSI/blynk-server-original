@@ -54,7 +54,7 @@ public class RedeemLogic {
                 if (redeem.isRedeemed && redeem.username.equals(user.name)) {
                     return new ResponseMessage(message.id, OK);
                 } else if (!redeem.isRedeemed && dbManager.updateRedeem(user.name, redeemToken)) {
-                    unlockContent(user);
+                    unlockContent(user, redeem.reward);
                     return new ResponseMessage(message.id, OK);
                 }
             }
@@ -65,8 +65,8 @@ public class RedeemLogic {
         return new ResponseMessage(message.id, NOT_ALLOWED);
     }
 
-    private void unlockContent(User user) {
-        user.purchaseEnergy(15000);
+    private void unlockContent(User user, int reward) {
+        user.purchaseEnergy(reward);
         log.info("Unlocking content...");
     }
 

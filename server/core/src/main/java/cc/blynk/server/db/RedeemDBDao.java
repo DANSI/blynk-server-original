@@ -38,7 +38,7 @@ public class RedeemDBDao {
             if (rs.next()) {
                 return new Redeem(rs.getString("token"), rs.getString("company"),
                         rs.getBoolean("isRedeemed"), rs.getString("username"),
-                        rs.getInt("version")
+                        rs.getInt("reward"), rs.getInt("version")
                 );
             }
         } finally {

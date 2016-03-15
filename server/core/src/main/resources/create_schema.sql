@@ -12,6 +12,7 @@ CREATE TABLE redeem (
   token character(32) PRIMARY KEY,
   company text,
   isRedeemed boolean DEFAULT FALSE,
+  reward integer NOT NULL DEFAULT 0,
   username text,
   version integer NOT NULL DEFAULT 1
 );
