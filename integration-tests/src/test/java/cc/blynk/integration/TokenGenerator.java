@@ -1,13 +1,15 @@
 package cc.blynk.integration;
 
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.Redeem;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * The Blynk Project.
@@ -16,18 +18,34 @@ import java.util.UUID;
  */
 public class TokenGenerator {
 
-    public static void main(String[] args) throws IOException {
-        Path path = Paths.get("/home/doom369/x.csv");
-        Set<String> tokens = new HashSet<>();
+    public static void main(String[] args) throws Exception {
+        //List<String> tokens = Files.readAllLines(Paths.get("/home/doom369/Downloads/x.csv"));
+        Set<String> tokens = generate(10);
 
-        for (int i = 0; i < 2000; i++ ) {
-            tokens.add(UUID.randomUUID().toString().replace("-", ""));
+        List<Redeem> redeems = new ArrayList<>(tokens.size());
+        for (String token : tokens) {
+            redeems.add(new Redeem(token, "SparkFun", 15000));
         }
 
-        System.out.println(tokens.size());
-        write(path, tokens);
+        DBManager dbManager = new DBManager("db-test.properties", new BlockingIOProcessor(1, 100, null));
+        dbManager.insertRedeems(redeems);
+    }
 
-        System.out.println(UUID.randomUUID().toString().replace("-", ""));
+    private static Set<String> generate(int amount) throws IOException {
+        Set<String> tokens = new HashSet<>();
+
+        for (int i = 0; i < amount; i++ ) {
+            String token = UUID.randomUUID().toString().replace("-", "");
+            tokens.add(token);
+            System.out.println(token);
+        }
+
+        return tokens;
+    }
+
+    private static void write(String outputPath, Set<String> tokens) throws IOException {
+        Path path = Paths.get(outputPath);
+        write(path, tokens);
     }
 
     private static void write(Path path, Set<String> tokens) throws IOException {
