@@ -39,6 +39,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -150,16 +151,35 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testHardwareDeviceWentOffline() throws Exception {
         Profile profile = JsonParser.parseProfile(readTestUserProfile(), 1);
-        Notification notification = profile.dashBoards[0].getWidgetByType(Notification.class);
+        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         notification.notifyWhenOffline = false;
 
-        clientPair.appClient.send("saveDash " + profile.dashBoards[0].toString());
+        clientPair.appClient.send("saveDash " + profile.getDashById(1).toString());
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseWithBodyMessage(0, Command.RESPONSE, DEVICE_WENT_OFFLINE, 1)));
+    }
+
+    @Test
+    public void addPushTokenWorks() throws Exception {
+        clientPair.appClient.send("addPushToken 1\0uid\0token");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+
+        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        assertNotNull(notification);
+        assertEquals(1, notification.androidTokens.size());
+        assertEquals(0, notification.iOSTokens.size());
+        Map.Entry<String, String> entry = notification.androidTokens.entrySet().iterator().next();
+        assertEquals("uid", entry.getKey());
+        assertEquals("token", entry.getValue());
     }
 
     @Test

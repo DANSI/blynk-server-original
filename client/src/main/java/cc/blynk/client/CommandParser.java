@@ -43,6 +43,8 @@ public class CommandParser {
                 return EMAIL;
             case "push" :
                 return PUSH_NOTIFICATION;
+            case "addpushtoken" :
+                return ADD_PUSH_TOKEN;
             case "bridge" :
                 return BRIDGE;
             case "createdash" :
