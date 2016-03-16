@@ -182,6 +182,32 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals("token", entry.getValue());
     }
 
+
+    @Test
+    public void addPushTokenWorks2() throws Exception {
+        clientPair.appClient.send("addPushToken 1\0uid\0token");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        doThrow(new Exception("NotRegistered")).when(gcmWrapper).send(any());
+
+        clientPair.hardwareClient.send("push Yo!");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOTIFICATION_EXCEPTION)));
+
+
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+
+        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        assertNotNull(notification);
+        assertEquals(0, notification.androidTokens.size());
+        assertEquals(0, notification.iOSTokens.size());
+
+        clientPair.hardwareClient.send("push Yo!");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NOTIFICATION_NOT_AUTHORIZED_EXCEPTION)));
+    }
+
     @Test
     public void testPingCommandWorks() throws Exception {
         clientPair.appClient.send("ping");
