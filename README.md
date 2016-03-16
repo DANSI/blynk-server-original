@@ -404,17 +404,9 @@ WARNING : this will changed in near future.
 
 ### Generate SSL certificates
 
-+ Create key
-        
-        openssl genrsa -out server.key 2048
-        
-+ Create new cert request
-        
-        openssl req -new -out server.csr -key server.key
++ Generate self-signed certificate and key
 
-+ Generate self-signed request
-
-        openssl x509 -req -days 1825 -in server.csr -signkey server.key -out server.crt
+        openssl req -x509 -nodes -days 1825 -newkey rsa:2048 -keyout server.key -out server.crt
         
 + Convert server.key to PKCS#8 private key file in PEM format
 
