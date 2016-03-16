@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
 
 /**
  * The Blynk Project.
@@ -17,6 +18,8 @@ public class RedeemDBDao {
 
     public static final String selectRedeemToken = "SELECT * from redeem where token = ?";
     public static final String updateRedeemToken = "UPDATE redeem SET username = ?, version = 2, isRedeemed = true WHERE token = ? and version = 1";
+    public static final String insertRedeemToken = "INSERT INTO redeem (token, company, reward) values (?, ?, ?)";
+
     private static final Logger log = LogManager.getLogger(RedeemDBDao.class);
     private final HikariDataSource ds;
 
@@ -60,5 +63,27 @@ public class RedeemDBDao {
             connection.commit();
             return updatedRows == 1;
         }
+    }
+
+    public void insertRedeems(List<Redeem> redeemList) throws Exception {
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(insertRedeemToken)) {
+
+            for (Redeem redeem : redeemList) {
+                insert(ps, redeem);
+                ps.addBatch();
+            }
+
+            ps.executeBatch();
+            connection.commit();
+        } catch (Exception e) {
+            log.error("Error inserting redeems data in DB.", e);
+        }
+    }
+
+    private static void insert(PreparedStatement ps, Redeem redeem) throws Exception {
+        ps.setString(1, redeem.token);
+        ps.setString(2, redeem.company);
+        ps.setInt(3, redeem.reward);
     }
 }
