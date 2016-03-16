@@ -35,10 +35,13 @@ public class AddPushLogic {
             throw new NotAllowedException("No notification widget.", message.id);
         }
 
-        if ("Android".equals(state.osType)) {
-            notification.androidTokens.put(uid, token);
-        } else {
-            notification.iOSTokens.put(uid, token);
+        switch (state.osType) {
+            case ANDROID :
+                notification.androidTokens.put(uid, token);
+                break;
+            case IOS :
+                notification.iOSTokens.put(uid, token);
+                break;
         }
 
         ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());

@@ -10,10 +10,10 @@ import cc.blynk.server.core.session.StateHolder;
  */
 public class AppStateHolder extends StateHolder {
 
-    public final String osType;
+    public final OsType osType;
     public final String version;
 
-    public AppStateHolder(User user, String osType, String version) {
+    public AppStateHolder(User user, OsType osType, String version) {
         super(user);
         this.osType = osType;
         this.version = version;

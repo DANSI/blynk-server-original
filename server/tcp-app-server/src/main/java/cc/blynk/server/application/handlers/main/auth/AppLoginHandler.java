@@ -46,16 +46,16 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             throw new IllegalCommandException("Wrong income message format.", message.id);
         }
 
-        String osType = null;
+        OsType osType = null;
         String version = null;
         if (messageParts.length == 4) {
-            osType = messageParts[2];
+            osType = OsType.parse(messageParts[2]);
             version = messageParts[3];
         }
         appLogin(ctx, message.id, messageParts[0].toLowerCase(), messageParts[1], osType, version);
     }
 
-    private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String pass, String osType, String version) {
+    private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String pass, OsType osType, String version) {
         User user = holder.userDao.getByName(username);
 
         if (user == null) {

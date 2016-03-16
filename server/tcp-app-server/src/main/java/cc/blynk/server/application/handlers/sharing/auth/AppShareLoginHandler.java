@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.sharing.auth;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
+import cc.blynk.server.application.handlers.main.auth.OsType;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
 import cc.blynk.server.application.handlers.sharing.AppShareHandler;
 import cc.blynk.server.core.dao.UserDao;
@@ -48,11 +49,11 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         if (messageParts.length < 2) {
             throw new IllegalCommandException("Wrong income message format.", message.id);
         } else {
-            String osType = null;
+            OsType osType = null;
             String version = null;
             String uid = null;
             if (messageParts.length > 3) {
-                osType = messageParts[2];
+                osType = OsType.parse(messageParts[2]);
                 version = messageParts[3];
             }
             if (messageParts.length == 5) {
@@ -62,7 +63,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         }
     }
 
-    private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String token, String osType, String version, String uid) {
+    private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String token, OsType osType, String version, String uid) {
         String userName = username.toLowerCase();
 
         User user = holder.userDao.sharedTokenManager.getUserByToken(token);
