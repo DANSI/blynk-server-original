@@ -356,6 +356,12 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testSendUnicodeChar() throws Exception {
+        clientPair.hardwareClient.send("hardware vw 1 °F");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 °F"))));
+    }
+
+    @Test
     public void testAppSendAnyHardCommandAndBack() throws Exception {
         clientPair.appClient.send("hardware 1 dw 1 1");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 1 1"))));
