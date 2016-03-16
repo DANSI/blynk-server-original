@@ -18,6 +18,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Map;
+
 import static cc.blynk.server.core.protocol.enums.Response.*;
 
 /**
@@ -69,19 +71,19 @@ public class PushLogic extends NotificationBase {
 
     private void push(Channel channel, String username, Notification widget, String body, int dashId, int msgId) {
         if (widget.androidTokens.size() != 0) {
-            for (String token : widget.androidTokens.values()) {
-                push(channel, username, new AndroidGCMMessage(token, widget.priority, body, dashId), msgId);
+            for (Map.Entry<String, String> entry : widget.androidTokens.entrySet()) {
+                push(channel, username, new AndroidGCMMessage(entry.getValue(), widget.priority, body, dashId), msgId, widget.androidTokens, entry.getKey());
             }
         }
 
         if (widget.iOSTokens.size() != 0) {
-            for (String token : widget.iOSTokens.values()) {
-                push(channel, username, new IOSGCMMessage(token, widget.priority, body, dashId), msgId);
+            for (Map.Entry<String, String> entry : widget.iOSTokens.entrySet()) {
+                push(channel, username, new IOSGCMMessage(entry.getValue(), widget.priority, body, dashId), msgId, widget.iOSTokens, entry.getKey());
             }
         }
     }
 
-    private void push(Channel channel, String username, GCMMessage message, int msgId) {
+    private void push(Channel channel, String username, GCMMessage message, int msgId, Map<String, String> tokens, String uid) {
         blockingIOProcessor.execute(() -> {
             try {
                 gcmWrapper.send(message);
@@ -89,6 +91,11 @@ public class PushLogic extends NotificationBase {
             } catch (Exception e) {
                 log.error("Error sending push notification from hardware. For user {}.",  username, e);
                 channel.writeAndFlush(new ResponseMessage(msgId, Response.NOTIFICATION_EXCEPTION), channel.voidPromise());
+
+                if (e.getMessage() != null && e.getMessage().contains("NotRegistered")) {
+                    log.error("Removing invalid token. UID {}", uid);
+                    tokens.remove(uid);
+                }
             }
         });
     }

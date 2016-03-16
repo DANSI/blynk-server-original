@@ -21,6 +21,8 @@ import io.netty.handler.timeout.ReadTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Map;
+
 import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.StateHolderUtil.*;
 
@@ -97,24 +99,29 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     private void push(User user, Notification widget, String body, int dashId) {
         if (widget.androidTokens.size() != 0) {
-            for (String token : widget.androidTokens.values()) {
-                push(user, new AndroidGCMMessage(token, widget.priority, body, dashId));
+            for (Map.Entry<String, String> entry : widget.androidTokens.entrySet()) {
+                push(user, new AndroidGCMMessage(entry.getValue(), widget.priority, body, dashId), widget.androidTokens, entry.getKey());
             }
         }
 
         if (widget.iOSTokens.size() != 0) {
-            for (String token : widget.iOSTokens.values()) {
-                push(user, new IOSGCMMessage(token, widget.priority, body, dashId));
+            for (Map.Entry<String, String> entry : widget.iOSTokens.entrySet()) {
+                push(user, new IOSGCMMessage(entry.getValue(), widget.priority, body, dashId), widget.iOSTokens, entry.getKey());
             }
         }
     }
 
-    private void push(User user, GCMMessage message) {
+    private void push(User user, GCMMessage message, Map<String, String> tokens, String uid) {
         blockingIOProcessor.execute(() -> {
             try {
                 gcmWrapper.send(message);
             } catch (Exception e) {
                 log.error("Error sending push notification on offline hardware. For user {}", user.name, e);
+
+                if (e.getMessage() != null && e.getMessage().contains("NotRegistered")) {
+                    log.error("Removing invalid token. UID {}", uid);
+                    tokens.remove(uid);
+                }
             }
         });
     }
