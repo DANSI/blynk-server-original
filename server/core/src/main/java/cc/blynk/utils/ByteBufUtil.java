@@ -34,11 +34,12 @@ public class ByteBufUtil {
     }
 
     private static ByteBuf makeStringMessage(ByteBufAllocator allocator, short cmd, int msgId, String data) {
-        return allocator.ioBuffer(MessageBase.HEADER_LENGTH + data.length())
+        final byte[] byteData = data.getBytes(CharsetUtil.UTF_8);
+        return allocator.ioBuffer(MessageBase.HEADER_LENGTH + byteData.length)
                 .writeByte(cmd)
                 .writeShort(msgId)
-                .writeShort(data.length())
-                .writeBytes(data.getBytes(CharsetUtil.UTF_8));
+                .writeShort(byteData.length)
+                .writeBytes(byteData);
     }
 
 }
