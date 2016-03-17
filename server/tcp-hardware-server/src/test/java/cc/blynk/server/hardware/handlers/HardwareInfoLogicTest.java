@@ -46,9 +46,9 @@ public class HardwareInfoLogicTest {
         when(ctx.pipeline()).thenReturn(pipeline);
         when(ctx.alloc()).thenReturn(allocator);
         when(allocator.ioBuffer(anyInt())).thenReturn(byteBuf);
-        when(byteBuf.writeByte(anyInt())).thenReturn(byteBuf);
-        when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
-        when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
+        when(byteBuf.writeByte(eq(0))).thenReturn(byteBuf);
+        when(byteBuf.writeShort(eq(1))).thenReturn(byteBuf);
+        when(byteBuf.writeShort(eq(200))).thenReturn(byteBuf);
 
         HardwareInfoMessage hardwareInfoLogic = new HardwareInfoMessage(1, "ver 0.3.2-beta h-beat 60 buff-in 256 dev ESP8266".replaceAll(" ", "\0"));
         logic.messageReceived(ctx, null, hardwareInfoLogic);
