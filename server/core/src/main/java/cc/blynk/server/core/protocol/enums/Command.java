@@ -33,6 +33,7 @@ public final class Command {
     public static final short BRIDGE = 15;
     public static final short HARDWARE_SYNC = 16;
     public static final short HARDWARE_INFO = 17;
+    public static final short SMS = 18;
     public static final short HARDWARE = 20;
     //app commands
     public static final short CREATE_DASH = 21;

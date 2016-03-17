@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.widgets.controls.*;
 import cc.blynk.server.core.model.widgets.inputs.GPS;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.model.widgets.notifications.SMS;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.Bluetooth;
 import cc.blynk.server.core.model.widgets.others.Bridge;
@@ -49,6 +50,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Twitter.class, name = "TWITTER"),
         @JsonSubTypes.Type(value = Mail.class, name = "EMAIL"),
         @JsonSubTypes.Type(value = Notification.class, name = "NOTIFICATION"),
+        @JsonSubTypes.Type(value = SMS.class, name = "SMS"),
 
         //others
         @JsonSubTypes.Type(value = RTC.class, name = "RTC"),
