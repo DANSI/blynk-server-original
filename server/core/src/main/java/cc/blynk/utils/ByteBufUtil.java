@@ -55,6 +55,10 @@ public class ByteBufUtil {
         return makeBinaryMessage(ctx.alloc(), cmd, msgId, byteData);
     }
 
+    public static ByteBuf makeBinaryMessage(Channel channel, short cmd, int msgId, byte[] byteData) {
+        return makeBinaryMessage(channel.alloc(), cmd, msgId, byteData);
+    }
+
     private static ByteBuf makeBinaryMessage(ByteBufAllocator allocator, short cmd, int msgId, byte[] byteData) {
         return allocator.ioBuffer(MessageBase.HEADER_LENGTH + byteData.length)
                 .writeByte(cmd)

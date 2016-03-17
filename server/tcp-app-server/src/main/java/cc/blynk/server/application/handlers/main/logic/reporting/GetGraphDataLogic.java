@@ -8,7 +8,6 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataBinaryMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.Channel;
@@ -18,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
+import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.ByteBufUtil.*;
 import static cc.blynk.utils.ByteUtils.*;
@@ -76,9 +76,9 @@ public class GetGraphDataLogic {
         blockingIOProcessor.execute(() -> {
             try {
                 byte[][] data = reportingDao.getAllFromDisk(username, requestedPins, msgId);
-                byte[] compressed = compress(requestedPins[0].dashId, data, msgId);
+                byte[] compressed = compress(requestedPins[0].dashId, data);
 
-                channel.writeAndFlush(new GetGraphDataBinaryMessage(msgId, compressed), channel.voidPromise());
+                channel.writeAndFlush(makeBinaryMessage(channel, GET_GRAPH_DATA_RESPONSE, msgId, compressed), channel.voidPromise());
             } catch (NoDataException noDataException) {
                 channel.writeAndFlush(makeResponse(channel, msgId, NO_DATA_EXCEPTION), channel.voidPromise());
             } catch (Exception e) {

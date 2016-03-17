@@ -46,25 +46,26 @@ public class ByteUtils {
         return baos.toByteArray();
     }
 
-    public static byte[] compress(int dashId, byte[][] values, int msgId) {
+    public static byte[] compress(int dashId, byte[][] values) throws IOException {
         //todo calculate size
         ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
 
         try (OutputStream out = new DeflaterOutputStream(baos)) {
-            out.write(ByteBuffer.allocate(4).putInt(dashId).array());
+            writeInt(out, dashId);
             for (byte[] data : values) {
-                ByteBuffer bb = ByteBuffer.allocate(4);
-                bb.putInt(data.length / REPORTING_RECORD_SIZE_BYTES);
-                out.write(bb.array());
+                writeInt(out, data.length / REPORTING_RECORD_SIZE_BYTES);
                 out.write(data);
             }
-        } catch (IOException ioe) {
-            //todo refactor exception
-            throw new GetGraphDataException(msgId);
         }
         return baos.toByteArray();
     }
 
+    private static void writeInt(OutputStream out, int value) throws IOException {
+        out.write((value >>> 24) & 0xFF);
+        out.write((value >>> 16) & 0xFF);
+        out.write((value >>>  8) & 0xFF);
+        out.write((value) & 0xFF);
+    }
 
     //for tests only
     public static byte[] decompress(byte[] bytes) throws IOException {
