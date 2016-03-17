@@ -9,14 +9,14 @@ import static cc.blynk.server.core.protocol.enums.Command.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class TweetMessage extends StringMessage {
+public class TwitMessage extends StringMessage {
 
-    public TweetMessage(int messageId, String body) {
+    public TwitMessage(int messageId, String body) {
         super(messageId, TWEET, body.length(), body);
     }
 
     @Override
     public String toString() {
-        return "TweetMessage{" + super.toString() + "}";
+        return "TwitMessage{" + super.toString() + "}";
     }
 }

@@ -42,7 +42,7 @@ public class MessageFactory {
             case GET_GRAPH_DATA :
                 return new GetGraphDataStringMessage(messageId, body);
             case TWEET :
-                return new TweetMessage(messageId, body);
+                return new TwitMessage(messageId, body);
             case EMAIL :
                 return new MailMessage(messageId, body);
             case PUSH_NOTIFICATION :

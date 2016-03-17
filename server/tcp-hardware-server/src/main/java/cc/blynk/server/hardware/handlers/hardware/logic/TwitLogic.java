@@ -25,15 +25,15 @@ import static cc.blynk.server.core.protocol.enums.Response.*;
  * Created on 2/1/2015.
  *
  */
-public class TweetLogic extends NotificationBase {
+public class TwitLogic extends NotificationBase {
 
-    private static final Logger log = LogManager.getLogger(TweetLogic.class);
+    private static final Logger log = LogManager.getLogger(TwitLogic.class);
 
     private static final int MAX_TWITTER_BODY_SIZE = 140;
     private final BlockingIOProcessor blockingIOProcessor;
     private final TwitterWrapper twitterWrapper;
 
-    public TweetLogic(BlockingIOProcessor blockingIOProcessor, TwitterWrapper twitterWrapper, long notificationQuotaLimit) {
+    public TwitLogic(BlockingIOProcessor blockingIOProcessor, TwitterWrapper twitterWrapper, long notificationQuotaLimit) {
         super(notificationQuotaLimit);
         this.blockingIOProcessor = blockingIOProcessor;
         this.twitterWrapper = twitterWrapper;
