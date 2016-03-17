@@ -31,6 +31,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             nga.field('name', 'email'),
             nga.field('pass', 'password'),
             nga.field('lastModifiedTs'),
+            nga.field('energy'),
             nga.field('profile.dashBoards', 'embedded_list')
                 .targetFields([
                     nga.field('id'),
