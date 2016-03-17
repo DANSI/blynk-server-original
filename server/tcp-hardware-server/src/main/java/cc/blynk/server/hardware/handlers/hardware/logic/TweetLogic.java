@@ -65,7 +65,7 @@ public class TweetLogic extends NotificationBase {
                 twitterWrapper.send(token, secret, body);
                 channel.writeAndFlush(new ResponseMessage(msgId, OK), channel.voidPromise());
             } catch (Exception e) {
-                log.error("Error sending twit. For user {}.",  username, e);
+                log.error("Error sending twit for user {}. Reason : {}",  username, e.getMessage());
                 channel.writeAndFlush(new ResponseMessage(msgId, Response.NOTIFICATION_EXCEPTION), channel.voidPromise());
             }
         });
