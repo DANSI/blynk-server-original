@@ -32,6 +32,8 @@ import static org.mockito.Mockito.*;
  */
 public abstract class IntegrationBase extends BaseTest {
 
+    public static final String DEFAULT_TEST_USER = "dima@mail.ua";
+
     public static String readTestUserProfile(String fileName) {
         if (fileName == null) {
             fileName = "user_profile_json.txt";
@@ -131,7 +133,7 @@ public abstract class IntegrationBase extends BaseTest {
     }
 
     public static ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {
-        return initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, "dima@mail.ua 1", null, properties);
+        return initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, DEFAULT_TEST_USER + " 1", null, properties);
     }
 
     public static String b(String body) {
@@ -139,11 +141,11 @@ public abstract class IntegrationBase extends BaseTest {
     }
 
     public ClientPair initAppAndHardPair() throws Exception {
-        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "dima@mail.ua 1", null, properties);
+        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER + " 1", null, properties);
     }
 
     public ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
-        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "dima@mail.ua 1", jsonProfile, properties);
+        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER + " 1", jsonProfile, properties);
     }
 
 }

@@ -5,15 +5,17 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
-import cc.blynk.server.application.handlers.main.logic.reporting.GraphPinRequestData;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -21,10 +23,10 @@ import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
-import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
+import cc.blynk.server.workers.StorageWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.JsonParser;
@@ -37,6 +39,10 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -371,15 +377,36 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    public void testGetGraphEmptyData() throws Exception {
+    public void testGetGraphDataFor1Pin() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+
+        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, PinType.DIGITAL, (byte) 8, GraphType.HOURLY));
+
+        StorageWorker.write(pinReportingDataPath, 1.11D, 1111111);
+        StorageWorker.write(pinReportingDataPath, 1.22D, 2222222);
+
         clientPair.appClient.send("getgraphdata 1 d 8 24 h");
 
-        GraphPinRequest[] array = new GraphPinRequest[] {
-                new GraphPinRequestData(1, "d 8 24 h".split(" "), 0, 1, 4)
-        };
+        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
-        //todo find how to check arrays
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA_EXCEPTION)));
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(2, bb.getInt());
+        assertEquals(1.11D, bb.getDouble(), 0.1);
+        assertEquals(1111111, bb.getLong());
+        assertEquals(1.22D, bb.getDouble(), 0.1);
+        assertEquals(2222222, bb.getLong());
+
     }
 
     @Test
@@ -399,7 +426,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         appClient.send("email 1");
-        verify(mailWrapper, timeout(1000)).send(eq("dima@mail.ua"), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"));
+        verify(mailWrapper, timeout(1000)).send(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"));
     }
 
     @Test
@@ -1009,4 +1036,8 @@ public class MainWorkflowTest extends IntegrationBase {
 
     }
 
+    @Override
+    public String getDataFolder() {
+        return com.google.common.io.Files.createTempDir().toString();
+    }
 }
