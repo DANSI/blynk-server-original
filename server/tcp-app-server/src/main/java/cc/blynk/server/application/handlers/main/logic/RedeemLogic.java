@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * Handler responsible for handling redeem logic. Unlocks premium content for predefined tokens.
@@ -40,7 +41,7 @@ public class RedeemLogic {
         String redeemToken = message.body;
 
         if (isAlreadyUnlocked(user)) {
-            ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
+            ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
             return;
         }
 

@@ -3,10 +3,8 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -16,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * Sends email from received from hardware. Via google smtp server.
@@ -71,10 +70,10 @@ public class MailLogic extends NotificationBase {
         blockingIOProcessor.execute(() -> {
             try {
                 mailWrapper.send(to, subj, body);
-                channel.writeAndFlush(new ResponseMessage(msgId, OK), channel.voidPromise());
+                channel.writeAndFlush(ok(channel, msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending mail from hardware. For user {}.",  username, e);
-                channel.writeAndFlush(new ResponseMessage(msgId, Response.NOTIFICATION_EXCEPTION), channel.voidPromise());
+                channel.writeAndFlush(makeResponse(channel, msgId, NOTIFICATION_EXCEPTION), channel.voidPromise());
             }
         });
     }

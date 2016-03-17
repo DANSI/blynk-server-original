@@ -4,13 +4,12 @@ import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * The Blynk Project.
@@ -44,6 +43,6 @@ public class AddPushLogic {
                 break;
         }
 
-        ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
+        ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
     }
 }

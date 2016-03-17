@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Map;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * Handler sends push notifications to Applications. Initiation is on hardware side.
@@ -87,10 +88,10 @@ public class PushLogic extends NotificationBase {
         blockingIOProcessor.execute(() -> {
             try {
                 gcmWrapper.send(message);
-                channel.writeAndFlush(new ResponseMessage(msgId, OK), channel.voidPromise());
+                channel.writeAndFlush(ok(channel, msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending push notification from hardware. For user {}. {}",  username, e.getMessage());
-                channel.writeAndFlush(new ResponseMessage(msgId, Response.NOTIFICATION_EXCEPTION), channel.voidPromise());
+                channel.writeAndFlush(makeResponse(channel, msgId, NOTIFICATION_EXCEPTION), channel.voidPromise());
 
                 if (e.getMessage() != null && e.getMessage().contains("NotRegistered")) {
                     log.error("Removing invalid token. UID {}", uid);

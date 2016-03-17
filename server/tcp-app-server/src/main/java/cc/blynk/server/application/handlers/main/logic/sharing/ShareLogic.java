@@ -5,15 +5,14 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.AppStateHolderUtil.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * The Blynk Project.
@@ -53,7 +52,7 @@ public class ShareLogic {
             }
         }
 
-        ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
+        ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
     }
 
 }

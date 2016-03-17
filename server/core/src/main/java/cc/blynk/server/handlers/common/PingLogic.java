@@ -2,7 +2,6 @@ package cc.blynk.server.handlers.common;
 
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
@@ -14,7 +13,7 @@ import static cc.blynk.utils.ByteBufUtil.*;
 public class PingLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, int messageId) {
-        ctx.writeAndFlush(makeResponse(ctx, messageId, OK), ctx.voidPromise());
+        ctx.writeAndFlush(ok(ctx, messageId), ctx.voidPromise());
     }
 
 }

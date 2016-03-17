@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * Process register message.
@@ -82,7 +83,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         log.info("Registered {}.", userName);
 
-        ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
+        ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
     }
 
     @Override

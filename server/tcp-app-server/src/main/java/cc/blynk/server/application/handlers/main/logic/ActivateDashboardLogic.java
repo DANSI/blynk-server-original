@@ -5,8 +5,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.protocol.enums.Response;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
 import cc.blynk.utils.ParseUtil;
@@ -21,6 +19,7 @@ import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.AppStateHolderUtil.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * The Blynk Project.
@@ -51,10 +50,10 @@ public class ActivateDashboardLogic {
         Session session = sessionDao.userSession.get(user);
 
         if (session.hasHardwareOnline(dashId)) {
-            ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
+            ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
         } else {
             log.debug("No device in session.");
-            ctx.writeAndFlush(new ResponseMessage(message.id, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(ctx, message.id, DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
         }
 
         List<SyncMessage> syncMessages = new ArrayList<>();

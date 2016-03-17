@@ -1,6 +1,5 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareProfile;
@@ -10,7 +9,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  *
@@ -47,7 +46,7 @@ public class HardwareInfoLogic {
             ctx.pipeline().addFirst(new ReadTimeoutHandler(newReadTimeout));
         }
 
-        ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
+        ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
     }
 
 }

@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 import static cc.blynk.utils.ByteUtils.*;
 
 /**
@@ -53,7 +53,7 @@ public class GetGraphDataLogic {
         //special case for delete command
         if (messageParts.length == 4) {
             deleteGraphData(messageParts, user.name, message.id);
-            ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
+            ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
         } else {
             int dashId = ParseUtil.parseInt(messageParts[0], message.id);
             user.profile.validateDashId(dashId, message.id);

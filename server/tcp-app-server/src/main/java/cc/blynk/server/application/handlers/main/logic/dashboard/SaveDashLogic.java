@@ -5,14 +5,13 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.JsonParser;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * The Blynk Project.
@@ -63,7 +62,7 @@ public class SaveDashLogic {
         user.profile.dashBoards[index] = updatedDash;
         user.lastModifiedTs = System.currentTimeMillis();
 
-        ctx.writeAndFlush(new ResponseMessage(message.id, OK), ctx.voidPromise());
+        ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
     }
 
 }

@@ -9,13 +9,12 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.UserNotAuthenticated;
 import cc.blynk.server.core.protocol.exceptions.UserNotRegistered;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import io.netty.channel.*;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 
 /**
@@ -88,7 +87,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
     private void completeLogin(Channel channel, Session session, String userName, int msgId) {
         session.addAppChannel(channel);
-        channel.writeAndFlush(new ResponseMessage(msgId, OK), channel.voidPromise());
+        channel.writeAndFlush(ok(channel, msgId), channel.voidPromise());
         log.info("{} app joined.", userName);
     }
 

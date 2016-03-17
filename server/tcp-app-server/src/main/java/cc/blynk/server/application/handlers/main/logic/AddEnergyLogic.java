@@ -5,7 +5,6 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.ByteBufUtil.*;
 
 
@@ -20,7 +19,7 @@ public class AddEnergyLogic {
         int energyAmountToAdd = ParseUtil.parseInt(message.body, message.id);
 
         user.purchaseEnergy(energyAmountToAdd);
-        ctx.writeAndFlush(makeResponse(ctx, message.id, OK), ctx.voidPromise());
+        ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
     }
 
 }
