@@ -15,6 +15,8 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class GetShareTokenLogic {
 
+    private static final int PRIVATE_TOKEN_PRICE = 2000;
+
     private final UserDao userDao;
 
     public GetShareTokenLogic(UserDao userDao) {
@@ -34,6 +36,8 @@ public class GetShareTokenLogic {
         user.profile.validateDashId(dashId, message.id);
 
         String token = userDao.sharedTokenManager.getToken(user, dashId);
+
+        user.subtractEnergy(PRIVATE_TOKEN_PRICE, message.id);
 
         ctx.writeAndFlush(new GetShareTokenMessage(message.id, token), ctx.voidPromise());
     }
