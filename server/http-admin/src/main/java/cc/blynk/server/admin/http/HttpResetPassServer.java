@@ -25,8 +25,6 @@ public class HttpResetPassServer extends BaseServer {
 
         HandlerRegistry.register("", new ResetPasswordLogic(holder.props, holder.userDao, holder.mailWrapper));
 
-        log.info("Enabling HTTP reset pass server.");
-
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {

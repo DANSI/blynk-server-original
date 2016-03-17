@@ -34,7 +34,6 @@ public class HardwareSSLServer extends BaseServer {
 
         int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
 
-        log.info("Enabling SSL for hardware.");
         final DomainNameMapping<SslContext> mappings = SslUtil.getDomainMappings(holder.props);
 
         this.channelInitializer = new ChannelInitializer<SocketChannel>() {

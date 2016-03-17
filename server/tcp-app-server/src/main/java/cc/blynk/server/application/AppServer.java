@@ -38,8 +38,6 @@ public class AppServer extends BaseServer {
         final AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 
-        log.info("Enabling SSL for application.");
-
         final DomainNameMapping<SslContext> mappings = SslUtil.getDomainMappingsMutual(holder.props);
 
         int appTimeoutSecs = holder.props.getIntProperty("app.socket.idle.timeout", 0);

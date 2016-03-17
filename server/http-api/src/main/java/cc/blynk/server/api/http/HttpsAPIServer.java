@@ -28,8 +28,6 @@ public class HttpsAPIServer extends BaseServer {
 
         HandlerRegistry.register(new HttpAPILogic(holder));
 
-        log.info("Enabling HTTPS API.");
-
         final DomainNameMapping<SslContext> mappings = SslUtil.getDomainMappings(holder.props);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {

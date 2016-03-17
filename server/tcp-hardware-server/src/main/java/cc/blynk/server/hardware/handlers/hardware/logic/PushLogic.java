@@ -89,7 +89,7 @@ public class PushLogic extends NotificationBase {
                 gcmWrapper.send(message);
                 channel.writeAndFlush(new ResponseMessage(msgId, OK), channel.voidPromise());
             } catch (Exception e) {
-                log.error("Error sending push notification from hardware. For user {}.",  username, e);
+                log.error("Error sending push notification from hardware. For user {}. {}",  username, e.getMessage());
                 channel.writeAndFlush(new ResponseMessage(msgId, Response.NOTIFICATION_EXCEPTION), channel.voidPromise());
 
                 if (e.getMessage() != null && e.getMessage().contains("NotRegistered")) {

@@ -116,7 +116,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             try {
                 gcmWrapper.send(message);
             } catch (Exception e) {
-                log.error("Error sending push notification on offline hardware. For user {}", user.name, e);
+                log.error("Error sending push notification on offline hardware. For user {}. {}", user.name, e.getMessage());
 
                 if (e.getMessage() != null && e.getMessage().contains("NotRegistered")) {
                     log.error("Removing invalid token. UID {}", uid);

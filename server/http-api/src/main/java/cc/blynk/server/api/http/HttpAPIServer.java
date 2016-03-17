@@ -24,8 +24,6 @@ public class HttpAPIServer extends BaseServer {
 
         HandlerRegistry.register(new HttpAPILogic(holder));
 
-        log.info("Enabling HTTP API.");
-
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {

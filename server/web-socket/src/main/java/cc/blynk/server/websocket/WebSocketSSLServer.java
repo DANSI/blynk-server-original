@@ -32,8 +32,6 @@ public class WebSocketSSLServer extends BaseServer {
     public WebSocketSSLServer(Holder holder) {
         super(holder.props.getIntProperty("ssl.websocket.port"));
 
-        log.info("Enabling Web SSL Sockets.");
-
         final int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder);
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.blockingIOProcessor, holder.gcmWrapper);

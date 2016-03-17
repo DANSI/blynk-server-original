@@ -48,7 +48,6 @@ public class HttpsAdminServer extends BaseServer {
             allowedIPs = Collections.emptySet();
         }
 
-        log.info("Enabling HTTPS for admin UI.");
         final DomainNameMapping<SslContext> mappings = SslUtil.getDomainMappings(holder.props);
         final IpFilterHandler ipFilterHandler = new IpFilterHandler(allowedIPs);
 
