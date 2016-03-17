@@ -44,15 +44,18 @@ public class ByteBufUtil {
     }
 
     public static ByteBuf makeStringMessage(ChannelHandlerContext ctx, short cmd, int msgId, String data) {
-        return makeStringMessage(ctx.alloc(), cmd, msgId, data);
+        return makeBinaryMessage(ctx.alloc(), cmd, msgId, data.getBytes(CharsetUtil.UTF_8));
     }
 
     public static ByteBuf makeStringMessage(Channel channel, short cmd, int msgId, String data) {
-        return makeStringMessage(channel.alloc(), cmd, msgId, data);
+        return makeBinaryMessage(channel.alloc(), cmd, msgId, data.getBytes(CharsetUtil.UTF_8));
     }
 
-    private static ByteBuf makeStringMessage(ByteBufAllocator allocator, short cmd, int msgId, String data) {
-        final byte[] byteData = data.getBytes(CharsetUtil.UTF_8);
+    public static ByteBuf makeBinaryMessage(ChannelHandlerContext ctx, short cmd, int msgId, byte[] byteData) {
+        return makeBinaryMessage(ctx.alloc(), cmd, msgId, byteData);
+    }
+
+    private static ByteBuf makeBinaryMessage(ByteBufAllocator allocator, short cmd, int msgId, byte[] byteData) {
         return allocator.ioBuffer(MessageBase.HEADER_LENGTH + byteData.length)
                 .writeByte(cmd)
                 .writeShort(msgId)

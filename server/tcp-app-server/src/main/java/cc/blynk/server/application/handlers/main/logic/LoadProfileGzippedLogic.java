@@ -2,9 +2,17 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
+import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+
+import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * The Blynk Project.
@@ -13,6 +21,8 @@ import io.netty.channel.ChannelHandlerContext;
  *
  */
 public class LoadProfileGzippedLogic {
+
+    private static final Logger log = LogManager.getLogger(LoadProfileGzippedLogic.class);
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String body;
@@ -25,7 +35,13 @@ public class LoadProfileGzippedLogic {
             body = user.profile.getDashById(dashId, message.id).toString();
         }
 
-        ctx.writeAndFlush(new LoadProfileGzippedBinaryMessage(message.id, body), ctx.voidPromise());
+        try {
+            byte[] data = ByteUtils.compress(body);
+            ctx.writeAndFlush(makeBinaryMessage(ctx, LOAD_PROFILE_GZIPPED, message.id, data), ctx.voidPromise());
+        } catch (IOException e) {
+            log.error("Error compressing data.", e);
+            ctx.writeAndFlush(makeResponse(ctx, message.id, NO_DATA_EXCEPTION));
+        }
     }
 
 }

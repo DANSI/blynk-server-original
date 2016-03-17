@@ -14,6 +14,7 @@ import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.JsonParser;
 import org.junit.After;
 import org.junit.Before;
@@ -379,7 +380,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         String body = clientPair.appClient.getBody();
 
         appClient2.send("loadProfileGzipped");
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(2, body)));
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(2, ByteUtils.compress(body))));
     }
 
 
