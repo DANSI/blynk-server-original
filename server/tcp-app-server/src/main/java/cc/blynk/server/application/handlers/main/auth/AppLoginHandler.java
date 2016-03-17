@@ -46,7 +46,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             throw new IllegalCommandException("Wrong income message format.", message.id);
         }
 
-        OsType osType = null;
+        OsType osType = OsType.OTHER;
         String version = null;
         if (messageParts.length == 4) {
             osType = OsType.parse(messageParts[2]);
