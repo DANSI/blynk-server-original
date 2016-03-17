@@ -9,9 +9,7 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
@@ -19,6 +17,7 @@ import io.netty.channel.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
@@ -70,7 +69,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
         if (user == null || !user.name.equals(userName)) {
             log.debug("Share token is invalid. User : {}, token {}, {}", userName, token, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(new ResponseMessage(messageId, Response.NOT_ALLOWED), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(ctx, messageId, NOT_ALLOWED), ctx.voidPromise());
             return;
         }
 
@@ -79,7 +78,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         DashBoard dash = user.profile.getDashById(dashId);
         if (!dash.isShared) {
             log.debug("Dashboard is not shared. User : {}, token {}, {}", userName, token, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(new ResponseMessage(messageId, Response.NOT_ALLOWED), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(ctx, messageId, NOT_ALLOWED), ctx.voidPromise());
             return;
         }
 

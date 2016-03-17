@@ -5,16 +5,16 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.sharing.RefreshShareTokenMessage;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 
+import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.AppStateHolderUtil.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * The Blynk Project.
@@ -50,11 +50,11 @@ public class RefreshShareTokenLogic {
         for (Channel appChannel : session.getAppChannels()) {
             AppShareStateHolder state = getShareState(appChannel);
             if (state != null && state.dashId == dashId) {
-                ChannelFuture cf = appChannel.writeAndFlush(new ResponseMessage(message.id, Response.NOT_ALLOWED));
+                ChannelFuture cf = appChannel.writeAndFlush(makeResponse(appChannel, message.id, NOT_ALLOWED));
                 cf.addListener(channelFuture -> appChannel.close());
             }
         }
 
-        ctx.writeAndFlush(new RefreshShareTokenMessage(message.id, token), ctx.voidPromise());
+        ctx.writeAndFlush(makeStringMessage(ctx, REFRESH_SHARE_TOKEN, message.id, token), ctx.voidPromise());
     }
 }

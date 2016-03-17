@@ -4,11 +4,9 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataBinaryMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
@@ -20,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
+import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.ByteBufUtil.*;
 import static cc.blynk.utils.ByteUtils.*;
 
@@ -81,10 +80,10 @@ public class GetGraphDataLogic {
 
                 channel.writeAndFlush(new GetGraphDataBinaryMessage(msgId, compressed), channel.voidPromise());
             } catch (NoDataException noDataException) {
-                channel.writeAndFlush(new ResponseMessage(msgId, Response.NO_DATA_EXCEPTION), channel.voidPromise());
+                channel.writeAndFlush(makeResponse(channel, msgId, NO_DATA_EXCEPTION), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error reading reporting data. For user {}", username);
-                channel.writeAndFlush(new ResponseMessage(msgId, Response.SERVER_EXCEPTION), channel.voidPromise());
+                channel.writeAndFlush(makeResponse(channel, msgId, SERVER_EXCEPTION), channel.voidPromise());
             }
         });
     }

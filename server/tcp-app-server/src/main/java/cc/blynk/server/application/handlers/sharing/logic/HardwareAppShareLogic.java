@@ -6,11 +6,8 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.FrequencyWidget;
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
@@ -19,6 +16,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * The Blynk Project.
@@ -46,13 +45,13 @@ public class HardwareAppShareLogic {
 
         if (!dashBoard.isActive) {
             log.debug("No active dashboard.");
-            ctx.writeAndFlush(new ResponseMessage(message.id, Response.NO_ACTIVE_DASHBOARD), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(ctx, message.id, NO_ACTIVE_DASHBOARD), ctx.voidPromise());
             return;
         }
 
         if (!dashBoard.isShared) {
             log.debug("Dashboard is not shared. User : {}, {}", state.user.name, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(new ResponseMessage(message.id, Response.NOT_ALLOWED), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(ctx, message.id, NOT_ALLOWED), ctx.voidPromise());
             return;
         }
 
@@ -67,7 +66,7 @@ public class HardwareAppShareLogic {
                 if (sharedToken != null) {
                     for (Channel appChannel : session.getAppChannels()) {
                         if (appChannel != ctx.channel() && Session.needSync(appChannel, sharedToken)) {
-                            appChannel.writeAndFlush(new SyncMessage(message.id, message.body), appChannel.voidPromise());
+                            appChannel.writeAndFlush(makeStringMessage(appChannel, SYNC, message.id, message.body), appChannel.voidPromise());
                         }
                     }
                 }

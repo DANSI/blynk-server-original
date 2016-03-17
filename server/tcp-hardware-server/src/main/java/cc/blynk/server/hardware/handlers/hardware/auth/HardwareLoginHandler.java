@@ -5,7 +5,6 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
@@ -21,6 +20,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * Handler responsible for managing hardware and apps login messages.
@@ -68,7 +68,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         if (user == null) {
             log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(new ResponseMessage(message.id, Response.INVALID_TOKEN), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(ctx, message.id, INVALID_TOKEN), ctx.voidPromise());
             return;
         }
 
@@ -77,7 +77,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         DashBoard dash = user.profile.getDashById(dashId);
         if (dash == null) {
             log.warn("User : {} requested token {} for non-existing {} dash id.", user.name, token, dashId);
-            ctx.writeAndFlush(new ResponseMessage(message.id, Response.INVALID_TOKEN), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(ctx, message.id, INVALID_TOKEN), ctx.voidPromise());
             return;
         }
 

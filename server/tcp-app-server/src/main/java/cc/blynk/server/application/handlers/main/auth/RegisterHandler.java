@@ -2,7 +2,6 @@ package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -53,7 +52,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         //expecting message with 2 parts, described above in comment.
         if (messageParts.length != 2) {
             log.error("Register Handler. Wrong income message format. {}", message);
-            ctx.writeAndFlush(new ResponseMessage(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(ctx, message.id, ILLEGAL_COMMAND), ctx.voidPromise());
             return;
         }
 
@@ -63,19 +62,19 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         if (!EmailValidator.getInstance().isValid(userName)) {
             log.error("Register Handler. Wrong email: {}", userName);
-            ctx.writeAndFlush(new ResponseMessage(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(ctx, message.id, ILLEGAL_COMMAND), ctx.voidPromise());
             return;
         }
 
         if (userDao.isUserExists(userName)) {
             log.warn("User with name {} already exists.", userName);
-            ctx.writeAndFlush(new ResponseMessage(message.id, USER_ALREADY_REGISTERED), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(ctx, message.id, USER_ALREADY_REGISTERED), ctx.voidPromise());
             return;
         }
 
         if (allowedUsers != null && !allowedUsers.contains(userName)) {
             log.warn("User with name {} not allowed to register.", userName);
-            ctx.writeAndFlush(new ResponseMessage(message.id, NOT_ALLOWED), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(ctx, message.id, NOT_ALLOWED), ctx.voidPromise());
             return;
         }
 

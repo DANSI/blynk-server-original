@@ -3,9 +3,11 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
+
+import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * The Blynk Project.
@@ -30,6 +32,6 @@ public class GetTokenLogic {
 
         String token = userDao.tokenManager.getToken(user, dashId);
 
-        ctx.writeAndFlush(new GetTokenMessage(message.id, token), ctx.voidPromise());
+        ctx.writeAndFlush(makeStringMessage(ctx, GET_TOKEN, message.id, token), ctx.voidPromise());
     }
 }

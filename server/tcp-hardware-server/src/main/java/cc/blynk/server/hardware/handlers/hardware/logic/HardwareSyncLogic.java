@@ -7,13 +7,15 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
 import cc.blynk.server.core.model.widgets.others.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.PinUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.time.Instant;
+
+import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * The Blynk Project.
@@ -45,8 +47,9 @@ public class HardwareSyncLogic {
             if (PinUtil.isReadOperation(bodyParts[0])) {
                 Widget widget = dash.findWidgetByPin(pin, pinType);
                 if (widget instanceof RTC)  {
-                    long now = Instant.now().getEpochSecond();
-                    ctx.writeAndFlush(new HardwareMessage(message.id, Pin.makeHardwareBody(pinType, pin, String.valueOf(now))), ctx.voidPromise());
+                    final long now = Instant.now().getEpochSecond();
+                    final String body = Pin.makeHardwareBody(pinType, pin, String.valueOf(now));
+                    ctx.writeAndFlush(makeStringMessage(ctx, HARDWARE, message.id, body), ctx.voidPromise());
                 } else if (widget instanceof HardwareSyncWidget) {
                     ((HardwareSyncWidget) widget).send(ctx, message.id);
                     ctx.flush();

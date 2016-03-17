@@ -3,9 +3,7 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.NotificationBodyInvalidException;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.exceptions.NotifNotAuthorizedException;
@@ -54,7 +52,7 @@ public class PushLogic extends NotificationBase {
 
         if (!dash.isActive) {
             log.debug("No active dashboard.");
-            ctx.writeAndFlush(new ResponseMessage(message.id, Response.NO_ACTIVE_DASHBOARD), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(ctx, message.id, NO_ACTIVE_DASHBOARD), ctx.voidPromise());
             return;
         }
 

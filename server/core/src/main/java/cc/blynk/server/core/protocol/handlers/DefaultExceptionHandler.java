@@ -2,7 +2,6 @@ package cc.blynk.server.core.protocol.handlers;
 
 import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.ssl.NotSslRecordException;
@@ -12,6 +11,8 @@ import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.SSLException;
 import java.io.IOException;
+
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * The Blynk Project.
@@ -27,7 +28,7 @@ public interface DefaultExceptionHandler {
             BaseServerException baseServerException = (BaseServerException) cause;
             //no need for stack trace for known exceptions
             log.error(baseServerException.getMessage());
-            ctx.writeAndFlush(new ResponseMessage(baseServerException.msgId, baseServerException.errorCode), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(ctx, baseServerException.msgId, baseServerException.errorCode), ctx.voidPromise());
         } else {
             handleUnexpectedException(ctx, cause);
         }
