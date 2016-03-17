@@ -4,8 +4,10 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.sharing.GetShareTokenMessage;
 import io.netty.channel.ChannelHandlerContext;
+
+import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * The Blynk Project.
@@ -15,7 +17,7 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class GetShareTokenLogic {
 
-    private static final int PRIVATE_TOKEN_PRICE = 2000;
+    private static final int PRIVATE_TOKEN_PRICE = 1000;
 
     private final UserDao userDao;
 
@@ -39,6 +41,6 @@ public class GetShareTokenLogic {
 
         user.subtractEnergy(PRIVATE_TOKEN_PRICE, message.id);
 
-        ctx.writeAndFlush(new GetShareTokenMessage(message.id, token), ctx.voidPromise());
+        ctx.writeAndFlush(makeStringMessage(ctx, GET_SHARE_TOKEN, message.id, token), ctx.voidPromise());
     }
 }
