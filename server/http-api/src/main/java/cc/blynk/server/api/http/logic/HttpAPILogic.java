@@ -373,7 +373,7 @@ public class HttpAPILogic {
             try {
                 mailWrapper.send(to, subj, body);
             } catch (Exception e) {
-                log.error("Error sending email from HTTP. For user {}", username, e);
+                log.error("Error sending email from HTTP. For user '{}'. To '{}'. Reason : {}", username, to, e.getMessage());
             }
         });
     }
