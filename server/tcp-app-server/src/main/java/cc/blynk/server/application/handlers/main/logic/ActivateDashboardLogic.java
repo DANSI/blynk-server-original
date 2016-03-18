@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
@@ -14,9 +13,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.AppStateHolderUtil.*;
 import static cc.blynk.utils.ByteBufUtil.*;
@@ -56,21 +53,19 @@ public class ActivateDashboardLogic {
             ctx.writeAndFlush(makeResponse(ctx, message.id, DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
         }
 
-        List<SyncMessage> syncMessages = new ArrayList<>();
-        for (Widget widget : dash.widgets) {
-            String body = widget.makeHardwareBody();
-            if (body != null) {
-                syncMessages.add(new SyncMessage(1111, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
-            }
-        }
-
         for (Channel appChannel : session.getAppChannels()) {
             if (appChannel != ctx.channel() && getAppState(appChannel) != null) {
-                appChannel.write(message);
+                appChannel.write(makeStringMessage(appChannel, message.command, message.id, message.body));
             }
-            for (SyncMessage syncMessage : syncMessages) {
-                appChannel.write(syncMessage);
+
+            for (Widget widget : dash.widgets) {
+                String body = widget.makeHardwareBody();
+                if (body != null) {
+                    final String data = dashId + StringUtils.BODY_SEPARATOR_STRING + body;
+                    appChannel.write(makeStringMessage(appChannel, SYNC, 1111, data));
+                }
             }
+
             appChannel.flush();
         }
     }

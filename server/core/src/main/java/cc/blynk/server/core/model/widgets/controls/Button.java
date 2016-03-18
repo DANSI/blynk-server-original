@@ -1,8 +1,10 @@
 package cc.blynk.server.core.model.widgets.controls;
 
 import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import io.netty.channel.ChannelHandlerContext;
+
+import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * The Blynk Project.
@@ -17,7 +19,7 @@ public class Button extends OnePinWidget implements HardwareSyncWidget {
     public void send(ChannelHandlerContext ctx, int msgId) {
         String body = makeHardwareBody();
         if (body != null) {
-            ctx.write(new HardwareMessage(msgId, body), ctx.voidPromise());
+            ctx.write(makeStringMessage(ctx, HARDWARE, msgId, body), ctx.voidPromise());
         }
     }
 

@@ -2,8 +2,10 @@ package cc.blynk.server.core.model.widgets.controls;
 
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import io.netty.channel.ChannelHandlerContext;
+
+import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * The Blynk Project.
@@ -28,12 +30,12 @@ public class TwoAxisJoystick extends MultiPinWidget implements HardwareSyncWidge
         if (split) {
             for (Pin pin : pins) {
                 if (pin.notEmpty()) {
-                    ctx.write(new HardwareMessage(msgId, pin.makeHardwareBody()), ctx.voidPromise());
+                    ctx.write(makeStringMessage(ctx, HARDWARE, msgId, pin.makeHardwareBody()), ctx.voidPromise());
                 }
             }
         } else {
             if (pins[0].notEmpty()) {
-                ctx.write(new HardwareMessage(msgId, makeHardwareBody()), ctx.voidPromise());
+                ctx.write(makeStringMessage(ctx, HARDWARE, msgId, makeHardwareBody()), ctx.voidPromise());
             }
         }
     }
