@@ -55,7 +55,7 @@
                 <Route>
                     <File name="${ctx:user}" fileName="${sys:logs.folder}/users/${ctx:user}.log">
                         <PatternLayout>
-                            <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
+                            <pattern>%d{yyyy-MM-dd} %d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
                         </PatternLayout>
                     </File>
                 </Route>
