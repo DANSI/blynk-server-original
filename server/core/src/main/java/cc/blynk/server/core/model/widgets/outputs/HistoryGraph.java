@@ -9,7 +9,7 @@ import cc.blynk.server.core.model.widgets.MultiPinWidget;
  * Created by Dmitriy Dumanskiy.
  * Created on 12.08.15.
  */
-public class Logger extends MultiPinWidget {
+public class HistoryGraph extends MultiPinWidget {
 
     public GraphPeriod period;
 

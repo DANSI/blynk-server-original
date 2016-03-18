@@ -37,6 +37,6 @@ public class Graph extends OnePinWidget implements FrequencyWidget {
 
     @Override
     public int getPrice() {
-        return 300;
+        return 400;
     }
 }

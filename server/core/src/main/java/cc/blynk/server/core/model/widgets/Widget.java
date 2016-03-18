@@ -55,7 +55,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         //others
         @JsonSubTypes.Type(value = RTC.class, name = "RTC"),
         @JsonSubTypes.Type(value = Bridge.class, name = "BRIDGE"),
-        @JsonSubTypes.Type(value = Logger.class, name = "LOGGER"),
+        @JsonSubTypes.Type(value = HistoryGraph.class, name = "LOGGER"),
         @JsonSubTypes.Type(value = Bluetooth.class, name = "BLUETOOTH"),
 
         //MENU
