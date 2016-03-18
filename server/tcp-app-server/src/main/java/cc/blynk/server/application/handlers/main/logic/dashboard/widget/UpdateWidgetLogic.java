@@ -48,11 +48,16 @@ public class UpdateWidgetLogic {
             throw new NotAllowedException("Widget is larger then limit.", message.id);
         }
 
-        DashBoard dash = user.profile.getDashById(dashId, message.id);
+        DashBoard dash = user.profile.getDashById(dashId);
 
         Widget newWidget = JsonParser.parseWidget(widgetString, message.id);
 
         log.debug("Updating widget {}.", widgetString);
+
+        if (dash == null || newWidget == null) {
+            log.error("Error updating widget {}. Project : {}", widgetString, dash);
+            throw new IllegalCommandException("Empty widget or project.", message.id);
+        }
 
         int existingWidgetIndex = dash.getWidgetIndex(newWidget.id, message.id);
 
