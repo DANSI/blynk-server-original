@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.utils.ByteBufUtil.*;
@@ -16,7 +17,9 @@ import static cc.blynk.utils.ByteBufUtil.*;
 public class AddEnergyLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        int energyAmountToAdd = ParseUtil.parseInt(message.body, message.id);
+        String[] bodyParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+
+        int energyAmountToAdd = ParseUtil.parseInt(bodyParts[0], message.id);
 
         user.purchaseEnergy(energyAmountToAdd);
         ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
