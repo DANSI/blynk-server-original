@@ -62,6 +62,10 @@ public class HardwareLogic {
         if (isWriteOperation(body)) {
             String[] splitBody = body.split(StringUtils.BODY_SEPARATOR_STRING);
 
+            if (splitBody.length < 3) {
+                throw new IllegalCommandException("Write command is wrong.", message.id);
+            }
+
             final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
             final byte pin = ParseUtil.parseByte(splitBody[1], message.id);
             final String[] values = Arrays.copyOfRange(splitBody, 2, splitBody.length);
