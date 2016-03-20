@@ -16,6 +16,7 @@
         <module>email</module>
         <module>push</module>
         <module>twitter</module>
+        <module>sms</module>
     </modules>
 
 </project>
