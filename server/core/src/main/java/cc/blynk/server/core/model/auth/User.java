@@ -124,14 +124,17 @@ public class User implements Serializable {
     public void subtractEnergy(int price, int msgId) {
         checkPrice(price, msgId);
         this.energy -= price;
+        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     public void addEnergy(int price) {
         this.energy += RECYCLE_PRICE_RESTORE * price;
+        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     public void purchaseEnergy(int price) {
         this.energy += price;
+        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     public void addEnergy(DashBoard dash) {
