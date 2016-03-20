@@ -1,5 +1,6 @@
 package cc.blynk.server.notifications.sms;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -7,6 +8,7 @@ import org.junit.Test;
  * Created by Dmitriy Dumanskiy.
  * Created on 19.03.16.
  */
+@Ignore
 public class TestSendSms {
 
     @Test
