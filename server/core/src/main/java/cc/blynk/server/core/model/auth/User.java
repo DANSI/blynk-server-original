@@ -2,7 +2,6 @@ package cc.blynk.server.core.model.auth;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
-import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.JsonParser;
 
@@ -135,14 +134,6 @@ public class User implements Serializable {
     public void purchaseEnergy(int price) {
         this.energy += price;
         this.lastModifiedTs = System.currentTimeMillis();
-    }
-
-    public void addEnergy(DashBoard dash) {
-        int sum = 0;
-        for (Widget widget : dash.widgets) {
-            sum += widget.getPrice();
-        }
-        addEnergy(sum + dash.getPrice());
     }
 
     public int getEnergy() {

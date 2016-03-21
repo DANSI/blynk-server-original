@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard;
 
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
@@ -34,7 +35,9 @@ public class DeleteDashLogic {
 
         log.info("Deleting dashboard {}.", dashId);
 
-        user.addEnergy(user.profile.dashBoards[index]);
+        DashBoard dash = user.profile.dashBoards[index];
+
+        user.addEnergy(dash.energySum());
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
         userDao.deleteProject(user, dashId);
 

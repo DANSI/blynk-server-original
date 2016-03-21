@@ -140,6 +140,16 @@ public class DashBoard {
         return sb.toString();
     }
 
+
+    public int energySum() {
+        int sum = 0;
+        for (Widget widget : widgets) {
+            sum += widget.getPrice();
+        }
+        return sum + getPrice();
+    }
+
+
     public int getPrice() {
         return 500;
     }
