@@ -1,5 +1,9 @@
 package cc.blynk.server.db;
 
+import cc.blynk.utils.StringUtils;
+
+import java.util.StringJoiner;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -18,6 +22,13 @@ public class Redeem {
     public int reward;
 
     public int version;
+
+    public String formatToken() {
+        return new StringJoiner(StringUtils.BODY_SEPARATOR_STRING)
+                .add(company)
+                .add(String.valueOf(reward))
+                .add(token).toString();
+    }
 
     public Redeem() {
         this.isRedeemed = false;
