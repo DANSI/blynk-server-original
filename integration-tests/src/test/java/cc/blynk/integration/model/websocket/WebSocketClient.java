@@ -35,6 +35,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.mockito.Mockito;
 
@@ -55,7 +56,7 @@ public final class WebSocketClient extends BaseClient {
         URI uri = new URI(scheme + host + ":" + port + WebSocketHandler.WEBSOCKET_PATH);
 
         if (isSSL) {
-            sslCtx = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+            sslCtx = SslContextBuilder.forClient().sslProvider(SslProvider.JDK).trustManager(InsecureTrustManagerFactory.INSTANCE).build();
         } else {
             sslCtx = null;
         }
