@@ -1,6 +1,5 @@
 package cc.blynk.integration.http;
 
-import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.api.http.HttpAPIServer;
@@ -23,7 +22,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static cc.blynk.integration.IntegrationBase.*;
 import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
@@ -38,7 +36,7 @@ import static org.mockito.Mockito.*;
  * Created on 07.01.16.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpAndTCPSameJVMTest extends BaseTest {
+public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     private static BaseServer httpServer;
     private static BaseServer hardwareServer;

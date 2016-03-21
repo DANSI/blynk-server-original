@@ -68,7 +68,7 @@ public abstract class IntegrationBase extends BaseTest {
         return resourcesPath;
     }
 
-    public static ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
+    public ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
                                                 ServerProperties properties) throws Exception {
 
         TestAppClient appClient = new TestAppClient(host, appPort, properties);
@@ -77,7 +77,7 @@ public abstract class IntegrationBase extends BaseTest {
         return initAppAndHardPair(appClient, hardClient, user, jsonProfile);
     }
 
-    public static ClientPair initAppAndHardPair(TestAppClient appClient, TestHardClient hardClient, String user,
+    public ClientPair initAppAndHardPair(TestAppClient appClient, TestHardClient hardClient, String user,
                                                 String jsonProfile) throws Exception {
 
         appClient.start();
@@ -97,6 +97,7 @@ public abstract class IntegrationBase extends BaseTest {
 
         appClient.send("register " + user);
         appClient.send("login " + user + " Android 1RC7");
+        appClient.send("addEnergy " + getEnergyForTest());
         //we should wait until login finished. Only after that we can send commands
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
@@ -106,7 +107,7 @@ public abstract class IntegrationBase extends BaseTest {
         appClient.send("getToken " + dashId);
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(appClient.responseMock, timeout(2000).times(4 + profile.dashBoards.length + expectedSyncCommandsCount)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(appClient.responseMock, timeout(2000).times(5 + profile.dashBoards.length + expectedSyncCommandsCount)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Object> arguments = objectArgumentCaptor.getAllValues();
         String token = getGetTokenMessage(arguments).body;
@@ -121,18 +122,13 @@ public abstract class IntegrationBase extends BaseTest {
         return new ClientPair(appClient, hardClient, token);
     }
 
-    public static void saveProfile(TestAppClient appClient, String profileString) {
-        Profile profile = JsonParser.parseProfile(profileString, 1);
-        saveProfile(appClient, profile.dashBoards);
-    }
-
     public static void saveProfile(TestAppClient appClient, DashBoard... dashBoards) {
         for (DashBoard dash : dashBoards) {
             appClient.send("createDash " + dash.toString());
         }
     }
 
-    public static ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {
+    public ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {
         return initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, DEFAULT_TEST_USER + " 1", null, properties);
     }
 
@@ -146,6 +142,10 @@ public abstract class IntegrationBase extends BaseTest {
 
     public ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
         return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER + " 1", jsonProfile, properties);
+    }
+
+    public int getEnergyForTest() {
+        return 10000;
     }
 
 }

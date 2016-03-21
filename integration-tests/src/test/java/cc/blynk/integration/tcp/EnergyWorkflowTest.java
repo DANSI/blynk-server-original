@@ -120,4 +120,8 @@ public class EnergyWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(10, GET_ENERGY, "1200")));
     }
 
+    @Override
+    public int getEnergyForTest() {
+        return 2800;
+    }
 }
