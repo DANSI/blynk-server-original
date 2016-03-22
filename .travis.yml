@@ -8,4 +8,6 @@ addons:
 jdk:
   - oraclejdk8
 
-script: mvn -q clean test
+script:
+  - mvn install -Dskip.unit.tests=true -Dmaven.javadoc.skip=true -V -B
+  - mvn clean test coveralls:report -V -P coverage
