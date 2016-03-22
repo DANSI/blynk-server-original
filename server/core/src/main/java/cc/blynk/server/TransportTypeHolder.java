@@ -7,6 +7,8 @@ import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Used in order to re-use EventLoopGroups, this is done for performance reasons.
@@ -17,6 +19,8 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  * Created on 25.04.15.
  */
 public class TransportTypeHolder {
+
+    private static final Logger log = LogManager.getLogger(TransportTypeHolder.class);
 
     public final EventLoopGroup bossGroup;
     public final EventLoopGroup workerGroup;
@@ -31,6 +35,7 @@ public class TransportTypeHolder {
     private TransportTypeHolder(boolean enableNativeEpoll, int workerThreads) {
         epollEnabled = enableNativeEpoll;
         if (enableNativeEpoll) {
+            log.warn("Native epoll transport enabled.");
             bossGroup = new EpollEventLoopGroup(1);
             workerGroup = new EpollEventLoopGroup(workerThreads);
             channelClass = EpollServerSocketChannel.class;

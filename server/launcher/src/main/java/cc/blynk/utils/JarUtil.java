@@ -19,7 +19,7 @@ import java.util.zip.ZipInputStream;
  * Created by Dmitriy Dumanskiy.
  * Created on 11.12.15.
  */
-public class JarUtil {
+public final class JarUtil {
 
     /**
      * Unpacks all files from staticFolder of jar and puts them to current folder within staticFolder path.

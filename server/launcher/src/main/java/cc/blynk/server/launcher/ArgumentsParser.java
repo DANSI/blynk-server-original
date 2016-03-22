@@ -9,7 +9,7 @@ import org.apache.commons.cli.ParseException;
 import java.util.Properties;
 
 /**
- * Simple class for program arguments parsing.
+ * Simple class for command line arguments parsing.
  *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -32,7 +32,13 @@ class ArgumentsParser {
                .addOption(DATA_FOLDER_OPTION, true, "Folder where user profiles will be stored.");
     }
 
-
+    /**
+     * Simply parsers command line arguments and sets it to server properties for future use.
+     *
+     * @param args - command line arguments
+     * @param serverProperties - server properties read from file
+     * @throws ParseException
+     */
     static void parse(String[] args, Properties serverProperties) throws ParseException {
         CommandLine cmd = new BasicParser().parse(options, args);
 

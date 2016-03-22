@@ -43,19 +43,11 @@ public class ServerLauncher {
     public static void main(String[] args) throws Exception {
         ServerProperties serverProperties = new ServerProperties();
 
-        //required to make all loggers async with LMAX disruptor
-        System.setProperty("Log4jContextSelector", "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
-        System.setProperty("AsyncLogger.RingBufferSize",
-                serverProperties.getProperty("async.logger.ring.buffer.size", String.valueOf(8 * 1024)));
-
-        //configurable folder for logs via property.
-        System.setProperty("logs.folder", serverProperties.getProperty("logs.folder"));
-
-        //changing log level based on properties file
-        LoggerUtil.changeLogLevel(serverProperties.getProperty("log.level"));
+        LoggerUtil.configureLogging(serverProperties);
 
         ArgumentsParser.parse(args, serverProperties);
 
+        //required for logging dynamic context
         System.setProperty("data.folder", serverProperties.getProperty("data.folder"));
 
         JarUtil.unpackStaticFiles("admin");
@@ -78,30 +70,31 @@ public class ServerLauncher {
                 new WebSocketSSLServer(holder)
         };
 
-        startServers(servers, new TransportTypeHolder(serverProperties));
+        if (startServers(servers, new TransportTypeHolder(serverProperties))) {
+            //Launching all background jobs.
+            JobLauncher.start(holder, servers);
 
-        //Launching all background jobs.
-        JobLauncher.start(holder, servers);
-
-        System.out.println();
-        System.out.println("Blynk Server successfully started.");
-        System.out.println("All server output is stored in folder '" + new File(System.getProperty("logs.folder")).getAbsolutePath() + "' file.");
+            System.out.println();
+            System.out.println("Blynk Server successfully started.");
+            System.out.println("All server output is stored in folder '" + new File(System.getProperty("logs.folder")).getAbsolutePath() + "' file.");
+        }
     }
 
-    private static void startServers(BaseServer[] servers, TransportTypeHolder transportType) {
+    private static boolean startServers(BaseServer[] servers, TransportTypeHolder transportType) {
         //start servers
         try {
             for (BaseServer server : servers) {
                 server.start(transportType);
             }
+            return true;
         } catch (BindException bindException) {
             System.out.println("Server ports are busy. Most probably server already launched. See " +
                     new File(System.getProperty("logs.folder")).getAbsolutePath() + " for more info.");
-            System.exit(0);
         } catch (Exception e) {
             System.out.println("Error starting Blynk server. Stopping.");
-            System.exit(0);
         }
+
+        return false;
     }
 
 }

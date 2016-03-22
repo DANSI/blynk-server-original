@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.Closeable;
 
 /**
- * Base server abstraction. Class responsible for Netty EventLoops creation.
+ * Base server abstraction. Class responsible for Netty EventLoops starting amd port listening.
  *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -30,9 +30,6 @@ public abstract class BaseServer implements Closeable {
     }
 
     public BaseServer start(TransportTypeHolder transportTypeHolder) throws Exception {
-        if (transportTypeHolder.epollEnabled) {
-            log.warn("Native epoll transport for {} server enabled.", getServerName());
-        }
         buildServerAndRun(
                 transportTypeHolder.bossGroup,
                 transportTypeHolder.workerGroup,
