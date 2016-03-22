@@ -1,7 +1,5 @@
 package cc.blynk.server.db;
 
-import cc.blynk.utils.StringUtils;
-
 import java.util.StringJoiner;
 
 /**
@@ -24,7 +22,7 @@ public class Redeem {
     public int version;
 
     public String formatToken() {
-        return new StringJoiner(StringUtils.BODY_SEPARATOR_STRING)
+        return new StringJoiner("+")
                 .add(company)
                 .add(String.valueOf(reward))
                 .add(token).toString();
