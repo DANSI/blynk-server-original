@@ -24,6 +24,7 @@ Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Jav
 **Download latest server build [here](https://github.com/blynkkk/blynk-server/releases).**
 
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
+[ ![Coverage Status](https://coveralls.io/repos/github/blynkkk/blynk-server/badge.svg?branch=master)](https://coveralls.io/github/blynkkk/blynk-server?branch=master)
 
 # Requirements
 Java 8 required. (OpenJDK, Oracle). Installation instructions [here](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu).
