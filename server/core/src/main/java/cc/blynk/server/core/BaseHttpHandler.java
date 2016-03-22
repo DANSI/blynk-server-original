@@ -17,7 +17,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.util.ReferenceCountUtil;
+import io.netty.util.ReferenceCounted;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,7 +54,12 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
         try {
             processHttp(ctx, req);
         } finally {
-            ReferenceCountUtil.release(msg);
+            if (msg instanceof ReferenceCounted) {
+                ReferenceCounted referenceCounted = (ReferenceCounted) msg;
+                if (referenceCounted.refCnt() > 0) {
+                    referenceCounted.release();
+                }
+            }
         }
     }
 
