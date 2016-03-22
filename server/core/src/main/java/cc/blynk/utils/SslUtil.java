@@ -33,7 +33,7 @@ public class SslUtil {
         final DomainNameMapping<SslContext> mapping = new DomainNameMapping<>(primarySslContext);
         mapping.add(props.getProperty("server.host", "*"), primarySslContext);
 
-        if (props.getProperty("server2.host") != null) {
+        if (props.getProperty("server2.host") != null && !props.getProperty("server2.host").equals("")) {
             SslContext secondarySslContext = initMutualSslContext(
                     props.getProperty("server2.ssl.cert"),
                     props.getProperty("server2.ssl.key"),
@@ -57,7 +57,7 @@ public class SslUtil {
         final DomainNameMapping<SslContext> mapping = new DomainNameMapping<>(primarySslContext);
         mapping.add(props.getProperty("server.host", "*"), primarySslContext);
 
-        if (props.getProperty("server2.host") != null) {
+        if (props.getProperty("server2.host") != null && !props.getProperty("server2.host").equals("")) {
             SslContext secondarySslContext = SslUtil.initSslContext(
                     props.getProperty("server2.ssl.cert"),
                     props.getProperty("server2.ssl.key"),
