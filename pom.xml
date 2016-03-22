@@ -145,6 +145,8 @@
         <mockito-all.version>1.10.19</mockito-all.version>
         <commons-io.version>2.4</commons-io.version>
         <jmh-core.version>1.11.3</jmh-core.version>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
