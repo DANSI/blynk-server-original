@@ -382,6 +382,8 @@ within same folder where server.jar is.
         nexmo.api.key=
         nexmo.api.secret=
         
+And fill above properties with credentials you'll get from Nexmo. (Account -> Settings -> API settings).
+        
 
 ### Raw data storage
 By default raw data storage is enabled. So any write (Blynk.virtualWrite) command will stored on disk. 
