@@ -73,10 +73,4 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         }
     }
 
-
-    //for test only
-    public HardwareStateHolder getState() {
-        return state;
-    }
-
 }
