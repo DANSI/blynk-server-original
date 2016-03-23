@@ -82,6 +82,7 @@ public final class Command {
                 put(SHARING, "Sharing");
                 put(GET_TOKEN, "GetToken");
                 put(PING, "Ping");
+                put(SMS, "Sms");
                 put(ACTIVATE_DASHBOARD, "Activate");
                 put(DEACTIVATE_DASHBOARD, "Deactivate");
                 put(REFRESH_TOKEN, "RefreshToken");
