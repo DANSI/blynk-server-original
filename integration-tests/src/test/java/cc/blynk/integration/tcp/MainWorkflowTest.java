@@ -684,6 +684,26 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testEmailWorks() throws Exception {
+        reset(blockingIOProcessor);
+
+        //no email widget
+        clientPair.hardwareClient.send("email to subj body");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
+
+        //adding email widget
+        clientPair.appClient.send("createWidget 1\0{\"id\":432, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.hardwareClient.send("email to subj body");
+        verify(mailWrapper, timeout(500)).send(eq("to"), eq("subj"), eq("body"));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+
+        clientPair.hardwareClient.send("email to subj body");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, QUOTA_LIMIT_EXCEPTION)));
+    }
+
+    @Test
     public void testWrongCommandForAggregation() throws Exception {
         clientPair.hardwareClient.send("hardware vw 10 aaaa");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 10 aaaa"))));
