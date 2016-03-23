@@ -383,6 +383,7 @@ within same folder where server.jar is.
         nexmo.api.secret=
         
 And fill above properties with credentials you'll get from Nexmo. (Account -> Settings -> API settings).
+You also can send sms via email in case your cell provider supports that. See [discussion](http://community.blynk.cc/t/sms-notification-for-important-alert/2542) for more details.
         
 
 ### Raw data storage
