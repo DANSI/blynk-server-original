@@ -45,14 +45,26 @@
                 <version>0.7.5.201505241946</version>
                 <executions>
                     <execution>
-                        <id>prepare-agent</id>
+                        <id>agent-for-ut</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>agent-for-it</id>
+                        <goals>
+                            <goal>prepare-agent-integration</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-site</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
                 </executions>
                 <configuration>
-                    <destFile>${project.basedir}/target/jacoco.exec</destFile>
                     <append>true</append>
                 </configuration>
             </plugin>
