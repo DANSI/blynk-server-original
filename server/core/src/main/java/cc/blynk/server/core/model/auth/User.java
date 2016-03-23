@@ -18,6 +18,8 @@ import java.util.Map;
 public class User implements Serializable {
 
     public static final double RECYCLE_PRICE_RESTORE = 0.8;
+    //new SimpleDateFormat("dd.MM.yyyy").parse("25.03.2016").getTime();
+    private static final long march25 = 1458856800000L;
 
 	private static final long serialVersionUID = 1L;
 
@@ -126,9 +128,11 @@ public class User implements Serializable {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    public void addEnergy(int price) {
-        this.energy += RECYCLE_PRICE_RESTORE * price;
-        this.lastModifiedTs = System.currentTimeMillis();
+    public void recycleEnergy(int price, long projectCreatedAt) {
+        if (projectCreatedAt > march25) {
+            this.energy += RECYCLE_PRICE_RESTORE * price;
+            this.lastModifiedTs = System.currentTimeMillis();
+        }
     }
 
     public void purchaseEnergy(int price) {

@@ -73,7 +73,7 @@ public class EnergyWorkflowTest extends IntegrationBase {
 
     @Test
     public void testEnergyAfterCreateRemoveProject() throws Exception {
-        clientPair.appClient.send("createDash {\"id\":2, \"name\":\"test board\"}\"");
+        clientPair.appClient.send("createDash {\"id\":2, \"createdAt\":1458856800001, \"name\":\"test board\"}\"");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("getEnergy");
@@ -89,7 +89,7 @@ public class EnergyWorkflowTest extends IntegrationBase {
 
     @Test
     public void testEnergyAfterCreateRemoveWidget() throws Exception {
-        clientPair.appClient.send("createDash {\"id\":2, \"name\":\"test board\"}\"");
+        clientPair.appClient.send("createDash {\"id\":2, \"createdAt\":1458856800001, \"name\":\"test board\"}\"");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("getEnergy");
