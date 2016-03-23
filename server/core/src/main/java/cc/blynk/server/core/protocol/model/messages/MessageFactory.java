@@ -41,12 +41,16 @@ public class MessageFactory {
                 return new RefreshTokenMessage(messageId, body);
             case GET_GRAPH_DATA :
                 return new GetGraphDataStringMessage(messageId, body);
+
             case TWEET :
                 return new TwitMessage(messageId, body);
             case EMAIL :
                 return new MailMessage(messageId, body);
             case PUSH_NOTIFICATION :
                 return new PushMessage(messageId, body);
+            case SMS :
+                return new SMSMessage(messageId, body);
+
             case BRIDGE :
                 return new BridgeMessage(messageId, body);
             case SHARE_LOGIN :

@@ -37,14 +37,18 @@ public class CommandParser {
                 return DEACTIVATE_DASHBOARD;
             case "register" :
                 return REGISTER;
+
             case "tweet" :
                 return TWEET;
             case "email" :
                 return EMAIL;
             case "push" :
                 return PUSH_NOTIFICATION;
+            case "sms" :
+                return SMS;
             case "addpushtoken" :
                 return ADD_PUSH_TOKEN;
+
             case "bridge" :
                 return BRIDGE;
             case "createdash" :

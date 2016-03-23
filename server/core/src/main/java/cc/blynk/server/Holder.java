@@ -10,6 +10,7 @@ import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.Config;
 import cc.blynk.utils.FileLoaderUtil;
@@ -47,6 +48,7 @@ public class Holder {
     public final TwitterWrapper twitterWrapper;
     public final MailWrapper mailWrapper;
     public final GCMWrapper gcmWrapper;
+    public final SMSWrapper smsWrapper;
 
     public Holder(ServerProperties serverProperties) {
         this.props = serverProperties;
@@ -62,8 +64,9 @@ public class Holder {
         this.reportingDao = new ReportingDao(reportingFolder, averageAggregator, serverProperties);
 
         this.twitterWrapper = new TwitterWrapper();
-        this.mailWrapper = new MailWrapper(new ServerProperties(Config.MAIL_PROPERTIES_FILENAME));
+        this.mailWrapper = new MailWrapper(new ServerProperties(MailWrapper.MAIL_PROPERTIES_FILENAME));
         this.gcmWrapper = new GCMWrapper(new ServerProperties(GCMWrapper.GCM_PROPERTIES_FILENAME));
+        this.smsWrapper = new SMSWrapper(new ServerProperties(SMSWrapper.SMS_PROPERTIES_FILENAME));
 
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
@@ -75,7 +78,7 @@ public class Holder {
     }
 
     //for tests only
-    public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper, MailWrapper mailWrapper, GCMWrapper gcmWrapper) {
+    public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper, MailWrapper mailWrapper, GCMWrapper gcmWrapper, SMSWrapper smsWrapper) {
         this.props = serverProperties;
 
         String dataFolder = serverProperties.getProperty("data.folder");
@@ -91,6 +94,7 @@ public class Holder {
         this.twitterWrapper = twitterWrapper;
         this.mailWrapper = mailWrapper;
         this.gcmWrapper = gcmWrapper;
+        this.smsWrapper = smsWrapper;
 
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),

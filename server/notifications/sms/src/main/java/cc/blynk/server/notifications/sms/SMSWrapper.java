@@ -16,6 +16,8 @@ import java.util.Properties;
  */
 public class SMSWrapper {
 
+    public static final String SMS_PROPERTIES_FILENAME = "sms.properties";
+
     private final String key;
     private final String secret;
 
@@ -32,14 +34,14 @@ public class SMSWrapper {
         this.secret = secret;
     }
 
-    public void sendSms(String to, String message) throws Exception {
+    public void send(String to, String message) throws Exception {
         URI apiUrl = new URIBuilder()
                 .setScheme("https")
                 .setHost("rest.nexmo.com")
                 .setPath("/sms/json")
                 .setParameter("api_key", key)
                 .setParameter("api_secret", secret)
-                .setParameter("from", "NEXMO")
+                .setParameter("from", "Blynk")
                 .setParameter("to", to)
                 .setParameter("text", message)
                 .build();

@@ -63,6 +63,11 @@
             <artifactId>twitter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cc.blynk.server.notifications</groupId>
+            <artifactId>sms</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- DB dependencies -->
         <dependency>

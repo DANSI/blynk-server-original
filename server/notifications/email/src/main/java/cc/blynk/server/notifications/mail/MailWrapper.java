@@ -16,6 +16,8 @@ import java.util.Properties;
  */
 public class MailWrapper {
 
+    public static final String MAIL_PROPERTIES_FILENAME = "mail.properties";
+
     private static final Logger log = LogManager.getLogger(MailWrapper.class);
 
     private final Session session;

@@ -8,7 +8,6 @@ package cc.blynk.utils;
 public class Config {
 
     public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
-    public static final String MAIL_PROPERTIES_FILENAME = "mail.properties";
     public static final String TOKEN_MAIL_BODY = "token_mail_body.txt";
 
 }

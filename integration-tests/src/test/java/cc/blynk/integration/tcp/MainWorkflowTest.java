@@ -673,6 +673,29 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testSmsWorks() throws Exception {
+        reset(blockingIOProcessor);
+
+        clientPair.hardwareClient.send("sms");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOTIFICATION_INVALID_BODY_EXCEPTION)));
+
+        //no sms widget
+        clientPair.hardwareClient.send("sms yo");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NOTIFICATION_NOT_AUTHORIZED_EXCEPTION)));
+
+        //adding sms widget
+        clientPair.appClient.send("createWidget 1\0{\"id\":432, \"to\":\"3809683423423\", \"x\":0, \"y\":0, \"type\":\"SMS\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.hardwareClient.send("sms yo");
+        verify(smsWrapper, timeout(500)).send(eq("3809683423423"), eq("yo"));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
+
+        clientPair.hardwareClient.send("sms yo");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, QUOTA_LIMIT_EXCEPTION)));
+    }
+
+    @Test
     public void testTweetWorks() throws Exception {
         reset(blockingIOProcessor);
 

@@ -14,7 +14,7 @@ public class TestSendSms {
     @Test
     public void testSend() throws Exception {
         SMSWrapper smsWrapper = new SMSWrapper("", "");
-        smsWrapper.sendSms("", "Hello!!!!!!!!");
+        smsWrapper.send("", "Hello!!!!!!!!");
     }
 
 }

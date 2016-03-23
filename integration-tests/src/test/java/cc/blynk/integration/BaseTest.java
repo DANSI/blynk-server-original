@@ -5,6 +5,7 @@ import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
@@ -56,6 +57,9 @@ public abstract class BaseTest {
     @Mock
     public GCMWrapper gcmWrapper;
 
+    @Mock
+    public SMSWrapper smsWrapper;
+
     public static void sleep(int ms) {
         try {
             Thread.sleep(ms);
@@ -70,7 +74,7 @@ public abstract class BaseTest {
         if (getDataFolder() != null) {
             this.properties.setProperty("data.folder", getDataFolder());
         }
-        this.holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper);
+        this.holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper);
         this.transportTypeHolder = new TransportTypeHolder(this.properties);
 
         this.tcpAppPort = properties.getIntProperty("app.ssl.port");
