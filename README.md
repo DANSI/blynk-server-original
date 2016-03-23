@@ -359,7 +359,7 @@ Blynk HTTP RESTful API allows to easily read and write values to/from Pins in Bl
 For now API available only for Local Blynk Servers. Http API description could be found [here](http://docs.blynkapi.apiary.io).
         
 ### Enabling mail on Local server
-In order to enable mail notifications on Local server you need to provide own mail credentials. To do that you need to create file "mail.properties" within same folder where server.jar is.
+In order to enable mail notifications on Local server you need to provide own mail credentials. To do that you need to create file ```mail.properties``` within same folder where server.jar is.
 Mail properties :
 
         mail.smtp.auth=true
@@ -373,6 +373,15 @@ See example [here](https://github.com/blynkkk/blynk-server/blob/master/server/no
 
 NOTE : you'll need to setup Gmail to allow less secured applications. Go [here](https://www.google.com/settings/security/lesssecureapps) and then click "Allow less secure apps".
 
+
+### Enabling sms on local server
+In order to enable sms notifications on Local Server you need to provide credentials for sms gateway (for now Blynk server
+supports only 1 provider - [Nexmo] (https://www.nexmo.com/)). So to do that you need to create file ```sms.properties``` 
+within same folder where server.jar is.
+
+        nexmo.api.key=
+        nexmo.api.secret=
+        
 
 ### Raw data storage
 By default raw data storage is enabled. So any write (Blynk.virtualWrite) command will stored on disk. 
