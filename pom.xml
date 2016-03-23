@@ -51,6 +51,10 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <destFile>${project.basedir}/server/launcher/target/jacoco.exec</destFile>
+                    <append>true</append>
+                </configuration>
             </plugin>
 
             <plugin>
