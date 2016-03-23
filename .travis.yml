@@ -9,4 +9,4 @@ jdk:
   - oraclejdk8
 
 script:
-  - mvn clean test coveralls:report -P coverage
+  - mvn clean test jacoco:report coveralls:report -P coverage
