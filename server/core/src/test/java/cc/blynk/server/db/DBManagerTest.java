@@ -9,7 +9,6 @@ import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
@@ -33,23 +32,22 @@ import static org.junit.Assert.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 19.02.16.
  */
-@Ignore("Requires real DB for test")
 public class DBManagerTest {
 
     private static DBManager dbManager;
 
     @BeforeClass
     public static void init() throws Exception {
-        BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(1, 10, null);
+        BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(1, 3, null);
         dbManager = new DBManager("db-test.properties", blockingIOProcessor);
         assertNotNull(dbManager.getConnection());
 
         //copy paste from create_schema.sql
-        dbManager.executeSQL("DELETE FROM users");
-        dbManager.executeSQL("DELETE FROM reporting_average_minute");
-        dbManager.executeSQL("DELETE FROM reporting_average_hourly");
-        dbManager.executeSQL("DELETE FROM reporting_average_daily");
-        dbManager.executeSQL("DELETE FROM purchase");
+        //dbManager.executeSQL("DELETE FROM users");
+        //dbManager.executeSQL("DELETE FROM reporting_average_minute");
+        //dbManager.executeSQL("DELETE FROM reporting_average_hourly");
+        //dbManager.executeSQL("DELETE FROM reporting_average_daily");
+        //dbManager.executeSQL("DELETE FROM purchase");
     }
 
     @AfterClass
