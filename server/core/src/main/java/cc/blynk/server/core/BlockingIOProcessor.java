@@ -38,4 +38,8 @@ public class BlockingIOProcessor implements Closeable {
         executor.shutdown();
     }
 
+    public int getActiveCount() {
+        return executor.getActiveCount();
+    }
+
 }

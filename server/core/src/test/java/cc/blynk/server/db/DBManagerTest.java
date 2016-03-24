@@ -7,10 +7,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 
@@ -23,7 +20,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPOutputStream;
 
 import static org.junit.Assert.*;
@@ -36,13 +37,17 @@ import static org.junit.Assert.*;
 public class DBManagerTest {
 
     private static DBManager dbManager;
+    private static BlockingIOProcessor blockingIOProcessor;
 
     @BeforeClass
     public static void init() throws Exception {
-        BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(1, 3, null);
+        blockingIOProcessor = new BlockingIOProcessor(2, 10000, null);
         dbManager = new DBManager("db-test.properties", blockingIOProcessor);
         assertNotNull(dbManager.getConnection());
+    }
 
+    @Before
+    public void cleanAll() throws Exception {
         //clean everything just in case
         dbManager.executeSQL("DELETE FROM users");
         dbManager.executeSQL("DELETE FROM reporting_average_minute");
@@ -64,8 +69,6 @@ public class DBManagerTest {
 
     @Test
     public void testInsert1000RecordsAndSelect() throws Exception {
-        System.out.println("Starting");
-
         int a = 0;
 
         long startMinute = 0;
@@ -186,17 +189,22 @@ public class DBManagerTest {
         User user = new User("test@test", "1");
         users.add(user);
 
-        Map<AggregationKey, AggregationValue> map = new HashMap<>();
+        Map<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
         AggregationValue value = new AggregationValue();
         value.update(1);
+        long ts = System.currentTimeMillis();
         for (int i = 0; i < 60; i++) {
-            map.clear();
-            map.put(new AggregationKey("test@test.com", i, PinType.ANALOG, (byte) 1, 0), value);
+            map.put(new AggregationKey("test@test.com", i, PinType.ANALOG, (byte) i, ts), value);
             dbManager.insertReporting(map, GraphType.MINUTE);
             dbManager.insertReporting(map, GraphType.HOURLY);
             dbManager.insertReporting(map, GraphType.DAILY);
+
             dbManager.saveUsers(users);
-            Thread.sleep(1000);
+            map.clear();
+        }
+
+        while (blockingIOProcessor.getActiveCount() > 0) {
+            Thread.sleep(100);
         }
 
     }
