@@ -1,5 +1,6 @@
 package cc.blynk.server.db;
 
+import java.util.Date;
 import java.util.StringJoiner;
 
 /**
@@ -21,6 +22,8 @@ public class Redeem {
 
     public int version;
 
+    public Date ts;
+
     public String formatToken() {
         return new StringJoiner("+")
                 .add(company)
@@ -40,12 +43,13 @@ public class Redeem {
         this.reward = reward;
     }
 
-    public Redeem(String token, String company, boolean isRedeemed, String username, int reward, int version) {
+    public Redeem(String token, String company, boolean isRedeemed, String username, int reward, int version, Date ts) {
         this.token = token;
         this.company = company;
         this.isRedeemed = isRedeemed;
         this.username = username;
         this.reward = reward;
         this.version = version;
+        this.ts = ts;
     }
 }

@@ -258,6 +258,7 @@ public class DBManagerTest {
         assertEquals(redeem.token, token);
         assertFalse(redeem.isRedeemed);
         assertEquals(1, redeem.version);
+        assertNull(redeem.ts);
 
         assertTrue(dbManager.updateRedeem("user@user.com", token));
         assertFalse(dbManager.updateRedeem("user@user.com", token));
@@ -268,6 +269,7 @@ public class DBManagerTest {
         assertTrue(redeem.isRedeemed);
         assertEquals(2, redeem.version);
         assertEquals("user@user.com", redeem.username);
+        assertNotNull(redeem.ts);
     }
 
     @Test

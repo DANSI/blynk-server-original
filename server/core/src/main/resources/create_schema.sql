@@ -14,7 +14,8 @@ CREATE TABLE redeem (
   isRedeemed boolean DEFAULT FALSE,
   reward integer NOT NULL DEFAULT 0,
   username text,
-  version integer NOT NULL DEFAULT 1
+  version integer NOT NULL DEFAULT 1,
+  ts timestamp
 );
 
 CREATE TABLE purchase (
