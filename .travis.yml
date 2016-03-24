@@ -11,9 +11,6 @@ jdk:
 services:
   - postgresql
 
-addons:
-  postgresql: "9.5"
-
 before_script:
   - psql -f /home/travis/build/blynkkk/blynk-server/core/src/main/resources/create_schema.sql -U postgres
 
