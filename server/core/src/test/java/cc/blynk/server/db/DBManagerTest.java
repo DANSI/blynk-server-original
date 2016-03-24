@@ -42,12 +42,13 @@ public class DBManagerTest {
         dbManager = new DBManager("db-test.properties", blockingIOProcessor);
         assertNotNull(dbManager.getConnection());
 
-        //copy paste from create_schema.sql
-        //dbManager.executeSQL("DELETE FROM users");
-        //dbManager.executeSQL("DELETE FROM reporting_average_minute");
-        //dbManager.executeSQL("DELETE FROM reporting_average_hourly");
-        //dbManager.executeSQL("DELETE FROM reporting_average_daily");
-        //dbManager.executeSQL("DELETE FROM purchase");
+        //clean everything just in case
+        dbManager.executeSQL("DELETE FROM users");
+        dbManager.executeSQL("DELETE FROM reporting_average_minute");
+        dbManager.executeSQL("DELETE FROM reporting_average_hourly");
+        dbManager.executeSQL("DELETE FROM reporting_average_daily");
+        dbManager.executeSQL("DELETE FROM purchase");
+        dbManager.executeSQL("DELETE FROM redeem");
     }
 
     @AfterClass
