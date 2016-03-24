@@ -12,7 +12,7 @@ services:
   - postgresql
 
 before_script:
-  - psql -f /home/travis/build/blynkkk/blynk-server/core/src/main/resources/create_schema.sql -U postgres
+  - psql -f $TRAVIS_BUILD_DIR/blynkkk/blynk-server/core/src/main/resources/create_schema.sql -U postgres
 
 script:
   - mvn clean test
