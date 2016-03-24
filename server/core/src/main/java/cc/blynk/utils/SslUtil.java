@@ -142,7 +142,8 @@ public class SslUtil {
         return SslContextBuilder.forServer(serverCert, serverKey, serverPass)
                 .sslProvider(sslProvider)
                 .trustManager(clientCert)
-                .clientAuth(ClientAuth.REQUIRE)
+                //todo fix that after iOS release
+                .clientAuth(ClientAuth.NONE)
                 .build();
     }
 
