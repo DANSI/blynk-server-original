@@ -48,6 +48,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final DeleteDashLogic deleteDashLogic;
     private final ShareLogic shareLogic;
     private final RedeemLogic redeemLogic;
+    private final AddEnergyLogic addEnergyLogic;
 
     public AppHandler(Holder holder, AppStateHolder state) {
         super(holder.props, state);
@@ -74,6 +75,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
         this.shareLogic = new ShareLogic(holder.sessionDao);
         this.redeemLogic = new RedeemLogic(holder.dbManager, holder.blockingIOProcessor);
+        this.addEnergyLogic = new AddEnergyLogic(holder.dbManager, holder.blockingIOProcessor);
 
         this.state = state;
     }
@@ -153,7 +155,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 GetEnergyLogic.messageReceived(ctx, state.user, msg);
                 break;
             case ADD_ENERGY :
-                AddEnergyLogic.messageReceived(ctx, state.user, msg);
+                addEnergyLogic.messageReceived(ctx, state.user, msg);
                 break;
 
         }

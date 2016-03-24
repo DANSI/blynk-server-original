@@ -17,6 +17,15 @@ CREATE TABLE redeem (
   version integer NOT NULL DEFAULT 1
 );
 
+CREATE TABLE purchase (
+  username text,
+  reward integer NOT NULL,
+  transactionId text,
+  price float8,
+  ts timestamp NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (username, transactionId, ts)
+);
+
 CREATE TABLE reporting_average_minute (
   username text,
   project_id int4,

@@ -36,6 +36,7 @@ public class DBManager implements Closeable {
     private ReportingDBDao reportingDBDao;
     private UserDBDao userDBDao;
     private RedeemDBDao redeemDBDao;
+    private PurchaseDBDao purchaseDBDao;
 
     public DBManager(BlockingIOProcessor blockingIOProcessor) {
         this(DB_PROPERTIES_FILENAME, blockingIOProcessor);
@@ -74,6 +75,7 @@ public class DBManager implements Closeable {
         this.reportingDBDao = new ReportingDBDao(hikariDataSource);
         this.userDBDao = new UserDBDao(hikariDataSource);
         this.redeemDBDao = new RedeemDBDao(hikariDataSource);
+        this.purchaseDBDao = new PurchaseDBDao(hikariDataSource);
         log.info("Connected to database successfully.");
     }
 
@@ -123,6 +125,12 @@ public class DBManager implements Closeable {
     public void insertRedeems(List<Redeem> redeemList) throws Exception {
         if (isDBEnabled() && redeemList.size() > 0) {
             redeemDBDao.insertRedeems(redeemList);
+        }
+    }
+
+    public void insertPurchase(Purchase purchase) {
+        if (isDBEnabled()) {
+            purchaseDBDao.insertPurchase(purchase);
         }
     }
 

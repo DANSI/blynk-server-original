@@ -49,6 +49,7 @@ public class DBManagerTest {
         dbManager.executeSQL("DELETE FROM reporting_average_minute");
         dbManager.executeSQL("DELETE FROM reporting_average_hourly");
         dbManager.executeSQL("DELETE FROM reporting_average_daily");
+        dbManager.executeSQL("DELETE FROM purchase");
     }
 
     @AfterClass
@@ -224,6 +225,27 @@ public class DBManagerTest {
         dbManager.executeSQL("insert into redeem (token) values('" + token + "')");
         assertNotNull(dbManager.selectRedeemByToken(token));
         assertNull(dbManager.selectRedeemByToken("123"));
+    }
+
+    @Test
+    public void testPurchase() throws Exception {
+        dbManager.insertPurchase(new Purchase("test@gmail.com", 1000, "123456"));
+
+
+        try (Connection connection = dbManager.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery("select * from purchase")) {
+
+            while (rs.next()) {
+                assertEquals("test@gmail.com", rs.getString("username"));
+                assertEquals(1000, rs.getInt("reward"));
+                assertEquals("123456", rs.getString("transactionId"));
+                assertEquals(0.99D, rs.getDouble("price"), 0.1D);
+                assertNotNull(rs.getDate("ts"));
+            }
+
+            connection.commit();
+        }
     }
 
     @Test

@@ -65,7 +65,7 @@ public class RedeemDBDao {
         }
     }
 
-    public void insertRedeems(List<Redeem> redeemList) throws Exception {
+    public void insertRedeems(List<Redeem> redeemList) {
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(insertRedeemToken)) {
 
