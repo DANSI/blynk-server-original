@@ -176,6 +176,7 @@ public class DBManagerTest {
 
     }
 
+
     @Test
     public void testManyConnections() throws Exception {
         List<User> users = new ArrayList<>();
