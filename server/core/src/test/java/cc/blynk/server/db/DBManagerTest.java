@@ -9,6 +9,7 @@ import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
@@ -111,6 +112,7 @@ public class DBManagerTest {
     }
 
     @Test
+    @Ignore
     public void testCopy100RecordsIntoFile() throws Exception {
         System.out.println("Starting");
 
