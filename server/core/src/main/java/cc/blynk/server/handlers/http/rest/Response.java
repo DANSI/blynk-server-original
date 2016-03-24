@@ -10,6 +10,7 @@ import io.netty.handler.codec.http.HttpVersion;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.List;
 
 import static cc.blynk.utils.ListUtils.*;
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
@@ -79,7 +80,7 @@ public class Response extends DefaultFullHttpResponse {
         return ok(JsonParser.toJson(user));
     }
 
-    public static Response ok(Collection<?> list, int page, int size) {
+    public static Response ok(List<?> list, int page, int size) {
         return ok(JsonParser.toJson(subList(list, page, size)));
     }
 

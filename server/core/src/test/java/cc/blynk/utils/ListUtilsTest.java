@@ -31,6 +31,18 @@ public class ListUtilsTest {
     }
 
     @Test
+    public void test1List() {
+        List<Integer> l = new ArrayList<>();
+        l.add(1);
+        List<?> res;
+
+        res = ListUtils.subList(l, 1, SIZE);
+        assertNotNull(res);
+        assertEquals(1, res.size());
+        assertEquals(1, res.get(0));
+    }
+
+    @Test
     public void testCorrectResponse() {
         List<Integer> l = new ArrayList<>();
         for (int i = 1; i <= 100; i++) {
