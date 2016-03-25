@@ -1,9 +1,9 @@
 package cc.blynk.server.workers;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.reporting.average.AverageAggregator;
-import cc.blynk.server.db.DBManager;
+
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Used to close and store all important info to disk.
@@ -14,22 +14,18 @@ import cc.blynk.server.db.DBManager;
  */
 public class ShutdownHookWorker implements Runnable {
 
-    private final AverageAggregator averageAggregator;
     private final BaseServer[] servers;
+    private final Holder holder;
     private final ProfileSaverWorker profileSaverWorker;
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final DBManager dbManager;
+    private final ScheduledExecutorService scheduler;
 
-    public ShutdownHookWorker(AverageAggregator averageAggregator,
-                              ProfileSaverWorker profileSaverWorker,
-                              BlockingIOProcessor blockingIOProcessor,
-                              DBManager dbManager,
-                              BaseServer[] servers) {
-        this.averageAggregator = averageAggregator;
-        this.profileSaverWorker = profileSaverWorker;
-        this.blockingIOProcessor = blockingIOProcessor;
-        this.dbManager = dbManager;
+    public ShutdownHookWorker(BaseServer[] servers, Holder holder,
+                              ScheduledExecutorService scheduler,
+                              ProfileSaverWorker profileSaverWorker) {
         this.servers = servers;
+        this.holder = holder;
+        this.profileSaverWorker = profileSaverWorker;
+        this.scheduler = scheduler;
     }
 
     @Override
@@ -41,16 +37,19 @@ public class ShutdownHookWorker implements Runnable {
             server.close();
         }
 
-        System.out.println("Stopping BlockingIOProcessor...");
-        blockingIOProcessor.close();
+        System.out.println("Stopping scheduler...");
+        scheduler.shutdown();
 
         System.out.println("Saving user profiles...");
         profileSaverWorker.close();
 
         System.out.println("Stopping aggregator...");
-        averageAggregator.close();
+        holder.averageAggregator.close();
 
-        dbManager.close();
+        System.out.println("Stopping BlockingIOProcessor...");
+        holder.blockingIOProcessor.close();
+
+        holder.dbManager.close();
 
         System.out.println("Done.");
     }

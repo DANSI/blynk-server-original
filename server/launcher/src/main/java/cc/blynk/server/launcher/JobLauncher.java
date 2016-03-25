@@ -55,8 +55,9 @@ class JobLauncher {
                 new TimerWorker(holder.userDao, holder.sessionDao), startDelay, 1000, TimeUnit.MILLISECONDS);
 
         //shutdown hook thread catcher
-        Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHookWorker(holder.averageAggregator, profileSaverWorker,
-                holder.blockingIOProcessor, holder.dbManager, servers)));
+        Runtime.getRuntime().addShutdownHook(new Thread(
+                new ShutdownHookWorker(servers, holder, scheduler, profileSaverWorker)
+        ));
     }
 
 
