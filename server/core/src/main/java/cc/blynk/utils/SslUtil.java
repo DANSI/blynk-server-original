@@ -99,11 +99,7 @@ public class SslUtil {
     }
 
     public static SslProvider fetchSslProvider(ServerProperties props) {
-        SslProvider sslProvider = props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK;
-        if (sslProvider == SslProvider.OPENSSL) {
-            log.warn("Using native openSSL provider.");
-        }
-        return sslProvider;
+        return props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK;
     }
 
     public static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,

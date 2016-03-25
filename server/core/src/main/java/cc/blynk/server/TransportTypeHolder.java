@@ -30,12 +30,16 @@ public class TransportTypeHolder {
     public TransportTypeHolder(ServerProperties serverProperties) {
         this(serverProperties.getBoolProperty("enable.native.epoll.transport"),
                 serverProperties.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors() * 2));
+
+        if (serverProperties.getBoolProperty("enable.native.openssl")) {
+            log.info("Using native openSSL provider.");
+        }
     }
 
     private TransportTypeHolder(boolean enableNativeEpoll, int workerThreads) {
         epollEnabled = enableNativeEpoll;
         if (enableNativeEpoll) {
-            log.warn("Native epoll transport enabled.");
+            log.warn("Using native epoll transport.");
             bossGroup = new EpollEventLoopGroup(1);
             workerGroup = new EpollEventLoopGroup(workerThreads);
             channelClass = EpollServerSocketChannel.class;
