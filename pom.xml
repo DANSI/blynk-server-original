@@ -125,6 +125,7 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-handler</artifactId>
             <!-- this is because of https://github.com/netty/netty/issues/5041-->
+            <!-- this is a local build of netty with 1.1.33.Fork14 netty.tcnative.version-->
             <version>4.0.36.Final-SNAPSHOT</version>
         </dependency>
         <dependency>
