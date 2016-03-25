@@ -71,17 +71,16 @@ public class DBManagerTest {
     public void testInsert1000RecordsAndSelect() throws Exception {
         int a = 0;
 
+        String userName = "test@gmail.com";
         long startMinute = 0;
         long start = System.currentTimeMillis();
         try (Connection connection = dbManager.getConnection();
              PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
 
-            String userName = "test{}@gmail.com";
             long minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
             startMinute = minute;
             for (int i = 0; i < 1000; i++) {
-                String newUserName = userName.replace("{}", "" + i);
-                ReportingDBDao.prepareReportingInsert(ps, newUserName, 1, (byte) 0, PinType.VIRTUAL, minute, (double) i);
+                ReportingDBDao.prepareReportingInsert(ps, userName, 1, (byte) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
                 minute += AverageAggregator.MINUTE;
                 a++;
@@ -100,9 +99,8 @@ public class DBManagerTest {
              ResultSet rs = statement.executeQuery("select * from reporting_average_minute order by ts ASC")) {
 
             int i = 0;
-            String userName = "test{}@gmail.com";
             while (rs.next()) {
-                assertEquals(userName.replace("{}", "" + i), rs.getString("username"));
+                assertEquals(userName, rs.getString("username"));
                 assertEquals(1, rs.getInt("project_id"));
                 assertEquals(0, rs.getByte("pin"));
                 assertEquals("v", rs.getString("pinType"));
