@@ -65,6 +65,10 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", username, ctx.channel().remoteAddress()), messageId);
         }
 
+        if (osType == OsType.IOS && user.lastLoggedAt == 0 && "1.9.0".equals(version)) {
+            user.purchaseEnergy(3000);
+        }
+
         final AppStateHolder appStateHolder = new AppStateHolder(user, osType, version);
         //todo finish.
         //if (appStateHolder.isOldAPI()) {
