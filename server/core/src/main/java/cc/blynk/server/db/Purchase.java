@@ -36,7 +36,7 @@ public class Purchase {
                 return 1.99;
             case 5000 :
                 return 3.99;
-            case 130000 :
+            case 13000 :
                 return 9.99;
             case 28000 :
                 return 19.99;
