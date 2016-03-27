@@ -21,8 +21,8 @@ public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-    public final Map<Integer, String> dashShareTokens;
-    public final Map<Integer, String> dashTokens;
+    public Map<Integer, String> dashShareTokens;
+    public Map<Integer, String> dashTokens;
 
 	public String name;
 
