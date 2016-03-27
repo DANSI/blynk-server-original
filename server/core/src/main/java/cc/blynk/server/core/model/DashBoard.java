@@ -146,12 +146,7 @@ public class DashBoard {
         for (Widget widget : widgets) {
             sum += widget.getPrice();
         }
-        return sum + getPrice();
-    }
-
-
-    public int getPrice() {
-        return 500;
+        return sum;
     }
 
     @Override
