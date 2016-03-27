@@ -47,19 +47,22 @@ public class EnergyWorkflowTest extends IntegrationBase {
 
     @Test
     public void testReach1500LimitOfEnergy() throws Exception {
-        for (int i = 1; i < 4; i++) {
-            clientPair.appClient.send("createDash {\"id\":X, \"name\":\"test board\"}\"".replace("X", String.valueOf(i + 1)));
+        clientPair.appClient.send("createDash {\"id\":2, \"createdAt\":1458856800001, \"name\":\"test board\"}\"");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        for (int i = 2; i < 12; i++) {
+            clientPair.appClient.send("createWidget 2\0{\"id\":X, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}".replace("X", "" + i));
             verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(i, OK)));
         }
 
-        clientPair.appClient.send("createDash {\"id\":5, \"name\":\"test board\"}\"");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, ENERGY_LIMIT)));
+        clientPair.appClient.send("createWidget 2\0{\"id\":100, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(12, ENERGY_LIMIT)));
     }
 
     @Test
     public void testGetEnergy() throws Exception {
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, GET_ENERGY, "1500")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, GET_ENERGY, "2000")));
     }
 
     @Test
@@ -68,7 +71,7 @@ public class EnergyWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "2500")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "3000")));
     }
 
     @Test
@@ -77,13 +80,13 @@ public class EnergyWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "1000")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "2000")));
 
         clientPair.appClient.send("deleteDash 2");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, GET_ENERGY, "1400")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, GET_ENERGY, "2000")));
     }
 
 
@@ -93,21 +96,21 @@ public class EnergyWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "1000")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "2000")));
 
-        clientPair.appClient.send("createWidget 2\0{\"id\":2, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
+        clientPair.appClient.send("createWidget 2\0{\"id\":2, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"LCD\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
 
-        clientPair.appClient.send("createWidget 2\0{\"id\":3, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
+        clientPair.appClient.send("createWidget 2\0{\"id\":3, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"LCD\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
 
-        clientPair.appClient.send("createWidget 2\0{\"id\":4, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
+        clientPair.appClient.send("createWidget 2\0{\"id\":4, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"LCD\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(5, OK)));
 
-        clientPair.appClient.send("createWidget 2\0{\"id\":5, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
+        clientPair.appClient.send("createWidget 2\0{\"id\":5, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"LCD\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(6, OK)));
 
-        clientPair.appClient.send("createWidget 2\0{\"id\":6, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
+        clientPair.appClient.send("createWidget 2\0{\"id\":6, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"LCD\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(7, OK)));
 
         clientPair.appClient.send("createWidget 2\0{\"id\":7, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
@@ -117,7 +120,7 @@ public class EnergyWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(9, OK)));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(10, GET_ENERGY, "1200")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(10, GET_ENERGY, "2000")));
     }
 
     @Override
