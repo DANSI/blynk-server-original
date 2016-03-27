@@ -58,6 +58,10 @@ public class CreateDashLogic {
             }
         }
 
+        if (newDash.createdAt == 0) {
+            newDash.createdAt = System.currentTimeMillis();
+        }
+
         user.subtractEnergy(newDash.energySum(), message.id);
         user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newDash);
         user.lastModifiedTs = System.currentTimeMillis();
