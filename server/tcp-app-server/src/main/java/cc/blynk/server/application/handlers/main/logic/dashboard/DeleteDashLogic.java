@@ -37,7 +37,7 @@ public class DeleteDashLogic {
 
         DashBoard dash = user.profile.dashBoards[index];
 
-        user.recycleEnergy(dash.energySum(), dash.createdAt);
+        user.recycleEnergy(dash.energySum());
 
         //if last project and we have less than 1000 fill up to 1000
         if (user.profile.dashBoards.length == 1 && user.getEnergy() < 1000 && user.getEnergy() >= 0) {
