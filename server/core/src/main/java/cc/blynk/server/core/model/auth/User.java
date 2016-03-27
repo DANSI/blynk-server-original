@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class User implements Serializable {
 
-    public static final double RECYCLE_PRICE_RESTORE = 0.8;
+    public static final double RECYCLE_PRICE_RESTORE = 1;
 
 	private static final long serialVersionUID = 1L;
 
