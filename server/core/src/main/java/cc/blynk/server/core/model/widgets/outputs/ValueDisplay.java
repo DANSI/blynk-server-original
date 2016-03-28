@@ -12,7 +12,7 @@ import static cc.blynk.utils.ByteBufUtil.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class Digit4Display extends OnePinWidget implements FrequencyWidget, HardwareSyncWidget {
+public class ValueDisplay extends OnePinWidget implements FrequencyWidget, HardwareSyncWidget {
 
     private int frequency;
 

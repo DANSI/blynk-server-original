@@ -2,7 +2,7 @@ package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.widgets.controls.RGB;
-import cc.blynk.server.core.model.widgets.outputs.Digit4Display;
+import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -22,7 +22,7 @@ public class PinGetJsonValueTest {
 
     @Test
     public void testSinglePin() {
-        OnePinWidget onePinWidget = new Digit4Display();
+        OnePinWidget onePinWidget = new ValueDisplay();
         onePinWidget.value = null;
 
         assertEquals("[]", onePinWidget.getJsonValue());
