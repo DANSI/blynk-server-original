@@ -15,6 +15,10 @@ public class Button extends OnePinWidget implements HardwareSyncWidget {
 
     public boolean pushMode;
 
+    public String onLabel;
+
+    public String offLabel;
+
     @Override
     public void send(ChannelHandlerContext ctx, int msgId) {
         String body = makeHardwareBody();
