@@ -11,7 +11,7 @@ import cc.blynk.server.core.model.widgets.others.Bluetooth;
 import cc.blynk.server.core.model.widgets.others.Bridge;
 import cc.blynk.server.core.model.widgets.others.RTC;
 import cc.blynk.server.core.model.widgets.outputs.*;
-import cc.blynk.server.core.model.widgets.ui.Menu;
+import cc.blynk.server.core.model.widgets.ui.Tabs;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -59,7 +59,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Bluetooth.class, name = "BLUETOOTH"),
 
         //MENU
-        @JsonSubTypes.Type(value = Menu.class, name = "MENU"),
+        @JsonSubTypes.Type(value = Tabs.class, name = "TABS"),
+        @JsonSubTypes.Type(value = Menu.class, name = "MENU")
 
 })
 public abstract class Widget {

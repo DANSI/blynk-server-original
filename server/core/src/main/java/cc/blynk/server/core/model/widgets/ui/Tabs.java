@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.widgets.Widget;
  * Created by Dmitriy Dumanskiy.
  * Created on 07.02.16.
  */
-public class Menu extends Widget {
+public class Tabs extends Widget {
 
     public Tab[] tabs;
 
@@ -44,7 +44,7 @@ public class Menu extends Widget {
 
     @Override
     public int getPrice() {
-        return 900;
+        return 1500;
     }
 
 }
