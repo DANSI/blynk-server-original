@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,6 +22,9 @@ public class TokenManager extends TokenManagerBase {
 
     @Override
     Map<Integer, String> getTokens(User user) {
+        if (user.dashTokens == null) {
+            user.dashTokens = new HashMap<>();
+        }
         return user.dashTokens;
     }
 
