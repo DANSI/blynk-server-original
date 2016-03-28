@@ -13,6 +13,8 @@ import static cc.blynk.utils.ByteBufUtil.*;
  */
 public class Menu extends OnePinWidget implements HardwareSyncWidget {
 
+    public String[] labels;
+
     @Override
     public void send(ChannelHandlerContext ctx, int msgId) {
         String body = makeHardwareBody();
