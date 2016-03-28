@@ -43,6 +43,18 @@ public class FileManagerIntegrationTest {
     }
 
     @Test
+    public void testNotNullTokenManager() throws IOException {
+        fileManager.overrideUserFile(user1);
+
+        Map<String, User> users = fileManager.deserialize();
+        assertNotNull(users);
+        assertNotNull(users.get(user1.name));
+        assertNotNull(users.get(user1.name).dashShareTokens);
+        assertNotNull(users.get(user1.name).dashTokens);
+
+    }
+
+    @Test
     public void testCreationTempFile() throws IOException {
         fileManager.overrideUserFile(user1);
         //file existence ignored
