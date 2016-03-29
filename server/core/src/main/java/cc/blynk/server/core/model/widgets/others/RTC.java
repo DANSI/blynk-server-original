@@ -9,6 +9,8 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  */
 public class RTC extends OnePinWidget {
 
+    public String timezone;
+
     @Override
     public String getModeType() {
         return null;
