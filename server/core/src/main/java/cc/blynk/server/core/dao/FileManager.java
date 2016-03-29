@@ -105,7 +105,6 @@ public class FileManager {
                     .flatMap(file -> {
                         try {
                             User user = JsonParser.parseUserFromFile(file);
-                            user.purchaseEnergy(2000);
                             return Stream.of(user);
                         } catch (IOException ioe) {
                             log.error("Error parsing file '{}'.", file);
