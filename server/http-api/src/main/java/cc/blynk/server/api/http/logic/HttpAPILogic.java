@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -47,19 +48,21 @@ public class HttpAPILogic {
     private final GlobalStats globalStats;
     private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
+    private final ReportingDao reportingDao;
 
     public HttpAPILogic(Holder holder) {
-        this(holder.userDao, holder.sessionDao, holder.blockingIOProcessor, holder.mailWrapper, holder.gcmWrapper, holder.stats);
+        this(holder.userDao, holder.sessionDao, holder.blockingIOProcessor, holder.mailWrapper, holder.gcmWrapper, holder.reportingDao, holder.stats);
     }
 
     private HttpAPILogic(UserDao userDao, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor,
-                         MailWrapper mailWrapper, GCMWrapper gcmWrapper, GlobalStats globalStats) {
+                         MailWrapper mailWrapper, GCMWrapper gcmWrapper, ReportingDao reportingDao, GlobalStats globalStats) {
         this.userDao = userDao;
         this.blockingIOProcessor = blockingIOProcessor;
         this.sessionDao = sessionDao;
         this.globalStats = globalStats;
         this.mailWrapper = mailWrapper;
         this.gcmWrapper = gcmWrapper;
+        this.reportingDao = reportingDao;
     }
 
     @GET
@@ -223,6 +226,8 @@ public class HttpAPILogic {
 
         Widget widget = dashBoard.findWidgetByPin(pin, pinType);
         String body;
+
+        reportingDao.process(user.name, dashId, pin, pinType, pinValues);
 
         if (widget == null) {
             body = Pin.makeHardwareBody(pinType, pin, pinValues);
