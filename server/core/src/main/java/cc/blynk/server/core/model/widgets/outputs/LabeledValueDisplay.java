@@ -53,7 +53,7 @@ public class LabeledValueDisplay extends OnePinWidget implements FrequencyWidget
 
     @Override
     public int getPrice() {
-        return 200;
+        return 400;
     }
 
 }

@@ -44,7 +44,7 @@ public class Tabs extends Widget {
 
     @Override
     public int getPrice() {
-        return 1500;
+        return 100;
     }
 
 }

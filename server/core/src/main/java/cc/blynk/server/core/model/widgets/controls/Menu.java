@@ -15,6 +15,8 @@ public class Menu extends OnePinWidget implements HardwareSyncWidget {
 
     public String[] labels;
 
+    public String hint;
+
     @Override
     public void send(ChannelHandlerContext ctx, int msgId) {
         String body = makeHardwareBody();
@@ -30,7 +32,7 @@ public class Menu extends OnePinWidget implements HardwareSyncWidget {
 
     @Override
     public int getPrice() {
-        return 200;
+        return 400;
     }
 
 }
