@@ -250,6 +250,8 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testHardSyncReturn1RTC() throws Exception {
         clientPair.hardwareClient.send("hardsync " + b("vr 9"));
 
+        long expectedTS = System.currentTimeMillis() / 1000;
+
         ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
 
@@ -259,6 +261,10 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals(HARDWARE, hardMessage.command);
         assertEquals(15, hardMessage.length);
         assertTrue(hardMessage.body.startsWith(b("vw 9")));
+        String tsString = hardMessage.body.split("\0")[2];
+        long ts = Long.valueOf(tsString);
+
+        assertEquals(expectedTS, ts, 2);
     }
 
     @Test
