@@ -42,7 +42,11 @@ public class RTC extends OnePinWidget {
     private static class ZoneIdToString extends JsonSerializer<Object> {
         @Override
         public void serialize(Object value, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException {
-            jsonGenerator.writeObject(value.toString());
+            String result = value.toString();
+            if (result.equals("Z")) {
+                result = "+00:00";
+            }
+            jsonGenerator.writeObject(result);
         }
     }
 

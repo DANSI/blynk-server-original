@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 public class RTCSerializationTest {
 
     @Test
-    public void tesDeSerializationIsCorrect() {
+    public void testDeSerializationIsCorrect() {
         String widgetString = "{\"id\":1, \"x\":1, \"y\":1, \"type\":\"RTC\", \"timezone\":\"+03:00\"}";
         Widget widget = JsonParser.parseWidget(widgetString, 1);
 
@@ -28,7 +28,7 @@ public class RTCSerializationTest {
     }
 
     @Test
-    public void tesDeSerializationIsCorrectForNull() {
+    public void testDeSerializationIsCorrectForNull() {
         String widgetString = "{\"id\":1, \"x\":1, \"y\":1, \"type\":\"RTC\"}";
         Widget widget = JsonParser.parseWidget(widgetString, 1);
 
@@ -39,7 +39,7 @@ public class RTCSerializationTest {
     }
 
     @Test
-    public void tesSerializationIsCorrect() throws Exception {
+    public void testSerializationIsCorrect() throws Exception {
         RTC rtc = new RTC();
         rtc.timezone = ZoneOffset.of("+03:00");
 
@@ -52,7 +52,20 @@ public class RTCSerializationTest {
     }
 
     @Test
-    public void tesSerializationIsCorrectForNull() throws Exception {
+    public void testSerializationIsCorrectUTC() throws Exception {
+        RTC rtc = new RTC();
+        rtc.timezone = ZoneOffset.of("+00:00");
+
+        String widgetString = JsonParser.mapper.writeValueAsString(rtc);
+
+        assertNotNull(widgetString);
+        assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"pin\":-1," +
+                "\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0," +
+                "\"timezone\":\"+00:00\"}", widgetString);
+    }
+
+    @Test
+    public void testSerializationIsCorrectForNull() throws Exception {
         RTC rtc = new RTC();
         rtc.timezone = null;
 
