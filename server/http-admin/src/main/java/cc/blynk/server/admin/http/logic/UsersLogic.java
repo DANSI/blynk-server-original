@@ -59,6 +59,12 @@ public class UsersLogic extends BaseLogic {
         return ok(userDao.getUsers().get(name));
     }
 
+    @GET
+    @Path("/names/all")
+    public Response getAllUserNames() {
+        return ok(userDao.getUsers().keySet());
+    }
+
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{name}")
