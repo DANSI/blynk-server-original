@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
 import cc.blynk.server.core.model.widgets.others.RTC;
+import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.PinUtil;
@@ -42,6 +43,12 @@ public class HardwareSyncLogic {
         } else {
             //return specific widget state
             String[] bodyParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+
+            if (bodyParts.length < 2) {
+                ctx.writeAndFlush(makeResponse(ctx, message.id, Response.ILLEGAL_COMMAND), ctx.voidPromise());
+                return;
+            }
+
             PinType pinType = PinType.getPinType(bodyParts[0].charAt(0));
             byte pin = Byte.parseByte(bodyParts[1]);
 
