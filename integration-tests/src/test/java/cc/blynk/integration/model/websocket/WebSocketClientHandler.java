@@ -64,9 +64,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
     public void startHandshake(Channel channel) {
         handshaker.handshake(channel);
-        if (handshakeFuture != null) {
-            handshakeFuture = channel.newPromise();
-        }
+        handshakeFuture = channel.newPromise();
     }
 
     @Override
@@ -80,7 +78,9 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         if (!handshaker.isHandshakeComplete()) {
             handshaker.finishHandshake(ch, (FullHttpResponse) msg);
             log.trace("WebSocket Client connected!");
-            handshakeFuture.setSuccess();
+            if (handshakeFuture != null) {
+                handshakeFuture.setSuccess();
+            }
             return;
         }
 
