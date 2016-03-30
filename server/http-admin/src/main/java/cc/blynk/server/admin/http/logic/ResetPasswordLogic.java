@@ -115,6 +115,7 @@ public class ResetPasswordLogic {
         }
 
         user.pass = password;
+        user.lastModifiedTs = System.currentTimeMillis();
 
         log.info("{} password was reset.", user.name);
         tokensPool.removeToken(token);
