@@ -319,7 +319,7 @@ public class HttpAPILogic {
             try {
                 gcmWrapper.send(message);
             } catch (Exception e) {
-                log.error("Error sending push notification on offline hardware. For user {}", user.name, e);
+                log.error("Error sending push notification on offline hardware. For user {}. Reason {}", user.name, e.getMessage());
             }
         });
     }
