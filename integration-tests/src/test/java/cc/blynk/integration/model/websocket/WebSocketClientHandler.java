@@ -64,7 +64,9 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
     public void startHandshake(Channel channel) {
         handshaker.handshake(channel);
-        handshakeFuture = channel.newPromise();
+        if (handshakeFuture != null) {
+            handshakeFuture = channel.newPromise();
+        }
     }
 
     @Override
