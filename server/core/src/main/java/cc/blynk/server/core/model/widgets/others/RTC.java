@@ -24,6 +24,8 @@ public class RTC extends OnePinWidget {
     @JsonDeserialize(using = StringToZoneId.class, as = ZoneOffset.class)
     public ZoneOffset timezone;
 
+    public String timezoneName;
+
     @Override
     public String getModeType() {
         return null;
