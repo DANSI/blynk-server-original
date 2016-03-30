@@ -52,29 +52,33 @@ public class ProfileSaverWorker implements Runnable, Closeable {
 
     @Override
     public void run() {
-        log.debug("Starting saving user db.");
-        int count = 0;
-        long newStart = System.currentTimeMillis();
+        try {
+            log.debug("Starting saving user db.");
+            int count = 0;
+            long newStart = System.currentTimeMillis();
 
-        List<User> users = new ArrayList<>();
+            List<User> users = new ArrayList<>();
 
-        for (User user : userDao.getUsers().values()) {
-            if (isUpdated(lastStart, user)) {
-                try {
-                    fileManager.overrideUserFile(user);
-                    users.add(user);
-                    count++;
-                } catch (IOException e) {
-                    log.error("Error saving : {}.", user);
+            for (User user : userDao.getUsers().values()) {
+                if (isUpdated(lastStart, user)) {
+                    try {
+                        fileManager.overrideUserFile(user);
+                        users.add(user);
+                        count++;
+                    } catch (IOException e) {
+                        log.error("Error saving : {}.", user);
+                    }
                 }
             }
+
+            dbManager.saveUsers(users);
+
+            lastStart = newStart;
+
+            log.debug("Saving user db finished. Modified {} users.", count);
+        } catch (Throwable t) {
+            log.error("Error saving users.", t);
         }
-
-        dbManager.saveUsers(users);
-
-        lastStart = newStart;
-
-        log.debug("Saving user db finished. Modified {} users.", count);
     }
 
     @Override
