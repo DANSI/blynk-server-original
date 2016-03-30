@@ -13,6 +13,7 @@ import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.time.Instant;
+import java.time.ZoneOffset;
 
 import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.utils.ByteBufUtil.*;
@@ -47,8 +48,8 @@ public class HardwareSyncLogic {
             if (PinUtil.isReadOperation(bodyParts[0])) {
                 Widget widget = dash.findWidgetByPin(pin, pinType);
                 if (widget instanceof RTC)  {
-                    final long now = Instant.now().getEpochSecond();
-                    final String body = Pin.makeHardwareBody(pinType, pin, String.valueOf(now));
+                    RTC rtc = (RTC) widget;
+                    final String body = Pin.makeHardwareBody(pinType, pin, getTime(rtc));
                     ctx.writeAndFlush(makeStringMessage(ctx, HARDWARE, message.id, body), ctx.voidPromise());
                 } else if (widget instanceof HardwareSyncWidget) {
                     ((HardwareSyncWidget) widget).send(ctx, message.id);
@@ -56,6 +57,11 @@ public class HardwareSyncLogic {
                 }
             }
         }
+    }
+
+    private static String getTime(RTC rtc) {
+        ZoneOffset offset = rtc.timezone == null ? ZoneOffset.UTC : rtc.timezone;
+        return String.valueOf(Instant.now().getEpochSecond() + offset.getTotalSeconds());
     }
 
 }

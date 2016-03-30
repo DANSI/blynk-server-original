@@ -45,6 +45,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -247,7 +248,7 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    public void testHardSyncReturn1RTC() throws Exception {
+    public void testHardSyncReturnRTCWithoutTimezone() throws Exception {
         clientPair.hardwareClient.send("hardsync " + b("vr 9"));
 
         long expectedTS = System.currentTimeMillis() / 1000;
@@ -261,6 +262,93 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals(HARDWARE, hardMessage.command);
         assertEquals(15, hardMessage.length);
         assertTrue(hardMessage.body.startsWith(b("vw 9")));
+        String tsString = hardMessage.body.split("\0")[2];
+        long ts = Long.valueOf(tsString);
+
+        assertEquals(expectedTS, ts, 2);
+    }
+
+    @Test
+    public void testHardSyncReturnRTCWithUTCTimezone() throws Exception {
+        ZoneOffset offset = ZoneOffset.of("+00:00");
+
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+                "\"x\":0,\"y\":0,\"width\":0,\"height\":0," +
+                "\"timezone\":\"TZ\"}").replace("TZ", offset.toString()));
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.hardwareClient.send("hardsync " + b("vr 99"));
+
+        long expectedTS = System.currentTimeMillis() / 1000 + offset.getTotalSeconds();
+
+        ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
+
+        List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
+        StringMessage hardMessage = arguments.get(0);
+        assertEquals(1, hardMessage.id);
+        assertEquals(HARDWARE, hardMessage.command);
+        assertEquals(16, hardMessage.length);
+        assertTrue(hardMessage.body.startsWith(b("vw 99")));
+        String tsString = hardMessage.body.split("\0")[2];
+        long ts = Long.valueOf(tsString);
+
+        assertEquals(expectedTS, ts, 2);
+    }
+
+    @Test
+    public void testHardSyncReturnRTCWithUTCTimezonePlus3() throws Exception {
+        ZoneOffset offset = ZoneOffset.of("+03:00");
+
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+                "\"x\":0,\"y\":0,\"width\":0,\"height\":0," +
+                "\"timezone\":\"TZ\"}").replace("TZ", offset.toString()));
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.hardwareClient.send("hardsync " + b("vr 99"));
+
+        long expectedTS = System.currentTimeMillis() / 1000 + offset.getTotalSeconds();
+
+        ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
+
+        List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
+        StringMessage hardMessage = arguments.get(0);
+        assertEquals(1, hardMessage.id);
+        assertEquals(HARDWARE, hardMessage.command);
+        assertEquals(16, hardMessage.length);
+        assertTrue(hardMessage.body.startsWith(b("vw 99")));
+        String tsString = hardMessage.body.split("\0")[2];
+        long ts = Long.valueOf(tsString);
+
+        assertEquals(expectedTS, ts, 2);
+    }
+
+    @Test
+    public void testHardSyncReturnRTCWithUTCTimezoneMinus3() throws Exception {
+        ZoneOffset offset = ZoneOffset.of("-03:00");
+
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+                "\"x\":0,\"y\":0,\"width\":0,\"height\":0," +
+                "\"timezone\":\"TZ\"}").replace("TZ", offset.toString()));
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.hardwareClient.send("hardsync " + b("vr 99"));
+
+        long expectedTS = System.currentTimeMillis() / 1000 + offset.getTotalSeconds();
+
+        ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
+
+        List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
+        StringMessage hardMessage = arguments.get(0);
+        assertEquals(1, hardMessage.id);
+        assertEquals(HARDWARE, hardMessage.command);
+        assertEquals(16, hardMessage.length);
+        assertTrue(hardMessage.body.startsWith(b("vw 99")));
         String tsString = hardMessage.body.split("\0")[2];
         long ts = Long.valueOf(tsString);
 
