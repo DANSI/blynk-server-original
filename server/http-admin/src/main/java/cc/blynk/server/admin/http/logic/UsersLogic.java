@@ -7,6 +7,7 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.handlers.http.rest.Response;
+import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
 
@@ -29,11 +30,13 @@ public class UsersLogic extends BaseLogic {
     private final UserDao userDao;
     private final SessionDao sessionDao;
     private final FileManager fileManager;
+    private final ProfileSaverWorker profileSaverWorker;
 
-    public UsersLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager) {
+    public UsersLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager, ProfileSaverWorker profileSaverWorker) {
         this.userDao = userDao;
         this.fileManager = fileManager;
         this.sessionDao = sessionDao;
+        this.profileSaverWorker = profileSaverWorker;
     }
 
     @GET
@@ -60,9 +63,16 @@ public class UsersLogic extends BaseLogic {
     }
 
     @GET
-    @Path("/names/all")
+    @Path("/names/getAll")
     public Response getAllUserNames() {
         return ok(userDao.getUsers().keySet());
+    }
+
+    @GET
+    @Path("/trigger/saveAll")
+    public Response saveAll() {
+        List<User> users = profileSaverWorker.saveAll();
+        return ok("Saved users : " + users.size());
     }
 
     @PUT

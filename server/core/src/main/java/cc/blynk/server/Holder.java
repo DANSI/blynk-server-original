@@ -12,6 +12,7 @@ import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
+import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.Config;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.ServerProperties;
@@ -44,6 +45,8 @@ public class Holder {
     public final AverageAggregator averageAggregator;
 
     public final BlockingIOProcessor blockingIOProcessor;
+
+    public ProfileSaverWorker profileSaverWorker;
 
     public final TwitterWrapper twitterWrapper;
     public final MailWrapper mailWrapper;

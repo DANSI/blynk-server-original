@@ -35,7 +35,7 @@ public class HttpsAdminServer extends BaseServer {
 
         final String rootPath = holder.props.getProperty("admin.rootPath", "/admin");
 
-        HandlerRegistry.register(rootPath, new UsersLogic(holder.userDao, holder.sessionDao, holder.fileManager));
+        HandlerRegistry.register(rootPath, new UsersLogic(holder.userDao, holder.sessionDao, holder.fileManager, holder.profileSaverWorker));
         HandlerRegistry.register(rootPath, new StatsLogic(holder.userDao, holder.sessionDao, holder.stats));
 
         final String[] allowedIPsArray = holder.props.getCommaSeparatedList("allowed.administrator.ips");

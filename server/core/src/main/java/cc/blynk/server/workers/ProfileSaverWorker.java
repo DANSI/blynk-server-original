@@ -54,31 +54,51 @@ public class ProfileSaverWorker implements Runnable, Closeable {
     public void run() {
         try {
             log.debug("Starting saving user db.");
-            int count = 0;
+
             long newStart = System.currentTimeMillis();
 
-            List<User> users = new ArrayList<>();
-
-            for (User user : userDao.getUsers().values()) {
-                if (isUpdated(lastStart, user)) {
-                    try {
-                        fileManager.overrideUserFile(user);
-                        users.add(user);
-                        count++;
-                    } catch (IOException e) {
-                        log.error("Error saving : {}.", user);
-                    }
-                }
-            }
+            List<User> users = saveModified();
 
             dbManager.saveUsers(users);
 
             lastStart = newStart;
 
-            log.debug("Saving user db finished. Modified {} users.", count);
+            log.debug("Saving user db finished. Modified {} users.", users.size());
         } catch (Throwable t) {
             log.error("Error saving users.", t);
         }
+    }
+
+    private List<User> saveModified() {
+        List<User> users = new ArrayList<>();
+
+        for (User user : userDao.getUsers().values()) {
+            if (isUpdated(lastStart, user)) {
+                try {
+                    fileManager.overrideUserFile(user);
+                    users.add(user);
+                } catch (IOException e) {
+                    log.error("Error saving : {}.", user);
+                }
+            }
+        }
+
+        return users;
+    }
+
+    public List<User> saveAll() {
+        List<User> users = new ArrayList<>(userDao.getUsers().size());
+
+        for (User user : userDao.getUsers().values()) {
+            try {
+                fileManager.overrideUserFile(user);
+                users.add(user);
+            } catch (IOException e) {
+                log.error("Error saving : {}.", user);
+            }
+        }
+
+        return users;
     }
 
     @Override
