@@ -75,6 +75,7 @@ public class UsersLogic extends BaseLogic {
         }
 
         userDao.add(updatedUser);
+        updatedUser.lastModifiedTs = System.currentTimeMillis();
         log.debug("Adding new user {}", updatedUser.name);
 
 
@@ -98,6 +99,7 @@ public class UsersLogic extends BaseLogic {
         }
 
         user.pass = userPassPojo.pass;
+        user.lastModifiedTs = System.currentTimeMillis();
 
         return ok();
     }
