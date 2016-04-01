@@ -62,7 +62,7 @@ public class HardwareLogic {
         if (isWriteOperation(body)) {
             String[] splitBody = body.split(StringUtils.BODY_SEPARATOR_STRING);
 
-            if (splitBody.length < 3) {
+            if (splitBody.length < 3 || splitBody[0].length() == 0) {
                 throw new IllegalCommandException("Write command is wrong.", message.id);
             }
 
