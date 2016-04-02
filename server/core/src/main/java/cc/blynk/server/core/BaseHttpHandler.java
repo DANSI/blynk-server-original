@@ -74,11 +74,15 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
 
         URIDecoder uriDecoder = new URIDecoder(req.getUri());
         HandlerRegistry.populateBody(req, uriDecoder);
-        uriDecoder.pathData = handlerHolder.uriTemplate.extractParameters();
 
         Object[] params;
         try {
+            uriDecoder.pathData = handlerHolder.uriTemplate.extractParameters();
             params = handlerHolder.fetchParams(uriDecoder);
+        } catch (StringIndexOutOfBoundsException stringE) {
+            log.error("{} : '{}'. Error : ", req.getMethod().name(), req.getUri(), stringE.getMessage());
+            ctx.writeAndFlush(Response.serverError(stringE.getMessage()));
+            return;
         } catch (Exception e) {
             ctx.writeAndFlush(Response.serverError(e.getMessage()));
             return;
