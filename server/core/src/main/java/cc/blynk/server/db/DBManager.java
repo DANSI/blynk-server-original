@@ -27,7 +27,7 @@ public class DBManager implements Closeable {
 
     private static final Logger log = LogManager.getLogger(DBManager.class);
 
-    private static final String DB_PROPERTIES_FILENAME = "db.properties";
+    public static final String DB_PROPERTIES_FILENAME = "db.properties";
 
     private final HikariDataSource ds;
 

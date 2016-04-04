@@ -181,8 +181,23 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         ]);
 
 
+    var config = nga.entity('config').identifier(nga.field('name'));
+    config.listView()
+        .title('Configurations')
+        .batchActions([])
+        .fields([
+            nga.field('name').isDetailLink(true)
+        ]);
 
-    // customize menu
+
+    config.editionView()
+        .title('Edit configuration "{{entry.values.name}}"')
+        .fields(
+            nga.field('name').editable(false),
+            nga.field('body', 'text')
+        );
+
+        // customize menu
     admin.menu(nga.menu().autoClose(false)
             .addChild(nga.menu(users).icon('<span class="glyphicon glyphicon-user"></span>'))
             .addChild(nga.menu().title('Stats')
@@ -193,9 +208,9 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                 .addChild(nga.menu(widgets).title('Widgets').icon(''))
                 .addChild(nga.menu(projectsPerUser).title('Projects per user').icon(''))
                 .addChild(nga.menu(filledSpace).title('Cells per project').icon(''))
-        )
+            )
+            .addChild(nga.menu(config))
     );
-
 
 
     // add the user entity to the admin application
@@ -207,6 +222,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     admin.addEntity(widgets);
     admin.addEntity(projectsPerUser);
     admin.addEntity(filledSpace);
+    admin.addEntity(config);
     // attach the admin application to the DOM and execute it
     nga.configure(admin);
 }]);

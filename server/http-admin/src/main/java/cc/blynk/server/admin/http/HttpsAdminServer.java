@@ -3,6 +3,7 @@ package cc.blynk.server.admin.http;
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.handlers.AdminHandler;
 import cc.blynk.server.admin.http.handlers.IpFilterHandler;
+import cc.blynk.server.admin.http.logic.ConfigsLogic;
 import cc.blynk.server.admin.http.logic.StatsLogic;
 import cc.blynk.server.admin.http.logic.UsersLogic;
 import cc.blynk.server.core.BaseServer;
@@ -37,6 +38,7 @@ public class HttpsAdminServer extends BaseServer {
 
         HandlerRegistry.register(rootPath, new UsersLogic(holder.userDao, holder.sessionDao, holder.fileManager, holder.profileSaverWorker));
         HandlerRegistry.register(rootPath, new StatsLogic(holder.userDao, holder.sessionDao, holder.stats));
+        HandlerRegistry.register(rootPath, new ConfigsLogic(holder.blockingIOProcessor));
 
         final String[] allowedIPsArray = holder.props.getCommaSeparatedList("allowed.administrator.ips");
         final Set<String> allowedIPs;

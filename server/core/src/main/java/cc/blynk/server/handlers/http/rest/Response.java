@@ -90,7 +90,6 @@ public class Response extends DefaultFullHttpResponse {
 
     public static Response appendTotalCountHeader(Response response, int count) {
         response.headers().set("X-Total-Count", count);
-        response.headers().set("Access-Control-Expose-Headers", "x-total-count");
         return response;
     }
 }
