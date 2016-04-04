@@ -72,13 +72,14 @@ public class DBManagerTest {
         int a = 0;
 
         String userName = "test@gmail.com";
-        long startMinute = 0;
+
         long start = System.currentTimeMillis();
+        long minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
+        long startMinute = minute;
+
         try (Connection connection = dbManager.getConnection();
              PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
 
-            long minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
-            startMinute = minute;
             for (int i = 0; i < 1000; i++) {
                 ReportingDBDao.prepareReportingInsert(ps, userName, 1, (byte) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
