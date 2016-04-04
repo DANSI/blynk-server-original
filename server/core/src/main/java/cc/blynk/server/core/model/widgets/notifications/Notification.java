@@ -22,6 +22,8 @@ public class Notification extends Widget {
 
     public boolean notifyWhenOffline;
 
+    public int notifyWhenOfflineIgnorePeriod;
+
     public Priority priority = Priority.normal;
 
     public static boolean isWrongBody(String body) {
