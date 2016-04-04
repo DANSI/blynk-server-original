@@ -89,8 +89,8 @@
         <maven.assembly.plugin.version>2.6</maven.assembly.plugin.version>
 
         <!-- dependencies -->
-        <netty.version>4.0.35.Final</netty.version>
-        <netty.tcnative.version>1.1.33.Fork14</netty.tcnative.version>
+        <netty.version>4.0.36.Final</netty.version>
+        <netty.tcnative.version>1.1.33.Fork15</netty.tcnative.version>
         <log4j2.version>2.5</log4j2.version>
         <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
         <jackson-databind.version>2.5.1</jackson-databind.version>
@@ -126,7 +126,7 @@
             <artifactId>netty-handler</artifactId>
             <!-- this is because of https://github.com/netty/netty/issues/5041-->
             <!-- this is a local build of netty with 1.1.33.Fork14 netty.tcnative.version-->
-            <version>4.0.36.Final-SNAPSHOT</version>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
