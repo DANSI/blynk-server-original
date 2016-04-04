@@ -9,7 +9,7 @@ If you need more information, please follow these links:
 * [Twitter](http://twitter.com/blynk_app)
 * [App Store](https://itunes.apple.com/us/app/blynk-control-arduino-raspberry/id808760481?ls=1&mt=8)
 * [Google Play](https://play.google.com/store/apps/details?id=cc.blynk)
-* [Getting Started](http://www.blynk.cc/getting-started)
+* [Blynk library](https://github.com/blynkkk/blynk-library)
 * [Kickstarter](https://www.kickstarter.com/projects/167134865/blynk-build-an-app-for-your-arduino-project-in-5-m/description)
 
 ![Dashboard settings](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/dash_settings.png)
