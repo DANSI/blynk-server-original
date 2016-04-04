@@ -2,9 +2,7 @@ package cc.blynk.server.launcher;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
-import cc.blynk.server.workers.FileChangeWatcherWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
 import cc.blynk.server.workers.StatsWorker;
 import cc.blynk.server.workers.StorageWorker;
@@ -45,9 +43,6 @@ class JobLauncher {
         StatsWorker statsWorker = new StatsWorker(holder.stats, holder.sessionDao, holder.userDao);
         scheduler.scheduleAtFixedRate(statsWorker, 1000,
                 holder.props.getIntProperty("stats.print.worker.period"), TimeUnit.MILLISECONDS);
-
-        FileChangeWatcherWorker fileChangeWatcherWorker = new FileChangeWatcherWorker(BlockingIOProcessor.TOKEN_MAIL_BODY, holder.blockingIOProcessor);
-        new Thread(fileChangeWatcherWorker).start();
 
         //millis we need to wait to start scheduler at the beginning of a second.
         startDelay = 1000 - (System.currentTimeMillis() % 1000);
