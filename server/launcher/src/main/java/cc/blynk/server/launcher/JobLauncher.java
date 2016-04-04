@@ -2,13 +2,13 @@ package cc.blynk.server.launcher;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.server.workers.FileChangeWatcherWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
 import cc.blynk.server.workers.StatsWorker;
 import cc.blynk.server.workers.StorageWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
-import cc.blynk.utils.Config;
 import cc.blynk.utils.ReportingUtil;
 
 import java.util.concurrent.Executors;
@@ -46,7 +46,7 @@ class JobLauncher {
         scheduler.scheduleAtFixedRate(statsWorker, 1000,
                 holder.props.getIntProperty("stats.print.worker.period"), TimeUnit.MILLISECONDS);
 
-        FileChangeWatcherWorker fileChangeWatcherWorker = new FileChangeWatcherWorker(Config.TOKEN_MAIL_BODY, holder.blockingIOProcessor);
+        FileChangeWatcherWorker fileChangeWatcherWorker = new FileChangeWatcherWorker(BlockingIOProcessor.TOKEN_MAIL_BODY, holder.blockingIOProcessor);
         new Thread(fileChangeWatcherWorker).start();
 
         //millis we need to wait to start scheduler at the beginning of a second.

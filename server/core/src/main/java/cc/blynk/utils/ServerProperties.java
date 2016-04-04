@@ -15,8 +15,10 @@ import java.util.Properties;
  */
 public class ServerProperties extends Properties {
 
+    public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
+
     public ServerProperties() {
-        initProperties(Config.SERVER_PROPERTIES_FILENAME);
+        initProperties(SERVER_PROPERTIES_FILENAME);
     }
 
     public ServerProperties(String propertiesFileName) {

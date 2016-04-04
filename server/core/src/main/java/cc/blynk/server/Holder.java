@@ -13,7 +13,6 @@ import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.workers.ProfileSaverWorker;
-import cc.blynk.utils.Config;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.ServerProperties;
 
@@ -74,7 +73,7 @@ public class Holder {
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
-                FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY)
+                FileLoaderUtil.readFileAsString(BlockingIOProcessor.TOKEN_MAIL_BODY)
         );
 
         this.dbManager = new DBManager(blockingIOProcessor);
@@ -102,7 +101,7 @@ public class Holder {
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
-                FileLoaderUtil.readFileAsString(Config.TOKEN_MAIL_BODY)
+                FileLoaderUtil.readFileAsString(BlockingIOProcessor.TOKEN_MAIL_BODY)
         );
 
         this.dbManager = new DBManager(blockingIOProcessor);

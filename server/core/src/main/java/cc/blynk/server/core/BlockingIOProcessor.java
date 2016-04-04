@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class BlockingIOProcessor implements Closeable {
 
+    public static final String TOKEN_MAIL_BODY = "token_mail_body.txt";
     private final ThreadPoolExecutor executor;
     public volatile String tokenBody;
 
