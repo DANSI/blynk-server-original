@@ -46,7 +46,7 @@ public class RTCSerializationTest {
         String widgetString = JsonParser.mapper.writeValueAsString(rtc);
 
         assertNotNull(widgetString);
-        assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"pin\":-1," +
+        assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"pin\":-1," +
                 "\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0," +
                 "\"timezone\":\"+03:00\"}", widgetString);
     }
@@ -59,7 +59,7 @@ public class RTCSerializationTest {
         String widgetString = JsonParser.mapper.writeValueAsString(rtc);
 
         assertNotNull(widgetString);
-        assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"pin\":-1," +
+        assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"pin\":-1," +
                 "\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0," +
                 "\"timezone\":\"+00:00\"}", widgetString);
     }
@@ -72,7 +72,7 @@ public class RTCSerializationTest {
         String widgetString = JsonParser.mapper.writeValueAsString(rtc);
 
         assertNotNull(widgetString);
-        assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"pin\":-1," +
+        assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"pin\":-1," +
                 "\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0}", widgetString);
     }
 
