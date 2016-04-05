@@ -356,6 +356,85 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testAddAndRemoveTabs() throws Exception {
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        assertEquals(13, profile.dashBoards[0].widgets.length);
+
+        clientPair.appClient.send("getEnergy");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "9200")));
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":100, \"x\":0, \"y\":0, \"tabs\":[{\"label\":\"tab 1\"}, {\"label\":\"tab 2\"}, {\"label\":\"tab 3\"}], \"type\":\"TABS\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":101, \"x\":15, \"y\":0, \"tabId\":1, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":18}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":102, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":17}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(5, OK)));
+
+        clientPair.appClient.send("getEnergy");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, GET_ENERGY, "8800")));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        assertEquals(16, profile.dashBoards[0].widgets.length);
+
+        clientPair.appClient.send("deleteWidget 1\0" + "100");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+
+        clientPair.appClient.send("getEnergy");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, GET_ENERGY, "9000")));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        assertEquals(14, profile.dashBoards[0].widgets.length);
+        assertNotNull(profile.dashBoards[0].findWidgetByPin((byte) 17, PinType.DIGITAL));
+    }
+
+    @Test
+    public void testAddAndUpdateTabs() throws Exception {
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        assertEquals(13, profile.dashBoards[0].widgets.length);
+
+        clientPair.appClient.send("getEnergy");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "9200")));
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":100, \"x\":0, \"y\":0, \"tabs\":[{\"label\":\"tab 1\"}, {\"label\":\"tab 2\"}, {\"label\":\"tab 3\"}], \"type\":\"TABS\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":101, \"x\":15, \"y\":0, \"tabId\":1, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":18}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":102, \"x\":5, \"y\":0, \"tabId\":2, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":17}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(5, OK)));
+
+        clientPair.appClient.send("getEnergy");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, GET_ENERGY, "8800")));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        assertEquals(16, profile.dashBoards[0].widgets.length);
+
+        clientPair.appClient.send("updateWidget 1\0{\"id\":100, \"x\":0, \"y\":0, \"tabs\":[{\"label\":\"tab 1\"}, {\"label\":\"tab 2\"}], \"type\":\"TABS\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+
+        clientPair.appClient.send("getEnergy");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, GET_ENERGY, "9000")));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        assertEquals(15, profile.dashBoards[0].widgets.length);
+        assertNull(profile.dashBoards[0].findWidgetByPin((byte) 17, PinType.DIGITAL));
+        assertNotNull(profile.dashBoards[0].findWidgetByPin((byte) 18, PinType.DIGITAL));
+    }
+
+    @Test
     public void testApplicationPingCommandOk() throws Exception {
         clientPair.appClient.send("ping");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));

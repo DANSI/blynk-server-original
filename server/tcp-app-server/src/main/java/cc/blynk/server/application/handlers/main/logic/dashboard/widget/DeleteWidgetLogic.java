@@ -2,6 +2,8 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
@@ -9,6 +11,9 @@ import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static cc.blynk.utils.ByteBufUtil.*;
 import static cc.blynk.utils.StringUtils.*;
@@ -33,20 +38,44 @@ public class DeleteWidgetLogic {
         long widgetId = ParseUtil.parseLong(split[1], message.id);
 
         DashBoard dash = user.profile.getDashById(dashId, message.id);
-        int existingWidgetIndex = dash.getWidgetIndex(widgetId, message.id);
 
         log.debug("Removing widget with id {}.", widgetId);
 
-        delete(user, dash, existingWidgetIndex);
+        int existingWidgetIndex = dash.getWidgetIndex(widgetId, message.id);
+        Widget widgetToDelete = dash.widgets[existingWidgetIndex];
+        if (widgetToDelete instanceof Tabs) {
+            deleteTabs(user, dash, 0);
+        }
+
+        existingWidgetIndex = dash.getWidgetIndex(widgetId, message.id);
+        deleteWidget(user, dash, existingWidgetIndex);
 
         ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
     }
 
-    private static void delete(User user, DashBoard dash, int existingWidgetIndex) {
+    /**
+     * Removes all widgets with tabId greater than lastTabIndex
+     */
+    public static void deleteTabs(User user, DashBoard dash, int lastTabIndex) {
+        List<Widget> zeroTabWidgets = new ArrayList<>();
+        int removedWidgetPrice = 0;
+        for (Widget widget : dash.widgets) {
+            if (widget.tabId > lastTabIndex) {
+                removedWidgetPrice += widget.getPrice();
+            } else {
+                zeroTabWidgets.add(widget);
+            }
+        }
+
+        user.recycleEnergy(removedWidgetPrice);
+        dash.widgets = zeroTabWidgets.toArray(new Widget[zeroTabWidgets.size()]);
+        dash.updatedAt = System.currentTimeMillis();
+    }
+
+    private static void deleteWidget(User user, DashBoard dash, int existingWidgetIndex) {
         user.recycleEnergy(dash.widgets[existingWidgetIndex].getPrice());
         dash.widgets = ArrayUtil.remove(dash.widgets, existingWidgetIndex);
         dash.updatedAt = System.currentTimeMillis();
-        user.lastModifiedTs = dash.updatedAt;
     }
 
 }

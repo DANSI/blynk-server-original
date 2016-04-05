@@ -12,6 +12,10 @@ public class Tabs extends Widget {
 
     public Tab[] tabs;
 
+    public Tabs() {
+        this.tabId = -1;
+    }
+
     @Override
     public void updateIfSame(byte pin, PinType type, String[] values) {
 
@@ -44,7 +48,7 @@ public class Tabs extends Widget {
 
     @Override
     public int getPrice() {
-        return 100;
+        return 0;
     }
 
 }

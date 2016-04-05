@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -60,6 +61,11 @@ public class UpdateWidgetLogic {
         }
 
         int existingWidgetIndex = dash.getWidgetIndex(newWidget.id, message.id);
+
+        if (newWidget instanceof Tabs) {
+            Tabs newTabs = (Tabs) newWidget;
+            DeleteWidgetLogic.deleteTabs(user, dash, newTabs.tabs.length - 1);
+        }
 
         dash.widgets[existingWidgetIndex] = newWidget;
         dash.updatedAt = System.currentTimeMillis();

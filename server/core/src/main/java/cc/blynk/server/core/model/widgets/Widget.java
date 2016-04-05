@@ -79,6 +79,8 @@ public abstract class Widget {
 
     public int height;
 
+    public int tabId = 0;
+
     public String label;
 
     public abstract void updateIfSame(byte pin, PinType type, String[] values);
