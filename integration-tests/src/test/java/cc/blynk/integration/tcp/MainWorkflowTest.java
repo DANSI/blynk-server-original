@@ -435,6 +435,27 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testPurchaseEnergy() throws Exception {
+        clientPair.appClient.send("addEnergy " + "1000" + "\0" + "5262996016779471529.4493624392154338");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
+
+        clientPair.appClient.send("addEnergy " + "1000" + "\0" + "A3B93EE9-BC65-499E-A660-F2A84F2AF1FC");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NOT_ALLOWED)));
+
+        clientPair.appClient.send("addEnergy " + "1000");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, NOT_ALLOWED)));
+
+        clientPair.appClient.send("addEnergy " + "1000" + "\0");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, NOT_ALLOWED)));
+
+        clientPair.appClient.send("addEnergy " + "1000" + "\0" + "150000195113772");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(5, OK)));
+
+        clientPair.appClient.send("addEnergy " + "1000" + "\0" + "1370-3990-1414-55681");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(6, OK)));
+    }
+
+    @Test
     public void testApplicationPingCommandOk() throws Exception {
         clientPair.appClient.send("ping");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
