@@ -46,7 +46,7 @@ public class RegisterHandlerTest {
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
 
         when(userDao.isUserExists(userName)).thenReturn(false);
-        registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + " 1"));
+        registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + "\0" + "1"));
 
         verify(userDao).add(eq(userName), eq("1"));
     }
@@ -64,7 +64,7 @@ public class RegisterHandlerTest {
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
 
         when(userDao.isUserExists(userName)).thenReturn(false);
-        registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + " 1"));
+        registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + "\0" + "1"));
 
         verify(userDao).add(eq(userName), eq("1"));
     }
@@ -82,7 +82,7 @@ public class RegisterHandlerTest {
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
 
         when(userDao.isUserExists(userName)).thenReturn(false);
-        registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + " 1"));
+        registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + "\0" + "1"));
 
         verify(userDao).add(eq(userName), eq("1"));
     }
@@ -100,7 +100,7 @@ public class RegisterHandlerTest {
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
 
         when(userDao.isUserExists(userName)).thenReturn(false);
-        registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + " 1"));
+        registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + "\0" + "1"));
 
         verify(userDao, times(0)).add(eq(userName), eq("1"));
         //verify(ctx).writeAndFlush(eq(new ResponseMessage(1, NOT_ALLOWED)), any());
@@ -119,7 +119,7 @@ public class RegisterHandlerTest {
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
 
         when(userDao.isUserExists(userName)).thenReturn(false);
-        registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + " 1"));
+        registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + "\0" + "1"));
 
         verify(userDao).add(eq(userName), eq("1"));
     }
