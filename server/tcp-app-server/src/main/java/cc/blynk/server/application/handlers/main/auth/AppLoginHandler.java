@@ -38,8 +38,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
         //warn: split may be optimized
-        //todo remove space after app migration
-        String[] messageParts = message.body.split(" |\0");
+        String[] messageParts = message.body.split("\0");
 
         if (messageParts.length < 2) {
             throw new IllegalCommandException("Wrong income message format.", message.id);
