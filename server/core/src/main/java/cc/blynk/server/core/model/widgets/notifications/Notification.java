@@ -46,11 +46,6 @@ public class Notification extends Widget {
     }
 
     @Override
-    public String getValue(byte pin, PinType type) {
-        return null;
-    }
-
-    @Override
     public String getJsonValue() {
         return null;
     }

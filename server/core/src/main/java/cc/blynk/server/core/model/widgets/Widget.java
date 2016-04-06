@@ -87,8 +87,6 @@ public abstract class Widget {
 
     public abstract boolean isSame(byte pin, PinType type);
 
-    public abstract String getValue(byte pin, PinType type);
-
     public abstract String getJsonValue();
 
     public abstract String makeHardwareBody();
