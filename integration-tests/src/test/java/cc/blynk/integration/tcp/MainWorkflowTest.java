@@ -47,7 +47,6 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -166,51 +165,6 @@ public class MainWorkflowTest extends IntegrationBase {
         channelFuture.await();
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseWithBodyMessage(0, Command.RESPONSE, DEVICE_WENT_OFFLINE, 1)));
-    }
-
-    @Test
-    public void addPushTokenWorks() throws Exception {
-        clientPair.appClient.send("addPushToken 1\0uid\0token");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-
-        clientPair.appClient.reset();
-
-        clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
-
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
-        assertNotNull(notification);
-        assertEquals(1, notification.androidTokens.size());
-        assertEquals(0, notification.iOSTokens.size());
-        Map.Entry<String, String> entry = notification.androidTokens.entrySet().iterator().next();
-        assertEquals("uid", entry.getKey());
-        assertEquals("token", entry.getValue());
-    }
-
-
-    @Test
-    public void addPushTokenWorks2() throws Exception {
-        clientPair.appClient.send("addPushToken 1\0uid\0token");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-
-        doThrow(new Exception("NotRegistered")).when(gcmWrapper).send(any());
-
-        clientPair.hardwareClient.send("push Yo!");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOTIFICATION_EXCEPTION)));
-
-
-        clientPair.appClient.reset();
-
-        clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
-
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
-        assertNotNull(notification);
-        assertEquals(0, notification.androidTokens.size());
-        assertEquals(0, notification.iOSTokens.size());
-
-        clientPair.hardwareClient.send("push Yo!");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NOTIFICATION_NOT_AUTHORIZED_EXCEPTION)));
     }
 
     @Test
