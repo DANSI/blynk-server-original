@@ -198,6 +198,9 @@ WARNING : Blynk is growing very quickly. And both apps and server constantly upd
 updates either turn off auto-update for Blynk app either update both local server and blynk app at same time to avoid possible
 migration issues.
 
+WARNING : Blynk local server is not Blynk cloud server. They are not related at all. So you have to create new account when using 
+Blynk local server.
+
 ## Advanced local server setup
 If you need more flexibility, you can extend server with more options by creating server.properties file in same folder as server.jar. Example could be found [here](https://github.com/blynkkk/blynk-server/blob/master/server/core/src/main/resources/server.properties).
 server.properties options:
