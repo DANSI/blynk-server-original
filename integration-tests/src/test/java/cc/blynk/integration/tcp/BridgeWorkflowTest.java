@@ -117,6 +117,14 @@ public class BridgeWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testSecondTokenNotInitialized() throws Exception {
+        clientPair.hardwareClient.send("bridge 1 i token");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.hardwareClient.send("bridge 2 aw 10 10");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NOT_ALLOWED)));
+    }
+
+    @Test
     public void testCorrectWorkflow2HardsSameToken() throws Exception {
         //creating 1 new hard client
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);

@@ -57,12 +57,12 @@ public class BridgeLogic {
 
             ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
         } else {
-            if (sendToMap.size() == 0) {
-                throw new NotAllowedException("Bridge not initialized.", message.id);
-            }
-
             final String pin = split[0];
             final String token = sendToMap.get(pin);
+
+            if (sendToMap.size() == 0 || token == null) {
+                throw new NotAllowedException("Bridge not initialized.", message.id);
+            }
 
             if (session.getHardwareChannels().size() > 1) {
                 boolean messageWasSent = false;
