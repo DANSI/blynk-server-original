@@ -5,7 +5,10 @@ import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.http.ResponseUserEntity;
 import cc.blynk.server.admin.http.HttpsAdminServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
@@ -90,7 +93,24 @@ public class HttpsAdminServerTest extends BaseTest {
         request.setEntity(new StringEntity(new ResponseUserEntity("123").toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(404, response.getStatusLine().getStatusCode() );
+            assertEquals(404, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testGetUserFromAdminPage() throws Exception {
+        String testUser = "dmitriy@blynk.cc";
+        HttpGet request = new HttpGet(httpsServerUrl + testUser);
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String jsonProfile = consumeText(response);
+            assertNotNull(jsonProfile);
+            User user = JsonParser.readAny(jsonProfile, User.class);
+            assertNotNull(user);
+            assertEquals(testUser, user.name);
+            assertNotNull(user.profile.dashBoards);
+            assertEquals(5, user.profile.dashBoards.length);
         }
     }
 
