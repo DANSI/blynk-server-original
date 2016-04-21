@@ -18,6 +18,11 @@ public class Bluetooth extends Widget {
     }
 
     @Override
+    public String getValue(byte pin, PinType type) {
+        return null;
+    }
+
+    @Override
     public boolean isSame(byte pin, PinType type) {
         return false;
     }

@@ -48,6 +48,7 @@ public abstract class OnePinWidget extends Widget {
         return this.pin == pin && ((this.isPWMSupported() && type == PinType.ANALOG) || (type == this.pinType));
     }
 
+    @Override
     public String getValue(byte pin, PinType type) {
         return value;
     }

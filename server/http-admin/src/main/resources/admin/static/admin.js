@@ -77,6 +77,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                             {value: 'Wildfire v3', label: 'Wildfire v3'},
                             {value: 'WiPy', label: 'WiPy'}
                         ]),
+                    nga.field('metadata', 'json'),
                     nga.field('widgets', 'embedded_list')
                         .targetFields([
                             nga.field('id', 'number'),

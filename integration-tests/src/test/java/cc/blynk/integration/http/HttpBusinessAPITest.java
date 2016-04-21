@@ -1,0 +1,65 @@
+package cc.blynk.integration.http;
+
+import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.IntegrationBase;
+import cc.blynk.server.api.http.HttpAPIServer;
+import cc.blynk.server.core.BaseServer;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import static org.junit.Assert.*;
+
+/**
+ * The Blynk Project.
+ * Created by Dmitriy Dumanskiy.
+ * Created on 24.12.15.
+ */
+@RunWith(MockitoJUnitRunner.class)
+public class HttpBusinessAPITest extends BaseTest {
+
+    private static BaseServer httpServer;
+    private static CloseableHttpClient httpclient;
+    private static String httpsServerUrl;
+
+    @AfterClass
+    public static void shutdown() throws Exception {
+        httpclient.close();
+        httpServer.close();
+    }
+
+    @Before
+    public void init() throws Exception {
+        if (httpServer == null) {
+            httpServer = new HttpAPIServer(holder).start(transportTypeHolder);
+            httpsServerUrl = String.format("http://localhost:%s/data", httpPort);
+            httpclient = HttpClients.createDefault();
+        }
+    }
+
+    @Override
+    public String getDataFolder() {
+        return IntegrationBase.getProfileFolder("/business_profile");
+    }
+
+    //----------------------------GET METHODS SECTION
+
+    @Test
+    public void testAllParkingAggregatedInfo() throws Exception {
+        HttpGet request = new HttpGet(httpsServerUrl + "?groupBy=name&aggregation=count&pin=V1&value=1");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String result = consumeText(response);
+            assertNotNull(result);
+        }
+    }
+
+
+}

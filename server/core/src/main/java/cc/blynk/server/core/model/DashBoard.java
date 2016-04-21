@@ -11,6 +11,8 @@ import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: ddumanskiy
@@ -39,6 +41,8 @@ public class DashBoard {
 
     public boolean isActive;
 
+    public Map<String, Object> metadata = new HashMap<>();
+
     /**
      * Specific property used for improving user experience on mobile application.
      * In case user activated dashboard before hardware connected to server, user have to
@@ -48,6 +52,10 @@ public class DashBoard {
      * without requiring user to activate/deactivate dashboard again.
      */
     public transient StringMessage pinModeMessage;
+
+    public String getName() {
+        return name;
+    }
 
     private static void append(StringBuilder sb, byte pin, PinType pinType, String pinMode) {
         if (pin == -1 || pinMode == null || pinType == PinType.VIRTUAL) {

@@ -66,7 +66,12 @@ public class HandlerRegistry {
                         handlerHolder.params[i] = new FormMethodParam(((FormParam) formParamAnnotation).value(), parameter.getType());
                     }
 
-                    if (pathParamAnnotation == null && queryParamAnnotation == null && formParamAnnotation == null) {
+                    Annotation headerParamAnnotation = parameter.getAnnotation(HeaderParam.class);
+                    if (headerParamAnnotation != null) {
+                        handlerHolder.params[i] = new RequestHeaderParam(((HeaderParam) headerParamAnnotation).value(), parameter.getType());
+                    }
+
+                    if (pathParamAnnotation == null && queryParamAnnotation == null && formParamAnnotation == null && headerParamAnnotation == null) {
                         handlerHolder.params[i] = new BodyMethodParam(parameter.getName(), parameter.getType(), contentType);
                     }
                 }

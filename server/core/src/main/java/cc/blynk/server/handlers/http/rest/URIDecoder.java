@@ -16,6 +16,7 @@ public class URIDecoder extends QueryStringDecoder {
     public Map<String, String> pathData;
     public ByteBuf bodyData;
     public String contentType;
+    public Map<String, String> headers;
 
     public URIDecoder(String uri) {
         super(uri);

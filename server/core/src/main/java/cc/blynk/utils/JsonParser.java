@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * User: ddumanskiy
@@ -63,6 +64,15 @@ public final class JsonParser {
     public static String toJson(ObjectWriter writer, Object o) {
         try {
             return writer.writeValueAsString(o);
+        } catch (Exception e) {
+            log.error("Error jsoning object.", e);
+        }
+        return "{}";
+    }
+
+    public static String toJson(Map<?, ?> map) {
+        try {
+            return mapper.writeValueAsString(map);
         } catch (Exception e) {
             log.error("Error jsoning object.", e);
         }

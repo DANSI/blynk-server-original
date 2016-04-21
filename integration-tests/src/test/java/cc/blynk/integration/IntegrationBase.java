@@ -56,8 +56,8 @@ public abstract class IntegrationBase extends BaseTest {
         throw new RuntimeException("Get token message wasn't retrieved.");
     }
 
-    public static String getProfileFolder() {
-        URL resource = IntegrationBase.class.getResource("/profiles");
+    public static String getProfileFolder(String path) {
+        URL resource = IntegrationBase.class.getResource(path);
         URI uri = null;
         try {
             uri = resource.toURI();
@@ -66,6 +66,10 @@ public abstract class IntegrationBase extends BaseTest {
         String resourcesPath = Paths.get(uri).toAbsolutePath().toString();
         System.out.println("Resource path : " + resourcesPath);
         return resourcesPath;
+    }
+
+    public static String getProfileFolder() {
+        return getProfileFolder("/profiles");
     }
 
     public ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,

@@ -3,6 +3,7 @@ package cc.blynk.server.api.http;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.HttpHandler;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
+import cc.blynk.server.api.http.logic.HttpBusinessAPILogic;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import io.netty.channel.ChannelInitializer;
@@ -23,6 +24,7 @@ public class HttpAPIServer extends BaseServer {
         super(holder.props.getIntProperty("http.port"));
 
         HandlerRegistry.register(new HttpAPILogic(holder));
+        HandlerRegistry.register(new HttpBusinessAPILogic(holder));
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override

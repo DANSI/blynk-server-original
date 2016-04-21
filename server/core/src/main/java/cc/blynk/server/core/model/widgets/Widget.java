@@ -93,6 +93,8 @@ public abstract class Widget {
 
     public abstract String getModeType();
 
+    public abstract String getValue(byte pin, PinType type);
+
     public abstract int getPrice();
 
 }
