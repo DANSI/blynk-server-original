@@ -98,6 +98,9 @@ public class HttpBusinessAPILogic {
         return projects.stream().filter(
                 project -> {
                     Widget widget = project.findWidgetByPin(pinIndex, pinType);
+                    if (widget == null) {
+                        return false;
+                    }
                     String widgetValue = widget.getValue(pinIndex, pinType);
                     return value.equalsIgnoreCase(widgetValue);
                 }

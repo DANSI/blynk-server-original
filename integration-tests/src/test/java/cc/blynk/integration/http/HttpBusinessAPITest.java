@@ -51,6 +51,18 @@ public class HttpBusinessAPITest extends BaseTest {
     //----------------------------GET METHODS SECTION
 
     @Test
+    public void testNoDataProfile() throws Exception {
+        HttpGet request = new HttpGet(String.format("http://localhost:%s/1/query", httpPort) + "?groupBy=name&aggregation=count&pin=V1&value=1");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String result = consumeText(response);
+            assertNotNull(result);
+            assertEquals("{}", result);
+        }
+    }
+
+    @Test
     public void testAllParkingsAggregatedInfo() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + "?groupBy=name&aggregation=count&pin=V1&value=1");
 
