@@ -72,6 +72,15 @@ public class HttpBusinessAPITest extends BaseTest {
             assertNotNull(result);
             assertEquals("{\"parking1\":2,\"parking2\":1}", result);
         }
+
+        request = new HttpGet(httpsServerUrl + "?groupBy=name&aggregation=count&value=1");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String result = consumeText(response);
+            assertNotNull(result);
+            assertEquals("{\"parking1\":2,\"parking2\":1}", result);
+        }
     }
 
     @Test
