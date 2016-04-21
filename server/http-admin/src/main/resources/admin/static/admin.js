@@ -86,7 +86,8 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                             nga.field('y').editable(false),
                             nga.field('type').editable(false),
                             nga.field('width').editable(false),
-                            nga.field('height').editable(false)
+                            nga.field('height').editable(false),
+                            nga.field('value')
                         ]),
                     nga.field('keepScreenOn', 'boolean'),
                     nga.field('isShared', 'boolean'),
