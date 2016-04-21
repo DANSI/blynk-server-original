@@ -51,15 +51,39 @@ public class HttpBusinessAPITest extends BaseTest {
     //----------------------------GET METHODS SECTION
 
     @Test
-    public void testAllParkingAggregatedInfo() throws Exception {
+    public void testAllParkingsAggregatedInfo() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + "?groupBy=name&aggregation=count&pin=V1&value=1");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String result = consumeText(response);
             assertNotNull(result);
+            assertEquals("{\"parking1\":2,\"parking2\":1}", result);
         }
     }
 
+    @Test
+    public void testNoData() throws Exception {
+        HttpGet request = new HttpGet(httpsServerUrl + "?groupBy=name&aggregation=count&pin=V1&value=0");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String result = consumeText(response);
+            assertNotNull(result);
+            assertEquals("{}", result);
+        }
+    }
+
+    @Test
+    public void testGetSpecificParking() throws Exception {
+        HttpGet request = new HttpGet(httpsServerUrl + "?name=parking2");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String result = consumeText(response);
+            assertNotNull(result);
+            assertEquals("[{\"id\":3,\"name\":\"parking2\",\"metadata\":{\"group\":3,\"lat\":50.4601,\"lon\":30.5334},\"pins\":[{\"value\":\"1\",\"pin\":1,\"pinType\":\"VIRTUAL\"}]}]", result);
+        }
+    }
 
 }

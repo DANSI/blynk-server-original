@@ -1,6 +1,7 @@
 package cc.blynk.server.api.http.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.pojo.business.BusinessProject;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
@@ -74,7 +75,7 @@ public class HttpBusinessAPILogic {
         projects = filterByValue(projects, pin, value);
 
         if (groupBy == null || aggregation == null) {
-            return ok(projects);
+            return ok(transform(projects));
         }
 
 
@@ -83,14 +84,20 @@ public class HttpBusinessAPILogic {
         return ok(result);
     }
 
+    private static List<BusinessProject> transform(List<DashBoard> projects) {
+        List<BusinessProject> businessProjects = new ArrayList<>();
+        for (DashBoard dashBoard : projects) {
+            businessProjects.add(new BusinessProject(dashBoard));
+        }
+        return businessProjects;
+    }
+
     private static Map<String, Long> groupBy(List<DashBoard> projects, String groupBy, String aggregation) {
         Map<String, Long> countByGroupBy = projects.stream()
                 .collect(Collectors.groupingBy(DashBoard::getName, Collectors.counting()));
 
         return countByGroupBy;
     }
-
-
 
     private static List<DashBoard> filterByValue(List<DashBoard> projects, String pin, String value) {
         if (value == null) {

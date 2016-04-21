@@ -33,7 +33,7 @@
                                    "id":1,
                                    "x":1,
                                    "y":1,
-                                   "label":"Some Text",
+                                   "label":"",
                                    "type":"DIGIT4_DISPLAY",
                                    "pinType":"VIRTUAL",
                                    "pin":1,
@@ -63,7 +63,37 @@
                                    "id":1,
                                    "x":1,
                                    "y":1,
-                                   "label":"Some Text",
+                                   "label":"",
+                                   "type":"DIGIT4_DISPLAY",
+                                   "pinType":"VIRTUAL",
+                                   "pin":1,
+                                   "frequency" : 0,
+                                   "value":"1"
+                               }
+                            ]
+                    },
+                    {
+                        "id":3,
+                        "name":"parking2",
+                        "createdAt":1461062179901,
+                        "updatedAt":1461062219021,
+                        "boardType":"ESP8266",
+                        "keepScreenOn":false,
+                        "isShared":false,
+                        "isActive":false,
+                        "metadata" :
+                            {
+                                "group" : 3,
+                                "lat" : 50.4601,
+                                "lon" : 30.5334
+                            },
+                        "widgets" :
+                            [
+                               {
+                                   "id":1,
+                                   "x":1,
+                                   "y":1,
+                                   "label":"",
                                    "type":"DIGIT4_DISPLAY",
                                    "pinType":"VIRTUAL",
                                    "pin":1,
