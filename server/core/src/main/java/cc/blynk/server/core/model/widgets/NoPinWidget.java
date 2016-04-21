@@ -40,8 +40,7 @@ public abstract class NoPinWidget extends Widget {
     }
 
     @Override
-    public String getValue() {
-        return null;
+    public boolean hasValue(String searchValue) {
+        return false;
     }
-
 }

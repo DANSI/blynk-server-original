@@ -75,6 +75,30 @@ public class HttpBusinessAPITest extends BaseTest {
     }
 
     @Test
+    public void testFilterByValue() throws Exception {
+        HttpGet request = new HttpGet(httpsServerUrl + "?value=1");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String result = consumeText(response);
+            assertNotNull(result);
+            assertEquals("[{\"id\":1,\"name\":\"parking1\",\"metadata\":{\"group\":1,\"lat\":50.4501,\"lon\":30.5234},\"pins\":[{\"value\":\"1\",\"pin\":1,\"pinType\":\"VIRTUAL\"}]},{\"id\":2,\"name\":\"parking1\",\"metadata\":{\"group\":2,\"lat\":50.4501,\"lon\":30.5234},\"pins\":[{\"value\":\"1\",\"pin\":1,\"pinType\":\"VIRTUAL\"}]},{\"id\":3,\"name\":\"parking2\",\"metadata\":{\"group\":3,\"lat\":50.4601,\"lon\":30.5334},\"pins\":[{\"value\":\"1\",\"pin\":1,\"pinType\":\"VIRTUAL\"}]}]", result);
+        }
+    }
+
+    @Test
+    public void testFilterByValueNoResults() throws Exception {
+        HttpGet request = new HttpGet(httpsServerUrl + "?value=0");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String result = consumeText(response);
+            assertNotNull(result);
+            assertEquals("[]", result);
+        }
+    }
+
+    @Test
     public void testNoData() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + "?groupBy=name&aggregation=count&pin=V1&value=0");
 

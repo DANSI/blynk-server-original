@@ -65,6 +65,18 @@ public abstract class MultiPinWidget extends Widget {
     }
 
     @Override
+    public boolean hasValue(String searchValue) {
+        if (pins != null) {
+            for (Pin pin : pins) {
+                if (searchValue.equals(pin.value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public String getJsonValue() {
         if (pins == null) {
             return "[]";

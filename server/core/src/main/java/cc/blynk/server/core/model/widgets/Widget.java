@@ -95,6 +95,8 @@ public abstract class Widget {
 
     public abstract String getValue(byte pin, PinType type);
 
+    public abstract boolean hasValue(String searchValue);
+
     public abstract int getPrice();
 
 }

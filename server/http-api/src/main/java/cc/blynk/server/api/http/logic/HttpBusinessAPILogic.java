@@ -92,6 +92,14 @@ public class HttpBusinessAPILogic {
             return projects;
         }
 
+        if (pin != null) {
+            return filterByValueAndPin(projects, pin, value);
+        }
+
+        return filterByValue(projects, value);
+    }
+
+    private static List<DashBoard> filterByValueAndPin(List<DashBoard> projects, String pin, String value) {
         PinType pinType = PinType.getPinType(pin.charAt(0));
         byte pinIndex = Byte.parseByte(pin.substring(1));
 
@@ -103,6 +111,19 @@ public class HttpBusinessAPILogic {
                     }
                     String widgetValue = widget.getValue(pinIndex, pinType);
                     return value.equalsIgnoreCase(widgetValue);
+                }
+        ).collect(Collectors.toList());
+    }
+
+    private static List<DashBoard> filterByValue(List<DashBoard> projects, String value) {
+        return projects.stream().filter(
+                project -> {
+                    for (Widget widget : project.widgets) {
+                        if (widget.hasValue(value)) {
+                            return true;
+                        }
+                    }
+                    return false;
                 }
         ).collect(Collectors.toList());
     }
