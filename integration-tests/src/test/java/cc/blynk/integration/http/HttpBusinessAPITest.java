@@ -38,7 +38,7 @@ public class HttpBusinessAPITest extends BaseTest {
     public void init() throws Exception {
         if (httpServer == null) {
             httpServer = new HttpAPIServer(holder).start(transportTypeHolder);
-            httpsServerUrl = String.format("http://localhost:%s/data", httpPort);
+            httpsServerUrl = String.format("http://localhost:%s/0130aceeb3864280b863c118eb84a8df/query", httpPort);
             httpclient = HttpClients.createDefault();
         }
     }
