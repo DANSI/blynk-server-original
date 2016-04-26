@@ -66,6 +66,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                             {value: 'Raspberry Pi B (Rev1)', label: 'Raspberry Pi B (Rev1)'},
                             {value: 'Raspberry Pi A/B (Rev2)', label: 'Raspberry Pi A/B (Rev2)'},
                             {value: 'RedBearLab CC3200/Mini', label: 'RedBearLab CC3200/Mini'},
+                            {value: 'SparkFun Blynk Board', label: 'SparkFun Blynk Board'},
                             {value: 'SparkFun ESP8266 Thing', label: 'SparkFun ESP8266 Thing'},
                             {value: 'SparkFun Photon RedBoard', label: 'SparkFun Photon RedBoard'},
                             {value: 'TI CC3200-LaunchXL', label: 'TI CC3200-LaunchXL'},
