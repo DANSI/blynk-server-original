@@ -139,8 +139,10 @@ public class UserDao {
     }
 
     public User add(String userName, String pass) {
+        log.debug("Adding new user {}.", userName);
         User newUser = new User(userName, pass);
-        return users.put(userName, newUser);
+        users.put(userName, newUser);
+        return newUser;
     }
 
 }

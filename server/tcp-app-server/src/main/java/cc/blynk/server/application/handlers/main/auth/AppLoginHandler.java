@@ -114,8 +114,8 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         log.info("{} app joined.", userName);
     }
 
-    private void cleanPipeline(ChannelPipeline pipeline) {
-        pipeline.remove(this);
+    private static void cleanPipeline(ChannelPipeline pipeline) {
+        pipeline.remove(AppLoginHandler.class);
         pipeline.remove(UserNotLoggedHandler.class);
         pipeline.remove(RegisterHandler.class);
         pipeline.remove(AppShareLoginHandler.class);
