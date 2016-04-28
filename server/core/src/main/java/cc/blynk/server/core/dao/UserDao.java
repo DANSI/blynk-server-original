@@ -138,11 +138,16 @@ public class UserDao {
         return filledSpace;
     }
 
-    public User add(String userName, String pass) {
-        log.debug("Adding new user {}.", userName);
-        User newUser = new User(userName, pass);
+    public User addFacebookUser(String userName) {
+        log.debug("Adding new facebook user {}.", userName);
+        User newUser = new User(userName);
         users.put(userName, newUser);
         return newUser;
+    }
+
+    public void add(String userName, String pass) {
+        User newUser = new User(userName, pass);
+        users.put(userName, newUser);
     }
 
 }

@@ -13,10 +13,13 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 
 /**
+ * Simple class that verifies that facebook access token is correct and belongs to user that sent it.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 28.04.16.
  */
+//todo not secure enough, I should check also app token belongs to
 public class FacebookLoginCheck {
 
     private static final String URL = "https://graph.facebook.com/me?fields=email&access_token=TOKEN";

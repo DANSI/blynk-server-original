@@ -70,7 +70,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
             User user = holder.userDao.getByName(username);
             if (user == null) {
-                user = holder.userDao.add(username, null);
+                user = holder.userDao.addFacebookUser(username);
             }
 
             login(ctx, messageId, user, osType, version);

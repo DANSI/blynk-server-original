@@ -34,6 +34,7 @@ public class User implements Serializable {
     public long lastLoggedAt;
     public Profile profile;
     private int energy;
+    public boolean isFacebookUser;
 
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
@@ -41,12 +42,20 @@ public class User implements Serializable {
         this.dashShareTokens = new HashMap<>();
         this.dashTokens = new HashMap<>();
         this.energy = 2000;
+        this.isFacebookUser = false;
     }
 
     public User(String name, String pass) {
         this();
         this.name = name;
         this.pass = pass;
+        this.isFacebookUser = false;
+    }
+
+    public User(String name) {
+        this();
+        this.name = name;
+        this.isFacebookUser = true;
     }
 
     public void setProfile(Profile profile) {
