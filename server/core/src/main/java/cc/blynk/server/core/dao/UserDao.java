@@ -138,9 +138,9 @@ public class UserDao {
         return filledSpace;
     }
 
-    public void add(String userName, String pass) {
+    public User add(String userName, String pass) {
         User newUser = new User(userName, pass);
-        users.put(userName, newUser);
+        return users.put(userName, newUser);
     }
 
 }

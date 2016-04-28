@@ -47,7 +47,7 @@ public abstract class IntegrationBase extends BaseTest {
         return readTestUserProfile(null);
     }
 
-    private static GetTokenMessage getGetTokenMessage(List<Object> arguments) {
+    protected static GetTokenMessage getGetTokenMessage(List<Object> arguments) {
         for (Object obj : arguments) {
             if (obj instanceof GetTokenMessage) {
                 return (GetTokenMessage) obj;

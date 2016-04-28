@@ -14,6 +14,7 @@ import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import io.netty.channel.*;
 
+import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.ByteBufUtil.*;
 
 
@@ -30,9 +31,11 @@ import static cc.blynk.utils.ByteBufUtil.*;
 public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler, DefaultReregisterHandler {
 
     private final Holder holder;
+    private final FacebookLoginCheck facebookLoginCheck;
 
     public AppLoginHandler(Holder holder) {
-       this.holder = holder;
+        this.holder = holder;
+        this.facebookLoginCheck = new FacebookLoginCheck();
     }
 
     @Override
@@ -44,16 +47,37 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             throw new IllegalCommandException("Wrong income message format.", message.id);
         }
 
-        OsType osType = OsType.OTHER;
-        String version = null;
-        if (messageParts.length == 4) {
-            osType = OsType.parse(messageParts[2]);
-            version = messageParts[3];
+        final String username = messageParts[0].toLowerCase();
+        final OsType osType = messageParts.length > 3 ? OsType.parse(messageParts[2]) : OsType.OTHER;
+        final String version = messageParts.length > 3 ? messageParts[3] : null;
+
+        if (messageParts.length == 5 && "facebook".equals(messageParts[4])) {
+            facebookLogin(ctx, message.id, username, messageParts[1], osType, version);
+        } else {
+            blynkLogin(ctx, message.id, username, messageParts[1], osType, version);
         }
-        appLogin(ctx, message.id, messageParts[0].toLowerCase(), messageParts[1], osType, version);
     }
 
-    private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String pass, OsType osType, String version) {
+    private void facebookLogin(ChannelHandlerContext ctx, int messageId, String username, String token, OsType osType, String version) {
+        holder.blockingIOProcessor.execute(() -> {
+            try {
+                facebookLoginCheck.verify(username, token);
+            } catch (Exception e) {
+                log.error("Error verifying facebook token {} for user {}.", token, username, e);
+                ctx.writeAndFlush(makeResponse(ctx, messageId, NOT_ALLOWED), ctx.voidPromise());
+                return;
+            }
+
+            User user = holder.userDao.getByName(username);
+            if (user == null) {
+                user = holder.userDao.add(username, null);
+            }
+
+            login(ctx, messageId, user, osType, version);
+        });
+    }
+
+    private void blynkLogin(ChannelHandlerContext ctx, int messageId, String username, String pass, OsType osType, String version) {
         User user = holder.userDao.getByName(username);
 
         if (user == null) {
@@ -64,11 +88,11 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", username, ctx.channel().remoteAddress()), messageId);
         }
 
-        final AppStateHolder appStateHolder = new AppStateHolder(user, osType, version);
-        //todo finish.
-        //if (appStateHolder.isOldAPI()) {
-        //    throw new NotSupportedVersion(messageId);
-        //}
+        login(ctx, messageId, user, osType, version);
+    }
+
+    private void login(ChannelHandlerContext ctx, int messageId, User user, OsType osType, String version) {
+        AppStateHolder appStateHolder = new AppStateHolder(user, osType, version);
 
         cleanPipeline(ctx.pipeline());
         ctx.pipeline().addLast(new AppHandler(holder, appStateHolder));
