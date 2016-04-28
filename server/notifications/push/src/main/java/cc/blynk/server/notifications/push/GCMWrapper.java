@@ -53,12 +53,9 @@ public class GCMWrapper {
 
         try (CloseableHttpResponse response = httpclient.execute(httpPost)) {
             HttpEntity entity = response.getEntity();
-            String errorMsg = EntityUtils.toString(entity);
-            if (response.getStatusLine().getStatusCode() != 200) {
-                EntityUtils.consume(entity);
-                throw new Exception(errorMsg);
-            } else {
-                GCMResponseMessage gcmResponseMessage = gcmResponseReader.readValue(errorMsg);
+            String responseMsg = EntityUtils.toString(entity);
+            if (response.getStatusLine().getStatusCode() == 200) {
+                GCMResponseMessage gcmResponseMessage = gcmResponseReader.readValue(responseMsg);
                 if (gcmResponseMessage.failure == 1) {
                     if (gcmResponseMessage.results != null && gcmResponseMessage.results.length > 0) {
                         throw new Exception("Error sending push. Problem : " + gcmResponseMessage.results[0].error);
@@ -66,6 +63,9 @@ public class GCMWrapper {
                         throw new Exception("Error sending push. Token : " + messageBase.getToken());
                     }
                 }
+            } else {
+                EntityUtils.consume(entity);
+                throw new Exception(responseMsg);
             }
         } finally {
             httpPost.releaseConnection();
