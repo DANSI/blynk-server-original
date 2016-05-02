@@ -37,6 +37,12 @@ public class QueryMethodParam extends MethodParam {
         if (params == null) {
             return null;
         }
+
+        //todo finish. now accepts only strings
+        if (type == List.class) {
+            return params;
+        }
+
         return convertTo(type, params.get(0));
     }
 

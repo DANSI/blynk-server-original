@@ -63,14 +63,14 @@ public class HttpBusinessAPITest extends BaseTest {
     }
 
     @Test
-    public void testAllParkingsAggregatedInfo() throws Exception {
+    public void testGroupByAndCount() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + "?groupBy=name&aggregation=count&pin=V1&value=1");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String result = consumeText(response);
             assertNotNull(result);
-            assertEquals("{\"parking1\":2,\"parking2\":1}", result);
+            assertEquals("[{\"name\":\"parking1\",\"count\":2},{\"name\":\"parking2\",\"count\":1}]", result);
         }
 
         request = new HttpGet(httpsServerUrl + "?groupBy=name&aggregation=count&value=1");
@@ -79,7 +79,28 @@ public class HttpBusinessAPITest extends BaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String result = consumeText(response);
             assertNotNull(result);
-            assertEquals("{\"parking1\":2,\"parking2\":1}", result);
+            assertEquals("[{\"name\":\"parking1\",\"count\":2},{\"name\":\"parking2\",\"count\":1}]", result);
+        }
+    }
+
+    @Test
+    public void testGroupByMultipleFieldsAndCount() throws Exception {
+        HttpGet request = new HttpGet(httpsServerUrl + "?groupBy=name&groupBy=lat&aggregation=count&pin=V1&value=1");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String result = consumeText(response);
+            assertNotNull(result);
+            assertEquals("[{\"name\":\"parking2\",\"count\":1,\"lat\":50.4601},{\"name\":\"parking1\",\"count\":2,\"lat\":50.4501}]", result);
+        }
+
+        request = new HttpGet(httpsServerUrl + "?groupBy=name&groupBy=lat&groupBy=lon&aggregation=count&pin=V1&value=1");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String result = consumeText(response);
+            assertNotNull(result);
+            assertEquals("[{\"name\":\"parking1\",\"count\":2,\"lon\":30.5234,\"lat\":50.4501},{\"name\":\"parking2\",\"count\":1,\"lon\":30.5334,\"lat\":50.4601}]", result);
         }
     }
 

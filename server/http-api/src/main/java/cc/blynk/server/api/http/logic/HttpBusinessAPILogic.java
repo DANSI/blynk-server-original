@@ -15,10 +15,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static cc.blynk.server.handlers.http.rest.Response.*;
@@ -47,7 +44,7 @@ public class HttpBusinessAPILogic {
     @Path("{token}/query")
     public Response getDashboard(@PathParam("token") String token,
                                  @QueryParam("name") String name,
-                                 @QueryParam("groupBy") String groupBy,
+                                 @QueryParam("groupBy") List<String> groupByList,
                                  @QueryParam("aggregation") String aggregation,
                                  @QueryParam("pin") String pin,
                                  @QueryParam("value") String value) {
@@ -64,12 +61,18 @@ public class HttpBusinessAPILogic {
         projects = filterByProjectName(projects, name);
         projects = filterByValue(projects, pin, value);
 
-        if (groupBy == null || aggregation == null) {
+        if (groupByList == null || aggregation == null) {
             return ok(transform(projects));
         }
 
+        Map<Map, Long> groupingResult = groupBy(projects, groupByList, aggregation);
+        List<Map> result = new ArrayList<>(groupingResult.size());
 
-        Map<String, Long> result = groupBy(projects, groupBy, aggregation);
+        for (Map.Entry<Map, Long> entry : groupingResult.entrySet()) {
+            Map<String, Object> key = entry.getKey();
+            key.put("count", entry.getValue());
+            result.add(key);
+        }
 
         return ok(result);
     }
@@ -83,8 +86,26 @@ public class HttpBusinessAPILogic {
     }
 
     //todo finish
-    private static Map<String, Long> groupBy(List<DashBoard> projects, String groupBy, String aggregation) {
-        return projects.stream().collect(Collectors.groupingBy(DashBoard::getName, Collectors.counting()));
+    private static Map<Map, Long> groupBy(List<DashBoard> projects, List<String> groupByList, String aggregation) {
+        return projects.stream().collect(Collectors.groupingBy(
+                proj -> {
+                    Map<String, Object> result = new HashMap<>();
+                    for (String groupBy : groupByList) {
+                        switch (groupBy) {
+                            case "name" :
+                                result.put(groupBy, proj.name);
+                                break;
+                            default:
+                                result.put(groupBy, proj.metadata.get(groupBy));
+                                break;
+                        }
+                    }
+
+                    return result;
+                },
+                Collectors.counting()
+               )
+        );
     }
 
     private static List<DashBoard> filterByValue(List<DashBoard> projects, String pin, String value) {
