@@ -3,6 +3,8 @@ package cc.blynk.server.handlers.http.rest;
 import cc.blynk.utils.UriTemplate;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.HttpMethod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -18,6 +20,8 @@ import java.util.Set;
  * Created on 09.12.15.
  */
 public class HandlerRegistry {
+
+    private static final Logger log = LogManager.getLogger(HandlerRegistry.class);
 
     private final static Set<HandlerHolder> processors = new HashSet<>();
 
@@ -105,6 +109,7 @@ public class HandlerRegistry {
         try {
             return (FullHttpResponse) handlerHolder.method.invoke(handlerHolder.handler, params);
         } catch (Exception e) {
+            log.error("Error invoking handler.", e.getMessage());
             return Response.serverError(e.getMessage());
         }
     }
