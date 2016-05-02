@@ -58,7 +58,7 @@ public class HttpBusinessAPITest extends BaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String result = consumeText(response);
             assertNotNull(result);
-            assertEquals("{}", result);
+            assertEquals("[]", result);
         }
     }
 
@@ -136,7 +136,7 @@ public class HttpBusinessAPITest extends BaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String result = consumeText(response);
             assertNotNull(result);
-            assertEquals("{}", result);
+            assertEquals("[]", result);
         }
     }
 

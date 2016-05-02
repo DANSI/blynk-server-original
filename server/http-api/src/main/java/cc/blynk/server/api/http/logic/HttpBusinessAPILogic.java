@@ -16,6 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static cc.blynk.server.handlers.http.rest.Response.*;
@@ -26,6 +27,7 @@ import static cc.blynk.server.handlers.http.rest.Response.*;
  * Created on 25.12.15.
  */
 @Path("/")
+@SuppressWarnings("unchecked")
 public class HttpBusinessAPILogic {
 
     private static final Logger log = LogManager.getLogger(HttpBusinessAPILogic.class);
@@ -66,26 +68,29 @@ public class HttpBusinessAPILogic {
         }
 
         Map<Map, Long> groupingResult = groupBy(projects, groupByList, aggregation);
+
+        return ok(transform(groupingResult, aggregation));
+    }
+
+    private static List<Map> transform(Map<Map, Long> groupingResult, String aggregation) {
         List<Map> result = new ArrayList<>(groupingResult.size());
 
         for (Map.Entry<Map, Long> entry : groupingResult.entrySet()) {
             Map<String, Object> key = entry.getKey();
-            key.put("count", entry.getValue());
+            key.put(aggregation, entry.getValue());
             result.add(key);
         }
 
-        return ok(result);
+        return result;
     }
 
+    /**
+     * Simplifies output object.
+     */
     private static List<BusinessProject> transform(List<DashBoard> projects) {
-        List<BusinessProject> businessProjects = new ArrayList<>();
-        for (DashBoard dashBoard : projects) {
-            businessProjects.add(new BusinessProject(dashBoard));
-        }
-        return businessProjects;
+        return projects.stream().map(BusinessProject::new).collect(Collectors.toList());
     }
 
-    //todo finish
     private static Map<Map, Long> groupBy(List<DashBoard> projects, List<String> groupByList, String aggregation) {
         return projects.stream().collect(Collectors.groupingBy(
                 proj -> {
@@ -103,9 +108,18 @@ public class HttpBusinessAPILogic {
 
                     return result;
                 },
-                Collectors.counting()
+                getAggregation(aggregation)
                )
         );
+    }
+
+    private static <T> Collector<T, ?, Long> getAggregation(String aggregation) {
+        switch (aggregation) {
+            case "count" :
+                return Collectors.counting();
+            default:
+                throw new RuntimeException("Not supported aggregation function " + aggregation);
+        }
     }
 
     private static List<DashBoard> filterByValue(List<DashBoard> projects, String pin, String value) {
