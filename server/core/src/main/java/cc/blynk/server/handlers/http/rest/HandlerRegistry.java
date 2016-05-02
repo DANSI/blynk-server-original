@@ -53,7 +53,7 @@ public class HandlerRegistry {
 
                     Annotation queryParamAnnotation = parameter.getAnnotation(QueryParam.class);
                     if (queryParamAnnotation != null) {
-                        handlerHolder.params[i] = new QueyMethodParam(((QueryParam) queryParamAnnotation).value(), parameter.getType());
+                        handlerHolder.params[i] = new QueryMethodParam(((QueryParam) queryParamAnnotation).value(), parameter.getType());
                     }
 
                     Annotation pathParamAnnotation = parameter.getAnnotation(PathParam.class);
