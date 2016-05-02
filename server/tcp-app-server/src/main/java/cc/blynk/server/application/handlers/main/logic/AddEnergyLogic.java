@@ -47,7 +47,7 @@ public class AddEnergyLogic {
     }
 
     private static boolean isValidTransactionId(String id) {
-        if (id == null || id.equals("")) {
+        if (id == null || id.equals("") || id.startsWith("com.blynk.energy")) {
             return false;
         }
 
