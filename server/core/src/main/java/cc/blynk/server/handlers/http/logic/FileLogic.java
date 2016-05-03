@@ -1,6 +1,5 @@
 package cc.blynk.server.handlers.http.logic;
 
-import cc.blynk.utils.ServerProperties;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
@@ -117,10 +116,10 @@ public class FileLogic extends SimpleChannelInboundHandler<FullHttpRequest> {
         }
 
         //for local mode
-        //File file = new File("/home/doom369/IdeaProjects/blynk-server/server/http-admin/target/classes" + request.getUri());
+        File file = new File("/home/doom369/IdeaProjects/blynk-server/server/http-admin/target/classes" + request.getUri());
 
         //.substring(1) is all after "/" part
-        File file = ServerProperties.getFileInCurrentDir(request.getUri()).toFile();
+        //File file = ServerProperties.getFileInCurrentDir(request.getUri()).toFile();
 
         if (file.isHidden() || !file.exists()) {
             sendError(ctx, NOT_FOUND);

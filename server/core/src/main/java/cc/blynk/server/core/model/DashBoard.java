@@ -33,7 +33,7 @@ public class DashBoard {
 
     public String boardType;
 
-    public String theme;
+    public String theme = "Blynk";
 
     public boolean keepScreenOn;
 
