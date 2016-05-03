@@ -1,5 +1,6 @@
 package cc.blynk.server.handlers.http.rest;
 
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.JsonParser;
 import io.netty.buffer.Unpooled;
@@ -79,6 +80,10 @@ public class Response extends DefaultFullHttpResponse {
 
     public static Response ok(User user) {
         return ok(JsonParser.toJson(user));
+    }
+
+    public static Response ok(DashBoard dashBoard) {
+        return ok(JsonParser.toJson(dashBoard));
     }
 
     public static Response ok(List<?> list, int page, int size) {

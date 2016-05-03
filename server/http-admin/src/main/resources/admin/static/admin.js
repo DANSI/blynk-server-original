@@ -36,7 +36,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                 .targetFields([
                     nga.field('id'),
                     nga.field('name'),
-                    nga.field('timestamp'),
+                    nga.field('createdAt'),
                     nga.field('theme', 'choice')
                         .choices([
                             {value: 'Blynk', label: 'Blynk'},

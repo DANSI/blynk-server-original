@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
  */
 public abstract class BaseLogic {
 
-    static final Logger log = LogManager.getLogger(BaseLogic.class);
+    public static final Logger log = LogManager.getLogger(BaseLogic.class);
 
-    static List<?> sort(List<?> list, String field, String order, boolean nameAsInt) {
+    public static List<?> sort(List<?> list, String field, String order, boolean nameAsInt) {
         if (list.size() == 0) {
             return list;
         }
@@ -37,11 +37,11 @@ public abstract class BaseLogic {
         return list;
     }
 
-    static List<?> sort(List<?> list, String field, String order) {
+    public static List<?> sort(List<?> list, String field, String order) {
         return sort(list, field, order, false);
     }
 
-    static List<NameCountResponse> convertMapToPair(Map<String, ?> map) {
+    public static List<NameCountResponse> convertMapToPair(Map<String, ?> map) {
         return map.entrySet().stream().map(NameCountResponse::new).collect(Collectors.toList());
     }
 

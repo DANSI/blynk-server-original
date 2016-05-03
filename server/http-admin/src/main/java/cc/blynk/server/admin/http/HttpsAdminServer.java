@@ -6,6 +6,7 @@ import cc.blynk.server.admin.http.handlers.IpFilterHandler;
 import cc.blynk.server.admin.http.logic.ConfigsLogic;
 import cc.blynk.server.admin.http.logic.StatsLogic;
 import cc.blynk.server.admin.http.logic.UsersLogic;
+import cc.blynk.server.admin.http.logic.business.BusinessLogic;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import cc.blynk.utils.SslUtil;
@@ -34,11 +35,14 @@ public class HttpsAdminServer extends BaseServer {
     public HttpsAdminServer(Holder holder) {
         super(holder.props.getIntProperty("administration.https.port", 7443));
 
-        final String rootPath = holder.props.getProperty("admin.rootPath", "/admin");
+        final String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
+        final String businessRootPath = "/business";
 
-        HandlerRegistry.register(rootPath, new UsersLogic(holder.userDao, holder.sessionDao, holder.fileManager, holder.profileSaverWorker));
-        HandlerRegistry.register(rootPath, new StatsLogic(holder.userDao, holder.sessionDao, holder.stats));
-        HandlerRegistry.register(rootPath, new ConfigsLogic(holder.blockingIOProcessor));
+        HandlerRegistry.register(adminRootPath, new UsersLogic(holder.userDao, holder.sessionDao, holder.fileManager, holder.profileSaverWorker));
+        HandlerRegistry.register(adminRootPath, new StatsLogic(holder.userDao, holder.sessionDao, holder.stats));
+        HandlerRegistry.register(adminRootPath, new ConfigsLogic(holder.blockingIOProcessor));
+
+        HandlerRegistry.register(businessRootPath, new BusinessLogic(holder.userDao, holder.sessionDao, holder.fileManager, holder.profileSaverWorker));
 
         final String[] allowedIPsArray = holder.props.getCommaSeparatedList("allowed.administrator.ips");
         final Set<String> allowedIPs;
@@ -62,7 +66,7 @@ public class HttpsAdminServer extends BaseServer {
                     new HttpServerCodec(),
                     new HttpObjectAggregator(65536),
                     new ChunkedWriteHandler(),
-                    new AdminHandler(holder.userDao, holder.sessionDao, holder.stats, rootPath)
+                    new AdminHandler(holder.userDao, holder.sessionDao, holder.stats, adminRootPath, businessRootPath)
                 );
             }
         };

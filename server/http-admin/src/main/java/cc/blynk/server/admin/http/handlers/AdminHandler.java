@@ -16,19 +16,23 @@ import io.netty.handler.codec.http.HttpRequest;
 public class AdminHandler extends BaseHttpHandler {
 
     private final FileLogic fileHandler;
-    private final String rootPath;
+    private final String adminRootPath;
+    private final String businessRootPath;
 
-    public AdminHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats, String rootPath) {
+    public AdminHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats, String adminRootPath, String businessRootPath) {
         super(userDao, sessionDao, globalStats);
-        this.rootPath = rootPath;
+        this.adminRootPath = adminRootPath;
+        this.businessRootPath = businessRootPath;
         this.fileHandler = new FileLogic();
     }
 
     @Override
     public void processHttp(ChannelHandlerContext ctx, HttpRequest req) {
         //a bit ugly code but it is ok for now. 2 branches. 1 fro static files, second for normal http api
-        if (req.getUri().equals(rootPath)) {
+        if (req.getUri().equals(adminRootPath)) {
             req.setUri("/admin/static/admin.html");
+        } else if (req.getUri().equals(businessRootPath)) {
+            req.setUri("/admin/static/business.html");
         } else if (req.getUri().equals("/favicon.ico")) {
             req.setUri("/admin/static/favicon.ico");
         }
