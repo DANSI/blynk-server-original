@@ -17,4 +17,20 @@ public abstract class MethodParam {
     }
 
     abstract Object get(URIDecoder uriDecoder);
+
+    Object convertTo(String value) {
+        if (type == long.class) {
+            return Long.valueOf(value);
+        }
+        if (type == int.class || type == Integer.class) {
+            return Integer.valueOf(value);
+        }
+        if (type == short.class || type == Short.class) {
+            return Short.valueOf(value);
+        }
+        if (type == boolean.class) {
+            return Boolean.valueOf(value);
+        }
+        return value;
+    }
 }

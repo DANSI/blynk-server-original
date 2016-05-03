@@ -13,7 +13,7 @@ public class PathMethodParam extends MethodParam {
 
     @Override
     Object get(URIDecoder uriDecoder) {
-        return uriDecoder.pathData.get(name);
+        return convertTo(uriDecoder.pathData.get(name));
     }
 
 }
