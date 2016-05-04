@@ -19,6 +19,7 @@ import cc.blynk.utils.ServerProperties;
 
 import java.io.File;
 import java.net.BindException;
+import java.util.Map;
 
 /**
  * Entry point for server launch.
@@ -42,11 +43,11 @@ import java.net.BindException;
 public class ServerLauncher {
 
     public static void main(String[] args) throws Exception {
-        ServerProperties serverProperties = new ServerProperties();
+        Map<String, String> cmdProperties = ArgumentsParser.parse(args);
+
+        ServerProperties serverProperties = new ServerProperties(cmdProperties);
 
         LoggerUtil.configureLogging(serverProperties);
-
-        ArgumentsParser.parse(args, serverProperties);
 
         //required for logging dynamic context
         System.setProperty("data.folder", serverProperties.getProperty("data.folder"));

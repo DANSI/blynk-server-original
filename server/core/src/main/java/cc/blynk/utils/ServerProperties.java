@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -21,12 +22,18 @@ public class ServerProperties extends Properties {
         initProperties(SERVER_PROPERTIES_FILENAME);
     }
 
-    public ServerProperties(String propertiesFileName) {
-        initProperties(propertiesFileName);
+    public ServerProperties(Map<String, String> cmdProperties) {
+        String propertiesFileName = cmdProperties.get(SERVER_PROPERTIES_FILENAME);
+        if (propertiesFileName == null) {
+            initProperties(SERVER_PROPERTIES_FILENAME);
+        } else {
+            initProperties(Paths.get(propertiesFileName));
+        }
+        putAll(cmdProperties);
     }
 
-    public ServerProperties(Path propertiesFileNamePath) {
-        initProperties(propertiesFileNamePath);
+    public ServerProperties(String propertiesFileName) {
+        initProperties(propertiesFileName);
     }
 
     public static Path getFileInCurrentDir(String filename) {
@@ -73,14 +80,16 @@ public class ServerProperties extends Properties {
     }
 
     private void initProperties(Path path) {
-        if (Files.exists(path)) {
-            try (InputStream curFolder = Files.newInputStream(path)) {
-                if (curFolder != null) {
-                    load(curFolder);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException("Error getting properties file : " + path, e);
+        if (!Files.exists(path)) {
+            throw new RuntimeException("Path " + path + " not found.");
+        }
+
+        try (InputStream curFolder = Files.newInputStream(path)) {
+            if (curFolder != null) {
+                load(curFolder);
             }
+        } catch (Exception e) {
+            throw new RuntimeException("Error getting properties file : " + path, e);
         }
     }
 
