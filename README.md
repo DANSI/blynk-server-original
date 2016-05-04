@@ -202,11 +202,11 @@ WARNING : Blynk local server is not Blynk cloud server. They are not related at 
 Blynk local server.
 
 ## Advanced local server setup
-If you need more flexibility, you can extend server with more options by creating ```server.properties``` file in same folder as server.jar. 
+For more flexibility you can extend server with more options by creating ```server.properties``` file in same folder as ```server.jar```. 
 Example could be found [here](https://github.com/blynkkk/blynk-server/blob/master/server/core/src/main/resources/server.properties).
 You could also specify any path to ```server.properties``` file via command line argument ```-serverConfig```. For example :
 
-    java -jar server-0.15.3.jar -dataFolder /home/pi/Blynk -serverConfig /home/user/server.properties
+    java -jar server-0.15.3.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
 
 Possible server options:
 
