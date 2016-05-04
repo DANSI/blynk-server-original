@@ -24,6 +24,10 @@ public final class LoggerUtil {
                 serverProperties.getProperty("async.logger.ring.buffer.size", String.valueOf(8 * 1024)));
 
         //configurable folder for logs via property.
+        if (serverProperties.getProperty("logs.folder") == null) {
+            System.out.println("logs.folder property is empty.");
+            System.exit(1);
+        }
         System.setProperty("logs.folder", serverProperties.getProperty("logs.folder"));
 
         //changing log level based on properties file

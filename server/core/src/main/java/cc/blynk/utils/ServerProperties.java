@@ -81,7 +81,8 @@ public class ServerProperties extends Properties {
 
     private void initProperties(Path path) {
         if (!Files.exists(path)) {
-            throw new RuntimeException("Path " + path + " not found.");
+            System.out.println("Path " + path + " not found.");
+            System.exit(1);
         }
 
         try (InputStream curFolder = Files.newInputStream(path)) {
@@ -89,7 +90,8 @@ public class ServerProperties extends Properties {
                 load(curFolder);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Error getting properties file : " + path, e);
+            System.out.println("Error reading properties file : '" + path + "'. Reason : " + e.getMessage());
+            System.exit(1);
         }
     }
 
