@@ -39,16 +39,13 @@ public class HttpsAdminServer extends BaseServer {
 
         HandlerRegistry.register(businessRootPath, new BusinessLogic(holder.userDao, holder.sessionDao, holder.fileManager, holder.profileSaverWorker));
 
-        String[] allowedIPsArray = holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips");
-
         final DomainNameMapping<SslContext> mappings = SslUtil.getDomainMappings(holder.props);
-        final IpFilterHandler ipFilterHandler = new IpFilterHandler(allowedIPsArray);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(
-                    ipFilterHandler,
+                    new IpFilterHandler(holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips")),
                     new SniHandler(mappings),
                     new HttpServerCodec(),
                     new HttpObjectAggregator(65536),
