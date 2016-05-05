@@ -9,8 +9,11 @@ import cc.blynk.utils.ServerProperties;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import static cc.blynk.server.handlers.http.rest.Response.*;
 
@@ -23,9 +26,11 @@ import static cc.blynk.server.handlers.http.rest.Response.*;
 public class ConfigsLogic extends BaseLogic {
 
     private final BlockingIOProcessor blockingIOProcessor;
+    private final ServerProperties serverProperties;
 
-    public ConfigsLogic(BlockingIOProcessor blockingIOProcessor) {
+    public ConfigsLogic(ServerProperties serverProperties, BlockingIOProcessor blockingIOProcessor) {
         this.blockingIOProcessor = blockingIOProcessor;
+        this.serverProperties = serverProperties;
     }
 
     @GET
@@ -52,26 +57,46 @@ public class ConfigsLogic extends BaseLogic {
     @GET
     @Path("/{name}")
     public Response getUserByName(@PathParam("name") String name) {
-        if ("token_mail_body.txt".equals(name)) {
-            return ok(new Config(name, blockingIOProcessor.tokenBody).toString());
+        switch (name) {
+            case "token_mail_body.txt" :
+                return ok(new Config(name, blockingIOProcessor.tokenBody).toString());
+            case ServerProperties.SERVER_PROPERTIES_FILENAME :
+                return ok(new Config(name, serverProperties).toString());
+            default :
+                return badRequest();
         }
-
-        return badRequest();
     }
 
 
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{name}")
-    public Response updateUser(@PathParam("name") String name,
+    public Response updateConfig(@PathParam("name") String name,
                                Config updatedConfig) {
 
-        if ("token_mail_body.txt".equals(name)) {
-            log.info("Updating config {}. New body : {}", name, updatedConfig.body);
-            blockingIOProcessor.tokenBody = updatedConfig.body;
+        log.info("Updating config {}. New body : {}", name, updatedConfig.body);
+
+        switch (name) {
+            case "token_mail_body.txt" :
+                blockingIOProcessor.tokenBody = updatedConfig.body;
+                break;
+            case ServerProperties.SERVER_PROPERTIES_FILENAME :
+                Properties properties = readPropertiesFromString(updatedConfig.body);
+                serverProperties.putAll(properties);
+                break;
         }
 
         return ok(updatedConfig.toString());
+    }
+
+    private static Properties readPropertiesFromString(String propertiesAsString) {
+        Properties properties = new Properties();
+        try {
+            properties.load(new StringReader(propertiesAsString));
+        } catch (IOException e) {
+            log.error("Error reading properties as string. {}", e.getMessage());
+        }
+        return properties;
     }
 
 }

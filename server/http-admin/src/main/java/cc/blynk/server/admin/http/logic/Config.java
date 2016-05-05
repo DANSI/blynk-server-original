@@ -1,6 +1,7 @@
 package cc.blynk.server.admin.http.logic;
 
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.ServerProperties;
 
 /**
  * The Blynk Project.
@@ -22,6 +23,16 @@ public class Config {
     public Config(String name, String body) {
         this.name = name;
         this.body = body;
+    }
+
+    public Config(String name, ServerProperties serverProperties) {
+        this.name = name;
+        //return only editable options
+        this.body = makeProperty(serverProperties, "allowed.administrator.ips");
+    }
+
+    private static String makeProperty(ServerProperties properties, String name) {
+        return name + " = " + properties.getProperty(name) + "\n";
     }
 
     @Override

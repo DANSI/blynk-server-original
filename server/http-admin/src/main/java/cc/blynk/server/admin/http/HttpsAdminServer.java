@@ -40,7 +40,7 @@ public class HttpsAdminServer extends BaseServer {
 
         HandlerRegistry.register(adminRootPath, new UsersLogic(holder.userDao, holder.sessionDao, holder.fileManager, holder.profileSaverWorker));
         HandlerRegistry.register(adminRootPath, new StatsLogic(holder.userDao, holder.sessionDao, holder.stats));
-        HandlerRegistry.register(adminRootPath, new ConfigsLogic(holder.blockingIOProcessor));
+        HandlerRegistry.register(adminRootPath, new ConfigsLogic(holder.props, holder.blockingIOProcessor));
 
         HandlerRegistry.register(businessRootPath, new BusinessLogic(holder.userDao, holder.sessionDao, holder.fileManager, holder.profileSaverWorker));
 
