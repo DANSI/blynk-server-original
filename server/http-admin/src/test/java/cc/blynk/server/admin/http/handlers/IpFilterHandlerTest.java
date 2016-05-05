@@ -3,8 +3,6 @@ package cc.blynk.server.admin.http.handlers;
 import org.junit.Test;
 
 import java.net.InetSocketAddress;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -21,8 +19,8 @@ public class IpFilterHandlerTest {
 
     @Test
     public void testSingleIPFilterWork() throws Exception {
-        Set<String> data = new HashSet<>();
-        data.add("192.168.0.50");
+        String[] data = new String[1];
+        data[0] = "192.168.0.50";
         IpFilterHandler ipFilterHandler = new IpFilterHandler(data);
 
         assertTrue(ipFilterHandler.accept(null, newSockAddress("192.168.0.50")));
@@ -32,9 +30,9 @@ public class IpFilterHandlerTest {
 
     @Test
     public void testCIDRNotationIPFilterWork() throws Exception {
-        Set<String> data = new HashSet<>();
-        data.add("192.168.100.100");
-        data.add("192.168.0.50/24");
+        String[] data = new String[2];
+        data[0] = "192.168.100.100";
+        data[1] = "192.168.0.50/24";
         IpFilterHandler ipFilterHandler = new IpFilterHandler(data);
 
         for (int i = 0; i <= 255; i++) {

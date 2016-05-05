@@ -19,11 +19,6 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.util.DomainNameMapping;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -44,18 +39,10 @@ public class HttpsAdminServer extends BaseServer {
 
         HandlerRegistry.register(businessRootPath, new BusinessLogic(holder.userDao, holder.sessionDao, holder.fileManager, holder.profileSaverWorker));
 
-        final String[] allowedIPsArray = holder.props.getCommaSeparatedList("allowed.administrator.ips");
-        final Set<String> allowedIPs;
-
-        if (allowedIPsArray != null && allowedIPsArray.length > 0 &&
-                allowedIPsArray[0] != null && !"".equals(allowedIPsArray[0])) {
-            allowedIPs = new HashSet<>(Arrays.asList(allowedIPsArray));
-        } else {
-            allowedIPs = Collections.emptySet();
-        }
+        String[] allowedIPsArray = holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips");
 
         final DomainNameMapping<SslContext> mappings = SslUtil.getDomainMappings(holder.props);
-        final IpFilterHandler ipFilterHandler = new IpFilterHandler(allowedIPs);
+        final IpFilterHandler ipFilterHandler = new IpFilterHandler(allowedIPsArray);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override

@@ -22,7 +22,10 @@ public class IpFilterHandler extends AbstractRemoteAddressFilter<InetSocketAddre
     private final Set<String> allowedIPs = new HashSet<>();
     private final Set<IpSubnetFilterRule> rules = new HashSet<>();
 
-    public IpFilterHandler(Set<String> allowedIPs) {
+    public IpFilterHandler(String[] allowedIPs) {
+        if (allowedIPs == null) {
+            return;
+        }
         for (String allowedIP : allowedIPs) {
             if (allowedIP.contains("/")) {
                 String[] split = allowedIP.split("/");
