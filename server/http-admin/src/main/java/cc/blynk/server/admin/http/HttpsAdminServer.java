@@ -27,7 +27,7 @@ import io.netty.util.DomainNameMapping;
 public class HttpsAdminServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public HttpsAdminServer(Holder holder) {
+    public HttpsAdminServer(Holder holder, boolean isUnpacked) {
         super(holder.props.getIntProperty("administration.https.port", 7443));
 
         final String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
@@ -50,7 +50,7 @@ public class HttpsAdminServer extends BaseServer {
                     new HttpServerCodec(),
                     new HttpObjectAggregator(65536),
                     new ChunkedWriteHandler(),
-                    new AdminHandler(holder.userDao, holder.sessionDao, holder.stats, adminRootPath, businessRootPath)
+                    new AdminHandler(holder.userDao, holder.sessionDao, holder.stats, adminRootPath, businessRootPath, isUnpacked)
                 );
             }
         };

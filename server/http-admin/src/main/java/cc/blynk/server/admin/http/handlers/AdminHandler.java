@@ -19,11 +19,11 @@ public class AdminHandler extends BaseHttpHandler {
     private final String adminRootPath;
     private final String businessRootPath;
 
-    public AdminHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats, String adminRootPath, String businessRootPath) {
+    public AdminHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats, String adminRootPath, String businessRootPath, boolean isUnpacked) {
         super(userDao, sessionDao, globalStats);
         this.adminRootPath = adminRootPath;
         this.businessRootPath = businessRootPath;
-        this.fileHandler = new FileLogic();
+        this.fileHandler = new FileLogic(isUnpacked);
     }
 
     @Override

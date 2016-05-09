@@ -41,7 +41,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        this.httpAdminServer = new HttpsAdminServer(holder).start(transportTypeHolder);
+        this.httpAdminServer = new HttpsAdminServer(holder, true).start(transportTypeHolder);
 
         httpsServerUrl = String.format("https://localhost:%s/admin/users/", administrationPort);
 

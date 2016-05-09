@@ -52,12 +52,12 @@ public class ServerLauncher {
         //required for logging dynamic context
         System.setProperty("data.folder", serverProperties.getProperty("data.folder"));
 
-        JarUtil.unpackStaticFiles("admin");
+        boolean isUnpacked = JarUtil.unpackStaticFiles("admin");
 
-        start(serverProperties);
+        start(serverProperties, isUnpacked);
     }
 
-    private static void start(ServerProperties serverProperties) {
+    private static void start(ServerProperties serverProperties, boolean isUnpacked) {
         final Holder holder = new Holder(serverProperties);
 
         holder.profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
@@ -68,7 +68,7 @@ public class ServerLauncher {
                 new AppServer(holder),
                 new HttpAPIServer(holder),
                 new HttpsAPIServer(holder),
-                new HttpsAdminServer(holder),
+                new HttpsAdminServer(holder, isUnpacked),
                 new HttpResetPassServer(holder),
                 new WebSocketServer(holder),
                 new WebSocketSSLServer(holder)

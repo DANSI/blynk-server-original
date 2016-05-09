@@ -27,8 +27,12 @@ public final class JarUtil {
      * @param staticFolder - path to resources
      * @throws Exception
      */
-    public static void unpackStaticFiles(String staticFolder) throws Exception {
+    public static boolean unpackStaticFiles(String staticFolder) throws Exception {
         List<String> staticResources = find(staticFolder);
+
+        if (staticResources.size() == 0) {
+            return false;
+        }
 
         for (String staticFile : staticResources) {
             try (InputStream is = JarUtil.class.getResourceAsStream("/" + staticFile)) {
@@ -40,6 +44,8 @@ public final class JarUtil {
                 Files.copy(is, newStaticFile, StandardCopyOption.REPLACE_EXISTING);
             }
         }
+
+        return true;
     }
 
     /**
