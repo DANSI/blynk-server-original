@@ -1,4 +1,4 @@
-package cc.blynk.server.admin.http.logic;
+package cc.blynk.server.admin.http.logic.admin;
 
 import cc.blynk.server.admin.http.response.RequestPerSecondResponse;
 import cc.blynk.server.core.dao.SessionDao;

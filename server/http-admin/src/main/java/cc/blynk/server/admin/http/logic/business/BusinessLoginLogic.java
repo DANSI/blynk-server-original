@@ -1,6 +1,6 @@
 package cc.blynk.server.admin.http.logic.business;
 
-import cc.blynk.server.admin.http.logic.BaseLogic;
+import cc.blynk.server.admin.http.logic.admin.BaseLogic;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;

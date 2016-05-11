@@ -2,7 +2,7 @@ package cc.blynk.server.admin.http;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.handlers.ResetPassHandler;
-import cc.blynk.server.admin.http.logic.ResetPasswordLogic;
+import cc.blynk.server.admin.http.logic.admin.ResetPasswordLogic;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import io.netty.channel.ChannelInitializer;

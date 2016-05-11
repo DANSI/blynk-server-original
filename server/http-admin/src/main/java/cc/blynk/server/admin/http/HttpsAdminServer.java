@@ -2,9 +2,9 @@ package cc.blynk.server.admin.http;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.handlers.IpFilterHandler;
-import cc.blynk.server.admin.http.logic.ConfigsLogic;
-import cc.blynk.server.admin.http.logic.StatsLogic;
-import cc.blynk.server.admin.http.logic.UsersLogic;
+import cc.blynk.server.admin.http.logic.admin.ConfigsLogic;
+import cc.blynk.server.admin.http.logic.admin.StatsLogic;
+import cc.blynk.server.admin.http.logic.admin.UsersLogic;
 import cc.blynk.server.admin.http.logic.business.BusinessLogic;
 import cc.blynk.server.admin.http.logic.business.BusinessLoginLogic;
 import cc.blynk.server.core.BaseHttpHandler;
