@@ -54,6 +54,13 @@ public class Response extends DefaultFullHttpResponse {
         return new Response(HTTP_1_1, BAD_REQUEST);
     }
 
+    public static Response redirect(String url) {
+        Response response = new Response(HTTP_1_1, MOVED_PERMANENTLY);
+        response.headers().set(LOCATION, url);
+        response.headers().set(CONTENT_LENGTH, response.content().readableBytes());
+        return response;
+    }
+
     public static Response badRequest(String message) {
         return new Response(HTTP_1_1, BAD_REQUEST, message, PLAIN_TEXT);
     }

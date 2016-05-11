@@ -6,13 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="http://www.blynk.cc/favicon.ico">
     <link rel="stylesheet" href="/business/static/css/blynk.css">
+
+    <script src="https://code.jquery.com/jquery-2.2.2.min.js" integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/core-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/sha256-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/enc-base64-min.js"></script>
+
 </head>
 <body>
-<script src="https://code.jquery.com/jquery-2.2.2.min.js" integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-<script src="http://crypto-js.googlecode.com/svn/tags/3.1/build/rollups/sha256.js"></script>
-<script src="http://crypto-js.googlecode.com/svn/tags/3.1/build/components/enc-base64-min.js"></script>
-<script src="/business/static/js//blynk.js"></script>
+
 
 <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -37,17 +41,16 @@
 
 
 <div class="container msg-container">
-    <form class="form-signin msg" action="/login" method="post">
+    <form class="form-signin msg" action="/business/login" method="post" onsubmit="encryptPassword();">
         <h4 class="form-signin-heading">Log In</h4>
         <label>
             Use your Blynk account to log in
         </label>
         <div class="form-group">
-            <input type="email" name="login" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="">
+            <input type="email" name="email" id="email" class="form-control" placeholder="Email address" required="" autofocus="">
         </div>
         <div class="form-group">
-            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
-            <input type="password" name="password" id="finalPass" class="form-control hide">
+            <input type="password" name="password" id="password" class="form-control" placeholder="Password" required="">
         </div>
         <div class="has-error"></div>
         <button class="btn btn-primary btn-block" type="submit">Sign in</button>
@@ -58,6 +61,19 @@
     </form>
 
 </div>
+
+<script type="text/javascript">
+    function encryptPassword() {
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("password").value;
+        var algo = CryptoJS.algo.SHA256.create();
+        algo.update(password, 'utf-8');
+        algo.update(CryptoJS.SHA256(email.toLowerCase()), 'utf-8');
+        var hash = algo.finalize();
+        var final = hash.toString(CryptoJS.enc.Base64);
+        document.getElementById("password").value = final;
+    }
+</script>
 
 </body>
 </html>

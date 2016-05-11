@@ -1,12 +1,13 @@
 package cc.blynk.server.admin.http;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.admin.http.handlers.AdminHandler;
 import cc.blynk.server.admin.http.handlers.IpFilterHandler;
 import cc.blynk.server.admin.http.logic.ConfigsLogic;
 import cc.blynk.server.admin.http.logic.StatsLogic;
 import cc.blynk.server.admin.http.logic.UsersLogic;
 import cc.blynk.server.admin.http.logic.business.BusinessLogic;
+import cc.blynk.server.admin.http.logic.business.BusinessLoginLogic;
+import cc.blynk.server.core.BaseHttpHandler;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.http.logic.StaticFileHandler;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
@@ -38,7 +39,8 @@ public class HttpsAdminServer extends BaseServer {
         HandlerRegistry.register(adminRootPath, new StatsLogic(holder.userDao, holder.sessionDao, holder.stats));
         HandlerRegistry.register(adminRootPath, new ConfigsLogic(holder.props, holder.blockingIOProcessor));
 
-        HandlerRegistry.register(businessRootPath, new BusinessLogic(holder.userDao, holder.sessionDao, holder.fileManager, holder.profileSaverWorker));
+        HandlerRegistry.register(businessRootPath, new BusinessLogic(holder.userDao, holder.sessionDao, holder.fileManager));
+        HandlerRegistry.register(businessRootPath, new BusinessLoginLogic(holder.userDao, holder.sessionDao, holder.fileManager));
 
         final DomainNameMapping<SslContext> mappings = SslUtil.getDomainMappings(holder.props);
 
@@ -52,7 +54,8 @@ public class HttpsAdminServer extends BaseServer {
                     new HttpObjectAggregator(65536),
                     new ChunkedWriteHandler(),
                     new StaticFileHandler(adminRootPath, "/admin.html", "/admin/static", isUnpacked),
-                    new AdminHandler(holder.userDao, holder.sessionDao, holder.stats)
+                    new StaticFileHandler(businessRootPath, "/login.html", "/business/static", isUnpacked),
+                    new BaseHttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );
             }
         };

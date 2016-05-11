@@ -8,7 +8,6 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.handlers.http.rest.Response;
-import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
 
@@ -30,13 +29,11 @@ public class BusinessLogic extends BaseLogic {
     private final UserDao userDao;
     private final SessionDao sessionDao;
     private final FileManager fileManager;
-    private final ProfileSaverWorker profileSaverWorker;
 
-    public BusinessLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager, ProfileSaverWorker profileSaverWorker) {
+    public BusinessLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager) {
         this.userDao = userDao;
         this.fileManager = fileManager;
         this.sessionDao = sessionDao;
-        this.profileSaverWorker = profileSaverWorker;
     }
 
     @GET
