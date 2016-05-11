@@ -1,9 +1,9 @@
 package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.utils.TokenGeneratorUtil;
 
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -18,10 +18,6 @@ public abstract class TokenManagerBase {
 
     public TokenManagerBase(Iterable<User> users) {
         this.cache = initTokenCache(users);
-    }
-
-    private static String generateNewToken() {
-        return UUID.randomUUID().toString().replace("-", "");
     }
 
     private ConcurrentMap<String, User> initTokenCache(Iterable<User> users) {
@@ -52,7 +48,7 @@ public abstract class TokenManagerBase {
         if (oldToken != null) cache.remove(oldToken);
 
         //Create new token
-        String newToken = generateNewToken();
+        String newToken = TokenGeneratorUtil.generateNewToken();
         user.putToken(dashboardId, newToken, dashTokens);
         cache.put(newToken, user);
 
