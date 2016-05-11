@@ -33,8 +33,6 @@ public class AdminHandler extends BaseHttpHandler {
             req.setUri("/admin/static/admin.html");
         } else if (req.getUri().equals(businessRootPath)) {
             req.setUri("/admin/static/business.html");
-        } else if (req.getUri().equals("/favicon.ico")) {
-            req.setUri("/admin/static/favicon.ico");
         }
         if (req.getUri().startsWith("/admin/static")) {
             try {
