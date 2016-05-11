@@ -23,19 +23,25 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.12.15.
  */
-public class FileLogic extends SimpleChannelInboundHandler<FullHttpRequest> {
+public class StaticFileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
     public static final int HTTP_CACHE_SECONDS = 60;
 
+    /**
+     * Used for case when server started from IDE and static files wasn't unpacked from jar.
+     */
     private final boolean isUnpacked;
 
-    public FileLogic() {
-        this.isUnpacked = true;
-    }
+    private final String rootPath;
+    private final String staticPath;
+    private final String startPage;
 
-    public FileLogic(boolean isUnpacked) {
+    public StaticFileHandler(String rootPath, String startPage, String staticPath, boolean isUnpacked) {
+        this.rootPath = rootPath;
+        this.startPage = startPage;
+        this.staticPath = staticPath;
         this.isUnpacked = isUnpacked;
     }
 
@@ -115,14 +121,26 @@ public class FileLogic extends SimpleChannelInboundHandler<FullHttpRequest> {
     }
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
+    public void channelRead0(ChannelHandlerContext ctx, FullHttpRequest req) throws Exception {
+        if (req.getUri().equals(rootPath)) {
+            req.setUri(staticPath + startPage);
+        }
+
+        if (req.getUri().startsWith(staticPath)) {
+            serveStatic(ctx, req);
+            return;
+        }
+
+        ctx.fireChannelRead(req);
+    }
+
+    private void serveStatic(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
         if (!request.getDecoderResult().isSuccess()) {
             sendError(ctx, BAD_REQUEST);
             return;
         }
 
         if (request.getMethod() != HttpMethod.GET) {
-            sendError(ctx, METHOD_NOT_ALLOWED);
             return;
         }
 

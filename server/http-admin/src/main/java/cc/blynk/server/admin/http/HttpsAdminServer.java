@@ -8,6 +8,7 @@ import cc.blynk.server.admin.http.logic.StatsLogic;
 import cc.blynk.server.admin.http.logic.UsersLogic;
 import cc.blynk.server.admin.http.logic.business.BusinessLogic;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.handlers.http.logic.StaticFileHandler;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
@@ -50,7 +51,8 @@ public class HttpsAdminServer extends BaseServer {
                     new HttpServerCodec(),
                     new HttpObjectAggregator(65536),
                     new ChunkedWriteHandler(),
-                    new AdminHandler(holder.userDao, holder.sessionDao, holder.stats, adminRootPath, businessRootPath, isUnpacked)
+                    new StaticFileHandler(adminRootPath, "/admin.html", "/admin/static", isUnpacked),
+                    new AdminHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );
             }
         };

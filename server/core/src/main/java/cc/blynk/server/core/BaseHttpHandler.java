@@ -17,7 +17,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.util.ReferenceCounted;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,16 +50,8 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
         log.info("{} : {}", req.getMethod().name(), req.getUri());
 
         globalStats.mark(Command.HTTP_TOTAL);
-        try {
-            processHttp(ctx, req);
-        } finally {
-            if (msg instanceof ReferenceCounted) {
-                ReferenceCounted referenceCounted = (ReferenceCounted) msg;
-                if (referenceCounted.refCnt() > 0) {
-                    referenceCounted.release();
-                }
-            }
-        }
+
+        processHttp(ctx, req);
     }
 
     public void processHttp(ChannelHandlerContext ctx, HttpRequest req) {
