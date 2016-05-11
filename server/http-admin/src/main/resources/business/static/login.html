@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Blynk</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="http://www.blynk.cc/favicon.ico">
+    <link rel="stylesheet" href="/business/static/css/blynk.css">
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-2.2.2.min.js" integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script src="http://crypto-js.googlecode.com/svn/tags/3.1/build/rollups/sha256.js"></script>
+<script src="http://crypto-js.googlecode.com/svn/tags/3.1/build/components/enc-base64-min.js"></script>
+<script src="/business/static/js//blynk.js"></script>
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">
+                Blynk Cloud
+            </a>
+        </div>
+        <div class="navbar-text navbar-right">
+            <div class="dropdown">
+                <a id="userMenu" data-target="#" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="dLabel">
+                    <li><a href="/logout">Log Out</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</nav>
+
+
+<div class="container msg-container">
+    <form class="form-signin msg" action="/login" method="post">
+        <h4 class="form-signin-heading">Log In</h4>
+        <label>
+            Use your Blynk account to log in
+        </label>
+        <div class="form-group">
+            <input type="email" name="login" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="">
+        </div>
+        <div class="form-group">
+            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
+            <input type="password" name="password" id="finalPass" class="form-control hide">
+        </div>
+        <div class="has-error"></div>
+        <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+        <p class="help-block">
+            Don't have an account? - Download Blynk for <a href="https://play.google.com/store/apps/details?id=cc.blynk&hl=en" target="_blank">Android</a> /
+            <a href="https://itunes.apple.com/us/app/blynk-control-arduino-raspberry/id808760481?ls=1&mt=8" target="_blank">iOS</a> and create a new one.
+        </p>
+    </form>
+
+</div>
+
+</body>
+</html>
