@@ -23,7 +23,7 @@ public class Button extends OnePinWidget implements HardwareSyncWidget {
     public void send(ChannelHandlerContext ctx, int msgId) {
         String body = makeHardwareBody();
         if (body != null) {
-            ctx.write(makeStringMessage(ctx, HARDWARE, msgId, body), ctx.voidPromise());
+            ctx.write(makeStringMessage(HARDWARE, msgId, body), ctx.voidPromise());
         }
     }
 

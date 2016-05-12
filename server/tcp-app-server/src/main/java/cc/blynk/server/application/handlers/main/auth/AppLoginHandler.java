@@ -110,7 +110,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
     private void completeLogin(Channel channel, Session session, String userName, int msgId) {
         session.addAppChannel(channel);
-        channel.writeAndFlush(ok(channel, msgId), channel.voidPromise());
+        channel.writeAndFlush(ok(msgId), channel.voidPromise());
         log.info("{} app joined.", userName);
     }
 

@@ -13,7 +13,7 @@ import static cc.blynk.utils.ByteBufUtil.*;
 public class PingLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, int messageId) {
-        ctx.writeAndFlush(ok(ctx, messageId), ctx.voidPromise());
+        ctx.writeAndFlush(ok(messageId), ctx.voidPromise());
     }
 
 }

@@ -55,7 +55,7 @@ public class BridgeLogic {
 
             sendToMap.put(pin, token);
 
-            ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
+            ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
             final String pin = split[0];
             final String token = sendToMap.get(pin);
@@ -75,10 +75,10 @@ public class BridgeLogic {
                     }
                 }
                 if (!messageWasSent) {
-                    ctx.writeAndFlush(makeResponse(ctx, message.id, DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+                    ctx.writeAndFlush(makeResponse(message.id, DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
                 }
             } else {
-                ctx.writeAndFlush(makeResponse(ctx, message.id, DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+                ctx.writeAndFlush(makeResponse(message.id, DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
             }
         }
     }

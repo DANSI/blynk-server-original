@@ -47,7 +47,7 @@ public class LabeledValueDisplay extends OnePinWidget implements FrequencyWidget
     public void send(ChannelHandlerContext ctx, int msgId) {
         final String body = makeHardwareBody();
         if (body != null) {
-            ctx.write(makeStringMessage(ctx, HARDWARE, msgId, body), ctx.voidPromise());
+            ctx.write(makeStringMessage(HARDWARE, msgId, body), ctx.voidPromise());
         }
     }
 

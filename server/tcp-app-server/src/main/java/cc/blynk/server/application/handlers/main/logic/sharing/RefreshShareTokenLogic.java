@@ -50,11 +50,11 @@ public class RefreshShareTokenLogic {
         for (Channel appChannel : session.getAppChannels()) {
             AppShareStateHolder state = getShareState(appChannel);
             if (state != null && state.dashId == dashId) {
-                ChannelFuture cf = appChannel.writeAndFlush(makeResponse(appChannel, message.id, NOT_ALLOWED));
+                ChannelFuture cf = appChannel.writeAndFlush(makeResponse(message.id, NOT_ALLOWED));
                 cf.addListener(channelFuture -> appChannel.close());
             }
         }
 
-        ctx.writeAndFlush(makeStringMessage(ctx, REFRESH_SHARE_TOKEN, message.id, token), ctx.voidPromise());
+        ctx.writeAndFlush(makeStringMessage(REFRESH_SHARE_TOKEN, message.id, token), ctx.voidPromise());
     }
 }

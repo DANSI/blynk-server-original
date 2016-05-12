@@ -32,6 +32,6 @@ public class RefreshTokenLogic {
 
         String token = userDao.tokenManager.refreshToken(user, dashId, user.dashTokens);
 
-        ctx.writeAndFlush(makeStringMessage(ctx, REFRESH_TOKEN, message.id, token), ctx.voidPromise());
+        ctx.writeAndFlush(makeStringMessage(REFRESH_TOKEN, message.id, token), ctx.voidPromise());
     }
 }
