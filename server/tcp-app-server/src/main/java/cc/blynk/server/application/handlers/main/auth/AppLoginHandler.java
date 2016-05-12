@@ -64,7 +64,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
                 facebookLoginCheck.verify(username, token);
             } catch (Exception e) {
                 log.error("Error verifying facebook token {} for user {}.", token, username, e);
-                ctx.writeAndFlush(makeResponse(ctx, messageId, NOT_ALLOWED), ctx.voidPromise());
+                ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
                 return;
             }
 
