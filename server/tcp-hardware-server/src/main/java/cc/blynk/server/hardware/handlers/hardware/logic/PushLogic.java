@@ -52,7 +52,7 @@ public class PushLogic extends NotificationBase {
 
         if (!dash.isActive) {
             log.debug("No active dashboard.");
-            ctx.writeAndFlush(makeResponse(ctx, message.id, NO_ACTIVE_DASHBOARD), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(message.id, NO_ACTIVE_DASHBOARD), ctx.voidPromise());
             return;
         }
 
@@ -86,10 +86,10 @@ public class PushLogic extends NotificationBase {
         blockingIOProcessor.execute(() -> {
             try {
                 gcmWrapper.send(message);
-                channel.writeAndFlush(ok(channel, msgId), channel.voidPromise());
+                channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending push notification from hardware. For user {}. {}",  username, e.getMessage());
-                channel.writeAndFlush(makeResponse(channel, msgId, NOTIFICATION_EXCEPTION), channel.voidPromise());
+                channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_EXCEPTION), channel.voidPromise());
 
                 if (e.getMessage() != null && e.getMessage().contains("NotRegistered")) {
                     log.error("Removing invalid token. UID {}", uid);

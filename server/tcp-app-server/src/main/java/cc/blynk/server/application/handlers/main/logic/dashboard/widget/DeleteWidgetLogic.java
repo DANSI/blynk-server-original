@@ -50,7 +50,7 @@ public class DeleteWidgetLogic {
         existingWidgetIndex = dash.getWidgetIndex(widgetId, message.id);
         deleteWidget(user, dash, existingWidgetIndex);
 
-        ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
+        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
     /**

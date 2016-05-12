@@ -42,7 +42,7 @@ public class ValueDisplay extends OnePinWidget implements FrequencyWidget, Hardw
     public void send(ChannelHandlerContext ctx, int msgId) {
         final String body = makeHardwareBody();
         if (body != null) {
-            ctx.write(makeStringMessage(ctx, HARDWARE, msgId, body), ctx.voidPromise());
+            ctx.write(makeStringMessage(HARDWARE, msgId, body), ctx.voidPromise());
         }
     }
 

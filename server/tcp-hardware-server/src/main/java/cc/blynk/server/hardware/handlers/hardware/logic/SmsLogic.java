@@ -63,10 +63,10 @@ public class SmsLogic extends NotificationBase {
         blockingIOProcessor.execute(() -> {
             try {
                 smsWrapper.send(to, body);
-                channel.writeAndFlush(ok(channel, msgId), channel.voidPromise());
+                channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending sms for user {}. Reason : {}",  username, e.getMessage());
-                channel.writeAndFlush(makeResponse(channel, msgId, NOTIFICATION_EXCEPTION), channel.voidPromise());
+                channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_EXCEPTION), channel.voidPromise());
             }
         });
     }

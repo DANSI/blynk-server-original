@@ -37,10 +37,10 @@ public class LoadProfileGzippedLogic {
 
         try {
             byte[] data = ByteUtils.compress(body);
-            ctx.writeAndFlush(makeBinaryMessage(ctx, LOAD_PROFILE_GZIPPED, message.id, data), ctx.voidPromise());
+            ctx.writeAndFlush(makeBinaryMessage(LOAD_PROFILE_GZIPPED, message.id, data), ctx.voidPromise());
         } catch (IOException e) {
             log.error("Error compressing data.", e);
-            ctx.writeAndFlush(makeResponse(ctx, message.id, NO_DATA_EXCEPTION));
+            ctx.writeAndFlush(makeResponse(message.id, NO_DATA_EXCEPTION));
         }
     }
 

@@ -52,7 +52,7 @@ public class GetGraphDataLogic {
         //special case for delete command
         if (messageParts.length == 4) {
             deleteGraphData(messageParts, user.name, message.id);
-            ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
+            ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
             int dashId = ParseUtil.parseInt(messageParts[0], message.id);
             user.profile.validateDashId(dashId, message.id);
@@ -78,12 +78,12 @@ public class GetGraphDataLogic {
                 byte[][] data = reportingDao.getAllFromDisk(username, requestedPins, msgId);
                 byte[] compressed = compress(requestedPins[0].dashId, data);
 
-                channel.writeAndFlush(makeBinaryMessage(channel, GET_GRAPH_DATA_RESPONSE, msgId, compressed), channel.voidPromise());
+                channel.writeAndFlush(makeBinaryMessage(GET_GRAPH_DATA_RESPONSE, msgId, compressed), channel.voidPromise());
             } catch (NoDataException noDataException) {
-                channel.writeAndFlush(makeResponse(channel, msgId, NO_DATA_EXCEPTION), channel.voidPromise());
+                channel.writeAndFlush(makeResponse(msgId, NO_DATA_EXCEPTION), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error reading reporting data. For user {}", username);
-                channel.writeAndFlush(makeResponse(channel, msgId, SERVER_EXCEPTION), channel.voidPromise());
+                channel.writeAndFlush(makeResponse(msgId, SERVER_EXCEPTION), channel.voidPromise());
             }
         });
     }

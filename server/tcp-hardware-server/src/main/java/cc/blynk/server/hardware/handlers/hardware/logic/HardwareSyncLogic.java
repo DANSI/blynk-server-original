@@ -45,7 +45,7 @@ public class HardwareSyncLogic {
             String[] bodyParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
             if (bodyParts.length < 2) {
-                ctx.writeAndFlush(makeResponse(ctx, message.id, Response.ILLEGAL_COMMAND), ctx.voidPromise());
+                ctx.writeAndFlush(makeResponse(message.id, Response.ILLEGAL_COMMAND), ctx.voidPromise());
                 return;
             }
 
@@ -57,7 +57,7 @@ public class HardwareSyncLogic {
                 if (widget instanceof RTC)  {
                     RTC rtc = (RTC) widget;
                     final String body = Pin.makeHardwareBody(pinType, pin, getTime(rtc));
-                    ctx.writeAndFlush(makeStringMessage(ctx, HARDWARE, message.id, body), ctx.voidPromise());
+                    ctx.writeAndFlush(makeStringMessage(HARDWARE, message.id, body), ctx.voidPromise());
                 } else if (widget instanceof HardwareSyncWidget) {
                     ((HardwareSyncWidget) widget).send(ctx, message.id);
                     ctx.flush();

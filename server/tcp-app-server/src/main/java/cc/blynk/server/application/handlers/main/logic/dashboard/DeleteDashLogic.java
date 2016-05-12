@@ -49,7 +49,7 @@ public class DeleteDashLogic {
 
         user.lastModifiedTs = System.currentTimeMillis();
 
-        ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
+        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
 }

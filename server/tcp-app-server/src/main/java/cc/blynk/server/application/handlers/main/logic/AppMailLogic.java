@@ -63,10 +63,10 @@ public class AppMailLogic {
         blockingIOProcessor.execute(() -> {
             try {
                 mailWrapper.send(to, subj, body);
-                channel.writeAndFlush(ok(channel, msgId), channel.voidPromise());
+                channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending email from application. For user {}.",  username, e);
-                channel.writeAndFlush(makeResponse(channel, msgId, NOTIFICATION_EXCEPTION), channel.voidPromise());
+                channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_EXCEPTION), channel.voidPromise());
             }
         });
     }

@@ -28,12 +28,12 @@ public class TwoAxisJoystick extends MultiPinWidget implements HardwareSyncWidge
         if (split) {
             for (Pin pin : pins) {
                 if (pin.notEmpty()) {
-                    ctx.write(makeStringMessage(ctx, HARDWARE, msgId, pin.makeHardwareBody()), ctx.voidPromise());
+                    ctx.write(makeStringMessage(HARDWARE, msgId, pin.makeHardwareBody()), ctx.voidPromise());
                 }
             }
         } else {
             if (pins[0].notEmpty()) {
-                ctx.write(makeStringMessage(ctx, HARDWARE, msgId, makeHardwareBody()), ctx.voidPromise());
+                ctx.write(makeStringMessage(HARDWARE, msgId, makeHardwareBody()), ctx.voidPromise());
             }
         }
     }

@@ -43,7 +43,7 @@ public class AddEnergyLogic {
         }
 
         user.purchaseEnergy(energyAmountToAdd);
-        ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
+        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
     private static boolean isValidTransactionId(String id) {

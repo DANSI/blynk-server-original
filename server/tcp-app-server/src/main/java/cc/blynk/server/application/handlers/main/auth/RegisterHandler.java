@@ -52,7 +52,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         //expecting message with 2 parts, described above in comment.
         if (messageParts.length != 2) {
             log.error("Register Handler. Wrong income message format. {}", message);
-            ctx.writeAndFlush(makeResponse(ctx, message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
             return;
         }
 
@@ -62,19 +62,19 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         if (!EmailValidator.getInstance().isValid(userName)) {
             log.error("Register Handler. Wrong email: {}", userName);
-            ctx.writeAndFlush(makeResponse(ctx, message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
             return;
         }
 
         if (userDao.isUserExists(userName)) {
             log.warn("User with name {} already exists.", userName);
-            ctx.writeAndFlush(makeResponse(ctx, message.id, USER_ALREADY_REGISTERED), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(message.id, USER_ALREADY_REGISTERED), ctx.voidPromise());
             return;
         }
 
         if (allowedUsers != null && !allowedUsers.contains(userName)) {
             log.warn("User with name {} not allowed to register.", userName);
-            ctx.writeAndFlush(makeResponse(ctx, message.id, NOT_ALLOWED), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
             return;
         }
 
@@ -82,7 +82,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         log.info("Registered {}.", userName);
 
-        ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
+        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
     @Override

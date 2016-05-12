@@ -47,22 +47,22 @@ public class ActivateDashboardLogic {
         Session session = sessionDao.userSession.get(user);
 
         if (session.hasHardwareOnline(dashId)) {
-            ctx.writeAndFlush(ok(ctx, message.id), ctx.voidPromise());
+            ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
             log.debug("No device in session.");
-            ctx.writeAndFlush(makeResponse(ctx, message.id, DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(message.id, DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
         }
 
         for (Channel appChannel : session.getAppChannels()) {
             if (appChannel != ctx.channel() && getAppState(appChannel) != null) {
-                appChannel.write(makeStringMessage(appChannel, message.command, message.id, message.body));
+                appChannel.write(makeStringMessage(message.command, message.id, message.body));
             }
 
             for (Widget widget : dash.widgets) {
                 String body = widget.makeHardwareBody();
                 if (body != null) {
                     final String data = dashId + StringUtils.BODY_SEPARATOR_STRING + body;
-                    appChannel.write(makeStringMessage(appChannel, SYNC, 1111, data));
+                    appChannel.write(makeStringMessage(SYNC, 1111, data));
                 }
             }
 
