@@ -1,8 +1,8 @@
 package cc.blynk.server.admin.http;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.admin.http.handlers.ResetPassHandler;
 import cc.blynk.server.admin.http.logic.admin.ResetPasswordLogic;
+import cc.blynk.server.core.BaseHttpHandler;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import io.netty.channel.ChannelInitializer;
@@ -32,7 +32,7 @@ public class HttpResetPassServer extends BaseServer {
                     new HttpServerCodec(),
                     new HttpObjectAggregator(65536),
                     new ChunkedWriteHandler(),
-                    new ResetPassHandler(holder.userDao, holder.sessionDao, holder.stats)
+                    new BaseHttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );
             }
         };

@@ -2,8 +2,6 @@ package cc.blynk.server.core;
 
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.model.auth.Session;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -12,10 +10,8 @@ import cc.blynk.server.handlers.http.rest.HandlerHolder;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import cc.blynk.server.handlers.http.rest.Response;
 import cc.blynk.server.handlers.http.rest.URIDecoder;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,9 +25,9 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
 
     protected static final Logger log = LogManager.getLogger(BaseHttpHandler.class);
 
-    private final UserDao userDao;
-    private final SessionDao sessionDao;
-    private final GlobalStats globalStats;
+    protected final UserDao userDao;
+    protected final SessionDao sessionDao;
+    protected final GlobalStats globalStats;
 
     public BaseHttpHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
         this.userDao = userDao;
@@ -79,32 +75,11 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
             return;
         }
 
-        String tokenPathParam = uriDecoder.pathData.get("token");
-        if (tokenPathParam == null) {
-            ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, params));
-            return;
-        }
-
-        //reregister logic
-        User user = userDao.tokenManager.getUserByToken(tokenPathParam);
-        if (user == null) {
-            log.error("Requested token {} not found.", tokenPathParam);
-            ctx.writeAndFlush(Response.badRequest("Invalid token."));
-            return;
-        }
-
-        Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
-        if (session.initialEventLoop != ctx.channel().eventLoop()) {
-            log.debug("Re registering http channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), HandlerRegistry.invoke(handlerHolder, params)));
-        } else {
-            completeLogin(ctx.channel(), HandlerRegistry.invoke(handlerHolder, params));
-        }
+        finishHttp(ctx, uriDecoder, handlerHolder, params);
     }
 
-    private void completeLogin(Channel channel, FullHttpResponse response) {
-        channel.writeAndFlush(response);
-        log.debug("Re registering http channel finished.");
+    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, HandlerHolder handlerHolder, Object[] params) {
+        ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, params));
     }
 
     @Override
