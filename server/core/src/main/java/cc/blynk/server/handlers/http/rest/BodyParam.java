@@ -14,13 +14,13 @@ import javax.ws.rs.core.MediaType;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-public class BodyMethodParam extends MethodParam {
+public class BodyParam extends Param {
 
-    private static final Logger log = LogManager.getLogger(BodyMethodParam.class);
+    private static final Logger log = LogManager.getLogger(BodyParam.class);
 
     private String expectedContentType;
 
-    public BodyMethodParam(String name, Class<?> type, String expectedContentType) {
+    public BodyParam(String name, Class<?> type, String expectedContentType) {
         super(name, type);
         this.expectedContentType = expectedContentType;
     }

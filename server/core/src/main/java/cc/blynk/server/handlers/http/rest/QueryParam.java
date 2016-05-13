@@ -7,9 +7,9 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-public class QueryMethodParam extends MethodParam {
+public class QueryParam extends Param {
 
-    public QueryMethodParam(String name, Class<?> type) {
+    public QueryParam(String name, Class<?> type) {
         super(name, type);
     }
 

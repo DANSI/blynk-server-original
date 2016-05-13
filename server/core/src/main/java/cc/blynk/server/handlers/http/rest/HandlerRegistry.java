@@ -2,11 +2,12 @@ package cc.blynk.server.handlers.http.rest;
 
 import cc.blynk.utils.UriTemplate;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.codec.http.HttpMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.lang.annotation.Annotation;
@@ -56,19 +57,19 @@ public class HandlerRegistry {
                 for (int i = 0; i < method.getParameterCount(); i++) {
                     Parameter parameter = method.getParameters()[i];
 
-                    Annotation queryParamAnnotation = parameter.getAnnotation(QueryParam.class);
+                    Annotation queryParamAnnotation = parameter.getAnnotation(javax.ws.rs.QueryParam.class);
                     if (queryParamAnnotation != null) {
-                        handlerHolder.params[i] = new QueryMethodParam(((QueryParam) queryParamAnnotation).value(), parameter.getType());
+                        handlerHolder.params[i] = new QueryParam(((javax.ws.rs.QueryParam) queryParamAnnotation).value(), parameter.getType());
                     }
 
-                    Annotation pathParamAnnotation = parameter.getAnnotation(PathParam.class);
+                    Annotation pathParamAnnotation = parameter.getAnnotation(javax.ws.rs.PathParam.class);
                     if (pathParamAnnotation != null) {
-                        handlerHolder.params[i] = new PathMethodParam(((PathParam) pathParamAnnotation).value(), parameter.getType());
+                        handlerHolder.params[i] = new PathParam(((javax.ws.rs.PathParam) pathParamAnnotation).value(), parameter.getType());
                     }
 
-                    Annotation formParamAnnotation = parameter.getAnnotation(FormParam.class);
+                    Annotation formParamAnnotation = parameter.getAnnotation(javax.ws.rs.FormParam.class);
                     if (formParamAnnotation != null) {
-                        handlerHolder.params[i] = new FormMethodParam(((FormParam) formParamAnnotation).value(), parameter.getType());
+                        handlerHolder.params[i] = new FormParam(((javax.ws.rs.FormParam) formParamAnnotation).value(), parameter.getType());
                     }
 
                     Annotation headerParamAnnotation = parameter.getAnnotation(HeaderParam.class);
@@ -83,7 +84,7 @@ public class HandlerRegistry {
 
                     if (pathParamAnnotation == null && queryParamAnnotation == null && formParamAnnotation == null &&
                             headerParamAnnotation == null && contextAnnotation == null) {
-                        handlerHolder.params[i] = new BodyMethodParam(parameter.getName(), parameter.getType(), contentType);
+                        handlerHolder.params[i] = new BodyParam(parameter.getName(), parameter.getType(), contentType);
                     }
                 }
 

@@ -5,9 +5,9 @@ package cc.blynk.server.handlers.http.rest;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-public class PathMethodParam extends MethodParam {
+public class PathParam extends Param {
 
-    public PathMethodParam(String name, Class<?> type) {
+    public PathParam(String name, Class<?> type) {
         super(name, type);
     }
 

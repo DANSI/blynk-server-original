@@ -11,9 +11,9 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-public class FormMethodParam extends MethodParam {
+public class FormParam extends Param {
 
-    public FormMethodParam(String name, Class<?> type) {
+    public FormParam(String name, Class<?> type) {
         super(name, type);
     }
 

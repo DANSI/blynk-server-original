@@ -5,7 +5,7 @@ package cc.blynk.server.handlers.http.rest;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-public class ContextParam extends MethodParam {
+public class ContextParam extends Param {
 
     public ContextParam(Class<?> type) {
         super(null, type);

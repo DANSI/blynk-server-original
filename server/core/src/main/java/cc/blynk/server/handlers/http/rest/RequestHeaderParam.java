@@ -5,7 +5,7 @@ package cc.blynk.server.handlers.http.rest;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-public class RequestHeaderParam extends MethodParam {
+public class RequestHeaderParam extends Param {
 
     public RequestHeaderParam(String name, Class<?> type) {
         super(name, type);

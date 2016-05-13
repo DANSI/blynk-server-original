@@ -21,7 +21,7 @@ public class HandlerHolder {
 
     public Object handler;
 
-    public MethodParam[] params;
+    public Param[] params;
 
     public HandlerHolder(UriTemplate uriTemplate, Method method, Object handler, int paramsCount) {
         this.uriTemplate = uriTemplate;
@@ -47,7 +47,7 @@ public class HandlerHolder {
             this.httpMethod = HttpMethod.OPTIONS;
         }
 
-        this.params = new MethodParam[paramsCount];
+        this.params = new Param[paramsCount];
     }
 
     public Object[] fetchParams(URIDecoder uriDecoder) {
