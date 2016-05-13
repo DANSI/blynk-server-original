@@ -33,15 +33,10 @@ public class StaticFileHandler extends SimpleChannelInboundHandler<FullHttpReque
      * Used for case when server started from IDE and static files wasn't unpacked from jar.
      */
     private final boolean isUnpacked;
+    private final String[] staticPaths;
 
-    private final String rootPath;
-    private final String staticPath;
-    private final String startPage;
-
-    public StaticFileHandler(String rootPath, String startPage, String staticPath, boolean isUnpacked) {
-        this.rootPath = rootPath;
-        this.startPage = startPage;
-        this.staticPath = staticPath;
+    public StaticFileHandler(boolean isUnpacked, String... staticPaths) {
+        this.staticPaths = staticPaths;
         this.isUnpacked = isUnpacked;
     }
 
@@ -122,16 +117,21 @@ public class StaticFileHandler extends SimpleChannelInboundHandler<FullHttpReque
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, FullHttpRequest req) throws Exception {
-        if (req.getUri().equals(rootPath)) {
-            req.setUri(staticPath + startPage);
-        }
-
-        if (req.getUri().startsWith(staticPath)) {
+        if (isStaticPath(req.getUri())) {
             serveStatic(ctx, req);
             return;
         }
 
         ctx.fireChannelRead(req);
+    }
+
+    private boolean isStaticPath(String path) {
+        for (String staticPath : staticPaths) {
+            if (path.startsWith(staticPath)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void serveStatic(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {

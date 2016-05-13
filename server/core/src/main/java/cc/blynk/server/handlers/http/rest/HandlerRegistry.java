@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -75,7 +76,13 @@ public class HandlerRegistry {
                         handlerHolder.params[i] = new RequestHeaderParam(((HeaderParam) headerParamAnnotation).value(), parameter.getType());
                     }
 
-                    if (pathParamAnnotation == null && queryParamAnnotation == null && formParamAnnotation == null && headerParamAnnotation == null) {
+                    Annotation contextAnnotation = parameter.getAnnotation(Context.class);
+                    if (contextAnnotation != null) {
+                        handlerHolder.params[i] = new ContextParam(parameter.getType());
+                    }
+
+                    if (pathParamAnnotation == null && queryParamAnnotation == null && formParamAnnotation == null &&
+                            headerParamAnnotation == null && contextAnnotation == null) {
                         handlerHolder.params[i] = new BodyMethodParam(parameter.getName(), parameter.getType(), contentType);
                     }
                 }

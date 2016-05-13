@@ -50,6 +50,10 @@ public class Response extends DefaultFullHttpResponse {
         return new Response(HTTP_1_1, NOT_FOUND);
     }
 
+    public static Response forbidden() {
+        return new Response(HTTP_1_1, FORBIDDEN);
+    }
+
     public static Response badRequest() {
         return new Response(HTTP_1_1, BAD_REQUEST);
     }

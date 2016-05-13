@@ -12,6 +12,7 @@ import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +39,8 @@ public class BusinessLogic extends BaseLogic {
 
     @GET
     @Path("")
-    public Response getUsers(@QueryParam("_filters") String filterParam,
+    public Response getUsers(@Context User user,
+                             @QueryParam("_filters") String filterParam,
                              @QueryParam("_page") int page,
                              @QueryParam("_perPage") int size,
                              @QueryParam("_sortField") String sortField,
@@ -49,7 +51,6 @@ public class BusinessLogic extends BaseLogic {
             filterParam = filter == null ? null : filter.name;
         }
 
-        User user = userDao.getByName("dmitriy@blynk.cc");
         List<DashBoard> projects = Arrays.asList(user.profile.dashBoards);
 
         return appendTotalCountHeader(
@@ -59,8 +60,9 @@ public class BusinessLogic extends BaseLogic {
 
     @GET
     @Path("/{projectId}")
-    public Response getUsers(@PathParam("projectId") int projectId) {
-        User user = userDao.getByName("dmitriy@blynk.cc");
+    public Response getUsers(@Context User user,
+                             @PathParam("projectId") int projectId) {
+
         DashBoard project = user.profile.getDashById(projectId);
 
         return ok(project);
@@ -69,10 +71,9 @@ public class BusinessLogic extends BaseLogic {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
-    public Response createUser(DashBoard newProject) {
+    public Response createUser(@Context User user, DashBoard newProject) {
 
         log.debug("Creating project {}", newProject);
-        User user = userDao.getByName("dmitriy@blynk.cc");
 
         newProject.createdAt = System.currentTimeMillis();
         newProject.updatedAt = newProject.createdAt;
@@ -95,10 +96,9 @@ public class BusinessLogic extends BaseLogic {
 
     @DELETE
     @Path("/{projectId}")
-    public Response updateUser(@PathParam("projectId") int projectId) {
+    public Response updateUser(@Context User user, @PathParam("projectId") int projectId) {
 
         log.debug("Deleting project {}", projectId);
-        User user = userDao.getByName("dmitriy@blynk.cc");
 
         int index = user.profile.getDashIndex(projectId, 1);
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
@@ -112,11 +112,11 @@ public class BusinessLogic extends BaseLogic {
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{projectId}")
-    public Response updateUser(@PathParam("projectId") int projectId,
+    public Response updateUser(@Context User user,
+                               @PathParam("projectId") int projectId,
                                DashBoard updatedProject) {
 
         log.debug("Updating project {}", projectId);
-        User user = userDao.getByName("dmitriy@blynk.cc");
 
         int projectIndex = user.profile.getDashIndex(projectId, 1);
         user.profile.dashBoards[projectIndex] = updatedProject;

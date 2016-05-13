@@ -25,18 +25,18 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.*;
  * Created on 09.12.15.
  */
 @Path("")
-public class BusinessLoginLogic extends BaseLogic {
+public class BusinessAuthLogic extends BaseLogic {
 
     private final UserDao userDao;
     private final SessionHolder sessionHolder;
     private final SessionDao sessionDao;
     private final FileManager fileManager;
 
-    public BusinessLoginLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager) {
+    public BusinessAuthLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager, SessionHolder sessionHolder) {
         this.userDao = userDao;
         this.fileManager = fileManager;
         this.sessionDao = sessionDao;
-        this.sessionHolder = new SessionHolder();
+        this.sessionHolder = sessionHolder;
     }
 
     @POST
@@ -59,7 +59,7 @@ public class BusinessLoginLogic extends BaseLogic {
             return redirect("/business");
         }
 
-        Response response = redirect("/business/static/business.html");
+        Response response = redirect("/business");
 
         Cookie cookie = makeDefaultSessionCookie(sessionHolder.generateNewSession(user));
         response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
@@ -68,7 +68,7 @@ public class BusinessLoginLogic extends BaseLogic {
     }
 
     private static Cookie makeDefaultSessionCookie(String sessionId) {
-        DefaultCookie cookie = new DefaultCookie("session", sessionId);
+        DefaultCookie cookie = new DefaultCookie(Cookies.SESSION_COOKIE, sessionId);
         cookie.setMaxAge(86400);
         return cookie;
     }

@@ -5,6 +5,7 @@ package cc.blynk.server.handlers.http.rest;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
+//todo rename to Param
 public abstract class MethodParam {
 
     String name;
