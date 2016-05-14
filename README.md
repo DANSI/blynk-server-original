@@ -40,7 +40,7 @@ By default, mobile application uses 8443 port and is based on SSL/TLS sockets. D
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-0.15.3.jar -dataFolder /path
+        java -jar server-0.15.4.jar -dataFolder /path
         
 That's it! 
 
@@ -63,11 +63,11 @@ That's it!
         
 + Download Blynk server jar file (or manually copy it to raspberry via ssh and scp command) : 
    
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.15.3/server-0.15.3.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.15.4/server-0.15.4.jar"
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-0.15.3.jar -dataFolder /home/pi/Blynk        
+        java -jar server-0.15.4.jar -dataFolder /home/pi/Blynk        
         
 That's it! 
 
@@ -80,7 +80,7 @@ That's it!
         
 + To enable server auto restart find /etc/init.d/rc.local file and add :
 
-        java -jar /home/pi/server-0.15.3.jar -dataFolder /home/pi/Blynk &
+        java -jar /home/pi/server-0.15.4.jar -dataFolder /home/pi/Blynk &
         
 + Or in case above approach doesn't work for you, execute 
        
@@ -88,7 +88,7 @@ That's it!
 
 add the following line
 
-        @reboot java -jar /home/pi/server-0.15.3.jar -dataFolder /home/pi/Blynk &
+        @reboot java -jar /home/pi/server-0.15.4.jar -dataFolder /home/pi/Blynk &
         
 save and exit.
 
@@ -100,7 +100,7 @@ save and exit.
 
 + Put in it one line : 
 
-        java -jar server-0.15.3.jar -dataFolder /home/pi/Blynk
+        java -jar server-0.15.4.jar -dataFolder /home/pi/Blynk
         
 + Put bat file to windows startup folder
 
@@ -114,7 +114,7 @@ In order to update your server with new version you need to kill old process and
         
 + You will see something like that
  
-        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.15.3.jar   
+        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.15.4.jar   
         
 + Kill old process
 
@@ -206,7 +206,7 @@ For more flexibility you can extend server with more options by creating ```serv
 Example could be found [here](https://github.com/blynkkk/blynk-server/blob/master/server/core/src/main/resources/server.properties).
 You could also specify any path to ```server.properties``` file via command line argument ```-serverConfig```. For example :
 
-    java -jar server-0.15.3.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
+    java -jar server-0.15.4.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
 
 Possible server options:
 
