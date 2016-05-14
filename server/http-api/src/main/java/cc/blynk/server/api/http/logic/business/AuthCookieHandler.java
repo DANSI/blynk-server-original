@@ -44,9 +44,7 @@ public class AuthCookieHandler extends ChannelInboundHandlerAdapter {
                     ctx.channel().attr(userAttributeKey).set(user);
                 } else {
                     if (request.getUri().endsWith("/login") || request.getUri().startsWith("/business/static")) {
-
                     } else {
-                        log.error("Unsecured access attempt path {}", request.getUri());
                         ctx.writeAndFlush(Response.redirect("/business/static/login.html"));
                         return;
                     }
