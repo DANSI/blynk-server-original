@@ -75,7 +75,8 @@ public class ConfigsLogic {
     public Response updateConfig(@PathParam("name") String name,
                                Config updatedConfig) {
 
-        log.info("Updating config {}. New body : {}", name, updatedConfig.body);
+        log.info("Updating config {}. New body : ", name);
+        log.info("{}", updatedConfig.body);
 
         switch (name) {
             case "token_mail_body.txt" :

@@ -28,11 +28,18 @@ public class Config {
     public Config(String name, ServerProperties serverProperties) {
         this.name = name;
         //return only editable options
-        this.body = makeProperty(serverProperties, "allowed.administrator.ips");
+        this.body = makeProperties(serverProperties,
+                "allowed.administrator.ips",
+                "user.dashboard.max.limit",
+                "user.profile.max.size");
     }
 
-    private static String makeProperty(ServerProperties properties, String name) {
-        return name + " = " + properties.getProperty(name) + "\n";
+    private static String makeProperties(ServerProperties properties, String... propertyNames) {
+        StringBuilder sb = new StringBuilder();
+        for (String name : propertyNames) {
+            sb.append(name).append(" = ").append(properties.getProperty(name)).append("\n");
+        }
+        return sb.toString();
     }
 
     @Override
