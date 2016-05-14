@@ -1,4 +1,4 @@
-package cc.blynk.server.admin.http.response;
+package cc.blynk.server.handlers.http;
 
 import java.util.Map;
 

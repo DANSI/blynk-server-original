@@ -7,6 +7,8 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.handlers.http.rest.Response;
+import cc.blynk.server.handlers.http.utils.Filter;
+import cc.blynk.server.handlers.http.utils.LogicHelper;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
@@ -25,7 +27,7 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  * Created on 03.12.15.
  */
 @Path("/users")
-public class UsersLogic extends BaseLogic {
+public class UsersLogic extends LogicHelper {
 
     private final UserDao userDao;
     private final SessionDao sessionDao;

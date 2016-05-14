@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Properties;
 
 import static cc.blynk.server.handlers.http.rest.Response.*;
+import static cc.blynk.server.handlers.http.utils.LogicHelper.*;
 
 /**
  * The Blynk Project.
@@ -23,7 +24,7 @@ import static cc.blynk.server.handlers.http.rest.Response.*;
  * Created on 09.12.15.
  */
 @Path("/config")
-public class ConfigsLogic extends BaseLogic {
+public class ConfigsLogic {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final ServerProperties serverProperties;

@@ -1,4 +1,4 @@
-package cc.blynk.server.admin.http.logic.business;
+package cc.blynk.server.handlers.http.logic;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

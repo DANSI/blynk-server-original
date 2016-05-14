@@ -4,7 +4,9 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.HttpHandler;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.HttpBusinessAPILogic;
+import cc.blynk.server.api.http.logic.business.*;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.handlers.http.logic.UrlMapperHandler;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
@@ -30,6 +32,13 @@ public class HttpsAPIServer extends BaseServer {
         HandlerRegistry.register(new HttpAPILogic(holder));
         HandlerRegistry.register(new HttpBusinessAPILogic(holder));
 
+        final String businessRootPath = holder.props.getProperty("business.rootPath", "/business");
+
+        final SessionHolder sessionHolder = new SessionHolder();
+
+        HandlerRegistry.register(businessRootPath, new BusinessLogic(holder.userDao, holder.sessionDao, holder.fileManager));
+        HandlerRegistry.register(businessRootPath, new BusinessAuthLogic(holder.userDao, holder.sessionDao, holder.fileManager, sessionHolder));
+
         final DomainNameMapping<SslContext> mappings = SslUtil.getDomainMappings(holder.props);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
@@ -39,6 +48,11 @@ public class HttpsAPIServer extends BaseServer {
                         new SniHandler(mappings),
                         new HttpServerCodec(),
                         new HttpObjectAggregator(1024, true),
+
+                        new AuthCookieHandler(businessRootPath, sessionHolder),
+                        new UrlMapperHandler(businessRootPath, "/business/static/business.html"),
+                        new AuthHttpHandler(holder.userDao, holder.sessionDao, holder.stats),
+
                         new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );
             }

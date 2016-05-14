@@ -1,15 +1,16 @@
-package cc.blynk.server.admin.http.logic.business;
+package cc.blynk.server.api.http.logic.business;
 
-import cc.blynk.server.admin.http.logic.admin.BaseLogic;
-import cc.blynk.server.admin.http.logic.admin.Filter;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.handlers.http.rest.Response;
+import cc.blynk.server.handlers.http.utils.Filter;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static cc.blynk.server.handlers.http.rest.Response.*;
+import static cc.blynk.server.handlers.http.utils.LogicHelper.*;
 
 /**
  * The Blynk Project.
@@ -25,7 +27,9 @@ import static cc.blynk.server.handlers.http.rest.Response.*;
  * Created on 09.12.15.
  */
 @Path("/projects")
-public class BusinessLogic extends BaseLogic {
+public class BusinessLogic {
+
+    private static final Logger log = LogManager.getLogger(BusinessLogic.class);
 
     private final UserDao userDao;
     private final SessionDao sessionDao;

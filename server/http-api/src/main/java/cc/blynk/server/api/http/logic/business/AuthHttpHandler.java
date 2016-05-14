@@ -1,6 +1,5 @@
-package cc.blynk.server.admin.http;
+package cc.blynk.server.api.http.logic.business;
 
-import cc.blynk.server.admin.http.logic.business.AuthCookieHandler;
 import cc.blynk.server.core.BaseHttpHandler;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;

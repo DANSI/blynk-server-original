@@ -1,4 +1,4 @@
-package cc.blynk.server.admin.http.logic.business;
+package cc.blynk.server.api.http.logic.business;
 
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.handlers.http.rest.Response;
@@ -36,9 +36,6 @@ public class AuthCookieHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof FullHttpRequest) {
             FullHttpRequest request = (FullHttpRequest) msg;
-            if (request.getUri().contains("projects")) {
-                log.error("aaaa");
-            }
             if (request.getUri().startsWith(authPath)) {
                 User user = getUser(request);
 

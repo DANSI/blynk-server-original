@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.Stat;
 import cc.blynk.server.handlers.http.rest.Response;
+import cc.blynk.server.handlers.http.utils.LogicHelper;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -25,7 +26,7 @@ import static cc.blynk.server.handlers.http.rest.Response.*;
  * Created on 09.12.15.
  */
 @Path("/stats")
-public class StatsLogic extends BaseLogic {
+public class StatsLogic extends LogicHelper {
 
     private final GlobalStats stats;
     private final SessionDao sessionDao;

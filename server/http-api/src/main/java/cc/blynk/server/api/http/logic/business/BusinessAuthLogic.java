@@ -1,6 +1,5 @@
-package cc.blynk.server.admin.http.logic.business;
+package cc.blynk.server.api.http.logic.business;
 
-import cc.blynk.server.admin.http.logic.admin.BaseLogic;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
@@ -25,7 +24,7 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.*;
  * Created on 09.12.15.
  */
 @Path("")
-public class BusinessAuthLogic extends BaseLogic {
+public class BusinessAuthLogic {
 
     private final UserDao userDao;
     private final SessionHolder sessionHolder;

@@ -1,4 +1,4 @@
-package cc.blynk.server.admin.http.logic.business;
+package cc.blynk.server.api.http.logic.business;
 
 import cc.blynk.server.core.model.auth.User;
 import io.netty.handler.codec.http.cookie.Cookie;
