@@ -49,6 +49,7 @@ public class HttpsAdminServer extends BaseServer {
                     new HttpObjectAggregator(65536),
                     new ChunkedWriteHandler(),
                     new UrlMapperHandler(adminRootPath, "/admin/static/admin.html"),
+                    new UrlMapperHandler("/favicon.ico", "/admin/static/favicon.ico"),
                     new StaticFileHandler(isUnpacked, "/admin/static", "/src/main/resources/static"),
                     new BaseHttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );

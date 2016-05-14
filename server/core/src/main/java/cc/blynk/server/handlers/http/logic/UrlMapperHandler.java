@@ -9,7 +9,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.05.16.
  */
-public class UrlMapperHandler extends ChannelInboundHandlerAdapter{
+public class UrlMapperHandler extends ChannelInboundHandlerAdapter {
 
     private final String initUrl;
     private final String mapToUrl;

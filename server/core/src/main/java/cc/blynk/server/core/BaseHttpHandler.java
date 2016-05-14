@@ -13,7 +13,6 @@ import cc.blynk.server.handlers.http.rest.URIDecoder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.util.ReferenceCountUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,11 +47,7 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
 
         globalStats.mark(Command.HTTP_TOTAL);
 
-        try {
-            processHttp(ctx, req);
-        } finally {
-            ReferenceCountUtil.release(msg);
-        }
+        processHttp(ctx, req);
     }
 
     public void processHttp(ChannelHandlerContext ctx, HttpRequest req) {
