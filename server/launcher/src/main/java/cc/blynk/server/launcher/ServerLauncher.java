@@ -67,7 +67,7 @@ public class ServerLauncher {
                 new HardwareSSLServer(holder),
                 new AppServer(holder),
                 new HttpAPIServer(holder),
-                new HttpsAPIServer(holder),
+                new HttpsAPIServer(holder, isUnpacked),
                 new HttpsAdminServer(holder, isUnpacked),
                 new HttpResetPassServer(holder),
                 new WebSocketServer(holder),

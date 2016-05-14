@@ -6,6 +6,7 @@ import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.HttpBusinessAPILogic;
 import cc.blynk.server.api.http.logic.business.*;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.handlers.http.logic.StaticFileHandler;
 import cc.blynk.server.handlers.http.logic.UrlMapperHandler;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import cc.blynk.utils.SslUtil;
@@ -15,6 +16,7 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.SniHandler;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.util.DomainNameMapping;
 
 /**
@@ -26,7 +28,7 @@ public class HttpsAPIServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public HttpsAPIServer(Holder holder) {
+    public HttpsAPIServer(Holder holder, boolean isUnpacked) {
         super(holder.props.getIntProperty("https.port"));
 
         HandlerRegistry.register(new HttpAPILogic(holder));
@@ -48,11 +50,12 @@ public class HttpsAPIServer extends BaseServer {
                         new SniHandler(mappings),
                         new HttpServerCodec(),
                         new HttpObjectAggregator(1024, true),
+                        new ChunkedWriteHandler(),
 
                         new AuthCookieHandler(businessRootPath, sessionHolder),
                         new UrlMapperHandler(businessRootPath, "/business/static/business.html"),
+                        new StaticFileHandler(isUnpacked, "/business/static", "/admin/static"),
                         new AuthHttpHandler(holder.userDao, holder.sessionDao, holder.stats),
-
                         new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );
             }

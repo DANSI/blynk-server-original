@@ -152,6 +152,9 @@ public class StaticFileHandler extends SimpleChannelInboundHandler<FullHttpReque
         } else {
             //for local mode
             file = new File("./server/http-admin/target/classes" + request.getUri());
+            if (!file.exists()) {
+                file = new File("./server/http-api/target/classes" + request.getUri());
+            }
         }
 
         if (file.isHidden() || !file.exists()) {
