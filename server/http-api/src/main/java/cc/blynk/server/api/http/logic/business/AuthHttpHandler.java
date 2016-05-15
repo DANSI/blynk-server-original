@@ -33,7 +33,9 @@ public class AuthHttpHandler extends BaseHttpHandler {
             return;
         }
 
-        params[0] = user;
+        if (params.length > 0) {
+            params[0] = user;
+        }
 
         Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
         if (session.initialEventLoop != ctx.channel().eventLoop()) {

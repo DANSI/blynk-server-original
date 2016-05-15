@@ -3,6 +3,24 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     // create an admin application
     var admin = nga.application('Blynk User Administration', false)
         .baseApiUrl(location.protocol + '//' + window.location.hostname + (location.port == 80 ? '' : (':' + location.port)) + location.pathname + '/'); // main API endpoint
+
+
+    var customHeaderTemplate =
+    '<div class="navbar-header">' +
+        '<a class="navbar-brand" href="#" ng-click="appController.displayHome()">My Custom Title</a>' +
+    '</div>' +
+    '<p class="navbar-text navbar-right">' +
+        '<form name="logoutForm" method="POST" action="/business/logout">' +
+            '<a href="javascript:document.logoutForm.submit()">' +
+            '<span class="glyphicon glyphicon-log-out"></span>&nbsp;Logout' +
+            '</a>' +
+        '</form>' +
+    '</p>';
+
+
+
+    admin.header(customHeaderTemplate);
+
     // create a user entity
     // the API endpoint for this entity will be 'http://jsonplaceholder.typicode.com/users/:id
     var userInfo = nga.entity('projects').identifier(nga.field('id'));

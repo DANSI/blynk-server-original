@@ -60,15 +60,24 @@ public class BusinessAuthLogic {
 
         Response response = redirect("/business");
 
-        Cookie cookie = makeDefaultSessionCookie(sessionHolder.generateNewSession(user));
+        Cookie cookie = makeDefaultSessionCookie(sessionHolder.generateNewSession(user), 86400);
         response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
 
         return response;
     }
 
-    private static Cookie makeDefaultSessionCookie(String sessionId) {
+    @POST
+    @Path("/logout")
+    public Response logout() {
+        Response response = redirect("/business");
+        Cookie cookie = makeDefaultSessionCookie("", 0);
+        response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
+        return response;
+    }
+
+    private static Cookie makeDefaultSessionCookie(String sessionId, int maxAge) {
         DefaultCookie cookie = new DefaultCookie(Cookies.SESSION_COOKIE, sessionId);
-        cookie.setMaxAge(86400);
+        cookie.setMaxAge(maxAge);
         return cookie;
     }
 

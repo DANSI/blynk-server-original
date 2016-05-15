@@ -41,7 +41,11 @@ public class AuthCookieHandler extends ChannelInboundHandlerAdapter {
 
                 //access to API that requires cookies and no auth cookie
                 if (user != null) {
-                    ctx.channel().attr(userAttributeKey).set(user);
+                    if (request.getUri().equals("/business/logout")) {
+                        ctx.channel().attr(userAttributeKey).remove();
+                    } else {
+                        ctx.channel().attr(userAttributeKey).set(user);
+                    }
                 } else {
                     if (request.getUri().endsWith("/login") || request.getUri().startsWith("/business/static")) {
                     } else {
