@@ -10,11 +10,9 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         '<a class="navbar-brand" href="#" ng-click="appController.displayHome()">My Custom Title</a>' +
     '</div>' +
     '<p class="navbar-text navbar-right">' +
-        '<form name="logoutForm" method="POST" action="/business/logout">' +
-            '<a href="javascript:document.logoutForm.submit()">' +
+        '<a href="javascript:post(&quot;/business/logout&quot;)">' +
             '<span class="glyphicon glyphicon-log-out"></span>&nbsp;Logout' +
-            '</a>' +
-        '</form>' +
+        '</a>' +
     '</p>';
 
 
@@ -144,3 +142,11 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     // attach the admin application to the DOM and execute it
     nga.configure(admin);
 }]);
+
+function post(action) {
+    var form = document.createElement("form");
+    form.setAttribute("method", "POST");
+    form.setAttribute("action", action);
+    document.body.appendChild(form);
+    form.submit();
+}
