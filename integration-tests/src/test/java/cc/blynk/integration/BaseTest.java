@@ -9,6 +9,7 @@ import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.junit.Before;
@@ -71,6 +72,13 @@ public abstract class BaseTest {
     @Before
     public void initBase() throws Exception {
         this.properties = new ServerProperties();
+
+        //disable native linux epoll transport for non linux envs.
+        if (!SystemUtils.IS_OS_LINUX) {
+            System.out.println("WARNING : DISABLING NATIVE EPOLL TRANSPORT. SYSTEM : " + SystemUtils.OS_NAME);
+            this.properties.put("enable.native.epoll.transport", false);
+        }
+
         if (getDataFolder() != null) {
             this.properties.setProperty("data.folder", getDataFolder());
         }
