@@ -52,7 +52,7 @@ public class ServerLauncher {
         //required for logging dynamic context
         System.setProperty("data.folder", serverProperties.getProperty("data.folder"));
 
-        boolean isUnpacked = JarUtil.unpackStaticFiles("admin");
+        boolean isUnpacked = JarUtil.unpackStaticFiles("static");
 
         start(serverProperties, isUnpacked);
     }

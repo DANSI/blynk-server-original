@@ -53,8 +53,8 @@ public class HttpsAPIServer extends BaseServer {
                         new ChunkedWriteHandler(),
 
                         new AuthCookieHandler(businessRootPath, sessionHolder),
-                        new UrlMapperHandler(businessRootPath, "/business/static/business.html"),
-                        new StaticFileHandler(isUnpacked, "/business/static", "/admin/static"),
+                        new UrlMapperHandler(businessRootPath, "/static/business/business.html"),
+                        new StaticFileHandler(isUnpacked, "/static/business", "/static/admin"),
                         new AuthHttpHandler(holder.userDao, holder.sessionDao, holder.stats),
                         new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );

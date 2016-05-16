@@ -21,9 +21,8 @@ import java.util.Set;
  */
 public class AuthCookieHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger log = LogManager.getLogger(AuthCookieHandler.class);
     public final static AttributeKey<User> userAttributeKey = AttributeKey.valueOf("user");
-
+    private static final Logger log = LogManager.getLogger(AuthCookieHandler.class);
     private final String authPath;
     private final SessionHolder sessionHolder;
 
@@ -47,9 +46,9 @@ public class AuthCookieHandler extends ChannelInboundHandlerAdapter {
                         ctx.channel().attr(userAttributeKey).set(user);
                     }
                 } else {
-                    if (request.getUri().endsWith("/login") || request.getUri().startsWith("/business/static")) {
+                    if (request.getUri().endsWith("/login") || request.getUri().startsWith("/static/business")) {
                     } else {
-                        ctx.writeAndFlush(Response.redirect("/business/static/login.html"));
+                        ctx.writeAndFlush(Response.redirect("/static/business/login.html"));
                         return;
                     }
                 }

@@ -18,8 +18,8 @@ import javax.ws.rs.core.MediaType;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
-import static io.netty.handler.codec.http.HttpResponseStatus.*;
-import static io.netty.handler.codec.http.HttpVersion.*;
+import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
  * The Blynk project
@@ -48,7 +48,7 @@ public class ResetPasswordLogic {
                 props.getProperty("reset-pass.http.host", IPUtils.resolveHostIP()),
                 props.getIntProperty("reset.pass.http.port")
         );
-        this.pageContent = FileLoaderUtil.readFileAsString("reset/static/enterNewPassword.html");
+        this.pageContent = FileLoaderUtil.readFileAsString("static/reset/enterNewPassword.html");
     }
 
     private static String generateToken() {
