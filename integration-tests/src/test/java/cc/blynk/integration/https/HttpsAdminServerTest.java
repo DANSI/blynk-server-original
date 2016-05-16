@@ -89,7 +89,7 @@ public class HttpsAdminServerTest extends BaseTest {
     @Test
     public void testChangePassNoUser() throws Exception {
         String testUser = "dima@dima.ua";
-        HttpPut request = new HttpPut(httpsServerUrl + "changePass/" + testUser);
+        HttpPut request = new HttpPut(httpsServerUrl + "xxx/" + testUser);
         request.setEntity(new StringEntity(new ResponseUserEntity("123").toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {

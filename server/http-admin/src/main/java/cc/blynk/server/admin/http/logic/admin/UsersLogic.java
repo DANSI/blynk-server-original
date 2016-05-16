@@ -1,6 +1,5 @@
 package cc.blynk.server.admin.http.logic.admin;
 
-import cc.blynk.server.admin.http.pojo.UserPassPojo;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
@@ -98,28 +97,6 @@ public class UsersLogic extends LogicHelper {
 
 
         return ok(updatedUser);
-    }
-
-    //todo remove after next release
-    @Deprecated
-    @PUT
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Path("/changePass/{name}")
-    public Response updateUser(@PathParam("name") String name,
-                               UserPassPojo userPassPojo) {
-
-        log.debug("Updating pass for user {}", name);
-        User user = userDao.getByName(name);
-
-        if (user == null) {
-            log.debug("No user with such name {}", name);
-            return new Response(HTTP_1_1, NOT_FOUND);
-        }
-
-        user.pass = userPassPojo.pass;
-        user.lastModifiedTs = System.currentTimeMillis();
-
-        return ok();
     }
 
     @DELETE
