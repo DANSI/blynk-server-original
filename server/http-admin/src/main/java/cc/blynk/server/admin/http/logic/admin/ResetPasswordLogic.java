@@ -18,8 +18,8 @@ import javax.ws.rs.core.MediaType;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
-import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+import static io.netty.handler.codec.http.HttpResponseStatus.*;
+import static io.netty.handler.codec.http.HttpVersion.*;
 
 /**
  * The Blynk project
@@ -38,17 +38,19 @@ public class ResetPasswordLogic {
     private final String resetPassUrl;
     private final String pageContent;
 
+    public static final String RESET_PASS_STATIC_PATH = "static/reset/";
+
     public ResetPasswordLogic(ServerProperties props, UserDao userDao, MailWrapper mailWrapper) {
         this.userDao = userDao;
         this.tokensPool = new TokensPool();
-        this.emailBody = FileLoaderUtil.readFileAsString("reset-email.html");
+        this.emailBody = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "reset-email.html");
         this.mailWrapper = mailWrapper;
 
         this.resetPassUrl = String.format("http://%s:%s/landing?token=",
                 props.getProperty("reset-pass.http.host", IPUtils.resolveHostIP()),
                 props.getIntProperty("reset.pass.http.port")
         );
-        this.pageContent = FileLoaderUtil.readFileAsString("static/reset/enterNewPassword.html");
+        this.pageContent = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "enterNewPassword.html");
     }
 
     private static String generateToken() {
