@@ -6,7 +6,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.ipfilter.AbstractRemoteAddressFilter;
 import io.netty.handler.ipfilter.IpFilterRuleType;
 import io.netty.handler.ipfilter.IpSubnetFilterRule;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.net.Inet6Address;
 import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +21,8 @@ import java.util.Set;
  */
 @ChannelHandler.Sharable
 public class IpFilterHandler extends AbstractRemoteAddressFilter<InetSocketAddress> {
+
+    private static final Logger log = LogManager.getLogger(IpFilterHandler.class);
 
     private final Set<String> allowedIPs = new HashSet<>();
     private final Set<IpSubnetFilterRule> rules = new HashSet<>();
@@ -46,6 +51,11 @@ public class IpFilterHandler extends AbstractRemoteAddressFilter<InetSocketAddre
 
         if (allowedIPs.contains(remoteAddress.getAddress().getHostAddress())) {
             return true;
+        }
+
+        if (remoteAddress.getAddress() instanceof Inet6Address) {
+            log.error("IPv6 CDR notation address not supported by Blynk Admin Server. Please use single IP instead.");
+            return false;
         }
 
         for (IpSubnetFilterRule rule : rules) {
