@@ -13,12 +13,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
+import static cc.blynk.utils.ByteBufUtil.ok;
 
 /**
  * Process register message.
- * Divides input string by spaces on 2 parts:
- * "username" "password".
+ * Divides input string by nil char on 3 parts:
+ * "username" "password" "appName".
  * Checks if user not registered yet. If not - registering.
  *
  * For instance, incoming register message may be : "user@mail.ua my_password"
@@ -47,10 +48,10 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterMessage message) throws Exception {
         //warn: split may be optimized
-        String[] messageParts = message.body.split("\0", 2);
+        String[] messageParts = message.body.split("\0");
 
-        //expecting message with 2 parts, described above in comment.
-        if (messageParts.length != 2) {
+        //expecting message with 3 parts, described above in comment.
+        if (messageParts.length < 2) {
             log.error("Register Handler. Wrong income message format. {}", message);
             ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
             return;
@@ -58,6 +59,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         String userName = messageParts[0].toLowerCase();
         String pass = messageParts[1];
+        String appName = messageParts.length == 3 ? messageParts[2] : AppName.BLYNK;
         log.info("Trying register user : {}", userName);
 
         if (!EmailValidator.getInstance().isValid(userName)) {
@@ -78,7 +80,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        userDao.add(userName, pass);
+        userDao.add(userName, pass, appName);
 
         log.info("Registered {}.", userName);
 

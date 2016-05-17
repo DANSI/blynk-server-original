@@ -10,7 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * User: ddumanskiy
@@ -21,8 +22,8 @@ public class FileManagerIntegrationTest {
 
     private String dataFolder = new ServerProperties().getProperty("data.folder");
 
-    private User user1 = new User("name1", "pass1");
-    private User user2 = new User("name2", "pass2");
+    private User user1 = new User("name1", "pass1", "Blynk");
+    private User user2 = new User("name2", "pass2", "Blynk");
 
     private FileManager fileManager = new FileManager(dataFolder);
 

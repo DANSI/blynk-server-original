@@ -32,9 +32,11 @@ public class User implements Serializable {
     public volatile long lastModifiedTs;
 
     public long lastLoggedAt;
+
     public Profile profile;
-    private int energy;
     public boolean isFacebookUser;
+    public String appName;
+    private int energy;
 
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
@@ -45,16 +47,16 @@ public class User implements Serializable {
         this.isFacebookUser = false;
     }
 
-    public User(String name, String pass) {
+    public User(String name, String pass, String appName) {
         this();
         this.name = name;
         this.pass = pass;
-        this.isFacebookUser = false;
+        this.appName = appName;
     }
 
-    public User(String name) {
-        this();
-        this.name = name;
+    //used for facebook login. available only for Blynk app.
+    public User(String name, String appName) {
+        this(name, null, appName);
         this.isFacebookUser = true;
     }
 

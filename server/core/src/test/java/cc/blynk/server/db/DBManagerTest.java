@@ -46,6 +46,11 @@ public class DBManagerTest {
         assertNotNull(dbManager.getConnection());
     }
 
+    @AfterClass
+    public static void close() {
+        dbManager.close();
+    }
+
     @Before
     public void cleanAll() throws Exception {
         //clean everything just in case
@@ -55,11 +60,6 @@ public class DBManagerTest {
         dbManager.executeSQL("DELETE FROM reporting_average_daily");
         dbManager.executeSQL("DELETE FROM purchase");
         dbManager.executeSQL("DELETE FROM redeem");
-    }
-
-    @AfterClass
-    public static void close() {
-        dbManager.close();
     }
 
     @Test
@@ -207,9 +207,9 @@ public class DBManagerTest {
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertUser() throws Exception {
         List<User> users = new ArrayList<>();
-        users.add(new User("test@gmail.com", "pass"));
-        users.add(new User("test@gmail.com", "pass2"));
-        users.add(new User("test2@gmail.com", "pass2"));
+        users.add(new User("test@gmail.com", "pass", "Blynk"));
+        users.add(new User("test@gmail.com", "pass2", "Blynk"));
+        users.add(new User("test2@gmail.com", "pass2", "Blynk"));
         dbManager.saveUsers(users);
 
         try (Connection connection = dbManager.getConnection();

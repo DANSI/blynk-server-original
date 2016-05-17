@@ -31,8 +31,6 @@ import static cc.blynk.utils.ByteBufUtil.ok;
 @ChannelHandler.Sharable
 public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler, DefaultReregisterHandler {
 
-    public static final String FACEBOOK = "facebook";
-
     private final Holder holder;
     private final FacebookLoginCheck facebookLoginCheck;
 
@@ -61,7 +59,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         final OsType osType = messageParts.length > 3 ? OsType.parse(messageParts[2]) : OsType.OTHER;
         final String version = messageParts.length > 3 ? messageParts[3] : null;
 
-        if (messageParts.length == 5 && FACEBOOK.equals(messageParts[4])) {
+        if (messageParts.length == 5 && AppName.FACEBOOK.equals(messageParts[4])) {
             facebookLogin(ctx, message.id, username, messageParts[1], osType, version);
         } else {
             blynkLogin(ctx, message.id, username, messageParts[1], osType, version);
@@ -80,7 +78,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
             User user = holder.userDao.getByName(username);
             if (user == null) {
-                user = holder.userDao.addFacebookUser(username);
+                user = holder.userDao.addFacebookUser(username, AppName.BLYNK);
             }
 
             login(ctx, messageId, user, osType, version);
