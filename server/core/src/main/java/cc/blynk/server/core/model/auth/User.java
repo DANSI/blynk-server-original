@@ -126,7 +126,8 @@ public class User implements Serializable {
     }
 
     private void checkPrice(int price, int msgId) {
-        if (price > energy) {
+        //todo replace with constant
+        if ("Blynk".equals(appName) && price > energy) {
             throw new EnergyLimitException("Not enough energy.", msgId);
         }
     }
