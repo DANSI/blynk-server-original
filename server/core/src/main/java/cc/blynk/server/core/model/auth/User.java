@@ -17,8 +17,6 @@ import java.util.Map;
  */
 public class User {
 
-    public static final double RECYCLE_PRICE_RESTORE = 1;
-
     public Map<Integer, String> dashShareTokens;
     public Map<Integer, String> dashTokens;
 
@@ -136,7 +134,7 @@ public class User {
     }
 
     public void recycleEnergy(int price) {
-        this.energy += RECYCLE_PRICE_RESTORE * price;
+        this.energy += price;
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
