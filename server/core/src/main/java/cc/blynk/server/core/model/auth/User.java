@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.JsonParser;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -16,11 +15,9 @@ import java.util.Map;
  * Date: 8/11/13
  * Time: 4:03 PM
  */
-public class User implements Serializable {
+public class User {
 
     public static final double RECYCLE_PRICE_RESTORE = 1;
-
-	private static final long serialVersionUID = 1L;
 
     public Map<Integer, String> dashShareTokens;
     public Map<Integer, String> dashTokens;
