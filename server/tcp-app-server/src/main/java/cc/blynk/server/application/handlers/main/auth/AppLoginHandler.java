@@ -14,8 +14,9 @@ import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import io.netty.channel.*;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
+import static cc.blynk.utils.ByteBufUtil.ok;
 
 
 /**
@@ -30,12 +31,21 @@ import static cc.blynk.utils.ByteBufUtil.*;
 @ChannelHandler.Sharable
 public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler, DefaultReregisterHandler {
 
+    public static final String FACEBOOK = "facebook";
+
     private final Holder holder;
     private final FacebookLoginCheck facebookLoginCheck;
 
     public AppLoginHandler(Holder holder) {
         this.holder = holder;
         this.facebookLoginCheck = new FacebookLoginCheck();
+    }
+
+    private static void cleanPipeline(ChannelPipeline pipeline) {
+        pipeline.remove(AppLoginHandler.class);
+        pipeline.remove(UserNotLoggedHandler.class);
+        pipeline.remove(RegisterHandler.class);
+        pipeline.remove(AppShareLoginHandler.class);
     }
 
     @Override
@@ -51,7 +61,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         final OsType osType = messageParts.length > 3 ? OsType.parse(messageParts[2]) : OsType.OTHER;
         final String version = messageParts.length > 3 ? messageParts[3] : null;
 
-        if (messageParts.length == 5 && "facebook".equals(messageParts[4])) {
+        if (messageParts.length == 5 && FACEBOOK.equals(messageParts[4])) {
             facebookLogin(ctx, message.id, username, messageParts[1], osType, version);
         } else {
             blynkLogin(ctx, message.id, username, messageParts[1], osType, version);
@@ -112,13 +122,6 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         session.addAppChannel(channel);
         channel.writeAndFlush(ok(msgId), channel.voidPromise());
         log.info("{} app joined.", userName);
-    }
-
-    private static void cleanPipeline(ChannelPipeline pipeline) {
-        pipeline.remove(AppLoginHandler.class);
-        pipeline.remove(UserNotLoggedHandler.class);
-        pipeline.remove(RegisterHandler.class);
-        pipeline.remove(AppShareLoginHandler.class);
     }
 
     @Override
