@@ -15,7 +15,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.SYNC;
 
 /**
  * Responsible for handling incoming hardware commands from applications and forwarding it to
@@ -72,7 +73,7 @@ public class HardwareAppLogic {
             case 'r' :
                 Widget widget = dash.findWidgetByPin(split[1].split(StringUtils.BODY_SEPARATOR_STRING), message.id);
                 if (widget == null) {
-                    throw new IllegalCommandBodyException("No frequency widget for read command.", message.id);
+                    throw new IllegalCommandBodyException("No widget for read command.", message.id);
                 }
 
                 if (widget instanceof FrequencyWidget) {
