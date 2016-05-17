@@ -50,9 +50,10 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -1074,12 +1075,12 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testTryReachQuotaLimit() throws Exception {
-        String body = "1 aw 100 100";
+        String body = "aw 100 100";
 
         //within 1 second sending more messages than default limit 100.
-        for (int i = 0; i < 1000 / 9; i++) {
+        for (int i = 0; i < 200; i++) {
             clientPair.hardwareClient.send("hardware " + body);
-            sleep(9);
+            sleep(5);
         }
 
         ArgumentCaptor<ResponseMessage> objectArgumentCaptor = ArgumentCaptor.forClass(ResponseMessage.class);
