@@ -3,6 +3,7 @@ package cc.blynk.server.api.http.logic.business;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.handlers.http.rest.Response;
 import io.netty.handler.codec.http.cookie.Cookie;
@@ -48,7 +49,7 @@ public class BusinessAuthLogic {
             return redirect("/business");
         }
 
-        User user = userDao.getByName(email);
+        User user = userDao.getByName(email, AppName.BLYNK);
 
         if (user == null) {
             return redirect("/business");

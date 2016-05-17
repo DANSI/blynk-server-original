@@ -3,6 +3,7 @@ package cc.blynk.server.admin.http.logic.admin;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.handlers.http.rest.Response;
@@ -51,7 +52,8 @@ public class UsersLogic extends LogicHelper {
             Filter filter = JsonParser.readAny(filterParam, Filter.class);
             filterParam = filter == null ? null : filter.name;
         }
-        List<User> users = userDao.searchByUsername(filterParam);
+
+        List<User> users = userDao.searchByUsername(filterParam, AppName.ALL);
         return appendTotalCountHeader(
                 ok(sort(users, sortField, sortOrder), page, size), users.size()
         );
@@ -60,7 +62,7 @@ public class UsersLogic extends LogicHelper {
     @GET
     @Path("/{name}")
     public Response getUserByName(@PathParam("name") String name) {
-        return ok(userDao.getUsers().get(name));
+        return ok(userDao.getByName(name, AppName.BLYNK));
     }
 
     @GET
@@ -83,7 +85,7 @@ public class UsersLogic extends LogicHelper {
                                    User updatedUser) {
 
         log.debug("Updating user {}", name);
-        User oldUser = userDao.getByName(name);
+        User oldUser = userDao.getByName(name, updatedUser.appName);
 
         //if pass was changed, cal hash.
         if (!updatedUser.pass.equals(oldUser.pass)) {
@@ -102,7 +104,7 @@ public class UsersLogic extends LogicHelper {
     @DELETE
     @Path("/{name}")
     public Response deleteUserByName(@PathParam("name") String name) {
-        User user = userDao.delete(name);
+        User user = userDao.delete(name, AppName.BLYNK);
         if (user == null) {
             return new Response(HTTP_1_1, NOT_FOUND);
         }

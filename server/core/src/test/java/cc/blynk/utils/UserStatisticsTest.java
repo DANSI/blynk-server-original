@@ -1,6 +1,7 @@
 package cc.blynk.utils;
 
 import cc.blynk.server.core.dao.FileManager;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -23,12 +24,11 @@ import java.util.zip.DeflaterOutputStream;
 public class UserStatisticsTest {
 
     static FileManager fileManager;
-    static Map<String, User> users;
+    static Map<UserKey, User> users;
 
     @BeforeClass
     public static void init() {
         fileManager = new FileManager("/home/doom369/test/root/data");
-        long start = System.currentTimeMillis();
         users = fileManager.deserialize();
     }
 
@@ -188,7 +188,7 @@ public class UserStatisticsTest {
         }
     }
 
-    private User getByToken(String token, Map<String, User> users) {
+    private User getByToken(String token, Map<UserKey, User> users) {
         for (User user : users.values()) {
             if (user.dashTokens.values().contains(token)) {
                 return user;

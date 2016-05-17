@@ -1,4 +1,4 @@
-package cc.blynk.server.application.handlers.main.auth;
+package cc.blynk.server.core.model;
 
 /**
  * The Blynk Project.
@@ -7,6 +7,7 @@ package cc.blynk.server.application.handlers.main.auth;
  */
 public final class AppName {
 
+    public static final String ALL = "*";
     public static final String BLYNK = "Blynk";
     public static final String FACEBOOK = "facebook";
 

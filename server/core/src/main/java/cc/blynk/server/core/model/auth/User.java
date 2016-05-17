@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.auth;
 
+import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
@@ -126,8 +127,7 @@ public class User implements Serializable {
     }
 
     private void checkPrice(int price, int msgId) {
-        //todo replace with constant
-        if ("Blynk".equals(appName) && price > energy) {
+        if (AppName.BLYNK.equals(appName) && price > energy) {
             throw new EnergyLimitException("Not enough energy.", msgId);
         }
     }

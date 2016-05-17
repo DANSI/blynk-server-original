@@ -1,6 +1,7 @@
 package cc.blynk.server.db;
 
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
@@ -207,9 +208,9 @@ public class DBManagerTest {
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertUser() throws Exception {
         List<User> users = new ArrayList<>();
-        users.add(new User("test@gmail.com", "pass", "Blynk"));
-        users.add(new User("test@gmail.com", "pass2", "Blynk"));
-        users.add(new User("test2@gmail.com", "pass2", "Blynk"));
+        users.add(new User("test@gmail.com", "pass", AppName.BLYNK));
+        users.add(new User("test@gmail.com", "pass2", AppName.BLYNK));
+        users.add(new User("test2@gmail.com", "pass2", AppName.BLYNK));
         dbManager.saveUsers(users);
 
         try (Connection connection = dbManager.getConnection();

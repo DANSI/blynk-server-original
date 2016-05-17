@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.auth;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.AppHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
+import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -14,9 +15,8 @@ import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import io.netty.channel.*;
 
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static cc.blynk.utils.ByteBufUtil.makeResponse;
-import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 
 /**
@@ -59,10 +59,16 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         final OsType osType = messageParts.length > 3 ? OsType.parse(messageParts[2]) : OsType.OTHER;
         final String version = messageParts.length > 3 ? messageParts[3] : null;
 
-        if (messageParts.length == 5 && AppName.FACEBOOK.equals(messageParts[4])) {
-            facebookLogin(ctx, message.id, username, messageParts[1], osType, version);
+        if (messageParts.length == 5) {
+            if (AppName.FACEBOOK.equals(messageParts[4])) {
+                facebookLogin(ctx, message.id, username, messageParts[1], osType, version);
+            } else {
+                final String appName = messageParts[4];
+                blynkLogin(ctx, message.id, username, messageParts[1], osType, version, appName);
+            }
         } else {
-            blynkLogin(ctx, message.id, username, messageParts[1], osType, version);
+            //todo this is for back compatibility
+            blynkLogin(ctx, message.id, username, messageParts[1], osType, version, AppName.BLYNK);
         }
     }
 
@@ -76,7 +82,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
                 return;
             }
 
-            User user = holder.userDao.getByName(username);
+            User user = holder.userDao.getByName(username, AppName.BLYNK);
             if (user == null) {
                 user = holder.userDao.addFacebookUser(username, AppName.BLYNK);
             }
@@ -85,8 +91,8 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         });
     }
 
-    private void blynkLogin(ChannelHandlerContext ctx, int messageId, String username, String pass, OsType osType, String version) {
-        User user = holder.userDao.getByName(username);
+    private void blynkLogin(ChannelHandlerContext ctx, int messageId, String username, String pass, OsType osType, String version, String appName) {
+        User user = holder.userDao.getByName(username, appName);
 
         if (user == null) {
             throw new UserNotRegistered(String.format("User not registered. Username '%s', %s", username, ctx.channel().remoteAddress()), messageId);

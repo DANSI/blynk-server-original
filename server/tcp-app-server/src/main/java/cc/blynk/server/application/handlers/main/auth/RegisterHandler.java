@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
 import io.netty.channel.ChannelHandler;
@@ -13,8 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.ByteBufUtil.makeResponse;
-import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
  * Process register message.
@@ -68,7 +68,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        if (userDao.isUserExists(userName)) {
+        if (userDao.isUserExists(userName, appName)) {
             log.warn("User with name {} already exists.", userName);
             ctx.writeAndFlush(makeResponse(message.id, USER_ALREADY_REGISTERED), ctx.voidPromise());
             return;

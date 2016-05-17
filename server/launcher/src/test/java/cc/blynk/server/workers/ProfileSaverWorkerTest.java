@@ -3,6 +3,8 @@ package cc.blynk.server.workers;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
@@ -40,16 +42,16 @@ public class ProfileSaverWorkerTest {
     public void testCorrectProfilesAreSaved() throws IOException {
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor));
 
-        User user1 = new User("1", "", "Blynk");
-        User user2 = new User("2", "", "Blynk");
-        User user3 = new User("3", "", "Blynk");
-        User user4 = new User("4", "", "Blynk");
+        User user1 = new User("1", "", AppName.BLYNK);
+        User user2 = new User("2", "", AppName.BLYNK);
+        User user3 = new User("3", "", AppName.BLYNK);
+        User user4 = new User("4", "", AppName.BLYNK);
 
-        Map<String, User> userMap = new HashMap<>();
-        userMap.put("1", user1);
-        userMap.put("2", user2);
-        userMap.put("3", user3);
-        userMap.put("4", user4);
+        Map<UserKey, User> userMap = new HashMap<>();
+        userMap.put(new UserKey("1", AppName.BLYNK), user1);
+        userMap.put(new UserKey("2", AppName.BLYNK), user2);
+        userMap.put(new UserKey("3", AppName.BLYNK), user3);
+        userMap.put(new UserKey("4", AppName.BLYNK), user4);
 
         when(userDao.getUsers()).thenReturn(userMap);
         profileSaverWorker.run();
@@ -63,16 +65,16 @@ public class ProfileSaverWorkerTest {
 
     @Test
     public void testNoProfileChanges() throws Exception {
-        User user1 = new User("1", "", "Blynk");
-        User user2 = new User("2", "", "Blynk");
-        User user3 = new User("3", "", "Blynk");
-        User user4 = new User("4", "", "Blynk");
+        User user1 = new User("1", "", AppName.BLYNK);
+        User user2 = new User("2", "", AppName.BLYNK);
+        User user3 = new User("3", "", AppName.BLYNK);
+        User user4 = new User("4", "", AppName.BLYNK);
 
-        Map<String, User> userMap = new HashMap<>();
-        userMap.put("1", user1);
-        userMap.put("2", user2);
-        userMap.put("3", user3);
-        userMap.put("4", user4);
+        Map<UserKey, User> userMap = new HashMap<>();
+        userMap.put(new UserKey("1", AppName.BLYNK), user1);
+        userMap.put(new UserKey("2", AppName.BLYNK), user2);
+        userMap.put(new UserKey("3", AppName.BLYNK), user3);
+        userMap.put(new UserKey("4", AppName.BLYNK), user4);
 
         Thread.sleep(1);
 

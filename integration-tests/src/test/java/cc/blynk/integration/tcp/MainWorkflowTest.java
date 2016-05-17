@@ -50,10 +50,9 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -162,7 +161,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.send("register test@test.com 1 MyApp");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        appClient.send("login test@test.com 1 Android 1.13.3");
+        appClient.send("login test@test.com 1 Android 1.13.3 MyApp");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         appClient.send("createDash {\"id\":1, \"createdAt\":1, \"name\":\"test board\"}\"");
@@ -189,7 +188,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.send("register test@test.com 1 MyApp");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        appClient.send("login test@test.com 1 Android 1.13.3");
+        appClient.send("login test@test.com 1 Android 1.13.3 MyApp");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         appClient.send("createDash {\"id\":2, \"createdAt\":1458856800001, \"name\":\"test board\"}\"");

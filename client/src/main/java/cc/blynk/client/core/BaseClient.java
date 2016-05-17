@@ -74,7 +74,7 @@ public abstract class BaseClient {
             if (userPass.length > 1) {
                 String username = userPass[0];
                 String pass = userPass[1];
-                body = username + "\0" + SHA256Util.makeHash(pass, username) + (userPass.length == 3 ? "\0" + userPass[2] : "");
+                body = username + "\0" + SHA256Util.makeHash(pass, username) + (userPass.length == 3 ? "\0" + userPass[2].replaceAll(" ", "\0") : "");
             }
         }
         if (command == Command.SHARE_LOGIN || command == Command.GET_GRAPH_DATA) {

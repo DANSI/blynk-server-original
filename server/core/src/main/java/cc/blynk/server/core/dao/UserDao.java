@@ -1,5 +1,6 @@
 package cc.blynk.server.core.dao;
 
+import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -26,9 +27,9 @@ public class UserDao {
     private static final Logger log = LogManager.getLogger(UserDao.class);
     public final TokenManagerBase tokenManager;
     public final TokenManagerBase sharedTokenManager;
-    private final ConcurrentMap<String, User> users;
+    private final ConcurrentMap<UserKey, User> users;
 
-    public UserDao(ConcurrentMap<String, User> users) {
+    public UserDao(ConcurrentMap<UserKey, User> users) {
         //reading DB to RAM.
         this.users = users;
         this.tokenManager = new TokenManager(users.values());
@@ -44,24 +45,24 @@ public class UserDao {
         throw new InvalidTokenException("Error getting dashId. Wrong token.", msgId);
     }
 
-    public boolean isUserExists(String name) {
-        return users.get(name) != null;
+    public boolean isUserExists(String name, String appName) {
+        return users.get(new UserKey(name, appName)) != null;
     }
 
-    public User getByName(String name) {
-        return users.get(name);
+    public User getByName(String name, String appName) {
+        return users.get(new UserKey(name, appName));
     }
 
-    public Map<String, User> getUsers() {
+    public Map<UserKey, User> getUsers() {
         return users;
     }
 
-    public List<User> searchByUsername(String name) {
+    public List<User> searchByUsername(String name, String appName) {
         if (name == null) {
             return new ArrayList<>(users.values());
         }
 
-        return users.values().stream().filter(user -> user.name.contains(name)).collect(Collectors.toList());
+        return users.values().stream().filter(user -> user.name.contains(name) && (AppName.ALL.equals(appName) || user.appName.equals(appName))).collect(Collectors.toList());
     }
 
     public void deleteProject(User user, Integer projectId) {
@@ -69,12 +70,12 @@ public class UserDao {
         sharedTokenManager.deleteProject(user, projectId);
     }
 
-    public User delete(String name) {
-        return users.remove(name);
+    public User delete(String name, String appName) {
+        return users.remove(new UserKey(name, appName));
     }
 
     public User add(User user) {
-        return users.put(user.name, user);
+        return users.put(new UserKey(user.name, user.appName), user);
     }
 
     public Map<String, Integer> getBoardsUsage() {
@@ -141,14 +142,14 @@ public class UserDao {
     public User addFacebookUser(String userName, String appName) {
         log.debug("Adding new facebook user {}. App : {}", userName, appName);
         User newUser = new User(userName, appName);
-        users.put(userName, newUser);
+        users.put(new UserKey(userName, appName), newUser);
         return newUser;
     }
 
     public void add(String userName, String pass, String appName) {
         log.debug("Adding new user {}. App : {}", userName, appName);
         User newUser = new User(userName, pass, appName);
-        users.put(userName, newUser);
+        users.put(new UserKey(userName, appName), newUser);
     }
 
 }

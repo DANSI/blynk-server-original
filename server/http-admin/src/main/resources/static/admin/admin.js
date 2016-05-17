@@ -11,6 +11,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         .sortField('lastModifiedTs')
         .fields([
             nga.field('name', 'email').isDetailLink(true),
+            nga.field('appName'),
             nga.field('# of projects').map(function (value, entry) {
                 if (entry["profile.dashBoards"]) {
                     return entry["profile.dashBoards"].length;
@@ -32,6 +33,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             nga.field('pass', 'password'),
             nga.field('lastModifiedTs'),
             nga.field('energy'),
+            nga.field('appName'),
             nga.field('profile.dashBoards', 'embedded_list')
                 .targetFields([
                     nga.field('id'),

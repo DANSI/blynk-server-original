@@ -93,14 +93,14 @@ public class FileManager {
      *
      * @return mapping between username and it's profile.
      */
-    public ConcurrentMap<String, User> deserialize() {
+    public ConcurrentMap<UserKey, User> deserialize() {
         log.debug("Starting reading user DB.");
 
         File userDBFolder = dataDir.toFile();
         File[] files = userDBFolder.listFiles();
 
         if (files != null) {
-            ConcurrentMap<String, User> tempUsers = Arrays.stream(files).parallel()
+            ConcurrentMap<UserKey, User> tempUsers = Arrays.stream(files).parallel()
                     .filter(File::isFile)
                     .flatMap(file -> {
                         try {
@@ -111,7 +111,7 @@ public class FileManager {
                         }
                         return Stream.empty();
                     })
-                    .collect(Collectors.toConcurrentMap(User::getName, identity(), (user1, user2) -> user2));
+                    .collect(Collectors.toConcurrentMap(user -> new UserKey(user.name, user.appName), identity(), (user1, user2) -> user2));
 
             log.debug("Reading user DB finished.");
             return tempUsers;

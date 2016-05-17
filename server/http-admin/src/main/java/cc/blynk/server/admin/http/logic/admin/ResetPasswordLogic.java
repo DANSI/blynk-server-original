@@ -3,6 +3,7 @@ package cc.blynk.server.admin.http.logic.admin;
 import cc.blynk.server.admin.http.pojo.TokenUser;
 import cc.blynk.server.admin.http.pojo.TokensPool;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.handlers.http.rest.Response;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -109,7 +110,8 @@ public class ResetPasswordLogic {
         }
 
         log.info("Resetting pass for {}", tokenUser.getEmail());
-        User user = userDao.getByName(tokenUser.getEmail());
+        //todo appName should be sent via API
+        User user = userDao.getByName(tokenUser.getEmail(), AppName.BLYNK);
 
         if (user == null) {
             log.warn("No user with name {}", tokenUser.getEmail());
