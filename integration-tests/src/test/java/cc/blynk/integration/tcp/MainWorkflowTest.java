@@ -154,6 +154,33 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testRegisterWithAnotherApp() throws Exception {
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+
+        appClient.start();
+
+        appClient.send("register test@test.com 1 MyApp");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        appClient.send("login test@test.com 1 Android 1.13.3");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+
+        appClient.send("createDash {\"id\":1, \"createdAt\":1, \"name\":\"test board\"}\"");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
+
+        appClient.send("createWidget 1\0{\"id\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":1}");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
+
+        appClient.reset();
+
+        appClient.send("loadProfileGzipped");
+        Profile profile = JsonParser.parseProfile(appClient.getBody(), 1);
+        profile.dashBoards[0].updatedAt = 0;
+
+        assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false,\"invertedOn\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
+    }
+
+    @Test
     public void testHardwareDeviceWentOffline() throws Exception {
         Profile profile = JsonParser.parseProfile(readTestUserProfile(), 1);
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
