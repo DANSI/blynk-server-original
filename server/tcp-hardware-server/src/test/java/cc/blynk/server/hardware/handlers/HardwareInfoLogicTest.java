@@ -1,6 +1,10 @@
 package cc.blynk.server.hardware.handlers;
 
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.hardware.HardwareInfoMessage;
+import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.logic.HardwareInfoLogic;
 import cc.blynk.utils.ServerProperties;
 import io.netty.buffer.ByteBuf;
@@ -37,8 +41,6 @@ public class HardwareInfoLogicTest {
     @Mock
     private ByteBuf byteBuf;
 
-
-
     @Test
     public void testCorrectBehavior() {
         HardwareInfoLogic logic = new HardwareInfoLogic(props.getIntProperty("hard.socket.idle.timeout", 0));
@@ -50,8 +52,13 @@ public class HardwareInfoLogicTest {
         when(byteBuf.writeShort(eq(1))).thenReturn(byteBuf);
         when(byteBuf.writeShort(eq(200))).thenReturn(byteBuf);
 
+        User user = new User();
+        user.profile = new Profile();
+        user.profile.dashBoards = new DashBoard[0];
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(1, user, null);
+
         HardwareInfoMessage hardwareInfoLogic = new HardwareInfoMessage(1, "ver 0.3.2-beta h-beat 60 buff-in 256 dev ESP8266".replaceAll(" ", "\0"));
-        logic.messageReceived(ctx, null, hardwareInfoLogic);
+        logic.messageReceived(ctx, hardwareStateHolder, hardwareInfoLogic);
 
         verify(pipeline).remove(ReadTimeoutHandler.class);
         verify(pipeline).addFirst(any(ReadTimeoutHandler.class));
