@@ -41,6 +41,7 @@ public class User {
         this.dashTokens = new HashMap<>();
         this.energy = 2000;
         this.isFacebookUser = false;
+        this.appName = AppName.BLYNK;
     }
 
     public User(String name, String pass, String appName) {
