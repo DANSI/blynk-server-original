@@ -91,6 +91,13 @@ public class StatsLogic extends LogicHelper {
     }
 
     @GET
+    @Path("/facebookLogins")
+    public Response getFacebookLogins(@QueryParam("_sortField") String sortField,
+                              @QueryParam("_sortDir") String sortOrder) {
+        return ok(sort(convertMapToPair(userDao.getFacebookLogin()), sortField, sortOrder));
+    }
+
+    @GET
     @Path("/filledSpace")
     public Response getFilledSpace(@QueryParam("_sortField") String sortField,
                                   @QueryParam("_sortDir") String sortOrder) {

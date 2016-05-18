@@ -90,6 +90,14 @@ public class UserDao {
         return boards;
     }
 
+    public Map<String, Integer> getFacebookLogin() {
+        Map<String, Integer> facebookLogin = new HashMap<>();
+        for (User user : users.values()) {
+            facebookLogin.compute(user.isFacebookUser ? AppName.FACEBOOK : AppName.BLYNK, (k, v) -> v == null ? 1 : v++);
+        }
+        return facebookLogin;
+    }
+
     public Map<String, Integer> getWidgetsUsage() {
         Map<String, Integer> widgets = new HashMap<>();
         for (User user : users.values()) {

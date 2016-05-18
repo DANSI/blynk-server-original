@@ -150,6 +150,17 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             nga.field('count').label('Count')
         ]);
 
+    var facebookLogins = nga.entity('facebookLogins').identifier(nga.field('name')).url('stats/facebookLogins').readOnly();
+    facebookLogins.listView()
+        .title('Login Types')
+        .perPage(50)
+        .batchActions([])
+        .sortField('count')
+        .fields([
+            nga.field('name').label('Login Type'),
+            nga.field('count').label('Count')
+        ]);
+
 
     var widgets = nga.entity('widgets').identifier(nga.field('name')).url('stats/widgets').readOnly();
     widgets.listView()
@@ -210,6 +221,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                 .addChild(nga.menu(requestsPerUser).title('Request per user').icon(''))
                 .addChild(nga.menu(messages).title('Messages').icon(''))
                 .addChild(nga.menu(boards).title('Board types').icon(''))
+                .addChild(nga.menu(facebookLogins).title('Login types').icon(''))
                 .addChild(nga.menu(widgets).title('Widgets').icon(''))
                 .addChild(nga.menu(projectsPerUser).title('Projects per user').icon(''))
                 .addChild(nga.menu(filledSpace).title('Cells per project').icon(''))
@@ -224,6 +236,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     admin.addEntity(realtime);
     admin.addEntity(messages);
     admin.addEntity(boards);
+    admin.addEntity(facebookLogins);
     admin.addEntity(widgets);
     admin.addEntity(projectsPerUser);
     admin.addEntity(filledSpace);
@@ -231,19 +244,3 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     // attach the admin application to the DOM and execute it
     nga.configure(admin);
 }]);
-
-function pad(n) {
-    return (n < 10) ? ("0" + n) : n;
-}
-
-function encryptPassword(password, entry) {
-     if (entry.values.pass == password) {
-     return password;
-     }
-     var algo = CryptoJS.algo.SHA256.create();
-     algo.update(password, 'utf-8');
-     algo.update(CryptoJS.SHA256(entry.values.name.toLowerCase()), 'utf-8');
-     var hash = algo.finalize();
-     var final = hash.toString(CryptoJS.enc.Base64);
-     return final;
-}
