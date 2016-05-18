@@ -1,8 +1,9 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.HardwareInfo;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.hardware.handlers.hardware.auth.HardwareProfile;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
@@ -34,8 +35,8 @@ public class HardwareInfoLogic {
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
-        HardwareProfile hardwareProfile = new HardwareProfile(messageParts);
-        int newHardwareInterval = hardwareProfile.getHeartBeatInterval();
+        HardwareInfo hardwareInfo = new HardwareInfo(messageParts);
+        int newHardwareInterval = hardwareInfo.heartbeatInterval;
 
         log.trace("Info command. heartbeat interval {}", newHardwareInterval);
 
@@ -44,6 +45,12 @@ public class HardwareInfoLogic {
             log.trace("Changing read timeout interval to {}", newReadTimeout);
             ctx.pipeline().remove(ReadTimeoutHandler.class);
             ctx.pipeline().addFirst(new ReadTimeoutHandler(newReadTimeout));
+        }
+
+        DashBoard dashBoard = state.user.profile.getDashById(state.dashId);
+        if (dashBoard != null && !hardwareInfo.equals(dashBoard.hardwareInfo)) {
+            dashBoard.hardwareInfo = hardwareInfo;
+            dashBoard.updatedAt = System.currentTimeMillis();
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

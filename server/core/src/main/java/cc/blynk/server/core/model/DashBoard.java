@@ -41,6 +41,8 @@ public class DashBoard {
 
     public boolean isActive;
 
+    public HardwareInfo hardwareInfo;
+
     public Map<String, Object> metadata = new HashMap<>();
 
     /**
