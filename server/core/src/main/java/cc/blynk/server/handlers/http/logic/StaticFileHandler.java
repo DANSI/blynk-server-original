@@ -7,6 +7,7 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
 import io.netty.util.CharsetUtil;
+import io.netty.util.ReferenceCountUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,7 +24,7 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.12.15.
  */
-public class StaticFileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
@@ -116,9 +117,19 @@ public class StaticFileHandler extends SimpleChannelInboundHandler<FullHttpReque
     }
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, FullHttpRequest req) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        if (!(msg instanceof FullHttpRequest)) {
+            return;
+        }
+
+        FullHttpRequest req = (FullHttpRequest) msg;
+
         if (isStaticPath(req.getUri())) {
-            serveStatic(ctx, req);
+            try {
+                serveStatic(ctx, req);
+            } finally {
+                ReferenceCountUtil.release(req);
+            }
             return;
         }
 
