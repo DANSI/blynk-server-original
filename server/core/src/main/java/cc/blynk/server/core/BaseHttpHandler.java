@@ -13,6 +13,7 @@ import cc.blynk.server.handlers.http.rest.URIDecoder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.util.ReferenceCountUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -55,6 +56,7 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
 
         if (handlerHolder == null) {
             log.error("Error resolving url. No path found. {} : {}", req.getMethod().name(), req.getUri());
+            ReferenceCountUtil.release(req);
             ctx.writeAndFlush(Response.notFound());
             return;
         }
@@ -73,6 +75,8 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
         } catch (Exception e) {
             ctx.writeAndFlush(Response.serverError(e.getMessage()));
             return;
+        } finally {
+            ReferenceCountUtil.release(req);
         }
 
         finishHttp(ctx, uriDecoder, handlerHolder, params);

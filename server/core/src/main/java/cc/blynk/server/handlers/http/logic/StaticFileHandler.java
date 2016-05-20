@@ -23,7 +23,7 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.12.15.
  */
-public class StaticFileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
