@@ -7,6 +7,7 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
 import io.netty.util.CharsetUtil;
+import io.netty.util.ReferenceCountUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,7 +17,7 @@ import java.util.*;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
-import static io.netty.handler.codec.http.HttpVersion.*;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
  * The Blynk Project.
@@ -116,9 +117,19 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, FullHttpRequest req) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        if (!(msg instanceof FullHttpRequest)) {
+            return;
+        }
+
+        FullHttpRequest req = (FullHttpRequest) msg;
+
         if (isStaticPath(req.getUri())) {
-            serveStatic(ctx, req);
+            try {
+                serveStatic(ctx, req);
+            } finally {
+                ReferenceCountUtil.release(req);
+            }
             return;
         }
 
