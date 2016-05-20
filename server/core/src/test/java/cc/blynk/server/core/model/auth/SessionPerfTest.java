@@ -42,7 +42,7 @@ public class SessionPerfTest {
         ctx.updateLoggers(conf);
 
         // create handler with HardwareStateHolder
-        User user = new User("user");
+        User user = new User();
         user.putToken(DASH_ID, "1", user.dashTokens);
 
         HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(DASH_ID, user, "1");
