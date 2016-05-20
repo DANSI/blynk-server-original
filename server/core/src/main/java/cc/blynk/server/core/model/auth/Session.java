@@ -4,23 +4,29 @@ import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import io.netty.channel.*;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.EventLoop;
 import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static cc.blynk.utils.ByteBufUtil.*;
-import static cc.blynk.utils.StateHolderUtil.*;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
+import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.StateHolderUtil.getHardState;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
- * 
+ * <p>
  * DefaultChannelGroup.java too complicated. so doing in simple way for now.
- * 
  */
 public class Session {
 
@@ -30,18 +36,8 @@ public class Session {
     private final Set<Channel> appChannels = new ConcurrentSet<>();
     private final Set<Channel> hardwareChannels = new ConcurrentSet<>();
 
-    private final ChannelFutureListener appRemover = new ChannelFutureListener() {
-        @Override
-        public void operationComplete(ChannelFuture future) throws Exception {
-            removeAppChannel(future.channel());
-        }
-    };
-    private final ChannelFutureListener hardRemover = new ChannelFutureListener() {
-        @Override
-        public void operationComplete(ChannelFuture future) throws Exception {
-            removeHardChannel(future.channel());
-        }
-    };
+    private final ChannelFutureListener appRemover = future -> removeAppChannel(future.channel());
+    private final ChannelFutureListener hardRemover = future -> removeHardChannel(future.channel());
 
     public Session(EventLoop initialEventLoop) {
         this.initialEventLoop = initialEventLoop;
@@ -89,19 +85,32 @@ public class Session {
     }
 
     public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body) {
-        boolean noActiveHardware = true;
+        Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null) {
-                if (hardwareState.dashId == activeDashId) {
-                    noActiveHardware = false;
-                    log.trace("Sending {} to hardware {}", body, channel);
-                    channel.writeAndFlush(makeStringMessage(cmd, msgId, body), channel.voidPromise());
-                }
+            if (hardwareState != null && hardwareState.dashId == activeDashId) {
+                targetChannels.add(channel);
             }
         }
 
-        return noActiveHardware;
+        int channelsNum = targetChannels.size();
+        if (channelsNum == 0)
+            return true; // -> noActiveHardware
+
+        ByteBuf msg = makeStringMessage(cmd, msgId, body);
+        if (channelsNum > 1) {
+            msg.retain(channelsNum - 1).markReaderIndex();
+        }
+
+        for (Channel channel : targetChannels) {
+            log.trace("Sending {} to hardware {}", body, channel);
+            channel.writeAndFlush(msg, channel.voidPromise());
+            if (msg.refCnt() > 0) {
+                msg.resetReaderIndex();
+            }
+        }
+
+        return false; // -> noActiveHardware
     }
 
     public void sendMessageToHardware(ChannelHandlerContext ctx, int activeDashId, short cmd, int msgId, String body) {
@@ -124,16 +133,46 @@ public class Session {
     }
 
     public void sendToApps(short cmd, int msgId, String body) {
+        int channelsNum = appChannels.size();
+        if (channelsNum == 0)
+            return;
+
+        ByteBuf msg = makeStringMessage(cmd, msgId, body);
+        if (channelsNum > 1) {
+            msg.retain(channelsNum - 1).markReaderIndex();
+        }
+
         for (Channel channel : appChannels) {
             log.trace("Sending {} to app {}", body, channel);
-            channel.writeAndFlush(makeStringMessage(cmd, msgId, body), channel.voidPromise());
+            channel.writeAndFlush(msg, channel.voidPromise());
+            if (msg.refCnt() > 0) {
+                msg.resetReaderIndex();
+            }
         }
     }
 
     public void sendToSharedApps(Channel sendingChannel, String sharedToken, short cmd, int msgId, String body) {
-        for (Channel appChannel : appChannels) {
-            if (appChannel != sendingChannel && needSync(appChannel, sharedToken)) {
-                appChannel.writeAndFlush(makeStringMessage(cmd, msgId, body), appChannel.voidPromise());
+        Set<Channel> targetChannels = new HashSet<>();
+        for (Channel channel : appChannels) {
+            if (channel != sendingChannel && needSync(channel, sharedToken)) {
+                targetChannels.add(channel);
+            }
+        }
+
+        int channelsNum = targetChannels.size();
+        if (channelsNum == 0)
+            return;
+
+        ByteBuf msg = makeStringMessage(cmd, msgId, body);
+        if (channelsNum > 1) {
+            msg.retain(channelsNum - 1).markReaderIndex();
+        }
+
+        for (Channel channel : targetChannels) {
+            log.trace("Sending {} to app {}", body, channel);
+            channel.writeAndFlush(msg, channel.voidPromise());
+            if (msg.refCnt() > 0) {
+                msg.resetReaderIndex();
             }
         }
     }
