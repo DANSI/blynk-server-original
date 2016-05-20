@@ -1,6 +1,6 @@
 package cc.blynk.server.reset;
 
-import cc.blynk.server.admin.http.pojo.TokenUser;
+import cc.blynk.server.api.http.pojo.TokenUser;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

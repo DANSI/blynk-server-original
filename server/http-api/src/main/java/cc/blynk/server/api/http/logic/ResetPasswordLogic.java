@@ -1,14 +1,14 @@
-package cc.blynk.server.admin.http.logic.admin;
+package cc.blynk.server.api.http.logic;
 
-import cc.blynk.server.admin.http.pojo.TokenUser;
-import cc.blynk.server.admin.http.pojo.TokensPool;
+import cc.blynk.server.api.http.pojo.TokenUser;
+import cc.blynk.server.api.http.pojo.TokensPool;
+import cc.blynk.server.api.http.utils.IPUtils;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.handlers.http.rest.Response;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
-import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.ServerProperties;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.logging.log4j.LogManager;
@@ -47,9 +47,8 @@ public class ResetPasswordLogic {
         this.emailBody = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "reset-email.html");
         this.mailWrapper = mailWrapper;
 
-        this.resetPassUrl = String.format("http://%s:%s/landing?token=",
-                props.getProperty("reset-pass.http.host", IPUtils.resolveHostIP()),
-                props.getIntProperty("reset.pass.http.port")
+        this.resetPassUrl = String.format("http://%s/landing?token=",
+                props.getProperty("reset-pass.http.host", IPUtils.resolveHostIP())
         );
         this.pageContent = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "enterNewPassword.html");
     }

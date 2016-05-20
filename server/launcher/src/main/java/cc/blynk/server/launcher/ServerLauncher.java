@@ -2,7 +2,6 @@ package cc.blynk.server.launcher;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.TransportTypeHolder;
-import cc.blynk.server.admin.http.HttpResetPassServer;
 import cc.blynk.server.admin.http.HttpsAdminServer;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.HttpsAPIServer;
@@ -69,7 +68,6 @@ public class ServerLauncher {
                 new HttpAPIServer(holder),
                 new HttpsAPIServer(holder, isUnpacked),
                 new HttpsAdminServer(holder, isUnpacked),
-                new HttpResetPassServer(holder),
                 new WebSocketServer(holder),
                 new WebSocketSSLServer(holder)
         };

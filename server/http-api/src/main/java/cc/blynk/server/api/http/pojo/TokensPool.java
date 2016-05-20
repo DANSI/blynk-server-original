@@ -1,4 +1,4 @@
-package cc.blynk.server.admin.http.pojo;
+package cc.blynk.server.api.http.pojo;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
