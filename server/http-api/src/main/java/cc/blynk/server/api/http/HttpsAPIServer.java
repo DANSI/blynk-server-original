@@ -14,10 +14,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.ssl.SniHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.stream.ChunkedWriteHandler;
-import io.netty.util.DomainNameMapping;
 
 /**
  * The Blynk Project.
@@ -41,13 +39,17 @@ public class HttpsAPIServer extends BaseServer {
         HandlerRegistry.register(businessRootPath, new BusinessLogic(holder.userDao, holder.sessionDao, holder.fileManager));
         HandlerRegistry.register(businessRootPath, new BusinessAuthLogic(holder.userDao, holder.sessionDao, holder.fileManager, sessionHolder));
 
-        final DomainNameMapping<SslContext> mappings = SslUtil.getDomainMappings(holder.props);
+        final SslContext sslCtx = SslUtil.initSslContext(
+                holder.props.getProperty("https.cert"),
+                holder.props.getProperty("https.key"),
+                holder.props.getProperty("https.key.pass"),
+                SslUtil.fetchSslProvider(holder.props));
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(
-                        new SniHandler(mappings),
+                        sslCtx.newHandler(ch.alloc()),
                         new HttpServerCodec(),
                         new HttpObjectAggregator(1024, true),
                         new ChunkedWriteHandler(),

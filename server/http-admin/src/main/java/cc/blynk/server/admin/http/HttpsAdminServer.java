@@ -15,10 +15,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.ssl.SniHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.stream.ChunkedWriteHandler;
-import io.netty.util.DomainNameMapping;
 
 /**
  * The Blynk Project.
@@ -37,14 +35,18 @@ public class HttpsAdminServer extends BaseServer {
         HandlerRegistry.register(adminRootPath, new StatsLogic(holder.userDao, holder.sessionDao, holder.stats));
         HandlerRegistry.register(adminRootPath, new ConfigsLogic(holder.props, holder.blockingIOProcessor));
 
-        final DomainNameMapping<SslContext> mappings = SslUtil.getDomainMappings(holder.props);
+        final SslContext sslCtx = SslUtil.initSslContext(
+                holder.props.getProperty("https.cert"),
+                holder.props.getProperty("https.key"),
+                holder.props.getProperty("https.key.pass"),
+                SslUtil.fetchSslProvider(holder.props));
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(
                     new IpFilterHandler(holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips")),
-                    new SniHandler(mappings),
+                    sslCtx.newHandler(ch.alloc()),
                     new HttpServerCodec(),
                     new HttpObjectAggregator(65536),
                     new ChunkedWriteHandler(),
