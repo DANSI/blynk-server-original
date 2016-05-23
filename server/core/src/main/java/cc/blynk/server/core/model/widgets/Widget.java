@@ -35,6 +35,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = TwoAxisJoystick.class, name = "TWO_AXIS_JOYSTICK"),
         @JsonSubTypes.Type(value = Terminal.class, name = "TERMINAL"),
         @JsonSubTypes.Type(value = Step.class, name = "STEP"),
+        @JsonSubTypes.Type(value = QR.class, name = "QR"),
 
         //outputs
         @JsonSubTypes.Type(value = LED.class, name = "LED"),
