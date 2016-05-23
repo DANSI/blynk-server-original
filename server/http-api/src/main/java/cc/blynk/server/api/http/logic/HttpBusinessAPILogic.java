@@ -16,10 +16,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static cc.blynk.server.handlers.http.rest.Response.*;
+import static cc.blynk.server.handlers.http.rest.Response.ok;
 
 /**
  * The Blynk Project.
@@ -40,36 +41,6 @@ public class HttpBusinessAPILogic {
 
     private HttpBusinessAPILogic(UserDao userDao) {
         this.userDao = userDao;
-    }
-
-    @GET
-    @Path("{token}/query")
-    public Response getDashboard(@PathParam("token") String token,
-                                 @QueryParam("name") String name,
-                                 @QueryParam("groupBy") List<String> groupByList,
-                                 @QueryParam("aggregation") String aggregation,
-                                 @QueryParam("pin") String pin,
-                                 @QueryParam("value") String value) {
-
-        User user = userDao.tokenManager.getUserByToken(token);
-
-        if (user == null) {
-            log.error("Requested token {} not found.", token);
-            return Response.badRequest("Invalid token.");
-        }
-
-        List<DashBoard> projects = new ArrayList<>(Arrays.asList(user.profile.dashBoards));
-
-        projects = filterByProjectName(projects, name);
-        projects = filterByValue(projects, pin, value);
-
-        if (groupByList == null || aggregation == null) {
-            return ok(transform(projects));
-        }
-
-        Map<Map, Long> groupingResult = groupBy(projects, groupByList, aggregation);
-
-        return ok(transform(groupingResult, aggregation));
     }
 
     private static List<Map> transform(Map<Map, Long> groupingResult, String aggregation) {
@@ -122,23 +93,23 @@ public class HttpBusinessAPILogic {
         }
     }
 
-    private static List<DashBoard> filterByValue(List<DashBoard> projects, String pin, String value) {
+    private static Predicate<DashBoard> filterByValue(String pin, String value) {
         if (value == null) {
-            return projects;
+            return x -> true;
         }
 
         if (pin != null) {
-            return filterByValueAndPin(projects, pin, value);
+            return filterByValueAndPin(pin, value);
         }
 
-        return filterByValue(projects, value);
+        return filterByValue(value);
     }
 
-    private static List<DashBoard> filterByValueAndPin(List<DashBoard> projects, String pin, String value) {
+    private static Predicate<DashBoard> filterByValueAndPin(String pin, String value) {
         PinType pinType = PinType.getPinType(pin.charAt(0));
         byte pinIndex = Byte.parseByte(pin.substring(1));
 
-        return projects.stream().filter(
+        return
                 project -> {
                     Widget widget = project.findWidgetByPin(pinIndex, pinType);
                     if (widget == null) {
@@ -146,12 +117,11 @@ public class HttpBusinessAPILogic {
                     }
                     String widgetValue = widget.getValue(pinIndex, pinType);
                     return value.equalsIgnoreCase(widgetValue);
-                }
-        ).collect(Collectors.toList());
+                };
     }
 
-    private static List<DashBoard> filterByValue(List<DashBoard> projects, String value) {
-        return projects.stream().filter(
+    private static Predicate<DashBoard> filterByValue(String value) {
+        return
                 project -> {
                     for (Widget widget : project.widgets) {
                         if (widget.hasValue(value)) {
@@ -159,17 +129,41 @@ public class HttpBusinessAPILogic {
                         }
                     }
                     return false;
-                }
-        ).collect(Collectors.toList());
+                };
     }
 
-    private static List<DashBoard> filterByProjectName(List<DashBoard> projects, String name) {
-        if (name == null) {
-            return projects;
+    private static Predicate<DashBoard> filterByProjectName(String name) {
+        return project -> name == null || name.equalsIgnoreCase(project.name);
+    }
+
+    @GET
+    @Path("{token}/query")
+    public Response getDashboard(@PathParam("token") String token,
+                                 @QueryParam("name") String name,
+                                 @QueryParam("groupBy") List<String> groupByList,
+                                 @QueryParam("aggregation") String aggregation,
+                                 @QueryParam("pin") String pin,
+                                 @QueryParam("value") String value) {
+
+        User user = userDao.tokenManager.getUserByToken(token);
+
+        if (user == null) {
+            log.error("Requested token {} not found.", token);
+            return Response.badRequest("Invalid token.");
         }
-        return projects.stream().filter(
-                project -> name.equalsIgnoreCase(project.name)
-        ).collect(Collectors.toList());
+
+        List<DashBoard> projects = Arrays.asList(user.profile.dashBoards).stream()
+            .filter(filterByProjectName(name))
+            .filter(filterByValue(pin, value))
+                .collect(Collectors.toList());
+
+        if (groupByList == null || aggregation == null) {
+            return ok(transform(projects));
+        }
+
+        Map<Map, Long> groupingResult = groupBy(projects, groupByList, aggregation);
+
+        return ok(transform(groupingResult, aggregation));
     }
 
 }
