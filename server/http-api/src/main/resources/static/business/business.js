@@ -7,7 +7,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
 
     var customHeaderTemplate =
     '<div class="navbar-header">' +
-        '<a class="navbar-brand" href="#" ng-click="appController.displayHome()">My Custom Title</a>' +
+        '<a class="navbar-brand" href="#" ng-click="appController.displayHome()">Blynk Administration</a>' +
     '</div>' +
     '<p class="navbar-text navbar-right">' +
         '<a href="javascript:post(&quot;/business/logout&quot;)">' +
@@ -26,7 +26,11 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     userInfo.listView()
         .sortField('updatedAt')
         .fields([
-            nga.field('name').isDetailLink(true),
+            nga.field('name').isDetailLink(true).map(
+                function truncate(value, entry) {
+                    return !value ? "(No Name)" : value;
+                }
+            ),
             nga.field('updatedAt', 'datetime'),
             nga.field('metadata', 'json')
         ])
