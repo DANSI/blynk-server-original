@@ -1,4 +1,4 @@
-package cc.blynk.server.api.http.logic;
+package cc.blynk.server.api.http.logic.business;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.pojo.business.BusinessProject;
@@ -64,23 +64,23 @@ public class HttpBusinessAPILogic {
 
     private static Map<Map, Long> groupBy(List<DashBoard> projects, List<String> groupByList, String aggregation) {
         return projects.stream().collect(Collectors.groupingBy(
-                proj -> {
-                    Map<String, Object> result = new HashMap<>();
-                    for (String groupBy : groupByList) {
-                        switch (groupBy) {
-                            case "name" :
-                                result.put(groupBy, proj.name);
-                                break;
-                            default:
-                                result.put(groupBy, proj.metadata.get(groupBy));
-                                break;
-                        }
-                    }
+                        proj -> {
+                            Map<String, Object> result = new HashMap<>();
+                            for (String groupBy : groupByList) {
+                                switch (groupBy) {
+                                    case "name":
+                                        result.put(groupBy, proj.name);
+                                        break;
+                                    default:
+                                        result.put(groupBy, proj.metadata.get(groupBy));
+                                        break;
+                                }
+                            }
 
-                    return result;
-                },
-                getAggregation(aggregation)
-               )
+                            return result;
+                        },
+                        getAggregation(aggregation)
+                )
         );
     }
 

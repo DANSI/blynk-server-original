@@ -3,7 +3,6 @@ package cc.blynk.server.api.http;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.HttpHandler;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
-import cc.blynk.server.api.http.logic.HttpBusinessAPILogic;
 import cc.blynk.server.api.http.logic.business.*;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.http.logic.StaticFileHandler;
