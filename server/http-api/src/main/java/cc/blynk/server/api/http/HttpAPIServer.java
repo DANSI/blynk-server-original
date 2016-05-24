@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.HttpHandler;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
-import cc.blynk.server.api.http.logic.business.HttpBusinessAPILogic;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import io.netty.channel.ChannelInitializer;
@@ -26,7 +25,6 @@ public class HttpAPIServer extends BaseServer {
 
         HandlerRegistry.register(new ResetPasswordLogic(holder.props, holder.userDao, holder.mailWrapper));
         HandlerRegistry.register(new HttpAPILogic(holder));
-        HandlerRegistry.register(new HttpBusinessAPILogic(holder));
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
