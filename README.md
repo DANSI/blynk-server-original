@@ -324,7 +324,7 @@ Possible server options:
         administration.https.port=7443
         
         
-+ Url for opening admin page. Must start from "/". For "/admin" url path will look like that "https://localhost:7443/admin". 
++ Url for opening admin page. Must start from "/". For "/admin" url path will look like that "https://127.0.0.1:7443/admin". 
 
         admin.rootPath=/admin
         
