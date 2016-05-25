@@ -437,6 +437,11 @@ As output you'll retrieve server.crt and server.pem files that you need to provi
         sudo apt-add-repository ppa:webupd8team/java
         sudo apt-get update
         sudo apt-get install oracle-java8-installer
+        
+### Port forwarding for HTTP/S API
+
+        sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
+        sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 9443
 
 ### Behind wifi router
 If you want to run Blynk server behind WiFi-router and want it to be accessible from the Internet, you have to add port-forwarding rule on your router. This is required in order to forward all of the requests that come to the router within the local network to Blynk server.
