@@ -98,6 +98,10 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             throw new UserNotRegistered(String.format("User not registered. Username '%s', %s", username, ctx.channel().remoteAddress()), messageId);
         }
 
+        if (user.pass == null) {
+            throw new UserNotAuthenticated(String.format("Facebook user tries to login with pass. Username '%s', %s", username, ctx.channel().remoteAddress()), messageId);
+        }
+
         if (!user.pass.equals(pass)) {
             throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", username, ctx.channel().remoteAddress()), messageId);
         }
