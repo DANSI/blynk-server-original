@@ -65,7 +65,7 @@ public class AppMailLogic {
                 mailWrapper.send(to, subj, body);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
-                log.error("Error sending email from application. For user {}.",  username, e);
+                log.error("Error sending email from application. From user {}, to : {}. Reason : {}",  username, to, e.getMessage());
                 channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_EXCEPTION), channel.voidPromise());
             }
         });
