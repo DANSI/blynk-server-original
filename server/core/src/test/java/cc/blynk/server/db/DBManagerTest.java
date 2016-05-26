@@ -1,6 +1,7 @@
 package cc.blynk.server.db;
 
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.GraphType;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.zip.GZIPOutputStream;
 
 import static org.junit.Assert.*;
@@ -204,14 +206,40 @@ public class DBManagerTest {
 
     }
 
+
+
+
+    @Test
+    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
+    public void testUpsertAndSelect() throws Exception {
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i < 10000; i++) {
+            users.add(new User("test" + i + "@gmail.com", "pass", AppName.BLYNK));
+        }
+        //dbManager.saveUsers(users);
+        dbManager.userDBDao.save(users);
+
+        int i = 0;
+
+        ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers();
+        System.out.println("Records : " + dbUsers.size());
+    }
+
     @Test
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertUser() throws Exception {
         List<User> users = new ArrayList<>();
-        users.add(new User("test@gmail.com", "pass", AppName.BLYNK));
-        users.add(new User("test@gmail.com", "pass2", AppName.BLYNK));
-        users.add(new User("test2@gmail.com", "pass2", AppName.BLYNK));
-        dbManager.saveUsers(users);
+        User user = new User("test@gmail.com", "pass", AppName.BLYNK);
+        user.lastModifiedTs = 0;
+        users.add(user);
+        user = new User("test@gmail.com", "pass2", AppName.BLYNK);
+        user.lastModifiedTs = 0;
+        users.add(user);
+        user = new User("test2@gmail.com", "pass2", AppName.BLYNK);
+        user.lastModifiedTs = 0;
+        users.add(user);
+
+        dbManager.userDBDao.save(users);
 
         try (Connection connection = dbManager.getConnection();
              Statement statement = connection.createStatement();
@@ -219,6 +247,7 @@ public class DBManagerTest {
             while (rs.next()) {
                 assertEquals("test@gmail.com", rs.getString("username"));
                 assertNull("region", rs.getString("region"));
+                assertEquals("{\"name\":\"test@gmail.com\",\"pass\":\"pass2\",\"lastModifiedTs\":0,\"lastLoggedAt\":0,\"profile\":{},\"isFacebookUser\":false,\"appName\":\"Blynk\",\"energy\":2000}", rs.getString("json"));
             }
             connection.commit();
         }

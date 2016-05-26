@@ -101,6 +101,10 @@ public final class JsonParser {
         return userReader.readValue(userFile);
     }
 
+    public static User parseUserFromString(String userString) throws IOException {
+        return userReader.readValue(userString);
+    }
+
     public static DashBoard parseDashboard(String reader, int id) {
         try {
             return dashboardReader.readValue(reader);
