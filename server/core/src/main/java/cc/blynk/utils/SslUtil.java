@@ -5,7 +5,6 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
-import io.netty.util.DomainNameMapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,54 +20,6 @@ import java.security.cert.CertificateException;
 public class SslUtil {
 
     private final static Logger log = LogManager.getLogger(SslUtil.class);
-
-    public static DomainNameMapping<SslContext> getDomainMappingsMutual(ServerProperties props) {
-        SslContext primarySslContext = initMutualSslContext(
-                props.getProperty("server.ssl.cert"),
-                props.getProperty("server.ssl.key"),
-                props.getProperty("server.ssl.key.pass"),
-                props.getProperty("client.ssl.cert"),
-                fetchSslProvider(props));
-
-        final DomainNameMapping<SslContext> mapping = new DomainNameMapping<>(primarySslContext);
-        mapping.add(props.getProperty("server.host", "*"), primarySslContext);
-
-        if (props.getProperty("server2.host") != null && !props.getProperty("server2.host").equals("")) {
-            SslContext secondarySslContext = initMutualSslContext(
-                    props.getProperty("server2.ssl.cert"),
-                    props.getProperty("server2.ssl.key"),
-                    props.getProperty("server2.ssl.key.pass"),
-                    props.getProperty("client.ssl.cert"),
-                    fetchSslProvider(props));
-
-            mapping.add(props.getProperty("server2.host"), secondarySslContext);
-        }
-
-        return mapping;
-    }
-
-    public static DomainNameMapping<SslContext> getDomainMappings(ServerProperties props) {
-        SslContext primarySslContext = SslUtil.initSslContext(
-                props.getProperty("server.ssl.cert"),
-                props.getProperty("server.ssl.key"),
-                props.getProperty("server.ssl.key.pass"),
-                SslUtil.fetchSslProvider(props));
-
-        final DomainNameMapping<SslContext> mapping = new DomainNameMapping<>(primarySslContext);
-        mapping.add(props.getProperty("server.host", "*"), primarySslContext);
-
-        if (props.getProperty("server2.host") != null && !props.getProperty("server2.host").equals("")) {
-            SslContext secondarySslContext = SslUtil.initSslContext(
-                    props.getProperty("server2.ssl.cert"),
-                    props.getProperty("server2.ssl.key"),
-                    props.getProperty("server2.ssl.key.pass"),
-                    fetchSslProvider(props));
-
-            mapping.add(props.getProperty("server2.host"), secondarySslContext);
-        }
-
-        return mapping;
-    }
 
     public static SslContext initMutualSslContext(String serverCertPath, String serverKeyPath, String serverPass,
                                                   String clientCertPath,

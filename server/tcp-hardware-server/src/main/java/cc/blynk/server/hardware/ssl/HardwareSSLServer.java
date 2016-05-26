@@ -11,10 +11,8 @@ import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.ssl.SniHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.util.DomainNameMapping;
 
 /**
  * The Blynk Project.
@@ -34,7 +32,11 @@ public class HardwareSSLServer extends BaseServer {
 
         int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
 
-        final DomainNameMapping<SslContext> mappings = SslUtil.getDomainMappings(holder.props);
+        final SslContext sslCtx = SslUtil.initSslContext(
+                holder.props.getProperty("server.ssl.cert"),
+                holder.props.getProperty("server.ssl.key"),
+                holder.props.getProperty("server.ssl.key.pass"),
+                SslUtil.fetchSslProvider(holder.props));
 
         this.channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -45,7 +47,7 @@ public class HardwareSSLServer extends BaseServer {
                     pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
                 }
                 pipeline.addLast(
-                        new SniHandler(mappings),
+                        sslCtx.newHandler(ch.alloc()),
                         hardwareChannelStateHandler,
                         new MessageDecoder(holder.stats),
                         new MessageEncoder(holder.stats),
