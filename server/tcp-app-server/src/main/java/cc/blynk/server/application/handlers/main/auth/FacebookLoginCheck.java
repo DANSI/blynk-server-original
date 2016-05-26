@@ -43,7 +43,7 @@ public class FacebookLoginCheck {
             if (response.getStatusLine().getStatusCode() == 200) {
                 FacebookVerifyResponse facebookVerifyResponse = facebookResponseReader.readValue(msg);
                 if (!username.equals(facebookVerifyResponse.email)) {
-                    throw new IllegalArgumentException("Token is invalid. Email is wrong.");
+                    throw new IllegalArgumentException("Token is invalid. Facebook email " + facebookVerifyResponse.email + " != " + username);
                 }
             } else {
                 EntityUtils.consume(entity);
