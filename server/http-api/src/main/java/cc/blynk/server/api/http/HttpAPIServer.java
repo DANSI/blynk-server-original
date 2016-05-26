@@ -6,11 +6,14 @@ import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
 import cc.blynk.server.api.http.logic.business.HttpBusinessAPILogic;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.handlers.http.logic.StaticFileHandler;
+import cc.blynk.server.handlers.http.logic.UrlMapperHandler;
 import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.stream.ChunkedWriteHandler;
 
 /**
  * The Blynk Project.
@@ -33,7 +36,10 @@ public class HttpAPIServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(
                         new HttpServerCodec(),
-                        new HttpObjectAggregator(1024, true),
+                        new HttpObjectAggregator(65536, true),
+                        new ChunkedWriteHandler(),
+                        new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"),
+                        new StaticFileHandler(true, "/static"),
                         new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );
             }

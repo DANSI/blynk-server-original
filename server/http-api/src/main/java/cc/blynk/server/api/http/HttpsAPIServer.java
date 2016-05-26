@@ -50,7 +50,7 @@ public class HttpsAPIServer extends BaseServer {
                 ch.pipeline().addLast(
                         sslCtx.newHandler(ch.alloc()),
                         new HttpServerCodec(),
-                        new HttpObjectAggregator(1024, true),
+                        new HttpObjectAggregator(65536, true),
                         new ChunkedWriteHandler(),
 
                         new AuthCookieHandler(businessRootPath, sessionHolder),

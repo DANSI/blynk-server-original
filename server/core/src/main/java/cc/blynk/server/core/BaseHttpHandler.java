@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
  * Created by Dmitriy Dumanskiy.
  * Created on 24.12.15.
  */
-public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements DefaultReregisterHandler, DefaultExceptionHandler {
+public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter implements DefaultReregisterHandler, DefaultExceptionHandler {
 
     protected static final Logger log = LogManager.getLogger(BaseHttpHandler.class);
 
@@ -82,9 +82,7 @@ public class BaseHttpHandler extends ChannelInboundHandlerAdapter implements Def
         finishHttp(ctx, uriDecoder, handlerHolder, params);
     }
 
-    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, HandlerHolder handlerHolder, Object[] params) {
-        ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, params));
-    }
+    public abstract void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, HandlerHolder handlerHolder, Object[] params);
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {

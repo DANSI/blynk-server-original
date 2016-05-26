@@ -2,10 +2,10 @@ package cc.blynk.server.admin.http;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.handlers.IpFilterHandler;
+import cc.blynk.server.admin.http.logic.HttpHandler;
 import cc.blynk.server.admin.http.logic.admin.ConfigsLogic;
 import cc.blynk.server.admin.http.logic.admin.StatsLogic;
 import cc.blynk.server.admin.http.logic.admin.UsersLogic;
-import cc.blynk.server.core.BaseHttpHandler;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.http.logic.StaticFileHandler;
 import cc.blynk.server.handlers.http.logic.UrlMapperHandler;
@@ -53,7 +53,7 @@ public class HttpsAdminServer extends BaseServer {
                     new UrlMapperHandler(adminRootPath, "/static/admin/admin.html"),
                     new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"),
                     new StaticFileHandler(isUnpacked, "/static"),
-                    new BaseHttpHandler(holder.userDao, holder.sessionDao, holder.stats)
+                    new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );
             }
         };
