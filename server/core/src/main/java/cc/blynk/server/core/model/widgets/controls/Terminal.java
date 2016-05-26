@@ -20,7 +20,7 @@ public class Terminal extends OnePinWidget {
     public boolean textLightOn;
 
     //todo move 25 to properties
-    public final List<String> lastCommands = new LimitedQueue<>(25);
+    public transient final List<String> lastCommands = new LimitedQueue<>(25);
 
     @Override
     public void updateIfSame(byte pin, PinType type, String[] values) {
