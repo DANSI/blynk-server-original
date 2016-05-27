@@ -69,11 +69,16 @@ public class TimerWorker implements Runnable {
     }
 
     private void send(User user, Timer timer, long curTime, int dashId) {
-        sendMessageIfTicked(user, curTime, timer.startTime, timer.startValue, dashId);
-        sendMessageIfTicked(user, curTime, timer.stopTime, timer.stopValue, dashId);
+        if (sendMessageIfTicked(user, curTime, timer.startTime, timer.startValue, dashId)) {
+            timer.value = timer.startValue;
+        }
+        if (sendMessageIfTicked(user, curTime, timer.stopTime, timer.stopValue, dashId)) {
+            timer.value = timer.stopValue;
+        }
     }
 
-    private void sendMessageIfTicked(User user, long curTime, long time, String value, int dashId) {
+    //todo simplify, move "if" to separate method
+    private boolean sendMessageIfTicked(User user, long curTime, long time, String value, int dashId) {
         if (time != -1 && value != null && !value.equals("") && curTime == time) {
             tickedTimers++;
             Session session = sessionDao.userSession.get(user);
@@ -83,7 +88,9 @@ public class TimerWorker implements Runnable {
                     session.sendMessageToHardware(dashId, HARDWARE, 7777, value);
                 }
             }
+            return true;
         }
+        return false;
     }
 
 }

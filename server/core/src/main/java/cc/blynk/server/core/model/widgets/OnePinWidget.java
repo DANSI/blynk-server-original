@@ -26,7 +26,7 @@ public abstract class OnePinWidget extends Widget {
 
     public String value;
 
-    private static String makeHardwareBody(PinType pinType, byte pin, String value) {
+    protected static String makeHardwareBody(PinType pinType, byte pin, String value) {
         return String.valueOf(pinType.pintTypeChar) + 'w' + BODY_SEPARATOR_STRING + pin + BODY_SEPARATOR_STRING + value;
     }
 
