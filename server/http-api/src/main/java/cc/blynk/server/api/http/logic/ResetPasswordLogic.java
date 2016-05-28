@@ -1,12 +1,12 @@
 package cc.blynk.server.api.http.logic;
 
+import cc.blynk.core.http.Response;
 import cc.blynk.server.api.http.pojo.TokenUser;
 import cc.blynk.server.api.http.pojo.TokensPool;
 import cc.blynk.server.api.http.utils.IPUtils;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.handlers.http.rest.Response;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.ServerProperties;

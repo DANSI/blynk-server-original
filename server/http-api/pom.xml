@@ -18,6 +18,13 @@
         </dependency>
 
         <dependency>
+            <groupId>cc.blynk.server.api.core</groupId>
+            <artifactId>http-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+
+        <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
             <version>${commons-validator.version}</version>

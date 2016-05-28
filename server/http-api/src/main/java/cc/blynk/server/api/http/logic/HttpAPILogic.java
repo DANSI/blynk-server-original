@@ -1,5 +1,6 @@
 package cc.blynk.server.api.http.logic;
 
+import cc.blynk.core.http.Response;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
@@ -16,7 +17,6 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.handlers.http.rest.Response;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMMessage;
 import cc.blynk.server.notifications.push.GCMWrapper;
@@ -29,8 +29,8 @@ import org.apache.logging.log4j.Logger;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import static cc.blynk.core.http.Response.*;
 import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.server.handlers.http.rest.Response.*;
 
 /**
  * The Blynk Project.

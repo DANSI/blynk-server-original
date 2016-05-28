@@ -1,15 +1,15 @@
 package cc.blynk.server.admin.http.logic.admin;
 
+import cc.blynk.core.http.Response;
+import cc.blynk.core.http.model.Filter;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.handlers.http.rest.Response;
-import cc.blynk.server.handlers.http.utils.Filter;
-import cc.blynk.server.handlers.http.utils.LogicHelper;
 import cc.blynk.server.workers.ProfileSaverWorker;
+import cc.blynk.utils.HttpLogicUtil;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
 
@@ -17,7 +17,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-import static cc.blynk.server.handlers.http.rest.Response.*;
+import static cc.blynk.core.http.Response.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.*;
 
@@ -27,7 +27,7 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  * Created on 03.12.15.
  */
 @Path("/users")
-public class UsersLogic extends LogicHelper {
+public class UsersLogic extends HttpLogicUtil {
 
     private final UserDao userDao;
     private final SessionDao sessionDao;

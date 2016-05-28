@@ -1,12 +1,12 @@
 package cc.blynk.server.api.http.logic.business;
 
+import cc.blynk.core.http.Response;
+import cc.blynk.core.http.model.Filter;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.handlers.http.rest.Response;
-import cc.blynk.server.handlers.http.utils.Filter;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
 import org.apache.logging.log4j.LogManager;
@@ -18,8 +18,8 @@ import javax.ws.rs.core.MediaType;
 import java.util.Arrays;
 import java.util.List;
 
-import static cc.blynk.server.handlers.http.rest.Response.*;
-import static cc.blynk.server.handlers.http.utils.LogicHelper.*;
+import static cc.blynk.core.http.Response.*;
+import static cc.blynk.utils.HttpLogicUtil.*;
 
 /**
  * The Blynk Project.

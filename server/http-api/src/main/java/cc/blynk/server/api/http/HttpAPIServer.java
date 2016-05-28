@@ -1,14 +1,14 @@
 package cc.blynk.server.api.http;
 
+import cc.blynk.core.http.handlers.StaticFileHandler;
+import cc.blynk.core.http.handlers.UrlMapperHandler;
+import cc.blynk.core.http.rest.HandlerRegistry;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.HttpHandler;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
 import cc.blynk.server.api.http.logic.business.HttpBusinessAPILogic;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.handlers.http.logic.StaticFileHandler;
-import cc.blynk.server.handlers.http.logic.UrlMapperHandler;
-import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;

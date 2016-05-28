@@ -1,15 +1,15 @@
 package cc.blynk.server.admin.http;
 
+import cc.blynk.core.http.HttpHandler;
+import cc.blynk.core.http.handlers.StaticFileHandler;
+import cc.blynk.core.http.handlers.UrlMapperHandler;
+import cc.blynk.core.http.rest.HandlerRegistry;
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.handlers.IpFilterHandler;
-import cc.blynk.server.admin.http.logic.HttpHandler;
 import cc.blynk.server.admin.http.logic.admin.ConfigsLogic;
 import cc.blynk.server.admin.http.logic.admin.StatsLogic;
 import cc.blynk.server.admin.http.logic.admin.UsersLogic;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.handlers.http.logic.StaticFileHandler;
-import cc.blynk.server.handlers.http.logic.UrlMapperHandler;
-import cc.blynk.server.handlers.http.rest.HandlerRegistry;
 import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;

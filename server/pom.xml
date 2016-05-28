@@ -14,13 +14,19 @@
 
     <modules>
         <module>notifications</module>
+
         <module>core</module>
-        <module>launcher</module>
+
+        <module>http-core</module>
         <module>http-admin</module>
         <module>http-api</module>
+
         <module>tcp-app-server</module>
         <module>tcp-hardware-server</module>
+
         <module>web-socket</module>
+
+        <module>launcher</module>
     </modules>
 
 </project>

@@ -1,8 +1,8 @@
 package cc.blynk.server.admin.http.logic.admin;
 
+import cc.blynk.core.http.Response;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.handlers.http.rest.Response;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.ServerProperties;
@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static cc.blynk.server.handlers.http.rest.Response.*;
-import static cc.blynk.server.handlers.http.utils.LogicHelper.*;
+import static cc.blynk.core.http.Response.*;
+import static cc.blynk.utils.HttpLogicUtil.*;
 
 /**
  * The Blynk Project.

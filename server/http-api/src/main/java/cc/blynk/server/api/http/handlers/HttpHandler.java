@@ -1,15 +1,15 @@
 package cc.blynk.server.api.http.handlers;
 
-import cc.blynk.server.core.BaseHttpHandler;
+import cc.blynk.core.http.BaseHttpHandler;
+import cc.blynk.core.http.Response;
+import cc.blynk.core.http.rest.HandlerHolder;
+import cc.blynk.core.http.rest.HandlerRegistry;
+import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.handlers.http.rest.HandlerHolder;
-import cc.blynk.server.handlers.http.rest.HandlerRegistry;
-import cc.blynk.server.handlers.http.rest.Response;
-import cc.blynk.server.handlers.http.rest.URIDecoder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;

@@ -1,5 +1,6 @@
 package cc.blynk.server.api.http.logic.business;
 
+import cc.blynk.core.http.Response;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.pojo.business.BusinessProject;
 import cc.blynk.server.core.dao.UserDao;
@@ -7,7 +8,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.handlers.http.rest.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +20,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static cc.blynk.server.handlers.http.rest.Response.ok;
+import static cc.blynk.core.http.Response.*;
 
 /**
  * The Blynk Project.

@@ -1,11 +1,11 @@
 package cc.blynk.server.api.http.logic.business;
 
+import cc.blynk.core.http.Response;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.handlers.http.rest.Response;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.DefaultCookie;
 import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
@@ -16,7 +16,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
-import static cc.blynk.server.handlers.http.rest.Response.*;
+import static cc.blynk.core.http.Response.*;
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
 
 /**

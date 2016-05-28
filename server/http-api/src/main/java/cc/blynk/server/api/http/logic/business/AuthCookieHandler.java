@@ -1,7 +1,7 @@
 package cc.blynk.server.api.http.logic.business;
 
+import cc.blynk.core.http.Response;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.handlers.http.rest.Response;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
