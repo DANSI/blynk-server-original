@@ -419,12 +419,12 @@ WARNING : this will changed in near future.
 
 ### Generate Let's Encrypt SSL/TLS Certificates
 
-+ First install ```certbot``` on your server
++ First install [certbot] (https://github.com/certbot/certbot) on your server (machine where you gonna run Blynk Server)
 
         wget https://dl.eff.org/certbot-auto
         chmod a+x certbot-auto
         
-+ Generate and verify certificates 
++ Generate and verify certificates (your server should be connected to internet and have open 80/443 ports)
 
         ./certbot-auto certonly --agree-tos --email YOUR_EMAIL --standalone -d YOUR_HOST
 
@@ -432,7 +432,7 @@ For example
 
         ./certbot-auto certonly --agree-tos --email pupkin@blynk.cc --standalone -d blynk.cc
 
-+ Add password to you let's encrypt certificate and reformat it:
++ Add password to your let's encrypt certificate and reformat it:
 
         mkdir /srv/blynk-data
         cp /etc/letsencrypt/live/YOUR_HOST/fullchain.pem /srv/blynk-data
@@ -440,7 +440,7 @@ For example
         cd /srv/blynk-data
         openssl pkcs8 -topk8 -inform PEM -outform PEM -in privkey.pem -out privkey_pass.pem
 
-+ Then add to your server.properties file (in folder with server.jar)
++ Then add to your ```server.properties``` file (in folder with server.jar)
 
         server.ssl.cert=/srv/blynk-data/fullchain.pem
         server.ssl.key=/srv/blynk-data/privkey_pass.pem
