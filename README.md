@@ -417,7 +417,40 @@ Raw data files are rotated every day and gzipped.
 
 WARNING : this will changed in near future. 
 
-### Generate SSL certificates
+### Generate Let's Encrypt SSL/TLS Certificates
+
++ First install ```certbot``` on your server
+
+        wget https://dl.eff.org/certbot-auto
+        chmod a+x certbot-auto
+        
++ Generate and verify certificates 
+
+        ./certbot-auto certonly --agree-tos --email YOUR_EMAIL --standalone -d YOUR_HOST
+
+For example 
+
+        ./certbot-auto certonly --agree-tos --email pupkin@blynk.cc --standalone -d blynk.cc
+
++ Add password to you let's encrypt certificate and reformat it:
+
+        mkdir /srv/blynk-data
+        cp /etc/letsencrypt/live/YOUR_HOST/fullchain.pem /srv/blynk-data
+        cp /etc/letsencrypt/live/YOUR_HOST/privkey.pem /srv/blynk-data
+        cd /srv/blynk-data
+        openssl pkcs8 -topk8 -inform PEM -outform PEM -in privkey.pem -out privkey_pass.pem
+
++ Then add to your server.properties file (in folder with server.jar)
+
+        server.ssl.cert=/srv/blynk-data/fullchain.pem
+        server.ssl.key=/srv/blynk-data/privkey_pass.pem
+        server.ssl.key.pass=your_password
+        
+        https.cert=/srv/blynk-data/fullchain.pem
+        https.key=/srv/blynk-data/privkey_pass.pem
+        https.key.pass=our_password
+
+### Generate own SSL certificates
 
 + Generate self-signed certificate and key
 
