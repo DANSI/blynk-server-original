@@ -30,7 +30,7 @@ public final class TokensPool {
 
 
     public void addToken(String token, TokenUser user) {
-        log.info("Adding token for {} user to the pool", user.getEmail());
+        log.info("Adding token for {} user to the pool", user.email);
         holder.put(token, user);
     }
 

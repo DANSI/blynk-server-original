@@ -60,7 +60,8 @@ public class ResetPasswordLogic {
     @POST
     @Consumes(value = MediaType.APPLICATION_FORM_URLENCODED)
     @Path("resetPassword")
-    public Response sendResetPasswordEmail(@FormParam("email") String email) {
+    public Response sendResetPasswordEmail(@FormParam("email") String email,
+                                           @FormParam("appName") String appName) {
         if (email == null || email.isEmpty()) {
             return Response.badRequest("Email field is empty. Please input your email.");
         }
@@ -69,11 +70,21 @@ public class ResetPasswordLogic {
             return Response.badRequest(String.format("%s email has not valid format.", email));
         }
 
+        email = email.toLowerCase();
+        appName = (appName == null ? AppName.BLYNK : appName);
+
+        //todo appName should be sent via API
+        User user = userDao.getByName(email, appName);
+
+        if (user == null) {
+            return Response.badRequest("Sorry, this account is not exists.");
+        }
+
         String token = generateToken();
         log.info("{} trying to reset pass.", email);
         try {
-            TokenUser user = new TokenUser(email);
-            tokensPool.addToken(token, user);
+            TokenUser userToken = new TokenUser(email, appName);
+            tokensPool.addToken(token, userToken);
             String message = emailBody.replace("{RESET_URL}", resetPassUrl + token);
             log.info("Sending token to {} address", email);
             mailWrapper.send(email, "Password reset request for Blynk app.", message, "text/html");
@@ -93,8 +104,8 @@ public class ResetPasswordLogic {
             return Response.badRequest("Your token was not found or it is outdated. Please try again.");
         }
 
-        log.info("{} landed.", user.getEmail());
-        String page = pageContent.replace("{EMAIL}", user.getEmail()).replace("{TOKEN}", token);
+        log.info("{} landed.", user.email);
+        String page = pageContent.replace("{EMAIL}", user.email).replace("{TOKEN}", token);
         return Response.ok(page, MediaType.TEXT_HTML);
     }
 
@@ -108,12 +119,12 @@ public class ResetPasswordLogic {
             return Response.badRequest("Invalid token. Please repeat all steps.");
         }
 
-        log.info("Resetting pass for {}", tokenUser.getEmail());
+        log.info("Resetting pass for {}", tokenUser.email);
         //todo appName should be sent via API
-        User user = userDao.getByName(tokenUser.getEmail(), AppName.BLYNK);
+        User user = userDao.getByName(tokenUser.email, tokenUser.appName);
 
         if (user == null) {
-            log.warn("No user with name {}", tokenUser.getEmail());
+            log.warn("No user with name {}", tokenUser.email);
             return new Response(HTTP_1_1, NOT_FOUND);
         }
 
