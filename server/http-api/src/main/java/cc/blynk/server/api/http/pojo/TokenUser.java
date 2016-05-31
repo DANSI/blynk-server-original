@@ -9,11 +9,12 @@ public class TokenUser {
 
     public final String email;
     public final String appName;
-
+    public final long createdAt;
 
     public TokenUser(String email, String appName) {
         this.email = email;
         this.appName = appName;
+        this.createdAt = System.currentTimeMillis();
     }
 
 }
