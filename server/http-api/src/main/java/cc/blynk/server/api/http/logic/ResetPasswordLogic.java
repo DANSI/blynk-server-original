@@ -73,7 +73,6 @@ public class ResetPasswordLogic {
         email = email.toLowerCase();
         appName = (appName == null ? AppName.BLYNK : appName);
 
-        //todo appName should be sent via API
         User user = userDao.getByName(email, appName);
 
         if (user == null) {
@@ -120,7 +119,6 @@ public class ResetPasswordLogic {
         }
 
         log.info("Resetting pass for {}", tokenUser.email);
-        //todo appName should be sent via API
         User user = userDao.getByName(tokenUser.email, tokenUser.appName);
 
         if (user == null) {
