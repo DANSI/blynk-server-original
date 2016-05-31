@@ -4,7 +4,10 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.widgets.MultiPinWidget;
+import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
@@ -92,8 +95,19 @@ public abstract class IntegrationBase extends BaseTest {
 
         int expectedSyncCommandsCount = 0;
         for (Widget widget : profile.dashBoards[0].widgets) {
-            if (widget.makeHardwareBody() != null) {
-                expectedSyncCommandsCount++;
+            if (widget instanceof OnePinWidget) {
+                if (((OnePinWidget) widget).makeHardwareBody() != null) {
+                    expectedSyncCommandsCount++;
+                }
+            } else if (widget instanceof MultiPinWidget) {
+                MultiPinWidget multiPinWidget = ((MultiPinWidget) widget);
+                if (multiPinWidget.pins != null) {
+                    for (Pin pin : multiPinWidget.pins) {
+                        if (pin.notEmpty()) {
+                            expectedSyncCommandsCount++;
+                        }
+                    }
+                }
             }
         }
 

@@ -13,6 +13,8 @@ import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.MultiPinWidget;
+import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
@@ -233,7 +235,13 @@ public class HttpAPILogic {
             body = Pin.makeHardwareBody(pinType, pin, pinValues);
         } else {
             widget.updateIfSame(pin, pinType, pinValues);
-            body = widget.makeHardwareBody();
+            if (widget instanceof OnePinWidget) {
+                body = ((OnePinWidget) widget).makeHardwareBody();
+            } else if (widget instanceof MultiPinWidget) {
+                body = ((MultiPinWidget) widget).makeHardwareBody();
+            } else {
+                body = null;
+            }
         }
 
         if (body != null) {

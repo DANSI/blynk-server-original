@@ -3,6 +3,7 @@ package cc.blynk.server.core.model.widgets.outputs;
 import cc.blynk.server.core.model.enums.GraphPeriod;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
+import io.netty.channel.Channel;
 
 /**
  * The Blynk Project.
@@ -23,6 +24,10 @@ public class HistoryGraph extends MultiPinWidget {
     @Override
     public void updateIfSame(byte pin, PinType type, String[] values) {
         //logger has no data to display. so no need to update values
+    }
+
+    @Override
+    public void sendSyncOnActivate(Channel appChannel, int dashId) {
     }
 
     @Override

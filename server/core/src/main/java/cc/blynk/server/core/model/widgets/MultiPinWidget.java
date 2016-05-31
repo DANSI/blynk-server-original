@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
+import io.netty.channel.Channel;
 
 import java.util.StringJoiner;
 
@@ -40,6 +41,8 @@ public abstract class MultiPinWidget extends Widget {
     }
 
     @Override
+    public abstract void sendSyncOnActivate(Channel appChannel, int dashId);
+
     public String makeHardwareBody() {
         if (pins != null && pins[0].notEmpty()) {
             StringBuilder sb = new StringBuilder(pins[0].makeHardwareBody());

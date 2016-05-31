@@ -1,7 +1,11 @@
 package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.utils.StringUtils;
+import io.netty.channel.Channel;
 
+import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.utils.ByteBufUtil.*;
 import static cc.blynk.utils.StringUtils.*;
 
 /**
@@ -31,6 +35,13 @@ public abstract class OnePinWidget extends Widget {
     }
 
     @Override
+    public void sendSyncOnActivate(Channel appChannel, int dashId) {
+        String body = makeHardwareBody();
+        if (body != null) {
+            appChannel.write(makeStringMessage(SYNC, 1111, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
+        }
+    }
+
     public String makeHardwareBody() {
         if (pin == -1 || value == null || pinType == null) {
             return null;

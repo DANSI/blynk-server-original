@@ -14,6 +14,7 @@ import cc.blynk.server.core.model.widgets.outputs.*;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.netty.channel.Channel;
 
 /**
  * User: ddumanskiy
@@ -90,7 +91,7 @@ public abstract class Widget {
 
     public abstract String getJsonValue();
 
-    public abstract String makeHardwareBody();
+    public abstract void sendSyncOnActivate(Channel appChannel, int dashId);
 
     public abstract String getModeType();
 
