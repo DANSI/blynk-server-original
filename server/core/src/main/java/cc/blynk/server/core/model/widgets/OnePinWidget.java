@@ -49,9 +49,10 @@ public abstract class OnePinWidget extends Widget {
         return isPWMSupported() ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
-    public void updateIfSame(byte pin, PinType type, String[] values) {
+    @Override
+    public void updateIfSame(byte pin, PinType type, String value) {
         if (isSame(pin, type)) {
-            this.value = values[0];
+            this.value = value;
         }
     }
 

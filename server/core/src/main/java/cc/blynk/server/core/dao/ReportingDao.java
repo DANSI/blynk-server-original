@@ -101,18 +101,16 @@ public class ReportingDao {
         FileUtils.deleteQuietly(userDataDailyFile);
     }
 
-    public void process(String username, int dashId, byte pin, PinType pinType, String[] bodyParts) {
-        //todo in case of multi pins logging only first value
-        String value = bodyParts[0];
+    public void process(String username, int dashId, byte pin, PinType pinType, String body) {
         long ts = System.currentTimeMillis();
 
         if (ENABLE_RAW_DATA_STORE) {
             ThreadContext.put("dashId", Integer.toString(dashId));
             ThreadContext.put("pin", String.valueOf(pinType.pintTypeChar) + pin);
-            log.info("{},{}", value, ts);
+            log.info("{},{}", body, ts);
         }
 
-        averageAggregator.collect(username, dashId, pinType, pin, ts, value);
+        averageAggregator.collect(username, dashId, pinType, pin, ts, body);
     }
 
     public byte[][] getAllFromDisk(String username, GraphPinRequest[] requestedPins, int msgId) {

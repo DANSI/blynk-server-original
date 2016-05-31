@@ -14,8 +14,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Arrays;
-
 import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.ByteBufUtil.*;
@@ -60,7 +58,7 @@ public class HardwareLogic {
         DashBoard dash = state.user.profile.getDashById(dashId, message.id);
 
         if (isWriteOperation(body)) {
-            String[] splitBody = body.split(StringUtils.BODY_SEPARATOR_STRING);
+            String[] splitBody = body.split(StringUtils.BODY_SEPARATOR_STRING, 3);
 
             if (splitBody.length < 3 || splitBody[0].length() == 0) {
                 throw new IllegalCommandException("Write command is wrong.", message.id);
@@ -68,15 +66,16 @@ public class HardwareLogic {
 
             final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
             final byte pin = ParseUtil.parseByte(splitBody[1], message.id);
-            final String[] values = Arrays.copyOfRange(splitBody, 2, splitBody.length);
+            final String value = splitBody[2];
 
-            //storing to DB and aggregating
-            if (values.length == 0) {
+            if (value.length() == 0) {
                 throw new IllegalCommandException("Hardware write command doesn't have value for pin.", message.id);
             }
 
-            reportingDao.process(state.user.name, dashId, pin, pinType, values);
-            dash.update(pin, pinType, values);
+            //storing to DB and aggregating
+            reportingDao.process(state.user.name, dashId, pin, pinType, value);
+
+            dash.update(pin, pinType, value);
         }
 
         if (dash.isActive) {

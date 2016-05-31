@@ -229,12 +229,14 @@ public class HttpAPILogic {
         Widget widget = dashBoard.findWidgetByPin(pin, pinType);
         String body;
 
-        reportingDao.process(user.name, dashId, pin, pinType, pinValues);
+        String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING, pinValues);
+
+        reportingDao.process(user.name, dashId, pin, pinType, pinValue);
 
         if (widget == null) {
             body = Pin.makeHardwareBody(pinType, pin, pinValues);
         } else {
-            widget.updateIfSame(pin, pinType, pinValues);
+            widget.updateIfSame(pin, pinType, pinValue);
             if (widget instanceof OnePinWidget) {
                 body = ((OnePinWidget) widget).makeHardwareBody();
             } else if (widget instanceof MultiPinWidget) {

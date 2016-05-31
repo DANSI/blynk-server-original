@@ -11,7 +11,7 @@ import io.netty.channel.Channel;
 public abstract class NoPinWidget extends Widget {
 
     @Override
-    public void updateIfSame(byte pin, PinType type, String[] values) {
+    public void updateIfSame(byte pin, PinType type, String values) {
 
     }
 

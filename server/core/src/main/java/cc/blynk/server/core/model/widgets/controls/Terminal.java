@@ -23,10 +23,10 @@ public class Terminal extends OnePinWidget {
     public transient final List<String> lastCommands = new LimitedQueue<>(25);
 
     @Override
-    public void updateIfSame(byte pin, PinType type, String[] values) {
+    public void updateIfSame(byte pin, PinType type, String value) {
         if (isSame(pin, type)) {
-            this.value = values[0];
-            this.lastCommands.add(values[0]);
+            this.value = value;
+            this.lastCommands.add(value);
         }
     }
 

@@ -70,20 +70,19 @@ public class DashBoard {
     }
 
     public void update(String body, int msgId) {
-        update(body.split(StringUtils.BODY_SEPARATOR_STRING), msgId);
+        update(body.split(StringUtils.BODY_SEPARATOR_STRING, 3), msgId);
     }
 
     public void update(String[] splitted, int msgId) {
         final PinType type = PinType.getPinType(splitted[0].charAt(0));
         final byte pin = ParseUtil.parseByte(splitted[1], msgId);
-        final String[] values = Arrays.copyOfRange(splitted, 2, splitted.length);
-        update(pin, type, values);
+        update(pin, type, splitted[2]);
     }
 
-    public void update(final byte pin, final PinType type, final String[] values) {
-        if (values != null) {
+    public void update(final byte pin, final PinType type, final String value) {
+        if (value != null) {
             for (Widget widget : widgets) {
-                widget.updateIfSame(pin, type, values);
+                widget.updateIfSame(pin, type, value);
             }
             this.updatedAt = System.currentTimeMillis();
         }

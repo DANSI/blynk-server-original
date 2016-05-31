@@ -85,7 +85,7 @@ public abstract class Widget {
 
     public String label;
 
-    public abstract void updateIfSame(byte pin, PinType type, String[] values);
+    public abstract void updateIfSame(byte pin, PinType type, String value);
 
     public abstract boolean isSame(byte pin, PinType type);
 
