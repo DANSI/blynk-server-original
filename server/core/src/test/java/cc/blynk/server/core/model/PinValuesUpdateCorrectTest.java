@@ -80,10 +80,7 @@ public class PinValuesUpdateCorrectTest {
 
         dash.update("vw 4 100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), 0);
 
-        for (int i = 0; i < rgb.pins.length; i++) {
-            assertEquals("10" + i, rgb.pins[i].value);
-        }
-
+        assertEquals("100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), rgb.pins[0].value);
     }
 
 
