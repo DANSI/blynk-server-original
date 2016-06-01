@@ -21,7 +21,7 @@ public class TokenManager extends TokenManagerBase {
     }
 
     @Override
-    Map<Integer, String> getTokens(User user) {
+    public Map<Integer, String> getTokens(User user) {
         if (user.dashTokens == null) {
             user.dashTokens = new HashMap<>();
         }

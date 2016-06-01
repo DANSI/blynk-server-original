@@ -153,6 +153,44 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testSharingChargingCorrect() throws Exception {
+        clientPair.appClient.send("getEnergy");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, GET_ENERGY, "9200")));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getShareToken 1");
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        clientPair.appClient.send("getEnergy");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "8200")));
+
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getShareToken 1");
+        token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        clientPair.appClient.send("getEnergy");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "8200")));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getShareToken 1");
+        token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        clientPair.appClient.send("getShareToken 1");
+        clientPair.appClient.send("getShareToken 1");
+        clientPair.appClient.send("getShareToken 1");
+
+        clientPair.appClient.send("getEnergy");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, GET_ENERGY, "8200")));
+    }
+
+    @Test
     public void checkStateWasChanged() throws Exception {
         clientPair.appClient.send("getShareToken 1");
 

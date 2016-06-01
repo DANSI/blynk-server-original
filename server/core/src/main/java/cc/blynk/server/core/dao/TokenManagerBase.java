@@ -60,7 +60,7 @@ public abstract class TokenManagerBase {
         return cache.get(token);
     }
 
-    abstract Map<Integer, String> getTokens(User user);
+    public abstract Map<Integer, String> getTokens(User user);
 
     abstract void deleteProject(User user, Integer projectId);
 

@@ -21,7 +21,7 @@ public class SharedTokenManager extends TokenManagerBase {
     }
 
     @Override
-    Map<Integer, String> getTokens(User user) {
+    public Map<Integer, String> getTokens(User user) {
         if (user.dashShareTokens == null) {
             user.dashShareTokens = new HashMap<>();
         }
