@@ -36,9 +36,9 @@ public class WebSocketSSLServer extends BaseServer {
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 
         final SslContext sslCtx = SslUtil.initSslContext(
-                    holder.props.getProperty("https.cert"),
-                    holder.props.getProperty("https.key"),
-                    holder.props.getProperty("https.key.pass"),
+                holder.props.getProperty("https.cert", holder.props.getProperty("server.ssl.cert")),
+                holder.props.getProperty("https.key", holder.props.getProperty("server.ssl.key")),
+                holder.props.getProperty("https.key.pass", holder.props.getProperty("server.ssl.key.pass")),
                     SslUtil.fetchSslProvider(holder.props)
         );
 

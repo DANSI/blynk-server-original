@@ -39,9 +39,9 @@ public class HttpsAPIServer extends BaseServer {
         HandlerRegistry.register(businessRootPath, new BusinessAuthLogic(holder.userDao, holder.sessionDao, holder.fileManager, sessionHolder));
 
         final SslContext sslCtx = SslUtil.initSslContext(
-                holder.props.getProperty("https.cert"),
-                holder.props.getProperty("https.key"),
-                holder.props.getProperty("https.key.pass"),
+                holder.props.getProperty("https.cert", holder.props.getProperty("server.ssl.cert")),
+                holder.props.getProperty("https.key", holder.props.getProperty("server.ssl.key")),
+                holder.props.getProperty("https.key.pass", holder.props.getProperty("server.ssl.key.pass")),
                 SslUtil.fetchSslProvider(holder.props));
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
