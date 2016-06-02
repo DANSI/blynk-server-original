@@ -7,6 +7,7 @@ import cc.blynk.core.http.rest.HandlerRegistry;
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.handlers.IpFilterHandler;
 import cc.blynk.server.admin.http.logic.admin.ConfigsLogic;
+import cc.blynk.server.admin.http.logic.admin.HardwareStatsLogic;
 import cc.blynk.server.admin.http.logic.admin.StatsLogic;
 import cc.blynk.server.admin.http.logic.admin.UsersLogic;
 import cc.blynk.server.core.BaseServer;
@@ -34,6 +35,7 @@ public class HttpsAdminServer extends BaseServer {
         HandlerRegistry.register(adminRootPath, new UsersLogic(holder.userDao, holder.sessionDao, holder.fileManager, holder.profileSaverWorker));
         HandlerRegistry.register(adminRootPath, new StatsLogic(holder.userDao, holder.sessionDao, holder.stats));
         HandlerRegistry.register(adminRootPath, new ConfigsLogic(holder.props, holder.blockingIOProcessor));
+        HandlerRegistry.register(adminRootPath, new HardwareStatsLogic(holder.userDao));
 
         final SslContext sslCtx = SslUtil.initSslContext(
                 holder.props.getProperty("https.cert", holder.props.getProperty("server.ssl.cert")),

@@ -128,6 +128,48 @@ public class UserDao {
         return projectsPerUser;
     }
 
+    public Map<String, Integer> getLibraryVersion() {
+        Map<String, Integer> projectsPerUser = new HashMap<>();
+        for (User user : users.values()) {
+            for (DashBoard dashBoard : user.profile.dashBoards) {
+                if (dashBoard.hardwareInfo != null && dashBoard.hardwareInfo.version != null) {
+                    String key = dashBoard.hardwareInfo.version;
+                    Integer i = projectsPerUser.getOrDefault(key, 0);
+                    projectsPerUser.put(key, ++i);
+                }
+            }
+        }
+        return projectsPerUser;
+    }
+
+    public Map<String, Integer> getCpuType() {
+        Map<String, Integer> projectsPerUser = new HashMap<>();
+        for (User user : users.values()) {
+            for (DashBoard dashBoard : user.profile.dashBoards) {
+                if (dashBoard.hardwareInfo != null && dashBoard.hardwareInfo.cpuType != null) {
+                    String key = dashBoard.hardwareInfo.cpuType;
+                    Integer i = projectsPerUser.getOrDefault(key, 0);
+                    projectsPerUser.put(key, ++i);
+                }
+            }
+        }
+        return projectsPerUser;
+    }
+
+    public Map<String, Integer> getConnectionType() {
+        Map<String, Integer> projectsPerUser = new HashMap<>();
+        for (User user : users.values()) {
+            for (DashBoard dashBoard : user.profile.dashBoards) {
+                if (dashBoard.hardwareInfo != null && dashBoard.hardwareInfo.connectionType != null) {
+                    String key = dashBoard.hardwareInfo.connectionType;
+                    Integer i = projectsPerUser.getOrDefault(key, 0);
+                    projectsPerUser.put(key, ++i);
+                }
+            }
+        }
+        return projectsPerUser;
+    }
+
     public Map<String, Integer> getFilledSpace() {
         Map<String, Integer> filledSpace = new HashMap<>();
         for (User user : users.values()) {

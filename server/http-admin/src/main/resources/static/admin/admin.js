@@ -102,6 +102,40 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         );
 
 
+    var libraryVersion = nga.entity('libraryVersion').identifier(nga.field('name')).url('hardwareInfo/version').readOnly();
+    libraryVersion.listView()
+        .title('Library versions')
+        .perPage(50)
+        .batchActions([])
+        .sortField('count')
+        .fields([
+            nga.field('name').label('Blynk library version'),
+            nga.field('count').label('Count')
+        ]);
+
+    var cpuType = nga.entity('cpuType').identifier(nga.field('name')).url('hardwareInfo/cpuType').readOnly();
+    cpuType.listView()
+        .title('CPU types')
+        .perPage(50)
+        .batchActions([])
+        .sortField('count')
+        .fields([
+            nga.field('name').label('CPU type'),
+            nga.field('count').label('Count')
+        ]);
+
+    var connectionType = nga.entity('connectionType').identifier(nga.field('name')).url('hardwareInfo/connectionType').readOnly();
+    connectionType.listView()
+        .title('Connection types')
+        .perPage(50)
+        .batchActions([])
+        .sortField('count')
+        .fields([
+            nga.field('name').label('Connection type'),
+            nga.field('count').label('Count')
+        ]);
+
+
     var realtime = nga.entity('realtime').url('stats/realtime').readOnly();
     realtime.listView()
         .title('Realtime stats')
@@ -227,6 +261,11 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                 .addChild(nga.menu(projectsPerUser).title('Projects per user').icon(''))
                 .addChild(nga.menu(filledSpace).title('Cells per project').icon(''))
             )
+            .addChild(nga.menu().title('Hardware Info')
+                .addChild(nga.menu(libraryVersion).title('Library versions').icon(''))
+                .addChild(nga.menu(cpuType).title('CPU types').icon(''))
+                .addChild(nga.menu(connectionType).title('Connection types').icon(''))
+            )
             .addChild(nga.menu(config))
     );
 
@@ -241,6 +280,9 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     admin.addEntity(widgets);
     admin.addEntity(projectsPerUser);
     admin.addEntity(filledSpace);
+    admin.addEntity(libraryVersion);
+    admin.addEntity(cpuType);
+    admin.addEntity(connectionType);
     admin.addEntity(config);
     // attach the admin application to the DOM and execute it
     nga.configure(admin);
