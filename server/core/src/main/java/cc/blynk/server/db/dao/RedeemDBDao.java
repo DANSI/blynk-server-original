@@ -1,5 +1,6 @@
-package cc.blynk.server.db;
+package cc.blynk.server.db.dao;
 
+import cc.blynk.server.db.model.Redeem;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +28,7 @@ public class RedeemDBDao {
         this.ds = ds;
     }
 
-    protected Redeem selectRedeemByToken(String token) throws Exception {
+    public Redeem selectRedeemByToken(String token) throws Exception {
         log.info("Redeem select for {}", token);
 
         ResultSet rs = null;
@@ -54,7 +55,7 @@ public class RedeemDBDao {
         return null;
     }
 
-    protected boolean updateRedeem(String username, String token) throws Exception {
+    public boolean updateRedeem(String username, String token) throws Exception {
         try (Connection connection = ds.getConnection();
              PreparedStatement statement = connection.prepareStatement(updateRedeemToken)) {
 

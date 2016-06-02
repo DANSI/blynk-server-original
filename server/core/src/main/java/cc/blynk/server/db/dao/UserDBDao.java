@@ -1,4 +1,4 @@
-package cc.blynk.server.db;
+package cc.blynk.server.db.dao;
 
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
@@ -59,7 +59,7 @@ public class UserDBDao {
         return users;
     }
 
-    protected void save(List<User> users) {
+    public void save(List<User> users) {
         long start = System.currentTimeMillis();
         log.info("Storing users...");
 

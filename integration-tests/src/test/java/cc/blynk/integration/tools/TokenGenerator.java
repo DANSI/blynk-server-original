@@ -2,7 +2,7 @@ package cc.blynk.integration.tools;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.db.Redeem;
+import cc.blynk.server.db.model.Redeem;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

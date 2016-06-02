@@ -1,4 +1,4 @@
-package cc.blynk.server.db;
+package cc.blynk.server.db.dao;
 
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
@@ -38,7 +38,7 @@ public class ReportingDBDao {
         this.ds = ds;
     }
 
-    protected static void prepareReportingSelect(PreparedStatement ps, long ts, int limit) throws SQLException {
+    public static void prepareReportingSelect(PreparedStatement ps, long ts, int limit) throws SQLException {
         ps.setLong(1, ts);
         ps.setInt(2, limit);
     }
@@ -51,7 +51,7 @@ public class ReportingDBDao {
         prepareReportingInsert(ps, key.username, key.dashId, key.pin, key.pinType, key.ts * type.period, value.calcAverage());
     }
 
-    protected static void prepareReportingInsert(PreparedStatement ps,
+    public static void prepareReportingInsert(PreparedStatement ps,
                                                  String username,
                                                  int dashId,
                                                  byte pin,
@@ -77,7 +77,7 @@ public class ReportingDBDao {
         }
     }
 
-    protected void insert(Map<AggregationKey, AggregationValue> map, GraphType graphType) {
+    public void insert(Map<AggregationKey, AggregationValue> map, GraphType graphType) {
         long start = System.currentTimeMillis();
 
         log.info("Storing {} reporting...", graphType.name());
@@ -101,7 +101,7 @@ public class ReportingDBDao {
         log.info("Storing {} reporting finished. Time {}. Records saved {}", graphType.name(), System.currentTimeMillis() - start, map.size());
     }
 
-    protected void cleanOldReportingRecords(Instant now) {
+    public void cleanOldReportingRecords(Instant now) {
         log.info("Removing old reporting records...");
 
         int minuteRecordsRemoved = 0;

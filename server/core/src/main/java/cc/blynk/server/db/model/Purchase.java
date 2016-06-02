@@ -1,4 +1,4 @@
-package cc.blynk.server.db;
+package cc.blynk.server.db.model;
 
 import java.util.Date;
 

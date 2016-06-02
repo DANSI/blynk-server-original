@@ -1,5 +1,6 @@
-package cc.blynk.server.db;
+package cc.blynk.server.db.dao;
 
+import cc.blynk.server.db.model.Purchase;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
