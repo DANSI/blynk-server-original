@@ -29,7 +29,9 @@ Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Jav
 
 ## Requirements
 Java 8 required. (OpenJDK, Oracle). 
+
 Ubuntu installation instructions [here](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu).
+
 For Windows just download from [here](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) and install. 
 
 ## Quick local server setup
