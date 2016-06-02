@@ -135,6 +135,17 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             nga.field('count').label('Count')
         ]);
 
+    var hardwareBoards = nga.entity('hardwareBoards').identifier(nga.field('name')).url('hardwareInfo/boards').readOnly();
+    hardwareBoards.listView()
+        .title('Board types')
+        .perPage(50)
+        .batchActions([])
+        .sortField('count')
+        .fields([
+            nga.field('name').label('Hardware board type'),
+            nga.field('count').label('Count')
+        ]);
+
 
     var realtime = nga.entity('realtime').url('stats/realtime').readOnly();
     realtime.listView()
@@ -264,6 +275,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             .addChild(nga.menu().title('Hardware Info')
                 .addChild(nga.menu(libraryVersion).title('Library versions').icon(''))
                 .addChild(nga.menu(cpuType).title('CPU types').icon(''))
+                .addChild(nga.menu(hardwareBoards).title('Hardware boards').icon(''))
                 .addChild(nga.menu(connectionType).title('Connection types').icon(''))
             )
             .addChild(nga.menu(config))
@@ -282,6 +294,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     admin.addEntity(filledSpace);
     admin.addEntity(libraryVersion);
     admin.addEntity(cpuType);
+    admin.addEntity(hardwareBoards);
     admin.addEntity(connectionType);
     admin.addEntity(config);
     // attach the admin application to the DOM and execute it
