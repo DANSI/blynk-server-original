@@ -34,6 +34,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             nga.field('lastModifiedTs'),
             nga.field('energy'),
             nga.field('appName'),
+            nga.field('region'),
             nga.field('profile.dashBoards', 'embedded_list')
                 .targetFields([
                     nga.field('id'),
