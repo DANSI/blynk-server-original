@@ -59,7 +59,7 @@ public class Holder {
 
         this.fileManager = new FileManager(dataFolder);
         this.sessionDao = new SessionDao();
-        this.userDao = new UserDao(fileManager.deserialize());
+        this.userDao = new UserDao(fileManager.deserialize(), serverProperties.getProperty("region", "local"));
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);
@@ -87,7 +87,7 @@ public class Holder {
 
         this.fileManager = new FileManager(dataFolder);
         this.sessionDao = new SessionDao();
-        this.userDao = new UserDao(fileManager.deserialize());
+        this.userDao = new UserDao(fileManager.deserialize(), "local");
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);

@@ -219,7 +219,7 @@ public class DBManagerTest {
     public void testUpsertAndSelect() throws Exception {
         List<User> users = new ArrayList<>();
         for (int i = 0; i < 10000; i++) {
-            users.add(new User("test" + i + "@gmail.com", "pass", AppName.BLYNK));
+            users.add(new User("test" + i + "@gmail.com", "pass", AppName.BLYNK, "local", false));
         }
         //dbManager.saveUsers(users);
         dbManager.userDBDao.save(users);
@@ -234,13 +234,13 @@ public class DBManagerTest {
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertUser() throws Exception {
         List<User> users = new ArrayList<>();
-        User user = new User("test@gmail.com", "pass", AppName.BLYNK);
+        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false);
         user.lastModifiedTs = 0;
         users.add(user);
-        user = new User("test@gmail.com", "pass2", AppName.BLYNK);
+        user = new User("test@gmail.com", "pass2", AppName.BLYNK, "local", false);
         user.lastModifiedTs = 0;
         users.add(user);
-        user = new User("test2@gmail.com", "pass2", AppName.BLYNK);
+        user = new User("test2@gmail.com", "pass2", AppName.BLYNK, "local", false);
         user.lastModifiedTs = 0;
         users.add(user);
 
@@ -251,8 +251,8 @@ public class DBManagerTest {
              ResultSet rs = statement.executeQuery("select * from users where username = 'test@gmail.com'")) {
             while (rs.next()) {
                 assertEquals("test@gmail.com", rs.getString("username"));
-                assertNull("region", rs.getString("region"));
-                assertEquals("{\"name\":\"test@gmail.com\",\"pass\":\"pass2\",\"lastModifiedTs\":0,\"lastLoggedAt\":0,\"profile\":{},\"isFacebookUser\":false,\"appName\":\"Blynk\",\"energy\":2000}", rs.getString("json"));
+                assertEquals("local", rs.getString("region"));
+                assertEquals("{\"name\":\"test@gmail.com\",\"appName\":\"Blynk\",\"region\":\"local\",\"pass\":\"pass2\",\"lastModifiedTs\":0,\"lastLoggedAt\":0,\"profile\":{},\"isFacebookUser\":false,\"energy\":2000}", rs.getString("json"));
             }
             connection.commit();
         }

@@ -42,10 +42,10 @@ public class ProfileSaverWorkerTest {
     public void testCorrectProfilesAreSaved() throws IOException {
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor));
 
-        User user1 = new User("1", "", AppName.BLYNK);
-        User user2 = new User("2", "", AppName.BLYNK);
-        User user3 = new User("3", "", AppName.BLYNK);
-        User user4 = new User("4", "", AppName.BLYNK);
+        User user1 = new User("1", "", AppName.BLYNK, "local", false);
+        User user2 = new User("2", "", AppName.BLYNK, "local", false);
+        User user3 = new User("3", "", AppName.BLYNK, "local", false);
+        User user4 = new User("4", "", AppName.BLYNK, "local", false);
 
         Map<UserKey, User> userMap = new HashMap<>();
         userMap.put(new UserKey("1", AppName.BLYNK), user1);
@@ -65,10 +65,10 @@ public class ProfileSaverWorkerTest {
 
     @Test
     public void testNoProfileChanges() throws Exception {
-        User user1 = new User("1", "", AppName.BLYNK);
-        User user2 = new User("2", "", AppName.BLYNK);
-        User user3 = new User("3", "", AppName.BLYNK);
-        User user4 = new User("4", "", AppName.BLYNK);
+        User user1 = new User("1", "", AppName.BLYNK, "local", false);
+        User user2 = new User("2", "", AppName.BLYNK, "local", false);
+        User user3 = new User("3", "", AppName.BLYNK, "local", false);
+        User user4 = new User("4", "", AppName.BLYNK, "local", false);
 
         Map<UserKey, User> userMap = new HashMap<>();
         userMap.put(new UserKey("1", AppName.BLYNK), user1);

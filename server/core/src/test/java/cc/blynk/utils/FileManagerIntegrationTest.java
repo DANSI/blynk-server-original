@@ -23,8 +23,8 @@ public class FileManagerIntegrationTest {
 
     private String dataFolder = new ServerProperties().getProperty("data.folder");
 
-    private User user1 = new User("name1", "pass1", AppName.BLYNK);
-    private User user2 = new User("name2", "pass2", AppName.BLYNK);
+    private User user1 = new User("name1", "pass1", AppName.BLYNK, "local", false);
+    private User user2 = new User("name2", "pass2", AppName.BLYNK, "local", false);
 
     private FileManager fileManager = new FileManager(dataFolder);
 

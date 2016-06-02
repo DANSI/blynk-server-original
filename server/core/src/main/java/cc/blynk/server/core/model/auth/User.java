@@ -17,10 +17,15 @@ import java.util.Map;
  */
 public class User {
 
+    private static final int INITIAL_ENERGY_AMOUNT = 2000;
+
     public Map<Integer, String> dashShareTokens;
     public Map<Integer, String> dashTokens;
 
+    //key fields
 	public String name;
+    public String appName;
+    public String region;
 
     public volatile String pass;
 
@@ -30,8 +35,9 @@ public class User {
     public long lastLoggedAt;
 
     public Profile profile;
+
     public boolean isFacebookUser;
-    public String appName;
+
     private int energy;
 
     public User() {
@@ -39,22 +45,18 @@ public class User {
         this.profile = new Profile();
         this.dashShareTokens = new HashMap<>();
         this.dashTokens = new HashMap<>();
-        this.energy = 2000;
+        this.energy = INITIAL_ENERGY_AMOUNT;
         this.isFacebookUser = false;
         this.appName = AppName.BLYNK;
     }
 
-    public User(String name, String pass, String appName) {
+    public User(String name, String pass, String appName, String region, boolean isFacebookUser) {
         this();
         this.name = name;
         this.pass = pass;
         this.appName = appName;
-    }
-
-    //used for facebook login. available only for Blynk app.
-    public User(String name, String appName) {
-        this(name, null, appName);
-        this.isFacebookUser = true;
+        this.region = region;
+        this.isFacebookUser = isFacebookUser;
     }
 
     public void setProfile(Profile profile) {

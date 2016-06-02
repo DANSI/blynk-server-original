@@ -25,15 +25,20 @@ import java.util.stream.Collectors;
 public class UserDao {
 
     private static final Logger log = LogManager.getLogger(UserDao.class);
+
     public final TokenManagerBase tokenManager;
     public final TokenManagerBase sharedTokenManager;
-    private final ConcurrentMap<UserKey, User> users;
 
-    public UserDao(ConcurrentMap<UserKey, User> users) {
+    private final ConcurrentMap<UserKey, User> users;
+    private final String region;
+
+    public UserDao(ConcurrentMap<UserKey, User> users, String region) {
         //reading DB to RAM.
         this.users = users;
         this.tokenManager = new TokenManager(users.values());
         this.sharedTokenManager = new SharedTokenManager(users.values());
+        this.region = region;
+        log.info("Region : {}", region);
     }
 
     public static Integer getDashIdByToken(Map<Integer, String> tokens, String token, int msgId) {
@@ -149,14 +154,14 @@ public class UserDao {
 
     public User addFacebookUser(String userName, String appName) {
         log.debug("Adding new facebook user {}. App : {}", userName, appName);
-        User newUser = new User(userName, appName);
+        User newUser = new User(userName, null, appName, region, true);
         users.put(new UserKey(userName, appName), newUser);
         return newUser;
     }
 
     public void add(String userName, String pass, String appName) {
         log.debug("Adding new user {}. App : {}", userName, appName);
-        User newUser = new User(userName, pass, appName);
+        User newUser = new User(userName, pass, appName, region, false);
         users.put(new UserKey(userName, appName), newUser);
     }
 
