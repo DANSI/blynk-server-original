@@ -25,11 +25,12 @@ Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Jav
 
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
 
-# Requirements
-Java 8 required. (OpenJDK, Oracle). Installation instructions [here](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu).
-
 # GETTING STARTED
-By default, mobile application uses 8443 port and is based on SSL/TLS sockets. Default hardware port is 8442 and is based on plain TCP/IP sockets.
+
+## Requirements
+Java 8 required. (OpenJDK, Oracle). 
+Ubuntu installation instructions [here](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu).
+For Windows just download from [here](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) and install. 
 
 ## Quick local server setup
 
