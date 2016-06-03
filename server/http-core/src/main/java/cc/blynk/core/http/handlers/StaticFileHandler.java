@@ -8,6 +8,8 @@ import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
 import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,6 +27,8 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  * Created on 10.12.15.
  */
 public class StaticFileHandler extends ChannelInboundHandlerAdapter {
+
+    private static final Logger log = LogManager.getLogger(StaticFileHandler.class);
 
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
@@ -241,9 +245,13 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
-        if (ctx.channel().isActive()) {
-            sendError(ctx, INTERNAL_SERVER_ERROR);
+        if (cause.getMessage() != null && cause.getMessage().contains("unknown_ca")) {
+            log.warn("Self-generated certificate.");
+        } else {
+            cause.printStackTrace();
+            if (ctx.channel().isActive()) {
+                sendError(ctx, INTERNAL_SERVER_ERROR);
+            }
         }
     }
 
