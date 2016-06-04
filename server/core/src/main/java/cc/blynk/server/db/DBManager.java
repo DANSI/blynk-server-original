@@ -43,6 +43,7 @@ public class DBManager implements Closeable {
     public UserDBDao userDBDao;
     private RedeemDBDao redeemDBDao;
     private PurchaseDBDao purchaseDBDao;
+    private final boolean cleanOldReporting;
 
     public DBManager(BlockingIOProcessor blockingIOProcessor) {
         this(DB_PROPERTIES_FILENAME, blockingIOProcessor);
@@ -60,6 +61,7 @@ public class DBManager implements Closeable {
         } catch (RuntimeException e) {
             log.warn("No {} file found. Separate DB storage disabled.", propsFilename);
             this.ds = null;
+            this.cleanOldReporting = false;
             return;
         }
 
@@ -75,13 +77,17 @@ public class DBManager implements Closeable {
         } catch (Exception e) {
             log.error("Not able connect to DB. Skipping.", e);
             this.ds = null;
+            this.cleanOldReporting = false;
             return;
         }
+
         this.ds = hikariDataSource;
         this.reportingDBDao = new ReportingDBDao(hikariDataSource);
         this.userDBDao = new UserDBDao(hikariDataSource);
         this.redeemDBDao = new RedeemDBDao(hikariDataSource);
         this.purchaseDBDao = new PurchaseDBDao(hikariDataSource);
+        this.cleanOldReporting = serverProperties.getBoolProperty("clean.reporting");
+
         log.info("Connected to database successfully.");
     }
 
@@ -112,7 +118,7 @@ public class DBManager implements Closeable {
     }
 
     public void cleanOldReportingRecords(Instant now) {
-        if (isDBEnabled()) {
+        if (isDBEnabled() && cleanOldReporting) {
             blockingIOProcessor.execute(() -> reportingDBDao.cleanOldReportingRecords(now));
         }
     }
