@@ -52,6 +52,8 @@ public class Holder {
     public final GCMWrapper gcmWrapper;
     public final SMSWrapper smsWrapper;
 
+    public final String region;
+
     public Holder(ServerProperties serverProperties) {
         this.props = serverProperties;
 
@@ -59,7 +61,8 @@ public class Holder {
 
         this.fileManager = new FileManager(dataFolder);
         this.sessionDao = new SessionDao();
-        this.userDao = new UserDao(fileManager.deserialize(), serverProperties.getProperty("region", "local"));
+        this.region = serverProperties.getProperty("region", "local");
+        this.userDao = new UserDao(fileManager.deserialize(), this.region);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);
@@ -87,7 +90,8 @@ public class Holder {
 
         this.fileManager = new FileManager(dataFolder);
         this.sessionDao = new SessionDao();
-        this.userDao = new UserDao(fileManager.deserialize(), "local");
+        this.region = "local";
+        this.userDao = new UserDao(fileManager.deserialize(), this.region);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);

@@ -33,10 +33,13 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
     private final Holder holder;
     private final FacebookLoginCheck facebookLoginCheck;
+    //todo remove after migration.
+    private final String region;
 
     public AppLoginHandler(Holder holder) {
         this.holder = holder;
         this.facebookLoginCheck = new FacebookLoginCheck();
+        this.region = holder.region;
     }
 
     private static void cleanPipeline(ChannelPipeline pipeline) {
@@ -120,16 +123,17 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering app channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user.name, messageId));
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, messageId));
         } else {
-            completeLogin(ctx.channel(), session, user.name, messageId);
+            completeLogin(ctx.channel(), session, user, messageId);
         }
     }
 
-    private void completeLogin(Channel channel, Session session, String userName, int msgId) {
+    private void completeLogin(Channel channel, Session session, User user, int msgId) {
         session.addAppChannel(channel);
         channel.writeAndFlush(ok(msgId), channel.voidPromise());
-        log.info("{} app joined.", userName);
+        user.region = region;
+        log.info("{} app joined.", user.name);
     }
 
     @Override
