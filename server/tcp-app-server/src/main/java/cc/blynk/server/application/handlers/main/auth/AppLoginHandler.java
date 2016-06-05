@@ -15,6 +15,8 @@ import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import io.netty.channel.*;
 
+import java.util.NoSuchElementException;
+
 import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.ByteBufUtil.*;
 
@@ -115,7 +117,15 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     private void login(ChannelHandlerContext ctx, int messageId, User user, OsType osType, String version) {
         AppStateHolder appStateHolder = new AppStateHolder(user, osType, version);
 
-        cleanPipeline(ctx.pipeline());
+        try {
+            cleanPipeline(ctx.pipeline());
+        } catch (NoSuchElementException e) {
+            //this case possible when few login commands come at same time to different threads
+            //just do nothing and ignore.
+            //https://github.com/blynkkk/blynk-server/issues/224
+            return;
+        }
+
         ctx.pipeline().addLast(new AppHandler(holder, appStateHolder));
 
         Session session = holder.sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
