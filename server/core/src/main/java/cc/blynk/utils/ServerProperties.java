@@ -54,17 +54,7 @@ public class ServerProperties extends Properties {
      * @param filePropertiesName - name of properties file, for example "twitter4j.properties"
      */
     private void initProperties(String filePropertiesName) {
-        if (!filePropertiesName.startsWith("/")) {
-            filePropertiesName = "/" + filePropertiesName;
-        }
-
-        try (InputStream classPath = ServerProperties.class.getResourceAsStream(filePropertiesName)) {
-            if (classPath != null) {
-                load(classPath);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Error getting properties file : " + filePropertiesName, e);
-        }
+        readFromClassPath(filePropertiesName);
 
         Path curDirPath = getFileInCurrentDir(filePropertiesName);
         if (Files.exists(curDirPath)) {
@@ -79,11 +69,27 @@ public class ServerProperties extends Properties {
 
     }
 
+    private void readFromClassPath(String filePropertiesName) {
+        if (!filePropertiesName.startsWith("/")) {
+            filePropertiesName = "/" + filePropertiesName;
+        }
+
+        try (InputStream classPath = ServerProperties.class.getResourceAsStream(filePropertiesName)) {
+            if (classPath != null) {
+                load(classPath);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error getting properties file : " + filePropertiesName, e);
+        }
+    }
+
     private void initProperties(Path path) {
         if (!Files.exists(path)) {
             System.out.println("Path " + path + " not found.");
             System.exit(1);
         }
+
+        readFromClassPath(SERVER_PROPERTIES_FILENAME);
 
         try (InputStream curFolder = Files.newInputStream(path)) {
             if (curFolder != null) {
