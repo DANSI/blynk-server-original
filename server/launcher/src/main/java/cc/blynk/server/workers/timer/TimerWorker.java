@@ -45,10 +45,10 @@ public class TimerWorker implements Runnable {
         tickedTimers = 0;
         onlineTimers = 0;
 
-        LocalTime localDateTime = LocalTime.now(UTC);
+        LocalTime localTime = LocalTime.now(UTC);
 
-        long curTime = localDateTime.getSecond() + localDateTime.getMinute() * 60 + localDateTime.getHour() * 3600;
-        checkTimers(curTime);
+        long curSeconds = localTime.getSecond() + localTime.getMinute() * 60 + localTime.getHour() * 3600;
+        checkTimers(curSeconds);
 
         //logging only events when timers ticked.
         if (onlineTimers > 0) {
@@ -56,14 +56,14 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    protected void checkTimers(long curTime) {
+    protected void checkTimers(long curSeconds) {
         for (User user : userDao.getUsers().values()) {
             for (DashBoard dashBoard : user.profile.dashBoards) {
                 if (dashBoard.isActive) {
                     for (Widget widget : dashBoard.widgets) {
                         if (widget instanceof Timer) {
                             Timer timer = (Timer) widget;
-                            send(user, timer, curTime, dashBoard.id);
+                            send(user, timer, curSeconds, dashBoard.id);
                         }
                     }
                 }
@@ -71,18 +71,18 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    private void send(User user, Timer timer, long curTime, int dashId) {
-        if (sendMessageIfTicked(user, curTime, timer.startTime, timer.startValue, dashId)) {
+    private void send(User user, Timer timer, long curSeconds, int dashId) {
+        if (sendMessageIfTicked(user, curSeconds, timer.startTime, timer.startValue, dashId)) {
             timer.value = timer.startValue;
         }
-        if (sendMessageIfTicked(user, curTime, timer.stopTime, timer.stopValue, dashId)) {
+        if (sendMessageIfTicked(user, curSeconds, timer.stopTime, timer.stopValue, dashId)) {
             timer.value = timer.stopValue;
         }
     }
 
     //todo simplify, move "if" to separate method
-    private boolean sendMessageIfTicked(User user, long curTime, long time, String value, int dashId) {
-        if (time != -1 && value != null && !value.equals("") && curTime == time) {
+    private boolean sendMessageIfTicked(User user, long curSeconds, long time, String value, int dashId) {
+        if (time != -1 && value != null && !value.equals("") && curSeconds == time) {
             tickedTimers++;
             Session session = sessionDao.userSession.get(user);
             if (session != null) {
