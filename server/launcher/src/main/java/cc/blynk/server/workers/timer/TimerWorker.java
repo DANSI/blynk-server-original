@@ -48,7 +48,15 @@ public class TimerWorker implements Runnable {
         LocalTime localDateTime = LocalTime.now(UTC);
 
         long curTime = localDateTime.getSecond() + localDateTime.getMinute() * 60 + localDateTime.getHour() * 3600;
+        checkTimers(curTime);
 
+        //logging only events when timers ticked.
+        if (onlineTimers > 0) {
+            log.info("Timer finished. Processed {}/{} timers.", onlineTimers, tickedTimers);
+        }
+    }
+
+    protected void checkTimers(long curTime) {
         for (User user : userDao.getUsers().values()) {
             for (DashBoard dashBoard : user.profile.dashBoards) {
                 if (dashBoard.isActive) {
@@ -60,11 +68,6 @@ public class TimerWorker implements Runnable {
                     }
                 }
             }
-        }
-
-        //logging only events when timers ticked.
-        if (onlineTimers > 0) {
-            log.info("Timer finished. Processed {}/{} timers.", onlineTimers, tickedTimers);
         }
     }
 
