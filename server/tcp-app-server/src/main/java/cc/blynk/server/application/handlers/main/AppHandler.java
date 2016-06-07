@@ -9,6 +9,8 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.SaveDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.CreateWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.DeleteWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.UpdateWidgetLogic;
+import cc.blynk.server.application.handlers.main.logic.metadata.GetMetadataLogic;
+import cc.blynk.server.application.handlers.main.logic.metadata.SaveMetadataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.GetGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.GetShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.GetSharedDashLogic;
@@ -157,7 +159,12 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case ADD_ENERGY :
                 addEnergyLogic.messageReceived(ctx, state.user, msg);
                 break;
-
+            case SAVE_METADATA :
+                SaveMetadataLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case GET_METADATA :
+                GetMetadataLogic.messageReceived(ctx, state.user, msg);
+                break;
         }
     }
 

@@ -73,6 +73,11 @@ public class CommandParser {
             case "getenergy" :
                 return GET_ENERGY;
 
+            case "savemetadata" :
+                return SAVE_METADATA;
+            case "getmetadata" :
+                return GET_METADATA;
+
             //sharing section
             case "sharelogin" :
                 return SHARE_LOGIN;

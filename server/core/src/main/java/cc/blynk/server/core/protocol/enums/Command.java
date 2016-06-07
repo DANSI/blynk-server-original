@@ -56,6 +56,10 @@ public final class Command {
     //energy commands
     public static final short GET_ENERGY = 36;
     public static final short ADD_ENERGY = 37;
+
+    public static final short SAVE_METADATA = 38;
+    public static final short GET_METADATA = 39;
+
     //------------------------------------------
 
     //http codes. Used only for stats
@@ -111,6 +115,9 @@ public final class Command {
 
                 put(ADD_ENERGY, "AddEnergy");
                 put(GET_ENERGY, "GetEnergy");
+
+                put(SAVE_METADATA, "SaveMetadata");
+                put(GET_METADATA, "GetMetadata");
 
                 put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
                 put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");

@@ -94,6 +94,11 @@ public class MessageFactory {
             case ADD_ENERGY :
                 return new AddEnergy(messageId, body);
 
+            case SAVE_METADATA :
+                return new SaveMetadata(messageId, body);
+            case GET_METADATA :
+                return new GetMetadata(messageId, body);
+
             default: throw new UnsupportedCommandException(String.format("Command with code %d not supported message.", command), messageId);
         }
     }

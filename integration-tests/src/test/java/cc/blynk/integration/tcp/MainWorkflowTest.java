@@ -596,6 +596,18 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testProfileMetadata() throws Exception {
+        clientPair.appClient.send("saveMetadata {\"lat\":123.123,\"lon\":124.124}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("getMetadata");
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals("{\"lat\":123.123,\"lon\":124.124}", token);
+    }
+
+    @Test
     public void testApplicationPingCommandOk() throws Exception {
         clientPair.appClient.send("ping");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
