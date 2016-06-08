@@ -43,6 +43,9 @@ public class DashBoard {
 
     public HardwareInfo hardwareInfo;
 
+    //used only for business UI
+    public String token;
+
     public Map<String, Object> metadata = new HashMap<>();
 
     /**

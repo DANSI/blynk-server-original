@@ -31,6 +31,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                     return !value ? "(No Name)" : value;
                 }
             ),
+            nga.field('token'),
             nga.field('updatedAt', 'datetime'),
             nga.field('metadata', 'json')
         ])
@@ -98,6 +99,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             nga.field('name'),
             nga.field('createdAt'),
             nga.field('updatedAt'),
+            nga.field('token'),
             nga.field('theme', 'choice')
                 .choices([
                     {value: 'Blynk', label: 'Blynk'},
@@ -139,10 +141,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                             {value: 'Wildfire v3', label: 'Wildfire v3'},
                             {value: 'WiPy', label: 'WiPy'}
                         ]),
-            nga.field('metadata', 'json'),
-            nga.field('keepScreenOn', 'boolean'),
-            nga.field('isShared', 'boolean'),
-            nga.field('isActive', 'boolean')
+            nga.field('metadata', 'json')
         );
 
     // customize menu

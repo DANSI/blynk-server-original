@@ -43,7 +43,7 @@ public class BusinessLogic {
 
     @GET
     @Path("")
-    public Response getUsers(@Context User user,
+    public Response getProjects(@Context User user,
                              @QueryParam("_filters") String filterParam,
                              @QueryParam("_page") int page,
                              @QueryParam("_perPage") int size,
@@ -57,6 +57,10 @@ public class BusinessLogic {
 
         List<DashBoard> projects = Arrays.asList(user.profile.dashBoards);
 
+        for (DashBoard project : projects) {
+            project.token = userDao.tokenManager.getToken(user, project.id);
+        }
+
         return appendTotalCountHeader(
                 ok(sort(projects , sortField, sortOrder), page, size), projects.size()
         );
@@ -64,10 +68,11 @@ public class BusinessLogic {
 
     @GET
     @Path("/{projectId}")
-    public Response getUsers(@Context User user,
+    public Response getProject(@Context User user,
                              @PathParam("projectId") int projectId) {
 
         DashBoard project = user.profile.getDashById(projectId);
+        project.token = userDao.tokenManager.getToken(user, projectId);
 
         return ok(project);
     }
@@ -75,7 +80,7 @@ public class BusinessLogic {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("")
-    public Response createUser(@Context User user, DashBoard newProject) {
+    public Response createProject(@Context User user, DashBoard newProject) {
 
         log.debug("Creating project {}", newProject);
 
@@ -100,7 +105,7 @@ public class BusinessLogic {
 
     @DELETE
     @Path("/{projectId}")
-    public Response updateUser(@Context User user, @PathParam("projectId") int projectId) {
+    public Response deleteProject(@Context User user, @PathParam("projectId") int projectId) {
 
         log.debug("Deleting project {}", projectId);
 
@@ -116,7 +121,7 @@ public class BusinessLogic {
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{projectId}")
-    public Response updateUser(@Context User user,
+    public Response updateProject(@Context User user,
                                @PathParam("projectId") int projectId,
                                DashBoard updatedProject) {
 
