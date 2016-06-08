@@ -18,6 +18,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMMessage;
@@ -170,7 +171,7 @@ public class HttpAPILogic {
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
             pin = Byte.parseByte(pinString.substring(1));
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.error("Wrong pin format. {}", pinString);
             return Response.badRequest("Wrong pin format.");
         }
@@ -221,7 +222,7 @@ public class HttpAPILogic {
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
             pin = Byte.parseByte(pinString.substring(1));
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.error("Wrong pin format. {}", pinString);
             return Response.badRequest("Wrong pin format.");
         }
