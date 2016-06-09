@@ -40,19 +40,19 @@ public class TwitLogic extends NotificationBase {
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         if (message.body == null || message.body.equals("") || message.body.length() > MAX_TWITTER_BODY_SIZE) {
-            throw new NotificationBodyInvalidException(message.id);
+            throw new NotificationBodyInvalidException();
         }
 
-        DashBoard dash = state.user.profile.getDashById(state.dashId, message.id);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(state.dashId);
         Twitter twitterWidget = dash.getWidgetByType(Twitter.class);
 
         if (twitterWidget == null || !dash.isActive ||
                 twitterWidget.token == null || twitterWidget.token.equals("") ||
                 twitterWidget.secret == null || twitterWidget.secret.equals("")) {
-            throw new NotifNotAuthorizedException("User has no access token provided.", message.id);
+            throw new NotifNotAuthorizedException("User has no access token provided.");
         }
 
-        checkIfNotificationQuotaLimitIsNotReached(message.id);
+        checkIfNotificationQuotaLimitIsNotReached();
 
         log.trace("Sending Twit for user {}, with message : '{}'.", state.user.name, message.body);
         twit(ctx.channel(), state.user.name, twitterWidget.token, twitterWidget.secret, message.body, message.id);

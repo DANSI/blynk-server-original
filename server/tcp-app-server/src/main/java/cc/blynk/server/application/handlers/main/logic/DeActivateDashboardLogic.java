@@ -33,8 +33,8 @@ public class DeActivateDashboardLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         if (message.length > 0) {
             log.debug("DeActivating dash {} for user {}", message.body, user.name);
-            int dashId = ParseUtil.parseInt(message.body, message.id);
-            DashBoard dashBoard = user.profile.getDashById(dashId, message.id);
+            int dashId = ParseUtil.parseInt(message.body);
+            DashBoard dashBoard = user.profile.getDashByIdOrThrow(dashId);
             dashBoard.deactivate();
         } else {
             for (DashBoard dashBoard : user.profile.dashBoards) {

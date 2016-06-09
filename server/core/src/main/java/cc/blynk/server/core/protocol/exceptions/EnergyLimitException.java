@@ -9,8 +9,8 @@ import cc.blynk.server.core.protocol.enums.Response;
  */
 public class EnergyLimitException extends BaseServerException {
 
-    public EnergyLimitException(String message, int msgId) {
-        super(message, msgId, Response.ENERGY_LIMIT);
+    public EnergyLimitException(String message) {
+        super(message, Response.ENERGY_LIMIT);
     }
 
 }

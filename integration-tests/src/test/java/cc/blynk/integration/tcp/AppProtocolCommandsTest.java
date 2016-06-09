@@ -104,7 +104,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     public void testRefreshToken() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        Profile profile = JsonParser.parseProfile(readTestUserProfile(), 1);
+        Profile profile = JsonParser.parseProfile(readTestUserProfile());
 
         makeCommands("login dmitriy@mail.ua 1", "addEnergy 5000" + "\0" + "123", "createDash " + profile.dashBoards[0]).check(3, OK);
 
@@ -120,7 +120,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     public void testProfileWithManyDashes() throws Exception {
         makeCommands("register dmitriy@mail.ua 1", "login dmitriy@mail.ua 1", "addEnergy 5000").check(3, OK);
 
-        Profile profile = JsonParser.parseProfile(readTestUserProfile("user_profile_json_many_dashes.txt"), 1);
+        Profile profile = JsonParser.parseProfile(readTestUserProfile("user_profile_json_many_dashes.txt"));
 
         String[] cmds = new String[profile.dashBoards.length + 1];
         cmds[0] = "login dmitriy@mail.ua 1";
@@ -160,7 +160,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testActivateWrongDashId() throws Exception {
-        Profile profile = JsonParser.parseProfile(readTestUserProfile(), 1);
+        Profile profile = JsonParser.parseProfile(readTestUserProfile());
 
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
@@ -169,7 +169,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testActivateBadId() throws Exception {
-        Profile profile = JsonParser.parseProfile(readTestUserProfile(), 1);
+        Profile profile = JsonParser.parseProfile(readTestUserProfile());
 
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 

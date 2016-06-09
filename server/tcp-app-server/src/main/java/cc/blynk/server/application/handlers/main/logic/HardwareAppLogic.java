@@ -15,8 +15,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Command.SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.*;
 
 /**
  * Responsible for handling incoming hardware commands from applications and forwarding it to
@@ -41,9 +40,9 @@ public class HardwareAppLogic {
         Session session = sessionDao.userSession.get(state.user);
 
         String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING, 2);
-        int dashId = ParseUtil.parseInt(split[0], message.id);
+        int dashId = ParseUtil.parseInt(split[0]);
 
-        DashBoard dash = state.user.profile.getDashById(dashId, message.id);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         //if no active dashboard - do nothing. this could happen only in case of app. bug
         if (!dash.isActive) {
@@ -61,7 +60,7 @@ public class HardwareAppLogic {
                 session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1]);
                 break;
             case 'w' :
-                dash.update(split[1], message.id);
+                dash.update(split[1]);
 
                 //if dash was shared. check for shared channels
                 if (state.user.dashShareTokens != null) {
@@ -71,9 +70,9 @@ public class HardwareAppLogic {
                 session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1]);
                 break;
             case 'r' :
-                Widget widget = dash.findWidgetByPin(split[1].split(StringUtils.BODY_SEPARATOR_STRING), message.id);
+                Widget widget = dash.findWidgetByPin(split[1].split(StringUtils.BODY_SEPARATOR_STRING));
                 if (widget == null) {
-                    throw new IllegalCommandBodyException("No widget for read command.", message.id);
+                    throw new IllegalCommandBodyException("No widget for read command.");
                 }
 
                 if (widget instanceof FrequencyWidget) {

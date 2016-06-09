@@ -46,16 +46,16 @@ public class GetGraphDataLogic {
         String[] messageParts = message.body.split(" |\0");
 
         if (messageParts.length < 3) {
-            throw new IllegalCommandException("Wrong income message format.", message.id);
+            throw new IllegalCommandException("Wrong income message format.");
         }
 
         //special case for delete command
         if (messageParts.length == 4) {
-            deleteGraphData(messageParts, user.name, message.id);
+            deleteGraphData(messageParts, user.name);
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
-            int dashId = ParseUtil.parseInt(messageParts[0], message.id);
-            user.profile.validateDashId(dashId, message.id);
+            int dashId = ParseUtil.parseInt(messageParts[0]);
+            user.profile.validateDashId(dashId);
             process(ctx.channel(), dashId, Arrays.copyOfRange(messageParts, 1, messageParts.length), user, message.id, 4);
         }
     }
@@ -66,7 +66,7 @@ public class GetGraphDataLogic {
         GraphPinRequest[] requestedPins = new GraphPinRequestData[numberOfPins];
 
         for (int i = 0; i < numberOfPins; i++) {
-            requestedPins[i] = new GraphPinRequestData(dashId, messageParts, i, msgId, valuesPerPin);
+            requestedPins[i] = new GraphPinRequestData(dashId, messageParts, i, valuesPerPin);
         }
 
         readGraphData(channel, user.name, requestedPins, msgId);
@@ -75,7 +75,7 @@ public class GetGraphDataLogic {
     private void readGraphData(Channel channel, String username, GraphPinRequest[] requestedPins, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
-                byte[][] data = reportingDao.getAllFromDisk(username, requestedPins, msgId);
+                byte[][] data = reportingDao.getAllFromDisk(username, requestedPins);
                 byte[] compressed = compress(requestedPins[0].dashId, data);
 
                 channel.writeAndFlush(makeBinaryMessage(GET_GRAPH_DATA_RESPONSE, msgId, compressed), channel.voidPromise());
@@ -88,18 +88,18 @@ public class GetGraphDataLogic {
         });
     }
 
-    private void deleteGraphData(String[] messageParts, String username, int msgId) {
+    private void deleteGraphData(String[] messageParts, String username) {
         try {
             int dashBoardId = Integer.parseInt(messageParts[0]);
             PinType pinType = PinType.getPinType(messageParts[1].charAt(0));
             byte pin = Byte.parseByte(messageParts[2]);
             String cmd = messageParts[3];
             if (!"del".equals(cmd)) {
-                throw new IllegalCommandBodyException("Wrong body format. Expecting 'del'.", msgId);
+                throw new IllegalCommandBodyException("Wrong body format. Expecting 'del'.");
             }
             reportingDao.delete(username, dashBoardId, pinType, pin);
         } catch (NumberFormatException e) {
-            throw new IllegalCommandException("HardwareLogic command body incorrect.", msgId);
+            throw new IllegalCommandException("HardwareLogic command body incorrect.");
         }
     }
 

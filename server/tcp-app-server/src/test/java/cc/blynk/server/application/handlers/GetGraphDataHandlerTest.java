@@ -63,7 +63,7 @@ public class GetGraphDataHandlerTest {
         byte[][] data = new byte[1][];
         data[0] = bb.array();
 
-        byte[] compressedData = ByteUtils.compress(data, 1);
+        byte[] compressedData = ByteUtils.compress(data);
         System.out.println("Size after compression : " + compressedData.length + ". Compress rate " + ((double) dataLength / compressedData.length));
         assertNotNull(compressedData);
         ByteBuffer result = ByteBuffer.wrap(decompress(compressedData));

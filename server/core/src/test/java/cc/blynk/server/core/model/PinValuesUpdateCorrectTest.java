@@ -32,13 +32,13 @@ public class PinValuesUpdateCorrectTest {
         assertEquals(PinType.DIGITAL, button.pinType);
         assertEquals("1", button.value);
 
-        dash.update("dw 1 0".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), 0);
+        dash.update("dw 1 0".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
         assertEquals("0", button.value);
 
-        dash.update("aw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), 0);
+        dash.update("aw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
         assertEquals("0", button.value);
 
-        dash.update("dw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), 0);
+        dash.update("dw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
         assertEquals("1", button.value);
 
         RGB rgb = new RGB();
@@ -56,9 +56,9 @@ public class PinValuesUpdateCorrectTest {
 
         dash.widgets = ArrayUtils.add(dash.widgets, rgb);
 
-        dash.update("vw 0 100".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), 0);
-        dash.update("vw 1 101".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), 0);
-        dash.update("vw 2 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), 0);
+        dash.update("vw 0 100".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        dash.update("vw 1 101".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        dash.update("vw 2 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
 
         for (int i = 0; i < rgb.pins.length; i++) {
             assertEquals("10" + i, rgb.pins[i].value);
@@ -78,7 +78,7 @@ public class PinValuesUpdateCorrectTest {
 
         dash.widgets = ArrayUtils.add(dash.widgets, rgb);
 
-        dash.update("vw 4 100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), 0);
+        dash.update("vw 4 100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
 
         assertEquals("100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), rgb.pins[0].value);
     }

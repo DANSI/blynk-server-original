@@ -9,8 +9,8 @@ import cc.blynk.server.core.protocol.enums.Response;
  */
 public class NotificationBodyInvalidException extends BaseServerException {
 
-    public NotificationBodyInvalidException(int msgId) {
-        super("Notification message is empty or larger than limit.", msgId, Response.NOTIFICATION_INVALID_BODY_EXCEPTION);
+    public NotificationBodyInvalidException() {
+        super("Notification message is empty or larger than limit.", Response.NOTIFICATION_INVALID_BODY_EXCEPTION);
     }
 
 }

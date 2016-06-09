@@ -34,23 +34,23 @@ public class SaveDashLogic {
         String dashString = message.body;
 
         if (dashString == null || dashString.equals("")) {
-            throw new IllegalCommandException("Income create dash message is empty.", message.id);
+            throw new IllegalCommandException("Income create dash message is empty.");
         }
 
         if (dashString.length() > DASH_MAX_SIZE) {
-            throw new NotAllowedException("User dashboard is larger then limit.", message.id);
+            throw new NotAllowedException("User dashboard is larger then limit.");
         }
 
         log.debug("Trying to parse user dash : {}", dashString);
-        DashBoard updatedDash = JsonParser.parseDashboard(dashString, message.id);
+        DashBoard updatedDash = JsonParser.parseDashboard(dashString);
 
         if (updatedDash == null) {
-            throw new IllegalCommandException("Project parsing error.", message.id);
+            throw new IllegalCommandException("Project parsing error.");
         }
 
         log.debug("Saving dashboard.");
 
-        int index = user.profile.getDashIndex(updatedDash.id, message.id);
+        int index = user.profile.getDashIndex(updatedDash.id);
         //do not accept isActive field from "saveDash" command
         updatedDash.isActive = user.profile.dashBoards[index].isActive;
 

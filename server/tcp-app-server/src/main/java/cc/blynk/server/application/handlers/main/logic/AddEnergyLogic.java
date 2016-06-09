@@ -35,11 +35,11 @@ public class AddEnergyLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] bodyParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING, 2);
 
-        int energyAmountToAdd = ParseUtil.parseInt(bodyParts[0], message.id);
+        int energyAmountToAdd = ParseUtil.parseInt(bodyParts[0]);
         if (bodyParts.length == 2 && isValidTransactionId(bodyParts[1])) {
             insertPurchase(user.name, energyAmountToAdd, bodyParts[1]);
         } else {
-            throw new NotAllowedException("Purchase with invalid transaction id. User " + user.name, message.id);
+            throw new NotAllowedException("Purchase with invalid transaction id. User " + user.name);
         }
 
         user.purchaseEnergy(energyAmountToAdd);

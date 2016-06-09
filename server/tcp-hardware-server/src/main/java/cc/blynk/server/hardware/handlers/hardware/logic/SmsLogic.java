@@ -42,18 +42,18 @@ public class SmsLogic extends NotificationBase {
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         if (message.body == null || message.body.equals("") || message.body.length() > MAX_SMS_BODY_SIZE) {
-            throw new NotificationBodyInvalidException(message.id);
+            throw new NotificationBodyInvalidException();
         }
 
-        DashBoard dash = state.user.profile.getDashById(state.dashId, message.id);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(state.dashId);
         SMS smsWidget = dash.getWidgetByType(SMS.class);
 
         if (smsWidget == null || !dash.isActive ||
                 smsWidget.to == null || smsWidget.to.equals("")) {
-            throw new NotifNotAuthorizedException("User has no access phone number provided.", message.id);
+            throw new NotifNotAuthorizedException("User has no access phone number provided.");
         }
 
-        checkIfNotificationQuotaLimitIsNotReached(message.id);
+        checkIfNotificationQuotaLimitIsNotReached();
 
         log.trace("Sending sms for user {}, with message : '{}'.", state.user.name, message.body);
         sms(ctx.channel(), state.user.name, smsWidget.to, message.body, message.id);

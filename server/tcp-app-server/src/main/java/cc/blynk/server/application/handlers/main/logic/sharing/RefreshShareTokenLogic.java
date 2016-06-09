@@ -39,10 +39,10 @@ public class RefreshShareTokenLogic {
         try {
             dashId = Integer.parseInt(dashBoardIdString);
         } catch (NumberFormatException ex) {
-            throw new NotAllowedException(String.format("Dash board id '%s' not valid.", dashBoardIdString), message.id);
+            throw new NotAllowedException(String.format("Dash board id '%s' not valid.", dashBoardIdString));
         }
 
-        user.profile.validateDashId(dashId, message.id);
+        user.profile.validateDashId(dashId);
 
         String token = userDao.sharedTokenManager.refreshToken(user, dashId, user.dashShareTokens);
 

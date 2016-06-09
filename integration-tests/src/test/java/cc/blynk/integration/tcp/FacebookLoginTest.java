@@ -78,7 +78,7 @@ public class FacebookLoginTest extends IntegrationBase {
         appClient.send("loadProfileGzipped");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), any());
 
-        Profile profile = JsonParser.parseProfile(appClient.getBody(), 1);
+        Profile profile = JsonParser.parseProfile(appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         assertEquals(expected, profile.toString());
     }
@@ -96,7 +96,7 @@ public class FacebookLoginTest extends IntegrationBase {
         hardClient.start();
 
         String userProfileString = readTestUserProfile(null);
-        Profile profile = JsonParser.parseProfile(userProfileString, 1);
+        Profile profile = JsonParser.parseProfile(userProfileString);
 
         int expectedSyncCommandsCount = 0;
         for (Widget widget : profile.dashBoards[0].widgets) {

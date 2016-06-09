@@ -18,7 +18,7 @@ public class RTCSerializationTest {
     @Test
     public void testDeSerializationIsCorrect() {
         String widgetString = "{\"id\":1, \"x\":1, \"y\":1, \"type\":\"RTC\", \"timezone\":\"+03:00\"}";
-        Widget widget = JsonParser.parseWidget(widgetString, 1);
+        Widget widget = JsonParser.parseWidget(widgetString);
 
         assertNotNull(widget);
 
@@ -30,7 +30,7 @@ public class RTCSerializationTest {
     @Test
     public void testDeSerializationIsCorrectForNull() {
         String widgetString = "{\"id\":1, \"x\":1, \"y\":1, \"type\":\"RTC\"}";
-        Widget widget = JsonParser.parseWidget(widgetString, 1);
+        Widget widget = JsonParser.parseWidget(widgetString);
 
         assertNotNull(widget);
 

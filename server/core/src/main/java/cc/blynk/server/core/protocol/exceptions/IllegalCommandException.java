@@ -9,8 +9,8 @@ import cc.blynk.server.core.protocol.enums.Response;
  */
 public class IllegalCommandException extends BaseServerException {
 
-    public IllegalCommandException(String message, int msgId) {
-        super(message, msgId, Response.ILLEGAL_COMMAND);
+    public IllegalCommandException(String message) {
+        super(message, Response.ILLEGAL_COMMAND);
     }
 
 }

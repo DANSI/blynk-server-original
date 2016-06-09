@@ -88,14 +88,14 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         String dashboard = clientPair2.appClient.getBody();
 
         assertNotNull(dashboard);
-        Profile profile = JsonParser.parseProfile(readTestUserProfile(), 1);
+        Profile profile = JsonParser.parseProfile(readTestUserProfile());
         Twitter twitter = profile.dashBoards[0].getWidgetByType(Twitter.class);
         twitter.cleanPrivateData();
         Notification notification = profile.dashBoards[0].getWidgetByType(Notification.class);
         notification.cleanPrivateData();
 
         //one field update, cause it is hard to compare.
-        DashBoard temp = JsonParser.parseDashboard(dashboard, 1);
+        DashBoard temp = JsonParser.parseDashboard(dashboard);
         profile.dashBoards[0].updatedAt = temp.updatedAt;
 
 
@@ -220,7 +220,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         String profileString = clientPair.appClient.getBody();
         assertNotNull(profileString);
-        Profile profile = JsonParser.parseProfile(profileString, 0);
+        Profile profile = JsonParser.parseProfile(profileString);
 
         OnePinWidget tmp = getWidgetByPin(profile, 3);
 
@@ -236,7 +236,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         profileString = clientPair.appClient.getBody();
         assertNotNull(profileString);
-        profile = JsonParser.parseProfile(profileString, 0);
+        profile = JsonParser.parseProfile(profileString);
 
         tmp = getWidgetByPin(profile, 3);
 
@@ -251,7 +251,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         profileString = clientPair.appClient.getBody();
         assertNotNull(profileString);
-        profile = JsonParser.parseProfile(profileString, 0);
+        profile = JsonParser.parseProfile(profileString);
 
         tmp = getWidgetByPin(profile, 3);
 
@@ -306,7 +306,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         String profileString = clientPair.appClient.getBody();
         assertNotNull(profileString);
-        Profile profile = JsonParser.parseProfile(profileString, 0);
+        Profile profile = JsonParser.parseProfile(profileString);
 
         OnePinWidget tmp = getWidgetByPin(profile, 3);
 
@@ -453,14 +453,14 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         dashboard = clientPair.appClient.getBody();
 
         assertNotNull(dashboard);
-        Profile profile = JsonParser.parseProfile(readTestUserProfile(), 1);
+        Profile profile = JsonParser.parseProfile(readTestUserProfile());
         Twitter twitter = profile.dashBoards[0].getWidgetByType(Twitter.class);
         twitter.cleanPrivateData();
         Notification notification = profile.dashBoards[0].getWidgetByType(Notification.class);
         notification.cleanPrivateData();
 
         //one field update, cause it is hard to compare.
-        DashBoard temp = JsonParser.parseDashboard(dashboard, 1);
+        DashBoard temp = JsonParser.parseDashboard(dashboard);
         profile.dashBoards[0].updatedAt = temp.updatedAt;
 
         assertEquals(profile.dashBoards[0].toString(), dashboard);

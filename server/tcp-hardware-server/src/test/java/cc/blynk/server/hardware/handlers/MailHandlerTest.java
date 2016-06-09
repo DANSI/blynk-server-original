@@ -70,7 +70,7 @@ public class MailHandlerTest {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body");
 
         user.profile = profile;
-        when(profile.getDashById(1, 1)).thenReturn(dashBoard);
+        when(profile.getDashByIdOrThrow(1)).thenReturn(dashBoard);
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(null);
 
         HardwareStateHolder state = new HardwareStateHolder(1, user, "x");
@@ -82,7 +82,7 @@ public class MailHandlerTest {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "".replaceAll(" ", "\0"));
 
         user.profile = profile;
-        when(profile.getDashById(1, 1)).thenReturn(dashBoard);
+        when(profile.getDashByIdOrThrow(1)).thenReturn(dashBoard);
         Mail mail = new Mail();
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(mail);
         dashBoard.isActive = true;
@@ -96,7 +96,7 @@ public class MailHandlerTest {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body".replaceAll(" ", "\0"));
 
         user.profile = profile;
-        when(profile.getDashById(1, 1)).thenReturn(dashBoard);
+        when(profile.getDashByIdOrThrow(1)).thenReturn(dashBoard);
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(new Mail());
         dashBoard.isActive = true;
 

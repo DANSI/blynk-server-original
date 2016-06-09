@@ -91,7 +91,7 @@ public abstract class IntegrationBase extends BaseTest {
         hardClient.start();
 
         String userProfileString = readTestUserProfile(jsonProfile);
-        Profile profile = JsonParser.parseProfile(userProfileString, 1);
+        Profile profile = JsonParser.parseProfile(userProfileString);
 
         int expectedSyncCommandsCount = 0;
         for (Widget widget : profile.dashBoards[0].widgets) {

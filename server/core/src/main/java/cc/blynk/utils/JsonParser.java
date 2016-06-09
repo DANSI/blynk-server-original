@@ -105,30 +105,30 @@ public final class JsonParser {
         return userReader.readValue(userString);
     }
 
-    public static DashBoard parseDashboard(String reader, int id) {
+    public static DashBoard parseDashboard(String reader) {
         try {
             return dashboardReader.readValue(reader);
         } catch (IOException e) {
             log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing dashboard.", id);
+            throw new IllegalCommandBodyException("Error parsing dashboard.");
         }
     }
 
-    public static Profile parseProfile(String reader, int id) {
+    public static Profile parseProfile(String reader) {
         try {
             return profileReader.readValue(reader);
         } catch (IOException e) {
             log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing user profile.", id);
+            throw new IllegalCommandBodyException("Error parsing user profile.");
         }
     }
 
-    public static Widget parseWidget(String reader, int id) {
+    public static Widget parseWidget(String reader) {
         try {
             return widgetReader.readValue(reader);
         } catch (IOException e) {
             log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing widget.", id);
+            throw new IllegalCommandBodyException("Error parsing widget.");
         }
     }
 
@@ -138,7 +138,7 @@ public final class JsonParser {
             return profileReader.readValue(reader);
         } catch (IOException e) {
             log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing user profile.", 1);
+            throw new IllegalCommandBodyException("Error parsing user profile.");
         }
     }
 

@@ -87,9 +87,4 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        handleGeneralException(ctx, cause);
-    }
-
 }

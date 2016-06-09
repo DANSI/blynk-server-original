@@ -26,9 +26,9 @@ public class RefreshTokenLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String dashBoardIdString = message.body;
 
-        int dashId = ParseUtil.parseInt(dashBoardIdString, message.id);
+        int dashId = ParseUtil.parseInt(dashBoardIdString);
 
-        user.profile.validateDashId(dashId, message.id);
+        user.profile.validateDashId(dashId);
 
         String token = userDao.tokenManager.refreshToken(user, dashId, user.dashTokens);
 

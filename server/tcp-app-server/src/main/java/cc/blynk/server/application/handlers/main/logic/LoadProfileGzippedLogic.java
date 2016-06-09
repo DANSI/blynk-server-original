@@ -31,8 +31,8 @@ public class LoadProfileGzippedLogic {
             body = user.profile.toString();
         } else {
             //load specific by id
-            int dashId = ParseUtil.parseInt(message.body, message.id);
-            body = user.profile.getDashById(dashId, message.id).toString();
+            int dashId = ParseUtil.parseInt(message.body);
+            body = user.profile.getDashByIdOrThrow(dashId).toString();
         }
 
         try {

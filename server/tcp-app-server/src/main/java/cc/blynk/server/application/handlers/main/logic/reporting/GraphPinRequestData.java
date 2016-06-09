@@ -12,7 +12,7 @@ import cc.blynk.server.core.reporting.GraphPinRequest;
  */
 public class GraphPinRequestData extends GraphPinRequest {
 
-    public GraphPinRequestData(int dashId, String[] messageParts, final int pinIndex, int msgId, int valuesPerPin) {
+    public GraphPinRequestData(int dashId, String[] messageParts, final int pinIndex, int valuesPerPin) {
         try {
             this.dashId = dashId;
             pinType = PinType.getPinType(messageParts[pinIndex * valuesPerPin].charAt(0));
@@ -20,7 +20,7 @@ public class GraphPinRequestData extends GraphPinRequest {
             count = Integer.parseInt(messageParts[pinIndex * valuesPerPin + 2]);
             type = GraphType.getPeriodByType(messageParts[pinIndex * valuesPerPin + 3].charAt(0));
         } catch (NumberFormatException e) {
-            throw new IllegalCommandException("HardwareLogic command body incorrect.", msgId);
+            throw new IllegalCommandException("HardwareLogic command body incorrect.");
         }
     }
 }

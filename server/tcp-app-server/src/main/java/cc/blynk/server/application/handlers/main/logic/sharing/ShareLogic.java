@@ -31,8 +31,8 @@ public class ShareLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] splitted = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
-        int dashId = ParseUtil.parseInt(splitted[0], message.id);
-        DashBoard dash = user.profile.getDashById(dashId, message.id);
+        int dashId = ParseUtil.parseInt(splitted[0]);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         switch (splitted[1]) {
             case "on" :
@@ -42,7 +42,7 @@ public class ShareLogic {
                 dash.isShared = false;
                 break;
             default:
-                throw new IllegalCommandBodyException("Wrong share command body", message.id);
+                throw new IllegalCommandBodyException("Wrong share command body");
         }
 
         Session session = sessionDao.userSession.get(user);

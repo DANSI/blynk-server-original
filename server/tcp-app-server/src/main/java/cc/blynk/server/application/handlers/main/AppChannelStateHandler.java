@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.auth.Session;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.timeout.ReadTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,13 +41,4 @@ public class AppChannelStateHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        if (cause instanceof ReadTimeoutException) {
-            //channel is already closed here by ReadTimeoutHandler
-            log.trace("Application timeout disconnect.");
-        } else {
-            super.exceptionCaught(ctx, cause);
-        }
-    }
 }

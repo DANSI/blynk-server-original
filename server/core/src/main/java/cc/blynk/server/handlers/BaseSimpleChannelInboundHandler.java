@@ -42,13 +42,13 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
             final I typedMsg = (I) msg;
             try {
                 if (quotaMeter.getOneMinuteRate() > USER_QUOTA_LIMIT) {
-                    sendErrorResponseIfTicked(typedMsg.id);
+                    sendErrorResponseIfTicked();
                     return;
                 }
                 quotaMeter.mark();
                 messageReceived(ctx, typedMsg);
             } catch (Exception e) {
-                handleGeneralException(ctx, e);
+                handleGeneralException(ctx, e, typedMsg.id);
             } finally {
                 ThreadContext.clearMap();
                 ReferenceCountUtil.release(msg);
@@ -56,12 +56,12 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
         }
     }
 
-    private void sendErrorResponseIfTicked(int msgId) {
+    private void sendErrorResponseIfTicked() {
         long now = System.currentTimeMillis();
         //once a minute sending user response message in case limit is exceeded constantly
         if (lastQuotaExceededTime + USER_QUOTA_LIMIT_WARN_PERIOD < now) {
             lastQuotaExceededTime = now;
-            throw new QuotaLimitException("User has exceeded message quota limit.", msgId);
+            throw new QuotaLimitException("User has exceeded message quota limit.");
         }
     }
 

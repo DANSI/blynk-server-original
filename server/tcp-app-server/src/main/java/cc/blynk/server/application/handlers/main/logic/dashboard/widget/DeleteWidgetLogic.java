@@ -31,23 +31,23 @@ public class DeleteWidgetLogic {
         String[] split = message.body.split(BODY_SEPARATOR_STRING, 2);
 
         if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.", message.id);
+            throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0], message.id) ;
-        long widgetId = ParseUtil.parseLong(split[1], message.id);
+        int dashId = ParseUtil.parseInt(split[0]) ;
+        long widgetId = ParseUtil.parseLong(split[1]);
 
-        DashBoard dash = user.profile.getDashById(dashId, message.id);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         log.debug("Removing widget with id {}.", widgetId);
 
-        int existingWidgetIndex = dash.getWidgetIndex(widgetId, message.id);
+        int existingWidgetIndex = dash.getWidgetIndex(widgetId);
         Widget widgetToDelete = dash.widgets[existingWidgetIndex];
         if (widgetToDelete instanceof Tabs) {
             deleteTabs(user, dash, 0);
         }
 
-        existingWidgetIndex = dash.getWidgetIndex(widgetId, message.id);
+        existingWidgetIndex = dash.getWidgetIndex(widgetId);
         deleteWidget(user, dash, existingWidgetIndex);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

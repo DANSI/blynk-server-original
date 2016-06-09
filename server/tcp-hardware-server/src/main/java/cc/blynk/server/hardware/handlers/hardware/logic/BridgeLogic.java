@@ -46,7 +46,7 @@ public class BridgeLogic {
         String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (split.length < 3) {
-            throw new IllegalCommandException("Wrong bridge body.", message.id);
+            throw new IllegalCommandException("Wrong bridge body.");
         }
 
         if (isInit(split[1])) {
@@ -61,7 +61,7 @@ public class BridgeLogic {
             final String token = sendToMap.get(pin);
 
             if (sendToMap.size() == 0 || token == null) {
-                throw new NotAllowedException("Bridge not initialized.", message.id);
+                throw new NotAllowedException("Bridge not initialized.");
             }
 
             if (session.getHardwareChannels().size() > 1) {

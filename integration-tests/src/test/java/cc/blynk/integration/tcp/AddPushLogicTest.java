@@ -83,7 +83,7 @@ public class AddPushLogicTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
 
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         assertNotNull(notification);
@@ -102,7 +102,7 @@ public class AddPushLogicTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
 
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         assertNotNull(notification);
@@ -128,7 +128,7 @@ public class AddPushLogicTest extends IntegrationBase {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(appClient.getBody(), 1);
+        Profile profile = JsonParser.parseProfile(appClient.getBody());
 
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         assertNotNull(notification);

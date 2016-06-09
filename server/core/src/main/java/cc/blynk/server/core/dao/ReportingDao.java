@@ -113,7 +113,7 @@ public class ReportingDao {
         averageAggregator.collect(username, dashId, pinType, pin, ts, body);
     }
 
-    public byte[][] getAllFromDisk(String username, GraphPinRequest[] requestedPins, int msgId) {
+    public byte[][] getAllFromDisk(String username, GraphPinRequest[] requestedPins) {
         byte[][] values = new byte[requestedPins.length][];
 
         for (int i = 0; i < requestedPins.length; i++) {
@@ -124,7 +124,7 @@ public class ReportingDao {
 
 
         if (checkNoData(values)) {
-            throw new NoDataException(msgId);
+            throw new NoDataException();
         }
 
         return values;

@@ -35,10 +35,10 @@ public class ActivateDashboardLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String dashBoardIdString = message.body;
 
-        int dashId = ParseUtil.parseInt(dashBoardIdString, message.id);
+        int dashId = ParseUtil.parseInt(dashBoardIdString);
 
         log.debug("Activating dash {} for user {}", dashBoardIdString, user.name);
-        DashBoard dash = user.profile.getDashById(dashId, message.id);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         dash.activate();
         user.lastModifiedTs = System.currentTimeMillis();
 

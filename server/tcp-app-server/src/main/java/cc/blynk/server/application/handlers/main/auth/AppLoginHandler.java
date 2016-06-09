@@ -6,14 +6,12 @@ import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.UserNotAuthenticated;
-import cc.blynk.server.core.protocol.exceptions.UserNotRegistered;
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import io.netty.channel.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.NoSuchElementException;
 
@@ -31,7 +29,9 @@ import static cc.blynk.utils.ByteBufUtil.*;
  *
  */
 @ChannelHandler.Sharable
-public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler, DefaultReregisterHandler {
+public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultReregisterHandler {
+
+    private static final Logger log = LogManager.getLogger(AppLoginHandler.class);
 
     private final Holder holder;
     private final FacebookLoginCheck facebookLoginCheck;
@@ -57,7 +57,9 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         String[] messageParts = message.body.split("\0");
 
         if (messageParts.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.", message.id);
+            log.error("Wrong income message format.");
+            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+            return;
         }
 
         final String username = messageParts[0].toLowerCase();
@@ -96,22 +98,28 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         });
     }
 
-    private void blynkLogin(ChannelHandlerContext ctx, int messageId, String username, String pass, OsType osType, String version, String appName) {
+    private void blynkLogin(ChannelHandlerContext ctx, int msgId, String username, String pass, OsType osType, String version, String appName) {
         User user = holder.userDao.getByName(username, appName);
 
         if (user == null) {
-            throw new UserNotRegistered(String.format("User not registered. Username '%s', %s", username, ctx.channel().remoteAddress()), messageId);
+            log.error("User not registered. Username '{}', {}", username, ctx.channel().remoteAddress());
+            ctx.writeAndFlush(makeResponse(msgId, USER_NOT_REGISTERED), ctx.voidPromise());
+            return;
         }
 
         if (user.pass == null) {
-            throw new UserNotAuthenticated(String.format("Facebook user tries to login with pass. Username '%s', %s", username, ctx.channel().remoteAddress()), messageId);
+            log.error("Facebook user tries to login with pass. Username '{}', {}", username, ctx.channel().remoteAddress());
+            ctx.writeAndFlush(makeResponse(msgId, USER_NOT_AUTHENTICATED), ctx.voidPromise());
+            return;
         }
 
         if (!user.pass.equals(pass)) {
-            throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", username, ctx.channel().remoteAddress()), messageId);
+            log.error("User credentials are wrong. Username '{}', {}", username, ctx.channel().remoteAddress());
+            ctx.writeAndFlush(makeResponse(msgId, USER_NOT_AUTHENTICATED), ctx.voidPromise());
+            return;
         }
 
-        login(ctx, messageId, user, osType, version);
+        login(ctx, msgId, user, osType, version);
     }
 
     private void login(ChannelHandlerContext ctx, int messageId, User user, OsType osType, String version) {
@@ -146,8 +154,4 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         log.info("{} app joined.", user.name);
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        handleGeneralException(ctx, cause);
-    }
 }

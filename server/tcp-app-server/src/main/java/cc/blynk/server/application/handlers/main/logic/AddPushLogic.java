@@ -22,16 +22,16 @@ public class AddPushLogic {
     public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String[] data = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
-        int dashId = ParseUtil.parseInt(data[0], message.id);
+        int dashId = ParseUtil.parseInt(data[0]);
         String uid = data[1];
         String token = data[2];
 
-        DashBoard dash = state.user.profile.getDashById(dashId, message.id);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         Notification notification = dash.getWidgetByType(Notification.class);
 
         if (notification == null) {
-            throw new NotAllowedException("No notification widget.", message.id);
+            throw new NotAllowedException("No notification widget.");
         }
 
         switch (state.osType) {

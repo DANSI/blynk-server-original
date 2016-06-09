@@ -10,8 +10,8 @@ import cc.blynk.server.core.protocol.exceptions.BaseServerException;
  */
 public class NotifNotAuthorizedException extends BaseServerException {
 
-    public NotifNotAuthorizedException(String message, int msgId) {
-        super(message, msgId, Response.NOTIFICATION_NOT_AUTHORIZED_EXCEPTION);
+    public NotifNotAuthorizedException(String message) {
+        super(message, Response.NOTIFICATION_NOT_AUTHORIZED_EXCEPTION);
     }
 
 }

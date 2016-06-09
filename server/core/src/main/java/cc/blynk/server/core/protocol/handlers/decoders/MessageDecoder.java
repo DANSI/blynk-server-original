@@ -64,8 +64,4 @@ public class MessageDecoder extends ByteToMessageDecoder implements DefaultExcep
         out.add(message);
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        handleGeneralException(ctx, cause);
-    }
 }

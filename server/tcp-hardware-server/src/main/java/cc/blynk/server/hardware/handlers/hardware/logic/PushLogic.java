@@ -45,10 +45,10 @@ public class PushLogic extends NotificationBase {
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         if (Notification.isWrongBody(message.body)) {
-            throw new NotificationBodyInvalidException(message.id);
+            throw new NotificationBodyInvalidException();
         }
 
-        DashBoard dash = state.user.profile.getDashById(state.dashId, message.id);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(state.dashId);
 
         if (!dash.isActive) {
             log.debug("No active dashboard.");
@@ -59,10 +59,10 @@ public class PushLogic extends NotificationBase {
         Notification widget = dash.getWidgetByType(Notification.class);
 
         if (widget == null || widget.hasNoToken()) {
-            throw new NotifNotAuthorizedException("User has no access token provided.", message.id);
+            throw new NotifNotAuthorizedException("User has no access token provided.");
         }
 
-        checkIfNotificationQuotaLimitIsNotReached(message.id);
+        checkIfNotificationQuotaLimitIsNotReached();
 
         log.trace("Sending push for user {}, with message : '{}'.", state.user.name, message.body);
         push(ctx.channel(), state.user.name, widget, message.body, state.dashId, message.id);

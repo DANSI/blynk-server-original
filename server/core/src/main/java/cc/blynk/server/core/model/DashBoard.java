@@ -72,13 +72,13 @@ public class DashBoard {
                 .append(pinMode);
     }
 
-    public void update(String body, int msgId) {
-        update(body.split(StringUtils.BODY_SEPARATOR_STRING, 3), msgId);
+    public void update(String body) {
+        update(body.split(StringUtils.BODY_SEPARATOR_STRING, 3));
     }
 
-    public void update(String[] splitted, int msgId) {
+    public void update(String[] splitted) {
         final PinType type = PinType.getPinType(splitted[0].charAt(0));
-        final byte pin = ParseUtil.parseByte(splitted[1], msgId);
+        final byte pin = ParseUtil.parseByte(splitted[1]);
         update(pin, type, splitted[2]);
     }
 
@@ -101,9 +101,9 @@ public class DashBoard {
         updatedAt = System.currentTimeMillis();
     }
 
-    public Widget findWidgetByPin(String[] splitted, int msgId) {
+    public Widget findWidgetByPin(String[] splitted) {
         final PinType type = PinType.getPinType(splitted[0].charAt(0));
-        final byte pin = ParseUtil.parseByte(splitted[1], msgId);
+        final byte pin = ParseUtil.parseByte(splitted[1]);
         return findWidgetByPin(pin, type);
     }
 
@@ -116,13 +116,13 @@ public class DashBoard {
         return null;
     }
 
-    public int getWidgetIndex(long id, int msgId) {
+    public int getWidgetIndex(long id) {
         for (int i = 0; i < widgets.length; i++) {
             if (widgets[i].id == id) {
                 return i;
             }
         }
-        throw new IllegalCommandException("Widget with passed id not found.", msgId);
+        throw new IllegalCommandException("Widget with passed id not found.");
     }
 
     public  <T> T getWidgetByType(Class<T> clazz) {

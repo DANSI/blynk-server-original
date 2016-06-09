@@ -16,11 +16,11 @@ public abstract class NotificationBase {
         this.NOTIFICATION_QUOTA_LIMIT = defaultNotificationQuotaLimit;
     }
 
-    void checkIfNotificationQuotaLimitIsNotReached(int msgId) {
+    void checkIfNotificationQuotaLimitIsNotReached() {
         long currentTs = System.currentTimeMillis();
         long timePassedSinceLastMessage = (currentTs - lastSentTs);
         if (timePassedSinceLastMessage < NOTIFICATION_QUOTA_LIMIT) {
-            throw new QuotaLimitException(String.format("Only 1 notification per %s miliseconds is allowed", NOTIFICATION_QUOTA_LIMIT), msgId);
+            throw new QuotaLimitException(String.format("Only 1 notification per %s milliseconds is allowed", NOTIFICATION_QUOTA_LIMIT));
         }
         this.lastSentTs = currentTs;
     }

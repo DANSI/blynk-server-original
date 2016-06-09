@@ -35,33 +35,33 @@ public class CreateWidgetLogic {
         String[] split = message.body.split(BODY_SEPARATOR_STRING, 2);
 
         if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.", message.id);
+            throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0], message.id) ;
+        int dashId = ParseUtil.parseInt(split[0]) ;
         String widgetString = split[1];
 
         if (widgetString == null || widgetString.equals("")) {
-            throw new IllegalCommandException("Income widget message is empty.", message.id);
+            throw new IllegalCommandException("Income widget message is empty.");
         }
 
         if (widgetString.length() > MAX_WIDGET_SIZE) {
-            throw new NotAllowedException("Widget is larger then limit.", message.id);
+            throw new NotAllowedException("Widget is larger then limit.");
         }
 
-        DashBoard dash = user.profile.getDashById(dashId, message.id);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        Widget newWidget = JsonParser.parseWidget(widgetString, message.id);
+        Widget newWidget = JsonParser.parseWidget(widgetString);
 
         log.debug("Creating new widget {}.", widgetString);
 
         for (Widget widget : dash.widgets) {
             if (widget.id == newWidget.id) {
-                throw new NotAllowedException("Widget with same id already exists.", message.id);
+                throw new NotAllowedException("Widget with same id already exists.");
             }
         }
 
-        user.subtractEnergy(newWidget.getPrice(), message.id);
+        user.subtractEnergy(newWidget.getPrice());
         dash.widgets = ArrayUtil.add(dash.widgets, newWidget);
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;

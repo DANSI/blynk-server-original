@@ -39,9 +39,9 @@ public class HardwareAppShareLogic {
         Session session = sessionDao.userSession.get(state.user);
 
         String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING, 2);
-        int dashId = ParseUtil.parseInt(split[0], message.id);
+        int dashId = ParseUtil.parseInt(split[0]);
 
-        DashBoard dashBoard = state.user.profile.getDashById(dashId, message.id);
+        DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(dashId);
 
         if (!dashBoard.isActive) {
             log.debug("No active dashboard.");
@@ -56,11 +56,11 @@ public class HardwareAppShareLogic {
         }
 
         char operation = split[1].charAt(1);
-        DashBoard dash = state.user.profile.getDashById(dashId, message.id);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         switch (operation) {
             case 'w':
-                dash.update(split[1], message.id);
+                dash.update(split[1]);
 
                 String sharedToken = state.user.dashShareTokens.get(dashId);
                 if (sharedToken != null) {
@@ -73,9 +73,9 @@ public class HardwareAppShareLogic {
                 session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1]);
                 break;
             case 'r':
-                Widget widget = dash.findWidgetByPin(split[1].split(StringUtils.BODY_SEPARATOR_STRING), message.id);
+                Widget widget = dash.findWidgetByPin(split[1].split(StringUtils.BODY_SEPARATOR_STRING));
                 if (widget == null) {
-                    throw new IllegalCommandBodyException("No frequency widget for read command.", message.id);
+                    throw new IllegalCommandBodyException("No frequency widget for read command.");
                 }
 
                 if (widget instanceof FrequencyWidget) {

@@ -97,7 +97,7 @@ public class TwitHandlerTest {
 		TwitMessage twitMessage = (TwitMessage) MessageFactory.produce(1, Command.TWEET, "test tweet");
 		TwitLogic tweetHandler = new TwitLogic(blockingIOProcessor, twitterWrapper, 60);
         state.user.profile = profile;
-        when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
+        when(state.user.profile.getDashByIdOrThrow(1)).thenReturn(dash);
         when(dash.getWidgetByType(Twitter.class)).thenReturn(null);
 		tweetHandler.messageReceived(ctx, state, twitMessage);
 	}
@@ -110,7 +110,7 @@ public class TwitHandlerTest {
 		Twitter twitter = new Twitter();
 		twitter.token = null;
 		twitter.secret = "secret_token";
-		when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
+		when(state.user.profile.getDashByIdOrThrow(1)).thenReturn(dash);
 		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, state, twitMessage);
 	}
@@ -123,7 +123,7 @@ public class TwitHandlerTest {
 		Twitter twitter = new Twitter();
 		twitter.token = null;
 		twitter.secret = "secret_token";
-		when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
+		when(state.user.profile.getDashByIdOrThrow(1)).thenReturn(dash);
 		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, state, twitMessage);
 	}
@@ -136,7 +136,7 @@ public class TwitHandlerTest {
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
 		twitter.secret = null;
-		when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
+		when(state.user.profile.getDashByIdOrThrow(1)).thenReturn(dash);
 		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, state, twitMessage);
 	}
@@ -149,7 +149,7 @@ public class TwitHandlerTest {
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
 		twitter.secret = null;
-		when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
+		when(state.user.profile.getDashByIdOrThrow(1)).thenReturn(dash);
 		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
 		tweetHandler.messageReceived(ctx, state, twitMessage);
 	}
@@ -162,7 +162,7 @@ public class TwitHandlerTest {
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
 		twitter.secret = "secret_token";
-		when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
+		when(state.user.profile.getDashByIdOrThrow(1)).thenReturn(dash);
 		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
 		dash.isActive = true;
 
@@ -181,7 +181,7 @@ public class TwitHandlerTest {
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
 		twitter.secret = "secret_token";
-		when(state.user.profile.getDashById(1, 1)).thenReturn(dash);
+		when(state.user.profile.getDashByIdOrThrow(1)).thenReturn(dash);
 		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
 		dash.isActive = true;
 

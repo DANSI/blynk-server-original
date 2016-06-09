@@ -9,8 +9,8 @@ import cc.blynk.server.core.protocol.enums.Response;
  */
 public class NoDataException extends BaseServerException {
 
-    public NoDataException(int msgId) {
-        super("No Data", msgId, Response.NO_DATA_EXCEPTION);
+    public NoDataException() {
+        super("No Data", Response.NO_DATA_EXCEPTION);
     }
 
 }

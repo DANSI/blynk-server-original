@@ -55,16 +55,16 @@ public class GetSharedDashLogic {
         User userThatShared = userDao.sharedTokenManager.getUserByToken(token);
 
         if (userThatShared == null) {
-            throw new InvalidTokenException("Illegal sharing token. No user with those shared token.", message.id);
+            throw new InvalidTokenException("Illegal sharing token. No user with those shared token.");
         }
 
         Integer dashId = getSharedDashId(userThatShared.dashShareTokens, token);
 
         if (dashId == null) {
-            throw new InvalidTokenException("Illegal sharing token. User has not token. Could happen only in rare cases.", message.id);
+            throw new InvalidTokenException("Illegal sharing token. User has not token. Could happen only in rare cases.");
         }
 
-        DashBoard dashBoard = userThatShared.profile.getDashById(dashId, message.id);
+        DashBoard dashBoard = userThatShared.profile.getDashByIdOrThrow(dashId);
         cleanPrivateData(dashBoard);
 
         ctx.writeAndFlush(produce(message.id, message.command, dashBoard.toString()), ctx.voidPromise());

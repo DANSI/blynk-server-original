@@ -27,7 +27,7 @@ public class SaveMetadataLogic {
         String metadataString = message.body;
 
         if (metadataString == null || metadataString.equals("")) {
-            throw new IllegalCommandException("Metadata message is empty.", message.id);
+            throw new IllegalCommandException("Metadata message is empty.");
         }
 
         log.debug("Trying to parse user metadata : {}", metadataString);

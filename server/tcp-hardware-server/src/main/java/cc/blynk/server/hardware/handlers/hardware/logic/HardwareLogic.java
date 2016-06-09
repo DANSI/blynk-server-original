@@ -51,25 +51,25 @@ public class HardwareLogic {
 
         //minimum command - "ar 1"
         if (body.length() < 4) {
-            throw new IllegalCommandException("HardwareLogic command body too short.", message.id);
+            throw new IllegalCommandException("HardwareLogic command body too short.");
         }
 
         int dashId = state.dashId;
-        DashBoard dash = state.user.profile.getDashById(dashId, message.id);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         if (isWriteOperation(body)) {
             String[] splitBody = body.split(StringUtils.BODY_SEPARATOR_STRING, 3);
 
             if (splitBody.length < 3 || splitBody[0].length() == 0) {
-                throw new IllegalCommandException("Write command is wrong.", message.id);
+                throw new IllegalCommandException("Write command is wrong.");
             }
 
             final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
-            final byte pin = ParseUtil.parseByte(splitBody[1], message.id);
+            final byte pin = ParseUtil.parseByte(splitBody[1]);
             final String value = splitBody[2];
 
             if (value.length() == 0) {
-                throw new IllegalCommandException("Hardware write command doesn't have value for pin.", message.id);
+                throw new IllegalCommandException("Hardware write command doesn't have value for pin.");
             }
 
             //storing to DB and aggregating

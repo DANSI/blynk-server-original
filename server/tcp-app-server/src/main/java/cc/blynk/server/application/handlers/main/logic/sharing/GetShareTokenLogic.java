@@ -34,10 +34,10 @@ public class GetShareTokenLogic {
         try {
             dashId = Integer.parseInt(dashBoardIdString);
         } catch (NumberFormatException ex) {
-            throw new NotAllowedException(String.format("Dash board id '%s' not valid.", dashBoardIdString), message.id);
+            throw new NotAllowedException(String.format("Dash board id '%s' not valid.", dashBoardIdString));
         }
 
-        user.profile.validateDashId(dashId, message.id);
+        user.profile.validateDashId(dashId);
 
         Map<Integer, String> tokens = userDao.sharedTokenManager.getTokens(user);
         boolean newToken = tokens.get(dashId) == null;
@@ -45,7 +45,7 @@ public class GetShareTokenLogic {
         String token = userDao.sharedTokenManager.getToken(user, dashId);
 
         if (newToken) {
-            user.subtractEnergy(PRIVATE_TOKEN_PRICE, message.id);
+            user.subtractEnergy(PRIVATE_TOKEN_PRICE);
         }
 
         ctx.writeAndFlush(makeStringMessage(GET_SHARE_TOKEN, message.id, token), ctx.voidPromise());

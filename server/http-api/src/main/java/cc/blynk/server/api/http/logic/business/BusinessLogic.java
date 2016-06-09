@@ -109,7 +109,7 @@ public class BusinessLogic {
 
         log.debug("Deleting project {}", projectId);
 
-        int index = user.profile.getDashIndex(projectId, 1);
+        int index = user.profile.getDashIndex(projectId);
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
         userDao.deleteProject(user, projectId);
 
@@ -127,7 +127,7 @@ public class BusinessLogic {
 
         log.debug("Updating project {}", projectId);
 
-        int projectIndex = user.profile.getDashIndex(projectId, 1);
+        int projectIndex = user.profile.getDashIndex(projectId);
         user.profile.dashBoards[projectIndex] = updatedProject;
         user.profile.dashBoards[projectIndex].updatedAt = System.currentTimeMillis();
 

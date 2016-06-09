@@ -27,32 +27,32 @@ public class Profile {
     /**
      * Check if dashboardId is real and exists in user profile.
      */
-    public void validateDashId(int dashBoardId, int msgId) {
+    public void validateDashId(int dashBoardId) {
         for (DashBoard dashBoard : dashBoards) {
             if (dashBoard.id == dashBoardId) {
                 return;
             }
         }
 
-        throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashBoardId), msgId);
+        throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashBoardId));
     }
 
-    public int getDashIndex(int dashId, int msgId) {
+    public int getDashIndex(int dashId) {
         for (int i = 0; i < dashBoards.length; i++) {
             if (dashBoards[i].id == dashId) {
                 return i;
             }
         }
-        throw new IllegalCommandException("Dashboard with passed id not found.", msgId);
+        throw new IllegalCommandException("Dashboard with passed id not found.");
     }
 
-    public DashBoard getDashById(int id, int msgId) {
+    public DashBoard getDashByIdOrThrow(int id) {
         for (DashBoard dashBoard : dashBoards) {
             if (dashBoard.id == id) {
                 return dashBoard;
             }
         }
-        throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", id), msgId);
+        throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", id));
     }
 
     public DashBoard getDashById(int id) {

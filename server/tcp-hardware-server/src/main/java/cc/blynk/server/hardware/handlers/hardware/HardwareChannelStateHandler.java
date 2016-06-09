@@ -71,7 +71,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void sentOfflineMessage(HardwareStateHolder state) {
-        DashBoard dashBoard = state.user.profile.getDashById(state.dashId, 0);
+        DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(state.dashId);
         if (dashBoard.isActive) {
             Notification notification = dashBoard.getWidgetByType(Notification.class);
             if (notification == null || !notification.notifyWhenOffline) {

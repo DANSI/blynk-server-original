@@ -36,25 +36,25 @@ public class CreateDashLogic {
         String dashString = message.body;
 
         if (dashString == null || dashString.equals("")) {
-            throw new IllegalCommandException("Income create dash message is empty.", message.id);
+            throw new IllegalCommandException("Income create dash message is empty.");
         }
 
         if (dashString.length() > DASH_MAX_SIZE) {
-            throw new NotAllowedException("User dashboard is larger then limit.", message.id);
+            throw new NotAllowedException("User dashboard is larger then limit.");
         }
 
         log.debug("Trying to parse user newDash : {}", dashString);
-        DashBoard newDash = JsonParser.parseDashboard(dashString, message.id);
+        DashBoard newDash = JsonParser.parseDashboard(dashString);
 
         log.info("Creating new dashboard.");
 
         if (user.profile.dashBoards.length >= DASH_MAX_LIMIT) {
-            throw new QuotaLimitException("Dashboards limit reached.", message.id);
+            throw new QuotaLimitException("Dashboards limit reached.");
         }
 
         for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.id == newDash.id) {
-                throw new NotAllowedException("Dashboard already exists.", message.id);
+                throw new NotAllowedException("Dashboard already exists.");
             }
         }
 
@@ -62,7 +62,7 @@ public class CreateDashLogic {
             newDash.createdAt = System.currentTimeMillis();
         }
 
-        user.subtractEnergy(newDash.energySum(), message.id);
+        user.subtractEnergy(newDash.energySum());
         user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newDash);
         user.lastModifiedTs = System.currentTimeMillis();
 

@@ -9,7 +9,6 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
@@ -45,7 +44,8 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         String[] messageParts = message.body.split("\0");
 
         if (messageParts.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.", message.id);
+            log.error("Wrong income message format.");
+            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
         } else {
             OsType osType = null;
             String version = null;

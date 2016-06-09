@@ -17,6 +17,8 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.core.protocol.enums.Response.*;
@@ -32,7 +34,9 @@ import static cc.blynk.utils.ByteBufUtil.*;
  *
  */
 @ChannelHandler.Sharable
-public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler, DefaultReregisterHandler {
+public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultReregisterHandler {
+
+    private static final Logger log = LogManager.getLogger(DefaultExceptionHandler.class);
 
     private final Holder holder;
 
@@ -95,8 +99,4 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         }
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-       handleGeneralException(ctx, cause);
-    }
 }

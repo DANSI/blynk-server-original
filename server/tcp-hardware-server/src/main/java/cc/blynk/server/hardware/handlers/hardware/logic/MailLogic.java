@@ -38,29 +38,29 @@ public class MailLogic extends NotificationBase {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        DashBoard dash = state.user.profile.getDashById(state.dashId, message.id);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(state.dashId);
 
         Mail mail = dash.getWidgetByType(Mail.class);
 
         if (mail == null || !dash.isActive) {
-            throw new NotAllowedException("User has no mail widget or active dashboard.", message.id);
+            throw new NotAllowedException("User has no mail widget or active dashboard.");
         }
 
         if (message.body.equals("")) {
-            throw new IllegalCommandException("Invalid mail notification body.", message.id);
+            throw new IllegalCommandException("Invalid mail notification body.");
         }
 
         String[] bodyParts = message.body.split("\0");
 
         if (bodyParts.length != 3) {
-            throw new IllegalCommandException("Invalid mail notification body.", message.id);
+            throw new IllegalCommandException("Invalid mail notification body.");
         }
 
         String to = bodyParts[0];
         String subj = bodyParts[1];
         String body = bodyParts[2];
 
-        checkIfNotificationQuotaLimitIsNotReached(message.id);
+        checkIfNotificationQuotaLimitIsNotReached();
 
         log.trace("Sending Mail for user {}, with message : '{}'.", state.user.name, message.body);
         mail(ctx.channel(), state.user.name, to, subj, body, message.id);

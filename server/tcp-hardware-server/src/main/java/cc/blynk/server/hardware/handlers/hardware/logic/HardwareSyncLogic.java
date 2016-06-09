@@ -29,7 +29,7 @@ public class HardwareSyncLogic {
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         final int dashId = state.dashId;
-        DashBoard dash = state.user.profile.getDashById(dashId, message.id);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         if (message.length == 0) {
             //return all widgets state

@@ -124,14 +124,14 @@ public class User {
         return name;
     }
 
-    private void checkPrice(int price, int msgId) {
+    private void checkPrice(int price) {
         if (AppName.BLYNK.equals(appName) && price > energy) {
-            throw new EnergyLimitException("Not enough energy.", msgId);
+            throw new EnergyLimitException("Not enough energy.");
         }
     }
 
-    public void subtractEnergy(int price, int msgId) {
-        checkPrice(price, msgId);
+    public void subtractEnergy(int price) {
+        checkPrice(price);
         this.energy -= price;
         this.lastModifiedTs = System.currentTimeMillis();
     }

@@ -41,13 +41,13 @@ public class AppMailLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String dashBoardIdString = message.body;
 
-        int dashId = ParseUtil.parseInt(dashBoardIdString, message.id);
+        int dashId = ParseUtil.parseInt(dashBoardIdString);
 
-        DashBoard dashBoard = user.profile.getDashById(dashId, message.id);
+        DashBoard dashBoard = user.profile.getDashByIdOrThrow(dashId);
         String token = user.dashTokens.get(dashId);
 
         if (token == null) {
-            throw new IllegalCommandBodyException("Wrong dash id.", message.id);
+            throw new IllegalCommandBodyException("Wrong dash id.");
         }
 
         String to = user.name;

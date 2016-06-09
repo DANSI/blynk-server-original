@@ -35,32 +35,32 @@ public class UpdateWidgetLogic {
         String[] split = message.body.split(BODY_SEPARATOR_STRING, 2);
 
         if (split.length < 2) {
-            throw new IllegalCommandException("Wrong income message format.", message.id);
+            throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0], message.id) ;
+        int dashId = ParseUtil.parseInt(split[0]) ;
         String widgetString = split[1];
 
         if (widgetString == null || widgetString.equals("")) {
-            throw new IllegalCommandException("Income widget message is empty.", message.id);
+            throw new IllegalCommandException("Income widget message is empty.");
         }
 
         if (widgetString.length() > MAX_WIDGET_SIZE) {
-            throw new NotAllowedException("Widget is larger then limit.", message.id);
+            throw new NotAllowedException("Widget is larger then limit.");
         }
 
         DashBoard dash = user.profile.getDashById(dashId);
 
-        Widget newWidget = JsonParser.parseWidget(widgetString, message.id);
+        Widget newWidget = JsonParser.parseWidget(widgetString);
 
         log.debug("Updating widget {}.", widgetString);
 
         if (dash == null || newWidget == null) {
             log.error("Error updating widget {}. Project : {}", widgetString, dash);
-            throw new IllegalCommandException("Empty widget or project.", message.id);
+            throw new IllegalCommandException("Empty widget or project.");
         }
 
-        int existingWidgetIndex = dash.getWidgetIndex(newWidget.id, message.id);
+        int existingWidgetIndex = dash.getWidgetIndex(newWidget.id);
 
         if (newWidget instanceof Tabs) {
             Tabs newTabs = (Tabs) newWidget;

@@ -112,7 +112,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(appClient.getBody(), 1);
+        Profile profile = JsonParser.parseProfile(appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false,\"invertedOn\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
@@ -123,7 +123,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(appClient.getBody(), 1);
+        profile = JsonParser.parseProfile(appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false,\"invertedOn\":false},{\"type\":\"BUTTON\",\"id\":2,\"x\":2,\"y\":2,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text 2\",\"pinType\":\"DIGITAL\",\"pin\":2,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false,\"invertedOn\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
 
@@ -133,7 +133,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(appClient.getBody(), 1);
+        profile = JsonParser.parseProfile(appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false,\"invertedOn\":false},{\"type\":\"BUTTON\",\"id\":2,\"x\":2,\"y\":2,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"new label\",\"pinType\":\"DIGITAL\",\"pin\":3,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false,\"invertedOn\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
 
@@ -149,7 +149,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(appClient.getBody(), 1);
+        profile = JsonParser.parseProfile(appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
     }
@@ -180,7 +180,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(appClient.getBody(), 1);
+        Profile profile = JsonParser.parseProfile(appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false,\"invertedOn\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
@@ -225,7 +225,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardwareDeviceWentOffline() throws Exception {
-        Profile profile = JsonParser.parseProfile(readTestUserProfile(), 1);
+        Profile profile = JsonParser.parseProfile(readTestUserProfile());
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         notification.notifyWhenOffline = false;
 
@@ -468,7 +468,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testTerminalStorageRemembersCommands() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
         assertEquals(13, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -486,7 +486,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         assertEquals(14, profile.dashBoards[0].widgets.length);
         assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"My Dashboard\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"pushMode\":false,\"invertedOn\":false},{\"type\":\"SLIDER\",\"id\":2,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":2,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"sendOnReleaseOn\":false},{\"type\":\"SLIDER\",\"id\":3,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":3,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"0\",\"sendOnReleaseOn\":false},{\"type\":\"SLIDER\",\"id\":4,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"VIRTUAL\",\"pin\":4,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"244\",\"sendOnReleaseOn\":false},{\"type\":\"TIMER\",\"id\":5,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":5,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"startTime\":0,\"stopTime\":-1,\"invertedOn\":false},{\"type\":\"LED\",\"id\":6,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":6,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"frequency\":100},{\"type\":\"DIGIT4_DISPLAY\",\"id\":7,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":7,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"3\",\"frequency\":5000},{\"type\":\"DIGIT4_DISPLAY\",\"id\":30,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":30,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"3\",\"frequency\":1000},{\"type\":\"GRAPH\",\"id\":8,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":8,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"isBar\":false,\"frequency\":0},{\"type\":\"NOTIFICATION\",\"id\":9,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"androidTokens\":{\"uid\":\"token\"},\"notifyWhenOffline\":true,\"notifyWhenOfflineIgnorePeriod\":0,\"priority\":\"normal\"},{\"type\":\"TWITTER\",\"id\":10,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"token\":\"token\",\"secret\":\"secret\"},{\"type\":\"RTC\",\"id\":11,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"pinType\":\"VIRTUAL\",\"pin\":9,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},{\"type\":\"LCD\",\"id\":12,\"x\":0,\"y\":0,\"color\":-1,\"width\":8,\"height\":2,\"tabId\":0,\"pins\":[{\"pin\":0,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"89.888037459418\",\"min\":-100,\"max\":100},{\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"-58.74774244674501\",\"min\":-100,\"max\":100}],\"advancedMode\":false,\"textFormatLine1\":\"pin1 : /pin0/\",\"textFormatLine2\":\"pin2 : /pin1/\",\"textLight\":false,\"textLightOn\":false,\"frequency\":1000},{\"type\":\"TERMINAL\",\"id\":102,\"x\":5,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":17,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"5\",\"autoScrollOn\":false,\"terminalInputOn\":false,\"textLightOn\":false}],\"boardType\":\"UNO\",\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":true,\"isActive\":true}]}", profile.toString());
@@ -495,7 +495,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testAddAndRemoveTabs() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
         assertEquals(13, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -515,7 +515,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("deleteWidget 1\0" + "100");
@@ -526,7 +526,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
         assertEquals(14, profile.dashBoards[0].widgets.length);
         assertNotNull(profile.dashBoards[0].findWidgetByPin((byte) 17, PinType.DIGITAL));
     }
@@ -534,7 +534,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testAddAndUpdateTabs() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
         assertEquals(13, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -554,7 +554,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("updateWidget 1\0{\"id\":100, \"x\":0, \"y\":0, \"tabs\":[{\"label\":\"tab 1\"}, {\"label\":\"tab 2\"}], \"type\":\"TABS\"}");
@@ -565,7 +565,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
         assertEquals(15, profile.dashBoards[0].widgets.length);
         assertNull(profile.dashBoards[0].findWidgetByPin((byte) 17, PinType.DIGITAL));
         assertNotNull(profile.dashBoards[0].findWidgetByPin((byte) 18, PinType.DIGITAL));
@@ -667,7 +667,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
         expectedDash = String.format("{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":%d,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}", profile.dashBoards[0].updatedAt);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(1, ByteUtils.compress(expectedDash))));
 
@@ -717,7 +717,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
 
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         assertEquals(expected, profile.toString());
     }
@@ -828,7 +828,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("deactivate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        Profile newProfile = JsonParser.parseProfile(readTestUserProfile("user_profile_json_3_dashes.txt"), 1);
+        Profile newProfile = JsonParser.parseProfile(readTestUserProfile("user_profile_json_3_dashes.txt"));
         clientPair.appClient.send("createDash " + newProfile.dashBoards[1]);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
@@ -879,7 +879,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
 
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody(), 1);
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         assertEquals(expectedProfile.toString(), profile.toString());
 
@@ -892,7 +892,7 @@ public class MainWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        Profile newProfile = JsonParser.parseProfile(readTestUserProfile("user_profile_json_3_dashes.txt"), 1);
+        Profile newProfile = JsonParser.parseProfile(readTestUserProfile("user_profile_json_3_dashes.txt"));
         clientPair.appClient.send("createDash " + newProfile.dashBoards[1]);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 

@@ -28,7 +28,7 @@ public class ByteUtils {
         return baos.toByteArray();
     }
 
-    public static byte[] compress(byte[][] values, int msgId) {
+    public static byte[] compress(byte[][] values) {
         //todo calculate size
         ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
 
@@ -41,7 +41,7 @@ public class ByteUtils {
             }
         } catch (IOException ioe) {
             //todo refactor exception
-            throw new GetGraphDataException(msgId);
+            throw new GetGraphDataException();
         }
         return baos.toByteArray();
     }
