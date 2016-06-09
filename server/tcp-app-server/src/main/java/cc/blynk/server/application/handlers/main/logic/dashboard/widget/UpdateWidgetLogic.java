@@ -4,6 +4,8 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
+import cc.blynk.server.core.protocol.enums.Response;
+import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -67,9 +69,15 @@ public class UpdateWidgetLogic {
             DeleteWidgetLogic.deleteTabs(user, dash, newTabs.tabs.length - 1);
         }
 
-        dash.widgets[existingWidgetIndex] = newWidget;
-        dash.updatedAt = System.currentTimeMillis();
-        user.lastModifiedTs = dash.updatedAt;
+        //strange issue https://github.com/blynkkk/blynk-server/issues/227
+        //just log error for now
+        try {
+            dash.widgets[existingWidgetIndex] = newWidget;
+            dash.updatedAt = System.currentTimeMillis();
+            user.lastModifiedTs = dash.updatedAt;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new BaseServerException("Error updating widget. " + widgetString, Response.SERVER_EXCEPTION);
+        }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
