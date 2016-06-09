@@ -89,7 +89,7 @@
         <maven.assembly.plugin.version>2.6</maven.assembly.plugin.version>
 
         <!-- dependencies -->
-        <netty.version>4.0.36.Final</netty.version>
+        <netty.version>4.0.37.Final</netty.version>
         <netty.tcnative.version>1.1.33.Fork15</netty.tcnative.version>
         <log4j2.version>2.5</log4j2.version>
         <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
