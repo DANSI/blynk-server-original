@@ -60,6 +60,10 @@ public class TwoAxisJoystick extends MultiPinWidget implements HardwareSyncWidge
         }
     }
 
+    public boolean isSplitMode() {
+        return split;
+    }
+
     @Override
     public String getModeType() {
         return "out";

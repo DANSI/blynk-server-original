@@ -54,6 +54,11 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     }
 
     @Override
+    public boolean isSplitMode() {
+        return !advancedMode;
+    }
+
+    @Override
     public final int getFrequency() {
         return frequency;
     }

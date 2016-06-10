@@ -58,6 +58,11 @@ public class RGB extends MultiPinWidget implements HardwareSyncWidget {
         }
     }
 
+
+    public boolean isSplitMode() {
+        return splitMode;
+    }
+
     @Override
     public String getModeType() {
         return "out";

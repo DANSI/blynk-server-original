@@ -241,7 +241,12 @@ public class HttpAPILogic {
             if (widget instanceof OnePinWidget) {
                 body = ((OnePinWidget) widget).makeHardwareBody();
             } else if (widget instanceof MultiPinWidget) {
-                body = ((MultiPinWidget) widget).makeHardwareBody();
+                MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+                if (multiPinWidget.isSplitMode()) {
+                    body = multiPinWidget.makeHardwareBodyForSplitPin(pin, pinType);
+                } else {
+                    body = multiPinWidget.makeHardwareBody();
+                }
             } else {
                 body = null;
             }

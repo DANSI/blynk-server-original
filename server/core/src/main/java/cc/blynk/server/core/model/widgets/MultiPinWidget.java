@@ -43,6 +43,8 @@ public abstract class MultiPinWidget extends Widget {
     @Override
     public abstract void sendSyncOnActivate(Channel appChannel, int dashId);
 
+    public abstract boolean isSplitMode();
+
     public String makeHardwareBody() {
         if (pins != null && pins[0].notEmpty()) {
             StringBuilder sb = new StringBuilder(pins[0].makeHardwareBody());
@@ -61,6 +63,17 @@ public abstract class MultiPinWidget extends Widget {
             for (Pin pin : pins) {
                 if (pin.isSame(pinIn, pinType)) {
                     return pin.value;
+                }
+            }
+        }
+        return null;
+    }
+
+    public String makeHardwareBodyForSplitPin(byte pinIn, PinType pinType) {
+        if (pins != null) {
+            for (Pin pin : pins) {
+                if (pin.isSame(pinIn, pinType)) {
+                    return pin.makeHardwareBody();
                 }
             }
         }

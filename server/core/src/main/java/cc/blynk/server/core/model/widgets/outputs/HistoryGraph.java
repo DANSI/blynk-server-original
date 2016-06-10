@@ -22,6 +22,11 @@ public class HistoryGraph extends MultiPinWidget {
     }
 
     @Override
+    public boolean isSplitMode() {
+        return false;
+    }
+
+    @Override
     public void updateIfSame(byte pin, PinType type, String value) {
         //logger has no data to display. so no need to update values
     }
