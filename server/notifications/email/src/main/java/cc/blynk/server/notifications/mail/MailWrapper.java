@@ -24,8 +24,8 @@ public class MailWrapper {
     private final InternetAddress from;
 
     public MailWrapper(Properties mailProperties) {
-        String username = mailProperties.getProperty("mail.smtp.username");
-        String password = mailProperties.getProperty("mail.smtp.password");
+        final String username = mailProperties.getProperty("mail.smtp.username");
+        final String password = mailProperties.getProperty("mail.smtp.password");
 
         log.info("Initializing mail transport. Username : {}. SMTP host : {}:{}",
                 username, mailProperties.getProperty("mail.smtp.host"), mailProperties.getProperty("mail.smtp.port"));
