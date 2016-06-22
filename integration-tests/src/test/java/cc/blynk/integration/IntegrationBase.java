@@ -23,10 +23,11 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -75,6 +76,16 @@ public abstract class IntegrationBase extends BaseTest {
         return getProfileFolder("/profiles");
     }
 
+    public static void saveProfile(TestAppClient appClient, DashBoard... dashBoards) {
+        for (DashBoard dash : dashBoards) {
+            appClient.send("createDash " + dash.toString());
+        }
+    }
+
+    public static String b(String body) {
+        return body.replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING);
+    }
+
     public ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
                                                 ServerProperties properties) throws Exception {
 
@@ -100,10 +111,16 @@ public abstract class IntegrationBase extends BaseTest {
                     expectedSyncCommandsCount++;
                 }
             } else if (widget instanceof MultiPinWidget) {
-                MultiPinWidget multiPinWidget = ((MultiPinWidget) widget);
+                MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
                 if (multiPinWidget.pins != null) {
-                    for (Pin pin : multiPinWidget.pins) {
-                        if (pin.notEmpty()) {
+                    if (multiPinWidget.isSplitMode()) {
+                        for (Pin pin : multiPinWidget.pins) {
+                            if (pin.notEmpty()) {
+                                expectedSyncCommandsCount++;
+                            }
+                        }
+                    } else {
+                        if (multiPinWidget.pins[0].notEmpty()) {
                             expectedSyncCommandsCount++;
                         }
                     }
@@ -140,18 +157,8 @@ public abstract class IntegrationBase extends BaseTest {
         return new ClientPair(appClient, hardClient, token);
     }
 
-    public static void saveProfile(TestAppClient appClient, DashBoard... dashBoards) {
-        for (DashBoard dash : dashBoards) {
-            appClient.send("createDash " + dash.toString());
-        }
-    }
-
     public ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {
         return initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, DEFAULT_TEST_USER + " 1", null, properties);
-    }
-
-    public static String b(String body) {
-        return body.replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING);
     }
 
     public ClientPair initAppAndHardPair() throws Exception {
