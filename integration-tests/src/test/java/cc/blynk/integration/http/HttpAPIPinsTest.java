@@ -24,7 +24,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * The Blynk Project.
@@ -152,7 +152,19 @@ public class HttpAPIPinsTest extends BaseTest {
         }
     }
 
+    @Test
+    public void testGetForRGB() throws Exception {
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v13");
 
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(3, values.size());
+            assertEquals("60", values.get(0));
+            assertEquals("143", values.get(1));
+            assertEquals("158", values.get(2));
+        }
+    }
 
 
     //----------------------------PUT METHODS SECTION

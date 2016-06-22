@@ -46,6 +46,41 @@
                     "textFormatLine2":"pin2 : /pin1/",
                     "textLight":false,
                     "frequency":1000
+                },
+                {
+                    "type":"RGB",
+                    "id":13,"x":2,"y":3,"color":616861439,"width":4,"height":3,"tabId":0,
+                    "splitMode":false,
+                    "sendOnReleaseOn":true,
+                    "pins":[
+                            {
+                                "pin":13,
+                                "pwmMode":false,
+                                "rangeMappingOn":false,
+                                "pinType":"VIRTUAL",
+                                "value":"60\u0000143\u0000158",
+                                "min":0,
+                                "max":255
+                            },
+                            {
+                                "pin":13,
+                                "pwmMode":false,
+                                "rangeMappingOn":false,
+                                "pinType":"VIRTUAL",
+                                "value":"60\u0000143\u0000158",
+                                "min":0,
+                                "max":255
+                            },
+                            {
+                                "pin":13,
+                                "pwmMode":false,
+                                "rangeMappingOn":false,
+                                "pinType":"VIRTUAL",
+                                "value":"60\u0000143\u0000158",
+                                "min":0,
+                                "max":255
+                            }
+                           ]
                 }
              ],
              "boardType":"UNO"

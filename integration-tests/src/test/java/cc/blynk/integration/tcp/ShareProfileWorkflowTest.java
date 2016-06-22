@@ -24,7 +24,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -155,7 +155,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     @Test
     public void testSharingChargingCorrect() throws Exception {
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, GET_ENERGY, "9200")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, GET_ENERGY, "8800")));
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getShareToken 1");
@@ -164,7 +164,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "8200")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "7800")));
 
         clientPair.appClient.reset();
 
@@ -174,7 +174,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "8200")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "7800")));
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getShareToken 1");
@@ -187,7 +187,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getShareToken 1");
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, GET_ENERGY, "8200")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, GET_ENERGY, "7800")));
     }
 
     @Test
