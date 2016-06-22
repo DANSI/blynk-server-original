@@ -28,7 +28,7 @@ public class RGB extends MultiPinWidget implements HardwareSyncWidget {
         if (pins == null) {
             return;
         }
-        if (splitMode) {
+        if (isSplitMode()) {
             for (Pin pin : pins) {
                 if (pin.notEmpty()) {
                     ctx.write(makeStringMessage(HARDWARE, msgId, pin.makeHardwareBody()), ctx.voidPromise());
@@ -46,7 +46,7 @@ public class RGB extends MultiPinWidget implements HardwareSyncWidget {
         if (pins == null) {
             return;
         }
-        if (splitMode) {
+        if (isSplitMode()) {
             for (Pin pin : pins) {
                 if (pin.notEmpty()) {
                     String body = dashId + StringUtils.BODY_SEPARATOR_STRING + pin.makeHardwareBody();
@@ -67,7 +67,7 @@ public class RGB extends MultiPinWidget implements HardwareSyncWidget {
             return "[]";
         }
 
-        if (splitMode) {
+        if (isSplitMode()) {
             return super.getJsonValue();
         } else {
             StringJoiner sj = new StringJoiner(",", "[", "]");

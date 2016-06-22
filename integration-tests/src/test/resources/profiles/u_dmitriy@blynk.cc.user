@@ -385,7 +385,36 @@
                                                "max":255
                                            }
                                           ]
-                               }
+                               },
+                {
+                    "type":"TWO_AXIS_JOYSTICK",
+                    "id":2,"x":2,"y":5,"color":600084223,"width":5,"height":4,
+                    "tabId":0,
+                    "pins":
+                        [
+                            {
+                                "pin":14,
+                                "pwmMode":false,
+                                "rangeMappingOn":false,
+                                "pinType":"VIRTUAL",
+                                "value":"128\u0000129",
+                                "min":0,
+                                "max":255
+                            },
+                            {
+                                "pin":14,
+                                "pwmMode":false,
+                                "rangeMappingOn":false,
+                                "pinType":"VIRTUAL",
+                                "value":"128\u0000129",
+                                "min":0,
+                                "max":255
+                            }
+                        ],
+                        "split":false,
+                        "autoReturnOn":true,
+                        "portraitLocked":false
+                }
             ],
             "boardType":"Arduino UNO",
             "keepScreenOn":false,

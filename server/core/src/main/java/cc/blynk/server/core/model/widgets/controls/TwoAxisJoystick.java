@@ -6,8 +6,11 @@ import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import java.util.StringJoiner;
+
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.SYNC;
+import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
 
 /**
  * The Blynk Project.
@@ -35,7 +38,7 @@ public class TwoAxisJoystick extends MultiPinWidget implements HardwareSyncWidge
             }
         } else {
             if (pins[0].notEmpty()) {
-                ctx.write(makeStringMessage(HARDWARE, msgId, makeHardwareBody()), ctx.voidPromise());
+                ctx.write(makeStringMessage(HARDWARE, msgId, pins[0].makeHardwareBody()), ctx.voidPromise());
             }
         }
     }
@@ -54,9 +57,28 @@ public class TwoAxisJoystick extends MultiPinWidget implements HardwareSyncWidge
             }
         } else {
             if (pins[0].notEmpty()) {
-                String body = dashId + StringUtils.BODY_SEPARATOR_STRING + makeHardwareBody();
+                String body = dashId + StringUtils.BODY_SEPARATOR_STRING + pins[0].makeHardwareBody();
                 appChannel.write(makeStringMessage(SYNC, 1111, body), appChannel.voidPromise());
             }
+        }
+    }
+
+    @Override
+    public String getJsonValue() {
+        if (pins == null) {
+            return "[]";
+        }
+
+        if (isSplitMode()) {
+            return super.getJsonValue();
+        } else {
+            StringJoiner sj = new StringJoiner(",", "[", "]");
+            if (pins[0].notEmpty()) {
+                for (String pinValue : pins[0].value.split(StringUtils.BODY_SEPARATOR_STRING)) {
+                    sj.add("\"" + pinValue + "\"");
+                }
+            }
+            return sj.toString();
         }
     }
 

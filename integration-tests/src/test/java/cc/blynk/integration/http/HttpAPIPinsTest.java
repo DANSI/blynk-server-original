@@ -153,7 +153,7 @@ public class HttpAPIPinsTest extends BaseTest {
     }
 
     @Test
-    public void testGetForRGB() throws Exception {
+    public void testGetForRGBMerge() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v13");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -166,6 +166,18 @@ public class HttpAPIPinsTest extends BaseTest {
         }
     }
 
+    @Test
+    public void testGetForJoystickMerge() throws Exception {
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v14");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(2, values.size());
+            assertEquals("128", values.get(0));
+            assertEquals("129", values.get(1));
+        }
+    }
 
     //----------------------------PUT METHODS SECTION
 
