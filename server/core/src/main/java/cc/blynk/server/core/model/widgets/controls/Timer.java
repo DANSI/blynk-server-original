@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.widgets.controls;
 
-import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -33,9 +32,8 @@ public class Timer extends OnePinWidget implements HardwareSyncWidget {
 
     @Override
     public void send(ChannelHandlerContext ctx, int msgId) {
-        String body = makeHardwareBody();
-        if (body != null) {
-            ctx.write(makeStringMessage(HARDWARE, msgId, body), ctx.voidPromise());
+        if (value != null) {
+            ctx.write(makeStringMessage(HARDWARE, msgId, value), ctx.voidPromise());
         }
     }
 
@@ -44,7 +42,7 @@ public class Timer extends OnePinWidget implements HardwareSyncWidget {
         if (pin == -1 || value == null || pinType == null) {
             return null;
         }
-        return isPWMSupported() ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
+        return value;
     }
 
     @Override

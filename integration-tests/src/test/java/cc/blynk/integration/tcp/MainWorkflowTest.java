@@ -57,10 +57,9 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -453,13 +452,13 @@ public class MainWorkflowTest extends IntegrationBase {
         User user = holder.userDao.getUsers().get(new UserKey("dima@mail.ua", "Blynk"));
         Widget widget = user.profile.dashBoards[0].findWidgetByPin((byte) 5, PinType.DIGITAL);
         Timer timer = (Timer) widget;
-        timer.value = "100500";
+        timer.value = b("dw 5 100500");
 
         clientPair.hardwareClient.send("hardsync " + b("dr 5"));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 5 100500"))));
 
         Thread thread = new Thread(() -> {
-            timer.value = "200300";
+            timer.value = b("dw 5 200300");
         });
 
         thread.start();
@@ -467,6 +466,19 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("hardsync " + b("dr 5"));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("dw 5 200300"))));
+
+        clientPair.hardwareClient.reset();
+
+        clientPair.hardwareClient.send("hardsync");
+        verify(clientPair.hardwareClient.responseMock, timeout(1000).times(8)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 1 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 2 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 5 200300"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 3 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 244"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 7 3"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 30 3"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 13 60 143 158"))));
     }
 
     @Test
