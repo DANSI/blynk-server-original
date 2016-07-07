@@ -36,6 +36,13 @@ public class Response extends DefaultFullHttpResponse {
         headers().set(CONTENT_LENGTH, content().readableBytes());
     }
 
+    public Response(HttpVersion version, HttpResponseStatus status, byte[] content, String contentType) {
+        super(version, status, (content == null ? Unpooled.EMPTY_BUFFER : Unpooled.copiedBuffer(content)));
+        headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+        headers().set(CONTENT_TYPE, contentType);
+        headers().set(CONTENT_LENGTH, content().readableBytes());
+    }
+
     public Response(HttpVersion version, HttpResponseStatus status) {
         super(version, status);
         headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
@@ -84,6 +91,11 @@ public class Response extends DefaultFullHttpResponse {
     public static Response ok(String data, String contentType) {
         return new Response(HTTP_1_1, OK, data, contentType);
     }
+
+    public static Response ok(byte[] data, String contentType) {
+        return new Response(HTTP_1_1, OK, data, contentType);
+    }
+
 
     public static Response ok(boolean bool) {
         return new Response(HTTP_1_1, OK, String.valueOf(bool), JSON);

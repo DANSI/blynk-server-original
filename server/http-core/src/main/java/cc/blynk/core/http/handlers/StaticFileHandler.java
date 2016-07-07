@@ -1,5 +1,6 @@
 package cc.blynk.core.http.handlers;
 
+import cc.blynk.utils.ContentTypeUtil;
 import cc.blynk.utils.ServerProperties;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -106,20 +107,6 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
                 LAST_MODIFIED, dateFormatter.format(new Date(fileToCache.lastModified())));
     }
 
-    private static String getContentType(String fileName) {
-        if (fileName.endsWith(".ico")) {
-            return "image/x-icon";
-        }
-        if (fileName.endsWith(".js")) {
-            return "application/javascript";
-        }
-        if (fileName.endsWith(".css")) {
-            return "text/css";
-        }
-
-        return "text/html";
-    }
-
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (!(msg instanceof FullHttpRequest)) {
@@ -211,7 +198,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         HttpHeaders.setContentLength(response, fileLength);
 
         //setting content type
-        response.headers().set(CONTENT_TYPE, getContentType(file.getName()));
+        response.headers().set(CONTENT_TYPE, ContentTypeUtil.getContentType(file.getName()));
 
         setDateAndCacheHeaders(response, file);
         if (HttpHeaders.isKeepAlive(request)) {

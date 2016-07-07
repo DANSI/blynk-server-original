@@ -25,12 +25,17 @@ import cc.blynk.server.notifications.push.GCMMessage;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
+import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.StringUtils;
+import net.glxn.qrgen.core.image.ImageType;
+import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.util.Base64;
 
 import static cc.blynk.core.http.Response.*;
 import static cc.blynk.server.core.protocol.enums.Command.*;
@@ -184,6 +189,39 @@ public class HttpAPILogic {
         }
 
         return ok(widget.getJsonValue());
+    }
+
+    @GET
+    @Path("{token}/qr")
+    //todo cover with test
+    public Response updateWidgetPinData(@PathParam("token") String token) {
+        globalStats.mark(HTTP_QR);
+
+        User user = userDao.tokenManager.getUserByToken(token);
+
+        if (user == null) {
+            log.error("Requested token {} not found.", token);
+            return Response.badRequest("Invalid token.");
+        }
+
+        Integer dashId = user.getDashIdByToken(token);
+
+        if (dashId == null) {
+            log.error("Dash id for token {} not found. User {}", token, user.name);
+            return Response.badRequest("Didn't find dash id for token.");
+        }
+
+        DashBoard dashBoard = user.profile.getDashById(dashId);
+
+        try {
+            byte[] compressed = ByteUtils.compress(dashBoard.toString());
+            String qrData = "bp1" + Base64.getEncoder().encodeToString(compressed);
+            byte[] qrDataBinary = QRCode.from(qrData).to(ImageType.PNG).withSize(500, 500).stream().toByteArray();
+            return ok(qrDataBinary, "image/png");
+        } catch (IOException ioe) {
+            log.error("Error generating QR.", ioe);
+            return Response.badRequest("Error generating QR.");
+        }
     }
 
     @PUT
