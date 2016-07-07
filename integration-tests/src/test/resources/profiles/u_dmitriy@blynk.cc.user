@@ -224,7 +224,9 @@
                   "startTime":75600,
                   "startValue":"dw\u00000\u00001",
                   "stopTime":75599,
-                  "stopValue":"dw\u00000\u00000"
+                  "stopValue":"dw\u00000\u00000",
+                  "value":"dw\u00000\u00001"
+
                },
                {
                   "type":"LED",

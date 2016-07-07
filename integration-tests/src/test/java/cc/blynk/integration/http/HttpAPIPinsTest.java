@@ -24,7 +24,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * The Blynk Project.
@@ -97,6 +97,19 @@ public class HttpAPIPinsTest extends BaseTest {
             assertEquals(400, response.getStatusLine().getStatusCode());
             assertEquals("Requested pin not exists in app.", consumeText(response));
         }
+    }
+
+    @Test
+    public void testGetTimerExistingPin() throws Exception {
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/D0");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("1", values.get(0));
+        }
+
     }
 
     @Test
