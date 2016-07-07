@@ -484,8 +484,10 @@ As output you'll retrieve server.crt and server.pem files that you need to provi
 ### Behind wifi router
 If you want to run Blynk server behind WiFi-router and want it to be accessible from the Internet, you have to add port-forwarding rule on your router. This is required in order to forward all of the requests that come to the router within the local network to Blynk server.
 
-### Performance
-Currently server handles 20k req/sec with SSL and 40k req/sec without SSL hardware messages on VM with 2-cores of Intel(R) Xeon(R) CPU E5-2660 @ 2.20GHz. With high load - memory consumption could be up to 1 GB of RAM.
+### How to build
+Blynk has a bunch of integration tests that require DB, so you have to skip tests during build.
+
+        mvn clean install -Dmaven.test.skip=true
 
 ## Licensing
 [GNU GPL license](https://github.com/blynkkk/blynk-server/blob/master/license.txt)
