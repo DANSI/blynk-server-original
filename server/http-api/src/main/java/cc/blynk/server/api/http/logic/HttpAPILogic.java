@@ -63,7 +63,7 @@ public class HttpAPILogic {
     private final GCMWrapper gcmWrapper;
     private final ReportingDao reportingDao;
 
-    private static final ObjectMapper dashboardCloneMapper = JsonParser.init()
+    protected static final ObjectMapper dashboardCloneMapper = JsonParser.init()
             .addMixIn(Twitter.class, TwitterCloneHideFields.class)
             .addMixIn(Notification.class, NotificationCloneHideFields.class);
 
