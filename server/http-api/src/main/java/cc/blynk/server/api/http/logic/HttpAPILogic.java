@@ -39,7 +39,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.io.IOException;
 import java.util.Base64;
 
 import static cc.blynk.core.http.Response.*;
@@ -228,8 +227,8 @@ public class HttpAPILogic {
             String qrData = "bp1" + Base64.getEncoder().encodeToString(compressed);
             byte[] qrDataBinary = QRCode.from(qrData).to(ImageType.PNG).withSize(500, 500).stream().toByteArray();
             return ok(qrDataBinary, "image/png");
-        } catch (IOException ioe) {
-            log.error("Error generating QR.", ioe);
+        } catch (Exception e) {
+            log.error("Error generating QR. Reason : {}", e.getMessage());
             return Response.badRequest("Error generating QR.");
         }
     }

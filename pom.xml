@@ -27,6 +27,14 @@
         <module>integration-tests</module>
     </modules>
 
+    <!-- for QR gen tool -->
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
@@ -36,8 +44,6 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <!-- this is to avoid travis build failure on old machines with JDK bugs -->
-                    <useIncrementalCompilation>false</useIncrementalCompilation>
                 </configuration>
             </plugin>
 
@@ -104,7 +110,7 @@
         <commons-validator.version>1.5.0</commons-validator.version>
         <postgresql.version>9.4.1208</postgresql.version>
         <HikariCP.version>2.4.7</HikariCP.version>
-        <qrgen.version>2.1.0</qrgen.version>
+        <qrgen.version>2.2.0</qrgen.version>
 
         <!-- test versions -->
         <commons-lang3.version>3.4</commons-lang3.version>
