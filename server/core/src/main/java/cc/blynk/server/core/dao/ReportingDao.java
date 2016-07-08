@@ -55,12 +55,23 @@ public class ReportingDao {
         }
     }
 
-    public static byte[] getAllFromDisk(String dataFolder, String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
+    public static ByteBuffer getAllFromDisk(String dataFolder, String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
         Path userDataFile = Paths.get(dataFolder, username, generateFilename(dashId, pinType, pin, type));
         if (Files.notExists(userDataFile)) {
-            return EMPTY_ARRAY;
+            return null;
         }
 
+        try {
+            return read(userDataFile, count);
+        } catch (IOException ioe) {
+            log.error(ioe);
+        }
+
+        return null;
+    }
+
+    //todo filter outdated records?
+    private static ByteBuffer read(Path userDataFile, int count) throws IOException {
         try (SeekableByteChannel channel = Files.newByteChannel(userDataFile, StandardOpenOption.READ)) {
             final int size = (int) Files.size(userDataFile);
             final int dataSize = count * 16;
@@ -69,15 +80,8 @@ public class ReportingDao {
             ByteBuffer buf = ByteBuffer.allocate(readDataSize);
             channel.position(Math.max(0, size - dataSize));
             channel.read(buf);
-
-            //todo filter outdated records?
-
-            return buf.array();
-        } catch (IOException e) {
-            log.error(e);
+            return buf;
         }
-
-        return EMPTY_ARRAY;
     }
 
     private static boolean checkNoData(byte[][] data) {
@@ -129,8 +133,9 @@ public class ReportingDao {
         return values;
     }
 
-    private byte[] getAllFromDisk(String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
-        return getAllFromDisk(dataFolder, username, dashId, pinType, pin, count, type);
+    public byte[] getAllFromDisk(String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
+        ByteBuffer byteBuffer = getAllFromDisk(dataFolder, username, dashId, pinType, pin, count, type);
+        return byteBuffer == null ? EMPTY_ARRAY : byteBuffer.array();
     }
 
 }
