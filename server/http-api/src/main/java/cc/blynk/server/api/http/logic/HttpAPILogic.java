@@ -2,6 +2,8 @@ package cc.blynk.server.api.http.logic;
 
 import cc.blynk.core.http.Response;
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.logic.serialization.NotificationCloneHideFields;
+import cc.blynk.server.api.http.logic.serialization.TwitterCloneHideFields;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BlockingIOProcessor;
@@ -18,6 +20,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -26,7 +29,9 @@ import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
 import cc.blynk.utils.ByteUtils;
+import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
@@ -57,6 +62,10 @@ public class HttpAPILogic {
     private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
     private final ReportingDao reportingDao;
+
+    private static final ObjectMapper dashboardCloneMapper = JsonParser.init()
+            .addMixIn(Twitter.class, TwitterCloneHideFields.class)
+            .addMixIn(Notification.class, NotificationCloneHideFields.class);
 
     public HttpAPILogic(Holder holder) {
         this(holder.userDao, holder.sessionDao, holder.blockingIOProcessor, holder.mailWrapper, holder.gcmWrapper, holder.reportingDao, holder.stats);
@@ -214,7 +223,7 @@ public class HttpAPILogic {
         DashBoard dashBoard = user.profile.getDashById(dashId);
 
         try {
-            byte[] compressed = ByteUtils.compress(dashBoard.toString());
+            byte[] compressed = ByteUtils.compress(dashboardCloneMapper.writeValueAsString(dashBoard));
             String qrData = "bp1" + Base64.getEncoder().encodeToString(compressed);
             byte[] qrDataBinary = QRCode.from(qrData).to(ImageType.PNG).withSize(500, 500).stream().toByteArray();
             return ok(qrDataBinary, "image/png");
