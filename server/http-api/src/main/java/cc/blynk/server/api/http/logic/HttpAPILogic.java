@@ -31,7 +31,7 @@ import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
@@ -63,9 +63,10 @@ public class HttpAPILogic {
     private final GCMWrapper gcmWrapper;
     private final ReportingDao reportingDao;
 
-    protected static final ObjectMapper dashboardCloneMapper = JsonParser.init()
+    protected static final ObjectWriter dashboardCloneWriter = JsonParser.init()
             .addMixIn(Twitter.class, TwitterCloneHideFields.class)
-            .addMixIn(Notification.class, NotificationCloneHideFields.class);
+            .addMixIn(Notification.class, NotificationCloneHideFields.class)
+            .writerFor(DashBoard.class);
 
     public HttpAPILogic(Holder holder) {
         this(holder.userDao, holder.sessionDao, holder.blockingIOProcessor, holder.mailWrapper, holder.gcmWrapper, holder.reportingDao, holder.stats);
@@ -223,7 +224,7 @@ public class HttpAPILogic {
         DashBoard dashBoard = user.profile.getDashById(dashId);
 
         try {
-            byte[] compressed = ByteUtils.compress(dashboardCloneMapper.writeValueAsString(dashBoard));
+            byte[] compressed = ByteUtils.compress(dashboardCloneWriter.writeValueAsString(dashBoard));
             String qrData = "bp1" + Base64.getEncoder().encodeToString(compressed);
             byte[] qrDataBinary = QRCode.from(qrData).to(ImageType.PNG).withSize(500, 500).stream().toByteArray();
             return ok(qrDataBinary, "image/png");
