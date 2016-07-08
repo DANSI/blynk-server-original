@@ -55,7 +55,6 @@ public class ReportingDao {
         }
     }
 
-    //todo move out from event loop
     public static byte[] getAllFromDisk(String dataFolder, String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
         Path userDataFile = Paths.get(dataFolder, username, generateFilename(dashId, pinType, pin, type));
         if (Files.notExists(userDataFile)) {
