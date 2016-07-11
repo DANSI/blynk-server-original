@@ -41,7 +41,7 @@ public class HttpAPIServer extends BaseServer {
                         new HttpObjectAggregator(65536, true),
                         new ChunkedWriteHandler(),
                         new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"),
-                        new StaticFileHandler(true, new StaticFile("/static", false), new StaticFile(FileUtils.CSV_DIR, true)),
+                        new StaticFileHandler(true, new StaticFile("/static", false), new StaticFile(FileUtils.CSV_DIR, true, false)),
                         new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );
             }

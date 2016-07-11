@@ -7,12 +7,21 @@ package cc.blynk.core.http.handlers;
  */
 public class StaticFile {
 
-    public String path;
+    public final String path;
 
-    public boolean isDirectPath;
+    public final boolean isDirectPath;
+
+    public final boolean doCaching;
 
     public StaticFile(String path, boolean isDirectPath) {
         this.path = path;
         this.isDirectPath = isDirectPath;
+        this.doCaching = true;
+    }
+
+    public StaticFile(String path, boolean isDirectPath, boolean doCaching) {
+        this.path = path;
+        this.isDirectPath = isDirectPath;
+        this.doCaching = doCaching;
     }
 }

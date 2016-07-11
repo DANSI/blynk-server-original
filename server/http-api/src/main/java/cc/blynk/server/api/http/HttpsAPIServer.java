@@ -58,7 +58,7 @@ public class HttpsAPIServer extends BaseServer {
                         new AuthCookieHandler(businessRootPath, sessionHolder),
                         new UrlMapperHandler(businessRootPath, "/static/business/business.html"),
                         new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"),
-                        new StaticFileHandler(isUnpacked, new StaticFile("/static", false), new StaticFile(FileUtils.CSV_DIR, true)),
+                        new StaticFileHandler(isUnpacked, new StaticFile("/static", false), new StaticFile(FileUtils.CSV_DIR, true, false)),
                         new AuthHttpHandler(holder.userDao, holder.sessionDao, holder.stats),
                         new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );

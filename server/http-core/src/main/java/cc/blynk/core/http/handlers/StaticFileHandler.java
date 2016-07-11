@@ -91,20 +91,24 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
      * @param fileToCache
      *            file to extract content type
      */
-    private static void setDateAndCacheHeaders(io.netty.handler.codec.http.HttpResponse response, File fileToCache) {
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(HTTP_DATE_FORMAT, Locale.US);
-        dateFormatter.setTimeZone(TimeZone.getTimeZone(HTTP_DATE_GMT_TIMEZONE));
+    private static void setDateAndCacheHeaders(io.netty.handler.codec.http.HttpResponse response, File fileToCache, StaticFile staticFile) {
+        if (staticFile.doCaching) {
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(HTTP_DATE_FORMAT, Locale.US);
+            dateFormatter.setTimeZone(TimeZone.getTimeZone(HTTP_DATE_GMT_TIMEZONE));
 
-        // Date header
-        Calendar time = new GregorianCalendar();
-        response.headers().set(DATE, dateFormatter.format(time.getTime()));
+            // Date header
+            Calendar time = new GregorianCalendar();
+            response.headers().set(DATE, dateFormatter.format(time.getTime()));
 
-        // Add cache headers
-        time.add(Calendar.SECOND, HTTP_CACHE_SECONDS);
-        response.headers().set(EXPIRES, dateFormatter.format(time.getTime()));
-        response.headers().set(CACHE_CONTROL, "private, max-age=" + HTTP_CACHE_SECONDS);
-        response.headers().set(
-                LAST_MODIFIED, dateFormatter.format(new Date(fileToCache.lastModified())));
+            // Add cache headers
+            time.add(Calendar.SECOND, HTTP_CACHE_SECONDS);
+            response.headers().set(EXPIRES, dateFormatter.format(time.getTime()));
+            response.headers().set(CACHE_CONTROL, "private, max-age=" + HTTP_CACHE_SECONDS);
+            response.headers().set(
+                    LAST_MODIFIED, dateFormatter.format(new Date(fileToCache.lastModified())));
+        } else {
+            response.headers().set(CACHE_CONTROL, "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+        }
     }
 
     @Override
@@ -205,7 +209,8 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         //setting content type
         response.headers().set(CONTENT_TYPE, ContentTypeUtil.getContentType(file.getName()));
 
-        setDateAndCacheHeaders(response, file);
+        //todo setup caching for files.
+        setDateAndCacheHeaders(response, file, staticFile);
         if (HttpHeaders.isKeepAlive(request)) {
             response.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
         }
