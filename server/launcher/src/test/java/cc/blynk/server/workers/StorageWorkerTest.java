@@ -95,6 +95,7 @@ public class StorageWorkerTest {
 
         ByteBuffer data = ReportingDao.getByteBufferFromDisk(reportingFolder, "test", 1, PinType.ANALOG, (byte) 1, 2, GraphType.HOURLY);
         assertNotNull(data);
+        data.flip();
         assertEquals(32, data.capacity());
 
         assertEquals(150.54, data.getDouble(), 0.001);
@@ -105,6 +106,7 @@ public class StorageWorkerTest {
 
         data = ReportingDao.getByteBufferFromDisk(reportingFolder, "test2", 2, PinType.ANALOG, (byte) 2, 1, GraphType.HOURLY);
         assertNotNull(data);
+        data.flip();
         assertEquals(16, data.capacity());
         assertEquals(200.0, data.getDouble(), 0.001);
         assertEquals(ts * AverageAggregator.HOUR, data.getLong());
@@ -143,6 +145,7 @@ public class StorageWorkerTest {
         //take less
         ByteBuffer data = ReportingDao.getByteBufferFromDisk(reportingFolder, "test", 1, PinType.ANALOG, (byte) 1, 1, GraphType.HOURLY);
         assertNotNull(data);
+        data.flip();
         assertEquals(16, data.capacity());
 
         assertEquals(100.0, data.getDouble(), 0.001);
@@ -152,6 +155,7 @@ public class StorageWorkerTest {
         //take more
         data = ReportingDao.getByteBufferFromDisk(reportingFolder, "test", 1, PinType.ANALOG, (byte) 1, 24, GraphType.HOURLY);
         assertNotNull(data);
+        data.flip();
         assertEquals(48, data.capacity());
 
         assertEquals(200.0, data.getDouble(), 0.001);
