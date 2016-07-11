@@ -28,10 +28,19 @@
     </modules>
 
     <!-- for QR gen tool -->
+    <distributionManagement>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+            <layout>default</layout>
+        </repository>
+    </distributionManagement>
+
     <repositories>
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+            <layout>default</layout>
         </repository>
     </repositories>
 
