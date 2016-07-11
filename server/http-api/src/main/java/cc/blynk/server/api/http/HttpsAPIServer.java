@@ -1,5 +1,6 @@
 package cc.blynk.server.api.http;
 
+import cc.blynk.core.http.handlers.StaticFile;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UrlMapperHandler;
 import cc.blynk.core.http.rest.HandlerRegistry;
@@ -8,6 +9,7 @@ import cc.blynk.server.api.http.handlers.HttpHandler;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.business.*;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -56,7 +58,7 @@ public class HttpsAPIServer extends BaseServer {
                         new AuthCookieHandler(businessRootPath, sessionHolder),
                         new UrlMapperHandler(businessRootPath, "/static/business/business.html"),
                         new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"),
-                        new StaticFileHandler(isUnpacked, "/static"),
+                        new StaticFileHandler(isUnpacked, new StaticFile("/static", false), new StaticFile(FileUtils.CSV_DIR, true)),
                         new AuthHttpHandler(holder.userDao, holder.sessionDao, holder.stats),
                         new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );

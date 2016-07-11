@@ -1,5 +1,6 @@
 package cc.blynk.server.api.http;
 
+import cc.blynk.core.http.handlers.StaticFile;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UrlMapperHandler;
 import cc.blynk.core.http.rest.HandlerRegistry;
@@ -9,6 +10,7 @@ import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
 import cc.blynk.server.api.http.logic.business.HttpBusinessAPILogic;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.utils.FileUtils;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -39,7 +41,7 @@ public class HttpAPIServer extends BaseServer {
                         new HttpObjectAggregator(65536, true),
                         new ChunkedWriteHandler(),
                         new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"),
-                        new StaticFileHandler(true, "/static"),
+                        new StaticFileHandler(true, new StaticFile("/static", false), new StaticFile(FileUtils.CSV_DIR, true)),
                         new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );
             }

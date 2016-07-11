@@ -72,7 +72,8 @@ public final class Command {
     public static final short HTTP_EMAIL = 47;
     public static final short HTTP_GET_PROJECT = 48;
     public static final short HTTP_QR = 49;
-    public static final short HTTP_TOTAL = 50;
+    public static final short HTTP_GET_DATA = 50;
+    public static final short HTTP_TOTAL = 51;
 
 
     //all this code just to make logging more user-friendly

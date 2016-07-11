@@ -1,6 +1,7 @@
 package cc.blynk.server.admin.http;
 
 import cc.blynk.core.http.HttpHandler;
+import cc.blynk.core.http.handlers.StaticFile;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UrlMapperHandler;
 import cc.blynk.core.http.rest.HandlerRegistry;
@@ -54,7 +55,7 @@ public class HttpsAdminServer extends BaseServer {
                     new ChunkedWriteHandler(),
                     new UrlMapperHandler(adminRootPath, "/static/admin/admin.html"),
                     new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"),
-                    new StaticFileHandler(isUnpacked, "/static"),
+                    new StaticFileHandler(isUnpacked, new StaticFile("/static", false)),
                     new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
                 );
             }

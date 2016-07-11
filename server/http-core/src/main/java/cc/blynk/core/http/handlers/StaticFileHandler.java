@@ -39,9 +39,9 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
      * Used for case when server started from IDE and static files wasn't unpacked from jar.
      */
     private final boolean isUnpacked;
-    private final String[] staticPaths;
+    private final StaticFile[] staticPaths;
 
-    public StaticFileHandler(boolean isUnpacked, String... staticPaths) {
+    public StaticFileHandler(boolean isUnpacked, StaticFile... staticPaths) {
         this.staticPaths = staticPaths;
         this.isUnpacked = isUnpacked;
     }
@@ -115,9 +115,10 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
         FullHttpRequest req = (FullHttpRequest) msg;
 
-        if (isStaticPath(req.getUri())) {
+        StaticFile staticFile = getStaticPath(req.getUri());
+        if (staticFile != null) {
             try {
-                serveStatic(ctx, req);
+                serveStatic(ctx, req, staticFile);
             } finally {
                 ReferenceCountUtil.release(req);
             }
@@ -127,16 +128,16 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         ctx.fireChannelRead(req);
     }
 
-    private boolean isStaticPath(String path) {
-        for (String staticPath : staticPaths) {
-            if (path.startsWith(staticPath)) {
-                return true;
+    private StaticFile getStaticPath(String path) {
+        for (StaticFile staticPath : staticPaths) {
+            if (path.startsWith(staticPath.path)) {
+                return staticPath;
             }
         }
-        return false;
+        return null;
     }
 
-    private void serveStatic(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
+    private void serveStatic(ChannelHandlerContext ctx, FullHttpRequest request, StaticFile staticFile) throws Exception {
         if (!request.getDecoderResult().isSuccess()) {
             sendError(ctx, BAD_REQUEST);
             return;
@@ -150,9 +151,13 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
         //running from jar
         if (isUnpacked) {
             //.substring(1) is all after "/" part
-            file = ServerProperties.getFileInCurrentDir(request.getUri()).toFile();
+            if (staticFile.isDirectPath) {
+                file = new File(request.getUri());
+            } else {
+                file = ServerProperties.getFileInCurrentDir(request.getUri()).toFile();
+            }
         } else {
-            //for local mode
+            //for local mode / running from ide
             file = new File("./server/http-admin/target/classes" + request.getUri());
             if (!file.exists()) {
                 file = new File("./server/http-api/target/classes" + request.getUri());

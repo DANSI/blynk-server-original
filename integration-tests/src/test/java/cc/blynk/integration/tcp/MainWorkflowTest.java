@@ -814,7 +814,7 @@ public class MainWorkflowTest extends IntegrationBase {
         StorageWorker.write(userReportFile, 2.2, 2L);
 
         List<Path> paths = new ArrayList<>();
-        paths.add(Paths.get("/tmp/dima@mail.ua_1_a7.csv.gz"));
+        paths.add(Paths.get("/tmp/blynk/dima@mail.ua_1_a7.csv.gz"));
 
         clientPair.appClient.send("export 1 14");
         verify(mailWrapper, timeout(1000)).send(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), eq(""), eq(paths));

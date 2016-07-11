@@ -20,6 +20,9 @@ public class ContentTypeUtil {
         if (fileName.endsWith(".png")) {
             return "image/png";
         }
+        if (fileName.endsWith(".gz")) {
+            return "application/x-gzip";
+        }
 
         return "text/html";
     }

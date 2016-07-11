@@ -1,5 +1,9 @@
 package cc.blynk.utils;
 
+import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.model.enums.GraphType;
+import cc.blynk.server.core.model.enums.PinType;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -7,7 +11,10 @@ import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.zip.GZIPOutputStream;
+
+import static java.lang.String.*;
 
 /**
  * The Blynk Project.
@@ -15,6 +22,8 @@ import java.util.zip.GZIPOutputStream;
  * Created on 04.01.16.
  */
 public class FileUtils {
+
+    public static final String CSV_DIR = Paths.get(System.getProperty("java.io.tmpdir"), "blynk").toString();
 
     public static boolean deleteQuietly(Path path) {
         try {
@@ -46,5 +55,24 @@ public class FileUtils {
                 writer.write('\n');
             }
         }
+    }
+
+    public static final int DEFAULT_FETCH_COUNT = 60 * 24 * 30 * 1;
+    public static final String EXPORT_GRAPH_FILENAME = "%s_%s_%c%d.csv.gz";
+
+    public static Path createCSV(ReportingDao reportingDao, String username, int dashId, PinType pinType, byte pin) throws IOException {
+        if (pinType != null && pin > -1) {
+            //data for 1 month
+
+            ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(username, dashId, pinType, pin, DEFAULT_FETCH_COUNT, GraphType.MINUTE);
+            if (onePinData != null) {
+                onePinData.flip();
+                String filename = format(EXPORT_GRAPH_FILENAME, username, dashId, pinType.pintTypeChar, pin);
+                Path path = Paths.get(CSV_DIR, filename);
+                makeGzippedCSVFile(onePinData, path);
+                return path;
+            }
+        }
+        throw new IOException("No data for pin.");
     }
 }

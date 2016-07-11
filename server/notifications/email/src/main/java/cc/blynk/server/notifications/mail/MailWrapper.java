@@ -9,6 +9,7 @@ import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -62,6 +63,10 @@ public class MailWrapper {
 
         Transport.send(message);
         log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
+    }
+
+    public void send(String to, String subj, String body, Path attachment) throws MessagingException {
+        send(to, subj, body, Collections.singletonList(attachment));
     }
 
     public void send(String to, String subj, String body, List<Path> attachments) throws MessagingException {

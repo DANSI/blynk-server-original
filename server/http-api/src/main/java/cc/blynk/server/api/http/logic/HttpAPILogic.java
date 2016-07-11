@@ -29,6 +29,7 @@ import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
 import cc.blynk.utils.ByteUtils;
+import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -39,6 +40,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 import java.util.Base64;
 
 import static cc.blynk.core.http.Response.*;
@@ -230,6 +232,47 @@ public class HttpAPILogic {
         } catch (Exception e) {
             log.error("Error generating QR. Reason : {}", e.getMessage());
             return Response.badRequest("Error generating QR.");
+        }
+    }
+
+    @GET
+    @Path("{token}/data/{pin}")
+    public Response getPinHistoryData(@PathParam("token") String token,
+                                      @PathParam("pin") String pinString) {
+        globalStats.mark(HTTP_GET_DATA);
+
+        User user = userDao.tokenManager.getUserByToken(token);
+
+        if (user == null) {
+            log.error("Requested token {} not found.", token);
+            return Response.badRequest("Invalid token.");
+        }
+
+        Integer dashId = user.getDashIdByToken(token);
+
+        if (dashId == null) {
+            log.error("Dash id for token {} not found. User {}", token, user.name);
+            return Response.badRequest("Didn't find dash id for token.");
+        }
+
+        PinType pinType;
+        byte pin;
+
+        try {
+            pinType = PinType.getPinType(pinString.charAt(0));
+            pin = Byte.parseByte(pinString.substring(1));
+        } catch (NumberFormatException | IllegalCommandBodyException e) {
+            log.error("Wrong pin format. {}", pinString);
+            return Response.badRequest("Wrong pin format.");
+        }
+
+        //todo may be optimized
+        try {
+            java.nio.file.Path path = FileUtils.createCSV(reportingDao, user.name, dashId, pinType, pin);
+            return redirect(path.toString());
+        } catch (IOException ioe) {
+            log.error("Error getting pin data. Reason : {}", ioe.getMessage());
+            return Response.badRequest("Error getting pin data.");
         }
     }
 
