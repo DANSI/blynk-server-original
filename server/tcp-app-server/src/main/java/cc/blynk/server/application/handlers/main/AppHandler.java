@@ -11,6 +11,7 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.widget.DeleteWi
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.UpdateWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.metadata.GetMetadataLogic;
 import cc.blynk.server.application.handlers.main.logic.metadata.SaveMetadataLogic;
+import cc.blynk.server.application.handlers.main.logic.reporting.ExportGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.GetGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.GetShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.GetSharedDashLogic;
@@ -37,6 +38,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final HardwareAppLogic hardwareApp;
     private final RefreshTokenLogic refreshToken;
     private final GetGraphDataLogic graphData;
+    private final ExportGraphDataLogic exportGraphData;
     private final AppMailLogic appMailLogic;
     private final GetShareTokenLogic getShareTokenLogic;
     private final RefreshShareTokenLogic refreshShareTokenLogic;
@@ -58,6 +60,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.hardwareApp = new HardwareAppLogic(holder.sessionDao);
         this.refreshToken = new RefreshTokenLogic(holder.userDao);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
+        this.exportGraphData = new ExportGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor, holder.mailWrapper);
         this.appMailLogic = new AppMailLogic(holder.blockingIOProcessor, holder.mailWrapper);
         this.getShareTokenLogic = new GetShareTokenLogic(holder.userDao);
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(holder.userDao, holder.sessionDao);
@@ -116,6 +119,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case GET_GRAPH_DATA :
                 graphData.messageReceived(ctx, state.user, msg);
+                break;
+            case EXPORT_GRAPH_DATA :
+                exportGraphData.messageReceived(ctx, state.user, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);

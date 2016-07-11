@@ -31,6 +31,8 @@ public class CommandParser {
                 return LOGIN;
             case "getgraphdata" :
                 return GET_GRAPH_DATA;
+            case "export" :
+                return EXPORT_GRAPH_DATA;
             case "activate" :
                 return ACTIVATE_DASHBOARD;
             case "deactivate" :

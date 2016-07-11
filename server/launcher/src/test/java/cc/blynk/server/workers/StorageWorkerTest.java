@@ -93,23 +93,21 @@ public class StorageWorkerTest {
         assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
         assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
 
-        byte[] data = ReportingDao.getAllFromDisk(reportingFolder, "test", 1, PinType.ANALOG, (byte) 1, 2, GraphType.HOURLY);
-        ByteBuffer byteBuffer = ByteBuffer.wrap(data);
+        ByteBuffer data = ReportingDao.getByteBufferFromDisk(reportingFolder, "test", 1, PinType.ANALOG, (byte) 1, 2, GraphType.HOURLY);
         assertNotNull(data);
-        assertEquals(32, data.length);
+        assertEquals(32, data.capacity());
 
-        assertEquals(150.54, byteBuffer.getDouble(), 0.001);
-        assertEquals((ts - 1) * AverageAggregator.HOUR, byteBuffer.getLong());
+        assertEquals(150.54, data.getDouble(), 0.001);
+        assertEquals((ts - 1) * AverageAggregator.HOUR, data.getLong());
 
-        assertEquals(100.0, byteBuffer.getDouble(), 0.001);
-        assertEquals(ts * AverageAggregator.HOUR, byteBuffer.getLong());
+        assertEquals(100.0, data.getDouble(), 0.001);
+        assertEquals(ts * AverageAggregator.HOUR, data.getLong());
 
-        data = ReportingDao.getAllFromDisk(reportingFolder, "test2", 2, PinType.ANALOG, (byte) 2, 1, GraphType.HOURLY);
-        byteBuffer = ByteBuffer.wrap(data);
+        data = ReportingDao.getByteBufferFromDisk(reportingFolder, "test2", 2, PinType.ANALOG, (byte) 2, 1, GraphType.HOURLY);
         assertNotNull(data);
-        assertEquals(16, data.length);
-        assertEquals(200.0, byteBuffer.getDouble(), 0.001);
-        assertEquals(ts * AverageAggregator.HOUR, byteBuffer.getLong());
+        assertEquals(16, data.capacity());
+        assertEquals(200.0, data.getDouble(), 0.001);
+        assertEquals(ts * AverageAggregator.HOUR, data.getLong());
     }
 
     @Test
@@ -143,29 +141,27 @@ public class StorageWorkerTest {
         assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
 
         //take less
-        byte[] data = ReportingDao.getAllFromDisk(reportingFolder, "test", 1, PinType.ANALOG, (byte) 1, 1, GraphType.HOURLY);
-        ByteBuffer byteBuffer = ByteBuffer.wrap(data);
+        ByteBuffer data = ReportingDao.getByteBufferFromDisk(reportingFolder, "test", 1, PinType.ANALOG, (byte) 1, 1, GraphType.HOURLY);
         assertNotNull(data);
-        assertEquals(16, data.length);
+        assertEquals(16, data.capacity());
 
-        assertEquals(100.0, byteBuffer.getDouble(), 0.001);
-        assertEquals(ts * AverageAggregator.HOUR, byteBuffer.getLong());
+        assertEquals(100.0, data.getDouble(), 0.001);
+        assertEquals(ts * AverageAggregator.HOUR, data.getLong());
 
 
         //take more
-        data = ReportingDao.getAllFromDisk(reportingFolder, "test", 1, PinType.ANALOG, (byte) 1, 24, GraphType.HOURLY);
-        byteBuffer = ByteBuffer.wrap(data);
+        data = ReportingDao.getByteBufferFromDisk(reportingFolder, "test", 1, PinType.ANALOG, (byte) 1, 24, GraphType.HOURLY);
         assertNotNull(data);
-        assertEquals(48, data.length);
+        assertEquals(48, data.capacity());
 
-        assertEquals(200.0, byteBuffer.getDouble(), 0.001);
-        assertEquals((ts - 2) * AverageAggregator.HOUR, byteBuffer.getLong());
+        assertEquals(200.0, data.getDouble(), 0.001);
+        assertEquals((ts - 2) * AverageAggregator.HOUR, data.getLong());
 
-        assertEquals(150.54, byteBuffer.getDouble(), 0.001);
-        assertEquals((ts - 1) * AverageAggregator.HOUR, byteBuffer.getLong());
+        assertEquals(150.54, data.getDouble(), 0.001);
+        assertEquals((ts - 1) * AverageAggregator.HOUR, data.getLong());
 
-        assertEquals(100.0, byteBuffer.getDouble(), 0.001);
-        assertEquals(ts * AverageAggregator.HOUR, byteBuffer.getLong());
+        assertEquals(100.0, data.getDouble(), 0.001);
+        assertEquals(ts * AverageAggregator.HOUR, data.getLong());
     }
 
 

@@ -81,6 +81,25 @@
                                 "max":255
                             }
                            ]
+                },
+                {
+                    "type":"LOGGER",
+                    "id":14,
+                    "x":0,
+                    "y":6,
+                    "color":0,
+                    "width":8,
+                    "height":3,
+                    "tabId":0,
+                    "pins":
+                        [
+                            {"pinType":"ANALOG", "pin":7,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":255},
+                            {"pin":-1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0},
+                            {"pin":-1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0},
+                            {"pin":-1,"pwmMode":false,"rangeMappingOn":false,"min":0,"max":0}
+                        ],
+                    "period":"THREE_MONTHS",
+                    "showLegends":true
                 }
              ],
              "boardType":"UNO"

@@ -53,6 +53,7 @@ import java.nio.file.attribute.FileAttribute;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -485,10 +486,10 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testTerminalStorageRemembersCommands() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        assertEquals(14, profile.dashBoards[0].widgets.length);
+        assertEquals(15, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "8800")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "7900")));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":102, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"DIGITAL\", \"pin\":17}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
@@ -504,18 +505,18 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         profile = JsonParser.parseProfile(clientPair.appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
-        assertEquals(15, profile.dashBoards[0].widgets.length);
-        assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"My Dashboard\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"pushMode\":false,\"invertedOn\":false},{\"type\":\"SLIDER\",\"id\":2,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":2,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"sendOnReleaseOn\":false},{\"type\":\"SLIDER\",\"id\":3,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":3,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"0\",\"sendOnReleaseOn\":false},{\"type\":\"SLIDER\",\"id\":4,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"VIRTUAL\",\"pin\":4,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"244\",\"sendOnReleaseOn\":false},{\"type\":\"TIMER\",\"id\":5,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":5,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"dw\\u00005\\u00001\",\"startTime\":0,\"stopTime\":-1,\"invertedOn\":false},{\"type\":\"LED\",\"id\":6,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":6,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"frequency\":100},{\"type\":\"DIGIT4_DISPLAY\",\"id\":7,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":7,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"3\",\"frequency\":5000},{\"type\":\"DIGIT4_DISPLAY\",\"id\":30,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":30,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"3\",\"frequency\":1000},{\"type\":\"GRAPH\",\"id\":8,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":8,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"isBar\":false,\"frequency\":0},{\"type\":\"NOTIFICATION\",\"id\":9,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"androidTokens\":{\"uid\":\"token\"},\"notifyWhenOffline\":true,\"notifyWhenOfflineIgnorePeriod\":0,\"priority\":\"normal\"},{\"type\":\"TWITTER\",\"id\":10,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"token\":\"token\",\"secret\":\"secret\"},{\"type\":\"RTC\",\"id\":11,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"pinType\":\"VIRTUAL\",\"pin\":9,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},{\"type\":\"LCD\",\"id\":12,\"x\":0,\"y\":0,\"color\":-1,\"width\":8,\"height\":2,\"tabId\":0,\"pins\":[{\"pin\":0,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"89.888037459418\",\"min\":-100,\"max\":100},{\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"-58.74774244674501\",\"min\":-100,\"max\":100}],\"advancedMode\":false,\"textFormatLine1\":\"pin1 : /pin0/\",\"textFormatLine2\":\"pin2 : /pin1/\",\"textLight\":false,\"textLightOn\":false,\"frequency\":1000},{\"type\":\"RGB\",\"id\":13,\"x\":2,\"y\":3,\"color\":616861439,\"width\":4,\"height\":3,\"tabId\":0,\"pins\":[{\"pin\":13,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"60\\u0000143\\u0000158\",\"min\":0,\"max\":255},{\"pin\":13,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"60\\u0000143\\u0000158\",\"min\":0,\"max\":255},{\"pin\":13,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"60\\u0000143\\u0000158\",\"min\":0,\"max\":255}],\"splitMode\":false,\"sendOnReleaseOn\":true},{\"type\":\"TERMINAL\",\"id\":102,\"x\":5,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":17,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"5\",\"autoScrollOn\":false,\"terminalInputOn\":false,\"textLightOn\":false}],\"boardType\":\"UNO\",\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":true,\"isActive\":true}]}", profile.toString());
+        assertEquals(16, profile.dashBoards[0].widgets.length);
+        assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"My Dashboard\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"pushMode\":false,\"invertedOn\":false},{\"type\":\"SLIDER\",\"id\":2,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":2,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"sendOnReleaseOn\":false},{\"type\":\"SLIDER\",\"id\":3,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":3,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"0\",\"sendOnReleaseOn\":false},{\"type\":\"SLIDER\",\"id\":4,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"VIRTUAL\",\"pin\":4,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"244\",\"sendOnReleaseOn\":false},{\"type\":\"TIMER\",\"id\":5,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":5,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"dw\\u00005\\u00001\",\"startTime\":0,\"stopTime\":-1,\"invertedOn\":false},{\"type\":\"LED\",\"id\":6,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":6,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"frequency\":100},{\"type\":\"DIGIT4_DISPLAY\",\"id\":7,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":7,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"3\",\"frequency\":5000},{\"type\":\"DIGIT4_DISPLAY\",\"id\":30,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":30,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"3\",\"frequency\":1000},{\"type\":\"GRAPH\",\"id\":8,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":8,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"isBar\":false,\"frequency\":0},{\"type\":\"NOTIFICATION\",\"id\":9,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"androidTokens\":{\"uid\":\"token\"},\"notifyWhenOffline\":true,\"notifyWhenOfflineIgnorePeriod\":0,\"priority\":\"normal\"},{\"type\":\"TWITTER\",\"id\":10,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"token\":\"token\",\"secret\":\"secret\"},{\"type\":\"RTC\",\"id\":11,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"pinType\":\"VIRTUAL\",\"pin\":9,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},{\"type\":\"LCD\",\"id\":12,\"x\":0,\"y\":0,\"color\":-1,\"width\":8,\"height\":2,\"tabId\":0,\"pins\":[{\"pin\":0,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"89.888037459418\",\"min\":-100,\"max\":100},{\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"-58.74774244674501\",\"min\":-100,\"max\":100}],\"advancedMode\":false,\"textFormatLine1\":\"pin1 : /pin0/\",\"textFormatLine2\":\"pin2 : /pin1/\",\"textLight\":false,\"textLightOn\":false,\"frequency\":1000},{\"type\":\"RGB\",\"id\":13,\"x\":2,\"y\":3,\"color\":616861439,\"width\":4,\"height\":3,\"tabId\":0,\"pins\":[{\"pin\":13,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"60\\u0000143\\u0000158\",\"min\":0,\"max\":255},{\"pin\":13,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"60\\u0000143\\u0000158\",\"min\":0,\"max\":255},{\"pin\":13,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"60\\u0000143\\u0000158\",\"min\":0,\"max\":255}],\"splitMode\":false,\"sendOnReleaseOn\":true},{\"type\":\"LOGGER\",\"id\":509087093,\"x\":0,\"y\":6,\"color\":0,\"width\":8,\"height\":3,\"tabId\":0,\"pins\":[{\"pin\":7,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"ANALOG\",\"min\":0,\"max\":255},{\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},{\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},{\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0}],\"period\":\"THREE_MONTHS\",\"showLegends\":true},{\"type\":\"TERMINAL\",\"id\":102,\"x\":5,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":17,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"5\",\"autoScrollOn\":false,\"terminalInputOn\":false,\"textLightOn\":false}],\"boardType\":\"UNO\",\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":true,\"isActive\":true}]}", profile.toString());
     }
 
     @Test
     public void testAddAndRemoveTabs() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        assertEquals(14, profile.dashBoards[0].widgets.length);
+        assertEquals(15, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "8800")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "7900")));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":100, \"x\":0, \"y\":0, \"tabs\":[{\"label\":\"tab 1\"}, {\"label\":\"tab 2\"}, {\"label\":\"tab 3\"}], \"type\":\"TABS\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
@@ -527,23 +528,23 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(5, OK)));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, GET_ENERGY, "8400")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, GET_ENERGY, "7500")));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        assertEquals(17, profile.dashBoards[0].widgets.length);
+        assertEquals(18, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("deleteWidget 1\0" + "100");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, GET_ENERGY, "8600")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, GET_ENERGY, "7700")));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        assertEquals(15, profile.dashBoards[0].widgets.length);
+        assertEquals(16, profile.dashBoards[0].widgets.length);
         assertNotNull(profile.dashBoards[0].findWidgetByPin((byte) 17, PinType.DIGITAL));
     }
 
@@ -551,10 +552,10 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testAddAndUpdateTabs() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        assertEquals(14, profile.dashBoards[0].widgets.length);
+        assertEquals(15, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "8800")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "7900")));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":100, \"x\":0, \"y\":0, \"tabs\":[{\"label\":\"tab 1\"}, {\"label\":\"tab 2\"}, {\"label\":\"tab 3\"}], \"type\":\"TABS\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
@@ -566,23 +567,23 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(5, OK)));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, GET_ENERGY, "8400")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, GET_ENERGY, "7500")));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        assertEquals(17, profile.dashBoards[0].widgets.length);
+        assertEquals(18, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("updateWidget 1\0{\"id\":100, \"x\":0, \"y\":0, \"tabs\":[{\"label\":\"tab 1\"}, {\"label\":\"tab 2\"}], \"type\":\"TABS\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, GET_ENERGY, "8600")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, GET_ENERGY, "7700")));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        assertEquals(16, profile.dashBoards[0].widgets.length);
+        assertEquals(17, profile.dashBoards[0].widgets.length);
         assertNull(profile.dashBoards[0].findWidgetByPin((byte) 17, PinType.DIGITAL));
         assertNotNull(profile.dashBoards[0].findWidgetByPin((byte) 18, PinType.DIGITAL));
     }
@@ -789,6 +790,34 @@ public class MainWorkflowTest extends IntegrationBase {
 
         appClient.send("email 1");
         verify(mailWrapper, timeout(1000)).send(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"));
+    }
+
+    @Test
+    public void testExportDataFromHistoryGraph() throws Exception {
+        clientPair.appClient.send("export 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
+
+        clientPair.appClient.send("export 1 666");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, ILLEGAL_COMMAND)));
+
+        clientPair.appClient.send("export 1 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, ILLEGAL_COMMAND)));
+
+        clientPair.appClient.send("export 1 14");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, NO_DATA_EXCEPTION)));
+
+        //generate fake reporting data
+        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
+        Files.createDirectories(userReportDirectory);
+        Path userReportFile = Paths.get(userReportDirectory.toString(), ReportingDao.generateFilename(1, PinType.ANALOG, (byte) 7, GraphType.HOURLY));
+        StorageWorker.write(userReportFile, 1.1, 1L);
+        StorageWorker.write(userReportFile, 2.2, 2L);
+
+        List<Path> paths = new ArrayList<>();
+        paths.add(Paths.get("/tmp/dima@mail.ua_1_a7.csv.gz"));
+
+        clientPair.appClient.send("export 1 14");
+        verify(mailWrapper, timeout(1000)).send(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), eq(""), eq(paths));
     }
 
     @Test

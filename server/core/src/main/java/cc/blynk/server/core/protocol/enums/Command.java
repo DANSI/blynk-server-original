@@ -43,6 +43,7 @@ public final class Command {
     public static final short SYNC = 25;
     public static final short SHARING = 26;
     public static final short ADD_PUSH_TOKEN = 27;
+    public static final short EXPORT_GRAPH_DATA = 28;
     //app sharing commands
     public static final short GET_SHARED_DASH = 29;
     public static final short GET_SHARE_TOKEN = 30;
@@ -93,6 +94,7 @@ public final class Command {
                 put(REFRESH_TOKEN, "RefreshToken");
                 put(GET_GRAPH_DATA, "GetGraphDataRequest");
                 put(GET_GRAPH_DATA_RESPONSE, "GetGraphDataResponse");
+                put(EXPORT_GRAPH_DATA, "ExportGraphData");
                 put(BRIDGE, "Bridge");
                 put(HARDWARE, "Hardware");
                 put(GET_SHARED_DASH, "GetSharedDash");

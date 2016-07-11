@@ -55,7 +55,11 @@ public class ReportingDao {
         }
     }
 
-    public static ByteBuffer getAllFromDisk(String dataFolder, String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
+    public ByteBuffer getByteBufferFromDisk(String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
+        return getByteBufferFromDisk(dataFolder, username, dashId, pinType, pin, count, type);
+    }
+
+    public static ByteBuffer getByteBufferFromDisk(String dataFolder, String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
         Path userDataFile = Paths.get(dataFolder, username, generateFilename(dashId, pinType, pin, type));
         if (Files.notExists(userDataFile)) {
             return null;
@@ -120,9 +124,10 @@ public class ReportingDao {
         byte[][] values = new byte[requestedPins.length][];
 
         for (int i = 0; i < requestedPins.length; i++) {
-            values[i] = getAllFromDisk(username,
+            final ByteBuffer byteBuffer = getByteBufferFromDisk(username,
                     requestedPins[i].dashId, requestedPins[i].pinType,
                     requestedPins[i].pin, requestedPins[i].count, requestedPins[i].type);
+            values[i] =  byteBuffer == null ? EMPTY_ARRAY : byteBuffer.array();
         }
 
 
@@ -131,11 +136,6 @@ public class ReportingDao {
         }
 
         return values;
-    }
-
-    public byte[] getAllFromDisk(String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
-        ByteBuffer byteBuffer = getAllFromDisk(dataFolder, username, dashId, pinType, pin, count, type);
-        return byteBuffer == null ? EMPTY_ARRAY : byteBuffer.array();
     }
 
 }

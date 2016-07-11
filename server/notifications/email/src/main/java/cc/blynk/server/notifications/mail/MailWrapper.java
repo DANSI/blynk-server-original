@@ -3,10 +3,13 @@ package cc.blynk.server.notifications.mail;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.*;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import javax.mail.internet.*;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -43,7 +46,7 @@ public class MailWrapper {
     }
 
     public void send(String to, String subj, String body) throws MessagingException {
-        send(to, subj, body, null);
+        send(to, subj, body, "");
     }
 
     public void send(String to, String subj, String body, String contentType) throws MessagingException {
@@ -51,11 +54,34 @@ public class MailWrapper {
         message.setFrom(from);
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
         message.setSubject(subj);
-        if (contentType == null) {
+        if ("".equals(contentType)) {
             message.setText(body);
         } else {
             message.setContent(body, contentType);
         }
+
+        Transport.send(message);
+        log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
+    }
+
+    public void send(String to, String subj, String body, List<Path> attachments) throws MessagingException {
+        Message message = new MimeMessage(session);
+        message.setFrom(from);
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+        message.setSubject(subj);
+        message.setText(body);
+
+        MimeBodyPart messageBodyPart = new MimeBodyPart();
+        Multipart multipart = new MimeMultipart();
+
+        for (Path path : attachments) {
+            DataSource source = new FileDataSource(path.toString());
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(path.getFileName().toString());
+            multipart.addBodyPart(messageBodyPart);
+        }
+
+        message.setContent(multipart);
 
         Transport.send(message);
         log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);

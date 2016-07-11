@@ -80,7 +80,7 @@ public abstract class BaseClient {
         if (command == Command.SHARE_LOGIN || command == Command.GET_GRAPH_DATA) {
             body = body.replaceAll(" ", "\0");
         }
-        if (command == Command.HARDWARE || command == Command.BRIDGE || command == Command.EMAIL || command == Command.SHARING) {
+        if (command == Command.HARDWARE || command == Command.BRIDGE || command == Command.EMAIL || command == Command.SHARING || command == Command.EXPORT_GRAPH_DATA) {
             body = body.replaceAll(" ", "\0");
         }
         return produce(msgId, command, body);

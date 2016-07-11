@@ -41,6 +41,8 @@ public class MessageFactory {
                 return new RefreshTokenMessage(messageId, body);
             case GET_GRAPH_DATA :
                 return new GetGraphDataStringMessage(messageId, body);
+            case EXPORT_GRAPH_DATA :
+                return new ExportDataMessage(messageId, body);
 
             case TWEET :
                 return new TwitMessage(messageId, body);
