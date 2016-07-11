@@ -809,7 +809,7 @@ public class MainWorkflowTest extends IntegrationBase {
         //generate fake reporting data
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
         Files.createDirectories(userReportDirectory);
-        Path userReportFile = Paths.get(userReportDirectory.toString(), ReportingDao.generateFilename(1, PinType.ANALOG, (byte) 7, GraphType.HOURLY));
+        Path userReportFile = Paths.get(userReportDirectory.toString(), ReportingDao.generateFilename(1, PinType.ANALOG, (byte) 7, GraphType.MINUTE));
         StorageWorker.write(userReportFile, 1.1, 1L);
         StorageWorker.write(userReportFile, 2.2, 2L);
 

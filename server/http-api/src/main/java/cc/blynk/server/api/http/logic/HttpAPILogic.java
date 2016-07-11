@@ -40,7 +40,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.io.IOException;
 import java.util.Base64;
 
 import static cc.blynk.core.http.Response.*;
@@ -267,12 +266,12 @@ public class HttpAPILogic {
         }
 
         //todo may be optimized
-        try {
-            java.nio.file.Path path = FileUtils.createCSV(reportingDao, user.name, dashId, pinType, pin);
-            return redirect(path.toString());
-        } catch (IOException ioe) {
-            log.error("Error getting pin data. Reason : {}", ioe.getMessage());
+        java.nio.file.Path path = FileUtils.createCSV(reportingDao, user.name, dashId, pinType, pin);
+        if (path == null) {
+            log.error("Error getting pin data.");
             return Response.badRequest("Error getting pin data.");
+        } else {
+            return redirect(path.toString());
         }
     }
 

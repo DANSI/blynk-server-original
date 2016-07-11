@@ -70,11 +70,9 @@ public class ExportGraphDataLogic {
                 List<Path> pinsCSVFilePath = new ArrayList<>();
                 for (Pin pin : historyGraph.pins) {
                     if (pin != null) {
-                        try {
-                            Path path = FileUtils.createCSV(reportingDao, user.name, dashId, pin.pinType, pin.pin);
+                        Path path = FileUtils.createCSV(reportingDao, user.name, dashId, pin.pinType, pin.pin);
+                        if (path != null) {
                             pinsCSVFilePath.add(path);
-                        } catch (Exception e) {
-                            log.warn("Error making csv file for data export. Reason : {}", e.getMessage());
                         }
                     }
                 }
