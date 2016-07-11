@@ -41,13 +41,13 @@ public class DeleteWidgetLogic {
 
         log.debug("Removing widget with id {}.", widgetId);
 
-        int existingWidgetIndex = dash.getWidgetIndex(widgetId);
+        int existingWidgetIndex = dash.getWidgetIndexById(widgetId);
         Widget widgetToDelete = dash.widgets[existingWidgetIndex];
         if (widgetToDelete instanceof Tabs) {
             deleteTabs(user, dash, 0);
         }
 
-        existingWidgetIndex = dash.getWidgetIndex(widgetId);
+        existingWidgetIndex = dash.getWidgetIndexById(widgetId);
         deleteWidget(user, dash, existingWidgetIndex);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

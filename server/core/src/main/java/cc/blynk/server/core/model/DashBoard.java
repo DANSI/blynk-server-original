@@ -116,13 +116,17 @@ public class DashBoard {
         return null;
     }
 
-    public int getWidgetIndex(long id) {
+    public int getWidgetIndexById(long id) {
         for (int i = 0; i < widgets.length; i++) {
             if (widgets[i].id == id) {
                 return i;
             }
         }
         throw new IllegalCommandException("Widget with passed id not found.");
+    }
+
+    public Widget getWidgetById(long id) {
+        return widgets[getWidgetIndexById(id)];
     }
 
     public  <T> T getWidgetByType(Class<T> clazz) {

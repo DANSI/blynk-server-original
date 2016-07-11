@@ -62,7 +62,7 @@ public class UpdateWidgetLogic {
             throw new IllegalCommandException("Empty widget or project.");
         }
 
-        int existingWidgetIndex = dash.getWidgetIndex(newWidget.id);
+        int existingWidgetIndex = dash.getWidgetIndexById(newWidget.id);
 
         if (newWidget instanceof Tabs) {
             Tabs newTabs = (Tabs) newWidget;

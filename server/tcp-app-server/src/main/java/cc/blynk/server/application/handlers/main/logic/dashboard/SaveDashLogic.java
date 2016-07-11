@@ -50,7 +50,7 @@ public class SaveDashLogic {
 
         log.debug("Saving dashboard.");
 
-        int index = user.profile.getDashIndex(updatedDash.id);
+        int index = user.profile.getDashIndexOrThrow(updatedDash.id);
         //do not accept isActive field from "saveDash" command
         updatedDash.isActive = user.profile.dashBoards[index].isActive;
 

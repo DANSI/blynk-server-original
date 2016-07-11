@@ -31,7 +31,7 @@ public class DeleteDashLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         int dashId = ParseUtil.parseInt(message.body);
 
-        int index = user.profile.getDashIndex(dashId);
+        int index = user.profile.getDashIndexOrThrow(dashId);
 
         log.info("Deleting dashboard {}.", dashId);
 
