@@ -26,7 +26,7 @@ public class Terminal extends OnePinWidget {
     public boolean textLightOn;
 
     //configured property via server.properties
-    private static final int POOL_SIZE = ParseUtil.parseInt(System.getProperty("terminal.strings.pool.size"));
+    private static final int POOL_SIZE = ParseUtil.parseInt(System.getProperty("terminal.strings.pool.size", "25"));
 
     public transient final List<String> lastCommands = new LimitedQueue<>(POOL_SIZE);
 
