@@ -293,6 +293,11 @@ Possible server options:
 
         user.profile.max.size=128
         
+        
++ Number of strings to store in terminal widget (terminal history data)
+
+        terminal.strings.pool.size=25
+        
 
 + Maximum allowed number of notification queue. Queue responsible for processing email, pushes, twits sending. Because of performance issue - those queue is processed in separate thread, this is required due to blocking nature of all above operations. Usually limit shouldn't be reached
         

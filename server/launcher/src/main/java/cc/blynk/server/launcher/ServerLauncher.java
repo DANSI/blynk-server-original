@@ -50,6 +50,8 @@ public class ServerLauncher {
 
         //required for logging dynamic context
         System.setProperty("data.folder", serverProperties.getProperty("data.folder"));
+        //required to avoid dependencies within model to server.properties
+        System.setProperty("terminal.strings.pool.size", serverProperties.getProperty("terminal.strings.pool.size", "25"));
 
         boolean isUnpacked = JarUtil.unpackStaticFiles("static");
 

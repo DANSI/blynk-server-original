@@ -3,6 +3,7 @@ package cc.blynk.server.core.model.widgets.controls;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.utils.LimitedQueue;
+import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 
@@ -24,8 +25,10 @@ public class Terminal extends OnePinWidget {
 
     public boolean textLightOn;
 
-    //todo move 25 to properties
-    public transient final List<String> lastCommands = new LimitedQueue<>(25);
+    //configured property via server.properties
+    private static final int POOL_SIZE = ParseUtil.parseInt(System.getProperty("terminal.strings.pool.size"));
+
+    public transient final List<String> lastCommands = new LimitedQueue<>(POOL_SIZE);
 
     @Override
     public void updateIfSame(byte pin, PinType type, String value) {
