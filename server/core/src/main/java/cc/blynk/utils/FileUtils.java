@@ -29,6 +29,14 @@ public class FileUtils {
 
     private final static Logger log = LogManager.getLogger(FileUtils.class);
 
+    static {
+        try {
+            Files.createDirectories(Paths.get(CSV_DIR));
+        } catch (IOException ioe) {
+            log.error("Error creating temp '{}' folder for csv export data.", CSV_DIR);
+        }
+    }
+
     public static boolean deleteQuietly(Path path) {
         try {
             return path.toFile().delete();
