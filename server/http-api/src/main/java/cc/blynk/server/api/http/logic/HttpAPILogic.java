@@ -322,6 +322,7 @@ public class HttpAPILogic {
 
         String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING, pinValues);
 
+        //todo should be move to upper level. ok for now
         try {
             ThreadContext.put("user", user.name);
             reportingDao.process(user.name, dashId, pin, pinType, pinValue);
