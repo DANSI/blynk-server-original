@@ -37,6 +37,7 @@ import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -321,7 +322,12 @@ public class HttpAPILogic {
 
         String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING, pinValues);
 
-        reportingDao.process(user.name, dashId, pin, pinType, pinValue);
+        try {
+            ThreadContext.put("user", user.name);
+            reportingDao.process(user.name, dashId, pin, pinType, pinValue);
+        } finally {
+            ThreadContext.clearMap();
+        }
 
         if (widget == null) {
             body = Pin.makeHardwareBody(pinType, pin, pinValues);
