@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 public class ReflectionUtilTest {
 
     @Test
-    public void testSetPropertyViaReflection() {
+    public void testSetPropertyViaReflection() throws Exception {
         Widget widget = new LED();
 
         setProperty(widget, "label", "newLabel");
@@ -26,7 +26,7 @@ public class ReflectionUtilTest {
     }
 
     @Test
-    public void testSetPropertyViaReflectionFails() {
+    public void testSetPropertyViaReflectionFails() throws Exception {
         Widget widget = new LED();
 
         setProperty(widget, "aaa", "newLabel");

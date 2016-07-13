@@ -46,7 +46,7 @@ public class ReflectionUtil {
     /**
      * Used to set any object property with value via reflection.
      */
-    public static boolean setProperty(Object object, String fieldName, String fieldValue) {
+    public static boolean setProperty(Object object, String fieldName, String fieldValue) throws Exception {
         Class<?> clazz = object.getClass();
         while (clazz != null) {
             try {
@@ -55,8 +55,6 @@ public class ReflectionUtil {
                 return true;
             } catch (NoSuchFieldException e) {
                 clazz = clazz.getSuperclass();
-            } catch (Exception e) {
-                throw new IllegalStateException(e);
             }
         }
         return false;

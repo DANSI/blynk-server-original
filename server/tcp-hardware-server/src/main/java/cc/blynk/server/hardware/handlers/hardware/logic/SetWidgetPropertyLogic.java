@@ -20,9 +20,7 @@ import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
- * Handler responsible for forwarding messages from hardware to applications.
- * Also handler stores all incoming hardware commands to disk in order to export and
- * analyze data.
+ * Handler that allows to change widget properties from hardware side.
  *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -60,7 +58,14 @@ public class SetWidgetPropertyLogic {
 
         //for now supporting only virtual pins
         Widget widget = dash.findWidgetByPin(pin, PinType.VIRTUAL);
-        boolean isChanged = ReflectionUtil.setProperty(widget, property, propertyValue);
+        boolean isChanged;
+        try {
+            isChanged = ReflectionUtil.setProperty(widget, property, propertyValue);
+        } catch (Exception e) {
+            log.error("Error setting widget property. Reason : {}", e.getMessage());
+            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
+            return;
+        }
 
         if (isChanged) {
             if (dash.isActive) {
