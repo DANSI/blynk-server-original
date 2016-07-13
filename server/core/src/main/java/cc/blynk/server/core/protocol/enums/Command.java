@@ -97,6 +97,7 @@ public final class Command {
                 put(GET_GRAPH_DATA, "GetGraphDataRequest");
                 put(GET_GRAPH_DATA_RESPONSE, "GetGraphDataResponse");
                 put(EXPORT_GRAPH_DATA, "ExportGraphData");
+                put(SET_WIDGET_PROPERTY, "setWidgetProperty");
                 put(BRIDGE, "Bridge");
                 put(HARDWARE, "Hardware");
                 put(GET_SHARED_DASH, "GetSharedDash");

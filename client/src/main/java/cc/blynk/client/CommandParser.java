@@ -39,6 +39,8 @@ public class CommandParser {
                 return DEACTIVATE_DASHBOARD;
             case "register" :
                 return REGISTER;
+            case "setproperty" :
+                return SET_WIDGET_PROPERTY;
 
             case "tweet" :
                 return TWEET;

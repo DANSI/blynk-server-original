@@ -43,4 +43,41 @@ public class ReflectionUtil {
         return valuesName;
     }
 
+    /**
+     * Used to set any object property with value via reflection.
+     */
+    public static boolean setProperty(Object object, String fieldName, String fieldValue) {
+        Class<?> clazz = object.getClass();
+        while (clazz != null) {
+            try {
+                Field field = clazz.getDeclaredField(fieldName);
+                field.set(object, castTo(field.getType(), fieldValue));
+                return true;
+            } catch (NoSuchFieldException e) {
+                clazz = clazz.getSuperclass();
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        return false;
+    }
+
+    public static Object castTo(Class type, String value) {
+        if (type == byte.class) {
+            return Byte.valueOf(value);
+        }
+        if (type == short.class || type == Short.class) {
+            return Short.valueOf(value);
+        }
+        if (type == int.class || type == Integer.class) {
+            return Integer.valueOf(value);
+        }
+        if (type == long.class) {
+            return Long.valueOf(value);
+        }
+        if (type == boolean.class) {
+            return Boolean.valueOf(value);
+        }
+        return value;
+    }
 }

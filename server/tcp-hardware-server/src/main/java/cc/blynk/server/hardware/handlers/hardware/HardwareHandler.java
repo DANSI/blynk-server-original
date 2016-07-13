@@ -25,6 +25,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final PushLogic push;
     private final TwitLogic tweet;
     private final SmsLogic smsLogic;
+    private final SetWidgetPropertyLogic propertyLogic;
     private final HardwareSyncLogic sync;
     private final HardwareInfoLogic info;
 
@@ -38,6 +39,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.push = new PushLogic(holder.blockingIOProcessor, holder.gcmWrapper, defaultNotificationQuotaLimit);
         this.tweet = new TwitLogic(holder.blockingIOProcessor, holder.twitterWrapper, defaultNotificationQuotaLimit);
         this.smsLogic = new SmsLogic(holder.blockingIOProcessor, holder.smsWrapper, defaultNotificationQuotaLimit);
+        this.propertyLogic = new SetWidgetPropertyLogic(holder.sessionDao);
         this.sync = new HardwareSyncLogic();
         this.info = new HardwareInfoLogic(holder.props.getIntProperty("hard.socket.idle.timeout", 0));
 
@@ -75,6 +77,10 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
             case HARDWARE_INFO :
                 info.messageReceived(ctx, state, msg);
                 break;
+            case SET_WIDGET_PROPERTY :
+                propertyLogic.messageReceived(ctx, state, msg);
+                break;
+
         }
     }
 

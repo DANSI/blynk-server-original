@@ -43,6 +43,8 @@ public class MessageFactory {
                 return new GetGraphDataStringMessage(messageId, body);
             case EXPORT_GRAPH_DATA :
                 return new ExportDataMessage(messageId, body);
+            case SET_WIDGET_PROPERTY :
+                return new SetWidgetPropertyMessage(messageId, body);
 
             case TWEET :
                 return new TwitMessage(messageId, body);

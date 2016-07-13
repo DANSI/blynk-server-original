@@ -1,6 +1,7 @@
 package cc.blynk.core.http.rest.params;
 
 import cc.blynk.core.http.rest.URIDecoder;
+import cc.blynk.utils.ReflectionUtil;
 import io.netty.util.CharsetUtil;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -18,22 +19,6 @@ public class FormParam extends Param {
         super(name, type);
     }
 
-    public static Object convertTo(Class type, String value) {
-        if (type == long.class) {
-            return Long.valueOf(value);
-        }
-        if (type == int.class || type == Integer.class) {
-            return Integer.valueOf(value);
-        }
-        if (type == short.class || type == Short.class) {
-            return Short.valueOf(value);
-        }
-        if (type == boolean.class) {
-            return Boolean.valueOf(value);
-        }
-        return value;
-    }
-
     @Override
     //todo this method is not optimal - optimize.
     public Object get(URIDecoder uriDecoder) {
@@ -46,7 +31,7 @@ public class FormParam extends Param {
 
         for(NameValuePair nameValuePair : nameValuePairs) {
             if (name.equals(nameValuePair.getName())) {
-                return convertTo(type, nameValuePair.getValue());
+                return ReflectionUtil.castTo(type, nameValuePair.getValue());
             }
         }
 

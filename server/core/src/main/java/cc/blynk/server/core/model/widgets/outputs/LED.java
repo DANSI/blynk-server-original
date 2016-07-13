@@ -12,7 +12,7 @@ public class LED extends OnePinWidget implements FrequencyWidget {
 
     public int color;
 
-    private int frequency;
+    public int frequency;
 
     private transient long lastRequestTS;
 
