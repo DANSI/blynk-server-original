@@ -30,7 +30,7 @@ public class ReflectionUtilTest {
         Widget widget = new LED();
 
         setProperty(widget, "aaa", "newLabel");
-        assertEquals("newLabel", widget.label);
+        assertEquals(null, widget.label);
     }
 
 }
