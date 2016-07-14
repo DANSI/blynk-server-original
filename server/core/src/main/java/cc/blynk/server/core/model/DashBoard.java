@@ -83,12 +83,10 @@ public class DashBoard {
     }
 
     public void update(final byte pin, final PinType type, final String value) {
-        if (value != null) {
-            for (Widget widget : widgets) {
-                widget.updateIfSame(pin, type, value);
-            }
-            this.updatedAt = System.currentTimeMillis();
+        for (Widget widget : widgets) {
+            widget.updateIfSame(pin, type, value);
         }
+        this.updatedAt = System.currentTimeMillis();
     }
 
     public void activate() {
