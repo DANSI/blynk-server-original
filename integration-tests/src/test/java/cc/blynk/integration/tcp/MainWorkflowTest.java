@@ -54,7 +54,6 @@ import java.nio.file.attribute.FileAttribute;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -904,11 +903,8 @@ public class MainWorkflowTest extends IntegrationBase {
         StorageWorker.write(userReportFile, 1.1, 1L);
         StorageWorker.write(userReportFile, 2.2, 2L);
 
-        List<Path> paths = new ArrayList<>();
-        paths.add(Paths.get("/tmp/blynk/dima@mail.ua_1_a7.csv.gz"));
-
         clientPair.appClient.send("export 1 14");
-        verify(mailWrapper, timeout(1000)).send(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), eq(""), eq(paths));
+        verify(mailWrapper, timeout(1000)).send(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/tmp/blynk/dima@mail.ua_1_a7.csv.gz"), eq("text/html"));
     }
 
     @Test

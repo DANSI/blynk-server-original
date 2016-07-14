@@ -79,8 +79,7 @@ public class FileUtils {
             ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(username, dashId, pinType, pin, DEFAULT_FETCH_COUNT, GraphType.MINUTE);
             if (onePinData != null) {
                 onePinData.flip();
-                String filename = format(EXPORT_GRAPH_FILENAME, username, dashId, pinType.pintTypeChar, pin);
-                Path path = Paths.get(CSV_DIR, filename);
+                Path path = generateExportCSVPath(username, dashId, pinType, pin);
                 try {
                     makeGzippedCSVFile(onePinData, path);
                     return path;
@@ -90,5 +89,9 @@ public class FileUtils {
             }
         }
         return null;
+    }
+
+    public static Path generateExportCSVPath(String username, int dashId, PinType pinType, byte pin) {
+        return Paths.get(CSV_DIR, format(EXPORT_GRAPH_FILENAME, username, dashId, pinType.pintTypeChar, pin));
     }
 }

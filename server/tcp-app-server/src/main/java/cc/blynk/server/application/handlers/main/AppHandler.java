@@ -20,6 +20,7 @@ import cc.blynk.server.application.handlers.main.logic.sharing.ShareLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
+import cc.blynk.utils.IPUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.ThreadContext;
 
@@ -60,7 +61,10 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.hardwareApp = new HardwareAppLogic(holder.sessionDao);
         this.refreshToken = new RefreshTokenLogic(holder.userDao);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
-        this.exportGraphData = new ExportGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor, holder.mailWrapper);
+        this.exportGraphData = new ExportGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor, holder.mailWrapper,
+                holder.props.getProperty("reset-pass.http.host", IPUtils.resolveHostIP()),
+                holder.props.getIntProperty("http.port"))
+        ;
         this.appMailLogic = new AppMailLogic(holder.blockingIOProcessor, holder.mailWrapper);
         this.getShareTokenLogic = new GetShareTokenLogic(holder.userDao);
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(holder.userDao, holder.sessionDao);

@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -39,11 +40,13 @@ public class ExportGraphDataLogic {
     private final BlockingIOProcessor blockingIOProcessor;
     private final ReportingDao reportingDao;
     private final MailWrapper mailWrapper;
+    private final String csvDownloadUrl;
 
-    public ExportGraphDataLogic(ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, MailWrapper mailWrapper) {
+    public ExportGraphDataLogic(ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, MailWrapper mailWrapper, String host, int httpPort) {
         this.reportingDao = reportingDao;
         this.blockingIOProcessor = blockingIOProcessor;
         this.mailWrapper = mailWrapper;
+        this.csvDownloadUrl = "http://" + host + ":" + httpPort;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -67,12 +70,13 @@ public class ExportGraphDataLogic {
 
         blockingIOProcessor.execute(() -> {
             try {
-                List<Path> pinsCSVFilePath = new ArrayList<>();
+                String dashName = dashBoard.name == null ? "" : dashBoard.name;
+                List<FileLink> pinsCSVFilePath = new ArrayList<>();
                 for (Pin pin : historyGraph.pins) {
                     if (pin != null) {
                         Path path = FileUtils.createCSV(reportingDao, user.name, dashId, pin.pinType, pin.pin);
                         if (path != null) {
-                            pinsCSVFilePath.add(path);
+                            pinsCSVFilePath.add(new FileLink(path, dashName, pin.pinType, pin.pin));
                         }
                     }
                 }
@@ -80,8 +84,9 @@ public class ExportGraphDataLogic {
                 if (pinsCSVFilePath.size() == 0) {
                     ctx.writeAndFlush(makeResponse(message.id, NO_DATA_EXCEPTION), ctx.voidPromise());
                 } else {
-                    String title = "History graph data for project " + (dashBoard.name == null ? "" : dashBoard.name);
-                    mailWrapper.send(user.name, title, "", pinsCSVFilePath);
+
+                    String title = "History graph data for project " + dashName;
+                    mailWrapper.send(user.name, title, makeBody(pinsCSVFilePath), "text/html");
                     ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
                 }
 
@@ -90,6 +95,35 @@ public class ExportGraphDataLogic {
                 ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_EXCEPTION), ctx.voidPromise());
             }
         });
+    }
+
+    private String makeBody(List<FileLink> fileUrls) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<html><body>");
+        for (FileLink link : fileUrls) {
+            sb.append(link.toString()).append("<br>");
+        }
+        sb.append("</body></html>");
+        return sb.toString();
+    }
+
+    private class FileLink {
+        Path path;
+        String dashName;
+        PinType pinType;
+        byte pin;
+
+        public FileLink(Path path, String dashName, PinType pinType, byte pin) {
+            this.path = path;
+            this.dashName = dashName;
+            this.pinType = pinType;
+            this.pin = pin;
+        }
+
+        @Override
+        public String toString() {
+            return "<a href=\"" + csvDownloadUrl + path + "\">" + dashName + " " + pinType.pintTypeChar + pin + "</a>";
+        }
     }
 
 }
