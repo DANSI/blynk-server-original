@@ -45,16 +45,26 @@ public abstract class MultiPinWidget extends Widget {
 
     public abstract boolean isSplitMode();
 
-    public String makeHardwareBody() {
-        if (pins != null && pins[0].notEmpty()) {
-            StringBuilder sb = new StringBuilder(pins[0].makeHardwareBody());
-            for (int i = 1; i < pins.length; i++) {
-                sb.append(BODY_SEPARATOR).append(pins[i].value);
-            }
-            return sb.toString();
-        } else {
+    public String makeHardwareBody(byte pinIn, PinType pinType) {
+        if (pins == null) {
             return null;
         }
+        if (isSplitMode()) {
+            for (Pin pin : pins) {
+                if (pin.isSame(pinIn, pinType)) {
+                    return pin.makeHardwareBody();
+                }
+            }
+        } else {
+            if (pins[0].notEmpty()) {
+                StringBuilder sb = new StringBuilder(pins[0].makeHardwareBody());
+                for (int i = 1; i < pins.length; i++) {
+                    sb.append(BODY_SEPARATOR).append(pins[i].value);
+                }
+                return sb.toString();
+            }
+        }
+        return null;
     }
 
     @Override
@@ -63,17 +73,6 @@ public abstract class MultiPinWidget extends Widget {
             for (Pin pin : pins) {
                 if (pin.isSame(pinIn, pinType)) {
                     return pin.value;
-                }
-            }
-        }
-        return null;
-    }
-
-    public String makeHardwareBodyForSplitPin(byte pinIn, PinType pinType) {
-        if (pins != null) {
-            for (Pin pin : pins) {
-                if (pin.isSame(pinIn, pinType)) {
-                    return pin.makeHardwareBody();
                 }
             }
         }

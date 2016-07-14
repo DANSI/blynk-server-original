@@ -41,7 +41,7 @@ public class HistoryGraph extends MultiPinWidget {
     }
 
     @Override
-    public String makeHardwareBody() {
+    public String makeHardwareBody(byte pinIn, PinType pinType) {
         return null;
     }
 
