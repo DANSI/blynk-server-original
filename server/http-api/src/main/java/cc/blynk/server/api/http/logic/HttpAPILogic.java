@@ -304,7 +304,7 @@ public class HttpAPILogic {
             return Response.badRequest("Didn't find dash id for token.");
         }
 
-        DashBoard dashBoard = user.profile.getDashById(dashId);
+        DashBoard dash = user.profile.getDashById(dashId);
 
         PinType pinType;
         byte pin;
@@ -317,9 +317,6 @@ public class HttpAPILogic {
             return Response.badRequest("Wrong pin format.");
         }
 
-        Widget widget = dashBoard.findWidgetByPin(pin, pinType);
-        String body;
-
         String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING, pinValues);
 
         //todo should be move to upper level. ok for now
@@ -330,18 +327,9 @@ public class HttpAPILogic {
             ThreadContext.clearMap();
         }
 
-        if (widget == null) {
-            body = Pin.makeHardwareBody(pinType, pin, pinValues);
-        } else {
-            widget.updateIfSame(pin, pinType, pinValue);
-            if (widget instanceof OnePinWidget) {
-                body = ((OnePinWidget) widget).makeHardwareBody();
-            } else if (widget instanceof MultiPinWidget) {
-                body =((MultiPinWidget) widget).makeHardwareBody(pin, pinType);
-            } else {
-                body = null;
-            }
-        }
+        dash.update(pin, pinType, pinValue);
+
+        String body = makeBody(dash, pin, pinType, pinValue);
 
         if (body != null) {
             Session session = sessionDao.userSession.get(user);
@@ -351,13 +339,27 @@ public class HttpAPILogic {
             }
             session.sendMessageToHardware(dashId, HARDWARE, 111, body);
 
-            if (dashBoard.isActive) {
+            if (dash.isActive) {
                 //todo check for shared apps? to minimize load...
                 session.sendToApps(HARDWARE, 111, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
             }
         }
 
         return Response.ok();
+    }
+
+    private static String makeBody(DashBoard dash, byte pin, PinType pinType, String pinValue) {
+        Widget widget = dash.findWidgetByPin(pin, pinType);
+        if (widget == null) {
+            return Pin.makeHardwareBody(pinType, pin, pinValue);
+        } else {
+            if (widget instanceof OnePinWidget) {
+                return ((OnePinWidget) widget).makeHardwareBody();
+            } else if (widget instanceof MultiPinWidget) {
+                return ((MultiPinWidget) widget).makeHardwareBody(pin, pinType);
+            }
+        }
+        return null;
     }
 
     @POST

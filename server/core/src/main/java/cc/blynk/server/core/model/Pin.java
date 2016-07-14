@@ -33,14 +33,6 @@ public class Pin {
                 + BODY_SEPARATOR_STRING + value;
     }
 
-    public static String makeHardwareBody(PinType pinType, byte pin, String[] values) {
-        return "" + pinType.pintTypeChar + 'w'
-                + BODY_SEPARATOR_STRING + pin
-                + BODY_SEPARATOR_STRING + String.join(BODY_SEPARATOR_STRING, values);
-
-
-    }
-
     public boolean isSame(byte pin, PinType type) {
         return this.pin == pin && ((this.pwmMode && type == PinType.ANALOG) || (type == this.pinType));
     }
