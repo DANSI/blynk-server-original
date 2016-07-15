@@ -91,7 +91,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testGetWithNonExistingPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v11");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
