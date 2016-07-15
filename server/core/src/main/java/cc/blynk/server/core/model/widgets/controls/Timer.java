@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.controls;
 
 import cc.blynk.server.core.model.widgets.OnePinWidget;
+import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -54,9 +55,9 @@ public class Timer extends OnePinWidget implements HardwareSyncWidget {
         }
         String[] values = value.split(StringUtils.BODY_SEPARATOR_STRING);
         if (values.length == 3) {
-            return "[\"" + values[2] + "\"]";
+            return JsonParser.valueToJsonAsString(values[2]);
         } else {
-            return "[\"" + value +"\"]";
+            return JsonParser.valueToJsonAsString(value);
         }
     }
 

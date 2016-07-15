@@ -195,8 +195,12 @@ public class HttpAPILogic {
         Widget widget = dashBoard.findWidgetByPin(pin, pinType);
 
         if (widget == null) {
-            log.error("Requested pin {} not found. User {}", pinString, user.name);
-            return Response.badRequest("Requested pin not exists in app.");
+            String value = dashBoard.pinStorage.get(pin);
+            if (value == null) {
+                log.error("Requested pin {} not found. User {}", pinString, user.name);
+                return Response.badRequest("Requested pin not exists in app.");
+            }
+            return ok(JsonParser.valueToJsonAsString(value.split(StringUtils.BODY_SEPARATOR_STRING)));
         }
 
         return ok(widget.getJsonValue());
@@ -340,7 +344,6 @@ public class HttpAPILogic {
             session.sendMessageToHardware(dashId, HARDWARE, 111, body);
 
             if (dash.isActive) {
-                //todo check for shared apps? to minimize load...
                 session.sendToApps(HARDWARE, 111, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
             }
         }

@@ -18,14 +18,17 @@ public abstract class MultiPinWidget extends Widget {
     public Pin[] pins;
 
     @Override
-    public void updateIfSame(byte pinIn, PinType type, String value) {
+    public boolean updateIfSame(byte pinIn, PinType type, String value) {
+        boolean isSame = false;
         if (pins != null) {
             for (Pin pin : pins) {
                 if (pin.isSame(pinIn, type)) {
                     pin.value = value;
+                    isSame = true;
                 }
             }
         }
+        return isSame;
     }
 
     @Override

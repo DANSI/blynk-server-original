@@ -48,6 +48,8 @@ public class DashBoard {
 
     public Map<String, Object> metadata = new HashMap<>();
 
+    public Map<Byte, String> pinStorage = new HashMap<>();
+
     /**
      * Specific property used for improving user experience on mobile application.
      * In case user activated dashboard before hardware connected to server, user have to
@@ -76,16 +78,24 @@ public class DashBoard {
         update(body.split(StringUtils.BODY_SEPARATOR_STRING, 3));
     }
 
-    public void update(String[] splitted) {
+    private void update(String[] splitted) {
         final PinType type = PinType.getPinType(splitted[0].charAt(0));
         final byte pin = ParseUtil.parseByte(splitted[1]);
         update(pin, type, splitted[2]);
     }
 
     public void update(final byte pin, final PinType type, final String value) {
+        boolean hasWidget = false;
         for (Widget widget : widgets) {
-            widget.updateIfSame(pin, type, value);
+            if (widget.updateIfSame(pin, type, value)) {
+                hasWidget = true;
+            }
         }
+        //special case. #237 if no widget - storing without widget.
+        if (!hasWidget) {
+            pinStorage.put(pin, value);
+        }
+
         this.updatedAt = System.currentTimeMillis();
     }
 

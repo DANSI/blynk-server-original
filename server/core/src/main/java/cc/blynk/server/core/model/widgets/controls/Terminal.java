@@ -31,11 +31,13 @@ public class Terminal extends OnePinWidget {
     public transient final List<String> lastCommands = new LimitedQueue<>(POOL_SIZE);
 
     @Override
-    public void updateIfSame(byte pin, PinType type, String value) {
+    public boolean updateIfSame(byte pin, PinType type, String value) {
         if (isSame(pin, type)) {
             this.value = value;
             this.lastCommands.add(value);
+            return true;
         }
+        return false;
     }
 
     @Override

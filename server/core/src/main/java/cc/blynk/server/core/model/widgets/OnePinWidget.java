@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 
@@ -50,10 +51,12 @@ public abstract class OnePinWidget extends Widget {
     }
 
     @Override
-    public void updateIfSame(byte pin, PinType type, String value) {
+    public boolean updateIfSame(byte pin, PinType type, String value) {
         if (isSame(pin, type)) {
             this.value = value;
+            return true;
         }
+        return false;
     }
 
     public boolean isSame(byte pin, PinType type) {
@@ -75,7 +78,7 @@ public abstract class OnePinWidget extends Widget {
         if (value == null) {
             return "[]";
         }
-        return "[\"" + value + "\"]";
+        return JsonParser.valueToJsonAsString(value);
     }
 
     public boolean isPWMSupported() {

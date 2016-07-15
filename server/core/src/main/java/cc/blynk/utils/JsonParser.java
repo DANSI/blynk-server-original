@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * User: ddumanskiy
@@ -140,6 +141,22 @@ public final class JsonParser {
             log.error(e.getMessage());
             throw new IllegalCommandBodyException("Error parsing user profile.");
         }
+    }
+
+    public static String valueToJsonAsString(String[] values) {
+        StringJoiner sj = new StringJoiner(",", "[", "]");
+        for (String value : values) {
+            sj.add(makeJsonStringValue(value));
+        }
+        return sj.toString();
+    }
+
+    public static String valueToJsonAsString(String value) {
+        return "[\"" + value  + "\"]";
+    }
+
+    private static String makeJsonStringValue(String value) {
+        return "\"" + value  + "\"";
     }
 
 }

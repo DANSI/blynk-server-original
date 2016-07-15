@@ -78,6 +78,36 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     }
 
     @Test
+    public void testChangeNonWidgetPinValueViaHardwareAndGetViaHTTP() throws Exception {
+        clientPair.hardwareClient.send("hardware vw 10 200");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 10 200"))));
+
+        reset(clientPair.appClient.responseMock);
+
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+
+        HttpGet request = new HttpGet(httpServerUrl + token + "/pin/v10");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("200", values.get(0));
+        }
+
+        clientPair.appClient.send("hardware 1 vw 10 201");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 10 201"))));
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("201", values.get(0));
+        }
+    }
+
+    @Test
     public void testChangePinValueViaAppAndHardware() throws Exception {
         clientPair.hardwareClient.send("hardware vw 4 200");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 4 200"))));

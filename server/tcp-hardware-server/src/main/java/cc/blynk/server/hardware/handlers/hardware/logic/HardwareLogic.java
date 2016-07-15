@@ -78,6 +78,7 @@ public class HardwareLogic {
             dash.update(pin, pinType, value);
         }
 
+        //todo do not send if no widget pin
         if (dash.isActive) {
             session.sendToApps(HARDWARE, message.id, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
         } else {
