@@ -1343,7 +1343,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         //sending hardware command from hardware that has no active dashboard
         nonActiveDashHardClient.send("hardware aw 1 1");
-        verify(nonActiveDashHardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, NO_ACTIVE_DASHBOARD)));
+        //verify(nonActiveDashHardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, NO_ACTIVE_DASHBOARD)));
         verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), any());
         verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), eq(new HardwareConnectedMessage(1, "2")));
 
