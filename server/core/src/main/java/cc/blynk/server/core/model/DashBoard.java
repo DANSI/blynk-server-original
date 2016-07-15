@@ -92,7 +92,7 @@ public class DashBoard {
             }
         }
         //special case. #237 if no widget - storing without widget.
-        if (!hasWidget) {
+        if (!hasWidget && type == PinType.VIRTUAL) {
             pinStorage.put(pin, value);
         }
 
