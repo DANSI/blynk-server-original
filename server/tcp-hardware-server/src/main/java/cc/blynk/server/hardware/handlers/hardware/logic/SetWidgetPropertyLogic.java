@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.ParseUtil;
@@ -43,7 +42,9 @@ public class SetWidgetPropertyLogic {
         String[] bodyParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (bodyParts.length != 3) {
-            throw new IllegalCommandException("SetWidgetProperty command body has wrong format.");
+            log.error("SetWidgetProperty command body has wrong format. {}", message.body);
+            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
+            return;
         }
 
         byte pin = ParseUtil.parseByte(bodyParts[0]);
@@ -51,13 +52,22 @@ public class SetWidgetPropertyLogic {
         String propertyValue = bodyParts[2];
 
         if (property.length() == 0 || propertyValue.length() == 0) {
-            throw new IllegalCommandException("SetWidgetProperty command body has wrong format.");
+            log.error("SetWidgetProperty command body has wrong format. {}", message.body);
+            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
+            return;
         }
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(state.dashId);
 
         //for now supporting only virtual pins
         Widget widget = dash.findWidgetByPin(pin, PinType.VIRTUAL);
+
+        if (widget == null) {
+            log.error("No widget for SetWidgetProperty command. {}", message.body);
+            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
+            return;
+        }
+
         boolean isChanged;
         try {
             isChanged = ReflectionUtil.setProperty(widget, property, propertyValue);
