@@ -51,6 +51,7 @@ public class ReflectionUtil {
         while (clazz != null) {
             try {
                 Field field = clazz.getDeclaredField(fieldName);
+                field.setAccessible(true);
                 field.set(object, castTo(field.getType(), fieldValue));
                 return true;
             } catch (NoSuchFieldException e) {
