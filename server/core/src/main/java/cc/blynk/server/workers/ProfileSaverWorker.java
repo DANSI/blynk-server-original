@@ -77,7 +77,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
                 try {
                     fileManager.overrideUserFile(user);
                     users.add(user);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     log.error("Error saving : {}.", user);
                 }
             }
