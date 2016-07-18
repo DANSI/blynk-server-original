@@ -492,7 +492,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("setProperty 4 label MyNewLabel");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("4 label MyNewLabel"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 4 label MyNewLabel"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
