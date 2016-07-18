@@ -78,9 +78,7 @@ public class SetWidgetPropertyLogic {
         }
 
         if (isChanged) {
-            if (dash.isActive) {
-                session.sendToApps(SET_WIDGET_PROPERTY, message.id, dash.id + StringUtils.BODY_SEPARATOR_STRING + message.body);
-            }
+            session.sendToApps(SET_WIDGET_PROPERTY, message.id, dash.id + StringUtils.BODY_SEPARATOR_STRING + message.body);
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
