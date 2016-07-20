@@ -43,19 +43,15 @@ public class MailWrapper {
     }
 
     public void send(String to, String subj, String body) throws MessagingException {
-        send(to, subj, body, "");
+        send(to, subj, body, "text/plain; charset=UTF-8");
     }
 
     public void send(String to, String subj, String body, String contentType) throws MessagingException {
-        Message message = new MimeMessage(session);
+        MimeMessage message = new MimeMessage(session);
         message.setFrom(from);
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-        message.setSubject(subj);
-        if ("".equals(contentType)) {
-            message.setText(body);
-        } else {
-            message.setContent(body, contentType);
-        }
+        message.setSubject(subj, "UTF-8");
+        message.setContent(body, contentType);
 
         Transport.send(message);
         log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
