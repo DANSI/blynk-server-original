@@ -52,13 +52,27 @@ public class MailLogic extends NotificationBase {
 
         String[] bodyParts = message.body.split("\0");
 
-        if (bodyParts.length != 3) {
+        if (bodyParts.length < 2) {
             throw new IllegalCommandException("Invalid mail notification body.");
         }
 
-        String to = bodyParts[0];
-        String subj = bodyParts[1];
-        String body = bodyParts[2];
+        String to;
+        String subj;
+        String body;
+
+        if (bodyParts.length == 3) {
+            to = bodyParts[0];
+            subj = bodyParts[1];
+            body = bodyParts[2];
+        } else {
+            if (mail.to == null || mail.to.equals("")) {
+                to = state.user.name;
+            } else {
+                to = mail.to;
+            }
+            subj = bodyParts[0];
+            body = bodyParts[1];
+        }
 
         checkIfNotificationQuotaLimitIsNotReached();
 

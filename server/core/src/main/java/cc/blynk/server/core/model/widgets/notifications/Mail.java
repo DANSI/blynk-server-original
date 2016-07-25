@@ -9,6 +9,8 @@ import cc.blynk.server.core.model.widgets.NoPinWidget;
  */
 public class Mail extends NoPinWidget {
 
+    public String to;
+
     @Override
     public int getPrice() {
         return 100;
