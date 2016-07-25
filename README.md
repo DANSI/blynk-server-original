@@ -284,9 +284,9 @@ Possible server options:
         user.message.quota.limit=100
         
 
-+ In case user exceeds quota limit - response error returned only once in specified period (in Millis).
-
-        user.message.quota.limit.exceeded.warning.period=60000
++ this setting defines how often you can send mail/tweet/push or any other notification. Specified in seconds
+        
+        notifications.frequency.user.quota.limit=60
         
 
 + Maximum allowed user profile size. In Kb's.
