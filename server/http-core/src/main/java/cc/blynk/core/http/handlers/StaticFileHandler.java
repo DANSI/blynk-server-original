@@ -1,5 +1,6 @@
 package cc.blynk.core.http.handlers;
 
+import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.utils.ContentTypeUtil;
 import cc.blynk.utils.ServerProperties;
 import io.netty.buffer.Unpooled;
@@ -27,7 +28,7 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.12.15.
  */
-public class StaticFileHandler extends ChannelInboundHandlerAdapter {
+public class StaticFileHandler extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
     private static final Logger log = LogManager.getLogger(StaticFileHandler.class);
 
@@ -241,14 +242,11 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (cause.getMessage() != null && cause.getMessage().contains("unknown_ca")) {
             log.warn("Self-generated certificate.");
         } else {
-            cause.printStackTrace();
-            if (ctx.channel().isActive()) {
-                sendError(ctx, INTERNAL_SERVER_ERROR);
-            }
+            handleGeneralException(ctx, cause);
         }
     }
 
