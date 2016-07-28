@@ -209,7 +209,7 @@ public class HttpAPILogic {
     @GET
     @Path("{token}/qr")
     //todo cover with test
-    public Response updateWidgetPinData(@PathParam("token") String token) {
+    public Response getQR(@PathParam("token") String token) {
         globalStats.mark(HTTP_QR);
 
         User user = userDao.tokenManager.getUserByToken(token);
