@@ -34,7 +34,7 @@ import static cc.blynk.utils.ByteBufUtil.*;
  *
  */
 @ChannelHandler.Sharable
-public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultReregisterHandler {
+public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultReregisterHandler, DefaultExceptionHandler {
 
     private static final Logger log = LogManager.getLogger(DefaultExceptionHandler.class);
 
@@ -97,6 +97,11 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         } else {
             completeLogin(ctx.channel(), session, user, dash, message.id);
         }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        handleGeneralException(ctx, cause);
     }
 
 }

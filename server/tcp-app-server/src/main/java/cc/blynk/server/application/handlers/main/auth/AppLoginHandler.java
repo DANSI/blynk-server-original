@@ -6,6 +6,7 @@ import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
@@ -29,7 +30,7 @@ import static cc.blynk.utils.ByteBufUtil.*;
  *
  */
 @ChannelHandler.Sharable
-public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultReregisterHandler {
+public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultReregisterHandler, DefaultExceptionHandler {
 
     private static final Logger log = LogManager.getLogger(AppLoginHandler.class);
 
@@ -152,6 +153,11 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         channel.writeAndFlush(ok(msgId), channel.voidPromise());
         user.region = region;
         log.info("{} app joined.", user.name);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        handleGeneralException(ctx, cause);
     }
 
 }
