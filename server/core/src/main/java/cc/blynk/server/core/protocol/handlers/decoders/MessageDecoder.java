@@ -1,7 +1,6 @@
 package cc.blynk.server.core.protocol.handlers.decoders;
 
 import cc.blynk.server.core.protocol.enums.Command;
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -23,7 +22,7 @@ import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class MessageDecoder extends ByteToMessageDecoder implements DefaultExceptionHandler {
+public class MessageDecoder extends ByteToMessageDecoder {
 
     protected static final Logger log = LogManager.getLogger(MessageDecoder.class);
 
