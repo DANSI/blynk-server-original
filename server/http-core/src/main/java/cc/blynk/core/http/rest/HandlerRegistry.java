@@ -120,6 +120,7 @@ public class HandlerRegistry {
             return (FullHttpResponse) handlerHolder.method.invoke(handlerHolder.handler, params);
         } catch (Exception e) {
             log.error("Error invoking handler. Reason : {}.", e.getMessage());
+            log.debug(e);
             return Response.serverError(e.getMessage());
         }
     }
