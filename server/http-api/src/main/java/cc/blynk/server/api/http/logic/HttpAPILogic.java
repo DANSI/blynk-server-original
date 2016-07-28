@@ -233,7 +233,7 @@ public class HttpAPILogic {
             String qrData = "bp1" + Base64.getEncoder().encodeToString(compressed);
             byte[] qrDataBinary = QRCode.from(qrData).to(ImageType.PNG).withSize(500, 500).stream().toByteArray();
             return ok(qrDataBinary, "image/png");
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("Error generating QR. Reason : {}", e.getMessage());
             return Response.badRequest("Error generating QR.");
         }
