@@ -80,4 +80,9 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
     public InstanceLoadMeter getQuotaMeter() {
         return quotaMeter;
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        handleGeneralException(ctx, cause);
+    }
 }
