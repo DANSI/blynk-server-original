@@ -64,7 +64,7 @@ public class HardwareServer extends BaseServer {
 
     @Override
     public void close() {
-        System.out.println("Shutting down plan tcp/ip hardware server...");
+        System.out.println("Shutting down plain tcp/ip hardware server...");
         super.close();
     }
 
