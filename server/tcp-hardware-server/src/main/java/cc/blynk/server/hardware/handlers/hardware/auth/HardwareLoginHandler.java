@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -52,7 +51,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         }
 
         session.addHardChannel(channel);
-        channel.write(new ResponseMessage(msgId, OK));
+        channel.write(ok(msgId));
 
         if (dash.isActive && dash.pinModeMessage.length > 2) {
             channel.write(dash.pinModeMessage);
