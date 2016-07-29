@@ -279,7 +279,7 @@ Possible server options:
         user.dashboard.max.limit=10
         
 
-+ 100 Req/sec rate limit per user.
++ 100 Req/sec rate limit per user. You also may want to extend this limit on [hardware side](https://github.com/blynkkk/blynk-library/blob/f4e132652906d63d683abeed89f5d6ebe369e37a/Blynk/BlynkConfig.h#L42).
 
         user.message.quota.limit=100
         
