@@ -6,6 +6,8 @@ import cc.blynk.server.api.http.logic.serialization.NotificationCloneHideFields;
 import cc.blynk.server.api.http.logic.serialization.TwitterCloneHideFields;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
+import cc.blynk.server.api.http.pojo.att.AttData;
+import cc.blynk.server.api.http.pojo.att.AttValue;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
@@ -41,7 +43,10 @@ import org.apache.logging.log4j.ThreadContext;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 
 import static cc.blynk.core.http.Response.*;
 import static cc.blynk.server.core.protocol.enums.Command.*;
@@ -278,6 +283,49 @@ public class HttpAPILogic {
         } else {
             return redirect(path.toString());
         }
+    }
+
+    @POST
+    @Path("{token}/custom/pin/{pin}")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    public Response acceptCustomPostRequest(@PathParam("token") String token,
+                                            @PathParam("pin") String pinString,
+                                            AttData attData) {
+
+        /**
+         {
+         "trigger":"forward everything to blynk",
+         "timestamp":"2016-07-28T20:18:18.132Z",
+         "event":"fired",
+         "device":
+         {
+         "id":"cfeafd941b7dbfadf3a7dbd7e91d4d07",
+         "name":"Arduino",
+         "serial":null
+         },
+         "conditions":
+         {
+         "test":{"changed":true}
+         },
+         "values":
+         {
+         "test":
+         {
+         "value":"41",
+         "timestamp":"2016-07-28T20:18:18.132Z",
+         "unit":"?C"
+         }
+         },
+         "timeframe":0,
+         "custom_data":null
+         }
+         */
+
+        List<String> valueList = new ArrayList<>();
+        for (Map.Entry<String, AttValue> entries : attData.values.entrySet()) {
+            valueList.add(entries.getValue().value);
+        }
+        return updateWidgetPinData(token, pinString, valueList.toArray(new String[valueList.size()]));
     }
 
     @PUT
