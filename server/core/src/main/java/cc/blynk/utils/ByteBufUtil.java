@@ -22,11 +22,11 @@ public class ByteBufUtil {
         return makeResponse(msgId, OK);
     }
 
-    public static ByteBuf makeResponse(int msgId, int response) {
+    public static ByteBuf makeResponse(int msgId, int responseCode) {
         return PooledByteBufAllocator.DEFAULT.buffer(MessageBase.HEADER_LENGTH)
                 .writeByte(Command.RESPONSE)
                 .writeShort(msgId)
-                .writeShort(response);
+                .writeShort(responseCode);
     }
 
     public static ByteBuf makeStringMessage(short cmd, int msgId, String data) {

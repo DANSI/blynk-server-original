@@ -3,10 +3,10 @@ package cc.blynk.server.websocket;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
+import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
-import cc.blynk.server.websocket.handlers.WebSocketEncoder;
 import cc.blynk.server.websocket.handlers.WebSocketHandler;
 import cc.blynk.server.websocket.handlers.WebSocketWrapperEncoder;
 import cc.blynk.utils.SslUtil;
@@ -59,7 +59,7 @@ public class WebSocketSSLServer extends BaseServer {
                         hardwareChannelStateHandler,
                         new MessageDecoder(holder.stats),
                         new WebSocketWrapperEncoder(),
-                        new WebSocketEncoder(holder.stats),
+                        new MessageEncoder(holder.stats),
                         hardwareLoginHandler,
                         userNotLoggedHandler
                 );
