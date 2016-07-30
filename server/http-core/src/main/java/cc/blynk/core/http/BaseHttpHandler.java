@@ -43,7 +43,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
 
         HttpRequest req = (HttpRequest) msg;
 
-        log.info("{} : {}", req.getMethod().name(), req.getUri());
+        log.info("{} : {}", req.method().name(), req.uri());
 
         globalStats.mark(Command.HTTP_TOTAL);
 
@@ -51,16 +51,16 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
     }
 
     public void processHttp(ChannelHandlerContext ctx, HttpRequest req) {
-        HandlerHolder handlerHolder = HandlerRegistry.findHandler(req.getMethod(), HandlerRegistry.path(req.getUri()));
+        HandlerHolder handlerHolder = HandlerRegistry.findHandler(req.method(), HandlerRegistry.path(req.uri()));
 
         if (handlerHolder == null) {
-            log.error("Error resolving url. No path found. {} : {}", req.getMethod().name(), req.getUri());
+            log.error("Error resolving url. No path found. {} : {}", req.method().name(), req.uri());
             ReferenceCountUtil.release(req);
             ctx.writeAndFlush(Response.notFound());
             return;
         }
 
-        URIDecoder uriDecoder = new URIDecoder(req.getUri());
+        URIDecoder uriDecoder = new URIDecoder(req.uri());
         HandlerRegistry.populateBody(req, uriDecoder);
 
         Object[] params;
@@ -68,7 +68,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
             uriDecoder.pathData = handlerHolder.uriTemplate.extractParameters();
             params = handlerHolder.fetchParams(uriDecoder);
         } catch (StringIndexOutOfBoundsException stringE) {
-            log.error("{} : '{}'. Error : ", req.getMethod().name(), req.getUri(), stringE.getMessage());
+            log.error("{} : '{}'. Error : ", req.method().name(), req.uri(), stringE.getMessage());
             ctx.writeAndFlush(Response.serverError(stringE.getMessage()));
             return;
         } catch (Exception e) {
