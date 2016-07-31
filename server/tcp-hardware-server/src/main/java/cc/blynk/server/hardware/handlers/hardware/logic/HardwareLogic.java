@@ -10,7 +10,6 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
-import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,7 +41,7 @@ public class HardwareLogic {
         return body.charAt(1) == 'w';
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
+    public void messageReceived(HardwareStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
         final String body = message.body;
@@ -70,7 +69,6 @@ public class HardwareLogic {
                 throw new IllegalCommandException("Hardware write command doesn't have value for pin.");
             }
 
-            //storing to DB and aggregating
             reportingDao.process(state.user.name, dashId, pin, pinType, value);
 
             dash.update(pin, pinType, value);
@@ -81,7 +79,6 @@ public class HardwareLogic {
             session.sendToApps(HARDWARE, message.id, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
         } else {
             log.debug("No active dashboard.");
-            //ctx.writeAndFlush(makeResponse(message.id, NO_ACTIVE_DASHBOARD), ctx.voidPromise());
         }
     }
 

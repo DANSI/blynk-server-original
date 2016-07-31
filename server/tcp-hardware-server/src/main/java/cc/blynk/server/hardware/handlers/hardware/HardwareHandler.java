@@ -32,7 +32,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     public HardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
         super(holder.props, stateHolder);
         this.hardware = new HardwareLogic(holder.sessionDao, holder.reportingDao);
-        this.bridge = new BridgeLogic(holder.sessionDao);
+        this.bridge = new BridgeLogic(holder.sessionDao, hardware);
 
         final long defaultNotificationQuotaLimit = holder.props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
         this.email = new MailLogic(holder.blockingIOProcessor, holder.mailWrapper, defaultNotificationQuotaLimit);
@@ -51,7 +51,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         ThreadContext.put("user", state.user.name);
         switch (msg.command) {
             case HARDWARE:
-                hardware.messageReceived(ctx, state, msg);
+                hardware.messageReceived(state, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);

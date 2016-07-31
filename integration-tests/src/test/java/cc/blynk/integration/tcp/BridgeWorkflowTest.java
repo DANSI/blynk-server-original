@@ -151,6 +151,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         clientPair.hardwareClient.send("bridge 1 aw 10 10");
         verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, b("aw 10 10"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1 aw 10 10"))));
     }
 
     @Test
@@ -163,6 +164,10 @@ public class BridgeWorkflowTest extends IntegrationBase {
         List<Object> arguments = objectArgumentCaptor.getAllValues();
         String token2 = ((StringMessage) arguments.get(0)).body;
 
+        clientPair.appClient.send("activate 2");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, DEVICE_NOT_IN_NETWORK)));
+        clientPair.appClient.reset();
+
         //creating 1 new hard client
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
@@ -174,6 +179,8 @@ public class BridgeWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         clientPair.hardwareClient.send("bridge 1 aw 11 11");
         verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, b("aw 11 11"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_CONNECTED, "2")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("2 aw 11 11"))));
     }
 
     @Test
@@ -185,6 +192,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
         List<Object> arguments = objectArgumentCaptor.getAllValues();
         String token2 = ((StringMessage) arguments.get(0)).body;
+        clientPair.appClient.reset();
 
         //creating 2 new hard clients
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
@@ -207,6 +215,8 @@ public class BridgeWorkflowTest extends IntegrationBase {
         verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, b("aw 11 11"))));
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, b("aw 11 11"))));
 
+        verify(clientPair.appClient.responseMock, timeout(500).times(2)).channelRead(any(), eq(produce(1, HARDWARE_CONNECTED, "2")));
+        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(2, HARDWARE, b("2 aw 11 11"))));
     }
 
     @Test
@@ -255,6 +265,5 @@ public class BridgeWorkflowTest extends IntegrationBase {
         verify(hardClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(4, BRIDGE, b("aw 13 13"))));
 
     }
-
 
 }

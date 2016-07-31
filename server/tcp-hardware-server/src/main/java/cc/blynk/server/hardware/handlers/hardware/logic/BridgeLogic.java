@@ -34,9 +34,12 @@ public class BridgeLogic {
     private final SessionDao sessionDao;
     private final Map<String, String> sendToMap;
 
-    public BridgeLogic(SessionDao sessionDao) {
+    public final HardwareLogic hardwareLogic;
+
+    public BridgeLogic(SessionDao sessionDao, HardwareLogic hardwareLogic) {
         this.sessionDao = sessionDao;
         this.sendToMap = new ConcurrentHashMap<>();
+        this.hardwareLogic = hardwareLogic;
     }
 
     private static boolean isInit(String body) {
@@ -53,16 +56,16 @@ public class BridgeLogic {
             return;
         }
 
-        final String pin = split[0];
+        final String bridgePin = split[0];
 
         if (isInit(split[1])) {
             final String token = split[2];
 
-            sendToMap.put(pin, token);
+            sendToMap.put(bridgePin, token);
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
-            final String token = sendToMap.get(pin);
+            final String token = sendToMap.get(bridgePin);
 
             if (sendToMap.size() == 0 || token == null) {
                 log.error("Bridge not initialized.");
@@ -78,6 +81,7 @@ public class BridgeLogic {
                         HardwareStateHolder hardwareState = getHardState(channel);
                         if (hardwareState != null && token.equals(hardwareState.token)) {
                             messageWasSent = true;
+                            hardwareLogic.messageReceived(hardwareState, message);
                             channel.writeAndFlush(message, channel.voidPromise());
                         }
                     }
