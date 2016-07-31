@@ -1,11 +1,9 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
-import cc.blynk.server.core.model.widgets.others.RTC;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -13,10 +11,6 @@ import cc.blynk.utils.PinUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.time.Instant;
-import java.time.ZoneOffset;
-
-import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
@@ -35,7 +29,10 @@ public class HardwareSyncLogic {
             //return all widgets state
             for (Widget widget : dash.widgets) {
                 if (widget instanceof HardwareSyncWidget) {
-                    ((HardwareSyncWidget) widget).send(ctx, message.id);
+                    HardwareSyncWidget hardwareSyncWidget = (HardwareSyncWidget) widget;
+                    if (hardwareSyncWidget.isRequiredForSyncAll()) {
+                        hardwareSyncWidget.send(ctx, message.id);
+                    }
                 }
             }
 
@@ -54,21 +51,12 @@ public class HardwareSyncLogic {
 
             if (PinUtil.isReadOperation(bodyParts[0])) {
                 Widget widget = dash.findWidgetByPin(pin, pinType);
-                if (widget instanceof RTC)  {
-                    RTC rtc = (RTC) widget;
-                    final String body = Pin.makeHardwareBody(pinType, pin, getTime(rtc));
-                    ctx.writeAndFlush(makeStringMessage(HARDWARE, message.id, body), ctx.voidPromise());
-                } else if (widget instanceof HardwareSyncWidget) {
+                if (widget instanceof HardwareSyncWidget) {
                     ((HardwareSyncWidget) widget).send(ctx, message.id);
                     ctx.flush();
                 }
             }
         }
-    }
-
-    private static String getTime(RTC rtc) {
-        ZoneOffset offset = rtc.timezone == null ? ZoneOffset.UTC : rtc.timezone;
-        return String.valueOf(Instant.now().getEpochSecond() + offset.getTotalSeconds());
     }
 
 }
