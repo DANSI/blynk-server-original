@@ -2,13 +2,13 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,6 +29,8 @@ import static cc.blynk.utils.StateHolderUtil.*;
  */
 public class BridgeLogic {
 
+    private static final Logger log = LogManager.getLogger(BridgeLogic.class);
+
     private final SessionDao sessionDao;
     private final Map<String, String> sendToMap;
 
@@ -46,7 +48,9 @@ public class BridgeLogic {
         String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (split.length < 3) {
-            throw new IllegalCommandException("Wrong bridge body.");
+            log.error("Wrong bridge body. '{}'", message.body);
+            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+            return;
         }
 
         if (isInit(split[1])) {
@@ -61,7 +65,9 @@ public class BridgeLogic {
             final String token = sendToMap.get(pin);
 
             if (sendToMap.size() == 0 || token == null) {
-                throw new NotAllowedException("Bridge not initialized.");
+                log.error("Bridge not initialized.");
+                ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
+                return;
             }
 
             if (session.getHardwareChannels().size() > 1) {
