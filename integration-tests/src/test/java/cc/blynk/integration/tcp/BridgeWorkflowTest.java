@@ -111,7 +111,21 @@ public class BridgeWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.send("bridge 1 i auth_token");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        //no OK, cause nothings send back
+        clientPair.hardwareClient.send("bridge 1 aw 10 10");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, DEVICE_NOT_IN_NETWORK)));
+    }
+
+    @Test
+    public void testBridgeInitAndSendOtherDevicesButNoBridgeDevices() throws Exception {
+        //creating 1 new hard client
+        TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
+        hardClient1.start();
+        hardClient1.send("login " + clientPair.token);
+        verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        hardClient1.reset();
+
+        clientPair.hardwareClient.send("bridge 1 i auth_token");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         clientPair.hardwareClient.send("bridge 1 aw 10 10");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, DEVICE_NOT_IN_NETWORK)));
     }
