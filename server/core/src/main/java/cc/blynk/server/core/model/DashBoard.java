@@ -48,7 +48,7 @@ public class DashBoard {
 
     public Map<String, Object> metadata = new HashMap<>();
 
-    public Map<Byte, String> pinStorage = new HashMap<>();
+    public Map<String, String> storagePins = new HashMap<>();
 
     /**
      * Specific property used for improving user experience on mobile application.
@@ -92,8 +92,8 @@ public class DashBoard {
             }
         }
         //special case. #237 if no widget - storing without widget.
-        if (!hasWidget && type == PinType.VIRTUAL) {
-            pinStorage.put(pin, value);
+        if (!hasWidget) {
+            storagePins.put("" + type.pintTypeChar + pin, value);
         }
 
         this.updatedAt = System.currentTimeMillis();

@@ -200,7 +200,7 @@ public class HttpAPILogic {
         Widget widget = dashBoard.findWidgetByPin(pin, pinType);
 
         if (widget == null) {
-            String value = dashBoard.pinStorage.get(pin);
+            String value = dashBoard.storagePins.get("" + pinType.pintTypeChar + pin);
             if (value == null) {
                 log.error("Requested pin {} not found. User {}", pinString, user.name);
                 return Response.badRequest("Requested pin not exists in app.");

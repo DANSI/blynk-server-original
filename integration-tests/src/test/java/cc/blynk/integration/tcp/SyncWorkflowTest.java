@@ -81,13 +81,57 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardSyncReturnNothingNoWidgetOnPin() throws Exception {
-        clientPair.hardwareClient.send("hardsync " + b("vr 22"));
+        clientPair.hardwareClient.send("hardsync vr 22");
         verify(clientPair.hardwareClient.responseMock, after(400).never()).channelRead(any(), any());
     }
 
     @Test
+    public void testHardSyncReturnValueForNoWidgetOnVirtualPin() throws Exception {
+        clientPair.hardwareClient.send("hardware vw 67 100");
+
+        clientPair.hardwareClient.send("hardsync vr 67");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 67 100"))));
+
+        clientPair.hardwareClient.reset();
+
+        clientPair.hardwareClient.send("hardsync");
+        verify(clientPair.hardwareClient.responseMock, timeout(1000).times(9)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 1 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 2 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 3 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 244"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 7 3"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 30 3"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 13 60 143 158"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 67 100"))));
+    }
+
+    @Test
+    public void testHardSyncReturnValueForNoWidgetOnAnalogPin() throws Exception {
+        clientPair.hardwareClient.send("hardware aw 66 100");
+
+        clientPair.hardwareClient.send("hardsync ar 66");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("aw 66 100"))));
+
+        clientPair.hardwareClient.reset();
+
+        clientPair.hardwareClient.send("hardsync");
+        verify(clientPair.hardwareClient.responseMock, timeout(1000).times(9)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 1 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 2 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 3 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 244"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 7 3"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 30 3"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 13 60 143 158"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 66 100"))));
+    }
+
+    @Test
     public void testHardSyncReturn1HardwareCommand() throws Exception {
-        clientPair.hardwareClient.send("hardsync " + b("vr 4"));
+        clientPair.hardwareClient.send("hardsync vr 4");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 244"))));
     }
 
@@ -161,7 +205,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardSyncReturnRTCWithoutTimezone() throws Exception {
-        clientPair.hardwareClient.send("hardsync " + b("vr 9"));
+        clientPair.hardwareClient.send("hardsync vr 9");
 
         long expectedTS = System.currentTimeMillis() / 1000;
 
@@ -219,7 +263,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        clientPair.hardwareClient.send("hardsync " + b("vr 99"));
+        clientPair.hardwareClient.send("hardsync vr 99");
 
         long expectedTS = System.currentTimeMillis() / 1000 + offset.getTotalSeconds();
 
@@ -248,7 +292,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        clientPair.hardwareClient.send("hardsync " + b("vr 99"));
+        clientPair.hardwareClient.send("hardsync vr 99");
 
         long expectedTS = System.currentTimeMillis() / 1000 + offset.getTotalSeconds();
 
@@ -274,7 +318,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         Timer timer = (Timer) widget;
         timer.value = b("dw 5 100500");
 
-        clientPair.hardwareClient.send("hardsync " + b("dr 5"));
+        clientPair.hardwareClient.send("hardsync dr 5");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 5 100500"))));
 
         Thread thread = new Thread(() -> {
@@ -284,7 +328,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         thread.start();
         thread.join();
 
-        clientPair.hardwareClient.send("hardsync " + b("dr 5"));
+        clientPair.hardwareClient.send("hardsync dr 5");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("dw 5 200300"))));
 
         clientPair.hardwareClient.reset();

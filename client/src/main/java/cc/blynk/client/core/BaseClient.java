@@ -81,7 +81,8 @@ public abstract class BaseClient {
             body = body.replaceAll(" ", "\0");
         }
         if (command == Command.HARDWARE || command == Command.BRIDGE || command == Command.EMAIL ||
-                command == Command.SHARING || command == Command.EXPORT_GRAPH_DATA || command == Command.SET_WIDGET_PROPERTY) {
+                command == Command.SHARING || command == Command.EXPORT_GRAPH_DATA || command == Command.SET_WIDGET_PROPERTY
+                || command == Command.HARDWARE_SYNC) {
             body = body.replaceAll(" ", "\0");
         }
         return produce(msgId, command, body);

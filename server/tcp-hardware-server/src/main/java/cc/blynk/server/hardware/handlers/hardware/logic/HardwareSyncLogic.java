@@ -1,6 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
@@ -11,6 +12,9 @@ import cc.blynk.utils.PinUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Map;
+
+import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.utils.ByteBufUtil.*;
 
 /**
@@ -35,6 +39,11 @@ public class HardwareSyncLogic {
                     }
                 }
             }
+            for (Map.Entry<String, String> entry : dash.storagePins.entrySet()) {
+                String pin = entry.getKey();
+                String body = Pin.makeHardwareBody(pin.charAt(0), pin.substring(1), entry.getValue());
+                ctx.write(makeStringMessage(HARDWARE, message.id, body), ctx.voidPromise());
+            }
 
             ctx.flush();
         } else {
@@ -51,10 +60,17 @@ public class HardwareSyncLogic {
 
             if (PinUtil.isReadOperation(bodyParts[0])) {
                 Widget widget = dash.findWidgetByPin(pin, pinType);
-                if (widget instanceof HardwareSyncWidget) {
+                if (widget == null) {
+                    String value = dash.storagePins.get("" + pinType.pintTypeChar + pin);
+                    if (value != null) {
+                        String body = Pin.makeHardwareBody(pinType, pin, value);
+                        ctx.writeAndFlush(makeStringMessage(HARDWARE, message.id, body), ctx.voidPromise());
+                    }
+                } else if (widget instanceof HardwareSyncWidget) {
                     ((HardwareSyncWidget) widget).send(ctx, message.id);
                     ctx.flush();
                 }
+
             }
         }
     }

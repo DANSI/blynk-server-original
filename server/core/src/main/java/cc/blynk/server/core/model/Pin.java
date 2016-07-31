@@ -27,6 +27,12 @@ public class Pin {
 
     public String label;
 
+    public static String makeHardwareBody(char pinType, String pin, String value) {
+        return "" + pinType + 'w'
+                + BODY_SEPARATOR_STRING + pin
+                + BODY_SEPARATOR_STRING + value;
+    }
+
     public static String makeHardwareBody(PinType pinType, byte pin, String value) {
         return "" + pinType.pintTypeChar + 'w'
                 + BODY_SEPARATOR_STRING + pin
