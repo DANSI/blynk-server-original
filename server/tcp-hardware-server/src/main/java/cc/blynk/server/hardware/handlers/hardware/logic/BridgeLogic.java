@@ -53,15 +53,15 @@ public class BridgeLogic {
             return;
         }
 
+        final String pin = split[0];
+
         if (isInit(split[1])) {
-            final String pin = split[0];
             final String token = split[2];
 
             sendToMap.put(pin, token);
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
-            final String pin = split[0];
             final String token = sendToMap.get(pin);
 
             if (sendToMap.size() == 0 || token == null) {
