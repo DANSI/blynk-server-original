@@ -32,10 +32,10 @@ public final class JsonParser {
     //it is threadsafe
     public static final ObjectMapper mapper = init();
     private static final Logger log = LogManager.getLogger(JsonParser.class);
-    private static final ObjectReader userReader = mapper.reader(User.class);
-    private static final ObjectReader profileReader = mapper.reader(Profile.class);
-    private static final ObjectReader dashboardReader = mapper.reader(DashBoard.class);
-    private static final ObjectReader widgetReader = mapper.reader(Widget.class);
+    private static final ObjectReader userReader = mapper.readerFor(User.class);
+    private static final ObjectReader profileReader = mapper.readerFor(Profile.class);
+    private static final ObjectReader dashboardReader = mapper.readerFor(DashBoard.class);
+    private static final ObjectReader widgetReader = mapper.readerFor(Widget.class);
 
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
