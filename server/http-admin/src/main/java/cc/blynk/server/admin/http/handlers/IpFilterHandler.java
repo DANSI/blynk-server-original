@@ -54,7 +54,9 @@ public class IpFilterHandler extends AbstractRemoteAddressFilter<InetSocketAddre
         }
 
         if (remoteAddress.getAddress() instanceof Inet6Address) {
-            log.error("IPv6 CDR notation address not supported by Blynk Admin Server. Please use single IP instead.");
+            log.error("Look like you are trying to connect with IPv6 : {}.  While in 'allowed.administrator.ips' " +
+                    "you are using IPv4.",
+                    remoteAddress.getAddress().getHostAddress());
             return false;
         }
 
