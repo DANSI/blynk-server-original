@@ -9,6 +9,13 @@ public class LessThan extends BaseCondition {
 
     public double value;
 
+    public LessThan() {
+    }
+
+    public LessThan(double value) {
+        this.value = value;
+    }
+
     @Override
     public boolean isValid(double in) {
         return in < value;

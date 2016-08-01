@@ -9,6 +9,13 @@ public class NotEqual extends BaseCondition {
 
     public double value;
 
+    public NotEqual() {
+    }
+
+    public NotEqual(double value) {
+        this.value = value;
+    }
+
     @Override
     public boolean isValid(double in) {
         return in != value;

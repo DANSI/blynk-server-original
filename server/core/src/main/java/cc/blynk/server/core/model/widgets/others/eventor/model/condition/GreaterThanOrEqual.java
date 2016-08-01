@@ -9,6 +9,13 @@ public class GreaterThanOrEqual extends BaseCondition {
 
     public double value;
 
+    public GreaterThanOrEqual() {
+    }
+
+    public GreaterThanOrEqual(double value) {
+        this.value = value;
+    }
+
     @Override
     public boolean isValid(double in) {
         return in >= value;

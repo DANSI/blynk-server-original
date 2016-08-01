@@ -9,6 +9,13 @@ public class Equal extends BaseCondition {
 
     public double value;
 
+    public Equal() {
+    }
+
+    public Equal(double value) {
+        this.value = value;
+    }
+
     @Override
     public boolean isValid(double in) {
         return in == value;
