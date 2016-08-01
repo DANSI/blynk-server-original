@@ -127,7 +127,7 @@
         <mockito-all.version>1.10.19</mockito-all.version>
         <commons-io.version>2.5</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
-        <jmh-core.version>1.11.3</jmh-core.version>
+        <jmh-core.version>1.13</jmh-core.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
