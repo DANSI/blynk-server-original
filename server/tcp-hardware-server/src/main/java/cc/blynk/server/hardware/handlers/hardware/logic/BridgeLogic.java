@@ -30,11 +30,9 @@ import static cc.blynk.utils.StateHolderUtil.*;
 public class BridgeLogic {
 
     private static final Logger log = LogManager.getLogger(BridgeLogic.class);
-
+    public final HardwareLogic hardwareLogic;
     private final SessionDao sessionDao;
     private final Map<String, String> sendToMap;
-
-    public final HardwareLogic hardwareLogic;
 
     public BridgeLogic(SessionDao sessionDao, HardwareLogic hardwareLogic) {
         this.sessionDao = sessionDao;
@@ -81,7 +79,7 @@ public class BridgeLogic {
                         HardwareStateHolder hardwareState = getHardState(channel);
                         if (hardwareState != null && token.equals(hardwareState.token)) {
                             messageWasSent = true;
-                            hardwareLogic.messageReceived(hardwareState, message);
+                            hardwareLogic.messageReceived(ctx, hardwareState, message);
                             channel.writeAndFlush(message, channel.voidPromise());
                         }
                     }

@@ -51,7 +51,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         ThreadContext.put("user", state.user.name);
         switch (msg.command) {
             case HARDWARE:
-                hardware.messageReceived(state, msg);
+                hardware.messageReceived(ctx, state, msg);
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);

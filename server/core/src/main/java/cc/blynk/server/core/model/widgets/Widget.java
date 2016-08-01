@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.Bluetooth;
 import cc.blynk.server.core.model.widgets.others.Bridge;
 import cc.blynk.server.core.model.widgets.others.RTC;
+import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.outputs.*;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -62,6 +63,7 @@ import io.netty.channel.Channel;
         @JsonSubTypes.Type(value = Bridge.class, name = "BRIDGE"),
         @JsonSubTypes.Type(value = HistoryGraph.class, name = "LOGGER"),
         @JsonSubTypes.Type(value = Bluetooth.class, name = "BLUETOOTH"),
+        @JsonSubTypes.Type(value = Eventor.class, name = "EVENTOR"),
 
         //MENU
         @JsonSubTypes.Type(value = Tabs.class, name = "TABS")

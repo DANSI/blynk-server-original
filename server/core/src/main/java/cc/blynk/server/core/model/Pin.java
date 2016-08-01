@@ -27,6 +27,19 @@ public class Pin {
 
     public String label;
 
+    public Pin() {
+    }
+
+    public Pin(int pin, PinType pinType) {
+        this.pin = (byte) pin;
+        this.pinType = pinType;
+    }
+
+    public Pin(byte pin, PinType pinType) {
+        this.pin = pin;
+        this.pinType = pinType;
+    }
+
     public static String makeHardwareBody(char pinType, String pin, String value) {
         return "" + pinType + 'w'
                 + BODY_SEPARATOR_STRING + pin
@@ -37,6 +50,10 @@ public class Pin {
         return "" + pinType.pintTypeChar + 'w'
                 + BODY_SEPARATOR_STRING + pin
                 + BODY_SEPARATOR_STRING + value;
+    }
+
+    public static String makeHardwareBody(boolean pwmMode, PinType pinType, byte pin, String value) {
+        return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
     public boolean isSame(byte pin, PinType type) {

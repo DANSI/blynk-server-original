@@ -60,10 +60,6 @@ public class DashBoard {
      */
     public transient StringMessage pinModeMessage;
 
-    public String getName() {
-        return name;
-    }
-
     private static void append(StringBuilder sb, byte pin, PinType pinType, String pinMode) {
         if (pin == -1 || pinMode == null || pinType == PinType.VIRTUAL) {
             return;
@@ -72,6 +68,10 @@ public class DashBoard {
                 .append(pin)
                 .append(StringUtils.BODY_SEPARATOR)
                 .append(pinMode);
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void update(String body) {
