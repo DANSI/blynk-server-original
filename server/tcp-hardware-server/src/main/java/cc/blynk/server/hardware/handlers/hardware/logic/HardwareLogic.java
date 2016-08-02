@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.eventor.Rule;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.RuleException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -18,7 +17,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 
 /**
  * Handler responsible for forwarding messages from hardware to applications.
@@ -62,11 +61,7 @@ public class HardwareLogic {
         for (Rule rule : eventor.rules) {
             if (rule.isValid(pin, type, valueParsed)) {
                 for (BaseAction action : rule.actions) {
-                    try {
-                        action.execute(ctx);
-                    } catch (RuleException ruleException) {
-
-                    }
+                    action.execute(ctx);
                 }
             }
         }
