@@ -7,14 +7,14 @@ import io.netty.channel.ChannelHandlerContext;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.08.16.
  */
-public class Notify extends BaseAction {
+public class Mail extends BaseAction {
 
     public String message;
 
-    public Notify() {
+    public Mail() {
     }
 
-    public Notify(String message) {
+    public Mail(String message) {
         this.message = message;
     }
 

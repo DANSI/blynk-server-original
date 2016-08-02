@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Equal.class, name = "EQ"),
         @JsonSubTypes.Type(value = NotEqual.class, name = "NEQ"),
         @JsonSubTypes.Type(value = Between.class, name = "BETWEEN"),
+        @JsonSubTypes.Type(value = NotBetween.class, name = "NOT_BETWEEN")
 
 })
 public abstract class BaseCondition {

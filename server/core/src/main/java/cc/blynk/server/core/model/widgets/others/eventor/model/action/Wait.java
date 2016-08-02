@@ -17,7 +17,13 @@ public class Wait extends BaseAction {
 
     public BaseAction delayedAction;
 
+    public Wait() {
+    }
 
+    public Wait(int seconds, BaseAction delayedAction) {
+        this.seconds = seconds;
+        this.delayedAction = delayedAction;
+    }
 
     @Override
     public void execute(ChannelHandlerContext ctx) {
