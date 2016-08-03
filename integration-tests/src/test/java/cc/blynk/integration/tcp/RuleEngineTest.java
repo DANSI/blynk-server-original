@@ -12,6 +12,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.Mail;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.Notify;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPin;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.Twit;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.Wait;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.BaseCondition;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.Between;
@@ -22,18 +23,23 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.condition.LessTha
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.LessThanOrEqual;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.NotBetween;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.NotEqual;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
+import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.utils.JsonParser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.timeout;
@@ -62,8 +68,19 @@ public class RuleEngineTest extends IntegrationBase {
                                                        //>                               37
         BaseCondition ifCondition = resolveCondition(splitted[2], Double.parseDouble(splitted[3]));
 
-                                            //setpin                V2            123
-        BaseAction action = resolveAction(splitted[5], parsePin(splitted[6]), splitted[7]);
+        Pin pin = null;
+        String value;
+        try {
+            //V2
+            pin = parsePin(splitted[6]);
+            //123
+            value = splitted[7];
+        } catch (IllegalCommandBodyException e) {
+            value = splitted[6];
+        }
+
+                                            //setpin
+        BaseAction action = resolveAction(splitted[5], pin, value);
 
         return new Rule(triggerPin, ifCondition, new BaseAction[] { action });
     }
@@ -81,7 +98,11 @@ public class RuleEngineTest extends IntegrationBase {
             case "wait" :
                 return new Wait();
             case "notify" :
-                return new Notify();
+                return new Notify(value);
+            case "mail" :
+                return new Mail(value);
+            case "twit" :
+                return new Twit(value);
 
             default: throw new RuntimeException("Not supported action. " + action);
         }
@@ -115,7 +136,7 @@ public class RuleEngineTest extends IntegrationBase {
     public void init() throws Exception {
         this.hardwareServer = new HardwareServer(holder).start(transportTypeHolder);
         this.appServer = new AppServer(holder).start(transportTypeHolder);
-        this.clientPair = initAppAndHardPair("user_profile_json_3_dashes.txt");
+        this.clientPair = initAppAndHardPair("user_profile_json.txt");
     }
 
     @After
@@ -267,6 +288,38 @@ public class RuleEngineTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
     }
 
+    @Test
+    public void testSimpleRule8Notify() throws Exception {
+        Eventor eventor = oneRuleEventor("if v1 = 37 then notify Yo!!!!!");
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.hardwareClient.send("hardware vw 1 37");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(888, OK)));
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture());
+        AndroidGCMMessage message = objectArgumentCaptor.getValue();
+
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Yo!!!!!", 1).toJson();
+        assertEquals(expectedJson, message.toJson());
+    }
+
+    @Test
+    public void testSimpleRule9Twit() throws Exception {
+        Eventor eventor = oneRuleEventor("if v1 = 37 then twit Yo!!!!!");
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.hardwareClient.send("hardware vw 1 37");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(888, OK)));
+
+        verify(twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("Yo!!!!!"));
+    }
 
 
     @Test

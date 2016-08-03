@@ -17,7 +17,8 @@ import io.netty.channel.ChannelHandlerContext;
         @JsonSubTypes.Type(value = SetPin.class, name = "SETPIN"),
         @JsonSubTypes.Type(value = Wait.class, name = "WAIT"),
         @JsonSubTypes.Type(value = Notify.class, name = "NOTIFY"),
-        @JsonSubTypes.Type(value = Notify.class, name = "MAIL")
+        @JsonSubTypes.Type(value = Mail.class, name = "MAIL"),
+        @JsonSubTypes.Type(value = Twit.class, name = "TWIT"),
 })
 public abstract class BaseAction {
 

@@ -2,7 +2,17 @@ package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.application.handlers.main.logic.*;
+import cc.blynk.server.application.handlers.main.logic.ActivateDashboardLogic;
+import cc.blynk.server.application.handlers.main.logic.AddEnergyLogic;
+import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
+import cc.blynk.server.application.handlers.main.logic.AppMailLogic;
+import cc.blynk.server.application.handlers.main.logic.DeActivateDashboardLogic;
+import cc.blynk.server.application.handlers.main.logic.GetEnergyLogic;
+import cc.blynk.server.application.handlers.main.logic.GetTokenLogic;
+import cc.blynk.server.application.handlers.main.logic.HardwareAppLogic;
+import cc.blynk.server.application.handlers.main.logic.LoadProfileGzippedLogic;
+import cc.blynk.server.application.handlers.main.logic.RedeemLogic;
+import cc.blynk.server.application.handlers.main.logic.RefreshTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.CreateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.DeleteDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.SaveDashLogic;
@@ -90,7 +100,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
+    public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
         if (state.user == null) {
             log.error("Should never happen.");
             return;

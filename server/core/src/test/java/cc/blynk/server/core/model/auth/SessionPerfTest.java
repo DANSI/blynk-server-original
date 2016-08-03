@@ -11,7 +11,17 @@ import io.netty.channel.ChannelPromise;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
-import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Measurement;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.TearDown;
+import org.openjdk.jmh.annotations.Warmup;
 
 import java.util.concurrent.TimeUnit;
 
@@ -101,7 +111,7 @@ public class SessionPerfTest {
     private ChannelHandler newChannelHandler(final HardwareStateHolder hardwareStateHolder) {
         return new BaseSimpleChannelInboundHandler(new ServerProperties(), hardwareStateHolder) {
             @Override
-            protected void messageReceived(ChannelHandlerContext ctx, MessageBase msg) {
+            public void messageReceived(ChannelHandlerContext ctx, MessageBase msg) {
                 throw new UnsupportedOperationException();
             }
         };

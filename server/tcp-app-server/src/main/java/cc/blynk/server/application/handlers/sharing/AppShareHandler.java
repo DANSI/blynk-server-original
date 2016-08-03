@@ -12,7 +12,11 @@ import cc.blynk.server.handlers.common.PingLogic;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.ThreadContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.PING;
 
 /**
  * The Blynk Project.
@@ -34,7 +38,7 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
+    public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
         ThreadContext.put("user", state.user.name);
         switch (msg.command) {
             case HARDWARE:

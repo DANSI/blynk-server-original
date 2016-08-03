@@ -75,7 +75,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
      *                      belongs to
      * @param msg           the message to handle
      */
-    protected abstract void messageReceived(ChannelHandlerContext ctx, I msg);
+    public abstract void messageReceived(ChannelHandlerContext ctx, I msg);
 
     public InstanceLoadMeter getQuotaMeter() {
         return quotaMeter;

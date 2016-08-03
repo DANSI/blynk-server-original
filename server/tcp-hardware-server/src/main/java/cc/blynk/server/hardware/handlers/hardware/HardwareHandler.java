@@ -5,11 +5,28 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.*;
+import cc.blynk.server.hardware.handlers.hardware.logic.BridgeLogic;
+import cc.blynk.server.hardware.handlers.hardware.logic.HardwareInfoLogic;
+import cc.blynk.server.hardware.handlers.hardware.logic.HardwareLogic;
+import cc.blynk.server.hardware.handlers.hardware.logic.HardwareSyncLogic;
+import cc.blynk.server.hardware.handlers.hardware.logic.MailLogic;
+import cc.blynk.server.hardware.handlers.hardware.logic.PushLogic;
+import cc.blynk.server.hardware.handlers.hardware.logic.SetWidgetPropertyLogic;
+import cc.blynk.server.hardware.handlers.hardware.logic.SmsLogic;
+import cc.blynk.server.hardware.handlers.hardware.logic.TwitLogic;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.ThreadContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
+import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_INFO;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.PING;
+import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
+import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
+import static cc.blynk.server.core.protocol.enums.Command.SMS;
+import static cc.blynk.server.core.protocol.enums.Command.TWEET;
 
 /**
  * The Blynk Project.
@@ -47,7 +64,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
+    public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
         ThreadContext.put("user", state.user.name);
         switch (msg.command) {
             case HARDWARE:
