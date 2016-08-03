@@ -4,15 +4,11 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.notifications.push.GCMMessage;
 import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
-import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -21,10 +17,8 @@ import io.netty.handler.timeout.ReadTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Map;
-
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.StateHolderUtil.*;
+import static cc.blynk.server.core.protocol.enums.Response.DEVICE_WENT_OFFLINE;
+import static cc.blynk.utils.StateHolderUtil.getHardState;
 
 /**
  * The Blynk Project.
@@ -90,40 +84,12 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                 String boardType = dashBoard.boardType;
                 String dashName = dashBoard.name;
                 dashName = dashName == null ? "" : dashName;
-                push(state.user, notification,
+                blockingIOProcessor.push(gcmWrapper, state.user.name, notification,
                         String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName),
-                        state.dashId);
+                        state.dashId
+                );
             }
         }
-    }
-
-    private void push(User user, Notification widget, String body, int dashId) {
-        if (widget.androidTokens.size() != 0) {
-            for (Map.Entry<String, String> entry : widget.androidTokens.entrySet()) {
-                push(user, new AndroidGCMMessage(entry.getValue(), widget.priority, body, dashId), widget.androidTokens, entry.getKey());
-            }
-        }
-
-        if (widget.iOSTokens.size() != 0) {
-            for (Map.Entry<String, String> entry : widget.iOSTokens.entrySet()) {
-                push(user, new IOSGCMMessage(entry.getValue(), widget.priority, body, dashId), widget.iOSTokens, entry.getKey());
-            }
-        }
-    }
-
-    private void push(User user, GCMMessage message, Map<String, String> tokens, String uid) {
-        blockingIOProcessor.execute(() -> {
-            try {
-                gcmWrapper.send(message);
-            } catch (Exception e) {
-                log.error("Error sending push notification on offline hardware. For user {}. {}", user.name, e.getMessage());
-
-                if (e.getMessage() != null && e.getMessage().contains("NotRegistered")) {
-                    log.error("Removing invalid token. UID {}", uid);
-                    tokens.remove(uid);
-                }
-            }
-        });
     }
 
 }
