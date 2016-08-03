@@ -19,9 +19,10 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
+import static cc.blynk.utils.ByteBufUtil.ok;
 
 /**
  * Handler responsible for managing hardware and apps login messages.
@@ -86,7 +87,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(UserNotLoggedHandler.class);
-        ctx.pipeline().addLast(new HardwareHandler(holder, new HardwareStateHolder(dashId, user, token)));
+        ctx.pipeline().addLast("HHArdwareHandler", new HardwareHandler(holder, new HardwareStateHolder(dashId, user, token)));
 
         Session session = holder.sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
 
