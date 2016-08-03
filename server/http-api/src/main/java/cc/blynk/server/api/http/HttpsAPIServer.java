@@ -56,7 +56,7 @@ public class HttpsAPIServer extends BaseServer {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
-                pipeline.addLast("HttpSslContext", sslCtx.newHandler(ch.alloc()));
+                pipeline.addLast("HttpsSslContext", sslCtx.newHandler(ch.alloc()));
                 pipeline.addLast("HttpsServerCodec", new HttpServerCodec());
                 pipeline.addLast("HttpsObjectAggregator", new HttpObjectAggregator(65536, true));
                 pipeline.addLast("HttpsChunckedWriter", new ChunkedWriteHandler());
