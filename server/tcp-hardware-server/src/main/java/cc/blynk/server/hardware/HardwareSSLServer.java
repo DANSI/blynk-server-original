@@ -1,4 +1,4 @@
-package cc.blynk.server.hardware.ssl;
+package cc.blynk.server.hardware;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
@@ -41,19 +41,17 @@ public class HardwareSSLServer extends BaseServer {
         this.channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ChannelPipeline pipeline = ch.pipeline();
+                final ChannelPipeline pipeline = ch.pipeline();
 
                 if (hardTimeoutSecs > 0) {
-                    pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
+                    pipeline.addLast("HSSLReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
                 }
-                pipeline.addLast(
-                        sslCtx.newHandler(ch.alloc()),
-                        hardwareChannelStateHandler,
-                        new MessageDecoder(holder.stats),
-                        new MessageEncoder(holder.stats),
-                        hardwareLoginHandler,
-                        userNotLoggedHandler
-                );
+                pipeline.addLast("HSSL", sslCtx.newHandler(ch.alloc()));
+                pipeline.addLast("HSSLChannelState", hardwareChannelStateHandler);
+                pipeline.addLast("HSSLMessageDecoder", new MessageDecoder(holder.stats));
+                pipeline.addLast("HSSLMessageEncoder", new MessageEncoder(holder.stats));
+                pipeline.addLast("HSSLLogin", hardwareLoginHandler);
+                pipeline.addLast("HSSLNotLogged", userNotLoggedHandler);
             }
         };
 

@@ -37,23 +37,21 @@ public class WebSocketServer extends BaseServer {
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ChannelPipeline pipeline = ch.pipeline();
+                final ChannelPipeline pipeline = ch.pipeline();
                 if (hardTimeoutSecs > 0) {
-                    pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
+                    pipeline.addLast("WSReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
                 }
-                ch.pipeline().addLast(
-                        new HttpServerCodec(),
-                        new HttpObjectAggregator(65536),
-                        new WebSocketHandler(false),
+                pipeline.addLast("WSHttpServerCodec", new HttpServerCodec());
+                pipeline.addLast("WSHttpObjectAggregator", new HttpObjectAggregator(65536));
+                pipeline.addLast("WSWebSocket", new WebSocketHandler(false));
 
                         //hardware handlers
-                        hardwareChannelStateHandler,
-                        new MessageDecoder(holder.stats),
-                        new WebSocketWrapperEncoder(),
-                        new MessageEncoder(holder.stats),
-                        hardwareLoginHandler,
-                        userNotLoggedHandler
-                );
+                pipeline.addLast("WSChannelState", hardwareChannelStateHandler);
+                pipeline.addLast("WSMessageDecoder", new MessageDecoder(holder.stats));
+                pipeline.addLast("WSSocketWrapper", new WebSocketWrapperEncoder());
+                pipeline.addLast("WSMessageEncoder", new MessageEncoder(holder.stats));
+                pipeline.addLast("WSLogin", hardwareLoginHandler);
+                pipeline.addLast("WSNotLogged", userNotLoggedHandler);
             }
         };
 

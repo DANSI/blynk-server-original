@@ -7,11 +7,17 @@ import cc.blynk.core.http.rest.HandlerRegistry;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.HttpHandler;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
-import cc.blynk.server.api.http.logic.business.*;
+import cc.blynk.server.api.http.logic.business.AuthCookieHandler;
+import cc.blynk.server.api.http.logic.business.AuthHttpHandler;
+import cc.blynk.server.api.http.logic.business.BusinessAuthLogic;
+import cc.blynk.server.api.http.logic.business.BusinessLogic;
+import cc.blynk.server.api.http.logic.business.HttpBusinessAPILogic;
+import cc.blynk.server.api.http.logic.business.SessionHolder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
@@ -49,19 +55,19 @@ public class HttpsAPIServer extends BaseServer {
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ch.pipeline().addLast(
-                        sslCtx.newHandler(ch.alloc()),
-                        new HttpServerCodec(),
-                        new HttpObjectAggregator(65536, true),
-                        new ChunkedWriteHandler(),
+                final ChannelPipeline pipeline = ch.pipeline();
+                pipeline.addLast(sslCtx.newHandler(ch.alloc()));
+                pipeline.addLast("HttpsServerCodec", new HttpServerCodec());
+                pipeline.addLast("HttpsObjectAggregator", new HttpObjectAggregator(65536, true));
+                pipeline.addLast("HttpsChunckedWriter", new ChunkedWriteHandler());
 
-                        new AuthCookieHandler(businessRootPath, sessionHolder),
-                        new UrlMapperHandler(businessRootPath, "/static/business/business.html"),
-                        new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"),
-                        new StaticFileHandler(isUnpacked, new StaticFile("/static", false), new StaticFile(FileUtils.CSV_DIR, true, false)),
-                        new AuthHttpHandler(holder.userDao, holder.sessionDao, holder.stats),
-                        new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
-                );
+                pipeline.addLast("HttpsAuthCookie", new AuthCookieHandler(businessRootPath, sessionHolder));
+                pipeline.addLast("HttpsUrlMapper", new UrlMapperHandler(businessRootPath, "/static/business/business.html"));
+                pipeline.addLast("HttpsUrlMapper2", new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
+                pipeline.addLast("HttpsStaticFile", new StaticFileHandler(isUnpacked,
+                        new StaticFile("/static", false), new StaticFile(FileUtils.CSV_DIR, true, false)));
+                pipeline.addLast("HttpsAuthHandler", new AuthHttpHandler(holder.userDao, holder.sessionDao, holder.stats));
+                pipeline.addLast("HttpsHandler", new HttpHandler(holder.userDao, holder.sessionDao, holder.stats));
             }
         };
 

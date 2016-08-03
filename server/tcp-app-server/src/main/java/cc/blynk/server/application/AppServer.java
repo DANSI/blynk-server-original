@@ -49,22 +49,20 @@ public class AppServer extends BaseServer {
         this.channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ChannelPipeline pipeline = ch.pipeline();
+                final ChannelPipeline pipeline = ch.pipeline();
 
                 if (appTimeoutSecs > 0) {
-                    pipeline.addLast(new ReadTimeoutHandler(appTimeoutSecs));
+                    pipeline.addLast("AReadTimeout", new ReadTimeoutHandler(appTimeoutSecs));
                 }
 
-                pipeline.addLast(
-                        sslCtx.newHandler(ch.alloc()),
-                        appChannelStateHandler,
-                        new MessageDecoder(holder.stats),
-                        new MessageEncoder(holder.stats),
-                        registerHandler,
-                        appLoginHandler,
-                        appShareLoginHandler,
-                        userNotLoggedHandler
-                );
+                pipeline.addLast("ASSL", sslCtx.newHandler(ch.alloc()));
+                pipeline.addLast("AChannelState", appChannelStateHandler);
+                pipeline.addLast("AMessageDecoder", new MessageDecoder(holder.stats));
+                pipeline.addLast("AMessageEncoder", new MessageEncoder(holder.stats));
+                pipeline.addLast("ARegister", registerHandler);
+                pipeline.addLast("ALogin", appLoginHandler);
+                pipeline.addLast("AShareLogin", appShareLoginHandler);
+                pipeline.addLast("ANotLogged", userNotLoggedHandler);
             }
         };
 

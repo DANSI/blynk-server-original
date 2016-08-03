@@ -45,24 +45,22 @@ public class WebSocketSSLServer extends BaseServer {
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ChannelPipeline pipeline = ch.pipeline();
+                final ChannelPipeline pipeline = ch.pipeline();
                 if (hardTimeoutSecs > 0) {
-                    pipeline.addLast(new ReadTimeoutHandler(hardTimeoutSecs));
+                    pipeline.addLast("WSSReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
                 }
-                ch.pipeline().addLast(
-                        sslCtx.newHandler(ch.alloc()),
-                        new HttpServerCodec(),
-                        new HttpObjectAggregator(65536),
-                        new WebSocketHandler(true),
+                pipeline.addLast("WSSContext", sslCtx.newHandler(ch.alloc()));
+                pipeline.addLast("WSSHttpServerCodec", new HttpServerCodec());
+                pipeline.addLast("WSSHttpObjectAggregator", new HttpObjectAggregator(65536));
+                pipeline.addLast("WSSWebSocket", new WebSocketHandler(false));
 
-                        //hardware handlers
-                        hardwareChannelStateHandler,
-                        new MessageDecoder(holder.stats),
-                        new WebSocketWrapperEncoder(),
-                        new MessageEncoder(holder.stats),
-                        hardwareLoginHandler,
-                        userNotLoggedHandler
-                );
+                //hardware handlers
+                pipeline.addLast("WSSChannelState", hardwareChannelStateHandler);
+                pipeline.addLast("WSSMessageDecoder", new MessageDecoder(holder.stats));
+                pipeline.addLast("WSSSocketWrapper", new WebSocketWrapperEncoder());
+                pipeline.addLast("WSSMessageEncoder", new MessageEncoder(holder.stats));
+                pipeline.addLast("WSSLogin", hardwareLoginHandler);
+                pipeline.addLast("WSSNotLogged", userNotLoggedHandler);
             }
         };
 

@@ -12,6 +12,7 @@ import cc.blynk.server.api.http.logic.business.HttpBusinessAPILogic;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.utils.FileUtils;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
@@ -36,14 +37,15 @@ public class HttpAPIServer extends BaseServer {
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ch.pipeline().addLast(
-                        new HttpServerCodec(),
-                        new HttpObjectAggregator(65536, true),
-                        new ChunkedWriteHandler(),
-                        new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"),
-                        new StaticFileHandler(true, new StaticFile("/static", false), new StaticFile(FileUtils.CSV_DIR, true, false)),
-                        new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
-                );
+                final ChannelPipeline pipeline = ch.pipeline();
+
+                pipeline.addLast("HttpServerCodec", new HttpServerCodec());
+                pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(65536, true));
+                pipeline.addLast("HttpChunkedWrite", new ChunkedWriteHandler());
+                pipeline.addLast("HttpUrlMapper", new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
+                pipeline.addLast("HttpStaticFile", new StaticFileHandler(true,
+                        new StaticFile("/static", false), new StaticFile(FileUtils.CSV_DIR, true, false)));
+                pipeline.addLast("HttpHandler", new HttpHandler(holder.userDao, holder.sessionDao, holder.stats));
             }
         };
 

@@ -14,6 +14,7 @@ import cc.blynk.server.admin.http.logic.admin.UsersLogic;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
@@ -47,17 +48,16 @@ public class HttpsAdminServer extends BaseServer {
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ch.pipeline().addLast(
-                    new IpFilterHandler(holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips")),
-                    sslCtx.newHandler(ch.alloc()),
-                    new HttpServerCodec(),
-                    new HttpObjectAggregator(65536),
-                    new ChunkedWriteHandler(),
-                    new UrlMapperHandler(adminRootPath, "/static/admin/admin.html"),
-                    new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"),
-                    new StaticFileHandler(isUnpacked, new StaticFile("/static", false)),
-                    new HttpHandler(holder.userDao, holder.sessionDao, holder.stats)
-                );
+                final ChannelPipeline pipeline = ch.pipeline();
+                pipeline.addLast(new IpFilterHandler(holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips")));
+                pipeline.addLast(sslCtx.newHandler(ch.alloc()));
+                pipeline.addLast(new HttpServerCodec());
+                pipeline.addLast(new HttpObjectAggregator(65536));
+                pipeline.addLast(new ChunkedWriteHandler());
+                pipeline.addLast(new UrlMapperHandler(adminRootPath, "/static/admin/admin.html"));
+                pipeline.addLast(new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
+                pipeline.addLast(new StaticFileHandler(isUnpacked, new StaticFile("/static", false)));
+                pipeline.addLast(new HttpHandler(holder.userDao, holder.sessionDao, holder.stats));
             }
         };
 
