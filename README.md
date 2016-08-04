@@ -367,6 +367,9 @@ You can change it with next options :
         allowed.administrator.ips
         administration.https.port
         
+WARNING : default ```allowed.administrator.ips``` setting allows access only from ```localhost```. In other words 
+administration will not be available from any other machine except those one you are running server on.
+        
 ## HTTP RESTful
 Blynk HTTP RESTful API allows to easily read and write values to/from Pins in Blynk apps and Hardware. 
 For now API available only for Local Blynk Servers. Http API description could be found [here](http://docs.blynkapi.apiary.io).
