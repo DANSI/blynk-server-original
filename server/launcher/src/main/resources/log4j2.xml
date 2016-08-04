@@ -53,11 +53,12 @@
                 <!-- This route is chosen if ThreadContext has a value for "user"
                 The value dynamically determines the name of the log file. -->
                 <Route>
-                    <File name="${ctx:user}" fileName="${sys:logs.folder}/users/${ctx:user}.log">
+                    <RollingFile name="${ctx:user}" fileName="${sys:logs.folder}/users/${ctx:user}.log"
+                                 filePattern="${sys:logs.folder}/users/archive/${ctx:user}.log.%d{yyyy-MM-dd}">
                         <PatternLayout>
                             <pattern>%d{yyyy-MM-dd} %d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
                         </PatternLayout>
-                    </File>
+                    </RollingFile>
                 </Route>
             </Routes>
         </Routing>
