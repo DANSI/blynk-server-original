@@ -19,8 +19,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-import static cc.blynk.utils.ReportingUtil.*;
-import static java.lang.String.*;
+import static cc.blynk.utils.ReportingUtil.EMPTY_ARRAY;
+import static java.lang.String.format;
 
 /**
  * The Blynk Project.
@@ -53,10 +53,6 @@ public class ReportingDao {
             default :
                 return format(REPORTING_DAILY_FILE_NAME, dashId, pinType.pintTypeChar, pin);
         }
-    }
-
-    public ByteBuffer getByteBufferFromDisk(String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
-        return getByteBufferFromDisk(dataFolder, username, dashId, pinType, pin, count, type);
     }
 
     public static ByteBuffer getByteBufferFromDisk(String dataFolder, String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
@@ -98,6 +94,10 @@ public class ReportingDao {
         return noData;
     }
 
+    public ByteBuffer getByteBufferFromDisk(String username, int dashId, PinType pinType, byte pin, int count, GraphType type) {
+        return getByteBufferFromDisk(dataFolder, username, dashId, pinType, pin, count, type);
+    }
+
     public void delete(String username, int dashId, PinType pinType, byte pin) {
         log.debug("Removing {}{} pin data for dashId {}.", pinType.pintTypeChar, pin, dashId);
         Path userDataMinuteFile = Paths.get(dataFolder, username, format(REPORTING_MINUTE_FILE_NAME, dashId, pinType.pintTypeChar, pin));
@@ -108,16 +108,18 @@ public class ReportingDao {
         FileUtils.deleteQuietly(userDataDailyFile);
     }
 
-    public void process(String username, int dashId, byte pin, PinType pinType, String body) {
-        long ts = System.currentTimeMillis();
-
+    public void process(String username, int dashId, byte pin, PinType pinType, String value, long ts) {
         if (ENABLE_RAW_DATA_STORE) {
             ThreadContext.put("dashId", Integer.toString(dashId));
             ThreadContext.put("pin", String.valueOf(pinType.pintTypeChar) + pin);
-            log.info("{},{}", body, ts);
+            log.info("{},{}", value, ts);
         }
 
-        averageAggregator.collect(username, dashId, pinType, pin, ts, body);
+        averageAggregator.collect(username, dashId, pinType, pin, ts, value);
+    }
+
+    public void process(String username, int dashId, byte pin, PinType pinType, String value) {
+        process(username, dashId, pin, pinType, value, System.currentTimeMillis());
     }
 
     public byte[][] getAllFromDisk(String username, GraphPinRequest[] requestedPins) {

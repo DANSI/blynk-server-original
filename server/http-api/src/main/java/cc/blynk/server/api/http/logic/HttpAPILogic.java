@@ -5,6 +5,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.logic.serialization.NotificationCloneHideFields;
 import cc.blynk.server.api.http.logic.serialization.TwitterCloneHideFields;
 import cc.blynk.server.api.http.pojo.EmailPojo;
+import cc.blynk.server.api.http.pojo.PinData;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.api.http.pojo.att.AttData;
 import cc.blynk.server.api.http.pojo.att.AttValue;
@@ -41,15 +42,30 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
-import static cc.blynk.core.http.Response.*;
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.core.http.Response.ok;
+import static cc.blynk.core.http.Response.redirect;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_EMAIL;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PIN_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PROJECT;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_IS_APP_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_IS_HARDWARE_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_NOTIFY;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_QR;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
 
 /**
  * The Blynk Project.
@@ -59,8 +75,11 @@ import static cc.blynk.server.core.protocol.enums.Command.*;
 @Path("/")
 public class HttpAPILogic {
 
+    protected static final ObjectWriter dashboardCloneWriter = JsonParser.init()
+            .addMixIn(Twitter.class, TwitterCloneHideFields.class)
+            .addMixIn(Notification.class, NotificationCloneHideFields.class)
+            .writerFor(DashBoard.class);
     private static final Logger log = LogManager.getLogger(HttpAPILogic.class);
-
     private final UserDao userDao;
     private final BlockingIOProcessor blockingIOProcessor;
     private final SessionDao sessionDao;
@@ -68,11 +87,6 @@ public class HttpAPILogic {
     private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
     private final ReportingDao reportingDao;
-
-    protected static final ObjectWriter dashboardCloneWriter = JsonParser.init()
-            .addMixIn(Twitter.class, TwitterCloneHideFields.class)
-            .addMixIn(Notification.class, NotificationCloneHideFields.class)
-            .writerFor(DashBoard.class);
 
     public HttpAPILogic(Holder holder) {
         this(holder.userDao, holder.sessionDao, holder.blockingIOProcessor, holder.mailWrapper, holder.gcmWrapper, holder.reportingDao, holder.stats);
@@ -87,6 +101,20 @@ public class HttpAPILogic {
         this.mailWrapper = mailWrapper;
         this.gcmWrapper = gcmWrapper;
         this.reportingDao = reportingDao;
+    }
+
+    private static String makeBody(DashBoard dash, byte pin, PinType pinType, String pinValue) {
+        Widget widget = dash.findWidgetByPin(pin, pinType);
+        if (widget == null) {
+            return Pin.makeHardwareBody(pinType, pin, pinValue);
+        } else {
+            if (widget instanceof OnePinWidget) {
+                return ((OnePinWidget) widget).makeHardwareBody();
+            } else if (widget instanceof MultiPinWidget) {
+                return ((MultiPinWidget) widget).makeHardwareBody(pin, pinType);
+            }
+        }
+        return null;
     }
 
     @GET
@@ -399,18 +427,73 @@ public class HttpAPILogic {
         return Response.ok();
     }
 
-    private static String makeBody(DashBoard dash, byte pin, PinType pinType, String pinValue) {
-        Widget widget = dash.findWidgetByPin(pin, pinType);
-        if (widget == null) {
-            return Pin.makeHardwareBody(pinType, pin, pinValue);
-        } else {
-            if (widget instanceof OnePinWidget) {
-                return ((OnePinWidget) widget).makeHardwareBody();
-            } else if (widget instanceof MultiPinWidget) {
-                return ((MultiPinWidget) widget).makeHardwareBody(pin, pinType);
+    @PUT
+    @Path("{token}/pin/extra/{pin}")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    //todo cover with test
+    public Response updateWidgetPinData(@PathParam("token") String token,
+                                        @PathParam("pin") String pinString,
+                                        PinData pinData) {
+
+        globalStats.mark(HTTP_UPDATE_PIN_DATA);
+
+        if (pinData == null) {
+            log.error("No pin for update provided.");
+            return Response.badRequest("No pin for update provided.");
+        }
+
+        User user = userDao.tokenManager.getUserByToken(token);
+
+        if (user == null) {
+            log.error("Requested token {} not found.", token);
+            return Response.badRequest("Invalid token.");
+        }
+
+        Integer dashId = user.getDashIdByToken(token);
+
+        if (dashId == null) {
+            log.error("Dash id for token {} not found. User {}", token, user.name);
+            return Response.badRequest("Didn't find dash id for token.");
+        }
+
+        DashBoard dash = user.profile.getDashById(dashId);
+
+        PinType pinType;
+        byte pin;
+
+        try {
+            pinType = PinType.getPinType(pinString.charAt(0));
+            pin = Byte.parseByte(pinString.substring(1));
+        } catch (NumberFormatException | IllegalCommandBodyException e) {
+            log.error("Wrong pin format. {}", pinString);
+            return Response.badRequest("Wrong pin format.");
+        }
+
+        try {
+            ThreadContext.put("user", user.name);
+            reportingDao.process(user.name, dashId, pin, pinType, pinData.value, pinData.timestamp);
+        } finally {
+            ThreadContext.clearMap();
+        }
+
+        dash.update(pin, pinType, pinData.value);
+
+        String body = makeBody(dash, pin, pinType, pinData.value);
+
+        if (body != null) {
+            Session session = sessionDao.userSession.get(user);
+            if (session == null) {
+                log.error("No session for user {}.", user.name);
+                return Response.ok();
+            }
+            session.sendMessageToHardware(dashId, HARDWARE, 111, body);
+
+            if (dash.isActive) {
+                session.sendToApps(HARDWARE, 111, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
             }
         }
-        return null;
+
+        return Response.ok();
     }
 
     @POST
