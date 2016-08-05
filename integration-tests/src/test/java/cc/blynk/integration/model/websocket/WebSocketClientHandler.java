@@ -37,7 +37,11 @@
 
 package cc.blynk.integration.model.websocket;
 
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
@@ -87,7 +91,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         if (msg instanceof FullHttpResponse) {
             FullHttpResponse response = (FullHttpResponse) msg;
             throw new IllegalStateException(
-                    "Unexpected FullHttpResponse (getStatus=" + response.getStatus() +
+                    "Unexpected FullHttpResponse (getStatus=" + response.status() +
                             ", content=" + response.content().toString(CharsetUtil.UTF_8) + ')');
         }
 
