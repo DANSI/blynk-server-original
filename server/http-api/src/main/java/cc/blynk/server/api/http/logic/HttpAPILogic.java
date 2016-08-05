@@ -430,14 +430,13 @@ public class HttpAPILogic {
     @PUT
     @Path("{token}/pin/extra/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
-    //todo cover with test
     public Response updateWidgetPinData(@PathParam("token") String token,
                                         @PathParam("pin") String pinString,
-                                        PinData pinData) {
+                                        PinData[] pinsData) {
 
         globalStats.mark(HTTP_UPDATE_PIN_DATA);
 
-        if (pinData == null) {
+        if (pinsData.length == 0) {
             log.error("No pin for update provided.");
             return Response.badRequest("No pin for update provided.");
         }
@@ -471,14 +470,16 @@ public class HttpAPILogic {
 
         try {
             ThreadContext.put("user", user.name);
-            reportingDao.process(user.name, dashId, pin, pinType, pinData.value, pinData.timestamp);
+            for (PinData pinData : pinsData) {
+                reportingDao.process(user.name, dashId, pin, pinType, pinData.value, pinData.timestamp);
+            }
         } finally {
             ThreadContext.clearMap();
         }
 
-        dash.update(pin, pinType, pinData.value);
+        dash.update(pin, pinType, pinsData[0].value);
 
-        String body = makeBody(dash, pin, pinType, pinData.value);
+        String body = makeBody(dash, pin, pinType, pinsData[0].value);
 
         if (body != null) {
             Session session = sessionDao.userSession.get(user);

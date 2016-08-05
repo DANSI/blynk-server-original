@@ -24,7 +24,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * The Blynk Project.
@@ -297,6 +297,17 @@ public class HttpAPIPinsTest extends BaseTest {
         HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
         request.setEntity(new StringEntity("[\"100\", \"101\", \"102\"]", ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testPutExtraWithNoWidget() throws Exception {
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/extra/v10");
+        request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
+        request.setEntity(new StringEntity("[{\"timestamp\" : 123, \"value\":\"100\"}]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
