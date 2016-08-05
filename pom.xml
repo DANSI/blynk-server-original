@@ -8,6 +8,14 @@
         Blynk - platform with iOs and Android apps to control Arduino,
         Raspberry Pi and similar micro-controllers boards over Internet.
     </description>
+    <organization>
+        <name>Blynk</name>
+        <url>http://www.blynk.cc/</url>
+    </organization>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/blynkkk/blynk-server/issues</url>
+    </issueManagement>
 
     <groupId>cc.blynk</groupId>
     <artifactId>blynk</artifactId>
