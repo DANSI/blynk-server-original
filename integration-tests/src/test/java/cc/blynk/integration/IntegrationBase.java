@@ -86,6 +86,10 @@ public abstract class IntegrationBase extends BaseTest {
         return body.replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING);
     }
 
+    public static ResponseMessage ok(int msgId) {
+        return new ResponseMessage(msgId, 200);
+    }
+
     public ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
                                                 ServerProperties properties) throws Exception {
 
@@ -172,5 +176,4 @@ public abstract class IntegrationBase extends BaseTest {
     public int getEnergyForTest() {
         return 10000;
     }
-
 }
