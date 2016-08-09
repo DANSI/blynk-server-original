@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.auth;
 
-import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.utils.ServerProperties;
@@ -111,7 +110,7 @@ public class SessionPerfTest {
     private ChannelHandler newChannelHandler(final HardwareStateHolder hardwareStateHolder) {
         return new BaseSimpleChannelInboundHandler(new ServerProperties(), hardwareStateHolder) {
             @Override
-            public void messageReceived(ChannelHandlerContext ctx, MessageBase msg) {
+            public void messageReceived(ChannelHandlerContext ctx, Object msg) {
                 throw new UnsupportedOperationException();
             }
         };

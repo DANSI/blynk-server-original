@@ -9,6 +9,7 @@ import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.hardware.HardwareSSLServer;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.hardware.MQTTHardwareServer;
 import cc.blynk.server.websocket.WebSocketSSLServer;
 import cc.blynk.server.websocket.WebSocketServer;
 import cc.blynk.server.workers.ProfileSaverWorker;
@@ -71,7 +72,8 @@ public class ServerLauncher {
                 new HttpsAPIServer(holder, isUnpacked),
                 new HttpsAdminServer(holder, isUnpacked),
                 new WebSocketServer(holder),
-                new WebSocketSSLServer(holder)
+                new WebSocketSSLServer(holder),
+                new MQTTHardwareServer(holder)
         };
 
         if (startServers(servers, new TransportTypeHolder(serverProperties))) {

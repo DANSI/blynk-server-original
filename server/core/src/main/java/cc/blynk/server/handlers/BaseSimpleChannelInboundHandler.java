@@ -18,7 +18,7 @@ import org.apache.logging.log4j.ThreadContext;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/3/2015.
  */
-public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
+public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
     public final StateHolder state;
     protected final int USER_QUOTA_LIMIT_WARN_PERIOD;
@@ -35,6 +35,13 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
         this.state = state;
     }
 
+    private static int getMsgId(Object o) {
+        if (o instanceof MessageBase) {
+            return ((MessageBase) o).id;
+        }
+        return 0;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -48,7 +55,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
                 quotaMeter.mark();
                 messageReceived(ctx, typedMsg);
             } catch (Exception e) {
-                handleGeneralException(ctx, e, typedMsg.id);
+                handleGeneralException(ctx, e, getMsgId(msg));
             } finally {
                 ThreadContext.clearMap();
                 ReferenceCountUtil.release(msg);
