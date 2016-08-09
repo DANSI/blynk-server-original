@@ -46,6 +46,9 @@ public abstract class BaseTest {
     public int tcpWebSocketPort;
     public int sslWebSocketPort;
 
+    //mqtt socket port
+    public int mqttPort;
+
     @Mock
     public BlockingIOProcessor blockingIOProcessor;
 
@@ -95,6 +98,7 @@ public abstract class BaseTest {
 
         this.tcpWebSocketPort = properties.getIntProperty("tcp.websocket.port");
         this.sslWebSocketPort = properties.getIntProperty("ssl.websocket.port");
+        this.mqttPort = properties.getIntProperty("hardware.mqtt.port");
     }
 
     public String getDataFolder() {
