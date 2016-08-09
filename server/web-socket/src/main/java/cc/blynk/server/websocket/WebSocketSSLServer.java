@@ -7,6 +7,7 @@ import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
+import cc.blynk.server.websocket.handlers.ExceptionCatcherHandler;
 import cc.blynk.server.websocket.handlers.WebSocketHandler;
 import cc.blynk.server.websocket.handlers.WebSocketWrapperEncoder;
 import cc.blynk.utils.SslUtil;
@@ -34,6 +35,8 @@ public class WebSocketSSLServer extends BaseServer {
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder);
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.blockingIOProcessor, holder.gcmWrapper);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
+        final ExceptionCatcherHandler exceptionCatcherHandler = new ExceptionCatcherHandler();
+        final WebSocketWrapperEncoder webSocketWrapperEncoder = new WebSocketWrapperEncoder();
 
         final SslContext sslCtx = SslUtil.initSslContext(
                 holder.props.getProperty("https.cert", holder.props.getProperty("server.ssl.cert")),
@@ -53,11 +56,12 @@ public class WebSocketSSLServer extends BaseServer {
                 pipeline.addLast("WSSHttpServerCodec", new HttpServerCodec());
                 pipeline.addLast("WSSHttpObjectAggregator", new HttpObjectAggregator(65536));
                 pipeline.addLast("WSSWebSocket", new WebSocketHandler(false));
+                pipeline.addLast("WSSExceptionCatcher", exceptionCatcherHandler);
 
                 //hardware handlers
                 pipeline.addLast("WSSChannelState", hardwareChannelStateHandler);
                 pipeline.addLast("WSSMessageDecoder", new MessageDecoder(holder.stats));
-                pipeline.addLast("WSSSocketWrapper", new WebSocketWrapperEncoder());
+                pipeline.addLast("WSSSocketWrapper", webSocketWrapperEncoder);
                 pipeline.addLast("WSSMessageEncoder", new MessageEncoder(holder.stats));
                 pipeline.addLast("WSSLogin", hardwareLoginHandler);
                 pipeline.addLast("WSSNotLogged", userNotLoggedHandler);

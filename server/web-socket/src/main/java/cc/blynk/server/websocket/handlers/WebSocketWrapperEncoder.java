@@ -1,6 +1,7 @@
 package cc.blynk.server.websocket.handlers;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
@@ -13,6 +14,7 @@ import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
  * Created by Dmitriy Dumanskiy.
  * Created on 15.01.16.
  */
+@ChannelHandler.Sharable
 public class WebSocketWrapperEncoder extends ChannelOutboundHandlerAdapter {
 
     @Override
@@ -23,4 +25,5 @@ public class WebSocketWrapperEncoder extends ChannelOutboundHandlerAdapter {
             super.write(ctx, msg, promise);
         }
     }
+
 }

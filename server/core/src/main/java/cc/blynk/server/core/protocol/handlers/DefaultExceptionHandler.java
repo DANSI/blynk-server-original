@@ -4,7 +4,6 @@ import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
-import io.netty.handler.codec.http.websocketx.WebSocketHandshakeException;
 import io.netty.handler.ssl.NotSslRecordException;
 import io.netty.handler.timeout.ReadTimeoutException;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import javax.net.ssl.SSLException;
 import java.io.IOException;
 
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
 
 /**
  * The Blynk Project.
@@ -67,8 +66,6 @@ public interface DefaultExceptionHandler {
             ctx.close();
         } else if (cause instanceof IOException) {
             log.debug("Blynk server IOException.", cause);
-        } else if (cause instanceof WebSocketHandshakeException) {
-            log.debug("Web Socket Handshake Exception.", cause);
         } else {
             log.error("Unexpected error!!!", cause);
             log.error("Handler class : {}. Name : {}", ctx.handler().getClass(), ctx.name());
