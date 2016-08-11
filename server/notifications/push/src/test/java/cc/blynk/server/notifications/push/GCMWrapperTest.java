@@ -7,7 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * The Blynk Project.
@@ -19,15 +19,15 @@ public class GCMWrapperTest {
     @Test
     @Ignore
     public void testIOS() throws Exception {
-        GCMWrapper gcmWrapper = new GCMWrapper(null);
-        gcmWrapper.send(new IOSGCMMessage("to", Priority.normal, "yo!!!", 1));
+        GCMWrapper gcmWrapper = new GCMWrapper(null, null);
+        gcmWrapper.send(new IOSGCMMessage("to", Priority.normal, "yo!!!", 1), null, null);
     }
 
     @Test
     @Ignore
     public void testAndroid() throws Exception {
-        GCMWrapper gcmWrapper = new GCMWrapper(null);
-        gcmWrapper.send(new AndroidGCMMessage("", Priority.normal, "yo!!!", 1));
+        GCMWrapper gcmWrapper = new GCMWrapper(null, null);
+        gcmWrapper.send(new AndroidGCMMessage("", Priority.normal, "yo!!!", 1), null, null);
     }
 
     @Test

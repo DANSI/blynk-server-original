@@ -27,10 +27,7 @@ import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.push.GCMMessage;
 import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
-import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
@@ -539,33 +536,9 @@ public class HttpAPILogic {
         }
 
         log.trace("Sending push for user {}, with message : '{}'.", user.name, message.body);
-        push(user, notification, message.body, 1);
+        notification.push(gcmWrapper, message.body, 1);
 
         return Response.ok();
-    }
-
-    private void push(User user, Notification widget, String body, int dashId) {
-        if (widget.androidTokens.size() != 0) {
-            for (String token : widget.androidTokens.values()) {
-                push(user, new AndroidGCMMessage(token, widget.priority, body, dashId));
-            }
-        }
-
-        if (widget.iOSTokens.size() != 0) {
-            for (String token : widget.iOSTokens.values()) {
-                push(user, new IOSGCMMessage(token, widget.priority, body, dashId));
-            }
-        }
-    }
-
-    private void push(User user, GCMMessage message) {
-        blockingIOProcessor.execute(() -> {
-            try {
-                gcmWrapper.send(message);
-            } catch (Exception e) {
-                log.error("Error sending push notification on offline hardware. For user {}. Reason {}", user.name, e.getMessage());
-            }
-        });
     }
 
     @POST

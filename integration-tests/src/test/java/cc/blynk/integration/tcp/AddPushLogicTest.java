@@ -85,7 +85,7 @@ public class AddPushLogicTest extends IntegrationBase {
         clientPair.appClient.send("addPushToken 1\0uid\0token");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        doThrow(new Exception("NotRegistered")).when(gcmWrapper).send(any());
+        doThrow(new Exception("NotRegistered")).when(gcmWrapper).send(any(), any(), any());
 
         clientPair.hardwareClient.send("push Yo!");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOTIFICATION_EXCEPTION)));

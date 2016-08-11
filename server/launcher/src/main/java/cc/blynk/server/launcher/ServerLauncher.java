@@ -76,7 +76,7 @@ public class ServerLauncher {
                 new MQTTHardwareServer(holder)
         };
 
-        if (startServers(servers, new TransportTypeHolder(serverProperties))) {
+        if (startServers(servers, holder.transportTypeHolder)) {
             //Launching all background jobs.
             JobLauncher.start(holder, servers);
 

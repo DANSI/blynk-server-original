@@ -23,7 +23,7 @@ public class SMSWrapper {
 
     private final ObjectReader smsResponseReader = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .reader(SmsResponse.class);
+            .readerFor(SmsResponse.class);
 
     public SMSWrapper(Properties props) {
         this(props.getProperty("nexmo.api.key"), props.getProperty("nexmo.api.secret"));

@@ -6,6 +6,7 @@ import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Response;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -41,7 +42,12 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         if (httpServer == null) {
             httpServer = new HttpAPIServer(holder).start(transportTypeHolder);
             httpsServerUrl = String.format("http://localhost:%s/", httpPort);
-            httpclient = new DefaultAsyncHttpClient();
+            httpclient = new DefaultAsyncHttpClient(
+                    new DefaultAsyncHttpClientConfig.Builder()
+                            .setUserAgent("")
+                            .setKeepAlive(false)
+                            .build()
+            );
         }
     }
 

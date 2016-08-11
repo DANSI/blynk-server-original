@@ -1,18 +1,21 @@
 package cc.blynk.server.notifications.push;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import io.netty.channel.EventLoopGroup;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.asynchttpclient.AsyncCompletionHandler;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
+import org.asynchttpclient.Response;
 
-import java.net.URI;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -23,53 +26,81 @@ import java.util.Properties;
 public class GCMWrapper {
 
     public static final String GCM_PROPERTIES_FILENAME = "gcm.properties";
+    private static final Logger log = LogManager.getLogger(GCMWrapper.class);
 
     private final String API_KEY;
-    private final CloseableHttpClient httpclient;
-    private final URI gcmURI;
+    private final AsyncHttpClient httpclient;
+    private final String gcmURI;
     private final ObjectReader gcmResponseReader = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .reader(GCMResponseMessage.class);
+            .readerFor(GCMResponseMessage.class);
 
-    public GCMWrapper(Properties props) {
+    public GCMWrapper(Properties props, EventLoopGroup eventLoop) {
         this.API_KEY = "key=" + props.getProperty("gcm.api.key");
-        this.httpclient = HttpClients.createDefault();
-        String server = props.getProperty("gcm.server");
-        if (server == null) {
-            this.gcmURI = null;
-        } else {
-            this.gcmURI = URI.create(server);
+        this.httpclient = new DefaultAsyncHttpClient(
+                new DefaultAsyncHttpClientConfig.Builder()
+                        .setUserAgent("")
+                        .setEventLoopGroup(eventLoop)
+                        .setKeepAlive(false)
+                        .build()
+        );
+        this.gcmURI = props.getProperty("gcm.server");
+    }
+
+    private static void processError(String errorMessage, Map<String, String> tokens, String uid) {
+        log.error("Error sending push. Reason {}", errorMessage);
+        clean(errorMessage, tokens, uid);
+    }
+
+    private static void clean(String errorMessage, Map<String, String> tokens, String uid) {
+        if (errorMessage != null && errorMessage.contains("NotRegistered")) {
+            log.error("Removing invalid token. UID {}", uid);
+            tokens.remove(uid);
         }
     }
 
-    public void send(GCMMessage messageBase) throws Exception {
+    public void send(GCMMessage messageBase, final Map<String, String> tokens, final String uid) {
         if (gcmURI == null) {
-            throw new Exception("Error sending push. Google cloud messaging properties not provided.");
+            log.error("Error sending push. Google cloud messaging properties not provided.");
+            return;
         }
 
-        HttpPost httpPost = new HttpPost(gcmURI);
-        httpPost.setHeader("Authorization", API_KEY);
-        httpPost.setEntity(new StringEntity(messageBase.toJson(), ContentType.APPLICATION_JSON));
+        String message;
+        try {
+            message = messageBase.toJson();
+        } catch (JsonProcessingException e) {
+            log.error("Error sending push. Wrong message format.");
+            return;
+        }
 
-        try (CloseableHttpResponse response = httpclient.execute(httpPost)) {
-            HttpEntity entity = response.getEntity();
-            String responseMsg = EntityUtils.toString(entity);
-            if (response.getStatusLine().getStatusCode() == 200) {
-                GCMResponseMessage gcmResponseMessage = gcmResponseReader.readValue(responseMsg);
-                if (gcmResponseMessage.failure == 1) {
-                    if (gcmResponseMessage.results != null && gcmResponseMessage.results.length > 0) {
-                        throw new Exception("Error sending push. Problem : " + gcmResponseMessage.results[0].error);
-                    } else {
-                        throw new Exception("Error sending push. Token : " + messageBase.getToken());
+        httpclient.preparePost(gcmURI).setHeader("Authorization", API_KEY)
+                .setHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON.toString())
+                .setBody(message)
+                .execute(new AsyncCompletionHandler<Response>() {
+                    @Override
+                    public Response onCompleted(Response response) throws Exception {
+                        if (response.getStatusCode() == 200) {
+                            GCMResponseMessage gcmResponseMessage = gcmResponseReader.readValue(response.getResponseBody());
+                            if (gcmResponseMessage.failure == 1) {
+                                String errorMessage =
+                                        gcmResponseMessage.results != null && gcmResponseMessage.results.length > 0 ?
+                                        gcmResponseMessage.results[0].error :
+                                        messageBase.getToken();
+                                processError(errorMessage, tokens, uid);
+                            }
+                            return response;
+                        }
+
+                        processError(response.getResponseBody(), tokens, uid);
+                        return response;
                     }
-                }
-            } else {
-                EntityUtils.consume(entity);
-                throw new Exception(responseMsg);
-            }
-        } finally {
-            httpPost.releaseConnection();
-        }
+
+                    @Override
+                    public void onThrowable(Throwable t) {
+                        processError(t.getMessage(), tokens, uid);
+                    }
+                });
+
     }
 
 }

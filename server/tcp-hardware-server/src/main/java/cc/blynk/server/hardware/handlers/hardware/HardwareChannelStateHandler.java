@@ -1,6 +1,5 @@
 package cc.blynk.server.hardware.handlers.hardware;
 
-import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -33,12 +32,10 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     private static final Logger log = LogManager.getLogger(HardwareChannelStateHandler.class);
 
     private final SessionDao sessionDao;
-    private final BlockingIOProcessor blockingIOProcessor;
     private final GCMWrapper gcmWrapper;
 
-    public HardwareChannelStateHandler(SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor, GCMWrapper gcmWrapper) {
+    public HardwareChannelStateHandler(SessionDao sessionDao, GCMWrapper gcmWrapper) {
         this.sessionDao = sessionDao;
-        this.blockingIOProcessor = blockingIOProcessor;
         this.gcmWrapper = gcmWrapper;
     }
 
@@ -84,7 +81,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                 String boardType = dashBoard.boardType;
                 String dashName = dashBoard.name;
                 dashName = dashName == null ? "" : dashName;
-                blockingIOProcessor.push(gcmWrapper, state.user.name, notification,
+                notification.push(gcmWrapper,
                         String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName),
                         state.dashId
                 );

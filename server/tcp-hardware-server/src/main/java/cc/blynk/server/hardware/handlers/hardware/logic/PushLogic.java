@@ -60,7 +60,7 @@ public class PushLogic extends NotificationBase {
         checkIfNotificationQuotaLimitIsNotReached();
 
         log.trace("Sending push for user {}, with message : '{}'.", state.user.name, message.body);
-        blockingIOProcessor.push(gcmWrapper, state.user.name, widget, message.body, state.dashId);
+        widget.push(gcmWrapper, message.body, state.dashId);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 

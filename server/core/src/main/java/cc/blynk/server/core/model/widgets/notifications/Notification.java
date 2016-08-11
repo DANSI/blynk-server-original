@@ -1,7 +1,10 @@
 package cc.blynk.server.core.model.widgets.notifications;
 
 import cc.blynk.server.core.model.widgets.NoPinWidget;
+import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
+import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,5 +44,26 @@ public class Notification extends NoPinWidget {
     @Override
     public int getPrice() {
         return 400;
+    }
+
+    public void push(GCMWrapper gcmWrapper, String body, int dashId) {
+        if (androidTokens.size() != 0) {
+            for (Map.Entry<String, String> entry : androidTokens.entrySet()) {
+                gcmWrapper.send(
+                        new AndroidGCMMessage(entry.getValue(), priority, body, dashId),
+                        androidTokens,
+                        entry.getKey()
+                );
+            }
+        }
+
+        if (iOSTokens.size() != 0) {
+            for (Map.Entry<String, String> entry : iOSTokens.entrySet()) {
+                gcmWrapper.send(new IOSGCMMessage(entry.getValue(), priority, body, dashId),
+                        iOSTokens,
+                        entry.getKey()
+                );
+            }
+        }
     }
 }

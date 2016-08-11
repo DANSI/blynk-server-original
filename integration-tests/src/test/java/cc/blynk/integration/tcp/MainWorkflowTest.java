@@ -53,11 +53,36 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
+import static cc.blynk.server.core.protocol.enums.Response.DEVICE_WENT_OFFLINE;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
+import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_INVALID_BODY_EXCEPTION;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED_EXCEPTION;
+import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
+import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
+import static cc.blynk.server.core.protocol.enums.Response.NO_DATA_EXCEPTION;
+import static cc.blynk.server.core.protocol.enums.Response.OK;
+import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT_EXCEPTION;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.after;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.contains;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.startsWith;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -795,7 +820,7 @@ public class MainWorkflowTest extends IntegrationBase {
         channelFuture.await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture());
+        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your UNO went offline. \"My Dashboard\" project is disconnected.", 1).toJson();
@@ -807,7 +832,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.send("push Yo!");
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture());
+        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Yo!", 1).toJson();

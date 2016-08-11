@@ -16,7 +16,7 @@ import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.ServerProperties;
 
-import static cc.blynk.utils.ReportingUtil.*;
+import static cc.blynk.utils.ReportingUtil.getReportingFolder;
 
 /**
  * Just a holder for all necessary objects for server instance creation.
@@ -44,15 +44,13 @@ public class Holder {
     public final AverageAggregator averageAggregator;
 
     public final BlockingIOProcessor blockingIOProcessor;
-
-    public ProfileSaverWorker profileSaverWorker;
-
+    public final TransportTypeHolder transportTypeHolder;
     public final TwitterWrapper twitterWrapper;
     public final MailWrapper mailWrapper;
     public final GCMWrapper gcmWrapper;
     public final SMSWrapper smsWrapper;
-
     public final String region;
+    public ProfileSaverWorker profileSaverWorker;
 
     public Holder(ServerProperties serverProperties) {
         this.props = serverProperties;
@@ -68,9 +66,11 @@ public class Holder {
         this.averageAggregator = new AverageAggregator(reportingFolder);
         this.reportingDao = new ReportingDao(reportingFolder, averageAggregator, serverProperties);
 
+        this.transportTypeHolder = new TransportTypeHolder(serverProperties);
+
         this.twitterWrapper = new TwitterWrapper();
         this.mailWrapper = new MailWrapper(new ServerProperties(MailWrapper.MAIL_PROPERTIES_FILENAME));
-        this.gcmWrapper = new GCMWrapper(new ServerProperties(GCMWrapper.GCM_PROPERTIES_FILENAME));
+        this.gcmWrapper = new GCMWrapper(new ServerProperties(GCMWrapper.GCM_PROPERTIES_FILENAME), transportTypeHolder.workerGroup);
         this.smsWrapper = new SMSWrapper(new ServerProperties(SMSWrapper.SMS_PROPERTIES_FILENAME));
 
         this.blockingIOProcessor = new BlockingIOProcessor(
@@ -96,6 +96,8 @@ public class Holder {
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);
         this.reportingDao = new ReportingDao(reportingFolder, averageAggregator, serverProperties);
+
+        this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
         this.twitterWrapper = twitterWrapper;
         this.mailWrapper = mailWrapper;

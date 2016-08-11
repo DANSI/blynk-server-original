@@ -27,7 +27,7 @@ public class HardwareSSLServer extends BaseServer {
         super(holder.props.getIntProperty("hardware.ssl.port"));
 
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder);
-        final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.blockingIOProcessor, holder.gcmWrapper);
+        final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 
         int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
