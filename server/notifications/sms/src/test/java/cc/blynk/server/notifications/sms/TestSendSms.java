@@ -13,7 +13,7 @@ public class TestSendSms {
 
     @Test
     public void testSend() throws Exception {
-        SMSWrapper smsWrapper = new SMSWrapper("", "");
+        SMSWrapper smsWrapper = new SMSWrapper(null, null);
         smsWrapper.send("", "Hello!!!!!!!!");
     }
 
