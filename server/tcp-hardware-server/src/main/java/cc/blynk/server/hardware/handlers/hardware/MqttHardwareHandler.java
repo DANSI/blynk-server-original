@@ -45,7 +45,7 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
         this.email = new MailLogic(holder.blockingIOProcessor, holder.mailWrapper, defaultNotificationQuotaLimit);
         this.push = new PushLogic(holder.blockingIOProcessor, holder.gcmWrapper, defaultNotificationQuotaLimit);
         this.tweet = new TwitLogic(holder.blockingIOProcessor, holder.twitterWrapper, defaultNotificationQuotaLimit);
-        this.smsLogic = new SmsLogic(holder.blockingIOProcessor, holder.smsWrapper, defaultNotificationQuotaLimit);
+        this.smsLogic = new SmsLogic(holder.smsWrapper, defaultNotificationQuotaLimit);
         this.propertyLogic = new SetWidgetPropertyLogic(holder.sessionDao);
         this.sync = new HardwareSyncLogic();
         this.info = new HardwareInfoLogic(holder.props.getIntProperty("hard.socket.idle.timeout", 0));
