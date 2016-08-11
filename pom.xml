@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <name>Blynk Server</name>
@@ -128,6 +128,7 @@
         <jackson-databind.version>2.8.1</jackson-databind.version>
         <disruptor.version>3.3.5</disruptor.version>
         <commons-cli.version>1.2</commons-cli.version>
+        <async-http-client.version>2.1.0-alpha1</async-http-client.version>
         <httpclient.version>4.5.2</httpclient.version>
         <twitter4j-core.version>4.0.2</twitter4j-core.version>
         <javax.mail.version>1.5.5</javax.mail.version>

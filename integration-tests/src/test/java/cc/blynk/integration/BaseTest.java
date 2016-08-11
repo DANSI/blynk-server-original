@@ -106,6 +106,11 @@ public abstract class BaseTest {
     }
 
     @SuppressWarnings("unchecked")
+    public List<String> consumeJsonPinValues(String response) throws IOException {
+        return JsonParser.readAny(response, List.class);
+    }
+
+    @SuppressWarnings("unchecked")
     public List<String> consumeJsonPinValues(CloseableHttpResponse response) throws IOException {
         return JsonParser.readAny(consumeText(response), List.class);
     }
