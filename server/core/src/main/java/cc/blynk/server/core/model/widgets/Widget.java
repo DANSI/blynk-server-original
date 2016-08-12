@@ -30,6 +30,7 @@ import cc.blynk.server.core.model.widgets.outputs.LevelDisplay;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.Video;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
+import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.netty.channel.Channel;
@@ -105,6 +106,16 @@ public abstract class Widget {
 
     public String label;
 
+    protected static void append(StringBuilder sb, byte pin, PinType pinType, String pinMode) {
+        if (pin == -1 || pinMode == null || pinType == PinType.VIRTUAL) {
+            return;
+        }
+        sb.append(StringUtils.BODY_SEPARATOR)
+                .append(pin)
+                .append(StringUtils.BODY_SEPARATOR)
+                .append(pinMode);
+    }
+
     public abstract boolean updateIfSame(byte pin, PinType type, String value);
 
     public abstract boolean isSame(byte pin, PinType type);
@@ -121,4 +132,5 @@ public abstract class Widget {
 
     public abstract int getPrice();
 
+    public abstract void append(StringBuilder sb);
 }

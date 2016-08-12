@@ -5,9 +5,9 @@ import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.utils.ByteBufUtil.*;
-import static cc.blynk.utils.StringUtils.*;
+import static cc.blynk.server.core.protocol.enums.Command.SYNC;
+import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**
  * The Blynk Project.
@@ -79,6 +79,11 @@ public abstract class OnePinWidget extends Widget {
             return "[]";
         }
         return JsonParser.valueToJsonAsString(value);
+    }
+
+    @Override
+    public void append(StringBuilder sb) {
+        append(sb, pin, pinType, getModeType());
     }
 
     public boolean isPWMSupported() {

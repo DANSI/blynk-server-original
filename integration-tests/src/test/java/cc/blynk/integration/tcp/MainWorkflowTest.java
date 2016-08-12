@@ -1042,7 +1042,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         assertTrue(channelFuture.isDone());
 
-        String body = "pm 13 in";
+        String body = "vw 13 1";
         clientPair.appClient.send("hardware 1 " + body);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, DEVICE_NOT_IN_NETWORK)));
 
@@ -1051,7 +1051,7 @@ public class MainWorkflowTest extends IntegrationBase {
         hardClient.send("login " + clientPair.token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b(body))));
+        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in"))));
         verify(hardClient.responseMock, times(2)).channelRead(any(), any());
         hardClient.stop().awaitUninterruptibly();
     }

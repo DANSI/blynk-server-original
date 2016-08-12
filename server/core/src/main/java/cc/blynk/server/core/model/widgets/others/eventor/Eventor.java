@@ -1,7 +1,9 @@
 package cc.blynk.server.core.model.widgets.others.eventor;
 
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.NoPinWidget;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPin;
 import io.netty.channel.Channel;
 
 /**
@@ -9,7 +11,7 @@ import io.netty.channel.Channel;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.08.16.
  */
-public class Eventor extends Widget {
+public class Eventor extends NoPinWidget {
 
     public Rule[] rules;
 
@@ -42,7 +44,7 @@ public class Eventor extends Widget {
 
     @Override
     public String getModeType() {
-        return null;
+        return "out";
     }
 
     @Override
@@ -53,6 +55,24 @@ public class Eventor extends Widget {
     @Override
     public boolean hasValue(String searchValue) {
         return false;
+    }
+
+    @Override
+    public void append(StringBuilder sb) {
+        if (rules != null) {
+            for (Rule rule : rules) {
+                if (rule.actions != null) {
+                    for (BaseAction action : rule.actions) {
+                        if (action instanceof SetPin) {
+                            SetPin setPinAction = (SetPin) action;
+                            if (setPinAction.pin != null) {
+                                append(sb, setPinAction.pin.pin, setPinAction.pin.pinType, getModeType());
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override

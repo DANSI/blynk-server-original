@@ -22,11 +22,26 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
+import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
+import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.SHARING;
+import static cc.blynk.server.core.protocol.enums.Command.SYNC;
+import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
+import static cc.blynk.server.core.protocol.enums.Response.OK;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.after;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 
 /**
@@ -148,8 +163,8 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("ar 30"))));
 
         clientPair.appClient.send("hardware 1 pm 2 2");
-        verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("pm 2 2"))));
+        verify(appClient2.responseMock, after(250).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, after(250).never()).channelRead(any(), eq(produce(3, HARDWARE, b("pm 2 2"))));
     }
 
     @Test

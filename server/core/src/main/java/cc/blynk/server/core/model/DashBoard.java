@@ -1,11 +1,8 @@
 package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.MultiPinWidget;
-import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
@@ -49,26 +46,6 @@ public class DashBoard {
     public Map<String, Object> metadata = new HashMap<>();
 
     public Map<String, String> storagePins = new HashMap<>();
-
-    /**
-     * Specific property used for improving user experience on mobile application.
-     * In case user activated dashboard before hardware connected to server, user have to
-     * deactivate and activate dashboard again in order to setup PIN MODES (OUT, IN).
-     * With this property problem resolved by server side. Command for setting Pin Modes
-     * is remembered and when hardware goes online - server sends Pin Modes command to hardware
-     * without requiring user to activate/deactivate dashboard again.
-     */
-    public transient StringMessage pinModeMessage;
-
-    private static void append(StringBuilder sb, byte pin, PinType pinType, String pinMode) {
-        if (pin == -1 || pinMode == null || pinType == PinType.VIRTUAL) {
-            return;
-        }
-        sb.append(StringUtils.BODY_SEPARATOR)
-                .append(pin)
-                .append(StringUtils.BODY_SEPARATOR)
-                .append(pinMode);
-    }
 
     public String getName() {
         return name;
@@ -149,17 +126,7 @@ public class DashBoard {
     public String buildPMMessage() {
         StringBuilder sb = new StringBuilder("pm");
         for (Widget widget : widgets) {
-            if (widget instanceof OnePinWidget) {
-                OnePinWidget onePinWidget = (OnePinWidget) widget;
-                append(sb, onePinWidget.pin, onePinWidget.pinType, onePinWidget.getModeType());
-            } else if (widget instanceof MultiPinWidget) {
-                MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-                if (multiPinWidget.pins != null) {
-                    for (Pin pin : multiPinWidget.pins) {
-                        append(sb, pin.pin, pin.pinType, multiPinWidget.getModeType());
-                    }
-                }
-            }
+            widget.append(sb);
         }
         return sb.toString();
     }

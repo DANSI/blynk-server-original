@@ -12,9 +12,12 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.AppStateHolderUtil.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
+import static cc.blynk.utils.AppStateHolderUtil.getAppState;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
+import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.ByteBufUtil.ok;
 
 /**
  * The Blynk Project.
@@ -45,6 +48,8 @@ public class ActivateDashboardLogic {
         Session session = sessionDao.userSession.get(user);
 
         if (session.hasHardwareOnline(dashId)) {
+            session.sendMessageToHardware(ctx, dashId, HARDWARE, 1, dash.buildPMMessage());
+
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
             log.debug("No device in session.");

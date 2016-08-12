@@ -43,4 +43,9 @@ public abstract class NoPinWidget extends Widget {
     public boolean hasValue(String searchValue) {
         return false;
     }
+
+    @Override
+    public void append(StringBuilder sb) {
+    }
+
 }

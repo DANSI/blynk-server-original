@@ -8,14 +8,14 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.FrequencyWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.SYNC;
 
 /**
  * Responsible for handling incoming hardware commands from applications and forwarding it to
@@ -51,14 +51,6 @@ public class HardwareAppLogic {
 
         final char operation = split[1].charAt(1);
         switch (operation) {
-            case 'm' :
-                log.trace("Pin Mode message catch. Remembering.");
-                //check PM command not empty
-                if (split[1].length() > 3) {
-                    dash.pinModeMessage = new HardwareMessage(message.id, split[1]);
-                }
-                session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1]);
-                break;
             case 'w' :
                 dash.update(split[1]);
 

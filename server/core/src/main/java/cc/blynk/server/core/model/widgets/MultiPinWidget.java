@@ -6,7 +6,7 @@ import io.netty.channel.Channel;
 
 import java.util.StringJoiner;
 
-import static cc.blynk.utils.StringUtils.*;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
  * The Blynk Project.
@@ -92,6 +92,15 @@ public abstract class MultiPinWidget extends Widget {
             }
         }
         return false;
+    }
+
+    @Override
+    public void append(StringBuilder sb) {
+        if (pins != null) {
+            for (Pin pin : pins) {
+                append(sb, pin.pin, pin.pinType, getModeType());
+            }
+        }
     }
 
     @Override
