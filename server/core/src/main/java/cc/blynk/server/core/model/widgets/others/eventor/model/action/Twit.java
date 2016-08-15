@@ -23,11 +23,11 @@ public class Twit extends BaseAction {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void execute(ChannelHandlerContext ctx) {
+    public void execute(ChannelHandlerContext ctx, String triggerValue) {
         if (message != null && !message.isEmpty()) {
             //todo refactor, a bit ugly
             BaseSimpleChannelInboundHandler<StringMessage> hardwareHandler = (BaseSimpleChannelInboundHandler) ctx.pipeline().get("HHArdwareHandler");
-            hardwareHandler.messageReceived(ctx, new TwitMessage(888, message));
+            hardwareHandler.messageReceived(ctx, new TwitMessage(888, format(message, triggerValue)));
         }
     }
 }

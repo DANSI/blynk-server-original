@@ -22,6 +22,9 @@ import io.netty.channel.ChannelHandlerContext;
 })
 public abstract class BaseAction {
 
-    public abstract void execute(ChannelHandlerContext ctx);
+    public abstract void execute(ChannelHandlerContext ctx, String triggerValue);
 
+    public String format(String message, String triggerValue) {
+        return message.replaceAll("/pin/", triggerValue);
+    }
 }

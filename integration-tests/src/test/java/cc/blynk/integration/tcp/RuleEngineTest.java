@@ -292,6 +292,25 @@ public class RuleEngineTest extends IntegrationBase {
     }
 
     @Test
+    public void testSimpleRule8NotifyAndFormat() throws Exception {
+        Eventor eventor = oneRuleEventor("if v1 = 37 then notify Temperatureis:/pin/.");
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.hardwareClient.send("hardware vw 1 37");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(888, OK)));
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        AndroidGCMMessage message = objectArgumentCaptor.getValue();
+
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Temperatureis:37.", 1).toJson();
+        assertEquals(expectedJson, message.toJson());
+    }
+
+    @Test
     public void testSimpleRule9Twit() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 = 37 then twit Yo!!!!!");
 

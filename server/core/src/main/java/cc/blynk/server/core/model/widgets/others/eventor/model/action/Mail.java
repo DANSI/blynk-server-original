@@ -23,12 +23,12 @@ public class Mail extends BaseAction {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void execute(ChannelHandlerContext ctx) {
+    public void execute(ChannelHandlerContext ctx, String triggerValue) {
         if (message != null && !message.isEmpty()) {
             //todo refactor, a bit ugly
             BaseSimpleChannelInboundHandler<StringMessage> hardwareHandler = (BaseSimpleChannelInboundHandler) ctx.pipeline().get("HHArdwareHandler");
             //todo finish, tests
-            hardwareHandler.messageReceived(ctx, new MailMessage(888, message));
+            hardwareHandler.messageReceived(ctx, new MailMessage(888, format(message, triggerValue)));
         }
     }
 }

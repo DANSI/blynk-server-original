@@ -45,7 +45,7 @@ public class MqttHardwareLogic {
         return body.charAt(1) == 'w';
     }
 
-    private static void processEventor(ChannelHandlerContext ctx, DashBoard dash, byte pin, PinType type, String value) {
+    private static void processEventor(ChannelHandlerContext ctx, DashBoard dash, byte pin, PinType type, String triggerValue) {
         Eventor eventor = dash.getWidgetByType(Eventor.class);
         if (eventor == null || eventor.rules == null) {
             return;
@@ -53,7 +53,7 @@ public class MqttHardwareLogic {
 
         double valueParsed;
         try {
-            valueParsed = Double.parseDouble(value);
+            valueParsed = Double.parseDouble(triggerValue);
         } catch (NumberFormatException nfe) {
             return;
         }
@@ -61,7 +61,7 @@ public class MqttHardwareLogic {
         for (Rule rule : eventor.rules) {
             if (rule.isValid(pin, type, valueParsed)) {
                 for (BaseAction action : rule.actions) {
-                    action.execute(ctx);
+                    action.execute(ctx, triggerValue);
                 }
             }
         }

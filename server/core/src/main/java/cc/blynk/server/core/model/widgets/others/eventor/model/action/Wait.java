@@ -26,13 +26,13 @@ public class Wait extends BaseAction {
     }
 
     @Override
-    public void execute(ChannelHandlerContext ctx) {
+    public void execute(ChannelHandlerContext ctx, String triggerValue) {
         long now = System.currentTimeMillis();
 
         if (delayedAction != null && lastActivation + seconds * 1000 < now) {
             lastActivation = now;
 
-            ctx.executor().schedule(() -> { delayedAction.execute(ctx);}, seconds, TimeUnit.SECONDS);
+            ctx.executor().schedule(() -> { delayedAction.execute(ctx, triggerValue);}, seconds, TimeUnit.SECONDS);
         }
     }
 }
