@@ -8,21 +8,8 @@ import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.eventor.Rule;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.Mail;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.Notify;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPin;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.Twit;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.Wait;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.BaseCondition;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.Between;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.Equal;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.GreaterThan;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.GreaterThanOrEqual;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.LessThan;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.LessThanOrEqual;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.NotBetween;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.NotEqual;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.*;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.*;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
@@ -40,10 +27,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -346,5 +330,24 @@ public class RuleEngineTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 124"))));
     }
 
+    @Test
+    public void testPinModeForEventorAndSetPinAction() throws Exception {
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in"))));
+        reset(clientPair.hardwareClient.responseMock);
+
+        Eventor eventor = oneRuleEventor("if v1 > 37 then setpin d9 1");
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in 9 out"))));
+        //reset(clientPair.hardwareClient.responseMock);
+
+        clientPair.hardwareClient.send("hardware vw 1 38");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 38"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("dw 9 1"))));
+    }
 
 }
