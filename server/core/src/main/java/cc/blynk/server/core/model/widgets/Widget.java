@@ -1,34 +1,18 @@
 package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.controls.Button;
-import cc.blynk.server.core.model.widgets.controls.Menu;
-import cc.blynk.server.core.model.widgets.controls.OneAxisJoystick;
-import cc.blynk.server.core.model.widgets.controls.QR;
-import cc.blynk.server.core.model.widgets.controls.RGB;
-import cc.blynk.server.core.model.widgets.controls.Slider;
-import cc.blynk.server.core.model.widgets.controls.Step;
-import cc.blynk.server.core.model.widgets.controls.Terminal;
-import cc.blynk.server.core.model.widgets.controls.Timer;
-import cc.blynk.server.core.model.widgets.controls.TwoAxisJoystick;
+import cc.blynk.server.core.model.widgets.controls.*;
 import cc.blynk.server.core.model.widgets.inputs.GPS;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.SMS;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.Bluetooth;
+import cc.blynk.server.core.model.widgets.others.BluetoothSerial;
 import cc.blynk.server.core.model.widgets.others.Bridge;
 import cc.blynk.server.core.model.widgets.others.RTC;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
-import cc.blynk.server.core.model.widgets.outputs.Gauge;
-import cc.blynk.server.core.model.widgets.outputs.Graph;
-import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
-import cc.blynk.server.core.model.widgets.outputs.LCD;
-import cc.blynk.server.core.model.widgets.outputs.LED;
-import cc.blynk.server.core.model.widgets.outputs.LabeledValueDisplay;
-import cc.blynk.server.core.model.widgets.outputs.LevelDisplay;
-import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
-import cc.blynk.server.core.model.widgets.outputs.Video;
+import cc.blynk.server.core.model.widgets.outputs.*;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -82,6 +66,7 @@ import io.netty.channel.Channel;
         @JsonSubTypes.Type(value = Bridge.class, name = "BRIDGE"),
         @JsonSubTypes.Type(value = HistoryGraph.class, name = "LOGGER"),
         @JsonSubTypes.Type(value = Bluetooth.class, name = "BLUETOOTH"),
+        @JsonSubTypes.Type(value = BluetoothSerial.class, name = "BLUETOOTH_SERIAL"),
         @JsonSubTypes.Type(value = Eventor.class, name = "EVENTOR"),
 
         //MENU
