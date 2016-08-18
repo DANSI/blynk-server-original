@@ -18,6 +18,8 @@ public class Rule {
 
     public BaseAction[] actions;
 
+    public boolean isActive = true;
+
     public Rule() {
     }
 

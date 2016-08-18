@@ -59,7 +59,7 @@ public class HardwareLogic {
         }
 
         for (Rule rule : eventor.rules) {
-            if (rule.isValid(pin, type, valueParsed)) {
+            if (rule.isActive && rule.isValid(pin, type, valueParsed)) {
                 for (BaseAction action : rule.actions) {
                     action.execute(ctx, triggerValue);
                 }
