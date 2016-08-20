@@ -52,7 +52,13 @@ public class ReflectionUtil {
             try {
                 Field field = clazz.getDeclaredField(fieldName);
                 field.setAccessible(true);
-                field.set(object, castTo(field.getType(), fieldValue));
+                Class fieldType = field.getType();
+                if (fieldType.isArray()) {
+                    //expecting String[] only
+                    field.set(object, fieldValue.split(StringUtils.BODY_SEPARATOR_STRING));
+                } else {
+                    field.set(object, castTo(fieldType, fieldValue));
+                }
                 return true;
             } catch (NoSuchFieldException e) {
                 clazz = clazz.getSuperclass();
@@ -62,7 +68,7 @@ public class ReflectionUtil {
     }
 
     public static Object castTo(Class type, String value) {
-        if (type == byte.class) {
+        if (type == byte.class || type == Byte.class) {
             return Byte.valueOf(value);
         }
         if (type == short.class || type == Short.class) {
@@ -71,10 +77,10 @@ public class ReflectionUtil {
         if (type == int.class || type == Integer.class) {
             return Integer.valueOf(value);
         }
-        if (type == long.class) {
+        if (type == long.class || type == Long.class) {
             return Long.valueOf(value);
         }
-        if (type == boolean.class) {
+        if (type == boolean.class || type == Boolean.class) {
             return Boolean.valueOf(value);
         }
         return value;
