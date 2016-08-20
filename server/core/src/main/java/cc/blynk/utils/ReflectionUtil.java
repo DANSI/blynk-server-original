@@ -59,7 +59,7 @@ public class ReflectionUtil {
                 } else {
                     //field specific parser
                     if (fieldName.equals("color")) {
-                        field.set(object, Integer.decode(fieldValue));
+                        field.set(object, parseColor(fieldValue));
                     } else {
                         field.set(object, castTo(fieldType, fieldValue));
                     }
@@ -70,6 +70,19 @@ public class ReflectionUtil {
             }
         }
         return false;
+    }
+
+    private static int parseColor(String fieldValue) {
+        return convertARGBtoRGBA(Integer.decode(fieldValue));
+    }
+
+    private static int convertARGBtoRGBA(int color) {
+        final int a = (color & 0xff000000) >> 24;
+        final int r = (color & 0x00ff0000) >> 16;
+        final int g = (color & 0x0000ff00) >> 8;
+        final int b = (color & 0x000000ff);
+
+        return (r << 24) | (g << 16) | (b << 8) | (a & 0xff);
     }
 
     public static Object castTo(Class type, String value) {
