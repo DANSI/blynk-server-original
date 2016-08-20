@@ -57,7 +57,12 @@ public class ReflectionUtil {
                     //expecting String[] only
                     field.set(object, fieldValue.split(StringUtils.BODY_SEPARATOR_STRING));
                 } else {
-                    field.set(object, castTo(fieldType, fieldValue));
+                    //field specific parser
+                    if (fieldName.equals("color")) {
+                        field.set(object, Integer.decode(fieldValue));
+                    } else {
+                        field.set(object, castTo(fieldType, fieldValue));
+                    }
                 }
                 return true;
             } catch (NoSuchFieldException e) {

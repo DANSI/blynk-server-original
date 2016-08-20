@@ -5,6 +5,8 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
 import cc.blynk.server.hardware.HardwareServer;
@@ -122,6 +124,23 @@ public class SetPropertyTest extends IntegrationBase {
         profile.dashBoards[0].updatedAt = 0;
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"My Dashboard\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"pushMode\":false,\"invertedOn\":false},{\"type\":\"SLIDER\",\"id\":2,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":2,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"sendOnReleaseOn\":false},{\"type\":\"SLIDER\",\"id\":3,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":3,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"0\",\"sendOnReleaseOn\":false},{\"type\":\"SLIDER\",\"id\":4,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"VIRTUAL\",\"pin\":4,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"244\",\"sendOnReleaseOn\":false},{\"type\":\"TIMER\",\"id\":5,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"DIGITAL\",\"pin\":5,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"dw\\u00005\\u00001\",\"startTime\":0,\"stopTime\":-1,\"invertedOn\":false},{\"type\":\"LED\",\"id\":6,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":6,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"frequency\":100},{\"type\":\"DIGIT4_DISPLAY\",\"id\":7,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":7,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"3\",\"frequency\":5000},{\"type\":\"DIGIT4_DISPLAY\",\"id\":30,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":30,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"3\",\"frequency\":1000},{\"type\":\"GRAPH\",\"id\":8,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"pinType\":\"ANALOG\",\"pin\":8,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"isBar\":false,\"frequency\":0},{\"type\":\"NOTIFICATION\",\"id\":9,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"androidTokens\":{\"uid\":\"token\"},\"notifyWhenOffline\":true,\"notifyWhenOfflineIgnorePeriod\":0,\"priority\":\"normal\"},{\"type\":\"TWITTER\",\"id\":10,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"token\":\"token\",\"secret\":\"secret\"},{\"type\":\"RTC\",\"id\":11,\"x\":1,\"y\":1,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"pinType\":\"VIRTUAL\",\"pin\":9,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},{\"type\":\"LCD\",\"id\":12,\"x\":0,\"y\":0,\"color\":-1,\"width\":8,\"height\":2,\"tabId\":0,\"pins\":[{\"pin\":0,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"89.888037459418\",\"min\":-100,\"max\":100},{\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"-58.74774244674501\",\"min\":-100,\"max\":100}],\"advancedMode\":false,\"textFormatLine1\":\"pin1 : /pin0/\",\"textFormatLine2\":\"pin2 : /pin1/\",\"textLight\":false,\"textLightOn\":false,\"frequency\":1000},{\"type\":\"RGB\",\"id\":13,\"x\":2,\"y\":3,\"color\":616861439,\"width\":4,\"height\":3,\"tabId\":0,\"pins\":[{\"pin\":13,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"60\\u0000143\\u0000158\",\"min\":0,\"max\":255},{\"pin\":13,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"60\\u0000143\\u0000158\",\"min\":0,\"max\":255},{\"pin\":13,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"value\":\"60\\u0000143\\u0000158\",\"min\":0,\"max\":255}],\"splitMode\":false,\"sendOnReleaseOn\":true},{\"type\":\"LOGGER\",\"id\":14,\"x\":0,\"y\":6,\"color\":0,\"width\":8,\"height\":3,\"tabId\":0,\"pins\":[{\"pin\":7,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"ANALOG\",\"min\":0,\"max\":255},{\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},{\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},{\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0}],\"period\":\"THREE_MONTHS\",\"showLegends\":true}],\"boardType\":\"UNO\",\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":true,\"isActive\":true}]}", profile.toString());
+    }
+
+    @Test
+    public void testSetColorForWidget() throws Exception {
+        int i = Integer.decode("#23C48E");
+        clientPair.hardwareClient.send("setProperty 4 color #23C48E");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 4 color #23C48E"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile.dashBoards[0].updatedAt = 0;
+
+        Widget widget = profile.dashBoards[0].findWidgetByPin((byte) 4, PinType.VIRTUAL);
+        assertEquals(2344078, widget.color);
+
     }
 
 }
