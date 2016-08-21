@@ -7,10 +7,7 @@ import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.SMS;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
-import cc.blynk.server.core.model.widgets.others.Bluetooth;
-import cc.blynk.server.core.model.widgets.others.BluetoothSerial;
-import cc.blynk.server.core.model.widgets.others.Bridge;
-import cc.blynk.server.core.model.widgets.others.RTC;
+import cc.blynk.server.core.model.widgets.others.*;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.outputs.*;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
@@ -68,6 +65,7 @@ import io.netty.channel.Channel;
         @JsonSubTypes.Type(value = Bluetooth.class, name = "BLUETOOTH"),
         @JsonSubTypes.Type(value = BluetoothSerial.class, name = "BLUETOOTH_SERIAL"),
         @JsonSubTypes.Type(value = Eventor.class, name = "EVENTOR"),
+        @JsonSubTypes.Type(value = Table.class, name = "TABLE"),
 
         //MENU
         @JsonSubTypes.Type(value = Tabs.class, name = "TABS")
