@@ -70,7 +70,7 @@ public class DashBoard {
         }
         //special case. #237 if no widget - storing without widget.
         if (!hasWidget) {
-            storagePins.put("" + type.pintTypeChar + pin, value);
+            storagePins.put(String.valueOf(type.pintTypeChar) + pin, value);
         }
 
         this.updatedAt = System.currentTimeMillis();

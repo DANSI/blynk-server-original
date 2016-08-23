@@ -4,13 +4,13 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.utils.LimitedQueue;
 import cc.blynk.utils.ParseUtil;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Command.SYNC;
+import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**
  * The Blynk Project.
@@ -19,16 +19,12 @@ import static cc.blynk.utils.ByteBufUtil.*;
  */
 public class Terminal extends OnePinWidget {
 
-    public boolean autoScrollOn;
-
-    public boolean terminalInputOn;
-
-    public boolean textLightOn;
-
     //configured property via server.properties
     private static final int POOL_SIZE = ParseUtil.parseInt(System.getProperty("terminal.strings.pool.size", "25"));
-
-    public transient final List<String> lastCommands = new LimitedQueue<>(POOL_SIZE);
+    private transient final List<String> lastCommands = new LimitedQueue<>(POOL_SIZE);
+    public boolean autoScrollOn;
+    public boolean terminalInputOn;
+    public boolean textLightOn;
 
     @Override
     public boolean updateIfSame(byte pin, PinType type, String value) {
@@ -47,7 +43,7 @@ public class Terminal extends OnePinWidget {
         }
         for (String storedValue : lastCommands) {
             String body = makeHardwareBody(pinType, pin, storedValue);
-            appChannel.write(makeStringMessage(SYNC, 1111, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
+            appChannel.write(makeStringMessage(SYNC, 1111, dashId + BODY_SEPARATOR_STRING + body));
         }
     }
 
