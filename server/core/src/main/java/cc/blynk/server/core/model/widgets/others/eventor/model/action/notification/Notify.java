@@ -18,7 +18,7 @@ public class Notify extends NotificationAction {
     }
 
     @Override
-    StringMessage makeMessage(String triggerValue) {
+    public StringMessage makeMessage(String triggerValue) {
         return new PushMessage(888, format(message, triggerValue));
     }
 }

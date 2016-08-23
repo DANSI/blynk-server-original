@@ -1,11 +1,11 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.core.dao.EventorProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -33,10 +33,12 @@ public class HardwareLogic {
 
     private final ReportingDao reportingDao;
     private final SessionDao sessionDao;
+    private final EventorProcessor eventorProcessor;
 
-    public HardwareLogic(SessionDao sessionDao, ReportingDao reportingDao) {
+    public HardwareLogic(SessionDao sessionDao, ReportingDao reportingDao, EventorProcessor eventorProcessor) {
         this.sessionDao = sessionDao;
         this.reportingDao = reportingDao;
+        this.eventorProcessor = eventorProcessor;
     }
 
     private static boolean isWriteOperation(String body) {
@@ -74,7 +76,7 @@ public class HardwareLogic {
             reportingDao.process(state.user.name, dashId, pin, pinType, value);
 
             dash.update(pin, pinType, value);
-            Eventor.processEventor(ctx, session, dash, pin, pinType, value);
+            eventorProcessor.processEventor(ctx, session, dash, pin, pinType, value);
         }
 
         //todo do not send if no widget pin

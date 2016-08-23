@@ -18,7 +18,7 @@ public class Mail extends NotificationAction {
     }
 
     @Override
-    StringMessage makeMessage(String triggerValue) {
+    public StringMessage makeMessage(String triggerValue) {
         return new MailMessage(888, format(message, triggerValue));
     }
 }

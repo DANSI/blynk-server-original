@@ -1,6 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.EventorProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
@@ -48,7 +49,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
 
     public HardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
         super(holder.props, stateHolder);
-        this.hardware = new HardwareLogic(holder.sessionDao, holder.reportingDao);
+        this.hardware = new HardwareLogic(holder.sessionDao, holder.reportingDao, new EventorProcessor());
         this.bridge = new BridgeLogic(holder.sessionDao, hardware);
 
         final long defaultNotificationQuotaLimit = holder.props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
