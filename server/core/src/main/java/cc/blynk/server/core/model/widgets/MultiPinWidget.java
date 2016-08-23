@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.controls.SyncOnActivate;
 import io.netty.channel.Channel;
 
 import java.util.StringJoiner;
@@ -13,7 +14,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  * Created by Dmitriy Dumanskiy.
  * Created on 02.11.15.
  */
-public abstract class MultiPinWidget extends Widget {
+public abstract class MultiPinWidget extends Widget implements SyncOnActivate {
 
     public Pin[] pins;
 

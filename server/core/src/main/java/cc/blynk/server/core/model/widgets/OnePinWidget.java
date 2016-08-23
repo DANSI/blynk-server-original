@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.controls.SyncOnActivate;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
@@ -15,7 +16,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
  * Created on 02.12.15.
  */
 //todo all this should be replaced with 1 Pin field.
-public abstract class OnePinWidget extends Widget {
+public abstract class OnePinWidget extends Widget implements SyncOnActivate {
 
     public PinType pinType;
 

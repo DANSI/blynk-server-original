@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.NoPinWidget;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPin;
-import io.netty.channel.Channel;
 
 /**
  * The Blynk Project.
@@ -35,11 +34,6 @@ public class Eventor extends NoPinWidget {
     @Override
     public String getJsonValue() {
         return null;
-    }
-
-    @Override
-    public void sendSyncOnActivate(Channel appChannel, int dashId) {
-
     }
 
     @Override

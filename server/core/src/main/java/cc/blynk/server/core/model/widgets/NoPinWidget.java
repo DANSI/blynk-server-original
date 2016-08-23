@@ -1,7 +1,6 @@
 package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.enums.PinType;
-import io.netty.channel.Channel;
 
 /**
  * The Blynk Project.
@@ -23,10 +22,6 @@ public abstract class NoPinWidget extends Widget {
     @Override
     public String getJsonValue() {
         return null;
-    }
-
-    @Override
-    public void sendSyncOnActivate(Channel appChannel, int dashId) {
     }
 
     @Override

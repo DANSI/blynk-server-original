@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.controls.SyncOnActivate;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.Channel;
@@ -62,7 +63,9 @@ public class ActivateDashboardLogic {
             }
 
             for (Widget widget : dash.widgets) {
-                widget.sendSyncOnActivate(appChannel, dashId);
+                if (widget instanceof SyncOnActivate) {
+                    ((SyncOnActivate) widget).sendSyncOnActivate(appChannel, dashId);
+                }
             }
 
             appChannel.flush();
