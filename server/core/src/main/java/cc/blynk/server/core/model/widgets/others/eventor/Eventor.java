@@ -5,8 +5,8 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.NoPinWidget;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.NotificationAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPin;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotificationAction;
 import io.netty.channel.ChannelHandlerContext;
 
 /**

@@ -1,6 +1,5 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
-import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.exceptions.NotificationBodyInvalidException;
@@ -29,12 +28,10 @@ public class PushLogic extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(PushLogic.class);
 
-    private final BlockingIOProcessor blockingIOProcessor;
     private final GCMWrapper gcmWrapper;
 
-    public PushLogic(BlockingIOProcessor blockingIOProcessor, GCMWrapper gcmWrapper, long notificationQuotaLimit) {
+    public PushLogic(GCMWrapper gcmWrapper, long notificationQuotaLimit) {
         super(notificationQuotaLimit);
-        this.blockingIOProcessor = blockingIOProcessor;
         this.gcmWrapper = gcmWrapper;
     }
 

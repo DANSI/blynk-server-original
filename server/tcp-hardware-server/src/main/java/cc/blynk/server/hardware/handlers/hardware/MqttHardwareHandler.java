@@ -43,7 +43,7 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
 
         final long defaultNotificationQuotaLimit = holder.props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
         this.email = new MailLogic(holder.blockingIOProcessor, holder.mailWrapper, defaultNotificationQuotaLimit);
-        this.push = new PushLogic(holder.blockingIOProcessor, holder.gcmWrapper, defaultNotificationQuotaLimit);
+        this.push = new PushLogic(holder.gcmWrapper, defaultNotificationQuotaLimit);
         this.tweet = new TwitLogic(holder.blockingIOProcessor, holder.twitterWrapper, defaultNotificationQuotaLimit);
         this.smsLogic = new SmsLogic(holder.smsWrapper, defaultNotificationQuotaLimit);
         this.propertyLogic = new SetWidgetPropertyLogic(holder.sessionDao);
