@@ -5,19 +5,16 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
-import cc.blynk.server.core.model.widgets.others.eventor.Rule;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.ParseUtil;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**
  * Handler responsible for forwarding messages from hardware to applications.
@@ -45,28 +42,6 @@ public class HardwareLogic {
         return body.charAt(1) == 'w';
     }
 
-    private static void processEventor(ChannelHandlerContext ctx, DashBoard dash, byte pin, PinType type, String triggerValue) {
-        Eventor eventor = dash.getWidgetByType(Eventor.class);
-        if (eventor == null || eventor.rules == null) {
-            return;
-        }
-
-        double valueParsed;
-        try {
-            valueParsed = Double.parseDouble(triggerValue);
-        } catch (NumberFormatException nfe) {
-            return;
-        }
-
-        for (Rule rule : eventor.rules) {
-            if (rule.isActive && rule.isValid(pin, type, valueParsed)) {
-                for (BaseAction action : rule.actions) {
-                    action.execute(ctx, triggerValue);
-                }
-            }
-        }
-    }
-
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
@@ -81,7 +56,7 @@ public class HardwareLogic {
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         if (isWriteOperation(body)) {
-            String[] splitBody = body.split(StringUtils.BODY_SEPARATOR_STRING, 3);
+            String[] splitBody = body.split(BODY_SEPARATOR_STRING, 3);
 
             if (splitBody.length < 3 || splitBody[0].length() == 0) {
                 throw new IllegalCommandException("Write command is wrong.");
@@ -99,12 +74,12 @@ public class HardwareLogic {
 
             dash.update(pin, pinType, value);
 
-            processEventor(ctx, dash, pin, pinType, value);
+            EventorLogic.processEventor(ctx, dash, pin, pinType, value);
         }
 
         //todo do not send if no widget pin
         if (dash.isActive) {
-            session.sendToApps(HARDWARE, message.id, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
+            session.sendToApps(HARDWARE, message.id, dashId + BODY_SEPARATOR_STRING + body);
         } else {
             log.debug("No active dashboard.");
         }

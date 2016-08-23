@@ -5,10 +5,8 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
-import cc.blynk.server.core.model.widgets.others.eventor.Rule;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.hardware.handlers.hardware.logic.EventorLogic;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
@@ -43,28 +41,6 @@ public class MqttHardwareLogic {
 
     private static boolean isWriteOperation(String body) {
         return body.charAt(1) == 'w';
-    }
-
-    private static void processEventor(ChannelHandlerContext ctx, DashBoard dash, byte pin, PinType type, String triggerValue) {
-        Eventor eventor = dash.getWidgetByType(Eventor.class);
-        if (eventor == null || eventor.rules == null) {
-            return;
-        }
-
-        double valueParsed;
-        try {
-            valueParsed = Double.parseDouble(triggerValue);
-        } catch (NumberFormatException nfe) {
-            return;
-        }
-
-        for (Rule rule : eventor.rules) {
-            if (rule.isValid(pin, type, valueParsed)) {
-                for (BaseAction action : rule.actions) {
-                    action.execute(ctx, triggerValue);
-                }
-            }
-        }
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, MqttPublishMessage msg) {
@@ -106,7 +82,7 @@ public class MqttHardwareLogic {
 
             dash.update(pin, pinType, value);
 
-            processEventor(ctx, dash, pin, pinType, value);
+            EventorLogic.processEventor(ctx, dash, pin, pinType, value);
         }
 
         //todo do not send if no widget pin

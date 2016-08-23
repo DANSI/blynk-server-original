@@ -18,7 +18,7 @@ public class Rule {
 
     public BaseAction[] actions;
 
-    public boolean isActive = true;
+    public boolean isActive;
 
     public Rule() {
     }
@@ -30,7 +30,7 @@ public class Rule {
     }
 
     public boolean isValid(byte pin, PinType pinType, double value) {
-        return triggerPin != null && condition != null &&
+        return isActive && triggerPin != null && condition != null &&
                actions != null && triggerPin.isSame(pin, pinType) &&
                condition.isValid(value);
     }
