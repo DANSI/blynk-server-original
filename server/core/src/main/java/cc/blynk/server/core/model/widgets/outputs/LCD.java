@@ -8,8 +8,8 @@ import io.netty.channel.Channel;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Command.SYNC;
+import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
 
 /**
  * The Blynk Project.
@@ -33,6 +33,13 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
 
     private transient Map<String, Long> lastRequestTS = new HashMap<>();
 
+    private static void sendSyncOnActivate(Pin pin, int dashId, Channel appChannel) {
+        if (pin.notEmpty()) {
+            String body = dashId + StringUtils.BODY_SEPARATOR_STRING + pin.makeHardwareBody();
+            appChannel.write(makeStringMessage(SYNC, 1111, body), appChannel.voidPromise());
+        }
+    }
+
     @Override
     public void sendSyncOnActivate(Channel appChannel, int dashId) {
         if (pins == null) {
@@ -40,16 +47,10 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
         }
         if (!advancedMode) {
             for (Pin pin : pins) {
-                if (pin.notEmpty()) {
-                    String body = dashId + StringUtils.BODY_SEPARATOR_STRING + pin.makeHardwareBody();
-                    appChannel.write(makeStringMessage(SYNC, 1111, body), appChannel.voidPromise());
-                }
+                sendSyncOnActivate(pin, dashId, appChannel);
             }
         } else {
-            if (pins[0].notEmpty()) {
-                String body = dashId + StringUtils.BODY_SEPARATOR_STRING + pins[0].makeHardwareBody();
-                appChannel.write(makeStringMessage(SYNC, 1111, body), appChannel.voidPromise());
-            }
+            sendSyncOnActivate(pins[0], dashId, appChannel);
         }
     }
 
