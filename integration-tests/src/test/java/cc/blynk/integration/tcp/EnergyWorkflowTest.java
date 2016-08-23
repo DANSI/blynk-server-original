@@ -12,10 +12,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
-import static org.mockito.Mockito.*;
+import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Response.ENERGY_LIMIT;
+import static cc.blynk.server.core.protocol.enums.Response.OK;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -125,6 +129,6 @@ public class EnergyWorkflowTest extends IntegrationBase {
 
     @Override
     public int getEnergyForTest() {
-        return 4100;
+        return 4500;
     }
 }

@@ -10,7 +10,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
@@ -31,7 +30,6 @@ import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -357,13 +355,13 @@ public class SyncWorkflowTest extends IntegrationBase {
     public void testTerminalSendsSyncOnActivate() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        assertEquals(15, profile.dashBoards[0].widgets.length);
+        assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "7900")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "7500")));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":102, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         clientPair.hardwareClient.send("hardware vw 17 a");
         clientPair.hardwareClient.send("hardware vw 17 b");
@@ -373,14 +371,59 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1 vw 17 c"))));
 
         clientPair.appClient.send("deactivate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
         clientPair.appClient.send("activate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(5, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 17 a"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 17 b"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 17 c"))));
     }
+
+    @Test
+    public void testLCDSendsSyncOnActivate() throws Exception {
+        clientPair.hardwareClient.send("hardware vw 20 p 0 0 Hello");
+        clientPair.hardwareClient.send("hardware vw 20 p 0 1 World");
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 20 p 0 0 Hello"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1 vw 20 p 0 1 World"))));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 20 p 0 0 Hello"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 20 p 0 1 World"))));
+    }
+
+    @Test
+    public void testLCDSendsSyncOnActivate2() throws Exception {
+        clientPair.hardwareClient.send("hardware vw 20 p 0 0 H1");
+        clientPair.hardwareClient.send("hardware vw 20 p 0 1 H2");
+        clientPair.hardwareClient.send("hardware vw 20 p 0 2 H3");
+        clientPair.hardwareClient.send("hardware vw 20 p 0 3 H4");
+        clientPair.hardwareClient.send("hardware vw 20 p 0 4 H5");
+        clientPair.hardwareClient.send("hardware vw 20 p 0 5 H6");
+        clientPair.hardwareClient.send("hardware vw 20 p 0 6 H7");
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 20 p 0 0 H1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1 vw 20 p 0 1 H2"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1 vw 20 p 0 2 H3"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, HARDWARE, b("1 vw 20 p 0 3 H4"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, b("1 vw 20 p 0 4 H5"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, HARDWARE, b("1 vw 20 p 0 5 H6"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, HARDWARE, b("1 vw 20 p 0 6 H7"))));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 20 p 0 1 H2"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 20 p 0 2 H3"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 20 p 0 3 H4"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 20 p 0 4 H5"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 20 p 0 5 H6"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 20 p 0 6 H7"))));
+    }
+
 
     @Test
     public void testSyncWorksForGauge() throws Exception {
