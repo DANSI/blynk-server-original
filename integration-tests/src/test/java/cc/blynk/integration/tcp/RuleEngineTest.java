@@ -8,8 +8,21 @@ import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.eventor.Rule;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.*;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.*;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.Mail;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.Notify;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPin;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.Twit;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.Wait;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.BaseCondition;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.Between;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.Equal;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.GreaterThan;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.GreaterThanOrEqual;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.LessThan;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.LessThanOrEqual;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.NotBetween;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.NotEqual;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
@@ -27,7 +40,11 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -66,7 +83,9 @@ public class RuleEngineTest extends IntegrationBase {
                                             //setpin
         BaseAction action = resolveAction(splitted[5], pin, value);
 
-        return new Rule(triggerPin, ifCondition, new BaseAction[] { action });
+        Rule rule = new Rule(triggerPin, ifCondition, new BaseAction[] { action });
+        rule.isActive = true;
+        return rule;
     }
 
     private static Pin parsePin(String pinString) {
@@ -367,6 +386,37 @@ public class RuleEngineTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 1 38");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 38"))));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("dw 9 1"))));
+    }
+
+    @Test
+    public void testTriggerOnlyOnceOnCondition() throws Exception {
+        Eventor eventor = oneRuleEventor("if v1 < 37 then setpin v2 123");
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.hardwareClient.send("hardware vw 1 36");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 36"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
+
+        clientPair.hardwareClient.reset();
+
+        clientPair.hardwareClient.send("hardware vw 1 36");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 36"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
+
+        clientPair.hardwareClient.send("hardware vw 1 36");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1 vw 1 36"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
+
+        clientPair.hardwareClient.send("hardware vw 1 38");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1 vw 1 38"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
+
+        clientPair.hardwareClient.send("hardware vw 1 36");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, HARDWARE, b("1 vw 1 36"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
+
     }
 
 }

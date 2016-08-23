@@ -20,6 +20,8 @@ public class Rule {
 
     public boolean isActive;
 
+    public transient boolean isProcessed;
+
     public Rule() {
     }
 
@@ -29,10 +31,16 @@ public class Rule {
         this.actions = actions;
     }
 
-    public boolean isValid(byte pin, PinType pinType, double value) {
-        return isActive && triggerPin != null && condition != null &&
-               actions != null && triggerPin.isSame(pin, pinType) &&
-               condition.isValid(value);
+    private boolean notEmpty() {
+        return triggerPin != null && condition != null && actions != null;
+    }
+
+    public boolean isReady(byte pin, PinType pinType) {
+        return isActive && notEmpty() && triggerPin.isSame(pin, pinType);
+    }
+
+    public boolean isValid(double value) {
+        return condition.isValid(value);
     }
 
 }

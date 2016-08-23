@@ -28,9 +28,16 @@ public class EventorLogic {
         }
 
         for (Rule rule : eventor.rules) {
-            if (rule.isValid(pin, type, valueParsed)) {
-                for (BaseAction action : rule.actions) {
-                    action.execute(ctx, triggerValue);
+            if (rule.isReady(pin, type)) {
+                if (rule.isValid(valueParsed)) {
+                    if (!rule.isProcessed) {
+                        for (BaseAction action : rule.actions) {
+                            action.execute(ctx, triggerValue);
+                            rule.isProcessed = true;
+                        }
+                    }
+                } else {
+                    rule.isProcessed = false;
                 }
             }
         }
