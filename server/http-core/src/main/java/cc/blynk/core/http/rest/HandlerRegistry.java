@@ -2,8 +2,16 @@ package cc.blynk.core.http.rest;
 
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.UriTemplate;
-import cc.blynk.core.http.rest.params.*;
-import io.netty.handler.codec.http.*;
+import cc.blynk.core.http.rest.params.BodyParam;
+import cc.blynk.core.http.rest.params.ContextParam;
+import cc.blynk.core.http.rest.params.FormParam;
+import cc.blynk.core.http.rest.params.PathParam;
+import cc.blynk.core.http.rest.params.QueryParam;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpContent;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -97,10 +105,10 @@ public class HandlerRegistry {
     }
 
     public static void populateBody(HttpRequest req, URIDecoder uriDecoder) {
-        if (req.getMethod() == HttpMethod.PUT || req.getMethod() == HttpMethod.POST) {
+        if (req.method() == HttpMethod.PUT || req.method() == HttpMethod.POST) {
             if (req instanceof HttpContent) {
                 uriDecoder.bodyData = ((HttpContent) req).content();
-                uriDecoder.contentType = req.headers().get(HttpHeaders.Names.CONTENT_TYPE);
+                uriDecoder.contentType = req.headers().get(HttpHeaderNames.CONTENT_TYPE);
             }
         }
     }

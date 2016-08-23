@@ -5,7 +5,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.JsonParser;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 
@@ -14,10 +14,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static cc.blynk.utils.ListUtils.*;
-import static io.netty.handler.codec.http.HttpHeaders.Names.*;
-import static io.netty.handler.codec.http.HttpResponseStatus.*;
-import static io.netty.handler.codec.http.HttpVersion.*;
+import static cc.blynk.utils.ListUtils.subList;
+import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
+import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
+import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpHeaders.Names.LOCATION;
+import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
+import static io.netty.handler.codec.http.HttpResponseStatus.FORBIDDEN;
+import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
+import static io.netty.handler.codec.http.HttpResponseStatus.MOVED_PERMANENTLY;
+import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
+import static io.netty.handler.codec.http.HttpResponseStatus.OK;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
  * The Blynk Project.
@@ -31,21 +39,21 @@ public class Response extends DefaultFullHttpResponse {
 
     public Response(HttpVersion version, HttpResponseStatus status, String content, String contentType) {
         super(version, status, (content == null ? Unpooled.EMPTY_BUFFER : Unpooled.copiedBuffer(content, StandardCharsets.UTF_8)));
-        headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+        headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         headers().set(CONTENT_TYPE, contentType);
         headers().set(CONTENT_LENGTH, content().readableBytes());
     }
 
     public Response(HttpVersion version, HttpResponseStatus status, byte[] content, String contentType) {
         super(version, status, (content == null ? Unpooled.EMPTY_BUFFER : Unpooled.copiedBuffer(content)));
-        headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+        headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         headers().set(CONTENT_TYPE, contentType);
         headers().set(CONTENT_LENGTH, content().readableBytes());
     }
 
     public Response(HttpVersion version, HttpResponseStatus status) {
         super(version, status);
-        headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+        headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         headers().set(CONTENT_LENGTH, 0);
     }
     
