@@ -2,7 +2,6 @@ package cc.blynk.server.core.model.widgets.others.eventor.model.action;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.netty.channel.ChannelHandlerContext;
 
 /**
  * The Blynk Project.
@@ -22,9 +21,8 @@ import io.netty.channel.ChannelHandlerContext;
 })
 public abstract class BaseAction {
 
-    public abstract void execute(ChannelHandlerContext ctx, String triggerValue);
-
     public String format(String message, String triggerValue) {
         return message.replaceAll("/pin/", triggerValue);
     }
+
 }

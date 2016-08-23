@@ -15,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static cc.blynk.utils.ByteBufUtil.makeResponse;
 import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
@@ -95,7 +94,7 @@ public class Session {
 
         int channelsNum = targetChannels.size();
         if (channelsNum == 0)
-            return true; // -> noActiveHardware
+            return true; // -> no active hardware
 
         ByteBuf msg = makeStringMessage(cmd, msgId, body);
         if (channelsNum > 1) {
@@ -110,7 +109,7 @@ public class Session {
             }
         }
 
-        return false; // -> noActiveHardware
+        return false; // -> there is active hardware
     }
 
     public void sendMessageToHardware(ChannelHandlerContext ctx, int activeDashId, short cmd, int msgId, String body) {

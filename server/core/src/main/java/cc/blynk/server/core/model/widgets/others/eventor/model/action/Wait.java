@@ -2,8 +2,6 @@ package cc.blynk.server.core.model.widgets.others.eventor.model.action;
 
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -25,8 +23,8 @@ public class Wait extends BaseAction {
         this.delayedAction = delayedAction;
     }
 
-    @Override
     public void execute(ChannelHandlerContext ctx, String triggerValue) {
+        /*
         long now = System.currentTimeMillis();
 
         if (delayedAction != null && lastActivation + seconds * 1000 < now) {
@@ -34,5 +32,6 @@ public class Wait extends BaseAction {
 
             ctx.executor().schedule(() -> { delayedAction.execute(ctx, triggerValue);}, seconds, TimeUnit.SECONDS);
         }
+        */
     }
 }

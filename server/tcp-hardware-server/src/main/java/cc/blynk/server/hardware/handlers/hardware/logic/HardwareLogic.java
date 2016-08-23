@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -73,8 +74,7 @@ public class HardwareLogic {
             reportingDao.process(state.user.name, dashId, pin, pinType, value);
 
             dash.update(pin, pinType, value);
-
-            EventorLogic.processEventor(ctx, dash, pin, pinType, value);
+            Eventor.processEventor(ctx, session, dash, pin, pinType, value);
         }
 
         //todo do not send if no widget pin

@@ -5,8 +5,8 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.hardware.handlers.hardware.logic.EventorLogic;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
@@ -82,7 +82,7 @@ public class MqttHardwareLogic {
 
             dash.update(pin, pinType, value);
 
-            EventorLogic.processEventor(ctx, dash, pin, pinType, value);
+            Eventor.processEventor(ctx, session, dash, pin, pinType, value);
         }
 
         //todo do not send if no widget pin

@@ -1,10 +1,9 @@
 package cc.blynk.server.core.model.widgets.others.eventor.model.action;
 
 import cc.blynk.server.core.model.Pin;
-import io.netty.channel.ChannelHandlerContext;
+import cc.blynk.server.core.model.auth.Session;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
 
 /**
  * The Blynk Project.
@@ -25,11 +24,10 @@ public class SetPin extends BaseAction {
         this.value = value;
     }
 
-    @Override
-    public void execute(ChannelHandlerContext ctx, String triggerValue) {
+    public void execute(Session session, int dashId) {
         if (pin != null && pin.pinType != null && pin.pin > -1 && value != null) {
             String body = Pin.makeHardwareBody(pin.pwmMode, pin.pinType, pin.pin, value);
-            ctx.writeAndFlush(makeStringMessage(HARDWARE, 888, body), ctx.voidPromise());
+            session.sendMessageToHardware(dashId, HARDWARE, 888, body);
         }
     }
 
