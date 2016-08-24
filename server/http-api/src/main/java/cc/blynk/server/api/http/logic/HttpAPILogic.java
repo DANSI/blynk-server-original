@@ -10,6 +10,7 @@ import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.api.http.pojo.att.AttData;
 import cc.blynk.server.api.http.pojo.att.AttValue;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.EventorProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
@@ -84,13 +85,17 @@ public class HttpAPILogic {
     private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
     private final ReportingDao reportingDao;
+    private final EventorProcessor eventorProcessor;
 
     public HttpAPILogic(Holder holder) {
-        this(holder.userDao, holder.sessionDao, holder.blockingIOProcessor, holder.mailWrapper, holder.gcmWrapper, holder.reportingDao, holder.stats);
+        this(holder.userDao, holder.sessionDao, holder.blockingIOProcessor,
+                holder.mailWrapper, holder.gcmWrapper, holder.reportingDao,
+                holder.stats, holder.eventorProcessor);
     }
 
     private HttpAPILogic(UserDao userDao, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor,
-                         MailWrapper mailWrapper, GCMWrapper gcmWrapper, ReportingDao reportingDao, GlobalStats globalStats) {
+                         MailWrapper mailWrapper, GCMWrapper gcmWrapper, ReportingDao reportingDao,
+                         GlobalStats globalStats, EventorProcessor eventorProcessor) {
         this.userDao = userDao;
         this.blockingIOProcessor = blockingIOProcessor;
         this.sessionDao = sessionDao;
@@ -98,6 +103,7 @@ public class HttpAPILogic {
         this.mailWrapper = mailWrapper;
         this.gcmWrapper = gcmWrapper;
         this.reportingDao = reportingDao;
+        this.eventorProcessor = eventorProcessor;
     }
 
     private static String makeBody(DashBoard dash, byte pin, PinType pinType, String pinValue) {
@@ -107,11 +113,10 @@ public class HttpAPILogic {
         } else {
             if (widget instanceof OnePinWidget) {
                 return ((OnePinWidget) widget).makeHardwareBody();
-            } else if (widget instanceof MultiPinWidget) {
+            } else {
                 return ((MultiPinWidget) widget).makeHardwareBody(pin, pinType);
             }
         }
-        return null;
     }
 
     @GET
@@ -408,17 +413,18 @@ public class HttpAPILogic {
 
         String body = makeBody(dash, pin, pinType, pinValue);
 
-        if (body != null) {
-            Session session = sessionDao.userSession.get(user);
-            if (session == null) {
-                log.error("No session for user {}.", user.name);
-                return Response.ok();
-            }
-            session.sendMessageToHardware(dashId, HARDWARE, 111, body);
+        Session session = sessionDao.userSession.get(user);
+        if (session == null) {
+            log.error("No session for user {}.", user.name);
+            return Response.ok();
+        }
 
-            if (dash.isActive) {
-                session.sendToApps(HARDWARE, 111, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
-            }
+        eventorProcessor.processEventor(session, dash, pin, pinType, pinValue);
+
+        session.sendMessageToHardware(dashId, HARDWARE, 111, body);
+
+        if (dash.isActive) {
+            session.sendToApps(HARDWARE, 111, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
         }
 
         return Response.ok();

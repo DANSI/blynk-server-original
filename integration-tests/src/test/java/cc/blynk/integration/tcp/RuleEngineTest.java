@@ -131,7 +131,7 @@ public class RuleEngineTest extends IntegrationBase {
         }
     }
 
-    private static Eventor oneRuleEventor(String ruleString) {
+    public static Eventor oneRuleEventor(String ruleString) {
         Rule rule = buildRule(ruleString);
         return new Eventor(new Rule[] {rule});
     }
