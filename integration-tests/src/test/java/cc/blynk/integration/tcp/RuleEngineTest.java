@@ -301,7 +301,6 @@ public class RuleEngineTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("hardware vw 1 37");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(888, OK)));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
         verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
@@ -320,7 +319,6 @@ public class RuleEngineTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("hardware vw 1 37");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(888, OK)));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
         verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
@@ -339,7 +337,6 @@ public class RuleEngineTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("hardware vw 1 37");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(888, OK)));
 
         verify(twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("Yo!!!!!"));
     }

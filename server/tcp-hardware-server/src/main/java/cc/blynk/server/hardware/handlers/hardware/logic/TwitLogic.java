@@ -13,8 +13,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_EXCEPTION;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
+import static cc.blynk.utils.ByteBufUtil.ok;
 
 /**
  * Sends tweets from hardware.
@@ -28,7 +29,6 @@ public class TwitLogic extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(TwitLogic.class);
 
-    private static final int MAX_TWITTER_BODY_SIZE = 140;
     private final BlockingIOProcessor blockingIOProcessor;
     private final TwitterWrapper twitterWrapper;
 
@@ -39,7 +39,7 @@ public class TwitLogic extends NotificationBase {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        if (message.body == null || message.body.equals("") || message.body.length() > MAX_TWITTER_BODY_SIZE) {
+        if (Twitter.isWrongBody(message.body)) {
             throw new NotificationBodyInvalidException();
         }
 

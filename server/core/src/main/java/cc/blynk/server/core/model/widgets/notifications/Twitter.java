@@ -9,6 +9,8 @@ import cc.blynk.server.core.model.widgets.NoPinWidget;
  */
 public class Twitter extends NoPinWidget {
 
+    private static final int MAX_TWITTER_BODY_SIZE = 140;
+
     public String token;
 
     public String secret;
@@ -19,6 +21,10 @@ public class Twitter extends NoPinWidget {
         token = null;
         secret = null;
         username = null;
+    }
+
+    public static boolean isWrongBody(String body) {
+       return body == null || body.equals("") || body.length() > MAX_TWITTER_BODY_SIZE;
     }
 
     @Override

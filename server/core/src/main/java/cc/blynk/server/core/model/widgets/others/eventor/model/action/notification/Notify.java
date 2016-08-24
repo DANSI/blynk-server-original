@@ -1,8 +1,5 @@
 package cc.blynk.server.core.model.widgets.others.eventor.model.action.notification;
 
-import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.protocol.model.messages.hardware.PushMessage;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -17,8 +14,4 @@ public class Notify extends NotificationAction {
         this.message = message;
     }
 
-    @Override
-    public StringMessage makeMessage(String triggerValue) {
-        return new PushMessage(888, format(message, triggerValue));
-    }
 }

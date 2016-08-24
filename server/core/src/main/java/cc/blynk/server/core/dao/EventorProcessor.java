@@ -1,16 +1,25 @@
 package cc.blynk.server.core.dao;
 
+import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.eventor.Rule;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPin;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.Mail;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotificationAction;
-import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import io.netty.channel.ChannelHandlerContext;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.Notify;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.Twit;
+import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.server.notifications.twitter.TwitterWrapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 
@@ -23,7 +32,21 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
  */
 public class EventorProcessor {
 
-    public void processEventor(ChannelHandlerContext ctx, Session session, DashBoard dash, byte pin, PinType type, String triggerValue) {
+    private static final Logger log = LogManager.getLogger(EventorProcessor.class);
+
+    private final GCMWrapper gcmWrapper;
+    private final TwitterWrapper twitterWrapper;
+    private final MailWrapper mailWrapper;
+    private final BlockingIOProcessor blockingIOProcessor;
+
+    public EventorProcessor(GCMWrapper gcmWrapper, MailWrapper mailWrapper, TwitterWrapper twitterWrapper, BlockingIOProcessor blockingIOProcessor) {
+        this.gcmWrapper = gcmWrapper;
+        this.mailWrapper = mailWrapper;
+        this.twitterWrapper = twitterWrapper;
+        this.blockingIOProcessor = blockingIOProcessor;
+    }
+
+    public void processEventor(Session session, DashBoard dash, byte pin, PinType type, String triggerValue) {
         Eventor eventor = dash.getWidgetByType(Eventor.class);
         if (eventor == null || eventor.rules == null) {
             return;
@@ -44,11 +67,10 @@ public class EventorProcessor {
                             if (action instanceof SetPin) {
                                 execute(session, dash.id, (SetPin) action);
                             } else if (action instanceof NotificationAction) {
-                                execute(ctx, triggerValue, (NotificationAction) action);
+                                execute(dash, triggerValue, (NotificationAction) action);
                             }
-
-                            rule.isProcessed = true;
                         }
+                        rule.isProcessed = true;
                     }
                 } else {
                     rule.isProcessed = false;
@@ -57,13 +79,70 @@ public class EventorProcessor {
         }
     }
 
-    private static void execute(ChannelHandlerContext ctx, String triggerValue, NotificationAction notificationAction) {
-        execute(ctx, notificationAction.message, notificationAction.makeMessage(triggerValue));
-    }
-    private static void execute(ChannelHandlerContext ctx, String message, StringMessage stringMessage) {
-        if (message != null && !message.isEmpty()) {
-            ctx.pipeline().fireChannelRead(stringMessage);
+    private void execute(DashBoard dash, String triggerValue, NotificationAction notificationAction) {
+        if (notificationAction.message != null && !notificationAction.message.isEmpty()) {
+            String body = format(notificationAction.message, triggerValue);
+            if (notificationAction instanceof Notify) {
+                push(dash, body);
+            } else if (notificationAction instanceof Twit) {
+                twit(dash, body);
+            } else if (notificationAction instanceof Mail) {
+                //email(dash, body);
+            }
         }
+    }
+
+    private void twit(DashBoard dash, String body) {
+        if (Twitter.isWrongBody(body)) {
+            log.debug("Wrong twit body.");
+            return;
+        }
+
+        Twitter twitterWidget = dash.getWidgetByType(Twitter.class);
+
+        if (twitterWidget == null || !dash.isActive ||
+                twitterWidget.token == null || twitterWidget.token.equals("") ||
+                twitterWidget.secret == null || twitterWidget.secret.equals("")) {
+            log.debug("User has no access token provided.");
+            return;
+        }
+
+        blockingIOProcessor.execute(() -> {
+            try {
+                twitterWrapper.send(twitterWidget.token, twitterWidget.secret, body);
+            } catch (Exception e) {
+                String errorMessage = e.getMessage();
+                if (errorMessage != null && errorMessage.contains("Eventor. Status is a duplicate")) {
+                    log.error("Error sending twit. Reason : {}", e.getMessage());
+                }
+            }
+        });
+    }
+
+
+    private void push(DashBoard dash, String body) {
+        if (Notification.isWrongBody(body)) {
+            log.debug("Wrong push body.");
+            return;
+        }
+
+        if (!dash.isActive) {
+            log.debug("Project not active.");
+            return;
+        }
+
+        Notification widget = dash.getWidgetByType(Notification.class);
+
+        if (widget == null || widget.hasNoToken()) {
+            log.debug("User has no access token provided.");
+            return;
+        }
+
+        widget.push(gcmWrapper, body, dash.id);
+    }
+
+    private String format(String message, String triggerValue) {
+        return message.replaceAll("/pin/", triggerValue);
     }
 
     private static void execute(Session session, int dashId, SetPin action) {

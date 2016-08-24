@@ -76,7 +76,7 @@ public class HardwareLogic {
             reportingDao.process(state.user.name, dashId, pin, pinType, value);
 
             dash.update(pin, pinType, value);
-            eventorProcessor.processEventor(ctx, session, dash, pin, pinType, value);
+            eventorProcessor.processEventor(session, dash, pin, pinType, value);
         }
 
         //todo do not send if no widget pin

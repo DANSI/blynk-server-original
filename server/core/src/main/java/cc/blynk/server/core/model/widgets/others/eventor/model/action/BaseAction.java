@@ -24,8 +24,4 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public abstract class BaseAction {
 
-    public String format(String message, String triggerValue) {
-        return message.replaceAll("/pin/", triggerValue);
-    }
-
 }

@@ -1,6 +1,7 @@
 package cc.blynk.server;
 
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.EventorProcessor;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
@@ -52,6 +53,8 @@ public class Holder {
     public final String region;
     public ProfileSaverWorker profileSaverWorker;
 
+    public final EventorProcessor eventorProcessor;
+
     public Holder(ServerProperties serverProperties) {
         this.props = serverProperties;
 
@@ -78,6 +81,8 @@ public class Holder {
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
                 FileLoaderUtil.readFileAsString(BlockingIOProcessor.TOKEN_MAIL_BODY)
         );
+
+        this.eventorProcessor = new EventorProcessor(gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor);
 
         this.dbManager = new DBManager(blockingIOProcessor);
     }
@@ -109,6 +114,8 @@ public class Holder {
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
                 FileLoaderUtil.readFileAsString(BlockingIOProcessor.TOKEN_MAIL_BODY)
         );
+
+        this.eventorProcessor = new EventorProcessor(gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor);
 
         this.dbManager = new DBManager(blockingIOProcessor);
     }
