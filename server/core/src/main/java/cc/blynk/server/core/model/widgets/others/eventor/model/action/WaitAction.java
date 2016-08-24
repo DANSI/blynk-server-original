@@ -7,7 +7,7 @@ import io.netty.channel.ChannelHandlerContext;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.08.16.
  */
-public class Wait extends BaseAction {
+public class WaitAction extends BaseAction {
 
     public int seconds;
 
@@ -15,10 +15,10 @@ public class Wait extends BaseAction {
 
     public BaseAction delayedAction;
 
-    public Wait() {
+    public WaitAction() {
     }
 
-    public Wait(int seconds, BaseAction delayedAction) {
+    public WaitAction(int seconds, BaseAction delayedAction) {
         this.seconds = seconds;
         this.delayedAction = delayedAction;
     }

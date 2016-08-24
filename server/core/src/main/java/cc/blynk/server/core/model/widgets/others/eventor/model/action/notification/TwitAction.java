@@ -5,12 +5,12 @@ package cc.blynk.server.core.model.widgets.others.eventor.model.action.notificat
  * Created by Dmitriy Dumanskiy.
  * Created on 01.08.16.
  */
-public class Twit extends NotificationAction {
+public class TwitAction extends NotificationAction {
 
-    public Twit() {
+    public TwitAction() {
     }
 
-    public Twit(String message) {
+    public TwitAction(String message) {
         this.message = message;
     }
 

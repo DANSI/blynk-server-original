@@ -10,11 +10,11 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.eventor.Rule;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPin;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.Wait;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.Mail;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.Notify;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.Twit;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.WaitAction;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.MailAction;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.TwitAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.BaseCondition;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.Between;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.Equal;
@@ -98,15 +98,15 @@ public class RuleEngineTest extends IntegrationBase {
     private static BaseAction resolveAction(String action, Pin pin, String value) {
         switch (action) {
             case "setpin" :
-                return new SetPin(pin, value);
+                return new SetPinAction(pin, value);
             case "wait" :
-                return new Wait();
+                return new WaitAction();
             case "notify" :
-                return new Notify(value);
+                return new NotifyAction(value);
             case "mail" :
-                return new Mail(value);
+                return new MailAction(value);
             case "twit" :
-                return new Twit(value);
+                return new TwitAction(value);
 
             default: throw new RuntimeException("Not supported action. " + action);
         }
@@ -179,10 +179,10 @@ public class RuleEngineTest extends IntegrationBase {
         Pin pin = new Pin(1, PinType.VIRTUAL);
 
         BaseAction[] actions = new BaseAction[] {
-                new SetPin(pin, "pinValuetoSEt"),
-                new Wait(360, new SetPin(pin, "pinValueToSet")),
-                new Notify("Hello!!!"),
-                new Mail("Hello mail")
+                new SetPinAction(pin, "pinValuetoSEt"),
+                new WaitAction(360, new SetPinAction(pin, "pinValueToSet")),
+                new NotifyAction("Hello!!!"),
+                new MailAction("Hello mail")
         };
 
         for (BaseAction action : actions) {

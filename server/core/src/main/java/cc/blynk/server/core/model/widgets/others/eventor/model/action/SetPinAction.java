@@ -7,16 +7,16 @@ import cc.blynk.server.core.model.Pin;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.08.16.
  */
-public class SetPin extends BaseAction {
+public class SetPinAction extends BaseAction {
 
     public Pin pin;
 
     public String value;
 
-    public SetPin() {
+    public SetPinAction() {
     }
 
-    public SetPin(Pin pin, String value) {
+    public SetPinAction(Pin pin, String value) {
         this.pin = pin;
         this.value = value;
     }

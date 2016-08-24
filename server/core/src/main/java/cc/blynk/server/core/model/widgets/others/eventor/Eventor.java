@@ -3,7 +3,7 @@ package cc.blynk.server.core.model.widgets.others.eventor;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.NoPinWidget;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPin;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 
 /**
  * The Blynk Project.
@@ -57,10 +57,10 @@ public class Eventor extends NoPinWidget {
             for (Rule rule : rules) {
                 if (rule.actions != null) {
                     for (BaseAction action : rule.actions) {
-                        if (action instanceof SetPin) {
-                            SetPin setPinAction = (SetPin) action;
-                            if (setPinAction.pin != null) {
-                                append(sb, setPinAction.pin.pin, setPinAction.pin.pinType, getModeType());
+                        if (action instanceof SetPinAction) {
+                            SetPinAction setPinActionAction = (SetPinAction) action;
+                            if (setPinActionAction.pin != null) {
+                                append(sb, setPinActionAction.pin.pin, setPinActionAction.pin.pinType, getModeType());
                             }
                         }
                     }

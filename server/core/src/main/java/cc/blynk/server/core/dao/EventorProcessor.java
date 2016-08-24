@@ -10,11 +10,11 @@ import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.eventor.Rule;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPin;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.Mail;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.MailAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotificationAction;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.Notify;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.Twit;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.TwitAction;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
@@ -64,8 +64,8 @@ public class EventorProcessor {
                 if (rule.isValid(valueParsed)) {
                     if (!rule.isProcessed) {
                         for (BaseAction action : rule.actions) {
-                            if (action instanceof SetPin) {
-                                execute(session, dash.id, (SetPin) action);
+                            if (action instanceof SetPinAction) {
+                                execute(session, dash.id, (SetPinAction) action);
                             } else if (action instanceof NotificationAction) {
                                 execute(dash, triggerValue, (NotificationAction) action);
                             }
@@ -82,11 +82,11 @@ public class EventorProcessor {
     private void execute(DashBoard dash, String triggerValue, NotificationAction notificationAction) {
         if (notificationAction.message != null && !notificationAction.message.isEmpty()) {
             String body = format(notificationAction.message, triggerValue);
-            if (notificationAction instanceof Notify) {
+            if (notificationAction instanceof NotifyAction) {
                 push(dash, body);
-            } else if (notificationAction instanceof Twit) {
+            } else if (notificationAction instanceof TwitAction) {
                 twit(dash, body);
-            } else if (notificationAction instanceof Mail) {
+            } else if (notificationAction instanceof MailAction) {
                 //email(dash, body);
             }
         }
@@ -145,7 +145,7 @@ public class EventorProcessor {
         return message.replaceAll("/pin/", triggerValue);
     }
 
-    private static void execute(Session session, int dashId, SetPin action) {
+    private static void execute(Session session, int dashId, SetPinAction action) {
         execute(session, dashId, action.pin, action.value);
     }
     private static void execute(Session session, int dashId, Pin pin, String value) {

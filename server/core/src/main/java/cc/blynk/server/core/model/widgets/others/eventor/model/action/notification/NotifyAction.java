@@ -5,12 +5,12 @@ package cc.blynk.server.core.model.widgets.others.eventor.model.action.notificat
  * Created by Dmitriy Dumanskiy.
  * Created on 01.08.16.
  */
-public class Notify extends NotificationAction {
+public class NotifyAction extends NotificationAction {
 
-    public Notify() {
+    public NotifyAction() {
     }
 
-    public Notify(String message) {
+    public NotifyAction(String message) {
         this.message = message;
     }
 
