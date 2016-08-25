@@ -18,6 +18,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.notificati
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
+import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -65,7 +66,7 @@ public class EventorProcessor {
                     if (!rule.isProcessed) {
                         for (BaseAction action : rule.actions) {
                             if (action instanceof SetPinAction) {
-                                execute(session, dash.id, (SetPinAction) action);
+                                execute(session, dash.isActive, dash.id, (SetPinAction) action);
                             } else if (action instanceof NotificationAction) {
                                 execute(dash, triggerValue, (NotificationAction) action);
                             }
@@ -145,13 +146,16 @@ public class EventorProcessor {
         return message.replaceAll("/pin/", triggerValue);
     }
 
-    private static void execute(Session session, int dashId, SetPinAction action) {
-        execute(session, dashId, action.pin, action.value);
+    private static void execute(Session session, boolean isActive, int dashId, SetPinAction action) {
+        execute(session, isActive, dashId, action.pin, action.value);
     }
-    private static void execute(Session session, int dashId, Pin pin, String value) {
+    private static void execute(Session session,  boolean isActive, int dashId, Pin pin, String value) {
         if (pin != null && pin.pinType != null && pin.pin > -1 && value != null) {
-            String body = Pin.makeHardwareBody(pin.pwmMode, pin.pinType, pin.pin, value);
+            final String body = Pin.makeHardwareBody(pin.pwmMode, pin.pinType, pin.pin, value);
             session.sendMessageToHardware(dashId, HARDWARE, 888, body);
+            if (isActive) {
+                session.sendToApps(HARDWARE, 888, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
+            }
         }
     }
 }
