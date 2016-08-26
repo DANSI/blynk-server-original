@@ -73,7 +73,8 @@ public class ReflectionUtil {
     }
 
     private static int parseColor(String fieldValue) {
-        return convertARGBtoRGBA(Integer.decode(fieldValue));
+        int decodedColor = Integer.decode(fieldValue);
+        return convertARGBtoRGBA(setAlphaComponent(decodedColor, 255));
     }
 
     private static int convertARGBtoRGBA(int color) {
@@ -83,6 +84,10 @@ public class ReflectionUtil {
         final int b = (color & 0x000000ff);
 
         return (r << 24) | (g << 16) | (b << 8) | (a & 0xff);
+    }
+
+    public static int setAlphaComponent(int color, int alpha) {
+        return (color & 0x00ffffff) | (alpha << 24);
     }
 
     public static Object castTo(Class type, String value) {
