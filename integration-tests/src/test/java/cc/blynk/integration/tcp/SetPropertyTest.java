@@ -153,7 +153,7 @@ public class SetPropertyTest extends IntegrationBase {
         profile.dashBoards[0].updatedAt = 0;
 
         Widget widget = profile.dashBoards[0].findWidgetByPin((byte) 4, PinType.VIRTUAL);
-        assertEquals(600083968, widget.color);
+        assertEquals(600084223, widget.color);
 
     }
 
