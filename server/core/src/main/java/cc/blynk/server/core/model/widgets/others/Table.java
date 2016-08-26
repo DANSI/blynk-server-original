@@ -13,6 +13,10 @@ public class Table extends OnePinWidget {
 
     public Row[] rows;
 
+    public boolean isReoderingAllowed;
+
+    public boolean isClickableRows;
+
     @Override
     public String getModeType() {
         return "out";

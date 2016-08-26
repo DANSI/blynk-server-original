@@ -19,6 +19,7 @@ import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.Bluetooth;
 import cc.blynk.server.core.model.widgets.others.BluetoothSerial;
 import cc.blynk.server.core.model.widgets.others.Bridge;
+import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.others.RTC;
 import cc.blynk.server.core.model.widgets.others.Table;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
@@ -86,6 +87,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = BluetoothSerial.class, name = "BLUETOOTH_SERIAL"),
         @JsonSubTypes.Type(value = Eventor.class, name = "EVENTOR"),
         @JsonSubTypes.Type(value = Table.class, name = "TABLE"),
+        @JsonSubTypes.Type(value = Player.class, name = "PLAYER"),
 
         //MENU
         @JsonSubTypes.Type(value = Tabs.class, name = "TABS")
