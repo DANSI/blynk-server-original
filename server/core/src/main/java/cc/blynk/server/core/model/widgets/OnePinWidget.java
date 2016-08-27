@@ -60,8 +60,13 @@ public abstract class OnePinWidget extends Widget implements SyncOnActivate {
         return false;
     }
 
+    //todo cover with test
     public boolean isSame(byte pin, PinType type) {
-        return this.pin == pin && ((this.isPWMSupported() && type == PinType.ANALOG) || (type == this.pinType));
+        return this.pin == pin && (
+                (type == this.pinType) ||
+                (this.isPWMSupported() && type == PinType.ANALOG) ||
+                (type == PinType.DIGITAL && this.pinType == PinType.ANALOG)
+        );
     }
 
     @Override
