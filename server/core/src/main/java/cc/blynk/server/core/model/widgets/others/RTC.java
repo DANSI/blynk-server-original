@@ -17,8 +17,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
 
 /**
  * The Blynk Project.
@@ -30,8 +30,6 @@ public class RTC extends OnePinWidget implements HardwareSyncWidget {
     @JsonSerialize(using = ZoneIdToString.class)
     @JsonDeserialize(using = StringToZoneId.class, as = ZoneOffset.class)
     public ZoneOffset timezone;
-
-    public String timezoneName;
 
     @Override
     public String getModeType() {
