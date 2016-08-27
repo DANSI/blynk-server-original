@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.controls.RGB;
 import cc.blynk.server.core.model.widgets.controls.Slider;
 import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.controls.Terminal;
+import cc.blynk.server.core.model.widgets.controls.TimeInput;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.controls.TwoAxisJoystick;
 import cc.blynk.server.core.model.widgets.inputs.GPS;
@@ -58,6 +59,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Terminal.class, name = "TERMINAL"),
         @JsonSubTypes.Type(value = Step.class, name = "STEP"),
         @JsonSubTypes.Type(value = QR.class, name = "QR"),
+        @JsonSubTypes.Type(value = TimeInput.class, name = "TIME_INPUT"),
 
         //outputs
         @JsonSubTypes.Type(value = LED.class, name = "LED"),
