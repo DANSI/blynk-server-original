@@ -19,6 +19,8 @@ public class TimeInput extends OnePinWidget {
 
     public String timezone;
 
+    public String timezoneName;
+
     public boolean isStartStopAllowed;
 
     public boolean isDayOfWeekAllowed;

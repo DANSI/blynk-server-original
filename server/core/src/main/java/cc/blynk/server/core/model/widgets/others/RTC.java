@@ -31,6 +31,9 @@ public class RTC extends OnePinWidget implements HardwareSyncWidget {
     @JsonDeserialize(using = StringToZoneId.class, as = ZoneOffset.class)
     public ZoneOffset timezone;
 
+    //todo remove in next version
+    public String timezoneName;
+
     @Override
     public String getModeType() {
         return null;
