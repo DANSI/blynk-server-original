@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,7 +92,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
             try {
                 fileManager.overrideUserFile(user);
                 users.add(user);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 log.error("Error saving : {}.", user);
             }
         }
