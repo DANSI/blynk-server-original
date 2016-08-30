@@ -32,6 +32,7 @@ import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.ReflectionUtil;
 import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import net.glxn.qrgen.core.image.ImageType;
@@ -64,6 +65,8 @@ import static cc.blynk.server.core.protocol.enums.Command.HTTP_IS_HARDWARE_CONNE
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_NOTIFY;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_QR;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**
  * The Blynk Project.
@@ -356,6 +359,78 @@ public class HttpAPILogic {
             valueList.add(entries.getValue().value);
         }
         return updateWidgetPinData(token, pinString, valueList.toArray(new String[valueList.size()]));
+    }
+
+    @PUT
+    @Path("{token}/pin/{pin}/{property}")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    public Response updateWidgetProperty(@PathParam("token") String token,
+                                         @PathParam("pin") String pinString,
+                                         @PathParam("property") String property,
+                                         String[] values) {
+        globalStats.mark(HTTP_UPDATE_PIN_DATA);
+
+        if (values.length == 0) {
+            log.error("No properties for update provided.");
+            return Response.badRequest("No properties for update provided.");
+        }
+
+        User user = userDao.tokenManager.getUserByToken(token);
+
+        if (user == null) {
+            log.error("Requested token {} not found.", token);
+            return Response.badRequest("Invalid token.");
+        }
+
+        Integer dashId = user.getDashIdByToken(token);
+
+        if (dashId == null) {
+            log.error("Dash id for token {} not found. User {}", token, user.name);
+            return Response.badRequest("Didn't find dash id for token.");
+        }
+
+        DashBoard dash = user.profile.getDashById(dashId);
+
+        //todo add test for this use case
+        if (!dash.isActive) {
+            return Response.badRequest("Project is not active.");
+        }
+
+        PinType pinType;
+        byte pin;
+        try {
+            pinType = PinType.getPinType(pinString.charAt(0));
+            pin = Byte.parseByte(pinString.substring(1));
+        } catch (NumberFormatException | IllegalCommandBodyException e) {
+            log.error("Wrong pin format. {}", pinString);
+            return Response.badRequest("Wrong pin format.");
+        }
+
+        //for now supporting only virtual pins
+        Widget widget = dash.findWidgetByPin(pin, pinType);
+
+        if (widget == null || pinType != PinType.VIRTUAL) {
+            log.error("No widget for SetWidgetProperty command.");
+            return Response.badRequest("No widget for SetWidgetProperty command.");
+        }
+
+        boolean isChanged;
+        try {
+            //todo for now supporting only single property
+            isChanged = ReflectionUtil.setProperty(widget, property, values[0]);
+        } catch (Exception e) {
+            log.error("Error setting widget property. Reason : {}", e.getMessage());
+            return Response.badRequest("Error setting widget property.");
+        }
+
+        if (isChanged) {
+            Session session = sessionDao.userSession.get(user);
+            session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id + BODY_SEPARATOR_STRING +
+                    pin + BODY_SEPARATOR_STRING + property + BODY_SEPARATOR_STRING + values[0]);
+            return Response.ok();
+        }
+
+        return Response.badRequest("Error setting widget property.");
     }
 
     @PUT
