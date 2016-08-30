@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.time.LocalTime;
 import java.time.ZoneId;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 
 /**
  * The Blynk Project.
@@ -72,28 +72,30 @@ public class TimerWorker implements Runnable {
     }
 
     private void send(User user, Timer timer, long curSeconds, int dashId) {
-        if (sendMessageIfTicked(user, curSeconds, timer.startTime, timer.startValue, dashId)) {
+        if (isTicked(curSeconds, timer.startTime, timer.startValue)) {
+            triggerTimer(user, timer.startValue, dashId);
             timer.value = timer.startValue;
         }
-        if (sendMessageIfTicked(user, curSeconds, timer.stopTime, timer.stopValue, dashId)) {
+
+        if (isTicked(curSeconds, timer.stopTime, timer.stopValue)) {
+            triggerTimer(user, timer.stopValue, dashId);
             timer.value = timer.stopValue;
         }
     }
 
-    //todo simplify, move "if" to separate method
-    private boolean sendMessageIfTicked(User user, long curSeconds, long time, String value, int dashId) {
-        if (time != -1 && value != null && !value.equals("") && curSeconds == time) {
-            tickedTimers++;
-            Session session = sessionDao.userSession.get(user);
-            if (session != null) {
-                onlineTimers++;
-                if (session.getHardwareChannels().size() > 0) {
-                    session.sendMessageToHardware(dashId, HARDWARE, 7777, value);
-                }
+    private void triggerTimer(User user, String value, int dashId) {
+        tickedTimers++;
+        Session session = sessionDao.userSession.get(user);
+        if (session != null) {
+            onlineTimers++;
+            if (session.getHardwareChannels().size() > 0) {
+                session.sendMessageToHardware(dashId, HARDWARE, 7777, value);
             }
-            return true;
         }
-        return false;
+    }
+
+    private static boolean isTicked(long curSeconds, long startTime, String value) {
+        return curSeconds == startTime && startTime != -1 && value != null && !value.equals("");
     }
 
 }
