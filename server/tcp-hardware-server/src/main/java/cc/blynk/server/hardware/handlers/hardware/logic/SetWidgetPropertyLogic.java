@@ -60,6 +60,10 @@ public class SetWidgetPropertyLogic {
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(state.dashId);
 
+        if (!dash.isActive) {
+            return;
+        }
+
         //for now supporting only virtual pins
         Widget widget = dash.findWidgetByPin(pin, PinType.VIRTUAL);
 
