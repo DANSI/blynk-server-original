@@ -305,7 +305,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testPutExtraWithNoWidget() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/extra/v10");
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/extra/pin/v10");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
         request.setEntity(new StringEntity("[{\"timestamp\" : 123, \"value\":\"100\"}]", ContentType.APPLICATION_JSON));
 

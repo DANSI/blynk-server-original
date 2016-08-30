@@ -506,7 +506,7 @@ public class HttpAPILogic {
     }
 
     @PUT
-    @Path("{token}/pin/extra/{pin}")
+    @Path("{token}/extra/pin/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     public Response updateWidgetPinData(@PathParam("token") String token,
                                         @PathParam("pin") String pinString,
