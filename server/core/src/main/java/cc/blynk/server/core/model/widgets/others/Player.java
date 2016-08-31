@@ -16,7 +16,7 @@ public class Player extends OnePinWidget {
 
     @Override
     public int getPrice() {
-        return 0;
+        return 400;
     }
 
 }
