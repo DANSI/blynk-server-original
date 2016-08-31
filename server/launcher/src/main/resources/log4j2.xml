@@ -8,7 +8,7 @@
             </PatternLayout>
         </File>
 
-        <File name="postgresDBLog" fileName="${sys:logs.folder}/postgres.log"
+        <RollingFile name="postgresDBLog" fileName="${sys:logs.folder}/postgres.log"
               filePattern="${sys:logs.folder}/archive/postgres.log.%d{yyyy-MM-dd}">
             <PatternLayout>
                 <pattern>%d{yyyy-MM-dd} %d{HH:mm:ss.SSS} - %msg%n</pattern>
@@ -16,7 +16,7 @@
             <Policies>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
-        </File>
+        </RollingFile>
 
         <RollingFile name="workersLog" fileName="${sys:logs.folder}/worker.log"
                      filePattern="${sys:logs.folder}/archive/worker.log.%d{yyyy-MM-dd}">
