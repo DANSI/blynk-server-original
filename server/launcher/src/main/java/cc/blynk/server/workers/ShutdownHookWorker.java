@@ -51,6 +51,8 @@ public class ShutdownHookWorker implements Runnable {
 
         holder.dbManager.close();
 
+        holder.transportTypeHolder.close();
+
         System.out.println("Done.");
     }
 

@@ -2,7 +2,11 @@ package cc.blynk.server.core;
 
 import cc.blynk.server.TransportTypeHolder;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.ServerChannel;
 import io.netty.channel.socket.SocketChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,8 +25,6 @@ public abstract class BaseServer implements Closeable {
     protected static final Logger log = LogManager.getLogger(BaseServer.class);
 
     protected final int port;
-    private EventLoopGroup bossGroup;
-    private EventLoopGroup workerGroup;
     private ChannelFuture cf;
 
     protected BaseServer(int port) {
@@ -50,9 +52,6 @@ public abstract class BaseServer implements Closeable {
                     .childHandler(getChannelInitializer());
 
             this.cf = b.bind(port).sync();
-
-            this.bossGroup = bossGroup;
-            this.workerGroup = workerGroup;
         } catch (Exception e) {
             log.error("Error initializing {}, port {}", getServerName(), port, e);
             throw e;
@@ -66,12 +65,5 @@ public abstract class BaseServer implements Closeable {
     @Override
     public void close() {
         cf.channel().close().awaitUninterruptibly();
-
-        if (bossGroup != null) {
-            bossGroup.shutdownGracefully();
-        }
-        if (workerGroup != null) {
-            workerGroup.shutdownGracefully();
-        }
     }
 }

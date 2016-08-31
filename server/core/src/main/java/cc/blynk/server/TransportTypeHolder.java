@@ -10,6 +10,8 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.Closeable;
+
 /**
  * Used in order to re-use EventLoopGroups, this is done for performance reasons.
  * To create less threads and minimize memory footprint (recommended way by netty devs)
@@ -18,7 +20,7 @@ import org.apache.logging.log4j.Logger;
  * Created by Dmitriy Dumanskiy.
  * Created on 25.04.15.
  */
-public class TransportTypeHolder {
+public class TransportTypeHolder implements Closeable {
 
     private static final Logger log = LogManager.getLogger(TransportTypeHolder.class);
 
@@ -49,4 +51,15 @@ public class TransportTypeHolder {
             channelClass = NioServerSocketChannel.class;
         }
     }
+
+    @Override
+    public void close() {
+        if (bossGroup != null) {
+            bossGroup.shutdownGracefully();
+        }
+        if (workerGroup != null) {
+            workerGroup.shutdownGracefully();
+        }
+    }
+
 }
