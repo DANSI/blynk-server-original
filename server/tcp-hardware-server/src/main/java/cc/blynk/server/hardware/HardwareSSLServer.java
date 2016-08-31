@@ -54,8 +54,6 @@ public class HardwareSSLServer extends BaseServer {
                 pipeline.addLast("HSSLNotLogged", userNotLoggedHandler);
             }
         };
-
-        log.info("SSL hardware port {}.", port);
     }
 
     @Override
@@ -65,12 +63,12 @@ public class HardwareSSLServer extends BaseServer {
 
     @Override
     protected String getServerName() {
-        return "hardware ssl";
+        return "Hardware SSL";
     }
 
     @Override
     public void close() {
-        System.out.println("Shutting down ssl hardware server...");
+        System.out.println("Shutting down Hardware SSL server...");
         super.close();
     }
 

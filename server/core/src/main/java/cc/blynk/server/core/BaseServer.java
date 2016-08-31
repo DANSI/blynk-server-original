@@ -24,7 +24,7 @@ public abstract class BaseServer implements Closeable {
 
     protected static final Logger log = LogManager.getLogger(BaseServer.class);
 
-    protected final int port;
+    private final int port;
     private ChannelFuture cf;
 
     protected BaseServer(int port) {
@@ -56,6 +56,8 @@ public abstract class BaseServer implements Closeable {
             log.error("Error initializing {}, port {}", getServerName(), port, e);
             throw e;
         }
+
+        log.info("{} server listening at {} port.", getServerName(), port);
     }
 
     protected abstract ChannelInitializer<SocketChannel> getChannelInitializer();

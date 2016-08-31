@@ -47,8 +47,6 @@ public class MQTTHardwareServer extends BaseServer {
         };
 
         log.debug("hard.socket.idle.timeout = {}", hardTimeoutSecs);
-
-        log.info("Mqtt hardware server port {}.", port);
     }
 
     @Override
@@ -58,12 +56,12 @@ public class MQTTHardwareServer extends BaseServer {
 
     @Override
     protected String getServerName() {
-        return "mqtt";
+        return "Mqtt hardware";
     }
 
     @Override
     public void close() {
-        System.out.println("Shutting down mqtt hardware server...");
+        System.out.println("Shutting down Mqtt hardware server...");
         super.close();
     }
 

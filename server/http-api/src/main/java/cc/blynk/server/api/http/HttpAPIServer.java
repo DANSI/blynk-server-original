@@ -48,8 +48,6 @@ public class HttpAPIServer extends BaseServer {
                 pipeline.addLast("HttpHandler", new HttpHandler(holder.userDao, holder.sessionDao, holder.stats));
             }
         };
-
-        log.info("HTTP API port {}.", port);
     }
 
     @Override

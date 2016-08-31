@@ -67,8 +67,6 @@ public class WebSocketSSLServer extends BaseServer {
                 pipeline.addLast("WSSNotLogged", userNotLoggedHandler);
             }
         };
-
-        log.info("Web SSL Sockets port {}.", port);
     }
 
     @Override

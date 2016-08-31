@@ -46,8 +46,6 @@ public class HardwareServer extends BaseServer {
         };
 
         log.debug("hard.socket.idle.timeout = {}", hardTimeoutSecs);
-
-        log.info("Plain tcp/ip hardware server port {}.", port);
     }
 
     @Override
@@ -57,12 +55,12 @@ public class HardwareServer extends BaseServer {
 
     @Override
     protected String getServerName() {
-        return "hardware";
+        return "Hardware plain tcp/ip";
     }
 
     @Override
     public void close() {
-        System.out.println("Shutting down plain tcp/ip hardware server...");
+        System.out.println("Shutting down Hardware plain tcp/ip server...");
         super.close();
     }
 

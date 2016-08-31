@@ -65,8 +65,6 @@ public class AppServer extends BaseServer {
                 pipeline.addLast("ANotLogged", userNotLoggedHandler);
             }
         };
-
-        log.info("Application server port {}.", port);
     }
 
     @Override
@@ -76,12 +74,12 @@ public class AppServer extends BaseServer {
 
     @Override
     protected String getServerName() {
-        return "application";
+        return "Application";
     }
 
     @Override
     public void close() {
-        System.out.println("Shutting down application SSL server...");
+        System.out.println("Shutting down Application SSL server...");
         super.close();
     }
 

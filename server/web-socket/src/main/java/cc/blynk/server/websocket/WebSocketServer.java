@@ -57,8 +57,6 @@ public class WebSocketServer extends BaseServer {
                 pipeline.addLast("WSNotLogged", userNotLoggedHandler);
             }
         };
-
-        log.info("Web Sockets port {}.", port);
     }
 
     @Override

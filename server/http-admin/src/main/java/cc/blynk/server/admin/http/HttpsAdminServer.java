@@ -27,6 +27,7 @@ import io.netty.handler.stream.ChunkedWriteHandler;
  * Created on 1/12/2015.
  */
 public class HttpsAdminServer extends BaseServer {
+
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HttpsAdminServer(Holder holder, boolean isUnpacked) {
@@ -60,8 +61,6 @@ public class HttpsAdminServer extends BaseServer {
                 pipeline.addLast(new HttpHandler(holder.userDao, holder.sessionDao, holder.stats));
             }
         };
-
-        log.info("HTTPS admin UI port {}.", port);
     }
 
     @Override
