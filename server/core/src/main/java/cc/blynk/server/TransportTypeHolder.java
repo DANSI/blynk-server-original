@@ -27,7 +27,6 @@ public class TransportTypeHolder implements Closeable {
     public final EventLoopGroup bossGroup;
     public final EventLoopGroup workerGroup;
     public final Class<? extends ServerChannel> channelClass;
-    public final boolean epollEnabled;
 
     public TransportTypeHolder(ServerProperties serverProperties) {
         this(serverProperties.getBoolProperty("enable.native.epoll.transport"),
@@ -39,7 +38,6 @@ public class TransportTypeHolder implements Closeable {
     }
 
     private TransportTypeHolder(boolean enableNativeEpoll, int workerThreads) {
-        epollEnabled = enableNativeEpoll;
         if (enableNativeEpoll) {
             log.warn("Using native epoll transport.");
             bossGroup = new EpollEventLoopGroup(1);
