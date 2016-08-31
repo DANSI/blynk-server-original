@@ -1,6 +1,5 @@
-package cc.blynk.server.core.model.widgets.others;
+package cc.blynk.server.core.model.widgets.ui;
 
-import cc.blynk.server.core.model.widgets.ui.Table;
 import cc.blynk.utils.JsonParser;
 import org.junit.Test;
 
