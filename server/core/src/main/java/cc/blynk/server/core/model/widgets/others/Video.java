@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model.widgets.outputs;
+package cc.blynk.server.core.model.widgets.others;
 
 import cc.blynk.server.core.model.widgets.NoPinWidget;
 

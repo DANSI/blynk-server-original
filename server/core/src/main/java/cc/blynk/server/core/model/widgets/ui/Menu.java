@@ -1,6 +1,7 @@
-package cc.blynk.server.core.model.widgets.controls;
+package cc.blynk.server.core.model.widgets.ui;
 
 import cc.blynk.server.core.model.widgets.OnePinWidget;
+import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -9,29 +10,13 @@ import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
- * Created on 27.08.16.
+ * Created on 28.03.16.
  */
-public class TimeInput extends OnePinWidget implements HardwareSyncWidget {
+public class Menu extends OnePinWidget implements HardwareSyncWidget {
 
-    public String format;
+    public String[] labels;
 
-    public int[] days;
-
-    public int startAt;
-
-    public int stopAt;
-
-    public String timezone;
-
-    public String timezoneName;
-
-    public boolean isStartStopAllowed;
-
-    public boolean isDayOfWeekAllowed;
-
-    public boolean isSunsetSunriseAllowed;
-
-    public boolean isTimezoneAllowed;
+    public String hint;
 
     @Override
     public void send(ChannelHandlerContext ctx, int msgId) {
@@ -48,6 +33,7 @@ public class TimeInput extends OnePinWidget implements HardwareSyncWidget {
 
     @Override
     public int getPrice() {
-        return 200;
+        return 400;
     }
+
 }

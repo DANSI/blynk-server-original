@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model.widgets.others;
+package cc.blynk.server.core.model.widgets.ui;
 
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 
