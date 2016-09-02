@@ -4,8 +4,21 @@ import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.utils.ContentTypeUtil;
 import cc.blynk.utils.ServerProperties;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.*;
-import io.netty.handler.codec.http.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.DefaultFileRegion;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.DefaultHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpChunkedInput;
+import io.netty.handler.codec.http.HttpHeaderValues;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpUtil;
+import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
 import io.netty.util.CharsetUtil;
@@ -17,11 +30,25 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
-import static io.netty.handler.codec.http.HttpHeaders.Names.*;
-import static io.netty.handler.codec.http.HttpResponseStatus.*;
-import static io.netty.handler.codec.http.HttpVersion.*;
+import static io.netty.handler.codec.http.HttpHeaders.Names.CACHE_CONTROL;
+import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
+import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpHeaders.Names.DATE;
+import static io.netty.handler.codec.http.HttpHeaders.Names.EXPIRES;
+import static io.netty.handler.codec.http.HttpHeaders.Names.IF_MODIFIED_SINCE;
+import static io.netty.handler.codec.http.HttpHeaders.Names.LAST_MODIFIED;
+import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
+import static io.netty.handler.codec.http.HttpResponseStatus.FORBIDDEN;
+import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
+import static io.netty.handler.codec.http.HttpResponseStatus.NOT_MODIFIED;
+import static io.netty.handler.codec.http.HttpResponseStatus.OK;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
  * The Blynk Project.
@@ -120,7 +147,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
 
         FullHttpRequest req = (FullHttpRequest) msg;
 
-        StaticFile staticFile = getStaticPath(req.getUri());
+        StaticFile staticFile = getStaticPath(req.uri());
         if (staticFile != null) {
             try {
                 serveStatic(ctx, req, staticFile);
@@ -143,12 +170,12 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
     }
 
     private void serveStatic(ChannelHandlerContext ctx, FullHttpRequest request, StaticFile staticFile) throws Exception {
-        if (!request.getDecoderResult().isSuccess()) {
+        if (!request.decoderResult().isSuccess()) {
             sendError(ctx, BAD_REQUEST);
             return;
         }
 
-        if (request.getMethod() != HttpMethod.GET) {
+        if (request.method() != HttpMethod.GET) {
             return;
         }
 
@@ -157,15 +184,15 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
         if (isUnpacked) {
             //.substring(1) is all after "/" part
             if (staticFile.isDirectPath) {
-                file = new File(request.getUri());
+                file = new File(request.uri());
             } else {
-                file = ServerProperties.getFileInCurrentDir(request.getUri()).toFile();
+                file = ServerProperties.getFileInCurrentDir(request.uri()).toFile();
             }
         } else {
             //for local mode / running from ide
-            file = new File("./server/http-admin/target/classes" + request.getUri());
+            file = new File("./server/http-admin/target/classes" + request.uri());
             if (!file.exists()) {
-                file = new File("./server/http-api/target/classes" + request.getUri());
+                file = new File("./server/http-api/target/classes" + request.uri());
             }
         }
 
@@ -205,15 +232,15 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
         long fileLength = raf.length();
 
         io.netty.handler.codec.http.HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
-        HttpHeaders.setContentLength(response, fileLength);
+        HttpUtil.setContentLength(response, fileLength);
 
         //setting content type
         response.headers().set(CONTENT_TYPE, ContentTypeUtil.getContentType(file.getName()));
 
         //todo setup caching for files.
         setDateAndCacheHeaders(response, file, staticFile);
-        if (HttpHeaders.isKeepAlive(request)) {
-            response.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+        if (HttpUtil.isKeepAlive(request)) {
+            response.headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         }
 
         // Write the initial line and the header.
@@ -235,7 +262,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
         }
 
         // Decide whether to close the connection or not.
-        if (!HttpHeaders.isKeepAlive(request)) {
+        if (!HttpUtil.isKeepAlive(request)) {
             // Close the connection when the whole content is written out.
             lastContentFuture.addListener(ChannelFutureListener.CLOSE);
         }
