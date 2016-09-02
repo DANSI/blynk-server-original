@@ -13,6 +13,8 @@ public class Table extends OnePinWidget {
 
     public Row[] rows;
 
+    public int currentRowIndex;
+
     public boolean isReoderingAllowed;
 
     public boolean isClickableRows;
