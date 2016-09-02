@@ -596,7 +596,7 @@ public class MainWorkflowTest extends IntegrationBase {
         StorageWorker.write(userReportFile, 2.2, 2L);
 
         clientPair.appClient.send("export 1 14");
-        verify(mailWrapper, timeout(1000)).send(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/tmp/blynk/dima@mail.ua_1_a7.csv.gz"), eq("text/html"));
+        verify(mailWrapper, timeout(1000)).send(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/dima@mail.ua_1_a7.csv.gz"), eq("text/html"));
     }
 
     @Test

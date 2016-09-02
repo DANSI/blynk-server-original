@@ -22,8 +22,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_EXCEPTION;
+import static cc.blynk.server.core.protocol.enums.Response.NO_DATA_EXCEPTION;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
+import static cc.blynk.utils.ByteBufUtil.ok;
 
 /**
  * Sends graph pins data in csv format via to user email.
@@ -46,7 +48,7 @@ public class ExportGraphDataLogic {
         this.reportingDao = reportingDao;
         this.blockingIOProcessor = blockingIOProcessor;
         this.mailWrapper = mailWrapper;
-        this.csvDownloadUrl = "http://" + host + ":" + httpPort;
+        this.csvDownloadUrl = "http://" + host + ":" + httpPort + "/";
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -76,7 +78,7 @@ public class ExportGraphDataLogic {
                     if (pin != null) {
                         Path path = FileUtils.createCSV(reportingDao, user.name, dashId, pin.pinType, pin.pin);
                         if (path != null) {
-                            pinsCSVFilePath.add(new FileLink(path, dashName, pin.pinType, pin.pin));
+                            pinsCSVFilePath.add(new FileLink(path.getFileName(), dashName, pin.pinType, pin.pin));
                         }
                     }
                 }

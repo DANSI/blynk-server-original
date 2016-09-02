@@ -1,6 +1,7 @@
 package cc.blynk.server.api.http;
 
 import cc.blynk.core.http.handlers.StaticFile;
+import cc.blynk.core.http.handlers.StaticFileEdsWith;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UrlMapperHandler;
 import cc.blynk.core.http.rest.HandlerRegistry;
@@ -44,7 +45,7 @@ public class HttpAPIServer extends BaseServer {
                 pipeline.addLast("HttpChunkedWrite", new ChunkedWriteHandler());
                 pipeline.addLast("HttpUrlMapper", new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
                 pipeline.addLast("HttpStaticFile", new StaticFileHandler(true,
-                        new StaticFile("/static", false), new StaticFile(FileUtils.CSV_DIR, true, false)));
+                        new StaticFile("/static"), new StaticFileEdsWith(FileUtils.CSV_DIR, ".csv.gz")));
                 pipeline.addLast("HttpHandler", new HttpHandler(holder.userDao, holder.sessionDao, holder.stats));
             }
         };

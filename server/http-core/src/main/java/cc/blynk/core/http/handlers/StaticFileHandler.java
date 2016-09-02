@@ -29,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -162,7 +163,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
 
     private StaticFile getStaticPath(String path) {
         for (StaticFile staticPath : staticPaths) {
-            if (path.startsWith(staticPath.path)) {
+            if (staticPath.isStatic(path)) {
                 return staticPath;
             }
         }
@@ -182,9 +183,9 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
         File file;
         //running from jar
         if (isUnpacked) {
-            //.substring(1) is all after "/" part
-            if (staticFile.isDirectPath) {
-                file = new File(request.uri());
+            if (staticFile instanceof StaticFileEdsWith) {
+                StaticFileEdsWith staticFileEdsWith = (StaticFileEdsWith) staticFile;
+                file = Paths.get(staticFileEdsWith.folderPathForStatic, request.uri()).toFile();
             } else {
                 file = ServerProperties.getFileInCurrentDir(request.uri()).toFile();
             }

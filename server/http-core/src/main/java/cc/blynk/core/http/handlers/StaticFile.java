@@ -9,19 +9,19 @@ public class StaticFile {
 
     public final String path;
 
-    public final boolean isDirectPath;
-
     public final boolean doCaching;
 
-    public StaticFile(String path, boolean isDirectPath) {
+    public StaticFile(String path) {
         this.path = path;
-        this.isDirectPath = isDirectPath;
-        this.doCaching = true;
+        this.doCaching = false;
     }
 
-    public StaticFile(String path, boolean isDirectPath, boolean doCaching) {
+    public StaticFile(String path, boolean doCaching) {
         this.path = path;
-        this.isDirectPath = isDirectPath;
         this.doCaching = doCaching;
+    }
+
+    public boolean isStatic(String url) {
+        return url.startsWith(path);
     }
 }
