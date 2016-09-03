@@ -7,7 +7,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class GPS extends OnePinWidget {
+public class GPSTrigger extends OnePinWidget {
 
     public boolean stream;
 

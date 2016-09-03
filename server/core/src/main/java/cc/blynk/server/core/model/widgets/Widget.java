@@ -10,7 +10,8 @@ import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.controls.Terminal;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.controls.TwoAxisJoystick;
-import cc.blynk.server.core.model.widgets.inputs.GPS;
+import cc.blynk.server.core.model.widgets.inputs.GPSStreaming;
+import cc.blynk.server.core.model.widgets.inputs.GPSTrigger;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.SMS;
@@ -72,8 +73,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Video.class, name = "VIDEO"),
 
         //inputs
-        @JsonSubTypes.Type(value = GPS.class, name = "GPS_TRIGGER"),
-        @JsonSubTypes.Type(value = GPS.class, name = "GPS_STREAMING"),
+        @JsonSubTypes.Type(value = GPSTrigger.class, name = "GPS_TRIGGER"),
+        @JsonSubTypes.Type(value = GPSStreaming.class, name = "GPS_STREAMING"),
 
         //notifications
         @JsonSubTypes.Type(value = Twitter.class, name = "TWITTER"),
