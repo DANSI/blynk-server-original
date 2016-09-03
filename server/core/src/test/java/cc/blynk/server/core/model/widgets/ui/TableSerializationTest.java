@@ -32,7 +32,7 @@ public class TableSerializationTest {
         table.rows[0].hardwareId = 1;
 
         String json = JsonParser.mapper.writeValueAsString(table);
-        assertEquals("{\"type\":\"TABLE\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"columns\":[{\"name\":\"indicator\"},{\"name\":\"name\"},{\"name\":\"value\"}],\"rows\":[{\"isSelected\":false,\"name\":\"Adskiy trash\",\"value\":\"6:33\",\"clientId\":1,\"hardwareId\":1}],\"isReoderingAllowed\":false,\"isClickableRows\":false}", json);
+        assertEquals("{\"type\":\"TABLE\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"columns\":[{\"name\":\"indicator\"},{\"name\":\"name\"},{\"name\":\"value\"}],\"rows\":[{\"isSelected\":false,\"name\":\"Adskiy trash\",\"value\":\"6:33\",\"clientId\":1,\"hardwareId\":1}],\"currentRowIndex\":0,\"isReoderingAllowed\":false,\"isClickableRows\":false}", json);
     }
 
 }
