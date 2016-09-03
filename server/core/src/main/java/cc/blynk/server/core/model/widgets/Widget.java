@@ -72,7 +72,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Video.class, name = "VIDEO"),
 
         //inputs
-        @JsonSubTypes.Type(value = GPS.class, name = "GPS"),
+        @JsonSubTypes.Type(value = GPS.class, name = "GPS_TRIGGER"),
+        @JsonSubTypes.Type(value = GPS.class, name = "GPS_STREAMING"),
 
         //notifications
         @JsonSubTypes.Type(value = Twitter.class, name = "TWITTER"),
