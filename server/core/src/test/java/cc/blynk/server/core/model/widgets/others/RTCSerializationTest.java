@@ -1,12 +1,15 @@
 package cc.blynk.server.core.model.widgets.others;
 
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.utils.JsonParser;
 import org.junit.Test;
 
 import java.time.ZoneOffset;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * The Blynk Project.

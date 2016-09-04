@@ -2,7 +2,13 @@ package cc.blynk.server.core.model.widgets.ui;
 
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
+import cc.blynk.server.core.model.widgets.others.rtc.StringToZoneId;
+import cc.blynk.server.core.model.widgets.others.rtc.ZoneIdToString;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.netty.channel.ChannelHandlerContext;
+
+import java.time.ZoneId;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
@@ -24,7 +30,9 @@ public class TimeInput extends OnePinWidget implements HardwareSyncWidget {
 
     public String timezone;
 
-    public String timezoneName;
+    @JsonSerialize(using = ZoneIdToString.class)
+    @JsonDeserialize(using = StringToZoneId.class, as = ZoneId.class)
+    public ZoneId tzName;
 
     public boolean isStartStopAllowed;
 

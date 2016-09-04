@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model.widgets.others;
+package cc.blynk.server.core.model.widgets.others.rtc;
 
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -71,25 +71,6 @@ public class RTC extends OnePinWidget implements HardwareSyncWidget {
         @Override
         public ZoneOffset deserialize(JsonParser p, DeserializationContext ctx) throws IOException {
             return ZoneOffset.of(p.readValueAs(String.class));
-        }
-
-    }
-
-    private static class ZoneIdToString extends JsonSerializer<Object> {
-
-        @Override
-        public void serialize(Object value, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException {
-            String result = value.toString();
-            jsonGenerator.writeObject(result);
-        }
-
-    }
-
-    private static class StringToZoneId extends JsonDeserializer<ZoneId> {
-
-        @Override
-        public ZoneId deserialize(JsonParser p, DeserializationContext ctx) throws IOException {
-            return ZoneId.of(p.readValueAs(String.class));
         }
 
     }
