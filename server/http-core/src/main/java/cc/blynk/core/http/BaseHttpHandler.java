@@ -43,7 +43,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
 
         HttpRequest req = (HttpRequest) msg;
 
-        log.info("{} : {}", req.method().name(), req.uri());
+        log.debug("{} : {}", req.method().name(), req.uri());
 
         globalStats.mark(Command.HTTP_TOTAL);
 
