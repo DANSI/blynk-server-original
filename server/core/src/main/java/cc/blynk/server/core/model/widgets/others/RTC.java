@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.io.IOException;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -81,6 +81,7 @@ public class RTC extends OnePinWidget implements HardwareSyncWidget {
 
     private String getTime() {
         ZoneOffset offset = timezone == null ? ZoneOffset.UTC : timezone;
-        return String.valueOf(Instant.now().getEpochSecond() + offset.getTotalSeconds());
+        LocalDateTime ldt = LocalDateTime.now(offset);
+        return String.valueOf(ldt.toEpochSecond(ZoneOffset.UTC));
     }
 }
