@@ -3,6 +3,7 @@ package cc.blynk.server.core.model.widgets.others;
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
+import cc.blynk.utils.DateTimeUtils;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -15,6 +16,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -27,12 +29,14 @@ import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
  */
 public class RTC extends OnePinWidget implements HardwareSyncWidget {
 
-    @JsonSerialize(using = ZoneIdToString.class)
-    @JsonDeserialize(using = StringToZoneId.class, as = ZoneOffset.class)
+    //todo remove in future updates
+    @JsonSerialize(using = ZoneOffsetToString.class)
+    @JsonDeserialize(using = StringToZoneOffset.class, as = ZoneOffset.class)
     public ZoneOffset timezone;
 
-    //todo remove in next version
-    public String timezoneName;
+    @JsonSerialize(using = ZoneIdToString.class)
+    @JsonDeserialize(using = StringToZoneId.class, as = ZoneId.class)
+    public ZoneId tzName;
 
     @Override
     public String getModeType() {
@@ -49,7 +53,8 @@ public class RTC extends OnePinWidget implements HardwareSyncWidget {
         return 100;
     }
 
-    private static class ZoneIdToString extends JsonSerializer<Object> {
+    private static class ZoneOffsetToString extends JsonSerializer<Object> {
+
         @Override
         public void serialize(Object value, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException {
             String result = value.toString();
@@ -58,14 +63,35 @@ public class RTC extends OnePinWidget implements HardwareSyncWidget {
             }
             jsonGenerator.writeObject(result);
         }
+
     }
 
-    private static class StringToZoneId extends JsonDeserializer<ZoneOffset> {
+    private static class StringToZoneOffset extends JsonDeserializer<ZoneOffset> {
 
         @Override
-        public ZoneOffset deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        public ZoneOffset deserialize(JsonParser p, DeserializationContext ctx) throws IOException {
             return ZoneOffset.of(p.readValueAs(String.class));
         }
+
+    }
+
+    private static class ZoneIdToString extends JsonSerializer<Object> {
+
+        @Override
+        public void serialize(Object value, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException {
+            String result = value.toString();
+            jsonGenerator.writeObject(result);
+        }
+
+    }
+
+    private static class StringToZoneId extends JsonDeserializer<ZoneId> {
+
+        @Override
+        public ZoneId deserialize(JsonParser p, DeserializationContext ctx) throws IOException {
+            return ZoneId.of(p.readValueAs(String.class));
+        }
+
     }
 
     @Override
@@ -80,8 +106,16 @@ public class RTC extends OnePinWidget implements HardwareSyncWidget {
     }
 
     private String getTime() {
-        ZoneOffset offset = timezone == null ? ZoneOffset.UTC : timezone;
-        LocalDateTime ldt = LocalDateTime.now(offset);
+        ZoneId zone;
+        if (tzName != null) {
+            zone = tzName;
+        } else if (timezone != null) {
+            zone = timezone;
+        } else {
+            zone = DateTimeUtils.UTC;
+        }
+
+        LocalDateTime ldt = LocalDateTime.now(zone);
         return String.valueOf(ldt.toEpochSecond(ZoneOffset.UTC));
     }
 }

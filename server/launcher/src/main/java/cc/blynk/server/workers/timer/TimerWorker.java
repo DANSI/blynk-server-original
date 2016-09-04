@@ -7,11 +7,11 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
+import cc.blynk.utils.DateTimeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.LocalTime;
-import java.time.ZoneId;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 
@@ -29,7 +29,6 @@ public class TimerWorker implements Runnable {
 
     private final UserDao userDao;
     private final SessionDao sessionDao;
-    private final ZoneId UTC = ZoneId.of("UTC");
 
     private int tickedTimers;
     private int onlineTimers;
@@ -45,7 +44,7 @@ public class TimerWorker implements Runnable {
         tickedTimers = 0;
         onlineTimers = 0;
 
-        LocalTime localTime = LocalTime.now(UTC);
+        LocalTime localTime = LocalTime.now(DateTimeUtils.UTC);
 
         long curSeconds = localTime.getSecond() + localTime.getMinute() * 60 + localTime.getHour() * 3600;
         checkTimers(curSeconds);

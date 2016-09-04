@@ -25,7 +25,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileAttribute;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
@@ -258,6 +261,44 @@ public class SyncWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testHardSyncReturnRTCWithUTCTimezonePlus11() throws Exception {
+        ZoneId zoneId = ZoneId.of("Australia/Sydney");
+
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+                "\"x\":0,\"y\":0,\"width\":0,\"height\":0," +
+                "\"tzName\":\"TZ\"}").replace("TZ", zoneId.toString()));
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("hardsync vr 99");
+
+        LocalDateTime dt = LocalDateTime.now();
+        ZonedDateTime zdt = dt.atZone(zoneId);
+        ZoneOffset offset = zdt.getOffset();
+        ZoneOffset offset2 = ZoneOffset.of("+10:00");
+
+        long expectedTS = System.currentTimeMillis() / 1000 + offset.getTotalSeconds();
+        long expectedTS2 = System.currentTimeMillis() / 1000 + offset2.getTotalSeconds();
+
+        ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
+
+        List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
+        StringMessage hardMessage = arguments.get(0);
+        assertEquals(1, hardMessage.id);
+        assertEquals(HARDWARE, hardMessage.command);
+        assertEquals(16, hardMessage.length);
+        assertTrue(hardMessage.body.startsWith(b("vw 99")));
+        String tsString = hardMessage.body.split("\0")[2];
+        long ts = Long.valueOf(tsString);
+
+        assertEquals(expectedTS, ts, 2);
+        assertEquals(expectedTS2, ts, 2);
+    }
+
+
+    @Test
+    //todo remove in future versions
     public void testHardSyncReturnRTCWithUTCTimezonePlus3() throws Exception {
         ZoneOffset offset = ZoneOffset.of("+03:00");
 
@@ -287,6 +328,7 @@ public class SyncWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    //todo remove in future versions
     public void testHardSyncReturnRTCWithUTCTimezoneMinus3() throws Exception {
         ZoneOffset offset = ZoneOffset.of("-03:00");
 
