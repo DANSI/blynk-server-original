@@ -54,7 +54,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class RuleEngineTest extends IntegrationBase {
+public class EventorTest extends IntegrationBase {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;

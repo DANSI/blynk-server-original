@@ -2,7 +2,7 @@ package cc.blynk.integration.http;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.integration.tcp.RuleEngineTest;
+import cc.blynk.integration.tcp.EventorTest;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
@@ -146,7 +146,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void testEventorWorksViaHttpAPI() throws Exception {
-        Eventor eventor = RuleEngineTest.oneRuleEventor("if v100 = 37 then setpin v2 123");
+        Eventor eventor = EventorTest.oneRuleEventor("if v100 = 37 then setpin v2 123");
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
