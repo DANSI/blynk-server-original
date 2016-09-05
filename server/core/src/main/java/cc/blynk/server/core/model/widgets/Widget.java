@@ -23,6 +23,7 @@ import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.others.Video;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
+import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.Gauge;
 import cc.blynk.server.core.model.widgets.outputs.Graph;
 import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
@@ -71,6 +72,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Graph.class, name = "GRAPH"),
         @JsonSubTypes.Type(value = LevelDisplay.class, name = "LEVEL_DISPLAY"),
         @JsonSubTypes.Type(value = Video.class, name = "VIDEO"),
+        @JsonSubTypes.Type(value = HistoryGraph.class, name = "LOGGER"),
 
         //inputs
         @JsonSubTypes.Type(value = GPSTrigger.class, name = "GPS_TRIGGER"),
@@ -82,19 +84,20 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Notification.class, name = "NOTIFICATION"),
         @JsonSubTypes.Type(value = SMS.class, name = "SMS"),
 
-        //others
+        //interface
         @JsonSubTypes.Type(value = Menu.class, name = "MENU"),
+        @JsonSubTypes.Type(value = Tabs.class, name = "TABS"),
+        @JsonSubTypes.Type(value = Player.class, name = "PLAYER"),
+        @JsonSubTypes.Type(value = Table.class, name = "TABLE"),
+
+        //others
         @JsonSubTypes.Type(value = RTC.class, name = "RTC"),
         @JsonSubTypes.Type(value = Bridge.class, name = "BRIDGE"),
-        @JsonSubTypes.Type(value = HistoryGraph.class, name = "LOGGER"),
         @JsonSubTypes.Type(value = Bluetooth.class, name = "BLUETOOTH"),
         @JsonSubTypes.Type(value = BluetoothSerial.class, name = "BLUETOOTH_SERIAL"),
         @JsonSubTypes.Type(value = Eventor.class, name = "EVENTOR"),
-        @JsonSubTypes.Type(value = Table.class, name = "TABLE"),
-        @JsonSubTypes.Type(value = Player.class, name = "PLAYER"),
 
-        //MENU
-        @JsonSubTypes.Type(value = Tabs.class, name = "TABS")
+        @JsonSubTypes.Type(value = WebHook.class, name = "WEBHOOK")
 
 })
 public abstract class Widget {
