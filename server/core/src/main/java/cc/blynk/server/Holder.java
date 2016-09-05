@@ -55,7 +55,7 @@ public class Holder {
     public ProfileSaverWorker profileSaverWorker;
 
     public final EventorProcessor eventorProcessor;
-    public final WebhookProcessor webHookProcessor;
+    public final WebhookProcessor webhookProcessor;
 
     public Holder(ServerProperties serverProperties) {
         this.props = serverProperties;
@@ -85,7 +85,7 @@ public class Holder {
         );
 
         this.eventorProcessor = new EventorProcessor(gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor);
-        this.webHookProcessor = new WebhookProcessor(transportTypeHolder.workerGroup);
+        this.webhookProcessor = new WebhookProcessor(transportTypeHolder.workerGroup);
 
         this.dbManager = new DBManager(blockingIOProcessor);
     }
@@ -119,7 +119,7 @@ public class Holder {
         );
 
         this.eventorProcessor = new EventorProcessor(gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor);
-        this.webHookProcessor = new WebhookProcessor(transportTypeHolder.workerGroup);
+        this.webhookProcessor = new WebhookProcessor(transportTypeHolder.workerGroup);
 
         this.dbManager = new DBManager(blockingIOProcessor);
     }

@@ -143,6 +143,54 @@ public class WebhookTest extends IntegrationBase {
         assertEquals("10", values.get(0));
     }
 
+    @Test
+    public void testWebhookWorksWithBlynkHttpApiWithPlaceholderQuotaLimit() throws Exception {
+        WebHook webHook = new WebHook();
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
+        webHook.method = PUT;
+        webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
+        webHook.body = "[%s]";
+        webHook.pin = 123;
+        webHook.pinType = PinType.VIRTUAL;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("hardware vw 123 10");
+        verify(clientPair.hardwareClient.responseMock, after(500).times(0)).channelRead(any(), any());
+
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Response response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        List<String> values = consumeJsonPinValues(response.getResponseBody());
+        assertEquals(1, values.size());
+        assertEquals("10", values.get(0));
+
+        clientPair.hardwareClient.send("hardware vw 123 11");
+        verify(clientPair.hardwareClient.responseMock, after(500).times(0)).channelRead(any(), any());
+
+        f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        values = consumeJsonPinValues(response.getResponseBody());
+        assertEquals(1, values.size());
+        assertEquals("10", values.get(0));
+
+
+        clientPair.hardwareClient.send("hardware vw 123 12");
+        verify(clientPair.hardwareClient.responseMock, after(500).times(0)).channelRead(any(), any());
+
+        f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        values = consumeJsonPinValues(response.getResponseBody());
+        assertEquals(1, values.size());
+        assertEquals("12", values.get(0));
+    }
+
     @Override
     public String getDataFolder() {
         return IntegrationBase.getProfileFolder();

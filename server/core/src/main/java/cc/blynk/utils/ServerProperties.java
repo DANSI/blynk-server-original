@@ -106,7 +106,8 @@ public class ServerProperties extends Properties {
     }
 
     public int getIntProperty(String propertyName, int defaultValue) {
-        if (getProperty(propertyName) == null || "".equals(getProperty(propertyName))) {
+        String prop = getProperty(propertyName);
+        if (prop == null || "".equals(prop)) {
             return defaultValue;
         }
         return ParseUtil.parseInt(getProperty(propertyName));
@@ -118,6 +119,14 @@ public class ServerProperties extends Properties {
 
     public long getLongProperty(String propertyName) {
         return ParseUtil.parseLong(getProperty(propertyName));
+    }
+
+    public long getLongProperty(String propertyName, long defaultValue) {
+        String prop = getProperty(propertyName);
+        if (prop == null || "".equals(prop)) {
+            return defaultValue;
+        }
+        return ParseUtil.parseLong(prop);
     }
 
     public String[] getCommaSeparatedValueAsArray(String propertyName) {
