@@ -9,6 +9,9 @@ public class StringUtils {
 
     public static final char BODY_SEPARATOR = '\0';
     public static final String BODY_SEPARATOR_STRING = String.valueOf(BODY_SEPARATOR);
+
+    public static final String PIN_PATTERN =  "/pin/";
+
     /**
      * Parses string similar to this : "xw 1 xxxx"
      * Every hard message has at least 3 starting chars we don't need.

@@ -1,4 +1,4 @@
-package cc.blynk.server.core.dao;
+package cc.blynk.server.core.processors;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
@@ -23,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN;
 
 /**
  * Class responsible for handling eventor logic.
@@ -47,9 +48,17 @@ public class EventorProcessor {
         this.blockingIOProcessor = blockingIOProcessor;
     }
 
-    public void processEventor(Session session, DashBoard dash, byte pin, PinType type, String triggerValue) {
+    public void process(Session session, DashBoard dash, byte pin, PinType type, String triggerValue) {
         Eventor eventor = dash.getWidgetByType(Eventor.class);
-        if (eventor == null || eventor.rules == null) {
+        if (eventor == null) {
+            return;
+        }
+
+        process(eventor, session, dash, pin, type, triggerValue);
+    }
+
+    public void process(Eventor eventor, Session session, DashBoard dash, byte pin, PinType type, String triggerValue) {
+        if (eventor.rules == null) {
             return;
         }
 
@@ -143,7 +152,7 @@ public class EventorProcessor {
     }
 
     private String format(String message, String triggerValue) {
-        return message.replaceAll("/pin/", triggerValue);
+        return message.replaceAll(PIN_PATTERN, triggerValue);
     }
 
     private static void execute(Session session, boolean isActive, int dashId, SetPinAction action) {

@@ -44,7 +44,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
             httpsServerUrl = String.format("http://localhost:%s/", httpPort);
             httpclient = new DefaultAsyncHttpClient(
                     new DefaultAsyncHttpClientConfig.Builder()
-                            .setUserAgent("")
+                            .setUserAgent(null)
                             .setKeepAlive(false)
                             .build()
             );

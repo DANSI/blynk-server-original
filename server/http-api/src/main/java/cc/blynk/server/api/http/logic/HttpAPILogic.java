@@ -10,7 +10,6 @@ import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.api.http.pojo.att.AttData;
 import cc.blynk.server.api.http.pojo.att.AttValue;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.EventorProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
@@ -25,6 +24,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
+import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -494,7 +494,7 @@ public class HttpAPILogic {
             return Response.ok();
         }
 
-        eventorProcessor.processEventor(session, dash, pin, pinType, pinValue);
+        eventorProcessor.process(session, dash, pin, pinType, pinValue);
 
         session.sendMessageToHardware(dashId, HARDWARE, 111, body);
 

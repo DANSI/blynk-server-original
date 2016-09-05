@@ -1,11 +1,15 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
-import cc.blynk.server.core.dao.EventorProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
+import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
+import cc.blynk.server.core.processors.EventorProcessor;
+import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -34,11 +38,13 @@ public class HardwareLogic {
     private final ReportingDao reportingDao;
     private final SessionDao sessionDao;
     private final EventorProcessor eventorProcessor;
+    private final WebhookProcessor webhookProcessor;
 
-    public HardwareLogic(SessionDao sessionDao, ReportingDao reportingDao, EventorProcessor eventorProcessor) {
+    public HardwareLogic(SessionDao sessionDao, ReportingDao reportingDao, EventorProcessor eventorProcessor, WebhookProcessor webhookProcessor) {
         this.sessionDao = sessionDao;
         this.reportingDao = reportingDao;
         this.eventorProcessor = eventorProcessor;
+        this.webhookProcessor = webhookProcessor;
     }
 
     private static boolean isWriteOperation(String body) {
@@ -76,7 +82,8 @@ public class HardwareLogic {
             reportingDao.process(state.user.name, dashId, pin, pinType, value);
 
             dash.update(pin, pinType, value);
-            eventorProcessor.processEventor(session, dash, pin, pinType, value);
+
+            process(dash, session, pin, pinType, value);
         }
 
         //todo do not send if no widget pin
@@ -84,6 +91,18 @@ public class HardwareLogic {
             session.sendToApps(HARDWARE, message.id, dashId + BODY_SEPARATOR_STRING + body);
         } else {
             log.debug("No active dashboard.");
+        }
+    }
+
+    private void process(DashBoard dash, Session session, byte pin, PinType pinType, String value) {
+        Widget widget = dash.findWidgetByPin(pin, pinType);
+        if (widget == null) {
+            return;
+        }
+        if (widget instanceof Eventor) {
+            eventorProcessor.process((Eventor) widget, session, dash, pin, pinType, value);
+        } else if (widget instanceof WebHook) {
+            webhookProcessor.process((WebHook) widget, value);
         }
     }
 

@@ -39,7 +39,7 @@ public class GCMWrapper {
         this.API_KEY = "key=" + props.getProperty("gcm.api.key");
         this.httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()
-                        .setUserAgent("")
+                        .setUserAgent(null)
                         .setEventLoopGroup(eventLoop)
                         .setKeepAlive(false)
                         .build()
