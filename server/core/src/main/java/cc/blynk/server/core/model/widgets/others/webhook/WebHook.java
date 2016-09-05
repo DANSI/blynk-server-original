@@ -11,7 +11,7 @@ public class WebHook extends OnePinWidget {
 
     public String url;
 
-    public SupportedWebhookMethods method;
+    public SupportedWebhookMethod method;
 
     public Header[] headers;
 

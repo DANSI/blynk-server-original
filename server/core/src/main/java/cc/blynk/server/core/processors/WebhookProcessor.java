@@ -1,7 +1,7 @@
 package cc.blynk.server.core.processors;
 
 import cc.blynk.server.core.model.widgets.others.webhook.Header;
-import cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethods;
+import cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import io.netty.channel.EventLoopGroup;
 import org.apache.logging.log4j.LogManager;
@@ -12,8 +12,6 @@ import org.asynchttpclient.BoundRequestBuilder;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Response;
-
-import static cc.blynk.utils.StringUtils.PIN_PATTERN;
 
 /**
  * Handles all webhooks logic.
@@ -40,14 +38,15 @@ public class WebhookProcessor {
 
     //todo could be optimized
     public void process(WebHook webHook, String triggerValue) {
-        String newUrl = webHook.url.replaceAll(PIN_PATTERN, triggerValue);
+        String newUrl = String.format(webHook.url, triggerValue);
         BoundRequestBuilder builder = buildRequestMethod(webHook.method, newUrl);
 
         if (webHook.headers != null) {
             for (Header header : webHook.headers) {
                 builder.setHeader(header.name, header.value);
                 if (header.name.equals("Content-Type")) {
-                    buildRequestBody(builder, header.value, webHook.body);
+                    String newBody = String.format(webHook.body, triggerValue);
+                    buildRequestBody(builder, header.value, newBody);
                 }
             }
         }
@@ -67,7 +66,7 @@ public class WebhookProcessor {
         return builder;
     }
 
-    private BoundRequestBuilder buildRequestMethod(SupportedWebhookMethods method, String url) {
+    private BoundRequestBuilder buildRequestMethod(SupportedWebhookMethod method, String url) {
         switch (method) {
             case GET :
                 return httpclient.prepareGet(url);

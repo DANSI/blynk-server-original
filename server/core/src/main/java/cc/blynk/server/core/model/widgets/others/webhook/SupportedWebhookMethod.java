@@ -5,7 +5,7 @@ package cc.blynk.server.core.model.widgets.others.webhook;
  * Created by Dmitriy Dumanskiy.
  * Created on 05.09.16.
  */
-public enum SupportedWebhookMethods {
+public enum SupportedWebhookMethod {
 
     POST,
     GET,
