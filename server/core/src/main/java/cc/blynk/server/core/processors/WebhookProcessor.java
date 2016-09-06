@@ -38,15 +38,20 @@ public class WebhookProcessor {
 
     //todo could be optimized
     public void process(WebHook webHook, String triggerValue) {
+        if (!webHook.isValid()) {
+            return;
+        }
         String newUrl = String.format(webHook.url, triggerValue);
         BoundRequestBuilder builder = buildRequestMethod(webHook.method, newUrl);
 
         if (webHook.headers != null) {
             for (Header header : webHook.headers) {
-                builder.setHeader(header.name, header.value);
-                if (header.name.equals("Content-Type")) {
-                    String newBody = String.format(webHook.body, triggerValue);
-                    buildRequestBody(builder, header.value, newBody);
+                if (header.isValid()) {
+                    builder.setHeader(header.name, header.value);
+                    if (header.name.equals("Content-Type") && webHook.body != null && !webHook.body.equals("")) {
+                        String newBody = String.format(webHook.body, triggerValue);
+                        buildRequestBody(builder, header.value, newBody);
+                    }
                 }
             }
         }

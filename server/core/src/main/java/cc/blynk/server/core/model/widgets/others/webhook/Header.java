@@ -18,4 +18,8 @@ public class Header {
         this.name = name;
         this.value = value;
     }
+
+    public boolean isValid() {
+        return name != null && value != null;
+    }
 }

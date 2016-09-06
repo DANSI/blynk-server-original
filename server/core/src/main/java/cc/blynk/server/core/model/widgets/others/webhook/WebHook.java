@@ -17,6 +17,10 @@ public class WebHook extends OnePinWidget {
 
     public String body;
 
+    public boolean isValid() {
+        return url != null && !url.equals("") && method != null;
+    }
+
     @Override
     public String getModeType() {
         return null;
