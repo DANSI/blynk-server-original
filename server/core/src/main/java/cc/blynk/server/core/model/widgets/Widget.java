@@ -12,6 +12,9 @@ import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.controls.TwoAxisJoystick;
 import cc.blynk.server.core.model.widgets.inputs.GPSStreaming;
 import cc.blynk.server.core.model.widgets.inputs.GPSTrigger;
+import cc.blynk.server.core.model.widgets.inputs.Light;
+import cc.blynk.server.core.model.widgets.inputs.Proximity;
+import cc.blynk.server.core.model.widgets.inputs.Temperature;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.SMS;
@@ -77,6 +80,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         //inputs
         @JsonSubTypes.Type(value = GPSTrigger.class, name = "GPS_TRIGGER"),
         @JsonSubTypes.Type(value = GPSStreaming.class, name = "GPS_STREAMING"),
+        @JsonSubTypes.Type(value = Light.class, name = "LIGHT"),
+        @JsonSubTypes.Type(value = Proximity.class, name = "PROXIMITY"),
+        @JsonSubTypes.Type(value = Temperature.class, name = "TEMPERATURE"),
 
         //notifications
         @JsonSubTypes.Type(value = Twitter.class, name = "TWITTER"),

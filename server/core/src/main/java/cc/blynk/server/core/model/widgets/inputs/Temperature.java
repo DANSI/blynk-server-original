@@ -5,17 +5,11 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
- * Created on 21.03.15.
+ * Created on 06.09.16.
  */
-public class GPSTrigger extends OnePinWidget {
+public class Temperature extends OnePinWidget {
 
-    public boolean triggerOnEnter;
-
-    public float triggerLat;
-
-    public float triggerLon;
-
-    public int triggerRadius;
+    public boolean isCelsius;
 
     @Override
     public String getModeType() {
@@ -24,6 +18,6 @@ public class GPSTrigger extends OnePinWidget {
 
     @Override
     public int getPrice() {
-        return 400;
+        return 200;
     }
 }

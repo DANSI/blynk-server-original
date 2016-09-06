@@ -9,17 +9,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  */
 public class GPSStreaming extends OnePinWidget {
 
-    public boolean stream;
-
-    public boolean triggerOnEnter;
-
-    public float triggerLat;
-
-    public float triggerLon;
-
-    public int triggerRadius;
-
-    public int accuracy;
+     public int accuracy;
 
     @Override
     public String getModeType() {
