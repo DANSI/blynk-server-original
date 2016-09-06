@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.widgets.controls.Terminal;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.controls.TwoAxisJoystick;
 import cc.blynk.server.core.model.widgets.inputs.Accelerometer;
+import cc.blynk.server.core.model.widgets.inputs.Barometer;
 import cc.blynk.server.core.model.widgets.inputs.GPSStreaming;
 import cc.blynk.server.core.model.widgets.inputs.GPSTrigger;
 import cc.blynk.server.core.model.widgets.inputs.Gravity;
@@ -87,6 +88,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Temperature.class, name = "TEMPERATURE"),
         @JsonSubTypes.Type(value = Accelerometer.class, name = "ACCELEROMETER"),
         @JsonSubTypes.Type(value = Gravity.class, name = "GRAVITY"),
+        @JsonSubTypes.Type(value = Barometer.class, name = "BAROMETER"),
 
         //notifications
         @JsonSubTypes.Type(value = Twitter.class, name = "TWITTER"),
