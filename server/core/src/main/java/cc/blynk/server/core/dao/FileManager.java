@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.function.Function.*;
+import static java.util.function.Function.identity;
 
 
 /**
@@ -107,7 +107,7 @@ public class FileManager {
                             User user = JsonParser.parseUserFromFile(file);
                             return Stream.of(user);
                         } catch (IOException ioe) {
-                            log.error("Error parsing file '{}'.", file);
+                            log.error("Error parsing file '{}'. Error : {}", file, ioe.getMessage());
                         }
                         return Stream.empty();
                     })
