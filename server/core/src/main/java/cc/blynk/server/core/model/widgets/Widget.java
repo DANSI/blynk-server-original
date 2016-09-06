@@ -10,8 +10,10 @@ import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.controls.Terminal;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.controls.TwoAxisJoystick;
+import cc.blynk.server.core.model.widgets.inputs.Accelerometer;
 import cc.blynk.server.core.model.widgets.inputs.GPSStreaming;
 import cc.blynk.server.core.model.widgets.inputs.GPSTrigger;
+import cc.blynk.server.core.model.widgets.inputs.Gravity;
 import cc.blynk.server.core.model.widgets.inputs.Light;
 import cc.blynk.server.core.model.widgets.inputs.Proximity;
 import cc.blynk.server.core.model.widgets.inputs.Temperature;
@@ -83,6 +85,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Light.class, name = "LIGHT"),
         @JsonSubTypes.Type(value = Proximity.class, name = "PROXIMITY"),
         @JsonSubTypes.Type(value = Temperature.class, name = "TEMPERATURE"),
+        @JsonSubTypes.Type(value = Accelerometer.class, name = "ACCELEROMETER"),
+        @JsonSubTypes.Type(value = Gravity.class, name = "GRAVITY"),
 
         //notifications
         @JsonSubTypes.Type(value = Twitter.class, name = "TWITTER"),

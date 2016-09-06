@@ -18,6 +18,6 @@ public class GPSStreaming extends OnePinWidget {
 
     @Override
     public int getPrice() {
-        return 400;
+        return 0;
     }
 }

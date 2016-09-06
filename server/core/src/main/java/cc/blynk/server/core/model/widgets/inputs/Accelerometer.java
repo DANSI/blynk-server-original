@@ -7,7 +7,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  * Created by Dmitriy Dumanskiy.
  * Created on 06.09.16.
  */
-public class Proximity extends OnePinWidget {
+public class Accelerometer extends OnePinWidget {
 
     @Override
     public String getModeType() {

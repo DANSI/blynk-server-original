@@ -16,6 +16,6 @@ public class Light extends OnePinWidget {
 
     @Override
     public int getPrice() {
-        return 200;
+        return 0;
     }
 }
