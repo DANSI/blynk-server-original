@@ -20,7 +20,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import static cc.blynk.utils.ReportingUtil.EMPTY_ARRAY;
-import static java.lang.String.format;
 
 /**
  * The Blynk Project.
@@ -29,11 +28,10 @@ import static java.lang.String.format;
  */
 public class ReportingDao {
 
-    public static final String REPORTING_MINUTE_FILE_NAME = "history_%s_%c%d_minute.bin";
-    public static final String REPORTING_HOURLY_FILE_NAME = "history_%s_%c%d_hourly.bin";
-    public static final String REPORTING_DAILY_FILE_NAME = "history_%s_%c%d_daily.bin";
     private static final Logger log = LogManager.getLogger(ReportingDao.class);
+
     private final AverageAggregator averageAggregator;
+
     private final String dataFolder;
 
     private final boolean ENABLE_RAW_DATA_STORE;
@@ -47,11 +45,11 @@ public class ReportingDao {
     public static String generateFilename(int dashId, PinType pinType, byte pin, GraphType type) {
         switch (type) {
             case MINUTE :
-                return format(REPORTING_MINUTE_FILE_NAME, dashId, pinType.pintTypeChar, pin);
+                return formatMinute(dashId, pinType, pin);
             case HOURLY :
-                return format(REPORTING_HOURLY_FILE_NAME, dashId, pinType.pintTypeChar, pin);
+                return formatHour(dashId, pinType, pin);
             default :
-                return format(REPORTING_DAILY_FILE_NAME, dashId, pinType.pintTypeChar, pin);
+                return formatDaily(dashId, pinType, pin);
         }
     }
 
@@ -100,12 +98,28 @@ public class ReportingDao {
 
     public void delete(String username, int dashId, PinType pinType, byte pin) {
         log.debug("Removing {}{} pin data for dashId {}.", pinType.pintTypeChar, pin, dashId);
-        Path userDataMinuteFile = Paths.get(dataFolder, username, format(REPORTING_MINUTE_FILE_NAME, dashId, pinType.pintTypeChar, pin));
-        Path userDataHourlyFile = Paths.get(dataFolder, username, format(REPORTING_HOURLY_FILE_NAME, dashId, pinType.pintTypeChar, pin));
-        Path userDataDailyFile = Paths.get(dataFolder, username, format(REPORTING_DAILY_FILE_NAME, dashId, pinType.pintTypeChar, pin));
+        Path userDataMinuteFile = Paths.get(dataFolder, username, formatMinute(dashId, pinType, pin));
+        Path userDataHourlyFile = Paths.get(dataFolder, username, formatHour(dashId, pinType, pin));
+        Path userDataDailyFile = Paths.get(dataFolder, username, formatDaily(dashId, pinType, pin));
         FileUtils.deleteQuietly(userDataMinuteFile);
         FileUtils.deleteQuietly(userDataHourlyFile);
         FileUtils.deleteQuietly(userDataDailyFile);
+    }
+
+    protected static String formatMinute(int dashId, PinType pinType, byte pin) {
+        return format("minute", dashId, pinType, pin);
+    }
+
+    protected static String formatHour(int dashId, PinType pinType, byte pin) {
+        return format("hourly", dashId, pinType, pin);
+    }
+
+    protected static String formatDaily(int dashId, PinType pinType, byte pin) {
+        return format("daily", dashId, pinType, pin);
+    }
+
+    private static String format(String type, int dashId, PinType pinType, byte pin) {
+        return "history_" + dashId + "_" + pinType.pintTypeChar + pin + "_" + type + ".bin";
     }
 
     public void process(String username, int dashId, byte pin, PinType pinType, String value, long ts) {
