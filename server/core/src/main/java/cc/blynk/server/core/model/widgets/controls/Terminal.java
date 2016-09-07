@@ -2,11 +2,9 @@ package cc.blynk.server.core.model.widgets.controls;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.utils.LimitedQueue;
 import cc.blynk.utils.ParseUtil;
+import cc.blynk.utils.structure.LimitedArrayDeque;
 import io.netty.channel.Channel;
-
-import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Command.SYNC;
 import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
@@ -19,11 +17,13 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
  */
 public class Terminal extends OnePinWidget {
 
-    //configured property via server.properties
     private static final int POOL_SIZE = ParseUtil.parseInt(System.getProperty("terminal.strings.pool.size", "25"));
-    private transient final List<String> lastCommands = new LimitedQueue<>(POOL_SIZE);
+    private transient final LimitedArrayDeque<String> lastCommands = new LimitedArrayDeque<>(POOL_SIZE);
+
     public boolean autoScrollOn;
+
     public boolean terminalInputOn;
+
     public boolean textLightOn;
 
     @Override

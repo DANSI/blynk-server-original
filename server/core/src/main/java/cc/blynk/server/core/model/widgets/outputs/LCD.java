@@ -3,12 +3,11 @@ package cc.blynk.server.core.model.widgets.outputs;
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
-import cc.blynk.utils.LimitedQueue;
 import cc.blynk.utils.ParseUtil;
+import cc.blynk.utils.structure.LimitedArrayDeque;
 import io.netty.channel.Channel;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.server.core.protocol.enums.Command.SYNC;
@@ -22,17 +21,21 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
  */
 public class LCD extends MultiPinWidget implements FrequencyWidget {
 
-    //configured property via server.properties
-    private static final int POOL_SIZE = ParseUtil.parseInt(System.getProperty("lcd.strings.pool.size", "6"));
-    private transient final List<String> lastCommands = new LimitedQueue<>(POOL_SIZE);
     public boolean advancedMode;
+
     public String textFormatLine1;
     public String textFormatLine2;
+
     //todo remove after migration.
     public boolean textLight;
     public boolean textLightOn;
+
     private int frequency;
+
     private transient Map<String, Long> lastRequestTS = new HashMap<>();
+
+    private static final int POOL_SIZE = ParseUtil.parseInt(System.getProperty("lcd.strings.pool.size", "6"));
+    private transient final LimitedArrayDeque<String> lastCommands = new LimitedArrayDeque<>(POOL_SIZE);
 
     private static void sendSyncOnActivate(Pin pin, int dashId, Channel appChannel) {
         if (pin.notEmpty()) {
