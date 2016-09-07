@@ -82,7 +82,7 @@ public class EventorProcessor {
 
     private void execute(DashBoard dash, String triggerValue, NotificationAction notificationAction) {
         if (notificationAction.message != null && !notificationAction.message.isEmpty()) {
-            String body = format(notificationAction.message, triggerValue);
+            String body = notificationAction.message.replaceAll("/pin/", triggerValue);
             if (notificationAction instanceof NotifyAction) {
                 push(dash, body);
             } else if (notificationAction instanceof TwitAction) {
@@ -140,10 +140,6 @@ public class EventorProcessor {
         }
 
         widget.push(gcmWrapper, body, dash.id);
-    }
-
-    private String format(String message, String triggerValue) {
-        return message.replaceAll("/pin/", triggerValue);
     }
 
     private static void execute(Session session, boolean isActive, int dashId, SetPinAction action) {
