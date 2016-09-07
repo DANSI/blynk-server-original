@@ -14,6 +14,7 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.zip.GZIPOutputStream;
 
 import static java.lang.String.*;
@@ -43,6 +44,16 @@ public class FileUtils {
         } catch (Exception ignored) {
             return false;
         }
+    }
+
+    public static boolean moveToDeleted(Path source, Path target) {
+        try {
+            Path targetFile = Paths.get(target.toString(), source.getFileName().toString());
+            Files.move(source, targetFile, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
     }
 
     /**
