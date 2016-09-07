@@ -20,7 +20,7 @@ public abstract class NotificationBase {
         long currentTs = System.currentTimeMillis();
         long timePassedSinceLastMessage = (currentTs - lastSentTs);
         if (timePassedSinceLastMessage < NOTIFICATION_QUOTA_LIMIT) {
-            throw new QuotaLimitException(String.format("Only 1 notification per %s milliseconds is allowed", NOTIFICATION_QUOTA_LIMIT));
+            throw new QuotaLimitException("Only 1 notification per " + NOTIFICATION_QUOTA_LIMIT + " milliseconds is allowed");
         }
         this.lastSentTs = currentTs;
     }

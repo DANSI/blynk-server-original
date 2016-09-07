@@ -14,13 +14,18 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
-import static io.netty.handler.codec.http.HttpResponseStatus.*;
-import static io.netty.handler.codec.http.HttpVersion.*;
+import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
  * The Blynk project
@@ -47,9 +52,8 @@ public class ResetPasswordLogic {
         this.emailBody = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "reset-email.html");
         this.mailWrapper = mailWrapper;
 
-        this.resetPassUrl = String.format("http://%s/landing?token=",
-                props.getProperty("reset-pass.http.host", IPUtils.resolveHostIP())
-        );
+        String host = props.getProperty("reset-pass.http.host", IPUtils.resolveHostIP());
+        this.resetPassUrl = "http://" + host + "/landing?token=";
         this.pageContent = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "enterNewPassword.html");
     }
 
@@ -67,7 +71,7 @@ public class ResetPasswordLogic {
         }
 
         if (!EmailValidator.getInstance().isValid(email)) {
-            return Response.badRequest(String.format("%s email has not valid format.", email));
+            return Response.badRequest(email + " email has not valid format.");
         }
 
         email = email.toLowerCase();

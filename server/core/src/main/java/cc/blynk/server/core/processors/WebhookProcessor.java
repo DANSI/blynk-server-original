@@ -41,7 +41,7 @@ public class WebhookProcessor {
         if (!webHook.isValid()) {
             return;
         }
-        String newUrl = String.format(webHook.url, triggerValue);
+        String newUrl = webHook.url.replace("%s", triggerValue);
         BoundRequestBuilder builder = buildRequestMethod(webHook.method, newUrl);
 
         if (webHook.headers != null) {
@@ -49,7 +49,7 @@ public class WebhookProcessor {
                 if (header.isValid()) {
                     builder.setHeader(header.name, header.value);
                     if (header.name.equals("Content-Type") && webHook.body != null && !webHook.body.equals("")) {
-                        String newBody = String.format(webHook.body, triggerValue);
+                        String newBody = webHook.body.replace("%s", triggerValue);
                         buildRequestBody(builder, header.value, newBody);
                     }
                 }
