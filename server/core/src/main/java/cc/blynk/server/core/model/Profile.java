@@ -34,7 +34,7 @@ public class Profile {
             }
         }
 
-        throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashId));
+        throw new IllegalCommandException("Requested token for non-existing '" + dashId + "' dash id.");
     }
 
     public int getDashIndexOrThrow(int dashId) {

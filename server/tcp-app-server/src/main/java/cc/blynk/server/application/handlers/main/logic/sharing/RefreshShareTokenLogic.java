@@ -11,10 +11,11 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.AppStateHolderUtil.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
+import static cc.blynk.utils.AppStateHolderUtil.getShareState;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
+import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
 
 /**
  * The Blynk Project.
@@ -39,7 +40,7 @@ public class RefreshShareTokenLogic {
         try {
             dashId = Integer.parseInt(dashBoardIdString);
         } catch (NumberFormatException ex) {
-            throw new NotAllowedException(String.format("Dash board id '%s' not valid.", dashBoardIdString));
+            throw new NotAllowedException("Dash board id not valid. Id : " + dashBoardIdString);
         }
 
         user.profile.validateDashId(dashId);

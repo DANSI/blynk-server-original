@@ -8,8 +8,8 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Map;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
+import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
 
 /**
  * The Blynk Project.
@@ -34,7 +34,7 @@ public class GetShareTokenLogic {
         try {
             dashId = Integer.parseInt(dashBoardIdString);
         } catch (NumberFormatException ex) {
-            throw new NotAllowedException(String.format("Dash board id '%s' not valid.", dashBoardIdString));
+            throw new NotAllowedException("Dash board id not valid. Id : " + dashBoardIdString);
         }
 
         user.profile.validateDashId(dashId);

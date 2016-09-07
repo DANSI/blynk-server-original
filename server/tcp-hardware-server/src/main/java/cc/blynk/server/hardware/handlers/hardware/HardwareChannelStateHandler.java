@@ -81,8 +81,9 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                 String boardType = dashBoard.boardType;
                 String dashName = dashBoard.name;
                 dashName = dashName == null ? "" : dashName;
+                String message = "Your " + boardType + " went offline. \"" + dashName + "\" project is disconnected.";
                 notification.push(gcmWrapper,
-                        String.format("Your %s went offline. \"%s\" project is disconnected.", boardType, dashName),
+                        message,
                         state.dashId
                 );
             }

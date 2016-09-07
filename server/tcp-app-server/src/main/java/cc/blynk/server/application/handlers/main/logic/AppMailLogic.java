@@ -12,8 +12,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_EXCEPTION;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
+import static cc.blynk.utils.ByteBufUtil.ok;
 
 /**
  * Sends email from application.
@@ -26,7 +27,6 @@ import static cc.blynk.utils.ByteBufUtil.*;
 public class AppMailLogic {
 
     private static final Logger log = LogManager.getLogger(AppMailLogic.class);
-    private final static String SUBJECT = "Auth Token for %s project";
     private final String BODY;
 
     private final BlockingIOProcessor blockingIOProcessor;
@@ -52,7 +52,7 @@ public class AppMailLogic {
 
         String to = user.name;
         String name = dashBoard.name == null ? "New Project" : dashBoard.name;
-        String subj = String.format(SUBJECT, name);
+        String subj = "Auth Token for " + name + " project";
         String body = String.format(BODY, name, token);
 
         log.trace("Sending Mail for user {}, with token : '{}'.", user.name, token);

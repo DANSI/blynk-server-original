@@ -1,12 +1,44 @@
 package cc.blynk.server.core.protocol.model.messages;
 
 import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
-import cc.blynk.server.core.protocol.model.messages.appllication.*;
-import cc.blynk.server.core.protocol.model.messages.appllication.sharing.*;
+import cc.blynk.server.core.protocol.model.messages.appllication.ActivateDashboardMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.AddEnergy;
+import cc.blynk.server.core.protocol.model.messages.appllication.AddPushToken;
+import cc.blynk.server.core.protocol.model.messages.appllication.CreateDashMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.CreateWidget;
+import cc.blynk.server.core.protocol.model.messages.appllication.DeActivateDashboardMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.DeleteDashMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.DeleteWidget;
+import cc.blynk.server.core.protocol.model.messages.appllication.ExportDataMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetEnergy;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataStringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetMetadata;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedStringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.RedeemMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.RefreshTokenMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.SaveDashMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.SaveMetadata;
+import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.UpdateWidget;
+import cc.blynk.server.core.protocol.model.messages.appllication.sharing.GetShareTokenMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.sharing.GetSharedDashMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.sharing.RefreshShareTokenMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SharingMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.protocol.model.messages.common.PingMessage;
-import cc.blynk.server.core.protocol.model.messages.hardware.*;
+import cc.blynk.server.core.protocol.model.messages.hardware.BridgeMessage;
+import cc.blynk.server.core.protocol.model.messages.hardware.HardwareInfoMessage;
+import cc.blynk.server.core.protocol.model.messages.hardware.HardwareSyncMessage;
+import cc.blynk.server.core.protocol.model.messages.hardware.MailMessage;
+import cc.blynk.server.core.protocol.model.messages.hardware.PushMessage;
+import cc.blynk.server.core.protocol.model.messages.hardware.SMSMessage;
+import cc.blynk.server.core.protocol.model.messages.hardware.TwitMessage;
 
 import static cc.blynk.server.core.protocol.enums.Command.*;
 
@@ -103,7 +135,7 @@ public class MessageFactory {
             case GET_METADATA :
                 return new GetMetadata(messageId, body);
 
-            default: throw new UnsupportedCommandException(String.format("Command with code %d not supported message.", command), messageId);
+            default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);
         }
     }
 
