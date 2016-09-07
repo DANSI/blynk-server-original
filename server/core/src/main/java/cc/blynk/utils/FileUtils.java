@@ -16,8 +16,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.zip.GZIPOutputStream;
 
-import static java.lang.String.*;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -70,7 +68,6 @@ public class FileUtils {
     }
 
     public static final int DEFAULT_FETCH_COUNT = 60 * 24 * 30 * 1;
-    public static final String EXPORT_GRAPH_FILENAME = "%s_%s_%c%d.csv.gz";
 
     public static Path createCSV(ReportingDao reportingDao, String username, int dashId, PinType pinType, byte pin) {
         if (pinType != null && pin > -1) {
@@ -91,7 +88,12 @@ public class FileUtils {
         return null;
     }
 
-    public static Path generateExportCSVPath(String username, int dashId, PinType pinType, byte pin) {
-        return Paths.get(CSV_DIR, format(EXPORT_GRAPH_FILENAME, username, dashId, pinType.pintTypeChar, pin));
+    private static Path generateExportCSVPath(String username, int dashId, PinType pinType, byte pin) {
+        return Paths.get(CSV_DIR, format(username, dashId, pinType, pin));
+    }
+
+    //"%s_%s_%c%d.csv.gz"
+    private static String format(String username, int dashId, PinType pinType, byte pin) {
+        return username + "_" + dashId + "_" + pinType.pintTypeChar + pin + ".csv.gz";
     }
 }
