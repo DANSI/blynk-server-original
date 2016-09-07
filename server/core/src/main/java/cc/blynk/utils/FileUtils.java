@@ -46,11 +46,12 @@ public class FileUtils {
         }
     }
 
-    public static boolean moveToDeleted(Path source, Path target) {
+    public static boolean move(Path source, Path target) {
         try {
             Path targetFile = Paths.get(target.toString(), source.getFileName().toString());
             Files.move(source, targetFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
+            log.debug("Failed to move file. {}" , e.getMessage());
             return false;
         }
         return true;

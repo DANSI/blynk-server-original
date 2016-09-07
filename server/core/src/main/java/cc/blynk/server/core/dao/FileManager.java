@@ -47,10 +47,10 @@ public class FileManager {
         }
         try {
             this.dataDir = createDatadir(dataFolder);
-            this.deletedDataDir = createDatadir(String.format("%s/%s", dataFolder, DELETED_DATA_DIR_NAME));
+            this.deletedDataDir = createDatadir(Paths.get(dataFolder, DELETED_DATA_DIR_NAME));
         } catch (RuntimeException e) {
             this.dataDir = createDatadir(Paths.get(System.getProperty("java.io.tmpdir"), "blynk"));
-            this.deletedDataDir = createDatadir(String.format("%s/%s", this.dataDir.toString(), DELETED_DATA_DIR_NAME));
+            this.deletedDataDir = createDatadir(Paths.get(this.dataDir.toString(), DELETED_DATA_DIR_NAME));
         }
 
         log.info("Using data dir '{}'", dataDir);
@@ -81,7 +81,7 @@ public class FileManager {
 
     public boolean delete(String name) {
         Path file = generateFileName(name);
-        return FileUtils.moveToDeleted(file, this.deletedDataDir);
+        return FileUtils.move(file, this.deletedDataDir);
     }
 
     public void overrideUserFile(User user) throws IOException {
