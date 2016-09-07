@@ -14,6 +14,7 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -41,6 +42,17 @@ public class FileUtils {
         } catch (Exception ignored) {
             return false;
         }
+    }
+
+    public static boolean move(Path source, Path target) {
+        try {
+            Path targetFile = Paths.get(target.toString(), source.getFileName().toString());
+            Files.move(source, targetFile, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            log.debug("Failed to move file. {}" , e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     /**
