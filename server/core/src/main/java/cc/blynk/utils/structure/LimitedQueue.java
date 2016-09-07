@@ -31,15 +31,4 @@ public class LimitedQueue<T> extends LinkedList<T> {
         add(newIndex, e);
     }
 
-    public T get(int index) {
-        int start = 0;
-        for (T t : this) {
-            if (start == index) {
-                return t;
-            }
-            start++;
-        }
-        return null;
-    }
-
 }

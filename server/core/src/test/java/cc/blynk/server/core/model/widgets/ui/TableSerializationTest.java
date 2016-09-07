@@ -1,5 +1,8 @@
 package cc.blynk.server.core.model.widgets.ui;
 
+import cc.blynk.server.core.model.widgets.ui.table.Column;
+import cc.blynk.server.core.model.widgets.ui.table.Row;
+import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.structure.TableLimitedQueue;
 import org.junit.Test;
@@ -16,16 +19,16 @@ public class TableSerializationTest {
     @Test
     public void testTableJson() throws Exception {
         Table table = new Table();
-        table.columns = new Table.Column[3];
-        table.columns[0] = new Table.Column();
+        table.columns = new Column[3];
+        table.columns[0] = new Column();
         table.columns[0].name = "indicator";
-        table.columns[1] = new Table.Column();
+        table.columns[1] = new Column();
         table.columns[1].name = "name";
-        table.columns[2] = new Table.Column();
+        table.columns[2] = new Column();
         table.columns[2].name = "value";
 
-        table.rows = new TableLimitedQueue<>(10);
-        Table.Row row = new Table.Row();
+        table.rows = new TableLimitedQueue<>();
+        Row row = new Row();
         row.name = "Adskiy trash";
         row.value = "6:33";
         row.isSelected = false;

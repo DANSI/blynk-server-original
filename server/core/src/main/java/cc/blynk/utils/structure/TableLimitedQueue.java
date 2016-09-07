@@ -18,7 +18,4 @@ public class TableLimitedQueue<T> extends LimitedQueue<T> {
         super(POOL_SIZE);
     }
 
-    public TableLimitedQueue(int capacity) {
-        super(capacity);
-    }
 }

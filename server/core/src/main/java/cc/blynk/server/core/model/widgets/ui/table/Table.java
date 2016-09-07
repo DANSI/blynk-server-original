@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model.widgets.ui;
+package cc.blynk.server.core.model.widgets.ui.table;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -37,24 +37,34 @@ public class Table extends OnePinWidget {
                         currentRowIndex = 0;
                         break;
                     case "add" :
-                        int id = ParseUtil.parseInt(values[1]);
-                        String rowName = values[2];
-                        String rowValue = values[3];
-                        rows.add(new Table.Row(id, rowName, rowValue));
+                        if (values.length > 3) {
+                            int id = ParseUtil.parseInt(values[1]);
+                            String rowName = values[2];
+                            String rowValue = values[3];
+                            rows.add(new Row(id, rowName, rowValue));
+                        }
                         break;
                     case "pick" :
-                        currentRowIndex = ParseUtil.parseInt(values[1]);
+                        if (values.length > 1) {
+                            currentRowIndex = Math.min(ParseUtil.parseInt(values[1]), rows.size() - 1);
+                        }
                         break;
                     case "select" :
-                        selectRow(values[1], true);
+                        if (values.length > 1) {
+                            selectRow(values[1], true);
+                        }
                         break;
                     case "deselect" :
-                        selectRow(values[1], false);
+                        if (values.length > 1) {
+                            selectRow(values[1], false);
+                        }
                         break;
                     case "order" :
-                        int oldIndex = ParseUtil.parseInt(values[1]);
-                        int newIndex = ParseUtil.parseInt(values[2]);
-                        rows.order(oldIndex, newIndex);
+                        if (values.length > 2) {
+                            int oldIndex = ParseUtil.parseInt(values[1]);
+                            int newIndex = ParseUtil.parseInt(values[2]);
+                            rows.order(oldIndex, newIndex);
+                        }
                         break;
                 }
             }
@@ -65,10 +75,19 @@ public class Table extends OnePinWidget {
 
     private void selectRow(String indexString, boolean select) {
         int index = ParseUtil.parseInt(indexString);
-        Row row = rows.get(index);
+        Row row = get(index);
         if (row != null) {
             row.isSelected = select;
         }
+    }
+
+    public Row get(int index) {
+        for (Row row : rows) {
+            if (index == row.id) {
+                return row;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -79,33 +98,6 @@ public class Table extends OnePinWidget {
     @Override
     public int getPrice() {
         return 800;
-    }
-
-    static class Column {
-
-        public String name;
-
-    }
-
-    static class Row {
-
-        public int id;
-
-        public String name;
-
-        public String value;
-
-        public boolean isSelected;
-
-        public Row() {
-        }
-
-        public Row(int id, String name, String value) {
-            this.id = id;
-            this.name = name;
-            this.value = value;
-            this.isSelected = true;
-        }
     }
 
 }
