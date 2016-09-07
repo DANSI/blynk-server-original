@@ -1,7 +1,9 @@
 package cc.blynk.server.admin.http.logic.admin;
 
 import cc.blynk.core.http.Response;
+import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.response.RequestPerSecondResponse;
+import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.Session;
@@ -18,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static cc.blynk.core.http.Response.*;
+import static cc.blynk.core.http.Response.ok;
 
 /**
  * The Blynk Project.
@@ -31,11 +33,13 @@ public class StatsLogic extends HttpLogicUtil {
     private final GlobalStats stats;
     private final SessionDao sessionDao;
     private final UserDao userDao;
+    private final FileManager fileManager;
 
-    public StatsLogic(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
-        this.userDao = userDao;
-        this.sessionDao = sessionDao;
-        this.stats = globalStats;
+    public StatsLogic(Holder holder) {
+        this.userDao = holder.userDao;
+        this.sessionDao = holder.sessionDao;
+        this.stats = holder.stats;
+        this.fileManager = holder.fileManager;
     }
 
     @GET
@@ -102,6 +106,13 @@ public class StatsLogic extends HttpLogicUtil {
     public Response getFilledSpace(@QueryParam("_sortField") String sortField,
                                   @QueryParam("_sortDir") String sortOrder) {
         return ok(sort(convertMapToPair(userDao.getFilledSpace()), sortField, sortOrder, true));
+    }
+
+    @GET
+    @Path("/userProfileSize")
+    public Response getUserProfileSize(@QueryParam("_sortField") String sortField,
+                                   @QueryParam("_sortDir") String sortOrder) {
+        return ok(sort(convertMapToPair(fileManager.getUserProfilesSize()), sortField, sortOrder, true));
     }
 
 }

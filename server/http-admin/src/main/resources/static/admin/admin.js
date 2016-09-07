@@ -253,6 +253,18 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             nga.field('count').label('Count')
         ]);
 
+    var userProfileSize = nga.entity('userProfileSize').identifier(nga.field('name')).url('stats/userProfileSize').readOnly();
+    userProfileSize.listView()
+        .title('Size of user profile')
+        .perPage(50)
+        .batchActions([])
+        .sortField('count')
+        .fields([
+            nga.field('name').label('User'),
+            nga.field('count').label('Size in bytes')
+        ]);
+
+
 
     var config = nga.entity('config').identifier(nga.field('name'));
     config.listView()
@@ -282,6 +294,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                 .addChild(nga.menu(widgets).title('Widgets').icon(''))
                 .addChild(nga.menu(projectsPerUser).title('Projects per user').icon(''))
                 .addChild(nga.menu(filledSpace).title('Cells per project').icon(''))
+                .addChild(nga.menu(userProfileSize).title('Size of user profile').icon(''))
             )
             .addChild(nga.menu().title('Hardware Info')
                 .addChild(nga.menu(libraryVersion).title('Library versions').icon(''))
@@ -303,6 +316,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     admin.addEntity(widgets);
     admin.addEntity(projectsPerUser);
     admin.addEntity(filledSpace);
+    admin.addEntity(userProfileSize);
     admin.addEntity(libraryVersion);
     admin.addEntity(cpuType);
     admin.addEntity(hardwareBoards);

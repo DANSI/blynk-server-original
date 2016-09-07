@@ -14,6 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -96,8 +98,7 @@ public class FileManager {
     public ConcurrentMap<UserKey, User> deserialize() {
         log.debug("Starting reading user DB.");
 
-        File userDBFolder = dataDir.toFile();
-        File[] files = userDBFolder.listFiles();
+        final File[] files = userFilesList();
 
         if (files != null) {
             ConcurrentMap<UserKey, User> tempUsers = Arrays.stream(files).parallel()
@@ -119,6 +120,24 @@ public class FileManager {
 
         log.debug("Reading user DB finished.");
         return new ConcurrentHashMap<>();
+    }
+
+    private File[] userFilesList() {
+        return dataDir.toFile().listFiles();
+    }
+
+    public Map<String, Integer> getUserProfilesSize() {
+        final Map<String, Integer> userProfileSize = new HashMap<>();
+        final File[] files = userFilesList();
+        for (File file : files) {
+            if (file.isFile()) {
+                String filename = file.getName();
+                if (filename.startsWith("u_")){
+                    userProfileSize.put(filename, (int) file.length());
+                }
+            }
+        }
+        return userProfileSize;
     }
 
 }
