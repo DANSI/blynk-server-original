@@ -9,6 +9,8 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  */
 public class Player extends OnePinWidget {
 
+    public boolean isOnPlay;
+
     @Override
     public String getModeType() {
         return "out";

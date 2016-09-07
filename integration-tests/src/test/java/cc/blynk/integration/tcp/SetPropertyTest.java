@@ -7,6 +7,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
@@ -77,6 +78,27 @@ public class SetPropertyTest extends IntegrationBase {
         widget = profile.dashBoards[0].findWidgetByPin((byte)4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals("MyNewLabel", widget.label);
+    }
+
+    @Test
+    public void testSetBooleanProperty() throws Exception {
+        clientPair.appClient.send("createWidget 1\0{\"id\":102, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"PLAYER\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.hardwareClient.send("setProperty 17 isOnPlay true");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 17 isOnPlay true"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+
+        Widget widget = profile.dashBoards[0].findWidgetByPin((byte) 17, PinType.VIRTUAL);
+        assertNotNull(widget);
+        assertTrue(widget instanceof Player);
+        Player playerWidget = (Player) widget;
+
+        assertTrue(playerWidget.isOnPlay);
     }
 
     @Test
