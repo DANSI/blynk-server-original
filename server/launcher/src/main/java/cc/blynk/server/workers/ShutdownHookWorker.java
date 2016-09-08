@@ -34,7 +34,11 @@ public class ShutdownHookWorker implements Runnable {
 
         System.out.println("Stopping servers...");
         for (BaseServer server : servers) {
-            server.close();
+            try {
+                server.close();
+            } catch (Throwable t) {
+                System.out.println("Error on serve shutdown : " + t.getCause());
+            }
         }
 
         System.out.println("Stopping scheduler...");

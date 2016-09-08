@@ -66,6 +66,6 @@ public abstract class BaseServer implements Closeable {
 
     @Override
     public void close() {
-        cf.channel().close().awaitUninterruptibly();
+        cf.channel().close();
     }
 }
