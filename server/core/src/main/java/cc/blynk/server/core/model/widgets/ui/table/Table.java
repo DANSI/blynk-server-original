@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.structure.TableLimitedQueue;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
@@ -17,6 +18,7 @@ public class Table extends OnePinWidget {
 
     public Column[] columns;
 
+    @JsonSerialize(using = TableRowsSerializator.class)
     public TableLimitedQueue<Row> rows = new TableLimitedQueue<>();
 
     public int currentRowIndex;
