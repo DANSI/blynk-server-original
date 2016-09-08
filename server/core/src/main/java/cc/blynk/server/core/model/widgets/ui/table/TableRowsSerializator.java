@@ -27,14 +27,14 @@ public class TableRowsSerializator extends JsonSerializer<TableLimitedQueue<Row>
     @Override
     @SuppressWarnings("unchecked")
     public void serialize(TableLimitedQueue<Row> value, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException {
+        jsonGenerator.writeStartArray();
         if (value != null && value.size() > 0) {
             TableLimitedQueue<Row> clonedRows = (TableLimitedQueue<Row>) value.clone();
-            jsonGenerator.writeStartArray();
             for (Row row : clonedRows) {
                 jsonGenerator.writeObject(row);
             }
-            jsonGenerator.writeEndArray();
         }
+        jsonGenerator.writeEndArray();
     }
 
 }
