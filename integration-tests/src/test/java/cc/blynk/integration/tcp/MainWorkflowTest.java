@@ -15,6 +15,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
@@ -70,6 +71,7 @@ import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT_EXCEPTION
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -915,6 +917,34 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.send("email subj body");
         verify(mailWrapper, timeout(500)).send(eq("test@mail.ua"), eq("subj"), eq("body"));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+    }
+
+    @Test
+    public void testPlayerUpdateWorksAsExpected() throws Exception {
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"PLAYER\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+                "\"x\":0,\"y\":0,\"width\":0,\"height\":0}"));
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("hardware 1 vw 99 play");
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 99 play"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Player player = (Player) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        assertNotNull(player);
+        assertTrue(player.isOnPlay);
+
+        clientPair.appClient.send("hardware 1 vw 99 stop");
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 99 stop"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        player = (Player) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        assertNotNull(player);
+        assertFalse(player.isOnPlay);
     }
 
     @Test
