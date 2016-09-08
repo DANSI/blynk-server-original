@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
+import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
@@ -34,7 +35,9 @@ import java.util.List;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
@@ -355,6 +358,31 @@ public class SyncWorkflowTest extends IntegrationBase {
         long ts = Long.valueOf(tsString);
 
         assertEquals(expectedTS, ts, 2);
+    }
+
+
+    @Test
+    public void testHardSyncForTimeInputWidget() throws Exception {
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"TIME_INPUT\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+                "\"x\":0,\"y\":0,\"width\":0,\"height\":0}"));
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("hardware 1 vw " + b("99 82800 82860 Europe/Kiev 1"));
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 99 82800 82860 Europe/Kiev 1"))));
+
+        clientPair.hardwareClient.send("hardsync vr 99");
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 99 82800 82860 Europe/Kiev 1"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        assertNotNull(timeInput);
+        assertEquals(82800, timeInput.startAt);
+        assertEquals(82860, timeInput.stopAt);
+        assertEquals(ZoneId.of("Europe/Kiev"), timeInput.tzName);
+        assertArrayEquals(new int[] {1}, timeInput.days);
     }
 
     @Test

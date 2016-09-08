@@ -15,6 +15,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -67,6 +68,7 @@ import static cc.blynk.server.core.protocol.enums.Response.NO_DATA_EXCEPTION;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT_EXCEPTION;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -915,6 +917,79 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
     }
 
+    @Test
+    public void testTimeInputUpdateWorksAsExpected() throws Exception {
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"TIME_INPUT\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+                "\"x\":0,\"y\":0,\"width\":0,\"height\":0}"));
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("hardware 1 vw " + b("99 82800 82860 Europe/Kiev 1"));
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 99 82800 82860 Europe/Kiev 1"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        assertNotNull(timeInput);
+        assertEquals(82800, timeInput.startAt);
+        assertEquals(82860, timeInput.stopAt);
+        assertEquals(ZoneId.of("Europe/Kiev"), timeInput.tzName);
+        assertArrayEquals(new int[] {1}, timeInput.days);
+
+
+        clientPair.appClient.send("hardware 1 vw " + b("99 82800 82860 Europe/Kiev "));
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 99 82800 82860 Europe/Kiev "))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        assertNotNull(timeInput);
+        assertEquals(82800, timeInput.startAt);
+        assertEquals(82860, timeInput.stopAt);
+        assertEquals(ZoneId.of("Europe/Kiev"), timeInput.tzName);
+        assertNull(timeInput.days);
+
+        clientPair.appClient.send("hardware 1 vw " + b("99 82800  Europe/Kiev "));
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 99 82800  Europe/Kiev "))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        assertNotNull(timeInput);
+        assertEquals(82800, timeInput.startAt);
+        assertEquals(-1, timeInput.stopAt);
+        assertEquals(ZoneId.of("Europe/Kiev"), timeInput.tzName);
+        assertNull(timeInput.days);
+
+        clientPair.appClient.send("hardware 1 vw " + b("99 82800  Europe/Kiev 1,2,3,4"));
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 99 82800  Europe/Kiev 1,2,3,4"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        assertNotNull(timeInput);
+        assertEquals(82800, timeInput.startAt);
+        assertEquals(-1, timeInput.stopAt);
+        assertEquals(ZoneId.of("Europe/Kiev"), timeInput.tzName);
+        assertArrayEquals(new int[]{1,2,3,4}, timeInput.days);
+
+        clientPair.appClient.send("hardware 1 vw " + b("99   Europe/Kiev 1,2,3,4"));
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 99   Europe/Kiev 1,2,3,4"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        assertNotNull(timeInput);
+        assertEquals(-1, timeInput.startAt);
+        assertEquals(-1, timeInput.stopAt);
+        assertEquals(ZoneId.of("Europe/Kiev"), timeInput.tzName);
+        assertArrayEquals(new int[]{1,2,3,4}, timeInput.days);
+    }
 
     @Test
     public void testEmailWorkWithNoEmailInApp() throws Exception {
