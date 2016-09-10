@@ -64,15 +64,22 @@ public class TwitLogic extends NotificationBase {
                 twitterWrapper.send(token, secret, body);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
-                String errorMessage = e.getMessage();
-                if (errorMessage != null && errorMessage.contains("Status is a duplicate")) {
-                    log.warn("Duplicate twit status for user {}.", username);
-                } else {
-                    log.error("Error sending twit for user {}. Reason : {}", username, e.getMessage());
-                }
+                logError(e.getMessage(), username);
                 channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_EXCEPTION), channel.voidPromise());
             }
         });
+    }
+
+    private static void logError(String errorMessage, String username) {
+        if (errorMessage != null) {
+            if (errorMessage.contains("Status is a duplicate")) {
+                log.warn("Duplicate twit status for user {}.", username);
+            } else if (errorMessage.contains("Authentication credentials")) {
+                log.warn("Tweet authentication failure for {}.", username);
+            } else {
+                log.error("Error sending twit for user {}. Reason : {}", username, errorMessage);
+            }
+        }
     }
 
 }
