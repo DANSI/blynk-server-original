@@ -75,17 +75,17 @@ public class Table extends OnePinWidget {
         return false;
     }
 
-    private void selectRow(String indexString, boolean select) {
-        int index = ParseUtil.parseInt(indexString);
-        Row row = get(index);
+    private void selectRow(String idString, boolean select) {
+        int id = ParseUtil.parseInt(idString);
+        Row row = get(id);
         if (row != null) {
             row.isSelected = select;
         }
     }
 
-    public Row get(int index) {
+    public Row get(int id) {
         for (Row row : rows) {
-            if (index == row.id) {
+            if (id == row.id) {
                 return row;
             }
         }
