@@ -13,6 +13,8 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Response;
 
+import static cc.blynk.utils.StringUtils.PIN_PATTERN;
+
 /**
  * Handles all webhooks logic.
  *
@@ -41,7 +43,14 @@ public class WebhookProcessor {
         if (!webHook.isValid()) {
             return;
         }
-        String newUrl = webHook.url.replace("%s", triggerValue);
+
+        String newUrl = webHook.url;
+        //this is an ugly hack to make it work with Blynk HTTP API.
+        if (!newUrl.toLowerCase().contains("/pin/v")) {
+            newUrl = newUrl.replace(PIN_PATTERN, triggerValue);
+        }
+        newUrl = newUrl.replace("%s", triggerValue);
+
         BoundRequestBuilder builder = buildRequestMethod(webHook.method, newUrl);
 
         if (webHook.headers != null) {

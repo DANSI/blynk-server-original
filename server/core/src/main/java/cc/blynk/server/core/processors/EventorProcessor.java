@@ -23,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN;
 
 /**
  * Class responsible for handling eventor logic.
@@ -82,7 +83,7 @@ public class EventorProcessor {
 
     private void execute(DashBoard dash, String triggerValue, NotificationAction notificationAction) {
         if (notificationAction.message != null && !notificationAction.message.isEmpty()) {
-            String body = notificationAction.message.replaceAll("/pin/", triggerValue);
+            String body = notificationAction.message.replaceAll(PIN_PATTERN, triggerValue);
             if (notificationAction instanceof NotifyAction) {
                 push(dash, body);
             } else if (notificationAction instanceof TwitAction) {
