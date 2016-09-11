@@ -92,7 +92,7 @@ public class ResetPasswordLogic {
             log.info("Sending token to {} address", email);
             mailWrapper.send(email, "Password reset request for Blynk app.", message, "text/html");
         } catch (Exception e) {
-            log.info("Error sending mail for {}", email, e);
+            log.info("Error sending mail for {}. Reason : {}", email, e.getMessage());
             return Response.badRequest("Error sending reset email.");
         }
         log.info("{} mail sent.", email);
