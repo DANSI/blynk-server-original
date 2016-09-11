@@ -44,13 +44,10 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
     private final Holder holder;
     private final FacebookLoginCheck facebookLoginCheck;
-    //todo remove after migration.
-    private final String region;
 
     public AppLoginHandler(Holder holder) {
         this.holder = holder;
         this.facebookLoginCheck = new FacebookLoginCheck();
-        this.region = holder.region;
     }
 
     private static void cleanPipeline(ChannelPipeline pipeline) {
@@ -159,7 +156,6 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     private void completeLogin(Channel channel, Session session, User user, int msgId) {
         session.addAppChannel(channel);
         channel.writeAndFlush(ok(msgId), channel.voidPromise());
-        user.region = region;
         log.info("{} app joined.", user.name);
     }
 
