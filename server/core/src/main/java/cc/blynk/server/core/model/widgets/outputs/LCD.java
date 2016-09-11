@@ -26,9 +26,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     public String textFormatLine1;
     public String textFormatLine2;
 
-    //todo remove after migration.
     public boolean textLight;
-    public boolean textLightOn;
 
     private int frequency;
 
