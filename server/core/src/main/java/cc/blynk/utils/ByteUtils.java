@@ -3,7 +3,11 @@ package cc.blynk.utils;
 import cc.blynk.server.core.protocol.exceptions.GetGraphDataException;
 import io.netty.util.CharsetUtil;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
@@ -29,7 +33,6 @@ public class ByteUtils {
     }
 
     public static byte[] compress(byte[][] values) {
-        //todo calculate size
         ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
 
         try (OutputStream out = new DeflaterOutputStream(baos)) {
@@ -40,14 +43,12 @@ public class ByteUtils {
                 out.write(data);
             }
         } catch (IOException ioe) {
-            //todo refactor exception
             throw new GetGraphDataException();
         }
         return baos.toByteArray();
     }
 
     public static byte[] compress(int dashId, byte[][] values) throws IOException {
-        //todo calculate size
         ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
 
         try (OutputStream out = new DeflaterOutputStream(baos)) {

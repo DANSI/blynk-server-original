@@ -88,7 +88,6 @@ public class HardwareLogic extends NotificationBase {
             process(dash, session, pin, pinType, value);
         }
 
-        //todo do not send if no widget pin
         if (dash.isActive) {
             session.sendToApps(HARDWARE, message.id, dashId + BODY_SEPARATOR_STRING + body);
         } else {

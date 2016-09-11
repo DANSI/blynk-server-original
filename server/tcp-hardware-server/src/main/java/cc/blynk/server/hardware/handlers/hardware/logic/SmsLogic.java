@@ -28,7 +28,6 @@ public class SmsLogic extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(SmsLogic.class);
 
-    //todo this should be encoding specific value?
     private static final int MAX_SMS_BODY_SIZE = 160;
 
     private final SMSWrapper smsWrapper;

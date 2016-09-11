@@ -7,7 +7,6 @@ import cc.blynk.core.http.rest.URIDecoder;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-//todo rename to Param
 public abstract class Param {
 
     protected String name;
