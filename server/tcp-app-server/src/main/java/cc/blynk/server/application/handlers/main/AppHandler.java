@@ -68,7 +68,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     public AppHandler(Holder holder, AppStateHolder state) {
         super(holder.props, state);
         this.token = new GetTokenLogic(holder.userDao);
-        this.hardwareApp = new HardwareAppLogic(holder.sessionDao);
+        this.hardwareApp = new HardwareAppLogic(holder);
         this.refreshToken = new RefreshTokenLogic(holder.userDao);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.exportGraphData = new ExportGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor, holder.mailWrapper,

@@ -43,7 +43,7 @@ public class HardwareLogic {
         this.reportingDao = holder.reportingDao;
         this.eventorProcessor = holder.eventorProcessor;
         this.webhookProcessor = new WebhookProcessor(holder.asyncHttpClient,
-                holder.props.getLongProperty("webhooks.frequency.user.quota.limit", 1000));;
+                holder.props.getLongProperty("webhooks.frequency.user.quota.limit", 1000));
     }
 
     private static boolean isWriteOperation(String body) {
@@ -82,7 +82,12 @@ public class HardwareLogic {
 
             dash.update(pin, pinType, value);
 
-            process(dash, session, pin, pinType, value);
+            //todo this temp catch. remove in next update.
+            try {
+                process(dash, session, pin, pinType, value);
+            } catch (Exception e) {
+                log.error("Error processing.", e);
+            }
         }
 
         if (dash.isActive) {

@@ -8,6 +8,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.others.webhook.Header;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.JsonParser;
 import org.asynchttpclient.AsyncHttpClient;
@@ -211,6 +212,82 @@ public class WebhookTest extends IntegrationBase {
         values = consumeJsonPinValues(response.getResponseBody());
         assertEquals(1, values.size());
         assertEquals("12", values.get(0));
+    }
+
+    @Test
+    public void testWebhookWorksWithBlynkHttpApiNoPlaceHolderAppSideTrigger() throws Exception {
+        WebHook webHook = new WebHook();
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
+        webHook.method = PUT;
+        webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
+        webHook.body = "[\"124\"]";
+        webHook.pin = 123;
+        webHook.pinType = PinType.VIRTUAL;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        //125564119 is id of project with 4ae3851817194e2596cf1b7103603ef8 token
+        clientPair.appClient.send("hardware 1 vw 123 10");
+        verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(new HardwareMessage(2, b("vw 123 10"))));
+
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Response response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        List<String> values = consumeJsonPinValues(response.getResponseBody());
+        assertEquals(1, values.size());
+        assertEquals("124", values.get(0));
+    }
+
+    @Test
+    public void testWebhookWorksWithBlynkHttpApiAppSideTriggerCheckLimit() throws Exception {
+        WebHook webHook = new WebHook();
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
+        webHook.method = PUT;
+        webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
+        webHook.body = "[\"/pin/\"]";
+        webHook.pin = 123;
+        webHook.pinType = PinType.VIRTUAL;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        //125564119 is id of project with 4ae3851817194e2596cf1b7103603ef8 token
+        clientPair.appClient.send("hardware 1 vw 123 10");
+        verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(new HardwareMessage(2, b("vw 123 10"))));
+
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Response response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        List<String> values = consumeJsonPinValues(response.getResponseBody());
+        assertEquals(1, values.size());
+        assertEquals("10", values.get(0));
+
+        clientPair.appClient.send("hardware 1 vw 123 11");
+        verify(clientPair.hardwareClient.responseMock, after(1000)).channelRead(any(), eq(new HardwareMessage(3, b("vw 123 11"))));
+
+        f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        values = consumeJsonPinValues(response.getResponseBody());
+        assertEquals(1, values.size());
+        assertEquals("10", values.get(0));
+
+
+        clientPair.appClient.send("hardware 1 vw 123 11");
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(new HardwareMessage(4, b("vw 123 11"))));
+
+        f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        values = consumeJsonPinValues(response.getResponseBody());
+        assertEquals(1, values.size());
+        assertEquals("11", values.get(0));
+
     }
 
     @Override
