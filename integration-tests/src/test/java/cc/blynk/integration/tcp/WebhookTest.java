@@ -119,6 +119,28 @@ public class WebhookTest extends IntegrationBase {
     }
 
     @Test
+    public void testWebhookWorksWithBlynkHttpApiPlaceHolderAndTextPlain() throws Exception {
+        WebHook webHook = new WebHook();
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
+        webHook.method = PUT;
+        webHook.headers = new Header[] {new Header("Content-Type", "text/plain")};
+        webHook.body = "[\"/pin/\"]";
+        webHook.pin = 123;
+        webHook.pinType = PinType.VIRTUAL;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("hardware vw 123 10");
+        verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
+
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Response response = f.get();
+
+        assertEquals(400, response.getStatusCode());
+    }
+
+    @Test
     public void testWebhookWorksWithBlynkHttpApiWithPlaceholder() throws Exception {
         WebHook webHook = new WebHook();
         webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";

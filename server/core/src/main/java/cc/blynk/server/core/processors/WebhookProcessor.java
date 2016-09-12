@@ -44,12 +44,7 @@ public class WebhookProcessor {
             return;
         }
 
-        String newUrl = webHook.url;
-        //this is an ugly hack to make it work with Blynk HTTP API.
-        if (!newUrl.toLowerCase().contains("/pin/v")) {
-            newUrl = newUrl.replace(PIN_PATTERN, triggerValue);
-        }
-        newUrl = newUrl.replace("%s", triggerValue);
+        String newUrl = prepareUrl(webHook.url, triggerValue);
 
         BoundRequestBuilder builder = buildRequestMethod(webHook.method, newUrl);
 
@@ -57,9 +52,13 @@ public class WebhookProcessor {
             for (Header header : webHook.headers) {
                 if (header.isValid()) {
                     builder.setHeader(header.name, header.value);
-                    if (header.name.equals("Content-Type") && webHook.body != null && !webHook.body.equals("")) {
-                        String newBody = webHook.body.replace("%s", triggerValue);
-                        buildRequestBody(builder, header.value, newBody);
+                    if (webHook.body != null && !webHook.body.equals("")) {
+                        if (header.name.equals("Content-Type")) {
+                            String newBody = webHook.body
+                                    .replace("%s", triggerValue)
+                                    .replace(PIN_PATTERN, triggerValue);
+                                buildRequestBody(builder, header.value, newBody);
+                            }
                     }
                 }
             }
@@ -68,9 +67,18 @@ public class WebhookProcessor {
         builder.execute(new ResponseHandler());
     }
 
+    private String prepareUrl(String url, String triggerValue) {
+        //this is an ugly hack to make it work with Blynk HTTP API.
+        if (!url.toLowerCase().contains("/pin/v")) {
+            url = url.replace(PIN_PATTERN, triggerValue);
+        }
+        return url.replace("%s", triggerValue);
+    }
+
     private BoundRequestBuilder buildRequestBody(BoundRequestBuilder builder, String header, String body) {
         switch (header) {
             case "application/json" :
+            case "text/plain" :
                 builder.setBody(body);
                 break;
             default :
