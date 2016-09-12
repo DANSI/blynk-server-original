@@ -11,14 +11,15 @@ public class WebHook extends OnePinWidget {
 
     public String url;
 
-    public SupportedWebhookMethod method;
+    //GET is always default so we don't do null checks
+    public SupportedWebhookMethod method = SupportedWebhookMethod.GET;
 
     public Header[] headers;
 
     public String body;
 
     public boolean isValid() {
-        return url != null && !url.equals("") && method != null;
+        return url != null && !url.equals("");
     }
 
     @Override
