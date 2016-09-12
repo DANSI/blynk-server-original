@@ -236,17 +236,14 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardSyncReturnRTCWithUTCTimezone() throws Exception {
-        ZoneOffset offset = ZoneOffset.of("+00:00");
-
         clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
-                "\"x\":0,\"y\":0,\"width\":0,\"height\":0," +
-                "\"timezone\":\"TZ\"}").replace("TZ", offset.toString()));
+                "\"x\":0,\"y\":0,\"width\":0,\"height\":0}"));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardsync " + b("vr 99"));
 
-        long expectedTS = System.currentTimeMillis() / 1000 + offset.getTotalSeconds();
+        long expectedTS = System.currentTimeMillis() / 1000;
 
         ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
@@ -301,19 +298,18 @@ public class SyncWorkflowTest extends IntegrationBase {
 
 
     @Test
-    //todo remove in future versions
     public void testHardSyncReturnRTCWithUTCTimezonePlus3() throws Exception {
-        ZoneOffset offset = ZoneOffset.of("+03:00");
+        ZoneId zoneId = ZoneId.of("Europe/Kiev");
 
         clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
                 "\"x\":0,\"y\":0,\"width\":0,\"height\":0," +
-                "\"timezone\":\"TZ\"}").replace("TZ", offset.toString()));
+                "\"tzName\":\"TZ\"}").replace("TZ", zoneId.toString()));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardsync vr 99");
 
-        long expectedTS = System.currentTimeMillis() / 1000 + offset.getTotalSeconds();
+        long expectedTS = System.currentTimeMillis() / 1000 + LocalDateTime.now().atZone(zoneId).getOffset().getTotalSeconds();
 
         ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
@@ -331,19 +327,18 @@ public class SyncWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    //todo remove in future versions
     public void testHardSyncReturnRTCWithUTCTimezoneMinus3() throws Exception {
-        ZoneOffset offset = ZoneOffset.of("-03:00");
+        ZoneId zoneId = ZoneId.of("Brazil/East");
 
         clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
                 "\"x\":0,\"y\":0,\"width\":0,\"height\":0," +
-                "\"timezone\":\"TZ\"}").replace("TZ", offset.toString()));
+                "\"tzName\":\"TZ\"}").replace("TZ", zoneId.toString()));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardsync vr 99");
 
-        long expectedTS = System.currentTimeMillis() / 1000 + offset.getTotalSeconds();
+        long expectedTS = System.currentTimeMillis() / 1000 + LocalDateTime.now().atZone(zoneId).getOffset().getTotalSeconds();
 
         ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
