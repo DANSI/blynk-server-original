@@ -1,4 +1,4 @@
-package cc.blynk.server.hardware.handlers.hardware.logic;
+package cc.blynk.server.core.processors;
 
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 
@@ -11,16 +11,17 @@ public abstract class NotificationBase {
 
     private final long NOTIFICATION_QUOTA_LIMIT;
     private long lastSentTs;
+    private final static QuotaLimitException EXCEPTION_CACHE = new QuotaLimitException("Notification limit reached.");
 
-    NotificationBase(long defaultNotificationQuotaLimit) {
+    public NotificationBase(long defaultNotificationQuotaLimit) {
         this.NOTIFICATION_QUOTA_LIMIT = defaultNotificationQuotaLimit;
     }
 
-    void checkIfNotificationQuotaLimitIsNotReached() {
+    public void checkIfNotificationQuotaLimitIsNotReached() {
         long currentTs = System.currentTimeMillis();
         long timePassedSinceLastMessage = (currentTs - lastSentTs);
         if (timePassedSinceLastMessage < NOTIFICATION_QUOTA_LIMIT) {
-            throw new QuotaLimitException("Only 1 notification per " + NOTIFICATION_QUOTA_LIMIT + " milliseconds is allowed");
+            throw EXCEPTION_CACHE;
         }
         this.lastSentTs = currentTs;
     }

@@ -6,7 +6,6 @@ import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.processors.EventorProcessor;
-import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
@@ -17,6 +16,8 @@ import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.ServerProperties;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
 import static cc.blynk.utils.ReportingUtil.getReportingFolder;
 
@@ -55,7 +56,7 @@ public class Holder {
     public ProfileSaverWorker profileSaverWorker;
 
     public final EventorProcessor eventorProcessor;
-    public final WebhookProcessor webhookProcessor;
+    public final DefaultAsyncHttpClient asyncHttpClient;
 
     public Holder(ServerProperties serverProperties) {
         this.props = serverProperties;
@@ -85,7 +86,12 @@ public class Holder {
         );
 
         this.eventorProcessor = new EventorProcessor(gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor);
-        this.webhookProcessor = new WebhookProcessor(transportTypeHolder.workerGroup);
+        this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
+                .setUserAgent(null)
+                .setEventLoopGroup(transportTypeHolder.workerGroup)
+                .setKeepAlive(false)
+                .build()
+        );
 
         this.dbManager = new DBManager(blockingIOProcessor);
     }
@@ -119,7 +125,12 @@ public class Holder {
         );
 
         this.eventorProcessor = new EventorProcessor(gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor);
-        this.webhookProcessor = new WebhookProcessor(transportTypeHolder.workerGroup);
+        this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
+                .setUserAgent(null)
+                .setEventLoopGroup(transportTypeHolder.workerGroup)
+                .setKeepAlive(false)
+                .build()
+        );
 
         this.dbManager = new DBManager(blockingIOProcessor);
     }

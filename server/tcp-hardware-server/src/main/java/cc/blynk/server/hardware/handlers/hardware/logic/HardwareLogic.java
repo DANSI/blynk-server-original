@@ -6,12 +6,9 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.ParseUtil;
@@ -32,7 +29,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
  * Created on 2/1/2015.
  *
  */
-public class HardwareLogic extends NotificationBase {
+public class HardwareLogic {
 
     private static final Logger log = LogManager.getLogger(HardwareLogic.class);
 
@@ -42,11 +39,11 @@ public class HardwareLogic extends NotificationBase {
     private final WebhookProcessor webhookProcessor;
 
     public HardwareLogic(Holder holder) {
-        super(holder.props.getLongProperty("webhooks.frequency.user.quota.limit", 1000));
         this.sessionDao = holder.sessionDao;
         this.reportingDao = holder.reportingDao;
         this.eventorProcessor = holder.eventorProcessor;
-        this.webhookProcessor = holder.webhookProcessor;
+        this.webhookProcessor = new WebhookProcessor(holder.asyncHttpClient,
+                holder.props.getLongProperty("webhooks.frequency.user.quota.limit", 1000));;
     }
 
     private static boolean isWriteOperation(String body) {
@@ -97,19 +94,7 @@ public class HardwareLogic extends NotificationBase {
 
     private void process(DashBoard dash, Session session, byte pin, PinType pinType, String value) {
         eventorProcessor.process(session, dash, pin, pinType, value);
-
-        Widget widget = dash.findWidgetByPin(pin, pinType);
-        if (widget == null) {
-            return;
-        }
-        if (widget instanceof WebHook) {
-            try {
-                checkIfNotificationQuotaLimitIsNotReached();
-                webhookProcessor.process((WebHook) widget, value);
-            } catch (QuotaLimitException qle) {
-                log.debug("Webhook quota limit reached. Ignoring hook.");
-            }
-        }
+        webhookProcessor.process(dash, pin, pinType, value);
     }
 
 }

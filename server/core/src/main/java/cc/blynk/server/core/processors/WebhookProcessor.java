@@ -1,16 +1,18 @@
 package cc.blynk.server.core.processors;
 
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.webhook.Header;
 import cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
-import io.netty.channel.EventLoopGroup;
+import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asynchttpclient.AsyncCompletionHandler;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.BoundRequestBuilder;
 import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Response;
 
 import static cc.blynk.utils.StringUtils.PIN_PATTERN;
@@ -22,23 +24,34 @@ import static cc.blynk.utils.StringUtils.PIN_PATTERN;
  * Created by Dmitriy Dumanskiy.
  * Created on 05.09.16.
  */
-public class WebhookProcessor {
+public class WebhookProcessor extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(WebhookProcessor.class);
 
     private final AsyncHttpClient httpclient;
 
-    public WebhookProcessor(EventLoopGroup workerGroup) {
-        this.httpclient = new DefaultAsyncHttpClient(
-                new DefaultAsyncHttpClientConfig.Builder()
-                        .setUserAgent(null)
-                        .setEventLoopGroup(workerGroup)
-                        .setKeepAlive(false)
-                        .build()
-        );
+    public WebhookProcessor(DefaultAsyncHttpClient httpclient, long quotaFrequencyLimit) {
+        super(quotaFrequencyLimit);
+        this.httpclient = httpclient;
     }
 
-    //todo could be optimized
+    public void process(DashBoard dash, byte pin, PinType pinType, String triggerValue) {
+        try {
+            checkIfNotificationQuotaLimitIsNotReached();
+        } catch (QuotaLimitException qle) {
+            log.debug("Webhook quota limit reached. Ignoring hook.");
+            return;
+        }
+
+        Widget widget = dash.findWidgetByPin(pin, pinType);
+        if (widget == null) {
+            return;
+        }
+        if (widget instanceof WebHook) {
+            process((WebHook) widget, triggerValue);
+        }
+    }
+
     public void process(WebHook webHook, String triggerValue) {
         if (!webHook.isValid()) {
             return;
@@ -120,6 +133,6 @@ public class WebhookProcessor {
             log.error("Error sending webhook. Reason {}", t.getMessage());
         }
 
-    };
+    }
 
 }
