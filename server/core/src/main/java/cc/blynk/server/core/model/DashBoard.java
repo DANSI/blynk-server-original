@@ -5,11 +5,12 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
-import cc.blynk.utils.StringUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static cc.blynk.utils.StringUtils.split3;
 
 /**
  * User: ddumanskiy
@@ -52,7 +53,7 @@ public class DashBoard {
     }
 
     public void update(String body) {
-        update(body.split(StringUtils.BODY_SEPARATOR_STRING, 3));
+        update(split3(body));
     }
 
     private void update(String[] splitted) {

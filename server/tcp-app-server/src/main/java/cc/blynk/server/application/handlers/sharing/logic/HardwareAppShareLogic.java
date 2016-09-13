@@ -15,9 +15,13 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.SYNC;
+import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
+import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
+import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * The Blynk Project.
@@ -38,7 +42,7 @@ public class HardwareAppShareLogic {
     public void messageReceived(ChannelHandlerContext ctx, AppShareStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
-        String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING, 2);
+        String[] split = split2(message.body);
         int dashId = ParseUtil.parseInt(split[0]);
 
         DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(dashId);

@@ -19,6 +19,8 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.SYNC;
+import static cc.blynk.utils.StringUtils.split2;
+import static cc.blynk.utils.StringUtils.split3;
 
 /**
  * Responsible for handling incoming hardware commands from applications and forwarding it to
@@ -45,7 +47,7 @@ public class HardwareAppLogic {
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
-        String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING, 2);
+        String[] split = split2(message.body);
         int dashId = ParseUtil.parseInt(split[0]);
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
@@ -58,7 +60,7 @@ public class HardwareAppLogic {
         final char operation = split[1].charAt(1);
         switch (operation) {
             case 'w' :
-                String[] splitBody = split[1].split(StringUtils.BODY_SEPARATOR_STRING, 3);
+                String[] splitBody = split3(split[1]);
                 final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
                 final byte pin = ParseUtil.parseByte(splitBody[1]);
                 final String value = splitBody[2];

@@ -40,37 +40,52 @@ public class StringUtils {
         return body.substring(START_INDEX, i);
     }
 
-    /*
-    private static final int LIMIT3 = 3;
+    /**
+     * Optimized method for splitting. It is uses knowledge of Blynk message structure. So it is 2-3 times faster
+     * and produces less garbage.
+     *
+     * Does same as String.split(BODY_SEPARATOR_STRING, 3);
+     *
+     * See StringUtilPerfTest
+     *
+     Benchmark                                        Mode  Cnt    Score    Error  Units
+     StringUtilPerfTest.customSplit3_aw_100_900       avgt    5   46.806 ±  6.927  ns/op
+     StringUtilPerfTest.customSplit3_aw_10_long_text  avgt    5   52.334 ±  9.231  ns/op
+     StringUtilPerfTest.customSplit3_aw_1_2           avgt    5   48.483 ± 14.347  ns/op
+     StringUtilPerfTest.customSplit3_vw_1             avgt    5   34.943 ±  9.918  ns/op
+     StringUtilPerfTest.customSplit3_vw_99_22222      avgt    5   46.511 ± 15.401  ns/op
+     StringUtilPerfTest.customSplit3_vw_99_900        avgt    5   48.025 ± 18.951  ns/op
+     StringUtilPerfTest.split3_aw_100_900             avgt    5  113.358 ± 26.606  ns/op
+     StringUtilPerfTest.split3_aw_10_long_text        avgt    5  117.831 ± 39.682  ns/op
+     StringUtilPerfTest.split3_aw_1_2                 avgt    5  106.119 ±  1.289  ns/op
+     StringUtilPerfTest.split3_vw_1                   avgt    5   87.868 ± 11.709  ns/op
+     StringUtilPerfTest.split3_vw_99_22222            avgt    5  115.280 ±  8.697  ns/op
+     StringUtilPerfTest.split3_vw_99_900              avgt    5  123.085 ± 20.625  ns/op
+     *
+     *
+     */
     public static String[] split3(String body) {
-        String[] s = new String[LIMIT3];
-        int counter = 0;
-        int i = 2;
-        int prev = -1;
-        while (i < body.length() && counter < LIMIT3 - 1) {
-            if (body.charAt(i) == BODY_SEPARATOR) {
-                s[counter++] = body.substring(prev + 1, i);
-                prev = i;
-            }
-            i++;
-        }
-        s[counter] = body.substring(prev + 1, body.length());
-        return s;
-    }
-    */
-
-    public static String[] split3(String body) {
-        final int i1 = body.indexOf(BODY_SEPARATOR, 2);
+        final int i1 = body.indexOf(BODY_SEPARATOR, 1);
         if (i1 == -1) {
             return new String[] {body};
         }
 
         final int i2 = body.indexOf(BODY_SEPARATOR, i1 + 1);
         if (i2 == -1) {
-            return new String[] {body.substring(0, i1), body.substring(i1, body.length())};
+            return new String[] {body.substring(0, i1), body.substring(i1 + 1, body.length())};
         }
 
         return new String[] {body.substring(0, i1), body.substring(i1 + 1, i2), body.substring(i2 + 1, body.length())};
     }
+
+    public static String[] split2(String body) {
+        final int i1 = body.indexOf(BODY_SEPARATOR, 1);
+        if (i1 == -1) {
+            return new String[] {body};
+        }
+
+        return new String[] {body.substring(0, i1), body.substring(i1 + 1, body.length())};
+    }
+
 
 }

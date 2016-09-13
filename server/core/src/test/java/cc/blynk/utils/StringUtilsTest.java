@@ -1,9 +1,12 @@
-package cc.blynk.common.utils;
+package cc.blynk.utils;
 
-import cc.blynk.utils.StringUtils;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
+import static cc.blynk.utils.StringUtils.split3;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * The Blynk Project.
@@ -56,5 +59,45 @@ public class StringUtilsTest {
         assertEquals("255", res[1]);
         assertEquals(s, res[2]);
     }
+
+    @Test
+    public void splitOk() {
+        String body = "vw 1 123".replaceAll(" ", "\0");
+        String[] stringSplitResult = body.split(BODY_SEPARATOR_STRING, 3);
+        String[] customSplitResult = split3(body);
+
+        assertArrayEquals(stringSplitResult, customSplitResult);
+
+        body = "vw 1 123 124".replaceAll(" ", "\0");
+        stringSplitResult = body.split(BODY_SEPARATOR_STRING, 3);
+        customSplitResult = split3(body);
+
+        assertArrayEquals(stringSplitResult, customSplitResult);
+
+        body = "vw".replaceAll(" ", "\0");
+        stringSplitResult = body.split(BODY_SEPARATOR_STRING, 3);
+        customSplitResult = split3(body);
+
+        assertArrayEquals(stringSplitResult, customSplitResult);
+
+        body = "1 vw".replaceAll(" ", "\0");
+        stringSplitResult = body.split(BODY_SEPARATOR_STRING, 3);
+        customSplitResult = split3(body);
+
+        assertArrayEquals(stringSplitResult, customSplitResult);
+
+        body = "vw 2".replaceAll(" ", "\0");
+        stringSplitResult = body.split(BODY_SEPARATOR_STRING, 3);
+        customSplitResult = split3(body);
+
+        assertArrayEquals(stringSplitResult, customSplitResult);
+
+        body = "2 vw 2 222".replaceAll(" ", "\0");
+        stringSplitResult = body.split(BODY_SEPARATOR_STRING, 3);
+        customSplitResult = split3(body);
+
+        assertArrayEquals(stringSplitResult, customSplitResult);
+    }
+
 
 }
