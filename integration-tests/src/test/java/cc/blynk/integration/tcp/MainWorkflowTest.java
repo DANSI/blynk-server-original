@@ -1019,6 +1019,19 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals(-1, timeInput.stopAt);
         assertEquals(ZoneId.of("Europe/Kiev"), timeInput.tzName);
         assertArrayEquals(new int[]{1,2,3,4}, timeInput.days);
+
+        clientPair.appClient.send("hardware 1 vw " + b("99 82800 82800 Europe/Kiev  10800"));
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 99 82800 82800 Europe/Kiev  10800"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        assertNotNull(timeInput);
+        assertEquals(82800, timeInput.startAt);
+        assertEquals(82800, timeInput.stopAt);
+        assertEquals(ZoneId.of("Europe/Kiev"), timeInput.tzName);
+        assertNull(timeInput.days);
     }
 
     @Test
