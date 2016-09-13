@@ -76,6 +76,9 @@ public final class Command {
     public static final short HTTP_GET_DATA = 50;
     public static final short HTTP_TOTAL = 51;
 
+    //web sockets
+    public static final short WEB_SOCKETS = 52;
+
 
     //all this code just to make logging more user-friendly
     public static final Map<Short, String> valuesName = Collections.unmodifiableMap(new HashMap<Short, String>() {
@@ -133,6 +136,8 @@ public final class Command {
                 put(HTTP_EMAIL, "HttpEmail");
                 put(HTTP_GET_PROJECT, "HttpGetProject");
                 put(HTTP_TOTAL, "HttpTotal");
+
+                put(WEB_SOCKETS, "WebSockets");
             }
     });
 
