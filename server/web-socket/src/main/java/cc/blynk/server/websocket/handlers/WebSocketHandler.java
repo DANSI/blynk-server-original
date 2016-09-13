@@ -61,8 +61,6 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<Object> {
         } else if (msg instanceof WebSocketFrame) {
             handleWebSocketFrame(ctx, (WebSocketFrame) msg);
         }
-
-        globalStats.mark(Command.WEB_SOCKETS);
     }
 
     private void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
@@ -73,6 +71,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<Object> {
         }
         if (frame instanceof BinaryWebSocketFrame) {
             ctx.fireChannelRead(frame.retain().content());
+            globalStats.mark(Command.WEB_SOCKETS);
         }
     }
 
