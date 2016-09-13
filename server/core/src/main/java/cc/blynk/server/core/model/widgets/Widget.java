@@ -38,6 +38,7 @@ import cc.blynk.server.core.model.widgets.outputs.LED;
 import cc.blynk.server.core.model.widgets.outputs.LabeledValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.LevelDisplay;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
+import cc.blynk.server.core.model.widgets.ui.Image;
 import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
@@ -101,6 +102,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Tabs.class, name = "TABS"),
         @JsonSubTypes.Type(value = Player.class, name = "PLAYER"),
         @JsonSubTypes.Type(value = Table.class, name = "TABLE"),
+        @JsonSubTypes.Type(value = Image.class, name = "IMAGE"),
 
         //others
         @JsonSubTypes.Type(value = RTC.class, name = "RTC"),
