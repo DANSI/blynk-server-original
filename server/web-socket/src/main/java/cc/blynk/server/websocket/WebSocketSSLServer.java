@@ -55,7 +55,7 @@ public class WebSocketSSLServer extends BaseServer {
                 pipeline.addLast("WSSContext", sslCtx.newHandler(ch.alloc()));
                 pipeline.addLast("WSSHttpServerCodec", new HttpServerCodec());
                 pipeline.addLast("WSSHttpObjectAggregator", new HttpObjectAggregator(65536));
-                pipeline.addLast("WSSWebSocket", new WebSocketHandler(false));
+                pipeline.addLast("WSSWebSocket", new WebSocketHandler(false, holder.stats));
                 pipeline.addLast("WSSExceptionCatcher", exceptionCatcherHandler);
 
                 //hardware handlers

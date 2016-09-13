@@ -45,7 +45,7 @@ public class WebSocketServer extends BaseServer {
                 }
                 pipeline.addLast("WSHttpServerCodec", new HttpServerCodec());
                 pipeline.addLast("WSHttpObjectAggregator", new HttpObjectAggregator(65536));
-                pipeline.addLast("WSWebSocket", new WebSocketHandler(false));
+                pipeline.addLast("WSWebSocket", new WebSocketHandler(false, holder.stats));
                 pipeline.addLast("WSExceptionCatcher", exceptionCatcherHandler);
 
                         //hardware handlers

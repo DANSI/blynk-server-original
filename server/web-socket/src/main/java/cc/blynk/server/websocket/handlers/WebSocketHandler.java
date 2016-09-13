@@ -1,5 +1,7 @@
 package cc.blynk.server.websocket.handlers;
 
+import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -22,11 +24,14 @@ import static io.netty.handler.codec.http.HttpVersion.*;
 public class WebSocketHandler extends SimpleChannelInboundHandler<Object> {
 
     public static final String WEBSOCKET_PATH = "/websocket";
+    protected final GlobalStats globalStats;
     private final String protocol;
     private WebSocketServerHandshaker handshaker;
 
-    public WebSocketHandler(boolean isSecured) {
+
+    public WebSocketHandler(boolean isSecured, GlobalStats globalStats) {
         this.protocol = isSecured ? "wss://" : "ws://";
+        this.globalStats = globalStats;
     }
 
     private static void sendHttpResponse(ChannelHandlerContext ctx, FullHttpRequest req, FullHttpResponse res) {
@@ -56,6 +61,8 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<Object> {
         } else if (msg instanceof WebSocketFrame) {
             handleWebSocketFrame(ctx, (WebSocketFrame) msg);
         }
+
+        globalStats.mark(Command.WEB_SOCKETS);
     }
 
     private void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
