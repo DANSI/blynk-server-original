@@ -1072,7 +1072,7 @@ public class MainWorkflowTest extends IntegrationBase {
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
         appClient2.send("getToken 1");
-        verify(appClient2.responseMock, after(400).never()).channelRead(any(), any());
+        verify(appClient2.responseMock, after(600).never()).channelRead(any(), any());
         assertTrue(appClient2.isClosed());
 
         appClient2.send("login dima@mail.ua 1 Android 1RC7");
