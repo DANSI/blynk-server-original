@@ -61,10 +61,14 @@ public class TimeInput extends OnePinWidget implements HardwareSyncWidget {
             if (values.length == 3) {
                 days = null;
             } else {
-                String[] daysString = values[3].split(",");
-                days = new int[daysString.length];
-                for (int i = 0; i < daysString.length; i++) {
-                    days[i] = ParseUtil.parseInt(daysString[i]);
+                if (values[3].equals("")) {
+                    days = null;
+                } else {
+                    String[] daysString = values[3].split(",");
+                    days = new int[daysString.length];
+                    for (int i = 0; i < daysString.length; i++) {
+                        days[i] = ParseUtil.parseInt(daysString[i]);
+                    }
                 }
             }
             return true;
