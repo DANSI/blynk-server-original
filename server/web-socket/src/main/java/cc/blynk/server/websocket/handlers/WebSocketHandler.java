@@ -24,7 +24,7 @@ import static io.netty.handler.codec.http.HttpVersion.*;
 public class WebSocketHandler extends SimpleChannelInboundHandler<Object> {
 
     public static final String WEBSOCKET_PATH = "/websocket";
-    protected final GlobalStats globalStats;
+    private final GlobalStats globalStats;
     private final String protocol;
     private WebSocketServerHandshaker handshaker;
 
