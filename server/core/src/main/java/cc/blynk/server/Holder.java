@@ -74,8 +74,15 @@ public class Holder {
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
+        this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
+                .setUserAgent(null)
+                .setEventLoopGroup(transportTypeHolder.workerGroup)
+                .setKeepAlive(false)
+                .build()
+        );
+
         this.twitterWrapper = new TwitterWrapper();
-        this.mailWrapper = new MailWrapper(new ServerProperties(MailWrapper.MAIL_PROPERTIES_FILENAME));
+        this.mailWrapper = new MailWrapper(new ServerProperties(MailWrapper.MAIL_PROPERTIES_FILENAME), asyncHttpClient);
         this.gcmWrapper = new GCMWrapper(new ServerProperties(GCMWrapper.GCM_PROPERTIES_FILENAME), transportTypeHolder.workerGroup);
         this.smsWrapper = new SMSWrapper(new ServerProperties(SMSWrapper.SMS_PROPERTIES_FILENAME), transportTypeHolder.workerGroup);
 
@@ -86,12 +93,6 @@ public class Holder {
         );
 
         this.eventorProcessor = new EventorProcessor(gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor);
-        this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
-                .setUserAgent(null)
-                .setEventLoopGroup(transportTypeHolder.workerGroup)
-                .setKeepAlive(false)
-                .build()
-        );
 
         this.dbManager = new DBManager(blockingIOProcessor);
     }

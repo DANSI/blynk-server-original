@@ -674,7 +674,7 @@ public class HttpAPILogic {
     private void mail(String username, String to, String subj, String body) {
         blockingIOProcessor.execute(() -> {
             try {
-                mailWrapper.send(to, subj, body);
+                mailWrapper.sendText(to, subj, body);
             } catch (Exception e) {
                 log.error("Error sending email from HTTP. From : '{}', to : '{}'. Reason : {}", username, to, e.getMessage());
             }

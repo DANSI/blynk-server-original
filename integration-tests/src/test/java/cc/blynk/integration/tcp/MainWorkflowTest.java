@@ -575,7 +575,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         appClient.send("email 1");
-        verify(mailWrapper, timeout(1000)).send(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"));
+        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"));
     }
 
     @Test
@@ -600,7 +600,7 @@ public class MainWorkflowTest extends IntegrationBase {
         StorageWorker.write(userReportFile, 2.2, 2L);
 
         clientPair.appClient.send("export 1 14");
-        verify(mailWrapper, timeout(1000)).send(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/dima@mail.ua_1_a7.csv.gz"), eq("text/html"));
+        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/dima@mail.ua_1_a7.csv.gz"), eq("text/html"));
     }
 
     @Test
@@ -899,7 +899,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.hardwareClient.send("email to subj body");
-        verify(mailWrapper, timeout(500)).send(eq("to"), eq("subj"), eq("body"));
+        verify(mailWrapper, timeout(500)).sendText(eq("to"), eq("subj"), eq("body"));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         clientPair.hardwareClient.send("email to subj body");
@@ -915,7 +915,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.hardwareClient.send("email subj body");
-        verify(mailWrapper, timeout(500)).send(eq("test@mail.ua"), eq("subj"), eq("body"));
+        verify(mailWrapper, timeout(500)).sendText(eq("test@mail.ua"), eq("subj"), eq("body"));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
     }
 
@@ -1043,7 +1043,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.hardwareClient.send("email subj body");
-        verify(mailWrapper, timeout(500)).send(eq("dima@mail.ua"), eq("subj"), eq("body"));
+        verify(mailWrapper, timeout(500)).sendText(eq("dima@mail.ua"), eq("subj"), eq("body"));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
     }
 

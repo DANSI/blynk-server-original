@@ -1,5 +1,7 @@
 package cc.blynk.server.notifications.mail;
 
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -13,6 +15,13 @@ import java.util.Properties;
  */
 public class MailWrapperTest {
 
+    private DefaultAsyncHttpClient httpclient = new DefaultAsyncHttpClient(
+            new DefaultAsyncHttpClientConfig.Builder()
+    .setUserAgent(null)
+    .setKeepAlive(false)
+    .build()
+    );
+
     @Test
     @Ignore
     public void sendMail() throws Exception {
@@ -24,13 +33,13 @@ public class MailWrapperTest {
         }
 
         String to = "";
-        MailWrapper mailWrapper = new MailWrapper(properties);
-        mailWrapper.send(to, "Hello", "Body!");
+        MailWrapper mailWrapper = new MailWrapper(properties, httpclient);
+        mailWrapper.sendText(to, "Hello", "Body!");
     }
 
     @Test
     @Ignore
-    public void sendMaiWithAttachments() throws Exception {
+    public void sendMailWithAttachments() throws Exception {
         Properties properties = new Properties();
         try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
             if (classPath != null) {
@@ -39,9 +48,23 @@ public class MailWrapperTest {
         }
 
         String to = "doom369@gmail.com";
-        MailWrapper mailWrapper = new MailWrapper(properties);
+        MailWrapper mailWrapper = new MailWrapper(properties, httpclient);
 
-        mailWrapper.send(to, "Hello", "Body!");
+        mailWrapper.sendText(to, "Hello", "Body!");
+    }
+
+    @Test
+    @Ignore
+    public void sendMailWithHttpProvider() throws Exception {
+        Properties properties = new Properties();
+        properties.setProperty("mail.host", "");
+        properties.setProperty("mail.api_key", "");
+        properties.setProperty("mail.from", "");
+
+        String to = "";
+        MailWrapper mailWrapper = new MailWrapper(properties, httpclient);
+
+        mailWrapper.sendText(to, "Hello", "Body!");
     }
 
 }

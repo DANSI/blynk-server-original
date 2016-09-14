@@ -62,7 +62,7 @@ public class AppMailLogic {
     private void mail(Channel channel, String username, String to, String subj, String body, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
-                mailWrapper.send(to, subj, body);
+                mailWrapper.sendText(to, subj, body);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending email from application. From user {}, to : {}. Reason : {}",  username, to, e.getMessage());

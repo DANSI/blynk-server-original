@@ -88,7 +88,7 @@ public class ExportGraphDataLogic {
                 } else {
 
                     String title = "History graph data for project " + dashName;
-                    mailWrapper.send(user.name, title, makeBody(pinsCSVFilePath), "text/html");
+                    mailWrapper.sendHtml(user.name, title, makeBody(pinsCSVFilePath));
                     ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
                 }
 
