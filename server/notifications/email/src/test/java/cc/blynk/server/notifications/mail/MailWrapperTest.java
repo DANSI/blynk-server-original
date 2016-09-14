@@ -57,14 +57,26 @@ public class MailWrapperTest {
     @Ignore
     public void sendMailWithHttpProvider() throws Exception {
         Properties properties = new Properties();
-        properties.setProperty("mail.host", "");
-        properties.setProperty("mail.api.key", "");
-        properties.setProperty("mail.from", "");
+        try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
+            if (classPath != null) {
+                properties.load(classPath);
+            }
+        }
 
         String to = "";
+
         MailWrapper mailWrapper = new MailWrapper(properties, httpclient);
 
-        mailWrapper.sendText(to, "Hello", "Body!");
+        mailWrapper.sendText(to, "Hello", "Happy Blynking!\n" +
+                "-\n" +
+                "Getting Started Guide -> http://www.blynk.cc/getting-started\n" +
+                "Documentation -> http://docs.blynk.cc/\n" +
+                "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.3.9/Blynk_v0.3.9.zip\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.18.1/server-0.18.1.jar\n" +
+                "-\n" +
+                "http://www.blynk.cc\n" +
+                "twitter.com/blynk_app\n" +
+                "www.facebook.com/blynkapp");
     }
 
 }
