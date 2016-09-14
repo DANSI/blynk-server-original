@@ -20,7 +20,7 @@ public class MailWrapper {
     private final MailClient client;
 
     public MailWrapper(Properties mailProperties, AsyncHttpClient asyncHttpClient) {
-        String apiKey = mailProperties.getProperty("mail.api_key");
+        String apiKey = mailProperties.getProperty("mail.api.key");
         if (apiKey == null || apiKey.equals("")) {
             client = new SmtpMailClient(mailProperties);
         } else {

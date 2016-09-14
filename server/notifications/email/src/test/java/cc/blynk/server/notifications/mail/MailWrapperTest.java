@@ -58,7 +58,7 @@ public class MailWrapperTest {
     public void sendMailWithHttpProvider() throws Exception {
         Properties properties = new Properties();
         properties.setProperty("mail.host", "");
-        properties.setProperty("mail.api_key", "");
+        properties.setProperty("mail.api.key", "");
         properties.setProperty("mail.from", "");
 
         String to = "";

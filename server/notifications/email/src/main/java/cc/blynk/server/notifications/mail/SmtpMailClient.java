@@ -28,7 +28,7 @@ public class SmtpMailClient implements MailClient {
         final String username = mailProperties.getProperty("mail.smtp.username");
         final String password = mailProperties.getProperty("mail.smtp.password");
 
-        log.info("Initializing mail transport. Username : {}. SMTP host : {}:{}",
+        log.info("Initializing smtp mail transport. Username : {}. SMTP host : {}:{}",
                 username, mailProperties.getProperty("mail.smtp.host"), mailProperties.getProperty("mail.smtp.port"));
 
         this.session = Session.getInstance(mailProperties, new javax.mail.Authenticator() {
