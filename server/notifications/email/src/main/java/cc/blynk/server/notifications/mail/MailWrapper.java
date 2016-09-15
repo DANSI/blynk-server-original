@@ -1,8 +1,5 @@
 package cc.blynk.server.notifications.mail;
 
-import cc.blynk.server.notifications.mail.http.HttpMailClient;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.asynchttpclient.AsyncHttpClient;
 
 import java.util.Properties;
@@ -16,15 +13,14 @@ public class MailWrapper {
 
     public static final String MAIL_PROPERTIES_FILENAME = "mail.properties";
 
-    private static final Logger log = LogManager.getLogger(MailWrapper.class);
     private final MailClient client;
 
     public MailWrapper(Properties mailProperties, AsyncHttpClient asyncHttpClient) {
-        String apiKey = mailProperties.getProperty("mail.api.key");
-        if (apiKey == null || apiKey.equals("")) {
-            client = new SmtpMailClient(mailProperties);
+        String host = mailProperties.getProperty("mail.smtp.host");
+        if (host != null && host.contains("gmail")) {
+            client = new GMailClient(mailProperties);
         } else {
-            client = new HttpMailClient(mailProperties, asyncHttpClient);
+            client = new SparkPostMailClient(mailProperties);
         }
     }
 

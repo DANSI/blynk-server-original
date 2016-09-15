@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
@@ -17,27 +16,27 @@ import java.util.Properties;
  * Created by Dmitriy Dumanskiy.
  * Created on 14.09.16.
  */
-public class SmtpMailClient implements MailClient {
+public class SparkPostMailClient implements MailClient {
 
     private static final Logger log = LogManager.getLogger(MailWrapper.class);
 
     private final Session session;
     private final InternetAddress from;
+    private final String host;
+    private final String username;
+    private final String password;
 
-    public SmtpMailClient(Properties mailProperties) {
-        final String username = mailProperties.getProperty("mail.smtp.username");
-        final String password = mailProperties.getProperty("mail.smtp.password");
+    public SparkPostMailClient(Properties mailProperties) {
+        this.username = mailProperties.getProperty("mail.smtp.username");
+        this.password = mailProperties.getProperty("mail.smtp.password");
+        this.host = mailProperties.getProperty("mail.smtp.host");
 
-        log.info("Initializing smtp mail transport. Username : {}. SMTP host : {}:{}",
-                username, mailProperties.getProperty("mail.smtp.host"), mailProperties.getProperty("mail.smtp.port"));
+        log.info("Initializing SparkPost smtp mail transport. Username : {}. SMTP host : {}:{}",
+                username, host, mailProperties.getProperty("mail.smtp.port"));
 
-        this.session = Session.getInstance(mailProperties, new javax.mail.Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        });
+        this.session = Session.getInstance(mailProperties);
         try {
-            this.from = new InternetAddress(username);
+            this.from = new InternetAddress(mailProperties.getProperty("mail.from"));
         } catch (AddressException e) {
             throw new RuntimeException("Error initializing MailWrapper.");
         }
@@ -60,7 +59,14 @@ public class SmtpMailClient implements MailClient {
         message.setSubject(subj, "UTF-8");
         message.setContent(body, contentType);
 
-        Transport.send(message);
+        Transport transport = session.getTransport();
+        try {
+            transport.connect(host, username, password);
+            transport.sendMessage(message, message.getAllRecipients());
+        } finally {
+            transport.close();
+        }
+
         log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
     }
 
