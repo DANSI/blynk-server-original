@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.exceptions.InvalidTokenException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -206,6 +207,51 @@ public class UserDao {
             }
         }
         return filledSpace;
+    }
+
+    public Map<String, Integer> getWebHookHosts() {
+        Map<String, Integer> data = new HashMap<>();
+        for (User user : users.values()) {
+            for (DashBoard dashBoard : user.profile.dashBoards) {
+                for (Widget widget : dashBoard.widgets) {
+                    if (widget instanceof WebHook) {
+                        WebHook webHook = (WebHook) widget;
+                        if (webHook.url != null) {
+                            try {
+                                String key = getHost(webHook.url);
+                                Integer i = data.getOrDefault(key, 0);
+                                data.put(key, ++i);
+                            } catch (Exception e) {
+                                //don't care if we couldn't parse.
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return data;
+    }
+
+    /**
+     * Will take a url such as http://www.stackoverflow.com and return www.stackoverflow.com
+     */
+    private static String getHost(String url) {
+        if(url == null || url.length() == 0)
+            return "";
+
+        int doubleslash = url.indexOf("//");
+        if(doubleslash == -1)
+            doubleslash = 0;
+        else
+            doubleslash += 2;
+
+        int end = url.indexOf('/', doubleslash);
+        end = end >= 0 ? end : url.length();
+
+        int port = url.indexOf(':', doubleslash);
+        end = (port > 0 && port < end) ? port : end;
+
+        return url.substring(doubleslash, end);
     }
 
     public User addFacebookUser(String userName, String appName) {

@@ -115,4 +115,12 @@ public class StatsLogic extends HttpLogicUtil {
         return ok(sort(convertMapToPair(fileManager.getUserProfilesSize()), sortField, sortOrder, true));
     }
 
+
+    @GET
+    @Path("/webHookHosts")
+    public Response getWebHookHosts(@QueryParam("_sortField") String sortField,
+                                       @QueryParam("_sortDir") String sortOrder) {
+        return ok(sort(convertMapToPair(userDao.getWebHookHosts()), sortField, sortOrder, true));
+    }
+
 }

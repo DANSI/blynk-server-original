@@ -264,7 +264,16 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             nga.field('count').label('Size in bytes')
         ]);
 
-
+    var webHookHosts = nga.entity('webHookHosts').identifier(nga.field('name')).url('stats/webHookHosts').readOnly();
+    webHookHosts.listView()
+        .title('Webhook hosts')
+        .perPage(50)
+        .batchActions([])
+        .sortField('count')
+        .fields([
+            nga.field('name').label('Host'),
+            nga.field('count').label('Number')
+        ]);
 
     var config = nga.entity('config').identifier(nga.field('name'));
     config.listView()
@@ -295,6 +304,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                 .addChild(nga.menu(projectsPerUser).title('Projects per user').icon(''))
                 .addChild(nga.menu(filledSpace).title('Cells per project').icon(''))
                 .addChild(nga.menu(userProfileSize).title('Size of user profile').icon(''))
+                .addChild(nga.menu(webHookHosts).title('Webhook hosts').icon(''))
             )
             .addChild(nga.menu().title('Hardware Info')
                 .addChild(nga.menu(libraryVersion).title('Library versions').icon(''))
@@ -321,6 +331,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     admin.addEntity(cpuType);
     admin.addEntity(hardwareBoards);
     admin.addEntity(connectionType);
+    admin.addEntity(webHookHosts);
     admin.addEntity(config);
     // attach the admin application to the DOM and execute it
     nga.configure(admin);
