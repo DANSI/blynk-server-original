@@ -109,6 +109,8 @@ save and exit.
         
 + Put bat file to windows startup folder
 
+You can also use this ready script to run server.
+
 ## Update instruction for unix-like systems
 
 In order to update your server with new version you need to kill old process and start new one.
