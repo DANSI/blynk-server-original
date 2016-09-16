@@ -109,7 +109,7 @@ save and exit.
         
 + Put bat file to windows startup folder
 
-You can also use this ready script to run server.
+You can also use [this](https://github.com/blynkkk/blynk-server/tree/master/scripts/win) ready script to run server.
 
 ## Update instruction for unix-like systems
 
