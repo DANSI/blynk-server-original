@@ -92,7 +92,7 @@ public class Holder {
                 FileLoaderUtil.readFileAsString(BlockingIOProcessor.TOKEN_MAIL_BODY)
         );
 
-        this.eventorProcessor = new EventorProcessor(gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor);
+        this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
 
         this.dbManager = new DBManager(blockingIOProcessor);
     }
@@ -125,7 +125,7 @@ public class Holder {
                 FileLoaderUtil.readFileAsString(BlockingIOProcessor.TOKEN_MAIL_BODY)
         );
 
-        this.eventorProcessor = new EventorProcessor(gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor);
+        this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
                 .setUserAgent(null)
                 .setEventLoopGroup(transportTypeHolder.workerGroup)

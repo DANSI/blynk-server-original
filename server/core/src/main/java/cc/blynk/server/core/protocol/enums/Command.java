@@ -79,6 +79,9 @@ public final class Command {
     //web sockets
     public static final short WEB_SOCKETS = 52;
 
+    public static final short EVENTOR = 53;
+    public static final short WEB_HOOKS = 54;
+
 
     //all this code just to make logging more user-friendly
     public static final Map<Short, String> valuesName = Collections.unmodifiableMap(new HashMap<Short, String>() {
@@ -138,6 +141,9 @@ public final class Command {
                 put(HTTP_TOTAL, "HttpTotal");
 
                 put(WEB_SOCKETS, "WebSockets");
+
+                put(EVENTOR, "Eventor");
+                put(WEB_HOOKS, "WebHooks");
             }
     });
 

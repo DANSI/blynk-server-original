@@ -41,7 +41,8 @@ public class HardwareAppLogic {
     public HardwareAppLogic(Holder holder) {
         this.sessionDao = holder.sessionDao;
         this.webhookProcessor = new WebhookProcessor(holder.asyncHttpClient,
-                holder.props.getLongProperty("webhooks.frequency.user.quota.limit", 1000));
+                holder.props.getLongProperty("webhooks.frequency.user.quota.limit", 1000),
+                holder.stats);
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
