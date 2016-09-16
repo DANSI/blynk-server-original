@@ -314,7 +314,7 @@ public class HttpAPILogic {
             log.error("Error getting pin data.");
             return Response.badRequest("Error getting pin data.");
         } else {
-            return redirect(path.toString());
+            return redirect("/" + path.getFileName().toString());
         }
     }
 
