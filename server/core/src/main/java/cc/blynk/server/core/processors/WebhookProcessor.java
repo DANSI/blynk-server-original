@@ -36,18 +36,17 @@ public class WebhookProcessor extends NotificationBase {
     }
 
     public void process(DashBoard dash, byte pin, PinType pinType, String triggerValue) {
-        try {
-            checkIfNotificationQuotaLimitIsNotReached();
-        } catch (QuotaLimitException qle) {
-            log.debug("Webhook quota limit reached. Ignoring hook.");
-            return;
-        }
-
         Widget widget = dash.findWidgetByPin(pin, pinType);
         if (widget == null) {
             return;
         }
         if (widget instanceof WebHook) {
+            try {
+                checkIfNotificationQuotaLimitIsNotReached();
+            } catch (QuotaLimitException qle) {
+                log.debug("Webhook quota limit reached. Ignoring hook.");
+                return;
+            }
             process((WebHook) widget, triggerValue);
         }
     }
