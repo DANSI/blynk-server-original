@@ -44,7 +44,8 @@ public class HardwareLogic {
         this.reportingDao = holder.reportingDao;
         this.eventorProcessor = holder.eventorProcessor;
         this.webhookProcessor = new WebhookProcessor(holder.asyncHttpClient,
-                holder.props.getLongProperty("webhooks.frequency.user.quota.limit", 1000));
+                holder.props.getLongProperty("webhooks.frequency.user.quota.limit", 1000),
+                holder.stats);
     }
 
     private static boolean isWriteOperation(String body) {

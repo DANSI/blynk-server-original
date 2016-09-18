@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.widgets.others.webhook.Header;
 import cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
+import cc.blynk.server.core.stats.GlobalStats;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asynchttpclient.AsyncCompletionHandler;
@@ -16,6 +17,7 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.Response;
 
 import static cc.blynk.utils.StringUtils.PIN_PATTERN;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_HOOKS;
 
 /**
  * Handles all webhooks logic.
@@ -29,10 +31,12 @@ public class WebhookProcessor extends NotificationBase {
     private static final Logger log = LogManager.getLogger(WebhookProcessor.class);
 
     private final AsyncHttpClient httpclient;
+    private final GlobalStats globalStats;
 
-    public WebhookProcessor(DefaultAsyncHttpClient httpclient, long quotaFrequencyLimit) {
+    public WebhookProcessor(DefaultAsyncHttpClient httpclient, long quotaFrequencyLimit, GlobalStats stats) {
         super(quotaFrequencyLimit);
         this.httpclient = httpclient;
+        this.globalStats = stats;
     }
 
     public void process(DashBoard dash, byte pin, PinType pinType, String triggerValue) {
@@ -77,6 +81,7 @@ public class WebhookProcessor extends NotificationBase {
         }
 
         builder.execute(new ResponseHandler());
+        globalStats.mark(WEB_HOOKS);
     }
 
     private String prepareUrl(String url, String triggerValue) {

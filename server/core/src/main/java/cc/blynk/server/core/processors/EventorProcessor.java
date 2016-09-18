@@ -15,13 +15,14 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.notificati
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotificationAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.TwitAction;
-import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.protocol.enums.Command.EVENTOR;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN;
 
@@ -38,14 +39,14 @@ public class EventorProcessor {
 
     private final GCMWrapper gcmWrapper;
     private final TwitterWrapper twitterWrapper;
-    private final MailWrapper mailWrapper;
     private final BlockingIOProcessor blockingIOProcessor;
+    private final GlobalStats globalStats;
 
-    public EventorProcessor(GCMWrapper gcmWrapper, MailWrapper mailWrapper, TwitterWrapper twitterWrapper, BlockingIOProcessor blockingIOProcessor) {
+    public EventorProcessor(GCMWrapper gcmWrapper, TwitterWrapper twitterWrapper, BlockingIOProcessor blockingIOProcessor, GlobalStats stats) {
         this.gcmWrapper = gcmWrapper;
-        this.mailWrapper = mailWrapper;
         this.twitterWrapper = twitterWrapper;
         this.blockingIOProcessor = blockingIOProcessor;
+        this.globalStats = stats;
     }
 
     public void process(Session session, DashBoard dash, byte pin, PinType type, String triggerValue) {
@@ -91,6 +92,8 @@ public class EventorProcessor {
             } else if (notificationAction instanceof MailAction) {
                 //email(dash, body);
             }
+
+            globalStats.mark(EVENTOR);
         }
     }
 
