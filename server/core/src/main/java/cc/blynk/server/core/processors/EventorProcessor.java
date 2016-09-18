@@ -92,7 +92,6 @@ public class EventorProcessor {
             } else if (notificationAction instanceof MailAction) {
                 //email(dash, body);
             }
-
             globalStats.mark(EVENTOR);
         }
     }
@@ -146,16 +145,17 @@ public class EventorProcessor {
         widget.push(gcmWrapper, body, dash.id);
     }
 
-    private static void execute(Session session, boolean isActive, int dashId, SetPinAction action) {
+    private void execute(Session session, boolean isActive, int dashId, SetPinAction action) {
         execute(session, isActive, dashId, action.pin, action.value);
     }
-    private static void execute(Session session,  boolean isActive, int dashId, Pin pin, String value) {
+    private void execute(Session session,  boolean isActive, int dashId, Pin pin, String value) {
         if (pin != null && pin.pinType != null && pin.pin > -1 && value != null) {
             final String body = Pin.makeHardwareBody(pin.pwmMode, pin.pinType, pin.pin, value);
             session.sendMessageToHardware(dashId, HARDWARE, 888, body);
             if (isActive) {
                 session.sendToApps(HARDWARE, 888, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
             }
+            globalStats.mark(EVENTOR);
         }
     }
 }

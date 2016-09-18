@@ -10,11 +10,12 @@ import java.util.concurrent.atomic.LongAdder;
 public class GlobalStats {
 
     private static final int LAST_COMMAND_INDEX = 55;
-    public final Meter incomeMessages;
+    //separate by income/outcome?
+    public final Meter totalMessages;
     public final LongAdder[] specificCounters;
 
     public GlobalStats() {
-        this.incomeMessages = new Meter();
+        this.totalMessages = new Meter();
 
         //yeah, this is a bit ugly code, but as fast as possible =).
         this.specificCounters = new LongAdder[LAST_COMMAND_INDEX];
@@ -24,7 +25,7 @@ public class GlobalStats {
     }
 
     public void mark(final short cmd) {
-        incomeMessages.mark(1);
+        totalMessages.mark(1);
         specificCounters[cmd].increment();
     }
 

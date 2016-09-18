@@ -39,7 +39,7 @@ public class Stat {
 
     public static Stat calcStats(SessionDao sessionDao, UserDao userDao, GlobalStats localStats, boolean reset) {
         Stat stat = new Stat();
-        stat.oneMinRate = (long) localStats.incomeMessages.getOneMinuteRate();
+        stat.oneMinRate = (long) localStats.totalMessages.getOneMinuteRate();
 
         //yeap, some stats updates may be lost (because of sumThenReset()),
         //but we don't care, cause this is just for general monitoring
