@@ -17,10 +17,10 @@ public class MailWrapper {
 
     public MailWrapper(Properties mailProperties, AsyncHttpClient asyncHttpClient) {
         String host = mailProperties.getProperty("mail.smtp.host");
-        if (host != null && host.contains("gmail")) {
-            client = new GMailClient(mailProperties);
-        } else {
+        if (host != null && host.contains("sparkpostmail")) {
             client = new SparkPostMailClient(mailProperties);
+        } else {
+            client = new GMailClient(mailProperties);
         }
     }
 
