@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asynchttpclient.AsyncCompletionHandler;
@@ -16,8 +17,13 @@ import org.asynchttpclient.BoundRequestBuilder;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.Response;
 
-import static cc.blynk.utils.StringUtils.PIN_PATTERN;
 import static cc.blynk.server.core.protocol.enums.Command.WEB_HOOKS;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_0;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_1;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_2;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_3;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_4;
 
 /**
  * Handles all webhooks logic.
@@ -60,7 +66,7 @@ public class WebhookProcessor extends NotificationBase {
             return;
         }
 
-        String newUrl = prepareUrl(webHook.url, triggerValue);
+        String newUrl = format(webHook.url, triggerValue, false);
 
         BoundRequestBuilder builder = buildRequestMethod(webHook.method, newUrl);
 
@@ -70,9 +76,7 @@ public class WebhookProcessor extends NotificationBase {
                     builder.setHeader(header.name, header.value);
                     if (webHook.body != null && !webHook.body.equals("")) {
                         if (header.name.equals("Content-Type")) {
-                            String newBody = webHook.body
-                                    .replace("%s", triggerValue)
-                                    .replace(PIN_PATTERN, triggerValue);
+                            String newBody = format(webHook.body, triggerValue, true);
                                 buildRequestBody(builder, header.value, newBody);
                             }
                     }
@@ -84,12 +88,27 @@ public class WebhookProcessor extends NotificationBase {
         globalStats.mark(WEB_HOOKS);
     }
 
-    private String prepareUrl(String url, String triggerValue) {
+    //todo this is very straightforward solution. should be optimized.
+    private String format(String data, String triggerValue, boolean doBlynkCheck) {
         //this is an ugly hack to make it work with Blynk HTTP API.
-        if (!url.toLowerCase().contains("/pin/v")) {
-            url = url.replace(PIN_PATTERN, triggerValue);
+        if (doBlynkCheck || !data.toLowerCase().contains("/pin/v")) {
+            data = data.replace(PIN_PATTERN, triggerValue);
         }
-        return url.replace("%s", triggerValue);
+        data = data.replace("%s", triggerValue);
+        String[] splitted = triggerValue.split(StringUtils.BODY_SEPARATOR_STRING);
+        switch (splitted.length) {
+            case 5 :
+                data = data.replace(PIN_PATTERN_4, splitted[4]);
+            case 4 :
+                data = data.replace(PIN_PATTERN_3, splitted[3]);
+            case 3 :
+                data = data.replace(PIN_PATTERN_2, splitted[2]);
+            case 2 :
+                data = data.replace(PIN_PATTERN_1, splitted[1]);
+            case 1 :
+                data = data.replace(PIN_PATTERN_0, splitted[0]);
+        }
+        return data;
     }
 
     private BoundRequestBuilder buildRequestBody(BoundRequestBuilder builder, String header, String body) {

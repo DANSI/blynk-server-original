@@ -11,6 +11,11 @@ public class StringUtils {
     public static final String BODY_SEPARATOR_STRING = String.valueOf(BODY_SEPARATOR);
 
     public static final String PIN_PATTERN =  "/pin/";
+    public static final String PIN_PATTERN_0 =  "/pin[0]/";
+    public static final String PIN_PATTERN_1 =  "/pin[1]/";
+    public static final String PIN_PATTERN_2 =  "/pin[2]/";
+    public static final String PIN_PATTERN_3 =  "/pin[3]/";
+    public static final String PIN_PATTERN_4 =  "/pin[4]/";
 
     /**
      * Parses string similar to this : "xw 1 xxxx"
