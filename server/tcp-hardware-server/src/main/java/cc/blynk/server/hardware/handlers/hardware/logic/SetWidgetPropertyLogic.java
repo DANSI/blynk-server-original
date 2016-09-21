@@ -18,6 +18,7 @@ import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.utils.ByteBufUtil.makeResponse;
 import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.StringUtils.split3;
 
 /**
  * Handler that allows to change widget properties from hardware side.
@@ -40,7 +41,7 @@ public class SetWidgetPropertyLogic {
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.user);
 
-        String[] bodyParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING, 3);
+        String[] bodyParts = split3(message.body);
 
         if (bodyParts.length != 3) {
             log.error("SetWidgetProperty command body has wrong format. {}", message.body);

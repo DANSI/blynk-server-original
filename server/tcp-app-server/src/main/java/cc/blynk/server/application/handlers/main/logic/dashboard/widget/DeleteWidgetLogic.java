@@ -15,8 +15,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cc.blynk.utils.ByteBufUtil.*;
-import static cc.blynk.utils.StringUtils.*;
+import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * The Blynk Project.
@@ -28,7 +28,7 @@ public class DeleteWidgetLogic {
     private static final Logger log = LogManager.getLogger(DeleteWidgetLogic.class);
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] split = message.body.split(BODY_SEPARATOR_STRING, 2);
+        String[] split = split2(message.body);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");

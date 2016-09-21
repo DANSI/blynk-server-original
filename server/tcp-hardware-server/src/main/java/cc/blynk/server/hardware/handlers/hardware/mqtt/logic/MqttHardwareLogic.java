@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.utils.StringUtils.split3;
 
 /**
  * Handler responsible for forwarding messages from hardware to applications.
@@ -61,7 +62,7 @@ public class MqttHardwareLogic {
 
         if (isWriteOperation(body)) {
             //" |\0" - to simplify demonstration
-            String[] splitBody = body.split(StringUtils.BODY_SEPARATOR_STRING, 3);
+            String[] splitBody = split3(body);
 
             if (splitBody.length < 3 || splitBody[0].length() == 0) {
                 //throw new IllegalCommandException("Write command is wrong.");

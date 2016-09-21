@@ -15,8 +15,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.utils.ByteBufUtil.*;
-import static cc.blynk.utils.StringUtils.*;
+import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.StringUtils.split2;
 
 /**
  * The Blynk Project.
@@ -34,7 +34,7 @@ public class UpdateWidgetLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] split = message.body.split(BODY_SEPARATOR_STRING, 2);
+        String[] split = split2(message.body);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");

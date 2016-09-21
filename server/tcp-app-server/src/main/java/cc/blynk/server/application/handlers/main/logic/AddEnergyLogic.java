@@ -7,12 +7,12 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.Purchase;
 import cc.blynk.utils.ParseUtil;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.StringUtils.split2;
 
 
 /**
@@ -30,20 +30,6 @@ public class AddEnergyLogic {
     public AddEnergyLogic(DBManager dbManager, BlockingIOProcessor blockingIOProcessor) {
         this.blockingIOProcessor = blockingIOProcessor;
         this.dbManager = dbManager;
-    }
-
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] bodyParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING, 2);
-
-        int energyAmountToAdd = ParseUtil.parseInt(bodyParts[0]);
-        if (bodyParts.length == 2 && isValidTransactionId(bodyParts[1])) {
-            insertPurchase(user.name, energyAmountToAdd, bodyParts[1]);
-        } else {
-            throw new NotAllowedException("Purchase with invalid transaction id. User " + user.name);
-        }
-
-        user.purchaseEnergy(energyAmountToAdd);
-        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
     private static boolean isValidTransactionId(String id) {
@@ -67,6 +53,20 @@ public class AddEnergyLogic {
         }
 
         return true;
+    }
+
+    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+        String[] bodyParts = split2(message.body);
+
+        int energyAmountToAdd = ParseUtil.parseInt(bodyParts[0]);
+        if (bodyParts.length == 2 && isValidTransactionId(bodyParts[1])) {
+            insertPurchase(user.name, energyAmountToAdd, bodyParts[1]);
+        } else {
+            throw new NotAllowedException("Purchase with invalid transaction id. User " + user.name);
+        }
+
+        user.purchaseEnergy(energyAmountToAdd);
+        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
     private void insertPurchase(String username, int reward, String transactionId) {
