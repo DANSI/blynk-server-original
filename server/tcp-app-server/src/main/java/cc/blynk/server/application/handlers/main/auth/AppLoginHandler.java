@@ -17,6 +17,9 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.asynchttpclient.AsyncCompletionHandler;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.Response;
 
 import java.util.NoSuchElementException;
 
@@ -40,14 +43,15 @@ import static cc.blynk.utils.ByteBufUtil.ok;
 @ChannelHandler.Sharable
 public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultReregisterHandler, DefaultExceptionHandler {
 
+    private static final String URL = "https://graph.facebook.com/me?fields=email&access_token=";
     private static final Logger log = LogManager.getLogger(AppLoginHandler.class);
 
     private final Holder holder;
-    private final FacebookLoginCheck facebookLoginCheck;
+    private final DefaultAsyncHttpClient asyncHttpClient;
 
     public AppLoginHandler(Holder holder) {
         this.holder = holder;
-        this.facebookLoginCheck = new FacebookLoginCheck(holder.asyncHttpClient);
+        this.asyncHttpClient = holder.asyncHttpClient;
     }
 
     private static void cleanPipeline(ChannelPipeline pipeline) {
@@ -86,22 +90,33 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     }
 
     private void facebookLogin(ChannelHandlerContext ctx, int messageId, String username, String token, OsType osType, String version) {
-        holder.blockingIOProcessor.execute(() -> {
-            try {
-                facebookLoginCheck.verify(username, token);
-            } catch (Exception e) {
-                log.error("Error verifying facebook token {} for user {}. Reason : {}", token, username, e.getMessage());
-                ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
-                return;
-            }
+        asyncHttpClient.prepareGet(URL + token)
+                .execute(new AsyncCompletionHandler<Response>() {
+                    @Override
+                    public Response onCompleted(Response response) throws Exception {
+                        if (response.getStatusCode() == 200) {
+                            if (response.getResponseBody() != null && response.getResponseBody().contains(username)) {
+                                User user = holder.userDao.getByName(username, AppName.BLYNK);
+                                if (user == null) {
+                                    user = holder.userDao.addFacebookUser(username, AppName.BLYNK);
+                                }
 
-            User user = holder.userDao.getByName(username, AppName.BLYNK);
-            if (user == null) {
-                user = holder.userDao.addFacebookUser(username, AppName.BLYNK);
-            }
+                                login(ctx, messageId, user, osType, version);
+                            }
+                        } else {
+                            log.error("Error getting facebook token {} for user {}. Reason : {}", token, username, response.getResponseBody());
+                            ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
+                        }
 
-            login(ctx, messageId, user, osType, version);
-        });
+                        return response;
+                    }
+
+                    @Override
+                    public void onThrowable(Throwable t) {
+                        log.error("Error performing facebook request. Token {} for user {}. Reason : {}", token, username, t.getMessage());
+                        ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
+                    }
+                });
     }
 
     private void blynkLogin(ChannelHandlerContext ctx, int msgId, String username, String pass, OsType osType, String version, String appName) {
