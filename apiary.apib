@@ -7,14 +7,15 @@ Blynk HTTP RESTful API allows to easily read and write values to/from Pins in Bl
 
 Every ```PUT``` request will update Pin's state both in apps and on the hardware.
 Every ```GET``` request will return current state/value on the given Pin.
+We also provide simplified API so you can do updates via GET requests.
 
-## Pin actions [/{auth_token}/pin/{pin}]
+## Get pin value [/{auth_token}/get/{pin}]
 
 + Parameters
     + auth_token (required, string, `4ae3851817194e2596cf1b7103603ef8`) ... authentification token.
     + pin (required, string, `D8`) ... pin you want to read.
 
-### Read pin value [GET]
+### Get pin value [GET]
 
 + Response 200 (applciation/json)
 
@@ -47,7 +48,40 @@ Every ```GET``` request will return current state/value on the given Pin.
         Requested pin not exists in app.
 
 
-### Write pin value [PUT]
+## Write pin value [/{auth_token}/update/{pin}?value={value}]
+
++ Parameters
+    + auth_token (required, string, `4ae3851817194e2596cf1b7103603ef8`) ... authentification token.
+    + pin (required, string, `D8`) ... pin you want to write.
+    + value (required, string, `1`) ... pin value you want to write.
+
+### Write pin value via GET [GET]
+
++ Response 200
+
++ Response 400 (plain/text)
+
+        Invalid token.
+
++ Response 400 (plain/text)
+
+        Wrong pin format.
+
++ Response 400 (plain/text)
+
+        Requested pin not exists in app.
+
++ Response 500 (plain/text)
+
+        Unexpected content type. Expecting application/json.
+
+## Write pin value via PUT [/{auth_token}/update/{pin}]
+
++ Parameters
+    + auth_token (required, string, `4ae3851817194e2596cf1b7103603ef8`) ... authentification token.
+    + pin (required, string, `D8`) ... pin you want to write.
+
+### Write pin value via PUT [PUT]
 
 + Request (application/json)
 
