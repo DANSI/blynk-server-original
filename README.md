@@ -506,6 +506,12 @@ If you want to run Blynk server behind WiFi-router and want it to be accessible 
 Blynk has a bunch of integration tests that require DB, so you have to skip tests during build.
 
         mvn clean install -Dmaven.test.skip=true
+        
+### Minimal requirements
+Blynk server is very powerful it can handle 1000 devices on single raspberry PI.
+
+- Any OS that can run java
+- At least 50 MB of RAM (could be less with tuning)
 
 ## Licensing
 [GNU GPL license](https://github.com/blynkkk/blynk-server/blob/master/license.txt)
