@@ -26,7 +26,7 @@
         <url>https://github.com/blynkkk/blynk-server.git</url>
         <connection>scm:git:ssh://git@github.com/blynkkk/blynk-server.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/blynkkk/blynk-server.git</developerConnection>
-        <tag>v0.18.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>
