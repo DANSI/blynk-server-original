@@ -3,7 +3,7 @@ HOST: http://blynk-cloud.com/
 
 # Blynk HTTP RESTful API
 
-Blynk HTTP RESTful API allows to easily read and write values to/from Pins in Blynk apps and Hardware(microcontrollers and microcomputers like Arduino, Raspberry Pi, ESP8266, Particle, etc.).
+Blynk HTTP RESTful API allows to easily read and write values to/from Pins in Blynk apps and Hardware (microcontrollers and microcomputers like Arduino, Raspberry Pi, ESP8266, Particle, etc.).
 
 Every ```PUT``` request will update Pin's state both in apps and on the hardware.
 Every ```GET``` request will return current state/value on the given Pin.
@@ -48,7 +48,7 @@ We also provide simplified API so you can do updates via GET requests.
         Requested pin not exists in app.
 
 
-## Write pin value [/{auth_token}/update/{pin}?value={value}]
+## Write pin value via GET [/{auth_token}/update/{pin}?value={value}]
 
 + Parameters
     + auth_token (required, string, `4ae3851817194e2596cf1b7103603ef8`) ... authentification token.
