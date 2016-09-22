@@ -8,6 +8,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.JsonParser;
@@ -75,18 +76,12 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         clientPair.appClient.reset();
     }
 
-    //----------------------------GET METHODS SECTION
-
     @Test
-    public void testChangeProperty() throws Exception {
+    public void testChangeLabelPropertyViaGet() throws Exception {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-
-        Future<Response> f = httpclient.preparePut(httpsServerUrl + token + "/pin/v4/label")
-                .setHeader("Content-Type", "application/json")
-                .setBody("[\"My-New-Label\"]")
-                .execute();
+        Future<Response> f = httpclient.prepareGet(httpsServerUrl + token + "/update/v4?label=My-New-Label").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -98,6 +93,70 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         Widget widget = profile.dashBoards[0].findWidgetByPin((byte) 4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals("My-New-Label", widget.label);
+    }
+
+    @Test
+    public void testChangeColorPropertyViaGet() throws Exception {
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+
+        Future<Response> f = httpclient.prepareGet(httpsServerUrl + token + "/update/v4?color=%23000000").execute();
+        Response response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(111, b("1 4 color #000000"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Widget widget = profile.dashBoards[0].findWidgetByPin((byte) 4, PinType.VIRTUAL);
+        assertNotNull(widget);
+        assertEquals(255, widget.color);
+    }
+
+    @Test
+    public void testChangeOnLabelPropertyViaGet() throws Exception {
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+        clientPair.appClient.reset();
+        clientPair.appClient.send("updateWidget 1\0{\"id\":1, \"x\":1, \"y\":1, \"label\":\"Some Text\", \"type\":\"BUTTON\",         \"pinType\":\"VIRTUAL\", \"pin\":1, \"value\":\"1\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        Future<Response> f = httpclient.prepareGet(httpsServerUrl + token + "/update/v1?onLabel=newOnButtonLabel").execute();
+        Response response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(111, b("1 1 onLabel newOnButtonLabel"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Button button = (Button) profile.dashBoards[0].findWidgetByPin((byte) 1, PinType.VIRTUAL);
+        assertNotNull(button);
+        assertEquals("newOnButtonLabel", button.onLabel);
+    }
+
+
+    @Test
+    public void testChangeOffLabelPropertyViaGet() throws Exception {
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+        clientPair.appClient.reset();
+        clientPair.appClient.send("updateWidget 1\0{\"id\":1, \"x\":1, \"y\":1, \"label\":\"Some Text\", \"type\":\"BUTTON\",         \"pinType\":\"VIRTUAL\", \"pin\":1, \"value\":\"1\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        Future<Response> f = httpclient.prepareGet(httpsServerUrl + token + "/update/v1?offLabel=newOffButtonLabel").execute();
+        Response response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(111, b("1 1 offLabel newOffButtonLabel"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Button button = (Button) profile.dashBoards[0].findWidgetByPin((byte) 1, PinType.VIRTUAL);
+        assertNotNull(button);
+        assertEquals("newOffButtonLabel", button.offLabel);
     }
 
 }

@@ -362,13 +362,10 @@ public class HttpAPILogic {
         return updateWidgetPinData(token, pinString, valueList.toArray(new String[valueList.size()]));
     }
 
-    @PUT
-    @Path("{token}/pin/{pin}/{property}")
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    public Response updateWidgetProperty(@PathParam("token") String token,
-                                         @PathParam("pin") String pinString,
-                                         @PathParam("property") String property,
-                                         String[] values) {
+    public Response updateWidgetProperty(String token,
+                                         String pinString,
+                                         String property,
+                                         String... values) {
         globalStats.mark(HTTP_UPDATE_PIN_DATA);
 
         if (values.length == 0) {
@@ -434,14 +431,43 @@ public class HttpAPILogic {
         return Response.badRequest("Error setting widget property.");
     }
 
+    //todo it is a bit ugly right now. could be simplified by passing map of query params.
     @GET
     @Path("{token}/update/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     public Response updateWidgetPinDataViaGet(@PathParam("token") String token,
                                               @PathParam("pin") String pinString,
-                                              @QueryParam("value") String[] pinValues) {
+                                              @QueryParam("value") String[] pinValues,
+                                              @QueryParam("label") String labelValue,
+                                              @QueryParam("labels") String labelsValue,
+                                              @QueryParam("color") String colorValue,
+                                              @QueryParam("onLabel") String onLabelValue,
+                                              @QueryParam("offLabel") String offLabelValue,
+                                              @QueryParam("isOnPlay") String isOnPlay) {
 
-        return updateWidgetPinData(token, pinString, pinValues);
+        if (pinValues != null) {
+            return updateWidgetPinData(token, pinString, pinValues);
+        }
+        if (labelValue != null) {
+            return updateWidgetProperty(token, pinString, "label", labelValue);
+        }
+        if (labelsValue != null) {
+            return updateWidgetProperty(token, pinString, "labels", labelsValue);
+        }
+        if (colorValue != null) {
+            return updateWidgetProperty(token, pinString, "color", colorValue);
+        }
+        if (onLabelValue != null) {
+            return updateWidgetProperty(token, pinString, "onLabel", onLabelValue);
+        }
+        if (offLabelValue != null) {
+            return updateWidgetProperty(token, pinString, "offLabel", offLabelValue);
+        }
+        if (isOnPlay != null) {
+            return updateWidgetProperty(token, pinString, "isOnPlay", isOnPlay);
+        }
+
+        return Response.badRequest("Wrong request format.");
     }
 
     //todo remove later?
