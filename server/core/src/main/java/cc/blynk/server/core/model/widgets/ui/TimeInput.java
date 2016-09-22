@@ -23,6 +23,10 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
  */
 public class TimeInput extends OnePinWidget implements HardwareSyncWidget {
 
+    private static final int NEVER = -1;
+    private static final int SUNSET = -2;
+    private static final int SUNRISE = -3;
+
     public String format;
 
     public int[] days;
@@ -55,8 +59,8 @@ public class TimeInput extends OnePinWidget implements HardwareSyncWidget {
     public boolean updateIfSame(byte pin, PinType type, String value) {
         if (super.updateIfSame(pin, type, value)) {
             String[] values = value.split(BODY_SEPARATOR_STRING);
-            startAt = "".equals(values[0]) ? -1 : ParseUtil.parseInt(values[0]);
-            stopAt = "".equals(values[1]) ? -1 : ParseUtil.parseInt(values[1]);
+            startAt = calcTime(values[0]);
+            stopAt = calcTime(values[1]);
             tzName = ZoneId.of(values[2]);
             if (values.length == 3) {
                 days = null;
@@ -74,6 +78,19 @@ public class TimeInput extends OnePinWidget implements HardwareSyncWidget {
             return true;
         }
         return false;
+    }
+
+    private static int calcTime(String value) {
+        switch (value) {
+            case "ss" :
+                return SUNSET;
+            case "sr" :
+                return SUNRISE;
+            case "" :
+                return NEVER;
+            default :
+                return ParseUtil.parseInt(value);
+        }
     }
 
     @Override
