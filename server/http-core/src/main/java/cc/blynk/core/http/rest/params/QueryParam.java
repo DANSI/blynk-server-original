@@ -2,6 +2,7 @@ package cc.blynk.core.http.rest.params;
 
 import cc.blynk.core.http.rest.URIDecoder;
 
+import java.lang.reflect.Array;
 import java.util.List;
 
 /**
@@ -22,9 +23,17 @@ public class QueryParam extends Param {
             return null;
         }
 
-        //todo finish. now accepts only strings
         if (type == List.class) {
             return params;
+        }
+
+        if (type.isArray()) {
+            //don't know how to make it better
+            if (type.getComponentType() == String.class) {
+                return params.toArray((String[]) Array.newInstance(type.getComponentType(), params.size()));
+            } else {
+                throw new IllegalStateException("Not supported.");
+            }
         }
 
         return convertTo(params.get(0));

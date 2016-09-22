@@ -47,6 +47,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -433,6 +434,17 @@ public class HttpAPILogic {
         return Response.badRequest("Error setting widget property.");
     }
 
+    @GET
+    @Path("{token}/update/{pin}")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    public Response updateWidgetPinDataViaGet(@PathParam("token") String token,
+                                              @PathParam("pin") String pinString,
+                                              @QueryParam("value") String[] pinValues) {
+
+        return updateWidgetPinData(token, pinString, pinValues);
+    }
+
+    //todo remove later?
     @PUT
     @Path("{token}/pin/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
