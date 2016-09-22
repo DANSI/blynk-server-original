@@ -47,7 +47,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
     public AppLoginHandler(Holder holder) {
         this.holder = holder;
-        this.facebookLoginCheck = new FacebookLoginCheck();
+        this.facebookLoginCheck = new FacebookLoginCheck(holder.asyncHttpClient);
     }
 
     private static void cleanPipeline(ChannelPipeline pipeline) {
