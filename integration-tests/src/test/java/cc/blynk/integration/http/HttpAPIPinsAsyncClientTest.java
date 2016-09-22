@@ -60,7 +60,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
 
     @Test
     public void testGetWithFakeToken() throws Exception {
-        Future<Response> f = httpclient.prepareGet(httpsServerUrl + "dsadasddasdasdasdasdasdas/pin/d8").execute();
+        Future<Response> f = httpclient.prepareGet(httpsServerUrl + "dsadasddasdasdasdasdasdas/get/d8").execute();
         Response response = f.get();
         assertEquals(400, response.getStatusCode());
         assertEquals("Invalid token.", response.getResponseBody());
@@ -74,7 +74,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
 
     @Test
     public void testGetWithWrongPin() throws Exception {
-        Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/x8").execute();
+        Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/x8").execute();
         Response response = f.get();
         assertEquals(400, response.getStatusCode());
         assertEquals("Wrong pin format.", response.getResponseBody());
@@ -82,7 +82,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
 
     @Test
     public void testGetWithNonExistingPin() throws Exception {
-        Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v11").execute();
+        Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v11").execute();
         Response response = f.get();
         assertEquals(400, response.getStatusCode());
         assertEquals("Requested pin not exists in app.", response.getResponseBody());
@@ -95,7 +95,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         assertEquals(200, response.getStatusCode());
 
 
-        f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v11").execute();
+        f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v11").execute();
         response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -111,7 +111,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         assertEquals(200, response.getStatusCode());
 
 
-        f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v11").execute();
+        f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v11").execute();
         response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -131,7 +131,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
 
         assertEquals(200, response.getStatusCode());
 
-        f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10").execute();
+        f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v10").execute();
         response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -151,7 +151,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
 
         assertEquals(200, response.getStatusCode());
 
-        f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10").execute();
+        f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v10").execute();
         response = f.get();
 
         assertEquals(200, response.getStatusCode());

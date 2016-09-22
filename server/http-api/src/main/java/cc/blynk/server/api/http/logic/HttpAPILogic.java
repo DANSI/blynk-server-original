@@ -198,6 +198,14 @@ public class HttpAPILogic {
     }
 
     @GET
+    @Path("{token}/get/{pin}")
+    public Response getWidgetPinDataNew(@PathParam("token") String token,
+                                     @PathParam("pin") String pinString) {
+        return getWidgetPinData(token, pinString);
+    }
+
+    //todo old API.
+    @GET
     @Path("{token}/pin/{pin}")
     public Response getWidgetPinData(@PathParam("token") String token,
                                      @PathParam("pin") String pinString) {
