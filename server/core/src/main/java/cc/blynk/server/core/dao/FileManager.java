@@ -51,7 +51,12 @@ public class FileManager {
             this.dataDir = createDatadir(dataFolder);
             this.deletedDataDir = createDatadir(Paths.get(dataFolder, DELETED_DATA_DIR_NAME));
         } catch (RuntimeException e) {
-            this.dataDir = createDatadir(Paths.get(System.getProperty("java.io.tmpdir"), "blynk"));
+            Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk");
+
+            System.out.println("WARNING : could not find folder '" + dataFolder + "'. Please specify correct -dataFolder parameter.");
+            System.out.println("Your data may be lost during server restart. Using temp folder : " + tempDir.toString());
+
+            this.dataDir = createDatadir(tempDir);
             this.deletedDataDir = createDatadir(Paths.get(this.dataDir.toString(), DELETED_DATA_DIR_NAME));
         }
 
