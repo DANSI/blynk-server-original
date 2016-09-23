@@ -32,7 +32,7 @@ public class PurchaseDBDao {
             ps.executeUpdate();
 
             connection.commit();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("Error inserting purchase data in DB.", e);
         }
     }

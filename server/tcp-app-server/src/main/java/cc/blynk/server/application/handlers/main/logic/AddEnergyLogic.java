@@ -8,8 +8,6 @@ import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.Purchase;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.utils.ByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
@@ -21,8 +19,6 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created on 14.03.16.
  */
 public class AddEnergyLogic {
-
-    private static final Logger log = LogManager.getLogger(AddEnergyLogic.class);
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
@@ -61,12 +57,11 @@ public class AddEnergyLogic {
         int energyAmountToAdd = ParseUtil.parseInt(bodyParts[0]);
         if (bodyParts.length == 2 && isValidTransactionId(bodyParts[1])) {
             insertPurchase(user.name, energyAmountToAdd, bodyParts[1]);
+            user.purchaseEnergy(energyAmountToAdd);
+            ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
             throw new NotAllowedException("Purchase with invalid transaction id. User " + user.name);
         }
-
-        user.purchaseEnergy(energyAmountToAdd);
-        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
     private void insertPurchase(String username, int reward, String transactionId) {
