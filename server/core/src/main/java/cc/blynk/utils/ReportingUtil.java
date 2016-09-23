@@ -6,7 +6,11 @@ import cc.blynk.server.core.reporting.average.AggregationValue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,6 +31,7 @@ public class ReportingUtil {
         return Paths.get(dataFolder, "data").toString();
     }
 
+    @SuppressWarnings("unchecked")
     public static ConcurrentHashMap<AggregationKey, AggregationValue> read(Path path) {
         if (Files.exists(path)) {
             try (InputStream is = Files.newInputStream(path);

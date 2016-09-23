@@ -20,6 +20,7 @@ public class HttpLogicUtil {
 
     public static final Logger log = LogManager.getLogger(HttpLogicUtil.class);
 
+    @SuppressWarnings("unchecked")
     public static List<?> sort(List<?> list, String field, String order, boolean nameAsInt) {
         if (list.size() == 0) {
             return list;
