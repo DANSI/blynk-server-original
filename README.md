@@ -49,6 +49,8 @@ For Windows just download from [here](http://www.oracle.com/technetwork/java/jav
         
 That's it! 
 
+**NOTE : ```/path``` should be real existing path to folder where you want to store all your data.**
+
 + As output you will see something like that :
 
         Blynk Server successfully started.
