@@ -11,11 +11,9 @@ import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.asynchttpclient.AsyncCompletionHandler;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.BoundRequestBuilder;
 import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.Response;
 
 import static cc.blynk.server.core.protocol.enums.Command.WEB_HOOKS;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN;
@@ -84,7 +82,7 @@ public class WebhookProcessor extends NotificationBase {
             }
         }
 
-        builder.execute(new ResponseHandler());
+        builder.execute(new WebhookResponseHandler());
         globalStats.mark(WEB_HOOKS);
     }
 
@@ -137,25 +135,6 @@ public class WebhookProcessor extends NotificationBase {
             default :
                 throw new IllegalArgumentException("Unsupported method type for webhook.");
         }
-    }
-
-    private static final class ResponseHandler extends AsyncCompletionHandler<Response> {
-
-        @Override
-        public Response onCompleted(org.asynchttpclient.Response response) throws Exception {
-            if (response.getStatusCode() == 200) {
-                return response;
-            }
-
-            log.error("Error sending webhook. Reason {}", response.getResponseBody());
-            return response;
-        }
-
-        @Override
-        public void onThrowable(Throwable t) {
-            log.error("Error sending webhook. Reason {}", t.getMessage());
-        }
-
     }
 
 }
