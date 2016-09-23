@@ -1,6 +1,13 @@
 package cc.blynk.server.api.http.logic;
 
+import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
+import cc.blynk.core.http.annotation.Consumes;
+import cc.blynk.core.http.annotation.FormParam;
+import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.POST;
+import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.api.http.pojo.TokenUser;
 import cc.blynk.server.api.http.pojo.TokensPool;
 import cc.blynk.server.core.dao.UserDao;
@@ -14,13 +21,6 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import java.net.URISyntaxException;
 import java.util.UUID;
 

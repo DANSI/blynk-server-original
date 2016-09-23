@@ -1,6 +1,11 @@
 package cc.blynk.server.api.http.logic.business;
 
+import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
+import cc.blynk.core.http.annotation.Consumes;
+import cc.blynk.core.http.annotation.FormParam;
+import cc.blynk.core.http.annotation.POST;
+import cc.blynk.core.http.annotation.Path;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
@@ -10,14 +15,8 @@ import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.DefaultCookie;
 import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.MediaType;
-
-import static cc.blynk.core.http.Response.*;
-import static io.netty.handler.codec.http.HttpHeaders.Names.*;
+import static cc.blynk.core.http.Response.redirect;
+import static io.netty.handler.codec.http.HttpHeaders.Names.SET_COOKIE;
 
 /**
  * The Blynk Project.

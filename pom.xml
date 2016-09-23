@@ -124,12 +124,10 @@
         <netty.version>4.1.4.Final</netty.version>
         <netty.tcnative.version>1.1.33.Fork15</netty.tcnative.version>
         <log4j2.version>2.6.2</log4j2.version>
-        <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
         <jackson-databind.version>2.8.1</jackson-databind.version>
         <disruptor.version>3.3.5</disruptor.version>
         <commons-cli.version>1.2</commons-cli.version>
         <async-http-client.version>2.1.0-alpha1</async-http-client.version>
-        <httpclient.version>4.5.2</httpclient.version>
         <twitter4j-core.version>4.0.2</twitter4j-core.version>
         <javax.mail.version>1.5.5</javax.mail.version>
         <commons-validator.version>1.5.0</commons-validator.version>
@@ -138,6 +136,7 @@
         <qrgen.version>2.2.0</qrgen.version>
 
         <!-- test versions -->
+        <httpclient.version>4.5.2</httpclient.version>
         <commons-lang3.version>3.4</commons-lang3.version>
         <junit.version>4.12</junit.version>
         <mockito-all.version>1.10.19</mockito-all.version>

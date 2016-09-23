@@ -1,10 +1,13 @@
 package cc.blynk.core.http.rest;
 
 import cc.blynk.core.http.UriTemplate;
+import cc.blynk.core.http.annotation.DELETE;
+import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.POST;
+import cc.blynk.core.http.annotation.PUT;
 import cc.blynk.core.http.rest.params.Param;
 import io.netty.handler.codec.http.HttpMethod;
 
-import javax.ws.rs.*;
 import java.lang.reflect.Method;
 
 /**
@@ -40,12 +43,6 @@ public class HandlerHolder {
         }
         if (method.isAnnotationPresent(DELETE.class)) {
             this.httpMethod = HttpMethod.DELETE;
-        }
-        if (method.isAnnotationPresent(HEAD.class)) {
-            this.httpMethod = HttpMethod.HEAD;
-        }
-        if (method.isAnnotationPresent(OPTIONS.class)) {
-            this.httpMethod = HttpMethod.OPTIONS;
         }
 
         this.params = new Param[paramsCount];

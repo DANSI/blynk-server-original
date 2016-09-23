@@ -1,5 +1,6 @@
 package cc.blynk.core.http.rest;
 
+import cc.blynk.core.http.MediaType;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -11,7 +12,6 @@ import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import io.netty.util.CharsetUtil;
 
-import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Map;
 

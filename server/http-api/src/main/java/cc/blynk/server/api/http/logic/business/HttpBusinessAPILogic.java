@@ -1,6 +1,10 @@
 package cc.blynk.server.api.http.logic.business;
 
 import cc.blynk.core.http.Response;
+import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.PathParam;
+import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.pojo.business.BusinessProject;
 import cc.blynk.server.core.dao.UserDao;
@@ -11,16 +15,16 @@ import cc.blynk.server.core.model.widgets.Widget;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static cc.blynk.core.http.Response.*;
+import static cc.blynk.core.http.Response.ok;
 
 /**
  * The Blynk Project.

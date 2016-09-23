@@ -1,13 +1,12 @@
 package cc.blynk.core.http.rest.params;
 
+import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.utils.JsonParser;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.ws.rs.core.MediaType;
 
 /**
  * The Blynk Project.

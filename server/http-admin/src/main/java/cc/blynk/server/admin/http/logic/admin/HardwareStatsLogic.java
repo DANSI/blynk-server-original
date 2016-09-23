@@ -1,14 +1,13 @@
 package cc.blynk.server.admin.http.logic.admin;
 
 import cc.blynk.core.http.Response;
+import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.utils.HttpLogicUtil;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-
-import static cc.blynk.core.http.Response.*;
+import static cc.blynk.core.http.Response.ok;
 
 /**
  * The Blynk Project.

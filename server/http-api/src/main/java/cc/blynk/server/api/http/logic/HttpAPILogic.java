@@ -1,6 +1,14 @@
 package cc.blynk.server.api.http.logic;
 
+import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
+import cc.blynk.core.http.annotation.Consumes;
+import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.POST;
+import cc.blynk.core.http.annotation.PUT;
+import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.PathParam;
+import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.logic.serialization.NotificationCloneHideFields;
 import cc.blynk.server.api.http.logic.serialization.TwitterCloneHideFields;
@@ -41,14 +49,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
