@@ -2,10 +2,12 @@ package cc.blynk.core.http.rest.params;
 
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.utils.ReflectionUtil;
-import io.netty.util.CharsetUtil;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
+import io.netty.handler.codec.http.multipart.Attribute;
+import io.netty.handler.codec.http.multipart.InterfaceHttpData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -15,23 +17,29 @@ import java.util.List;
  */
 public class FormParam extends Param {
 
+    private static final Logger log = LogManager.getLogger(FormParam.class);
+
     public FormParam(String name, Class<?> type) {
         super(name, type);
     }
 
     @Override
-    //todo this method is not optimal - optimize.
     public Object get(URIDecoder uriDecoder) {
-        String body = uriDecoder.bodyData.toString(CharsetUtil.UTF_8);
-
-        List<NameValuePair> nameValuePairs = URLEncodedUtils.parse(body, CharsetUtil.UTF_8);
-        if (nameValuePairs == null || nameValuePairs.size() == 0) {
+        List<InterfaceHttpData> bodyHttpDatas = uriDecoder.getBodyHttpDatas();
+        if (bodyHttpDatas == null || bodyHttpDatas.size() == 0) {
             return null;
         }
 
-        for(NameValuePair nameValuePair : nameValuePairs) {
-            if (name.equals(nameValuePair.getName())) {
-                return ReflectionUtil.castTo(type, nameValuePair.getValue());
+        for (InterfaceHttpData data : bodyHttpDatas) {
+            if (name.equals(data.getName())) {
+                if (data.getHttpDataType() == InterfaceHttpData.HttpDataType.Attribute) {
+                    Attribute attribute = (Attribute) data;
+                    try {
+                        return ReflectionUtil.castTo(type, attribute.getValue());
+                    } catch (IOException e) {
+                        log.error("Error getting form params. Reason : {}", e.getMessage(), e);
+                    }
+                }
             }
         }
 

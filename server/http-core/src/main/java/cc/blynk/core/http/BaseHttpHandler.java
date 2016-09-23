@@ -60,8 +60,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
             return;
         }
 
-        URIDecoder uriDecoder = new URIDecoder(req.uri());
-        HandlerRegistry.populateBody(req, uriDecoder);
+        URIDecoder uriDecoder = new URIDecoder(req);
 
         Object[] params;
         try {
