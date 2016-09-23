@@ -7,7 +7,6 @@ import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
-import cc.blynk.server.websocket.handlers.ExceptionCatcherHandler;
 import cc.blynk.server.websocket.handlers.WebSocketHandler;
 import cc.blynk.server.websocket.handlers.WebSocketWrapperEncoder;
 import io.netty.channel.ChannelInitializer;
@@ -15,6 +14,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
 /**
@@ -25,6 +25,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 public class WebSocketServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
+    public static final String WEBSOCKET_PATH = "/websocket";
 
     public WebSocketServer(Holder holder) {
         super(holder.props.getIntProperty("tcp.websocket.port"));
@@ -33,8 +34,6 @@ public class WebSocketServer extends BaseServer {
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder);
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
-        final ExceptionCatcherHandler exceptionCatcherHandler = new ExceptionCatcherHandler();
-
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -45,10 +44,10 @@ public class WebSocketServer extends BaseServer {
                 }
                 pipeline.addLast("WSHttpServerCodec", new HttpServerCodec());
                 pipeline.addLast("WSHttpObjectAggregator", new HttpObjectAggregator(65536));
-                pipeline.addLast("WSWebSocket", new WebSocketHandler(false, holder.stats));
-                pipeline.addLast("WSExceptionCatcher", exceptionCatcherHandler);
+                pipeline.addLast("WSWebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(WEBSOCKET_PATH));
+                pipeline.addLast("WSWebSocket", new WebSocketHandler(holder.stats));
 
-                        //hardware handlers
+                //hardware handlers
                 pipeline.addLast("WSChannelState", hardwareChannelStateHandler);
                 pipeline.addLast("WSMessageDecoder", new MessageDecoder(holder.stats));
                 pipeline.addLast("WSSocketWrapper", new WebSocketWrapperEncoder());

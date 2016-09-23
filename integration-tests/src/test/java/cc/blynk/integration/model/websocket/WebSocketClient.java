@@ -20,7 +20,7 @@ import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.websocket.handlers.WebSocketHandler;
+import cc.blynk.server.websocket.WebSocketServer;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelInitializer;
@@ -53,7 +53,7 @@ public final class WebSocketClient extends BaseClient {
         super(host, port, new Random());
 
         String scheme = isSSL ? "wss://" : "ws://";
-        URI uri = new URI(scheme + host + ":" + port + WebSocketHandler.WEBSOCKET_PATH);
+        URI uri = new URI(scheme + host + ":" + port + WebSocketServer.WEBSOCKET_PATH);
 
         if (isSSL) {
             sslCtx = SslContextBuilder.forClient().sslProvider(SslProvider.JDK).trustManager(InsecureTrustManagerFactory.INSTANCE).build();
