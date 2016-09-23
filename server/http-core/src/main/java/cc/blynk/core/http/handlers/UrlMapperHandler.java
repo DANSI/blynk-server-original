@@ -23,7 +23,7 @@ public class UrlMapperHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof FullHttpRequest) {
             FullHttpRequest request = (FullHttpRequest) msg;
-            if (request.getUri().equals(initUrl)) {
+            if (request.uri().equals(initUrl)) {
                 request.setUri(mapToUrl);
             }
         }

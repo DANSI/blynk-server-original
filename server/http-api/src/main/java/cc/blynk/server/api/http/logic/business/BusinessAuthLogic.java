@@ -16,7 +16,7 @@ import io.netty.handler.codec.http.cookie.DefaultCookie;
 import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 
 import static cc.blynk.core.http.Response.redirect;
-import static io.netty.handler.codec.http.HttpHeaders.Names.SET_COOKIE;
+import static io.netty.handler.codec.http.HttpHeaderNames.SET_COOKIE;
 
 /**
  * The Blynk Project.

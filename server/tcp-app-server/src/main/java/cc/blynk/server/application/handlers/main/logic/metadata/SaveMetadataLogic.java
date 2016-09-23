@@ -11,7 +11,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
+import static cc.blynk.utils.ByteBufUtil.ok;
 
 /**
  * The Blynk Project.
@@ -23,6 +24,7 @@ public class SaveMetadataLogic {
 
     private static final Logger log = LogManager.getLogger(SaveMetadataLogic.class);
 
+    @SuppressWarnings("unchecked")
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String metadataString = message.body;
 
