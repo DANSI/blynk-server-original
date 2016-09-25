@@ -4,12 +4,14 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.AppHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.utils.JsonParser;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -94,8 +96,16 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
                 .execute(new AsyncCompletionHandler<Response>() {
                     @Override
                     public Response onCompleted(Response response) throws Exception {
-                        if (response.getStatusCode() == 200) {
-                            if (response.getResponseBody() != null && response.getResponseBody().contains(username)) {
+                        if (response.getStatusCode() != 200) {
+                            log.error("Error getting facebook token {} for user {}. Reason : {}", token, username, response.getResponseBody());
+                            ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
+                            return response;
+                        }
+
+                        try {
+                            String responseBody = response.getResponseBody();
+                            FacebookTokenResponse facebookTokenResponse = JsonParser.parseFacebookTokenResponse(responseBody);
+                            if (username.equalsIgnoreCase(facebookTokenResponse.email)) {
                                 User user = holder.userDao.getByName(username, AppName.BLYNK);
                                 if (user == null) {
                                     user = holder.userDao.addFacebookUser(username, AppName.BLYNK);
@@ -103,8 +113,8 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
                                 login(ctx, messageId, user, osType, version);
                             }
-                        } else {
-                            log.error("Error getting facebook token {} for user {}. Reason : {}", token, username, response.getResponseBody());
+                        } catch (Exception e) {
+                            log.error("Error during facebook response parsing for user {}. Reason : {}", username, response.getResponseBody());
                             ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
                         }
 

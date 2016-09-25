@@ -2,6 +2,7 @@ package cc.blynk.utils;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
@@ -36,6 +37,7 @@ public final class JsonParser {
     private static final ObjectReader profileReader = mapper.readerFor(Profile.class);
     private static final ObjectReader dashboardReader = mapper.readerFor(DashBoard.class);
     private static final ObjectReader widgetReader = mapper.readerFor(Widget.class);
+    private static final ObjectReader facebookTokenReader = mapper.readerFor(FacebookTokenResponse.class);
 
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
@@ -104,6 +106,10 @@ public final class JsonParser {
 
     public static User parseUserFromString(String userString) throws IOException {
         return userReader.readValue(userString);
+    }
+
+    public static FacebookTokenResponse parseFacebookTokenResponse(String response) throws IOException {
+        return facebookTokenReader.readValue(response);
     }
 
     public static DashBoard parseDashboard(String reader) {
