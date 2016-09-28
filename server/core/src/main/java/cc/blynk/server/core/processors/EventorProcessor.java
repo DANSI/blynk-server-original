@@ -147,9 +147,10 @@ public class EventorProcessor {
 
     private void execute(Session session, DashBoard dash, SetPinAction action) {
         execute(session, dash.isActive, dash.id, action.pin, action.value);
+        dash.update(action.pin.pin, action.pin.pinType, action.value);
     }
 
-    private void execute(Session session,  boolean isActive, int dashId, Pin pin, String value) {
+    private void execute(Session session, boolean isActive, int dashId, Pin pin, String value) {
         final String body = Pin.makeHardwareBody(pin.pwmMode, pin.pinType, pin.pin, value);
         session.sendMessageToHardware(dashId, HARDWARE, 888, body);
         if (isActive) {
