@@ -11,4 +11,9 @@ public abstract class NotificationAction extends BaseAction {
 
     public String message;
 
+    @Override
+    public boolean isValid() {
+        return message != null && !message.isEmpty();
+    }
+
 }

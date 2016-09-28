@@ -67,10 +67,12 @@ public class EventorProcessor {
                 if (rule.isValid(valueParsed)) {
                     if (!rule.isProcessed) {
                         for (BaseAction action : rule.actions) {
-                            if (action instanceof SetPinAction) {
-                                execute(session, dash.isActive, dash.id, (SetPinAction) action);
-                            } else if (action instanceof NotificationAction) {
-                                execute(dash, triggerValue, (NotificationAction) action);
+                            if (action.isValid()) {
+                                if (action instanceof SetPinAction) {
+                                    execute(session, dash, (SetPinAction) action);
+                                } else if (action instanceof NotificationAction) {
+                                    execute(dash, triggerValue, (NotificationAction) action);
+                                }
                             }
                         }
                         rule.isProcessed = true;
@@ -83,17 +85,15 @@ public class EventorProcessor {
     }
 
     private void execute(DashBoard dash, String triggerValue, NotificationAction notificationAction) {
-        if (notificationAction.message != null && !notificationAction.message.isEmpty()) {
-            String body = notificationAction.message.replaceAll(PIN_PATTERN, triggerValue);
-            if (notificationAction instanceof NotifyAction) {
-                push(dash, body);
-            } else if (notificationAction instanceof TwitAction) {
-                twit(dash, body);
-            } else if (notificationAction instanceof MailAction) {
-                //email(dash, body);
-            }
-            globalStats.mark(EVENTOR);
+        String body = notificationAction.message.replaceAll(PIN_PATTERN, triggerValue);
+        if (notificationAction instanceof NotifyAction) {
+            push(dash, body);
+        } else if (notificationAction instanceof TwitAction) {
+            twit(dash, body);
+        } else if (notificationAction instanceof MailAction) {
+            //email(dash, body);
         }
+        globalStats.mark(EVENTOR);
     }
 
     private void twit(DashBoard dash, String body) {
@@ -145,17 +145,16 @@ public class EventorProcessor {
         widget.push(gcmWrapper, body, dash.id);
     }
 
-    private void execute(Session session, boolean isActive, int dashId, SetPinAction action) {
-        execute(session, isActive, dashId, action.pin, action.value);
+    private void execute(Session session, DashBoard dash, SetPinAction action) {
+        execute(session, dash.isActive, dash.id, action.pin, action.value);
     }
+
     private void execute(Session session,  boolean isActive, int dashId, Pin pin, String value) {
-        if (pin != null && pin.pinType != null && pin.pin > -1 && value != null) {
-            final String body = Pin.makeHardwareBody(pin.pwmMode, pin.pinType, pin.pin, value);
-            session.sendMessageToHardware(dashId, HARDWARE, 888, body);
-            if (isActive) {
-                session.sendToApps(HARDWARE, 888, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
-            }
-            globalStats.mark(EVENTOR);
+        final String body = Pin.makeHardwareBody(pin.pwmMode, pin.pinType, pin.pin, value);
+        session.sendMessageToHardware(dashId, HARDWARE, 888, body);
+        if (isActive) {
+            session.sendToApps(HARDWARE, 888, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
         }
+        globalStats.mark(EVENTOR);
     }
 }

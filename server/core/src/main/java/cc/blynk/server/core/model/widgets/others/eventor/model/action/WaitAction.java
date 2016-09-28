@@ -34,4 +34,9 @@ public class WaitAction extends BaseAction {
         }
         */
     }
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
 }

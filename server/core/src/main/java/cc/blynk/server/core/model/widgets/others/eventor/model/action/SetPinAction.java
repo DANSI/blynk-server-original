@@ -21,4 +21,8 @@ public class SetPinAction extends BaseAction {
         this.value = value;
     }
 
+    @Override
+    public boolean isValid() {
+        return pin != null && pin.pinType != null && pin.pin > -1 && value != null;
+    }
 }

@@ -24,4 +24,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public abstract class BaseAction {
 
+    public abstract boolean isValid();
+
 }
