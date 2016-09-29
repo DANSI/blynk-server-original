@@ -42,6 +42,7 @@ public class HardwareAppLogic {
         this.sessionDao = holder.sessionDao;
         this.webhookProcessor = new WebhookProcessor(holder.asyncHttpClient,
                 holder.props.getLongProperty("webhooks.frequency.user.quota.limit", 1000),
+                holder.props.getIntProperty("webhooks.response.size.limit", 64),
                 holder.stats);
     }
 
@@ -77,7 +78,7 @@ public class HardwareAppLogic {
 
                 //todo this temp catch. remove in next update.
                 try {
-                    webhookProcessor.process(dash, pin, pinType, value);
+                    webhookProcessor.process(session, dash, pin, pinType, value);
                 } catch (Exception e) {
                     log.error("Error app processing.", e);
                 }

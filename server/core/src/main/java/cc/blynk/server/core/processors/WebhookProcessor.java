@@ -1,19 +1,25 @@
 package cc.blynk.server.core.processors;
 
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.webhook.Header;
 import cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
+import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.StringUtils;
+import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.asynchttpclient.AsyncCompletionHandler;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.BoundRequestBuilder;
 import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.HttpResponseBodyPart;
+import org.asynchttpclient.Response;
 
 import static cc.blynk.server.core.protocol.enums.Command.WEB_HOOKS;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN;
@@ -36,14 +42,16 @@ public class WebhookProcessor extends NotificationBase {
 
     private final AsyncHttpClient httpclient;
     private final GlobalStats globalStats;
+    private final int responseSizeLimit;
 
-    public WebhookProcessor(DefaultAsyncHttpClient httpclient, long quotaFrequencyLimit, GlobalStats stats) {
+    public WebhookProcessor(DefaultAsyncHttpClient httpclient, long quotaFrequencyLimit, int responseSizeLimit, GlobalStats stats) {
         super(quotaFrequencyLimit);
         this.httpclient = httpclient;
         this.globalStats = stats;
+        this.responseSizeLimit = responseSizeLimit * 1024;
     }
 
-    public void process(DashBoard dash, byte pin, PinType pinType, String triggerValue) {
+    public void process(Session session, DashBoard dash, byte pin, PinType pinType, String triggerValue) {
         Widget widget = dash.findWidgetByPin(pin, pinType);
         if (widget == null) {
             return;
@@ -55,11 +63,11 @@ public class WebhookProcessor extends NotificationBase {
                 log.debug("Webhook quota limit reached. Ignoring hook.");
                 return;
             }
-            process((WebHook) widget, triggerValue);
+            process(session, dash.id, (WebHook) widget, triggerValue);
         }
     }
 
-    public void process(WebHook webHook, String triggerValue) {
+    private void process(Session session, int dashId, WebHook webHook, String triggerValue) {
         if (!webHook.isValid()) {
             return;
         }
@@ -82,7 +90,40 @@ public class WebhookProcessor extends NotificationBase {
             }
         }
 
-        builder.execute(new WebhookResponseHandler());
+        builder.execute(new AsyncCompletionHandler<Response>() {
+
+            private int length = 0;
+
+            @Override
+            public State onBodyPartReceived(HttpResponseBodyPart content) throws Exception {
+                length += content.length();
+
+                if (length > responseSizeLimit) {
+                    log.debug("Response from webhook is too big. Skipping. Size : {}", length);
+                    return State.ABORT;
+                }
+                return super.onBodyPartReceived(content);
+            }
+
+            @Override
+            public Response onCompleted(Response response) throws Exception {
+                if (response.getStatusCode() == 200) {
+                    if (response.hasResponseBody()) {
+                        //todo could be optimized
+                        session.sendMessageToHardware(dashId, Command.HARDWARE, 888, response.getResponseBody(CharsetUtil.UTF_8));
+                    }
+                } else {
+                    log.error("Error sending webhook. Reason {}", response.getResponseBody());
+                }
+
+                return null;
+            }
+
+            @Override
+            public void onThrowable(Throwable t) {
+                log.error("Error sending webhook. Reason {}", t.getMessage());
+            }
+        });
         globalStats.mark(WEB_HOOKS);
     }
 

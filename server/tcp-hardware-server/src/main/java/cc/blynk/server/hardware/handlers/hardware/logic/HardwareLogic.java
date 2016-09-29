@@ -45,6 +45,7 @@ public class HardwareLogic {
         this.eventorProcessor = holder.eventorProcessor;
         this.webhookProcessor = new WebhookProcessor(holder.asyncHttpClient,
                 holder.props.getLongProperty("webhooks.frequency.user.quota.limit", 1000),
+                holder.props.getIntProperty("webhooks.response.size.limit", 64),
                 holder.stats);
     }
 
@@ -101,7 +102,7 @@ public class HardwareLogic {
 
     private void process(DashBoard dash, Session session, byte pin, PinType pinType, String value) {
         eventorProcessor.process(session, dash, pin, pinType, value);
-        webhookProcessor.process(dash, pin, pinType, value);
+        webhookProcessor.process(session, dash, pin, pinType, value);
     }
 
 }

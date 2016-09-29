@@ -84,7 +84,7 @@ public class Session {
     }
 
     public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body) {
-        Set<Channel> targetChannels = new HashSet<>();
+        final Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
             if (hardwareState != null && hardwareState.dashId == activeDashId) {
@@ -151,7 +151,7 @@ public class Session {
     }
 
     public void sendToSharedApps(Channel sendingChannel, String sharedToken, short cmd, int msgId, String body) {
-        Set<Channel> targetChannels = new HashSet<>();
+        final Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : appChannels) {
             if (channel != sendingChannel && needSync(channel, sharedToken)) {
                 targetChannels.add(channel);

@@ -27,6 +27,8 @@ import java.util.concurrent.Future;
 
 import static cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod.GET;
 import static cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod.PUT;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
@@ -92,6 +94,22 @@ public class WebhookTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
+    }
+
+    @Test
+    public void testSome3dPartyWeatherServiceTest() throws Exception {
+        WebHook webHook = new WebHook();
+        webHook.url = "http://api.sunrise-sunset.org/json?lat=36.7201600&lng=-4.4203400&date=2016-08-25";
+        webHook.method = GET;
+        webHook.pin = 123;
+        webHook.pinType = PinType.VIRTUAL;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("hardware vw 123 10");
+        String expectedResponse = "{\"results\":{\"sunrise\":\"5:43:55 AM\",\"sunset\":\"6:55:05 PM\",\"solar_noon\":\"12:19:30 PM\",\"day_length\":\"13:11:10\",\"civil_twilight_begin\":\"5:17:12 AM\",\"civil_twilight_end\":\"7:21:47 PM\",\"nautical_twilight_begin\":\"4:45:18 AM\",\"nautical_twilight_end\":\"7:53:42 PM\",\"astronomical_twilight_begin\":\"4:12:05 AM\",\"astronomical_twilight_end\":\"8:26:55 PM\"},\"status\":\"OK\"}";
+        verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(888, HARDWARE, expectedResponse)));
     }
 
     @Test
