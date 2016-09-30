@@ -10,7 +10,6 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.ThreadContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
@@ -39,7 +38,6 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
-        ThreadContext.put("user", state.user.name);
         switch (msg.command) {
             case HARDWARE:
                 hardwareApp.messageReceived(ctx, state, msg);

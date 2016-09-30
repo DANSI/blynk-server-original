@@ -11,7 +11,6 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.internal.TypeParameterMatcher;
-import org.apache.logging.log4j.ThreadContext;
 
 /**
  * The Blynk Project.
@@ -57,7 +56,6 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
             } catch (Exception e) {
                 handleGeneralException(ctx, e, getMsgId(msg));
             } finally {
-                ThreadContext.clearMap();
                 ReferenceCountUtil.release(msg);
             }
         }

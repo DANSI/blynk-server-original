@@ -15,7 +15,6 @@ import cc.blynk.server.hardware.handlers.hardware.logic.SetWidgetPropertyLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.SmsLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.TwitLogic;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.ThreadContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
@@ -65,7 +64,6 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
-        ThreadContext.put("user", state.user.name);
         switch (msg.command) {
             case HARDWARE:
                 hardware.messageReceived(ctx, state, msg);

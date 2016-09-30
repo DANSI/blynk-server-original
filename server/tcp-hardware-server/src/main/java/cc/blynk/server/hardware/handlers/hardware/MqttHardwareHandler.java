@@ -16,7 +16,6 @@ import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageFactory;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
-import org.apache.logging.log4j.ThreadContext;
 
 /**
  * The Blynk Project.
@@ -54,7 +53,6 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MqttMessage msg) {
-        ThreadContext.put("user", state.user.name);
         MqttMessageType messageType = msg.fixedHeader().messageType();
 
         switch (messageType) {

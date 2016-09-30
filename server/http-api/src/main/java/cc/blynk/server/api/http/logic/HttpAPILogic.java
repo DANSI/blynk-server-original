@@ -47,7 +47,6 @@ import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
 
 import java.util.ArrayList;
 import java.util.Base64;
@@ -522,13 +521,7 @@ public class HttpAPILogic {
 
         String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING, pinValues);
 
-        //todo should be move to upper level. ok for now
-        try {
-            ThreadContext.put("user", user.name);
-            reportingDao.process(user.name, dashId, pin, pinType, pinValue);
-        } finally {
-            ThreadContext.clearMap();
-        }
+        reportingDao.process(user.name, dashId, pin, pinType, pinValue);
 
         dash.update(pin, pinType, pinValue);
 
@@ -592,13 +585,8 @@ public class HttpAPILogic {
             return Response.badRequest("Wrong pin format.");
         }
 
-        try {
-            ThreadContext.put("user", user.name);
-            for (PinData pinData : pinsData) {
-                reportingDao.process(user.name, dashId, pin, pinType, pinData.value, pinData.timestamp);
-            }
-        } finally {
-            ThreadContext.clearMap();
+        for (PinData pinData : pinsData) {
+            reportingDao.process(user.name, dashId, pin, pinType, pinData.value, pinData.timestamp);
         }
 
         dash.update(pin, pinType, pinsData[0].value);

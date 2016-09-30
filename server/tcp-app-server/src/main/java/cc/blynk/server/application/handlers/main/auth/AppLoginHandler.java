@@ -133,7 +133,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         User user = holder.userDao.getByName(username, appName);
 
         if (user == null) {
-            log.error("User not registered. Username '{}', {}", username, ctx.channel().remoteAddress());
+            log.warn("User not registered. Username '{}', {}", username, ctx.channel().remoteAddress());
             ctx.writeAndFlush(makeResponse(msgId, USER_NOT_REGISTERED), ctx.voidPromise());
             return;
         }
@@ -145,7 +145,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         }
 
         if (!user.pass.equals(pass)) {
-            log.error("User credentials are wrong. Username '{}', {}", username, ctx.channel().remoteAddress());
+            log.warn("User credentials are wrong. Username '{}', {}", username, ctx.channel().remoteAddress());
             ctx.writeAndFlush(makeResponse(msgId, USER_NOT_AUTHENTICATED), ctx.voidPromise());
             return;
         }

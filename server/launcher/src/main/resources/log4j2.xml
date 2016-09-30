@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
+
     <Appenders>
 
         <File name="admin" fileName="${sys:logs.folder}/admin.log">
@@ -38,10 +39,21 @@
             </Policies>
         </RollingFile>
 
+        <!-- this is much quicker and simpler than below routing -->
+        <RollingFile name="userLog" fileName="${sys:logs.folder}/blynk.log"
+                     filePattern="${sys:logs.folder}/archive/blynk.log.%d{yyyy-MM-dd}">
+            <PatternLayout>
+                <pattern>%d{yyyy-MM-dd} %d{HH:mm:ss.SSS} - %msg%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+
+        <!--
         <Routing name="userLog">
             <Routes pattern="$${ctx:user}">
 
-                <!-- This route is chosen if ThreadContext has no value for key "user". -->
                 <Route key="$${ctx:user}">
                     <RollingFile name="default" fileName="${sys:logs.folder}/blynk.log"
                                  filePattern="${sys:logs.folder}/archive/blynk.log.%d{yyyy-MM-dd}">
@@ -54,8 +66,6 @@
                     </RollingFile>
                 </Route>
 
-                <!-- This route is chosen if ThreadContext has a value for "user"
-                The value dynamically determines the name of the log file. -->
                 <Route>
                     <RollingFile name="${ctx:user}" fileName="${sys:logs.folder}/users/${ctx:user}.log"
                                  filePattern="${sys:logs.folder}/users/archive/${ctx:user}.log.%d{yyyy-MM-dd}">
@@ -69,6 +79,8 @@
                 </Route>
             </Routes>
         </Routing>
+        -->
+
 
         <Routing name="csvDataStorage">
             <Routes pattern="$${ctx:user}_$${ctx:dashId}_$${ctx:pin}">
@@ -90,6 +102,7 @@
         </Routing>
 
     </Appenders>
+
     <Loggers>
 
         <Logger name="cc.blynk.server.workers.ProfileSaverWorker" level="debug" additivity="false">
@@ -114,8 +127,9 @@
             <appender-ref ref="postgresDBLog"/>
         </Logger>
 
-        <Root level="debug">
+        <Root>
             <AppenderRef ref="userLog"/>
         </Root>
+
     </Loggers>
 </Configuration>
