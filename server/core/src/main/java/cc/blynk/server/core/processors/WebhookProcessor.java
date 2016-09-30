@@ -43,12 +43,15 @@ public class WebhookProcessor extends NotificationBase {
     private final AsyncHttpClient httpclient;
     private final GlobalStats globalStats;
     private final int responseSizeLimit;
+    private final String username;
 
-    public WebhookProcessor(DefaultAsyncHttpClient httpclient, long quotaFrequencyLimit, int responseSizeLimit, GlobalStats stats) {
+    public WebhookProcessor(DefaultAsyncHttpClient httpclient, long quotaFrequencyLimit, int responseSizeLimit,
+                            GlobalStats stats, String username) {
         super(quotaFrequencyLimit);
         this.httpclient = httpclient;
         this.globalStats = stats;
         this.responseSizeLimit = responseSizeLimit * 1024;
+        this.username = username;
     }
 
     public void process(Session session, DashBoard dash, byte pin, PinType pinType, String triggerValue) {
@@ -99,7 +102,7 @@ public class WebhookProcessor extends NotificationBase {
                 length += content.length();
 
                 if (length > responseSizeLimit) {
-                    log.debug("Response from webhook is too big. Skipping. Size : {}", length);
+                    log.debug("Response from webhook is too big for {}. Skipping. Size : {}", username, length);
                     return State.ABORT;
                 }
                 return super.onBodyPartReceived(content);
@@ -113,7 +116,7 @@ public class WebhookProcessor extends NotificationBase {
                         session.sendMessageToHardware(dashId, Command.HARDWARE, 888, response.getResponseBody(CharsetUtil.UTF_8));
                     }
                 } else {
-                    log.error("Error sending webhook. Reason {}", response.getResponseBody());
+                    log.error("Error sending webhook for {}. Reason {}", username, response.getResponseBody());
                 }
 
                 return null;
@@ -121,7 +124,7 @@ public class WebhookProcessor extends NotificationBase {
 
             @Override
             public void onThrowable(Throwable t) {
-                log.error("Error sending webhook. Reason {}", t.getMessage());
+                log.error("Error sending webhook for {}. Reason {}", username, t.getMessage());
             }
         });
         globalStats.mark(WEB_HOOKS);

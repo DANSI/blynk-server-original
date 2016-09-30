@@ -39,14 +39,15 @@ public class HardwareLogic {
     private final EventorProcessor eventorProcessor;
     private final WebhookProcessor webhookProcessor;
 
-    public HardwareLogic(Holder holder) {
+    public HardwareLogic(Holder holder, String username) {
         this.sessionDao = holder.sessionDao;
         this.reportingDao = holder.reportingDao;
         this.eventorProcessor = holder.eventorProcessor;
         this.webhookProcessor = new WebhookProcessor(holder.asyncHttpClient,
                 holder.props.getLongProperty("webhooks.frequency.user.quota.limit", 1000),
                 holder.props.getIntProperty("webhooks.response.size.limit", 64),
-                holder.stats);
+                holder.stats,
+                username);
     }
 
     private static boolean isWriteOperation(String body) {
