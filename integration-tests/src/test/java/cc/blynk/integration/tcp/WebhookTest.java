@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.StringUtils;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -108,7 +109,8 @@ public class WebhookTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
-        String expectedResponse = "{\"results\":{\"sunrise\":\"5:43:55 AM\",\"sunset\":\"6:55:05 PM\",\"solar_noon\":\"12:19:30 PM\",\"day_length\":\"13:11:10\",\"civil_twilight_begin\":\"5:17:12 AM\",\"civil_twilight_end\":\"7:21:47 PM\",\"nautical_twilight_begin\":\"4:45:18 AM\",\"nautical_twilight_end\":\"7:53:42 PM\",\"astronomical_twilight_begin\":\"4:12:05 AM\",\"astronomical_twilight_end\":\"8:26:55 PM\"},\"status\":\"OK\"}";
+        String expectedResponse = "vw" + StringUtils.BODY_SEPARATOR_STRING + "123" + StringUtils.BODY_SEPARATOR_STRING +
+                "{\"results\":{\"sunrise\":\"5:43:55 AM\",\"sunset\":\"6:55:05 PM\",\"solar_noon\":\"12:19:30 PM\",\"day_length\":\"13:11:10\",\"civil_twilight_begin\":\"5:17:12 AM\",\"civil_twilight_end\":\"7:21:47 PM\",\"nautical_twilight_begin\":\"4:45:18 AM\",\"nautical_twilight_end\":\"7:53:42 PM\",\"astronomical_twilight_begin\":\"4:12:05 AM\",\"astronomical_twilight_end\":\"8:26:55 PM\"},\"status\":\"OK\"}";
         verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(888, HARDWARE, expectedResponse)));
     }
 
@@ -126,7 +128,8 @@ public class WebhookTest extends IntegrationBase {
         clientPair.appClient.send("hardware 1 vw 123 10");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 123 10"))));
 
-        String expectedResponse = "{\"results\":{\"sunrise\":\"5:43:55 AM\",\"sunset\":\"6:55:05 PM\",\"solar_noon\":\"12:19:30 PM\",\"day_length\":\"13:11:10\",\"civil_twilight_begin\":\"5:17:12 AM\",\"civil_twilight_end\":\"7:21:47 PM\",\"nautical_twilight_begin\":\"4:45:18 AM\",\"nautical_twilight_end\":\"7:53:42 PM\",\"astronomical_twilight_begin\":\"4:12:05 AM\",\"astronomical_twilight_end\":\"8:26:55 PM\"},\"status\":\"OK\"}";
+        String expectedResponse = "vw" + StringUtils.BODY_SEPARATOR_STRING + "123" + StringUtils.BODY_SEPARATOR_STRING +
+                "{\"results\":{\"sunrise\":\"5:43:55 AM\",\"sunset\":\"6:55:05 PM\",\"solar_noon\":\"12:19:30 PM\",\"day_length\":\"13:11:10\",\"civil_twilight_begin\":\"5:17:12 AM\",\"civil_twilight_end\":\"7:21:47 PM\",\"nautical_twilight_begin\":\"4:45:18 AM\",\"nautical_twilight_end\":\"7:53:42 PM\",\"astronomical_twilight_begin\":\"4:12:05 AM\",\"astronomical_twilight_end\":\"8:26:55 PM\"},\"status\":\"OK\"}";
         verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(888, HARDWARE, expectedResponse)));
     }
 
