@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.FrequencyWidget;
 import cc.blynk.server.core.processors.WebhookProcessor;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
@@ -19,6 +18,8 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.SYNC;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
 import static cc.blynk.utils.StringUtils.split2;
 import static cc.blynk.utils.StringUtils.split3;
 
@@ -87,7 +88,9 @@ public class HardwareAppLogic {
             case 'r' :
                 Widget widget = dash.findWidgetByPin(split[1].split(StringUtils.BODY_SEPARATOR_STRING));
                 if (widget == null) {
-                    throw new IllegalCommandBodyException("No widget for read command.");
+                    log.debug("No widget for read command.");
+                    ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
+                    return;
                 }
 
                 if (widget instanceof FrequencyWidget) {

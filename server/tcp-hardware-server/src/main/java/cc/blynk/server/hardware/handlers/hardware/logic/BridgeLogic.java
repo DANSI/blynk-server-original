@@ -69,7 +69,7 @@ public class BridgeLogic {
             final String token = sendToMap.get(bridgePin);
 
             if (sendToMap.size() == 0 || token == null) {
-                log.debug("Bridge not initialized.");
+                log.debug("Bridge not initialized. {}", state.user.name);
                 ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
                 return;
             }

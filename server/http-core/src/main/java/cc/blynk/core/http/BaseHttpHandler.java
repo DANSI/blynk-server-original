@@ -54,7 +54,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
         HandlerHolder handlerHolder = HandlerRegistry.findHandler(req.method(), HandlerRegistry.path(req.uri()));
 
         if (handlerHolder == null) {
-            log.error("Error resolving url. No path found. {} : {}", req.method().name(), req.uri());
+            log.debug("Error resolving url. No path found. {} : {}", req.method().name(), req.uri());
             ReferenceCountUtil.release(req);
             ctx.writeAndFlush(Response.notFound());
             return;
