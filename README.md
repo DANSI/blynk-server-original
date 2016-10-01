@@ -513,7 +513,7 @@ Blynk has a bunch of integration tests that require DB, so you have to skip test
 Blynk server is very powerful it can handle 1000 devices on single raspberry PI.
 
 - Any OS that can run java
-- At least 50 MB of RAM (could be less with tuning)
+- At least 30 MB of RAM (could be less with tuning)
 
 ## Licensing
 [GNU GPL license](https://github.com/blynkkk/blynk-server/blob/master/license.txt)

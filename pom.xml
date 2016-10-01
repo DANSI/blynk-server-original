@@ -135,7 +135,7 @@
         <HikariCP.version>2.5.1</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>
 
-        <!-- test versions -->
+        <!-- test dependencies -->
         <httpclient.version>4.5.2</httpclient.version>
         <commons-lang3.version>3.4</commons-lang3.version>
         <junit.version>4.12</junit.version>
