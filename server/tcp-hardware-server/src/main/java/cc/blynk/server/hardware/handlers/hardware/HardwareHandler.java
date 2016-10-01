@@ -64,38 +64,42 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
-        switch (msg.command) {
-            case HARDWARE:
-                hardware.messageReceived(ctx, state, msg);
-                break;
-            case PING :
-                PingLogic.messageReceived(ctx, msg.id);
-                break;
-            case BRIDGE :
-                bridge.messageReceived(ctx, state, msg);
-                break;
-            case EMAIL :
-                email.messageReceived(ctx, state, msg);
-                break;
-            case PUSH_NOTIFICATION :
-                push.messageReceived(ctx, state, msg);
-                break;
-            case TWEET :
-                tweet.messageReceived(ctx, state, msg);
-                break;
-            case SMS :
-                smsLogic.messageReceived(ctx, state, msg);
-                break;
-            case HARDWARE_SYNC :
-                sync.messageReceived(ctx, state, msg);
-                break;
-            case HARDWARE_INFO :
-                info.messageReceived(ctx, state, msg);
-                break;
-            case SET_WIDGET_PROPERTY :
-                propertyLogic.messageReceived(ctx, state, msg);
-                break;
-
+        //todo this temporary try catch. should be removed in next releases.
+        try {
+            switch (msg.command) {
+                case HARDWARE:
+                    hardware.messageReceived(ctx, state, msg);
+                    break;
+                case PING:
+                    PingLogic.messageReceived(ctx, msg.id);
+                    break;
+                case BRIDGE:
+                    bridge.messageReceived(ctx, state, msg);
+                    break;
+                case EMAIL:
+                    email.messageReceived(ctx, state, msg);
+                    break;
+                case PUSH_NOTIFICATION:
+                    push.messageReceived(ctx, state, msg);
+                    break;
+                case TWEET:
+                    tweet.messageReceived(ctx, state, msg);
+                    break;
+                case SMS:
+                    smsLogic.messageReceived(ctx, state, msg);
+                    break;
+                case HARDWARE_SYNC:
+                    sync.messageReceived(ctx, state, msg);
+                    break;
+                case HARDWARE_INFO:
+                    info.messageReceived(ctx, state, msg);
+                    break;
+                case SET_WIDGET_PROPERTY:
+                    propertyLogic.messageReceived(ctx, state, msg);
+                    break;
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            log.error("Unexpected error in hardware handler.", e);
         }
     }
 

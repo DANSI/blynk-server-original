@@ -33,12 +33,12 @@ public class TokenManager extends TokenManagerBase {
         String removedToken = user.dashTokens.remove(projectId);
         if (removedToken != null) {
             cache.remove(removedToken);
-            log.info("Deleted {} token.", removedToken);
+            log.debug("Deleted {} token.", removedToken);
         }
     }
 
     @Override
     void printMessage(String username, Integer dashId, String token) {
-        log.info("Generated token for user {} and dashId {} is {}.", username, dashId, token);
+        log.debug("Generated token for user {} and dashId {} is {}.", username, dashId, token);
     }
 }
