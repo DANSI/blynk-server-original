@@ -113,6 +113,24 @@ public class WebhookTest extends IntegrationBase {
     }
 
     @Test
+    public void testSome3dPartyWeatherServiceTriggerFromAppTest() throws Exception {
+        WebHook webHook = new WebHook();
+        webHook.url = "http://api.sunrise-sunset.org/json?lat=36.7201600&lng=-4.4203400&date=2016-08-25";
+        webHook.method = GET;
+        webHook.pin = 123;
+        webHook.pinType = PinType.VIRTUAL;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("hardware 1 vw 123 10");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 123 10"))));
+
+        String expectedResponse = "{\"results\":{\"sunrise\":\"5:43:55 AM\",\"sunset\":\"6:55:05 PM\",\"solar_noon\":\"12:19:30 PM\",\"day_length\":\"13:11:10\",\"civil_twilight_begin\":\"5:17:12 AM\",\"civil_twilight_end\":\"7:21:47 PM\",\"nautical_twilight_begin\":\"4:45:18 AM\",\"nautical_twilight_end\":\"7:53:42 PM\",\"astronomical_twilight_begin\":\"4:12:05 AM\",\"astronomical_twilight_end\":\"8:26:55 PM\"},\"status\":\"OK\"}";
+        verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(888, HARDWARE, expectedResponse)));
+    }
+
+    @Test
     public void testWebhookWorksWithBlynkHttpApiNoPlaceHolder() throws Exception {
         WebHook webHook = new WebHook();
         webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
