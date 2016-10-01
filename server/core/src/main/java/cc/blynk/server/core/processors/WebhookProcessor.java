@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.webhook.Header;
 import cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
@@ -56,19 +55,18 @@ public class WebhookProcessor extends NotificationBase {
     }
 
     public void process(Session session, DashBoard dash, byte pin, PinType pinType, String triggerValue) {
-        Widget widget = dash.findWidgetByPin(pin, pinType);
+        WebHook widget = dash.findWebhookByPin(pin, pinType);
         if (widget == null) {
             return;
         }
-        if (widget instanceof WebHook) {
-            try {
-                checkIfNotificationQuotaLimitIsNotReached();
-            } catch (QuotaLimitException qle) {
-                log.debug("Webhook quota limit reached. Ignoring hook.");
-                return;
-            }
-            process(session, dash.id, (WebHook) widget, triggerValue);
+
+        try {
+            checkIfNotificationQuotaLimitIsNotReached();
+        } catch (QuotaLimitException qle) {
+            log.debug("Webhook quota limit reached. Ignoring hook.");
+            return;
         }
+        process(session, dash.id, widget, triggerValue);
     }
 
     private void process(Session session, int dashId, WebHook webHook, String triggerValue) {
@@ -79,7 +77,6 @@ public class WebhookProcessor extends NotificationBase {
         String newUrl = format(webHook.url, triggerValue, false);
 
         BoundRequestBuilder builder = buildRequestMethod(webHook.method, newUrl);
-
         if (webHook.headers != null) {
             for (Header header : webHook.headers) {
                 if (header.isValid()) {
@@ -94,6 +91,7 @@ public class WebhookProcessor extends NotificationBase {
             }
         }
 
+        log.trace("Sending webhook. ", webHook);
         builder.execute(new AsyncCompletionHandler<Response>() {
 
             private int length = 0;
@@ -115,6 +113,7 @@ public class WebhookProcessor extends NotificationBase {
                     if (response.hasResponseBody()) {
                         //todo could be optimized
                         String body = Pin.makeHardwareBody(webHook.pinType, webHook.pin, response.getResponseBody(CharsetUtil.UTF_8));
+                        log.trace("Sending webhook to hardware. {}", body);
                         session.sendMessageToHardware(dashId, Command.HARDWARE, 888, body);
                     }
                 } else {

@@ -2,6 +2,7 @@ package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
@@ -97,6 +98,18 @@ public class DashBoard {
         for (Widget widget : widgets) {
             if (widget.isSame(pin, pinType)) {
                 return widget;
+            }
+        }
+        return null;
+    }
+
+    public WebHook findWebhookByPin(byte pin, PinType pinType) {
+        for (Widget widget : widgets) {
+            if (widget instanceof WebHook) {
+                WebHook webHook = (WebHook) widget;
+                if (webHook.isSameWebHook(pin, pinType)) {
+                    return webHook;
+                }
             }
         }
         return null;
