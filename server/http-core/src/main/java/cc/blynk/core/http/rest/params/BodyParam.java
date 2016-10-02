@@ -37,7 +37,7 @@ public class BodyParam extends Param {
                     data = uriDecoder.getContentAsString();
                     return JsonParser.mapper.readValue(data, type);
                 } catch (JsonParseException | JsonMappingException jsonParseError) {
-                    log.error("Error parsing body '{}' param. {}. Message {}", uriDecoder.getBodyData(), data, jsonParseError.getMessage());
+                    log.warn("Error parsing body param : '{}'.", data);
                     throw new RuntimeException("Error parsing body param. " + data);
                 } catch (Exception e) {
                     log.error("Unexpected error during parsing body param.", e);
