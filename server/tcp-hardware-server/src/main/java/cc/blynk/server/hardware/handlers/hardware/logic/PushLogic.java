@@ -7,12 +7,13 @@ import cc.blynk.server.core.protocol.exceptions.NoActiveDashboardException;
 import cc.blynk.server.core.protocol.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.hardware.exceptions.NotifNotAuthorizedException;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED_EXCEPTION;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
 import static cc.blynk.utils.ByteBufUtil.ok;
 
 /**
@@ -49,7 +50,9 @@ public class PushLogic extends NotificationBase {
         Notification widget = dash.getWidgetByType(Notification.class);
 
         if (widget == null || widget.hasNoToken()) {
-            throw new NotifNotAuthorizedException("User has no access token provided.");
+            log.debug("User has no access token provided for push widget.");
+            ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_NOT_AUTHORIZED_EXCEPTION), ctx.voidPromise());
+            return;
         }
 
         checkIfNotificationQuotaLimitIsNotReached();

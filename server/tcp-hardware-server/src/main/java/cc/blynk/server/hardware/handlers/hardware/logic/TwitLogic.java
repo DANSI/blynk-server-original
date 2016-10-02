@@ -7,7 +7,6 @@ import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.hardware.exceptions.NotifNotAuthorizedException;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -15,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_EXCEPTION;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED_EXCEPTION;
 import static cc.blynk.utils.ByteBufUtil.makeResponse;
 import static cc.blynk.utils.ByteBufUtil.ok;
 
@@ -50,7 +50,9 @@ public class TwitLogic extends NotificationBase {
         if (twitterWidget == null || !dash.isActive ||
                 twitterWidget.token == null || twitterWidget.token.equals("") ||
                 twitterWidget.secret == null || twitterWidget.secret.equals("")) {
-            throw new NotifNotAuthorizedException("User has no access token provided.");
+            log.debug("User has no access token provided for twit widget.");
+            ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_NOT_AUTHORIZED_EXCEPTION), ctx.voidPromise());
+            return;
         }
 
         checkIfNotificationQuotaLimitIsNotReached();

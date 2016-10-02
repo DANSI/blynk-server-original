@@ -107,7 +107,7 @@ public class EventorProcessor {
         if (twitterWidget == null || !dash.isActive ||
                 twitterWidget.token == null || twitterWidget.token.equals("") ||
                 twitterWidget.secret == null || twitterWidget.secret.equals("")) {
-            log.debug("User has no access token provided.");
+            log.debug("User has no access token provided for eventor twitting.");
             return;
         }
 
@@ -138,7 +138,7 @@ public class EventorProcessor {
         Notification widget = dash.getWidgetByType(Notification.class);
 
         if (widget == null || widget.hasNoToken()) {
-            log.debug("User has no access token provided.");
+            log.debug("User has no access token provided for eventor push.");
             return;
         }
 
