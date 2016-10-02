@@ -17,6 +17,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 import static cc.blynk.utils.StringUtils.split3;
 
@@ -79,7 +81,9 @@ public class HardwareLogic {
             final String value = splitBody[2];
 
             if (value.length() == 0) {
-                throw new IllegalCommandException("Hardware write command doesn't have value for pin.");
+                log.debug("Hardware write command doesn't have value for pin. User {}", state.user.name);
+                ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+                return;
             }
 
             reportingDao.process(state.user.name, dashId, pin, pinType, value);
