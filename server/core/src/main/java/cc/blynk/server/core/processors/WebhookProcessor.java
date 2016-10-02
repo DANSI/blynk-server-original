@@ -110,6 +110,7 @@ public class WebhookProcessor extends NotificationBase {
             @Override
             public Response onCompleted(Response response) throws Exception {
                 if (response.getStatusCode() == 200) {
+                    webHook.failureCounter = 0;
                     if (response.hasResponseBody()) {
                         //todo could be optimized
                         String body = Pin.makeHardwareBody(webHook.pinType, webHook.pin, response.getResponseBody(CharsetUtil.UTF_8));
@@ -117,6 +118,7 @@ public class WebhookProcessor extends NotificationBase {
                         session.sendMessageToHardware(dashId, Command.HARDWARE, 888, body);
                     }
                 } else {
+                    webHook.failureCounter++;
                     log.error("Error sending webhook for {}. Reason {}", username, response.getResponseBody());
                 }
 
@@ -125,6 +127,7 @@ public class WebhookProcessor extends NotificationBase {
 
             @Override
             public void onThrowable(Throwable t) {
+                webHook.failureCounter++;
                 log.error("Error sending webhook for {}. Reason {}", username, t.getMessage());
             }
         });

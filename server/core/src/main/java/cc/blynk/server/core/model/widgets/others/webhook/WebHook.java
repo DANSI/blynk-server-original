@@ -20,8 +20,13 @@ public class WebHook extends OnePinWidget {
 
     public String body;
 
+    public transient volatile int failureCounter = 0;
+
+    //todo move to property
+    public static final int WEBHOOK_FAILURE_LIMIT = 10;
+
     public boolean isValid() {
-        return url != null && !url.equals("");
+        return url != null && !url.equals("") && failureCounter < WEBHOOK_FAILURE_LIMIT;
     }
 
     //a bit ugly but as quick fix ok
