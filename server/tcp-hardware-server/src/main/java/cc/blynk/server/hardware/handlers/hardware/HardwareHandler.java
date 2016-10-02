@@ -99,7 +99,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                     break;
             }
         } catch (ArrayIndexOutOfBoundsException e) {
-            log.error("Unexpected error in hardware handler.", e);
+            log.error("Unexpected error in hardware handler. User {}.", (state.user == null ? "" : state.user.name), e);
         }
     }
 

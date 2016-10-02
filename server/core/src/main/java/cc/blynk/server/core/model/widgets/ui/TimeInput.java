@@ -59,19 +59,21 @@ public class TimeInput extends OnePinWidget implements HardwareSyncWidget {
     public boolean updateIfSame(byte pin, PinType type, String value) {
         if (super.updateIfSame(pin, type, value)) {
             String[] values = value.split(BODY_SEPARATOR_STRING);
-            startAt = calcTime(values[0]);
-            stopAt = calcTime(values[1]);
-            tzName = ZoneId.of(values[2]);
-            if (values.length == 3) {
-                days = null;
-            } else {
-                if (values[3].equals("")) {
+            if (values.length > 2) {
+                startAt = calcTime(values[0]);
+                stopAt = calcTime(values[1]);
+                tzName = ZoneId.of(values[2]);
+                if (values.length == 3) {
                     days = null;
                 } else {
-                    String[] daysString = values[3].split(",");
-                    days = new int[daysString.length];
-                    for (int i = 0; i < daysString.length; i++) {
-                        days[i] = ParseUtil.parseInt(daysString[i]);
+                    if (values[3].equals("")) {
+                        days = null;
+                    } else {
+                        String[] daysString = values[3].split(",");
+                        days = new int[daysString.length];
+                        for (int i = 0; i < daysString.length; i++) {
+                            days[i] = ParseUtil.parseInt(daysString[i]);
+                        }
                     }
                 }
             }
