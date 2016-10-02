@@ -1,6 +1,7 @@
 package cc.blynk.server.core.protocol.handlers;
 
 import cc.blynk.server.core.protocol.exceptions.BaseServerException;
+import cc.blynk.server.core.protocol.exceptions.ParseException;
 import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
@@ -26,8 +27,13 @@ public interface DefaultExceptionHandler {
     default void handleGeneralException(ChannelHandlerContext ctx, Throwable cause, int msgId) throws Exception {
         if (cause instanceof BaseServerException) {
             BaseServerException baseServerException = (BaseServerException) cause;
-            //no need for stack trace for known exceptions
-            log.error(baseServerException.getMessage());
+            //todo think how to fix it and find reason for issue.
+            if (cause instanceof ParseException) {
+                log.trace(baseServerException.getMessage());
+            } else {
+                //no need for stack trace for known exceptions
+                log.error(baseServerException.getMessage());
+            }
             ctx.writeAndFlush(makeResponse(msgId, baseServerException.errorCode), ctx.voidPromise());
         } else {
             handleUnexpectedException(ctx, cause);

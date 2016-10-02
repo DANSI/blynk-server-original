@@ -1,7 +1,6 @@
 package cc.blynk.utils;
 
-import cc.blynk.server.core.protocol.enums.Response;
-import cc.blynk.server.core.protocol.exceptions.BaseServerException;
+import cc.blynk.server.core.protocol.exceptions.ParseException;
 
 /**
  * The Blynk Project.
@@ -14,7 +13,7 @@ public final class ParseUtil {
         try {
             return Integer.parseInt(intString);
         } catch (NumberFormatException ex) {
-            throw new BaseServerException(intString + " not a valid int number. " + ex.getMessage(), Response.ILLEGAL_COMMAND);
+            throw new ParseException(intString + " not a valid int number.");
         }
     }
 
@@ -22,7 +21,7 @@ public final class ParseUtil {
         try {
             return Byte.parseByte(byteString);
         } catch (NumberFormatException ex) {
-            throw new BaseServerException(byteString + " not a valid byte number.", Response.ILLEGAL_COMMAND);
+            throw new ParseException(byteString + " not a valid byte number.");
         }
     }
 
@@ -30,7 +29,7 @@ public final class ParseUtil {
         try {
             return Long.parseLong(longString);
         } catch (NumberFormatException nfe) {
-            throw new BaseServerException(longString + " not a valid long number.", Response.ILLEGAL_COMMAND);
+            throw new ParseException(longString + " not a valid long number.");
         }
     }
 
