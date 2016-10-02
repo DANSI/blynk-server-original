@@ -57,7 +57,7 @@ public interface DefaultExceptionHandler {
             //channel is already closed here by ReadTimeoutHandler
         } else if (cause instanceof DecoderException) {
             if (cause.getCause() instanceof UnsupportedCommandException) {
-                log.error("Input command is invalid. Closing socket. Reason {}. Address {}", cause.getMessage(), ctx.channel().remoteAddress());
+                log.debug("Input command is invalid. Closing socket. Reason {}. Address {}", cause.getMessage(), ctx.channel().remoteAddress());
             } else if (cause.getCause() instanceof SSLException) {
                 log.error("Unsecured connection attempt. Channel : {}. Reason : {}", ctx.channel().remoteAddress(), cause.getMessage());
             } else {

@@ -10,7 +10,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.utils.ByteBufUtil.ok;
 
 /**
  * The Blynk Project.
@@ -33,7 +33,7 @@ public class DeleteDashLogic {
 
         int index = user.profile.getDashIndexOrThrow(dashId);
 
-        log.info("Deleting dashboard {}.", dashId);
+        log.debug("Deleting dashboard {}.", dashId);
 
         DashBoard dash = user.profile.dashBoards[index];
 

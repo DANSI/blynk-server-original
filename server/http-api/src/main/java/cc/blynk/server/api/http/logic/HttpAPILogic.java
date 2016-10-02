@@ -178,14 +178,14 @@ public class HttpAPILogic {
         User user = userDao.tokenManager.getUserByToken(token);
 
         if (user == null) {
-            log.error("Requested token {} not found.", token);
+            log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
-            log.error("Dash id for token {} not found. User {}", token, user.name);
+            log.debug("Dash id for token {} not found. User {}", token, user.name);
             return Response.badRequest("Didn't find dash id for token.");
         }
 
@@ -214,14 +214,14 @@ public class HttpAPILogic {
         User user = userDao.tokenManager.getUserByToken(token);
 
         if (user == null) {
-            log.error("Requested token {} not found.", token);
+            log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
-            log.error("Dash id for token {} not found. User {}", token, user.name);
+            log.debug("Dash id for token {} not found. User {}", token, user.name);
             return Response.badRequest("Didn't find dash id for token.");
         }
 
@@ -234,7 +234,7 @@ public class HttpAPILogic {
             pinType = PinType.getPinType(pinString.charAt(0));
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
-            log.error("Wrong pin format. {}", pinString);
+            log.debug("Wrong pin format. {}", pinString);
             return Response.badRequest("Wrong pin format.");
         }
 
@@ -243,7 +243,7 @@ public class HttpAPILogic {
         if (widget == null) {
             String value = dashBoard.storagePins.get("" + pinType.pintTypeChar + pin);
             if (value == null) {
-                log.error("Requested pin {} not found. User {}", pinString, user.name);
+                log.debug("Requested pin {} not found. User {}", pinString, user.name);
                 return Response.badRequest("Requested pin not exists in app.");
             }
             return ok(JsonParser.valueToJsonAsString(value.split(StringUtils.BODY_SEPARATOR_STRING)));
@@ -261,14 +261,14 @@ public class HttpAPILogic {
         User user = userDao.tokenManager.getUserByToken(token);
 
         if (user == null) {
-            log.error("Requested token {} not found.", token);
+            log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
-            log.error("Dash id for token {} not found. User {}", token, user.name);
+            log.debug("Dash id for token {} not found. User {}", token, user.name);
             return Response.badRequest("Didn't find dash id for token.");
         }
 
@@ -294,14 +294,14 @@ public class HttpAPILogic {
         User user = userDao.tokenManager.getUserByToken(token);
 
         if (user == null) {
-            log.error("Requested token {} not found.", token);
+            log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
-            log.error("Dash id for token {} not found. User {}", token, user.name);
+            log.debug("Dash id for token {} not found. User {}", token, user.name);
             return Response.badRequest("Didn't find dash id for token.");
         }
 
@@ -312,14 +312,14 @@ public class HttpAPILogic {
             pinType = PinType.getPinType(pinString.charAt(0));
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
-            log.error("Wrong pin format. {}", pinString);
+            log.debug("Wrong pin format. {}", pinString);
             return Response.badRequest("Wrong pin format.");
         }
 
         //todo may be optimized
         java.nio.file.Path path = FileUtils.createCSV(reportingDao, user.name, dashId, pinType, pin);
         if (path == null) {
-            log.error("Error getting pin data.");
+            log.debug("Error getting pin data.");
             return Response.badRequest("Error getting pin data.");
         } else {
             return redirect("/" + path.getFileName().toString());
@@ -376,21 +376,21 @@ public class HttpAPILogic {
         globalStats.mark(HTTP_UPDATE_PIN_DATA);
 
         if (values.length == 0) {
-            log.error("No properties for update provided.");
+            log.debug("No properties for update provided.");
             return Response.badRequest("No properties for update provided.");
         }
 
         User user = userDao.tokenManager.getUserByToken(token);
 
         if (user == null) {
-            log.error("Requested token {} not found.", token);
+            log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
-            log.error("Dash id for token {} not found. User {}", token, user.name);
+            log.debug("Dash id for token {} not found. User {}", token, user.name);
             return Response.badRequest("Didn't find dash id for token.");
         }
 
@@ -407,7 +407,7 @@ public class HttpAPILogic {
             pinType = PinType.getPinType(pinString.charAt(0));
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
-            log.error("Wrong pin format. {}", pinString);
+            log.debug("Wrong pin format. {}", pinString);
             return Response.badRequest("Wrong pin format.");
         }
 
@@ -415,7 +415,7 @@ public class HttpAPILogic {
         Widget widget = dash.findWidgetByPin(pin, pinType);
 
         if (widget == null || pinType != PinType.VIRTUAL) {
-            log.error("No widget for SetWidgetProperty command.");
+            log.debug("No widget for SetWidgetProperty command.");
             return Response.badRequest("No widget for SetWidgetProperty command.");
         }
 
@@ -424,7 +424,7 @@ public class HttpAPILogic {
             //todo for now supporting only single property
             isChanged = ReflectionUtil.setProperty(widget, property, values[0]);
         } catch (Exception e) {
-            log.error("Error setting widget property. Reason : {}", e.getMessage());
+            log.debug("Error setting widget property. Reason : {}", e.getMessage());
             return Response.badRequest("Error setting widget property.");
         }
 
@@ -488,21 +488,21 @@ public class HttpAPILogic {
         globalStats.mark(HTTP_UPDATE_PIN_DATA);
 
         if (pinValues.length == 0) {
-            log.error("No pin for update provided.");
+            log.debug("No pin for update provided.");
             return Response.badRequest("No pin for update provided.");
         }
 
         User user = userDao.tokenManager.getUserByToken(token);
 
         if (user == null) {
-            log.error("Requested token {} not found.", token);
+            log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
-            log.error("Dash id for token {} not found. User {}", token, user.name);
+            log.debug("Dash id for token {} not found. User {}", token, user.name);
             return Response.badRequest("Didn't find dash id for token.");
         }
 
@@ -515,7 +515,7 @@ public class HttpAPILogic {
             pinType = PinType.getPinType(pinString.charAt(0));
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
-            log.error("Wrong pin format. {}", pinString);
+            log.debug("Wrong pin format. {}", pinString);
             return Response.badRequest("Wrong pin format.");
         }
 
@@ -529,7 +529,7 @@ public class HttpAPILogic {
 
         Session session = sessionDao.userSession.get(user);
         if (session == null) {
-            log.error("No session for user {}.", user.name);
+            log.debug("No session for user {}.", user.name);
             return Response.ok();
         }
 
@@ -554,21 +554,21 @@ public class HttpAPILogic {
         globalStats.mark(HTTP_UPDATE_PIN_DATA);
 
         if (pinsData.length == 0) {
-            log.error("No pin for update provided.");
+            log.debug("No pin for update provided.");
             return Response.badRequest("No pin for update provided.");
         }
 
         User user = userDao.tokenManager.getUserByToken(token);
 
         if (user == null) {
-            log.error("Requested token {} not found.", token);
+            log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
-            log.error("Dash id for token {} not found. User {}", token, user.name);
+            log.debug("Dash id for token {} not found. User {}", token, user.name);
             return Response.badRequest("Didn't find dash id for token.");
         }
 
@@ -581,7 +581,7 @@ public class HttpAPILogic {
             pinType = PinType.getPinType(pinString.charAt(0));
             pin = Byte.parseByte(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
-            log.error("Wrong pin format. {}", pinString);
+            log.debug("Wrong pin format. {}", pinString);
             return Response.badRequest("Wrong pin format.");
         }
 
@@ -620,33 +620,33 @@ public class HttpAPILogic {
         User user = userDao.tokenManager.getUserByToken(token);
 
         if (user == null) {
-            log.error("Requested token {} not found.", token);
+            log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
-            log.error("Dash id for token {} not found. User {}", token, user.name);
+            log.debug("Dash id for token {} not found. User {}", token, user.name);
             return Response.badRequest("Didn't find dash id for token.");
         }
 
         if (message == null || Notification.isWrongBody(message.body)) {
-            log.error("Notification body is wrong. '{}'", message == null ? "" : message.body);
+            log.debug("Notification body is wrong. '{}'", message == null ? "" : message.body);
             return Response.badRequest("Body is empty or larger than 255 chars.");
         }
 
         DashBoard dash = user.profile.getDashById(dashId);
 
         if (!dash.isActive) {
-            log.error("Project is not active.");
+            log.debug("Project is not active.");
             return Response.badRequest("Project is not active.");
         }
 
         Notification notification = dash.getWidgetByType(Notification.class);
 
         if (notification == null || notification.hasNoToken()) {
-            log.error("No notification tokens.");
+            log.debug("No notification tokens.");
             return Response.badRequest("No notification widget or widget not initialized.");
         }
 
@@ -667,35 +667,35 @@ public class HttpAPILogic {
         User user = userDao.tokenManager.getUserByToken(token);
 
         if (user == null) {
-            log.error("Requested token {} not found.", token);
+            log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
         Integer dashId = user.getDashIdByToken(token);
 
         if (dashId == null) {
-            log.error("Dash id for token {} not found. User {}", token, user.name);
+            log.debug("Dash id for token {} not found. User {}", token, user.name);
             return Response.badRequest("Didn't find dash id for token.");
         }
 
         DashBoard dash = user.profile.getDashById(dashId);
 
         if (!dash.isActive) {
-            log.error("Project is not active.");
+            log.debug("Project is not active.");
             return Response.badRequest("Project is not active.");
         }
 
         Mail mail = dash.getWidgetByType(Mail.class);
 
         if (mail == null) {
-            log.error("No email widget.");
+            log.debug("No email widget.");
             return Response.badRequest("No email widget.");
         }
 
         if (message == null ||
                 message.subj == null || message.subj.equals("") ||
                 message.to == null || message.to.equals("")) {
-            log.error("Email body empty. '{}'", message);
+            log.debug("Email body empty. '{}'", message);
             return Response.badRequest("Email body is wrong. Missing or empty fields 'to', 'subj'.");
         }
 
