@@ -3,13 +3,13 @@ package cc.blynk.server.core.dao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
-import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -93,7 +93,7 @@ public class FileManager {
 
     public void overrideUserFile(User user) throws IOException {
         Path file = generateFileName(user.name);
-        try (BufferedWriter writer = Files.newBufferedWriter(file, CharsetUtil.UTF_8)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
             String userString = user.toString();
 
             writer.write(userString);

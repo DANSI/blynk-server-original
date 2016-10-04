@@ -11,13 +11,13 @@ import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzip
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 
 /**
  * Decodes input byte array into java message.
@@ -70,7 +70,7 @@ public class ClientMessageDecoder extends ByteToMessageDecoder implements Defaul
                     message = new LoadProfileGzippedBinaryMessage(messageId, bytes);
                     break;
                 default:
-                    message = produce(messageId, command, buf.toString(CharsetUtil.UTF_8));
+                    message = produce(messageId, command, buf.toString(StandardCharsets.UTF_8));
             }
 
         }

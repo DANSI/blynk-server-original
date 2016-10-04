@@ -10,8 +10,8 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.multipart.DefaultHttpDataFactory;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
-import io.netty.util.CharsetUtil;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +50,7 @@ public class URIDecoder extends QueryStringDecoder {
     }
 
     public String getContentAsString() {
-        return bodyData.toString(CharsetUtil.UTF_8);
+        return bodyData.toString(StandardCharsets.UTF_8);
     }
 
     public ByteBuf getBodyData() {

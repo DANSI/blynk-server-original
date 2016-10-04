@@ -4,9 +4,10 @@ import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.util.CharsetUtil;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
+import java.nio.charset.StandardCharsets;
+
+import static cc.blynk.server.core.protocol.enums.Response.OK;
 
 /**
  * Utility class that creates native netty buffers instead of java objects.
@@ -30,7 +31,7 @@ public class ByteBufUtil {
     }
 
     public static ByteBuf makeStringMessage(short cmd, int msgId, String data) {
-        return makeBinaryMessage(cmd, msgId, data.getBytes(CharsetUtil.UTF_8));
+        return makeBinaryMessage(cmd, msgId, data.getBytes(StandardCharsets.UTF_8));
     }
 
     public static ByteBuf makeBinaryMessage(short cmd, int msgId, byte[] byteData) {

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.utils.ListUtils.subList;
+import static io.netty.handler.codec.http.HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
@@ -39,15 +40,18 @@ public class Response extends DefaultFullHttpResponse {
 
     public Response(HttpVersion version, HttpResponseStatus status, String content, String contentType) {
         super(version, status, (content == null ? Unpooled.EMPTY_BUFFER : Unpooled.copiedBuffer(content, StandardCharsets.UTF_8)));
-        headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-        headers().set(CONTENT_TYPE, contentType);
-        headers().set(CONTENT_LENGTH, content().readableBytes());
+        fillHeaders(contentType);
     }
 
     public Response(HttpVersion version, HttpResponseStatus status, byte[] content, String contentType) {
         super(version, status, (content == null ? Unpooled.EMPTY_BUFFER : Unpooled.copiedBuffer(content)));
+        fillHeaders(contentType);
+    }
+
+    private void fillHeaders(String contentType) {
         headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         headers().set(CONTENT_TYPE, contentType);
+        headers().set(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         headers().set(CONTENT_LENGTH, content().readableBytes());
     }
 

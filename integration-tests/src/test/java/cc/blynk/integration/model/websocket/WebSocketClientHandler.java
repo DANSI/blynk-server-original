@@ -47,9 +47,10 @@ import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.nio.charset.StandardCharsets;
 
 public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
 
@@ -92,7 +93,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
             FullHttpResponse response = (FullHttpResponse) msg;
             throw new IllegalStateException(
                     "Unexpected FullHttpResponse (getStatus=" + response.status() +
-                            ", content=" + response.content().toString(CharsetUtil.UTF_8) + ')');
+                            ", content=" + response.content().toString(StandardCharsets.UTF_8) + ')');
         }
 
         WebSocketFrame frame = (WebSocketFrame) msg;

@@ -1,7 +1,6 @@
 package cc.blynk.utils;
 
 import cc.blynk.server.core.protocol.exceptions.GetGraphDataException;
-import io.netty.util.CharsetUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -22,7 +22,7 @@ public class ByteUtils {
     public static final int REPORTING_RECORD_SIZE_BYTES = 16;
 
     public static byte[] compress(String value) throws IOException {
-        byte[] stringData = value.getBytes(CharsetUtil.UTF_8);
+        byte[] stringData = value.getBytes(StandardCharsets.UTF_8);
         ByteArrayOutputStream baos = new ByteArrayOutputStream(stringData.length);
 
         try (OutputStream out = new DeflaterOutputStream(baos)) {

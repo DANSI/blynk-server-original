@@ -10,9 +10,10 @@ import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
-import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.nio.charset.StandardCharsets;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.utils.StringUtils.split3;
@@ -46,7 +47,7 @@ public class MqttHardwareLogic {
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, MqttPublishMessage msg) {
         Session session = sessionDao.userSession.get(state.user);
 
-        String body = msg.payload().readSlice(msg.payload().capacity()).toString(CharsetUtil.UTF_8);
+        String body = msg.payload().readSlice(msg.payload().capacity()).toString(StandardCharsets.UTF_8);
 
         //just temp solution to simplify demo
         body = body.replace(" ", "\0").replace(" ", "\0");
