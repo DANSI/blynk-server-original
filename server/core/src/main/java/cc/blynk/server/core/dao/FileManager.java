@@ -44,31 +44,29 @@ public class FileManager {
     private Path deletedDataDir;
 
     public FileManager(String dataFolder) {
-        if (dataFolder == null || "".equals(dataFolder)) {
+        if (dataFolder == null || dataFolder.equals("") || dataFolder.equals("/path")) {
+            System.out.println("WARNING : '" + dataFolder + "' does not exists. Please specify correct -dataFolder parameter.");
             dataFolder = Paths.get(System.getProperty("java.io.tmpdir"), "blynk").toString();
+            System.out.println("Your data may be lost during server restart. Using temp folder : " + dataFolder);
         }
         try {
-            this.dataDir = createDatadir(dataFolder);
-            this.deletedDataDir = createDatadir(Paths.get(dataFolder, DELETED_DATA_DIR_NAME));
+            Path dataFolderPath = Paths.get(dataFolder);
+            this.dataDir = createDir(dataFolderPath);
+            this.deletedDataDir = createDir(Paths.get(dataFolder, DELETED_DATA_DIR_NAME));
         } catch (RuntimeException e) {
             Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk");
 
             System.out.println("WARNING : could not find folder '" + dataFolder + "'. Please specify correct -dataFolder parameter.");
             System.out.println("Your data may be lost during server restart. Using temp folder : " + tempDir.toString());
 
-            this.dataDir = createDatadir(tempDir);
-            this.deletedDataDir = createDatadir(Paths.get(this.dataDir.toString(), DELETED_DATA_DIR_NAME));
+            this.dataDir = createDir(tempDir);
+            this.deletedDataDir = createDir(Paths.get(this.dataDir.toString(), DELETED_DATA_DIR_NAME));
         }
 
         log.info("Using data dir '{}'", dataDir);
     }
 
-    private static Path createDatadir(String dataFolder) {
-        Path dataDir = Paths.get(dataFolder);
-        return createDatadir(dataDir);
-    }
-
-    private static Path createDatadir(Path dataDir) {
+    private static Path createDir(Path dataDir) {
         try {
             Files.createDirectories(dataDir);
         } catch (IOException ioe) {
