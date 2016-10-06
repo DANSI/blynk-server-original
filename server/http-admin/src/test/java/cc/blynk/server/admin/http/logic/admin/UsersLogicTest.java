@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.workers.ProfileSaverWorker;
@@ -38,8 +39,9 @@ public class UsersLogicTest {
     private SessionDao sessionDao;
     @Mock
     private ProfileSaverWorker profileSaverWorker;
-    @Mock
+
     private User user;
+
     @Mock
     private Session session;
 
@@ -51,13 +53,14 @@ public class UsersLogicTest {
 
     @Before
     public void setUp() throws Exception {
+        user = new User(TEST_USER, "123", AppName.BLYNK, "local", false);
         when(userDao.delete(any(), any())).thenReturn(user);
         sessionDao.getOrCreateSessionByUser(new UserKey(user), mock(EventLoop.class));
         FileManager fileManager = new FileManager(null);
         usersLogic = new UsersLogic(userDao, sessionDao, fileManager, profileSaverWorker);
 
-        userFile = Paths.get(System.getProperty("java.io.tmpdir"), "blynk", "u_" + TEST_USER + ".user");
-        deletedUserFile = Paths.get(System.getProperty("java.io.tmpdir"), "blynk", DELETED_DATA_DIR_NAME, "u_" + TEST_USER + ".user");
+        userFile = Paths.get(System.getProperty("java.io.tmpdir"), "blynk", TEST_USER + ".Blynk.user");
+        deletedUserFile = Paths.get(System.getProperty("java.io.tmpdir"), "blynk", DELETED_DATA_DIR_NAME, TEST_USER + ".Blynk.user");
         Files.deleteIfExists(userFile);
         Files.deleteIfExists(deletedUserFile);
 
