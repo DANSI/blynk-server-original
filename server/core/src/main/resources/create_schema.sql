@@ -3,9 +3,11 @@ CREATE DATABASE blynk;
 \connect blynk
 
 CREATE TABLE users (
-  username text PRIMARY KEY,
+  username text NOT NULL,
+  appName text NOT NULL,
   region text,
-  json text
+  json text,
+  PRIMARY KEY(username, appName)
 );
 
 CREATE TABLE redeem (

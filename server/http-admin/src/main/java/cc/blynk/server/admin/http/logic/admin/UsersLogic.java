@@ -112,12 +112,13 @@ public class UsersLogic extends HttpLogicUtil {
     @DELETE
     @Path("/{name}")
     public Response deleteUserByName(@PathParam("name") String name) {
+        //todo pass app name from UI
         User user = userDao.delete(name, AppName.BLYNK);
         if (user == null) {
             return new Response(HTTP_1_1, NOT_FOUND);
         }
 
-        if (!fileManager.delete(name)) {
+        if (!fileManager.delete(name, user.appName)) {
             return new Response(HTTP_1_1, NOT_FOUND);
         }
 

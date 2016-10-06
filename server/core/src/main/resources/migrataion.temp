@@ -1,0 +1,4 @@
+alter table users add column appName text;
+alter table users drop CONSTRAINT users_pkey;
+update users set appName = 'blynk';
+alter table users add primary key (username, appName);

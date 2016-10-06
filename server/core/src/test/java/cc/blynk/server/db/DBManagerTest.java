@@ -12,7 +12,11 @@ import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.model.Purchase;
 import cc.blynk.server.db.model.Redeem;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 
@@ -32,7 +36,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.zip.GZIPOutputStream;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.
@@ -212,7 +220,16 @@ public class DBManagerTest {
     }
 
 
-
+    @Test
+    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
+    public void testUpsertForDifferentApps() throws Exception {
+        List<User> users = new ArrayList<>();
+        users.add(new User("test1@gmail.com", "pass", "testapp2", "local", false));
+        users.add(new User("test1@gmail.com", "pass", "testapp1", "local", false));
+        dbManager.userDBDao.save(users);
+        ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers();
+        assertEquals(2, dbUsers.size());
+    }
 
     @Test
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")

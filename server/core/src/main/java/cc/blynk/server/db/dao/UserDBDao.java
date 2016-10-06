@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class UserDBDao {
 
-    public static final String upsertUser = "INSERT INTO users (username, region, json) VALUES (?, ?, ?) ON CONFLICT (username) DO UPDATE SET json = EXCLUDED.json, region = EXCLUDED.region";
+    public static final String upsertUser = "INSERT INTO users (username, appName, region, json) VALUES (?, ?, ?, ?) ON CONFLICT (username, appName) DO UPDATE SET json = EXCLUDED.json, region = EXCLUDED.region";
     public static final String selectAllUsers = "SELECT * from users";
 
     private static final Logger log = LogManager.getLogger(UserDBDao.class);
@@ -43,6 +43,7 @@ public class UserDBDao {
 
             while (rs.next()) {
                 User user = JsonParser.parseUserFromString(rs.getString("json"));
+                user.appName = rs.getString("appName");
                 user.region = rs.getString("region");
                 users.put(new UserKey(user), user);
             }
@@ -67,8 +68,9 @@ public class UserDBDao {
 
             for (User user : users) {
                 ps.setString(1, user.name);
-                ps.setString(2, user.region);
-                ps.setString(3, user.toString());
+                ps.setString(2, user.appName);
+                ps.setString(3, user.region);
+                ps.setString(4, user.toString());
                 ps.addBatch();
             }
 

@@ -12,7 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * User: ddumanskiy
@@ -31,17 +32,17 @@ public class FileManagerIntegrationTest {
     @Before
     public void cleanup() throws IOException {
         Path file;
-        file = fileManager.generateFileName(user1.name);
+        file = fileManager.generateFileName(user1.name, user1.appName);
         Files.deleteIfExists(file);
 
-        file = fileManager.generateFileName(user2.name);
+        file = fileManager.generateFileName(user2.name, user1.appName);
         Files.deleteIfExists(file);
     }
 
     @Test
     public void testGenerateFileName() {
-        Path file = fileManager.generateFileName(user1.name);
-        assertEquals("u_name1.user", file.getFileName().toString());
+        Path file = fileManager.generateFileName(user1.name, user1.appName);
+        assertEquals("name1.blynk.user", file.getFileName().toString());
     }
 
     @Test

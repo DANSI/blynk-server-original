@@ -80,21 +80,37 @@ public class FileManager {
         return dataDir;
     }
 
-    public Path generateFileName(String userName) {
+    public Path generateFileName(String userName, String appName) {
+        return Paths.get(dataDir.toString(), userName + "." + appName + ".user");
+    }
+
+    public Path generateOldFileName(String userName) {
         return Paths.get(dataDir.toString(), "u_" + userName + ".user");
     }
 
-    public boolean delete(String name) {
-        Path file = generateFileName(name);
+    public boolean delete(String name, String appName) {
+        Path file = generateFileName(name, appName);
         return FileUtils.move(file, this.deletedDataDir);
     }
 
     public void overrideUserFile(User user) throws IOException {
-        Path file = generateFileName(user.name);
+        Path file = generateFileName(user.name, user.appName);
+
         try (BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
             String userString = user.toString();
-
             writer.write(userString);
+        }
+
+        removeOldFile(user.name);
+    }
+
+    private void removeOldFile(String username) {
+        //this oldFileName is migration code. should be removed in future versions
+        Path oldFileName = generateOldFileName(username);
+        try {
+            Files.deleteIfExists(oldFileName);
+        } catch (Exception e) {
+            log.error("Error removing old file. {}", oldFileName, e);
         }
     }
 

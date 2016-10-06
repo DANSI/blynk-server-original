@@ -8,7 +8,7 @@ package cc.blynk.server.core.model;
 public final class AppName {
 
     public static final String ALL = "*";
-    public static final String BLYNK = "Blynk";
+    public static final String BLYNK = "blynk";
     public static final String FACEBOOK = "facebook";
 
 }
