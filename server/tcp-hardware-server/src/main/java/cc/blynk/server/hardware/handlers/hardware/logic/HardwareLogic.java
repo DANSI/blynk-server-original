@@ -57,7 +57,7 @@ public class HardwareLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        Session session = sessionDao.userSession.get(state.user);
+        Session session = sessionDao.userSession.get(state.userKey);
 
         final String body = message.body;
 

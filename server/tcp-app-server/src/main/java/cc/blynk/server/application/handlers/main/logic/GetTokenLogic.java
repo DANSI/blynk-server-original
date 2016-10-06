@@ -6,8 +6,8 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
+import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
 
 /**
  * The Blynk Project.

@@ -88,9 +88,10 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         }
 
         cleanPipeline(ctx.pipeline());
-        ctx.pipeline().addLast("AAppSHareHandler", new AppShareHandler(holder, new AppShareStateHolder(user, osType, version, token, dashId)));
+        AppShareStateHolder appShareStateHolder = new AppShareStateHolder(user, osType, version, token, dashId);
+        ctx.pipeline().addLast("AAppSHareHandler", new AppShareHandler(holder, appShareStateHolder));
 
-        Session session = holder.sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
+        Session session = holder.sessionDao.getOrCreateSessionByUser(appShareStateHolder.userKey, ctx.channel().eventLoop());
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering app channel. {}", ctx.channel());

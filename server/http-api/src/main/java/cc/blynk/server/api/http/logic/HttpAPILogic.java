@@ -21,6 +21,7 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.auth.Session;
@@ -165,7 +166,7 @@ public class HttpAPILogic {
             return Response.badRequest("Didn't find dash id for token.");
         }
 
-        final Session session = sessionDao.userSession.get(user);
+        final Session session = sessionDao.userSession.get(new UserKey(user));
 
         return ok(session.isHardwareConnected(dashId));
     }
@@ -191,7 +192,7 @@ public class HttpAPILogic {
 
         final DashBoard dashBoard = user.profile.getDashById(dashId);
 
-        final Session session = sessionDao.userSession.get(user);
+        final Session session = sessionDao.userSession.get(new UserKey(user));
 
         return ok(dashBoard.isActive && session.isAppConnected());
     }
@@ -429,7 +430,7 @@ public class HttpAPILogic {
         }
 
         if (isChanged) {
-            Session session = sessionDao.userSession.get(user);
+            Session session = sessionDao.userSession.get(new UserKey(user));
             session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id + BODY_SEPARATOR_STRING +
                     pin + BODY_SEPARATOR_STRING + property + BODY_SEPARATOR_STRING + values[0]);
             return Response.ok();
@@ -527,7 +528,7 @@ public class HttpAPILogic {
 
         String body = makeBody(dash, pin, pinType, pinValue);
 
-        Session session = sessionDao.userSession.get(user);
+        Session session = sessionDao.userSession.get(new UserKey(user));
         if (session == null) {
             log.debug("No session for user {}.", user.name);
             return Response.ok();
@@ -594,7 +595,7 @@ public class HttpAPILogic {
         String body = makeBody(dash, pin, pinType, pinsData[0].value);
 
         if (body != null) {
-            Session session = sessionDao.userSession.get(user);
+            Session session = sessionDao.userSession.get(new UserKey(user));
             if (session == null) {
                 log.error("No session for user {}.", user.name);
                 return Response.ok();

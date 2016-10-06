@@ -6,6 +6,7 @@ import cc.blynk.core.http.rest.HandlerRegistry;
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -37,7 +38,7 @@ public class AuthHttpHandler extends BaseHttpHandler {
             params[0] = user;
         }
 
-        Session session = sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
+        Session session = sessionDao.getOrCreateSessionByUser(new UserKey(user), ctx.channel().eventLoop());
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering http channel. {}", ctx.channel());
             reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), HandlerRegistry.invoke(handlerHolder, params)));

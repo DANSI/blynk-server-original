@@ -105,16 +105,16 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 hardwareApp.messageReceived(ctx, state, msg);
                 break;
             case ACTIVATE_DASHBOARD :
-                activateDashboardLogic.messageReceived(ctx, state.user, msg);
+                activateDashboardLogic.messageReceived(ctx, state, msg);
                 break;
             case DEACTIVATE_DASHBOARD :
-                deActivateDashboardLogic.messageReceived(ctx, state.user, msg);
+                deActivateDashboardLogic.messageReceived(ctx, state, msg);
                 break;
             case LOAD_PROFILE_GZIPPED :
                 LoadProfileGzippedLogic.messageReceived(ctx, state.user, msg);
                 break;
             case SHARING :
-                shareLogic.messageReceived(ctx, state.user, msg);
+                shareLogic.messageReceived(ctx, state, msg);
                 break;
             case GET_TOKEN :
                 token.messageReceived(ctx, state.user, msg);
@@ -138,7 +138,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 getShareTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
             case REFRESH_SHARE_TOKEN :
-                refreshShareTokenLogic.messageReceived(ctx, state.user, msg);
+                refreshShareTokenLogic.messageReceived(ctx, state, msg);
                 break;
             case GET_SHARED_DASH :
                 getSharedDashLogic.messageReceived(ctx, msg);

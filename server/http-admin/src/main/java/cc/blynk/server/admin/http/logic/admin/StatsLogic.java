@@ -9,8 +9,8 @@ import cc.blynk.server.admin.http.response.RequestPerSecondResponse;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.Session;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.Stat;
 import cc.blynk.utils.HttpLogicUtil;
@@ -53,7 +53,7 @@ public class StatsLogic extends HttpLogicUtil {
     public Response getRequestPerUser(@QueryParam("_sortField") String sortField,
                                           @QueryParam("_sortDir") String sortOrder) {
         List<RequestPerSecondResponse> res = new ArrayList<>();
-        for (Map.Entry<User, Session> entry : sessionDao.userSession.entrySet()) {
+        for (Map.Entry<UserKey, Session> entry : sessionDao.userSession.entrySet()) {
             Session session = entry.getValue();
 
             int appReqRate = session.getAppRequestRate();

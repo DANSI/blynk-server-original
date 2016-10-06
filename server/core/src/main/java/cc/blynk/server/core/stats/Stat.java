@@ -2,6 +2,7 @@ package cc.blynk.server.core.stats;
 
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.enums.Command;
@@ -65,7 +66,7 @@ public class Stat {
         int active3 = 0;
 
         long now = System.currentTimeMillis();
-        for (Map.Entry<User, Session> entry: sessionDao.userSession.entrySet()) {
+        for (Map.Entry<UserKey, Session> entry: sessionDao.userSession.entrySet()) {
             Session session = entry.getValue();
 
             if (session.getHardwareChannels().size() > 0 && session.getAppChannels().size() > 0) {
@@ -79,10 +80,13 @@ public class Stat {
                 appActive++;
                 totalOnlineApps += session.getAppChannels().size();
             }
-            if (now - entry.getKey().lastModifiedTs < ONE_DAY) {
+            UserKey userKey = entry.getKey();
+            User user = userDao.users.get(userKey);
+
+            if (now - user.lastModifiedTs < ONE_DAY) {
                 active++;
             }
-            if (now - entry.getKey().lastModifiedTs < THREE_DAYS) {
+            if (now - user.lastModifiedTs < THREE_DAYS) {
                 active3++;
             }
 
@@ -96,7 +100,7 @@ public class Stat {
 
         stat.active = active;
         stat.active3 = active3;
-        stat.total = userDao.getUsers().size();
+        stat.total = userDao.users.size();
 
         return stat;
     }

@@ -385,7 +385,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testSyncForTimer() throws Exception {
-        User user = holder.userDao.getUsers().get(new UserKey("dima@mail.ua", "Blynk"));
+        User user = holder.userDao.users.get(new UserKey("dima@mail.ua", "Blynk"));
         Widget widget = user.profile.dashBoards[0].findWidgetByPin((byte) 5, PinType.DIGITAL);
         Timer timer = (Timer) widget;
         timer.value = b("dw 5 100500");

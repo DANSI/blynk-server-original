@@ -2,6 +2,7 @@ package cc.blynk.server.workers.timer;
 
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -56,7 +57,7 @@ public class TimerWorker implements Runnable {
     }
 
     protected void checkTimers(long curSeconds) {
-        for (User user : userDao.getUsers().values()) {
+        for (User user : userDao.users.values()) {
             for (DashBoard dashBoard : user.profile.dashBoards) {
                 if (dashBoard.isActive) {
                     for (Widget widget : dashBoard.widgets) {
@@ -84,7 +85,7 @@ public class TimerWorker implements Runnable {
 
     private void triggerTimer(User user, String value, int dashId) {
         tickedTimers++;
-        Session session = sessionDao.userSession.get(user);
+        Session session = sessionDao.userSession.get(new UserKey(user));
         if (session != null) {
             onlineTimers++;
             if (session.getHardwareChannels().size() > 0) {

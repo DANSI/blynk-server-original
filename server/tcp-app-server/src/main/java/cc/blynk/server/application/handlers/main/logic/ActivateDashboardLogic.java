@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic;
 
+import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -36,7 +37,8 @@ public class ActivateDashboardLogic {
         this.sessionDao = sessionDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+        final User user = state.user;
         String dashBoardIdString = message.body;
 
         int dashId = ParseUtil.parseInt(dashBoardIdString);
@@ -46,7 +48,7 @@ public class ActivateDashboardLogic {
         dash.activate();
         user.lastModifiedTs = System.currentTimeMillis();
 
-        Session session = sessionDao.userSession.get(user);
+        Session session = sessionDao.userSession.get(state.userKey);
 
         if (session.hasHardwareOnline(dashId)) {
             session.sendMessageToHardware(ctx, dashId, HARDWARE, 1, dash.buildPMMessage());

@@ -120,7 +120,7 @@ public class FileManager {
                         }
                         return Stream.empty();
                     })
-                    .collect(Collectors.toConcurrentMap(user -> new UserKey(user.name, user.appName), identity(), (user1, user2) -> user2));
+                    .collect(Collectors.toConcurrentMap(UserKey::new, identity(), (user1, user2) -> user2));
 
             log.debug("Reading user DB finished.");
             return tempUsers;

@@ -167,7 +167,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
         ctx.pipeline().addLast("AAppHandler", new AppHandler(holder, appStateHolder));
 
-        Session session = holder.sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
+        Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, ctx.channel().eventLoop());
         user.lastLoggedAt = System.currentTimeMillis();
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
@@ -181,7 +181,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     private void completeLogin(Channel channel, Session session, User user, int msgId) {
         session.addAppChannel(channel);
         channel.writeAndFlush(ok(msgId), channel.voidPromise());
-        log.info("{} app joined.", user.name);
+        log.info("{} {}-app joined.", user.name, user.appName);
     }
 
     @Override

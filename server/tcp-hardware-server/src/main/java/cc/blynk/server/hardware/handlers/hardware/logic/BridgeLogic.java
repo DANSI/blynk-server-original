@@ -48,7 +48,7 @@ public class BridgeLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        Session session = sessionDao.userSession.get(state.user);
+        Session session = sessionDao.userSession.get(state.userKey);
         String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (split.length < 3) {

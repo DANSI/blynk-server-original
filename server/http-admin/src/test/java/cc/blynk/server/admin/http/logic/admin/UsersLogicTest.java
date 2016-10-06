@@ -4,6 +4,7 @@ import cc.blynk.core.http.Response;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.workers.ProfileSaverWorker;
@@ -21,7 +22,9 @@ import java.nio.file.Paths;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -49,7 +52,7 @@ public class UsersLogicTest {
     @Before
     public void setUp() throws Exception {
         when(userDao.delete(any(), any())).thenReturn(user);
-        sessionDao.getSessionByUser(user, mock(EventLoop.class));
+        sessionDao.getOrCreateSessionByUser(new UserKey(user), mock(EventLoop.class));
         FileManager fileManager = new FileManager(null);
         usersLogic = new UsersLogic(userDao, sessionDao, fileManager, profileSaverWorker);
 

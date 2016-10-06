@@ -1,17 +1,22 @@
 package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.auth.User;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 17.05.16.
  */
-public class UserKey {
+public final class UserKey {
 
     public final String name;
 
     public final String appName;
+
+    public UserKey(User user) {
+        this(user.name, user.appName);
+    }
 
     public UserKey(String name, String appName) {
         this.name = name;
@@ -39,5 +44,13 @@ public class UserKey {
         int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (appName != null ? appName.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "UserKey{" +
+                "name='" + name + '\'' +
+                ", appName='" + appName + '\'' +
+                '}';
     }
 }

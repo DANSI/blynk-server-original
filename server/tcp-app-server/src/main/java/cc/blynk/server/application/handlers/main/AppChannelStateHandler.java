@@ -9,7 +9,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.utils.AppStateHolderUtil.*;
+import static cc.blynk.utils.AppStateHolderUtil.getAppState;
 
 /**
  * The Blynk Project.
@@ -33,7 +33,7 @@ public class AppChannelStateHandler extends ChannelInboundHandlerAdapter {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         AppStateHolder state = getAppState(ctx.channel());
         if (state != null) {
-            Session session = sessionDao.userSession.get(state.user);
+            Session session = sessionDao.userSession.get(state.userKey);
             if (session != null) {
                 session.removeAppChannel(ctx.channel());
                 log.trace("Application channel disconnect. {}", ctx.channel());

@@ -44,7 +44,7 @@ public class UserDBDao {
             while (rs.next()) {
                 User user = JsonParser.parseUserFromString(rs.getString("json"));
                 user.region = rs.getString("region");
-                users.put(new UserKey(user.name, user.appName), user);
+                users.put(new UserKey(user), user);
             }
             connection.commit();
         } finally {

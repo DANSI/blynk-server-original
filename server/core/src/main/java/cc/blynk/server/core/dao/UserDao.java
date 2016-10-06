@@ -30,7 +30,7 @@ public class UserDao {
     public final TokenManagerBase tokenManager;
     public final TokenManagerBase sharedTokenManager;
 
-    private final ConcurrentMap<UserKey, User> users;
+    public final ConcurrentMap<UserKey, User> users;
     private final String region;
 
     public UserDao(ConcurrentMap<UserKey, User> users, String region) {
@@ -59,6 +59,7 @@ public class UserDao {
         return users.get(new UserKey(name, appName));
     }
 
+    //for tests only
     public Map<UserKey, User> getUsers() {
         return users;
     }
@@ -81,7 +82,7 @@ public class UserDao {
     }
 
     public User add(User user) {
-        return users.put(new UserKey(user.name, user.appName), user);
+        return users.put(new UserKey(user), user);
     }
 
     public Map<String, Integer> getBoardsUsage() {

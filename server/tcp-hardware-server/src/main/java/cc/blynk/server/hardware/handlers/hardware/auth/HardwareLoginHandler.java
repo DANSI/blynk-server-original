@@ -85,9 +85,10 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(UserNotLoggedHandler.class);
-        ctx.pipeline().addLast("HHArdwareHandler", new HardwareHandler(holder, new HardwareStateHolder(dashId, user, token)));
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(dashId, user, token);
+        ctx.pipeline().addLast("HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
 
-        Session session = holder.sessionDao.getSessionByUser(user, ctx.channel().eventLoop());
+        Session session = holder.sessionDao.getOrCreateSessionByUser(hardwareStateHolder.userKey, ctx.channel().eventLoop());
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering hard channel. {}", ctx.channel());

@@ -17,10 +17,13 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.ByteBufUtil.*;
-import static cc.blynk.utils.ByteUtils.*;
+import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA_RESPONSE;
+import static cc.blynk.server.core.protocol.enums.Response.NO_DATA_EXCEPTION;
+import static cc.blynk.server.core.protocol.enums.Response.SERVER_EXCEPTION;
+import static cc.blynk.utils.ByteBufUtil.makeBinaryMessage;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
+import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.ByteUtils.compress;
 
 /**
  * The Blynk Project.

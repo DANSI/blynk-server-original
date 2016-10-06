@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.sharing;
 
+import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
@@ -33,7 +34,7 @@ public class RefreshShareTokenLogic {
         this.sessionDao = sessionDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String dashBoardIdString = message.body;
 
         int dashId;
@@ -43,14 +44,15 @@ public class RefreshShareTokenLogic {
             throw new NotAllowedException("Dash board id not valid. Id : " + dashBoardIdString);
         }
 
+        final User user = state.user;
         user.profile.validateDashId(dashId);
 
         String token = userDao.sharedTokenManager.refreshToken(user, dashId, user.dashShareTokens);
 
-        Session session = sessionDao.userSession.get(user);
+        Session session = sessionDao.userSession.get(state.userKey);
         for (Channel appChannel : session.getAppChannels()) {
-            AppShareStateHolder state = getShareState(appChannel);
-            if (state != null && state.dashId == dashId) {
+            AppShareStateHolder localState = getShareState(appChannel);
+            if (localState != null && localState.dashId == dashId) {
                 ChannelFuture cf = appChannel.writeAndFlush(makeResponse(message.id, NOT_ALLOWED));
                 cf.addListener(channelFuture -> appChannel.close());
             }

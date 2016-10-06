@@ -49,7 +49,7 @@ public class HardwareAppLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        Session session = sessionDao.userSession.get(state.user);
+        Session session = sessionDao.userSession.get(state.userKey);
 
         String[] split = split2(message.body);
         int dashId = ParseUtil.parseInt(split[0]);

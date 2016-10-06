@@ -13,6 +13,7 @@ import cc.blynk.core.http.model.Filter;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -75,7 +76,7 @@ public class UsersLogic extends HttpLogicUtil {
     @GET
     @Path("/names/getAll")
     public Response getAllUserNames() {
-        return ok(userDao.getUsers().keySet());
+        return ok(userDao.users.keySet());
     }
 
     @GET
@@ -120,7 +121,7 @@ public class UsersLogic extends HttpLogicUtil {
             return new Response(HTTP_1_1, NOT_FOUND);
         }
 
-        Session session = sessionDao.userSession.get(user);
+        Session session = sessionDao.userSession.get(new UserKey(user));
         session.closeAll();
 
         log.info("User {} successfully removed.", name);

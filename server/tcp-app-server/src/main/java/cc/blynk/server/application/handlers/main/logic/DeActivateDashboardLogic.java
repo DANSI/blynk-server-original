@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic;
 
+import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -11,8 +12,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.utils.AppStateHolderUtil.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.utils.AppStateHolderUtil.getAppState;
+import static cc.blynk.utils.ByteBufUtil.ok;
 
 /**
  * The Blynk Project.
@@ -30,7 +31,8 @@ public class DeActivateDashboardLogic {
         this.sessionDao = sessionDao;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+        final User user = state.user;
         if (message.length > 0) {
             log.debug("DeActivating dash {} for user {}", message.body, user.name);
             int dashId = ParseUtil.parseInt(message.body);
@@ -43,7 +45,7 @@ public class DeActivateDashboardLogic {
         }
         user.lastModifiedTs = System.currentTimeMillis();
 
-        Session session = sessionDao.userSession.get(user);
+        Session session = sessionDao.userSession.get(state.userKey);
         for (Channel appChannel : session.getAppChannels()) {
             if (appChannel != ctx.channel() && getAppState(appChannel) != null) {
                 appChannel.writeAndFlush(message, appChannel.voidPromise());
