@@ -16,8 +16,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * The Blynk Project.
@@ -47,11 +53,11 @@ public class ProfileSaverWorkerTest {
         User user3 = new User("3", "", AppName.BLYNK, "local", false);
         User user4 = new User("4", "", AppName.BLYNK, "local", false);
 
-        Map<UserKey, User> userMap = new HashMap<>();
-        userMap.put(new UserKey("1", AppName.BLYNK), user1);
-        userMap.put(new UserKey("2", AppName.BLYNK), user2);
-        userMap.put(new UserKey("3", AppName.BLYNK), user3);
-        userMap.put(new UserKey("4", AppName.BLYNK), user4);
+        ConcurrentMap<UserKey, User> userMap = new ConcurrentHashMap<>();
+        userMap.put(new UserKey(user1), user1);
+        userMap.put(new UserKey(user2), user2);
+        userMap.put(new UserKey(user3), user3);
+        userMap.put(new UserKey(user4), user4);
 
         when(userDao.getUsers()).thenReturn(userMap);
         profileSaverWorker.run();

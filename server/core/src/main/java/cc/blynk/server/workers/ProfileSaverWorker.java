@@ -71,7 +71,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
     private List<User> saveModified() {
         List<User> users = new ArrayList<>();
 
-        for (User user : userDao.users.values()) {
+        for (User user : userDao.getUsers().values()) {
             if (isUpdated(lastStart, user)) {
                 try {
                     fileManager.overrideUserFile(user);
