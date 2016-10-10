@@ -478,6 +478,15 @@ public class HttpAPILogic {
         return Response.badRequest("Wrong request format.");
     }
 
+    @PUT
+    @Path("{token}/update/{pin}")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    public Response updateWidgetPinDataNew(@PathParam("token") String token,
+                                        @PathParam("pin") String pinString,
+                                        String[] pinValues) {
+        return updateWidgetPinData(token, pinString, pinValues);
+    }
+
     //todo remove later?
     @PUT
     @Path("{token}/pin/{pin}")

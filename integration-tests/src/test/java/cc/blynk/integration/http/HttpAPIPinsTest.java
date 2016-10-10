@@ -139,6 +139,26 @@ public class HttpAPIPinsTest extends BaseTest {
         }
     }
 
+    @Test
+    public void testMultiPutGetNonExistingPinWithNewMethod() throws Exception {
+        HttpPut put = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v10");
+        put.setEntity(new StringEntity("[\"100\", \"101\", \"102\"]", ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(put)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet get = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v10");
+
+        try (CloseableHttpResponse response = httpclient.execute(get)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(3, values.size());
+            assertEquals("100", values.get(0));
+            assertEquals("101", values.get(1));
+            assertEquals("102", values.get(2));
+        }
+    }
 
     @Test
     public void testGetTimerExistingPin() throws Exception {
