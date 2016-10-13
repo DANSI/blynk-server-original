@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
+import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
@@ -29,6 +30,7 @@ public class HardwareSSLServer extends BaseServer {
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder);
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
+        final AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
 
         int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
 
@@ -52,6 +54,7 @@ public class HardwareSSLServer extends BaseServer {
                 pipeline.addLast("HSSLMessageEncoder", new MessageEncoder(holder.stats));
                 pipeline.addLast("HSSLLogin", hardwareLoginHandler);
                 pipeline.addLast("HSSLNotLogged", userNotLoggedHandler);
+                pipeline.addLast("HSSLAlreadyLogged", alreadyLoggedHandler);
             }
         };
     }

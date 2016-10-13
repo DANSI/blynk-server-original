@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
+import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
@@ -28,6 +29,7 @@ public class HardwareServer extends BaseServer {
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder);
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
+        final AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -42,6 +44,7 @@ public class HardwareServer extends BaseServer {
                 pipeline.addLast("H_MessageEncoder", new MessageEncoder(holder.stats));
                 pipeline.addLast("H_Login", hardwareLoginHandler);
                 pipeline.addLast("H_NotLogged", userNotLoggedHandler);
+                pipeline.addLast("H_AlreadyLogged", alreadyLoggedHandler);
             }
         };
 
