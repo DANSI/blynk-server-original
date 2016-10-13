@@ -26,7 +26,7 @@ CREATE TABLE purchase (
   transactionId text,
   price float8,
   ts timestamp NOT NULL DEFAULT NOW(),
-  PRIMARY KEY (username, transactionId, ts)
+  PRIMARY KEY (username, transactionId)
 );
 
 CREATE TABLE reporting_average_minute (
