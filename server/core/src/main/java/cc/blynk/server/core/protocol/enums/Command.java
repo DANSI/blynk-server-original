@@ -62,6 +62,8 @@ public final class Command {
     public static final short SAVE_METADATA = 38;
     public static final short GET_METADATA = 39;
 
+    public static final short GET_SERVER = 40;
+
     //------------------------------------------
 
     //http codes. Used only for stats
@@ -130,6 +132,8 @@ public final class Command {
 
                 put(SAVE_METADATA, "SaveMetadata");
                 put(GET_METADATA, "GetMetadata");
+
+                put(GET_SERVER, "GetServer");
 
                 put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
                 put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");

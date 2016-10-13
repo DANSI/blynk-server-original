@@ -82,6 +82,9 @@ public class CommandParser {
             case "getmetadata" :
                 return GET_METADATA;
 
+            case "getserver" :
+                return GET_SERVER;
+
             //sharing section
             case "sharelogin" :
                 return SHARE_LOGIN;

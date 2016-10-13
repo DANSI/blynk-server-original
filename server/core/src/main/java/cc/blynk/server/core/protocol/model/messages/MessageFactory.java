@@ -13,6 +13,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.ExportDataMessa
 import cc.blynk.server.core.protocol.model.messages.appllication.GetEnergy;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataStringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetMetadata;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedStringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
@@ -134,6 +135,9 @@ public class MessageFactory {
                 return new SaveMetadata(messageId, body);
             case GET_METADATA :
                 return new GetMetadata(messageId, body);
+
+            case GET_SERVER :
+                return new GetServerMessage(messageId, body);
 
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);
         }

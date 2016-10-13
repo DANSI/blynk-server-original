@@ -61,6 +61,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         pipeline.remove(UserNotLoggedHandler.class);
         pipeline.remove(RegisterHandler.class);
         pipeline.remove(AppShareLoginHandler.class);
+        pipeline.remove(GetServerHandler.class);
     }
 
     @Override

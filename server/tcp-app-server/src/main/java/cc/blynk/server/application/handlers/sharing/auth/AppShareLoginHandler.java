@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.sharing.auth;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
+import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.OsType;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
 import cc.blynk.server.application.handlers.sharing.AppShareHandler;
@@ -112,6 +113,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         pipeline.remove(UserNotLoggedHandler.class);
         pipeline.remove(RegisterHandler.class);
         pipeline.remove(AppLoginHandler.class);
+        pipeline.remove(GetServerHandler.class);
     }
 
 }

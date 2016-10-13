@@ -3,6 +3,7 @@ package cc.blynk.server.application;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.AppChannelStateHandler;
 import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
+import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.core.BaseServer;
@@ -35,6 +36,7 @@ public class AppServer extends BaseServer {
         final AppLoginHandler appLoginHandler = new AppLoginHandler(holder);
         final AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
+        final GetServerHandler getServerHandler = new GetServerHandler(holder.props.getCommaSeparatedValueAsArray("load.balancing.ips"));
 
         final SslContext sslCtx = SslUtil.initMutualSslContext(
                 holder.props.getProperty("server.ssl.cert"),
@@ -59,6 +61,7 @@ public class AppServer extends BaseServer {
                 pipeline.addLast("AChannelState", appChannelStateHandler);
                 pipeline.addLast("AMessageDecoder", new MessageDecoder(holder.stats));
                 pipeline.addLast("AMessageEncoder", new MessageEncoder(holder.stats));
+                pipeline.addLast("AGetServer", getServerHandler);
                 pipeline.addLast("ARegister", registerHandler);
                 pipeline.addLast("ALogin", appLoginHandler);
                 pipeline.addLast("AShareLogin", appShareLoginHandler);
