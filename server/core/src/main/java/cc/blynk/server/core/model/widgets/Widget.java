@@ -37,6 +37,7 @@ import cc.blynk.server.core.model.widgets.outputs.LCD;
 import cc.blynk.server.core.model.widgets.outputs.LED;
 import cc.blynk.server.core.model.widgets.outputs.LabeledValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.LevelDisplay;
+import cc.blynk.server.core.model.widgets.outputs.Map;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.ui.Image;
 import cc.blynk.server.core.model.widgets.ui.Menu;
@@ -110,6 +111,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Bluetooth.class, name = "BLUETOOTH"),
         @JsonSubTypes.Type(value = BluetoothSerial.class, name = "BLUETOOTH_SERIAL"),
         @JsonSubTypes.Type(value = Eventor.class, name = "EVENTOR"),
+        @JsonSubTypes.Type(value = Map.class, name = "MAP"),
 
         @JsonSubTypes.Type(value = WebHook.class, name = "WEBHOOK")
 
