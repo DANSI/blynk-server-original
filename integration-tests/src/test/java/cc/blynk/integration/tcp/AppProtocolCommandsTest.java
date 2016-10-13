@@ -27,9 +27,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static org.mockito.Mockito.*;
+import static cc.blynk.server.core.protocol.enums.Command.SYNC;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
+import static cc.blynk.server.core.protocol.enums.Response.OK;
+import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
+import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
+import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_REGISTERED;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * The Blynk Project.
@@ -128,7 +135,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
             cmds[i + 1] = "createDash " + profile.dashBoards[i];
         }
 
-        makeCommands(cmds).check(profile.dashBoards.length, OK).check(new ResponseMessage(1, QUOTA_LIMIT_EXCEPTION));
+        makeCommands(cmds).check(profile.dashBoards.length, OK).check(new ResponseMessage(1, QUOTA_LIMIT));
     }
 
     @Test

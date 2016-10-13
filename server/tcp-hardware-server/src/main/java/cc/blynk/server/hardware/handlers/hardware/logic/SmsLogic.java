@@ -12,8 +12,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_EXCEPTION;
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED_EXCEPTION;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_ERROR;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
 import static cc.blynk.utils.ByteBufUtil.makeResponse;
 import static cc.blynk.utils.ByteBufUtil.ok;
 
@@ -49,7 +49,7 @@ public class SmsLogic extends NotificationBase {
         if (smsWidget == null || !dash.isActive ||
                 smsWidget.to == null || smsWidget.to.equals("")) {
             log.debug("User has no access phone number provided.");
-            ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_NOT_AUTHORIZED_EXCEPTION), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_NOT_AUTHORIZED), ctx.voidPromise());
             return;
         }
 
@@ -65,7 +65,7 @@ public class SmsLogic extends NotificationBase {
             channel.writeAndFlush(ok(msgId), channel.voidPromise());
         } catch (Exception e) {
             log.error("Error sending sms for user {}. Reason : {}",  username, e.getMessage());
-            channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_EXCEPTION), channel.voidPromise());
+            channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_ERROR), channel.voidPromise());
         }
     }
 

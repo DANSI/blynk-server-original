@@ -61,13 +61,13 @@ import static cc.blynk.server.core.protocol.enums.Response.DEVICE_WENT_OFFLINE;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_INVALID_BODY_EXCEPTION;
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED_EXCEPTION;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_INVALID_BODY;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
-import static cc.blynk.server.core.protocol.enums.Response.NO_DATA_EXCEPTION;
+import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
-import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT_EXCEPTION;
+import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
 import static cc.blynk.server.core.protocol.enums.Response.USER_ALREADY_REGISTERED;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertArrayEquals;
@@ -597,7 +597,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, ILLEGAL_COMMAND)));
 
         clientPair.appClient.send("export 1 14");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, NO_DATA_EXCEPTION)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, NO_DATA)));
 
         //generate fake reporting data
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
@@ -839,10 +839,10 @@ public class MainWorkflowTest extends IntegrationBase {
         reset(blockingIOProcessor);
 
         clientPair.hardwareClient.send("tweet");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOTIFICATION_INVALID_BODY_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOTIFICATION_INVALID_BODY)));
 
         clientPair.hardwareClient.send("tweet ");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NOTIFICATION_INVALID_BODY_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NOTIFICATION_INVALID_BODY)));
 
         StringBuilder a = new StringBuilder();
         for (int i = 0; i < 141; i++) {
@@ -850,13 +850,13 @@ public class MainWorkflowTest extends IntegrationBase {
         }
 
         clientPair.hardwareClient.send("tweet " + a);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, NOTIFICATION_INVALID_BODY_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, NOTIFICATION_INVALID_BODY)));
 
         clientPair.appClient.send("deactivate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.hardwareClient.send("tweet yo");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, NOTIFICATION_NOT_AUTHORIZED_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, NOTIFICATION_NOT_AUTHORIZED)));
     }
 
     @Test
@@ -864,11 +864,11 @@ public class MainWorkflowTest extends IntegrationBase {
         reset(blockingIOProcessor);
 
         clientPair.hardwareClient.send("sms");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOTIFICATION_INVALID_BODY_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOTIFICATION_INVALID_BODY)));
 
         //no sms widget
         clientPair.hardwareClient.send("sms yo");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NOTIFICATION_NOT_AUTHORIZED_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NOTIFICATION_NOT_AUTHORIZED)));
 
         //adding sms widget
         clientPair.appClient.send("createWidget 1\0{\"id\":432, \"to\":\"3809683423423\", \"x\":0, \"y\":0, \"type\":\"SMS\"}");
@@ -879,7 +879,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
 
         clientPair.hardwareClient.send("sms yo");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, QUOTA_LIMIT_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, QUOTA_LIMIT)));
     }
 
     @Test
@@ -890,7 +890,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("yo"));
 
         clientPair.hardwareClient.send("tweet yo");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, QUOTA_LIMIT_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, QUOTA_LIMIT)));
     }
 
     @Test
@@ -910,7 +910,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         clientPair.hardwareClient.send("email to subj body");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, QUOTA_LIMIT_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, QUOTA_LIMIT)));
     }
 
     @Test
@@ -1296,7 +1296,7 @@ public class MainWorkflowTest extends IntegrationBase {
             sleep(9);
         }
 
-        verify(clientPair.hardwareClient.responseMock, times(0)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT_EXCEPTION)));
+        verify(clientPair.hardwareClient.responseMock, times(0)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT)));
         verify(clientPair.appClient.responseMock, times(0)).channelRead(any(), eq(produce(1, HARDWARE, b(body))));
     }
 
@@ -1402,7 +1402,7 @@ public class MainWorkflowTest extends IntegrationBase {
             sleep(9);
         }
 
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT_EXCEPTION)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT)));
         verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE, b(body))));
 
         clientPair.appClient.reset();
@@ -1416,7 +1416,7 @@ public class MainWorkflowTest extends IntegrationBase {
             sleep(9);
         }
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT_EXCEPTION)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT)));
         verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE, b(body))));
 
     }

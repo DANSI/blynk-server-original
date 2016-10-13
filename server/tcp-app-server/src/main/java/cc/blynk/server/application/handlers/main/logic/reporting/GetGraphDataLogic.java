@@ -18,8 +18,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.Arrays;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA_RESPONSE;
-import static cc.blynk.server.core.protocol.enums.Response.NO_DATA_EXCEPTION;
-import static cc.blynk.server.core.protocol.enums.Response.SERVER_EXCEPTION;
+import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
+import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
 import static cc.blynk.utils.ByteBufUtil.makeBinaryMessage;
 import static cc.blynk.utils.ByteBufUtil.makeResponse;
 import static cc.blynk.utils.ByteBufUtil.ok;
@@ -83,10 +83,10 @@ public class GetGraphDataLogic {
 
                 channel.writeAndFlush(makeBinaryMessage(GET_GRAPH_DATA_RESPONSE, msgId, compressed), channel.voidPromise());
             } catch (NoDataException noDataException) {
-                channel.writeAndFlush(makeResponse(msgId, NO_DATA_EXCEPTION), channel.voidPromise());
+                channel.writeAndFlush(makeResponse(msgId, NO_DATA), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error reading reporting data. For user {}", username);
-                channel.writeAndFlush(makeResponse(msgId, SERVER_EXCEPTION), channel.voidPromise());
+                channel.writeAndFlush(makeResponse(msgId, SERVER_ERROR), channel.voidPromise());
             }
         });
     }

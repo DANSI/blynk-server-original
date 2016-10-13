@@ -12,7 +12,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_EXCEPTION;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_ERROR;
 import static cc.blynk.utils.ByteBufUtil.makeResponse;
 import static cc.blynk.utils.ByteBufUtil.ok;
 
@@ -66,7 +66,7 @@ public class AppMailLogic {
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending email from application. From user {}, to : {}. Reason : {}",  username, to, e.getMessage());
-                channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_EXCEPTION), channel.voidPromise());
+                channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_ERROR), channel.voidPromise());
             }
         });
     }

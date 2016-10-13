@@ -22,8 +22,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_EXCEPTION;
-import static cc.blynk.server.core.protocol.enums.Response.NO_DATA_EXCEPTION;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_ERROR;
+import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.utils.ByteBufUtil.makeResponse;
 import static cc.blynk.utils.ByteBufUtil.ok;
 
@@ -84,7 +84,7 @@ public class ExportGraphDataLogic {
                 }
 
                 if (pinsCSVFilePath.size() == 0) {
-                    ctx.writeAndFlush(makeResponse(message.id, NO_DATA_EXCEPTION), ctx.voidPromise());
+                    ctx.writeAndFlush(makeResponse(message.id, NO_DATA), ctx.voidPromise());
                 } else {
 
                     String title = "History graph data for project " + dashName;
@@ -94,7 +94,7 @@ public class ExportGraphDataLogic {
 
             } catch (Exception e) {
                 log.error("Error making csv file for data export. Reason {}", e.getMessage());
-                ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_EXCEPTION), ctx.voidPromise());
+                ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_ERROR), ctx.voidPromise());
             }
         });
     }

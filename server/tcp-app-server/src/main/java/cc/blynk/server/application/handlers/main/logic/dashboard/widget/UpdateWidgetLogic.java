@@ -76,7 +76,7 @@ public class UpdateWidgetLogic {
             dash.updatedAt = System.currentTimeMillis();
             user.lastModifiedTs = dash.updatedAt;
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new BaseServerException("Error updating widget. " + widgetString, Response.SERVER_EXCEPTION);
+            throw new BaseServerException("Error updating widget. " + widgetString, Response.SERVER_ERROR);
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

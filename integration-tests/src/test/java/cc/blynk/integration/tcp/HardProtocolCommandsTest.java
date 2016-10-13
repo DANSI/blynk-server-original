@@ -17,9 +17,14 @@ import org.mockito.stubbing.OngoingStubbing;
 
 import java.io.BufferedReader;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_INVALID_BODY;
+import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * The Blynk Project.
@@ -82,7 +87,7 @@ public class HardProtocolCommandsTest extends IntegrationBase {
     public void testInvalidTweetBody() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 1", "tweet").check(OK).check(new ResponseMessage(1, NOTIFICATION_INVALID_BODY_EXCEPTION));
+        makeCommands("login dmitriy@mail.ua 1", "tweet").check(OK).check(new ResponseMessage(1, NOTIFICATION_INVALID_BODY));
     }
 
     /**

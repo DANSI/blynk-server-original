@@ -10,9 +10,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
+import static cc.blynk.utils.ByteBufUtil.makeBinaryMessage;
+import static cc.blynk.utils.ByteBufUtil.makeResponse;
 
 /**
  * The Blynk Project.
@@ -40,7 +41,7 @@ public class LoadProfileGzippedLogic {
             ctx.writeAndFlush(makeBinaryMessage(LOAD_PROFILE_GZIPPED, message.id, data), ctx.voidPromise());
         } catch (IOException e) {
             log.error("Error compressing data.", e);
-            ctx.writeAndFlush(makeResponse(message.id, NO_DATA_EXCEPTION));
+            ctx.writeAndFlush(makeResponse(message.id, NO_DATA));
         }
     }
 

@@ -10,7 +10,7 @@ import cc.blynk.server.core.protocol.enums.Response;
 public class GetGraphDataException extends BaseServerException {
 
     public GetGraphDataException() {
-        super("Server exception!", Response.GET_GRAPH_DATA_EXCEPTION);
+        super("Server exception!", Response.GET_GRAPH_DATA);
     }
 
 }

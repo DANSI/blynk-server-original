@@ -13,8 +13,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_EXCEPTION;
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED_EXCEPTION;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_ERROR;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
 import static cc.blynk.utils.ByteBufUtil.makeResponse;
 import static cc.blynk.utils.ByteBufUtil.ok;
 
@@ -51,7 +51,7 @@ public class TwitLogic extends NotificationBase {
                 twitterWidget.token == null || twitterWidget.token.equals("") ||
                 twitterWidget.secret == null || twitterWidget.secret.equals("")) {
             log.debug("User has no access token provided for twit widget.");
-            ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_NOT_AUTHORIZED_EXCEPTION), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_NOT_AUTHORIZED), ctx.voidPromise());
             return;
         }
 
@@ -68,7 +68,7 @@ public class TwitLogic extends NotificationBase {
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 logError(e.getMessage(), username);
-                channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_EXCEPTION), channel.voidPromise());
+                channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_ERROR), channel.voidPromise());
             }
         });
     }
