@@ -4,6 +4,7 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
@@ -36,6 +37,8 @@ public class Holder {
 
     public final UserDao userDao;
 
+    public final TokenManager tokenManager;
+
     public final ReportingDao reportingDao;
 
     public final DBManager dbManager;
@@ -67,6 +70,7 @@ public class Holder {
         this.sessionDao = new SessionDao();
         this.region = serverProperties.getProperty("region", "local");
         this.userDao = new UserDao(fileManager.deserialize(), this.region);
+        this.tokenManager = new TokenManager(this.userDao.users);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);
@@ -107,6 +111,7 @@ public class Holder {
         this.sessionDao = new SessionDao();
         this.region = "local";
         this.userDao = new UserDao(fileManager.deserialize(), this.region);
+        this.tokenManager = new TokenManager(this.userDao.users);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);

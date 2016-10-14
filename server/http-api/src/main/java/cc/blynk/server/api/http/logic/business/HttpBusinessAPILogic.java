@@ -7,7 +7,7 @@ import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.pojo.business.BusinessProject;
-import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
@@ -37,14 +37,14 @@ public class HttpBusinessAPILogic {
 
     private static final Logger log = LogManager.getLogger(HttpBusinessAPILogic.class);
 
-    private final UserDao userDao;
+    private final TokenManager tokenManager;
 
     public HttpBusinessAPILogic(Holder holder) {
-        this(holder.userDao);
+        this(holder.tokenManager);
     }
 
-    private HttpBusinessAPILogic(UserDao userDao) {
-        this.userDao = userDao;
+    private HttpBusinessAPILogic(TokenManager tokenManager) {
+        this.tokenManager = tokenManager;
     }
 
     private static List<Map> transform(Map<Map, Long> groupingResult, String aggregation) {
@@ -149,7 +149,7 @@ public class HttpBusinessAPILogic {
                                  @QueryParam("pin") String pin,
                                  @QueryParam("value") String value) {
 
-        User user = userDao.regularTokenManager.getUserByToken(token);
+        User user = tokenManager.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.error("Requested token {} not found.", token);

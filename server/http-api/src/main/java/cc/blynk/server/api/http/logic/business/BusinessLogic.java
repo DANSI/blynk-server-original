@@ -14,7 +14,7 @@ import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.core.http.model.Filter;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.ArrayUtil;
@@ -39,12 +39,12 @@ public class BusinessLogic {
 
     private static final Logger log = LogManager.getLogger(BusinessLogic.class);
 
-    private final UserDao userDao;
+    private final TokenManager tokenManager;
     private final SessionDao sessionDao;
     private final FileManager fileManager;
 
-    public BusinessLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager) {
-        this.userDao = userDao;
+    public BusinessLogic(TokenManager tokenManager, SessionDao sessionDao, FileManager fileManager) {
+        this.tokenManager = tokenManager;
         this.fileManager = fileManager;
         this.sessionDao = sessionDao;
     }
@@ -66,7 +66,7 @@ public class BusinessLogic {
         List<DashBoard> projects = Arrays.asList(user.profile.dashBoards);
 
         for (DashBoard project : projects) {
-            project.token = userDao.regularTokenManager.getToken(user, project.id);
+            project.token = tokenManager.regularTokenManager.getToken(user, project.id);
         }
 
         return appendTotalCountHeader(
@@ -80,7 +80,7 @@ public class BusinessLogic {
                              @PathParam("projectId") int projectId) {
 
         DashBoard project = user.profile.getDashById(projectId);
-        project.token = userDao.regularTokenManager.getToken(user, projectId);
+        project.token = tokenManager.regularTokenManager.getToken(user, projectId);
 
         return ok(project);
     }
@@ -95,7 +95,7 @@ public class BusinessLogic {
         newProject.createdAt = System.currentTimeMillis();
         newProject.updatedAt = newProject.createdAt;
         newProject.id = findMaxId(user.profile.dashBoards) + 1;
-        String token = userDao.regularTokenManager.getToken(user, newProject.id);
+        String token = tokenManager.regularTokenManager.getToken(user, newProject.id);
 
         user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newProject);
         user.lastModifiedTs = System.currentTimeMillis();
@@ -119,7 +119,7 @@ public class BusinessLogic {
 
         int index = user.profile.getDashIndexOrThrow(projectId);
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
-        userDao.deleteProject(user, projectId);
+        tokenManager.deleteProject(user, projectId);
 
         user.lastModifiedTs = System.currentTimeMillis();
 

@@ -5,7 +5,7 @@ import cc.blynk.core.http.rest.HandlerHolder;
 import cc.blynk.core.http.rest.HandlerRegistry;
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -21,8 +21,8 @@ import io.netty.handler.codec.http.FullHttpResponse;
  */
 public class AuthHttpHandler extends BaseHttpHandler {
 
-    public AuthHttpHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
-        super(userDao, sessionDao, globalStats);
+    public AuthHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats) {
+        super(tokenManager, sessionDao, globalStats);
     }
 
     @Override

@@ -4,7 +4,7 @@ import cc.blynk.core.http.rest.HandlerHolder;
 import cc.blynk.core.http.rest.HandlerRegistry;
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -15,8 +15,8 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class HttpHandler extends BaseHttpHandler {
 
-    public HttpHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
-        super(userDao, sessionDao, globalStats);
+    public HttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats) {
+        super(tokenManager, sessionDao, globalStats);
     }
 
     @Override

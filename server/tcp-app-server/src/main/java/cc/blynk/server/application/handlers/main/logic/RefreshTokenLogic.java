@@ -1,6 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic;
 
-import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
@@ -17,10 +17,10 @@ import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
  */
 public class RefreshTokenLogic {
 
-    private final UserDao userDao;
+    private final TokenManager tokenManager;
 
-    public RefreshTokenLogic(UserDao userDao) {
-        this.userDao = userDao;
+    public RefreshTokenLogic(TokenManager tokenManager) {
+        this.tokenManager = tokenManager;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -30,7 +30,7 @@ public class RefreshTokenLogic {
 
         user.profile.validateDashId(dashId);
 
-        String token = userDao.regularTokenManager.refreshToken(user, dashId, user.dashTokens);
+        String token = tokenManager.regularTokenManager.refreshToken(user, dashId, user.dashTokens);
 
         ctx.writeAndFlush(makeStringMessage(REFRESH_TOKEN, message.id, token), ctx.voidPromise());
     }

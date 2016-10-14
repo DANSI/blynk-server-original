@@ -1,6 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.sharing;
 
-import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
@@ -11,7 +11,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Map;
 
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 
 /**
  * The Blynk Project.
@@ -21,10 +21,10 @@ import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
  */
 public class GetSharedDashLogic {
 
-    private final UserDao userDao;
+    private final TokenManager tokenManager;
 
-    public GetSharedDashLogic(UserDao userDao) {
-        this.userDao = userDao;
+    public GetSharedDashLogic(TokenManager tokenManager) {
+        this.tokenManager = tokenManager;
     }
 
     private static Integer getSharedDashId(Map<Integer, String> sharedTokens, String token) {
@@ -52,7 +52,7 @@ public class GetSharedDashLogic {
     public void messageReceived(ChannelHandlerContext ctx, StringMessage message) {
         String token = message.body;
 
-        User userThatShared = userDao.sharedTokenManager.getUserByToken(token);
+        User userThatShared = tokenManager.sharedTokenManager.getUserByToken(token);
 
         if (userThatShared == null) {
             throw new InvalidTokenException("Illegal sharing token. No user with those shared token.", message.id);

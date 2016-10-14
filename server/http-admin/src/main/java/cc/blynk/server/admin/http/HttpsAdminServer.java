@@ -58,7 +58,7 @@ public class HttpsAdminServer extends BaseServer {
                 pipeline.addLast(new UrlMapperHandler(adminRootPath, "/static/admin/admin.html"));
                 pipeline.addLast(new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
                 pipeline.addLast(new StaticFileHandler(isUnpacked, new StaticFile("/static", false)));
-                pipeline.addLast(new HttpHandler(holder.userDao, holder.sessionDao, holder.stats));
+                pipeline.addLast(new HttpHandler(holder.tokenManager, holder.sessionDao, holder.stats));
             }
         };
     }

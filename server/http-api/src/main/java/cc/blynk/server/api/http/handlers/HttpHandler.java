@@ -6,7 +6,7 @@ import cc.blynk.core.http.rest.HandlerHolder;
 import cc.blynk.core.http.rest.HandlerRegistry;
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -22,8 +22,8 @@ import io.netty.handler.codec.http.FullHttpResponse;
  */
 public class HttpHandler extends BaseHttpHandler {
 
-    public HttpHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
-        super(userDao, sessionDao, globalStats);
+    public HttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats) {
+        super(tokenManager, sessionDao, globalStats);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class HttpHandler extends BaseHttpHandler {
         }
 
         //reregister logic
-        User user = userDao.regularTokenManager.getUserByToken(tokenPathParam);
+        User user = tokenManager.regularTokenManager.getUserByToken(tokenPathParam);
         if (user == null) {
             log.error("Requested token {} not found.", tokenPathParam);
             ctx.writeAndFlush(Response.badRequest("Invalid token."));

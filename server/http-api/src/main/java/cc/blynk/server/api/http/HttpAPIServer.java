@@ -46,7 +46,7 @@ public class HttpAPIServer extends BaseServer {
                 pipeline.addLast("HttpUrlMapper", new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
                 pipeline.addLast("HttpStaticFile", new StaticFileHandler(true,
                         new StaticFile("/static"), new StaticFileEdsWith(FileUtils.CSV_DIR, ".csv.gz")));
-                pipeline.addLast("HttpHandler", new HttpHandler(holder.userDao, holder.sessionDao, holder.stats));
+                pipeline.addLast("HttpHandler", new HttpHandler(holder.tokenManager, holder.sessionDao, holder.stats));
             }
         };
     }

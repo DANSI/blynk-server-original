@@ -4,7 +4,7 @@ import cc.blynk.core.http.rest.HandlerHolder;
 import cc.blynk.core.http.rest.HandlerRegistry;
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -25,12 +25,12 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
 
     protected static final Logger log = LogManager.getLogger(BaseHttpHandler.class);
 
-    protected final UserDao userDao;
+    protected final TokenManager tokenManager;
     protected final SessionDao sessionDao;
     protected final GlobalStats globalStats;
 
-    public BaseHttpHandler(UserDao userDao, SessionDao sessionDao, GlobalStats globalStats) {
-        this.userDao = userDao;
+    public BaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats) {
+        this.tokenManager = tokenManager;
         this.sessionDao = sessionDao;
         this.globalStats = globalStats;
     }

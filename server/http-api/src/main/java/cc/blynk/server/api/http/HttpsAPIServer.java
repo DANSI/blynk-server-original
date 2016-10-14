@@ -44,7 +44,7 @@ public class HttpsAPIServer extends BaseServer {
 
         final SessionHolder sessionHolder = new SessionHolder();
 
-        HandlerRegistry.register(businessRootPath, new BusinessLogic(holder.userDao, holder.sessionDao, holder.fileManager));
+        HandlerRegistry.register(businessRootPath, new BusinessLogic(holder.tokenManager, holder.sessionDao, holder.fileManager));
         HandlerRegistry.register(businessRootPath, new BusinessAuthLogic(holder.userDao, holder.sessionDao, holder.fileManager, sessionHolder));
 
         final SslContext sslCtx = SslUtil.initSslContext(
@@ -67,8 +67,8 @@ public class HttpsAPIServer extends BaseServer {
                 pipeline.addLast("HttpsUrlMapper2", new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
                 pipeline.addLast("HttpsStaticFile", new StaticFileHandler(isUnpacked,
                         new StaticFile("/static"), new StaticFileEdsWith(FileUtils.CSV_DIR, ".csv.gz")));
-                pipeline.addLast("HttpsAuthHandler", new AuthHttpHandler(holder.userDao, holder.sessionDao, holder.stats));
-                pipeline.addLast("HttpsHandler", new HttpHandler(holder.userDao, holder.sessionDao, holder.stats));
+                pipeline.addLast("HttpsAuthHandler", new AuthHttpHandler(holder.tokenManager, holder.sessionDao, holder.stats));
+                pipeline.addLast("HttpsHandler", new HttpHandler(holder.tokenManager, holder.sessionDao, holder.stats));
             }
         };
     }

@@ -66,18 +66,18 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
     public AppHandler(Holder holder, AppStateHolder state) {
         super(holder.props, state);
-        this.token = new GetTokenLogic(holder.userDao);
+        this.token = new GetTokenLogic(holder.tokenManager);
         this.hardwareApp = new HardwareAppLogic(holder, state.user.name);
-        this.refreshToken = new RefreshTokenLogic(holder.userDao);
+        this.refreshToken = new RefreshTokenLogic(holder.tokenManager);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.exportGraphData = new ExportGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor, holder.mailWrapper,
                 holder.props.getProperty("reset-pass.http.host", IPUtils.resolveHostIP()),
                 holder.props.getIntProperty("http.port"))
         ;
         this.appMailLogic = new AppMailLogic(holder.blockingIOProcessor, holder.mailWrapper);
-        this.getShareTokenLogic = new GetShareTokenLogic(holder.userDao);
-        this.refreshShareTokenLogic = new RefreshShareTokenLogic(holder.userDao, holder.sessionDao);
-        this.getSharedDashLogic = new GetSharedDashLogic(holder.userDao);
+        this.getShareTokenLogic = new GetShareTokenLogic(holder.tokenManager);
+        this.refreshShareTokenLogic = new RefreshShareTokenLogic(holder.tokenManager, holder.sessionDao);
+        this.getSharedDashLogic = new GetSharedDashLogic(holder.tokenManager);
 
         final int profileMaxSize = holder.props.getIntProperty("user.profile.max.size", 10) * 1024;
         this.createDashLogic = new CreateDashLogic(holder.props.getIntProperty("user.dashboard.max.limit"), profileMaxSize);
@@ -89,7 +89,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         final int widgetSize = holder.props.getIntProperty("user.widget.max.size.limit", 10) * 1024;
         this.createWidgetLogic = new CreateWidgetLogic(widgetSize);
         this.updateWidgetLogic = new UpdateWidgetLogic(widgetSize);
-        this.deleteDashLogic = new DeleteDashLogic(holder.userDao);
+        this.deleteDashLogic = new DeleteDashLogic(holder.tokenManager);
 
         this.shareLogic = new ShareLogic(holder.sessionDao);
         this.redeemLogic = new RedeemLogic(holder.dbManager, holder.blockingIOProcessor);

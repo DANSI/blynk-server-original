@@ -20,7 +20,7 @@ import cc.blynk.server.api.http.pojo.att.AttValue;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Pin;
@@ -82,7 +82,7 @@ public class HttpAPILogic {
             .addMixIn(Notification.class, NotificationCloneHideFields.class)
             .writerFor(DashBoard.class);
     private static final Logger log = LogManager.getLogger(HttpAPILogic.class);
-    private final UserDao userDao;
+    private final TokenManager tokenManager;
     private final BlockingIOProcessor blockingIOProcessor;
     private final SessionDao sessionDao;
     private final GlobalStats globalStats;
@@ -92,15 +92,15 @@ public class HttpAPILogic {
     private final EventorProcessor eventorProcessor;
 
     public HttpAPILogic(Holder holder) {
-        this(holder.userDao, holder.sessionDao, holder.blockingIOProcessor,
+        this(holder.tokenManager, holder.sessionDao, holder.blockingIOProcessor,
                 holder.mailWrapper, holder.gcmWrapper, holder.reportingDao,
                 holder.stats, holder.eventorProcessor);
     }
 
-    private HttpAPILogic(UserDao userDao, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor,
+    private HttpAPILogic(TokenManager tokenManager, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor,
                          MailWrapper mailWrapper, GCMWrapper gcmWrapper, ReportingDao reportingDao,
                          GlobalStats globalStats, EventorProcessor eventorProcessor) {
-        this.userDao = userDao;
+        this.tokenManager = tokenManager;
         this.blockingIOProcessor = blockingIOProcessor;
         this.sessionDao = sessionDao;
         this.globalStats = globalStats;
@@ -128,7 +128,7 @@ public class HttpAPILogic {
     public Response getDashboard(@PathParam("token") String token) {
         globalStats.mark(HTTP_GET_PROJECT);
 
-        User user = userDao.regularTokenManager.getUserByToken(token);
+        User user = tokenManager.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.error("Requested token {} not found.", token);
@@ -152,7 +152,7 @@ public class HttpAPILogic {
     public Response isHardwareConnected(@PathParam("token") String token) {
         globalStats.mark(HTTP_IS_HARDWARE_CONNECTED);
 
-        User user = userDao.regularTokenManager.getUserByToken(token);
+        User user = tokenManager.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.error("Requested token {} not found.", token);
@@ -176,7 +176,7 @@ public class HttpAPILogic {
     public Response isAppConnected(@PathParam("token") String token) {
         globalStats.mark(HTTP_IS_APP_CONNECTED);
 
-        User user = userDao.regularTokenManager.getUserByToken(token);
+        User user = tokenManager.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -212,7 +212,7 @@ public class HttpAPILogic {
 
         globalStats.mark(HTTP_GET_PIN_DATA);
 
-        User user = userDao.regularTokenManager.getUserByToken(token);
+        User user = tokenManager.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -259,7 +259,7 @@ public class HttpAPILogic {
     public Response getQR(@PathParam("token") String token) {
         globalStats.mark(HTTP_QR);
 
-        User user = userDao.regularTokenManager.getUserByToken(token);
+        User user = tokenManager.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -292,7 +292,7 @@ public class HttpAPILogic {
                                       @PathParam("pin") String pinString) {
         globalStats.mark(HTTP_GET_DATA);
 
-        User user = userDao.regularTokenManager.getUserByToken(token);
+        User user = tokenManager.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -381,7 +381,7 @@ public class HttpAPILogic {
             return Response.badRequest("No properties for update provided.");
         }
 
-        User user = userDao.regularTokenManager.getUserByToken(token);
+        User user = tokenManager.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -502,7 +502,7 @@ public class HttpAPILogic {
             return Response.badRequest("No pin for update provided.");
         }
 
-        User user = userDao.regularTokenManager.getUserByToken(token);
+        User user = tokenManager.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -568,7 +568,7 @@ public class HttpAPILogic {
             return Response.badRequest("No pin for update provided.");
         }
 
-        User user = userDao.regularTokenManager.getUserByToken(token);
+        User user = tokenManager.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -627,7 +627,7 @@ public class HttpAPILogic {
 
         globalStats.mark(HTTP_NOTIFY);
 
-        User user = userDao.regularTokenManager.getUserByToken(token);
+        User user = tokenManager.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -674,7 +674,7 @@ public class HttpAPILogic {
 
         globalStats.mark(HTTP_EMAIL);
 
-        User user = userDao.regularTokenManager.getUserByToken(token);
+        User user = tokenManager.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);

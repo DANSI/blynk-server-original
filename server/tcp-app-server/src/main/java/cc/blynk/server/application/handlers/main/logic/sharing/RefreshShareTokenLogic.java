@@ -3,7 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.sharing;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -26,11 +26,11 @@ import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
  */
 public class RefreshShareTokenLogic {
 
-    private final UserDao userDao;
+    private final TokenManager tokenManager;
     private final SessionDao sessionDao;
 
-    public RefreshShareTokenLogic(UserDao userDao, SessionDao sessionDao) {
-        this.userDao = userDao;
+    public RefreshShareTokenLogic(TokenManager tokenManager, SessionDao sessionDao) {
+        this.tokenManager = tokenManager;
         this.sessionDao = sessionDao;
     }
 
@@ -47,7 +47,7 @@ public class RefreshShareTokenLogic {
         final User user = state.user;
         user.profile.validateDashId(dashId);
 
-        String token = userDao.sharedTokenManager.refreshToken(user, dashId, user.dashShareTokens);
+        String token = tokenManager.sharedTokenManager.refreshToken(user, dashId, user.dashShareTokens);
 
         Session session = sessionDao.userSession.get(state.userKey);
         for (Channel appChannel : session.getAppChannels()) {
