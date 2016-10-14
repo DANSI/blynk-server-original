@@ -47,7 +47,7 @@ public class RefreshShareTokenLogic {
         final User user = state.user;
         user.profile.validateDashId(dashId);
 
-        String token = tokenManager.sharedTokenManager.refreshToken(user, dashId, user.dashShareTokens);
+        String token = tokenManager.refreshSharedToken(user, dashId);
 
         Session session = sessionDao.userSession.get(state.userKey);
         for (Channel appChannel : session.getAppChannels()) {

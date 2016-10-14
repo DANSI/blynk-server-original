@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentMap;
  * Created by Dmitriy Dumanskiy.
  * Created on 22.09.15.
  */
-public abstract class TokenManagerBase {
+abstract class TokenManagerBase {
 
     protected final ConcurrentMap<String, User> cache;
 

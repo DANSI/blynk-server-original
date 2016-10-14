@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -12,7 +11,7 @@ import java.util.Map;
  * Created by Dmitriy Dumanskiy.
  * Created on 22.09.15.
  */
-public class SharedTokenManager extends TokenManagerBase {
+class SharedTokenManager extends TokenManagerBase {
 
     private static final Logger log = LogManager.getLogger(SharedTokenManager.class);
 
@@ -22,9 +21,6 @@ public class SharedTokenManager extends TokenManagerBase {
 
     @Override
     public Map<Integer, String> getTokens(User user) {
-        if (user.dashShareTokens == null) {
-            user.dashShareTokens = new HashMap<>();
-        }
         return user.dashShareTokens;
     }
 

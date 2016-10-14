@@ -66,7 +66,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
         String token = message.body.trim();
-        User user = holder.tokenManager.regularTokenManager.getUserByToken(token);
+        User user = holder.tokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());

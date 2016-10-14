@@ -149,7 +149,7 @@ public class HttpBusinessAPILogic {
                                  @QueryParam("pin") String pin,
                                  @QueryParam("value") String value) {
 
-        User user = tokenManager.regularTokenManager.getUserByToken(token);
+        User user = tokenManager.getUserByToken(token);
 
         if (user == null) {
             log.error("Requested token {} not found.", token);

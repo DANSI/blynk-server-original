@@ -30,7 +30,7 @@ public class GetTokenLogic {
 
         user.profile.validateDashId(dashId);
 
-        String token = tokenManager.regularTokenManager.getToken(user, dashId);
+        String token = tokenManager.getToken(user, dashId);
 
         ctx.writeAndFlush(makeStringMessage(GET_TOKEN, message.id, token), ctx.voidPromise());
     }

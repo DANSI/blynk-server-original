@@ -52,7 +52,7 @@ public class GetSharedDashLogic {
     public void messageReceived(ChannelHandlerContext ctx, StringMessage message) {
         String token = message.body;
 
-        User userThatShared = tokenManager.sharedTokenManager.getUserByToken(token);
+        User userThatShared = tokenManager.getUserBySharedToken(token);
 
         if (userThatShared == null) {
             throw new InvalidTokenException("Illegal sharing token. No user with those shared token.", message.id);

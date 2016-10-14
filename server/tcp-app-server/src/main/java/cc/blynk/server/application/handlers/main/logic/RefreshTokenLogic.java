@@ -30,7 +30,7 @@ public class RefreshTokenLogic {
 
         user.profile.validateDashId(dashId);
 
-        String token = tokenManager.regularTokenManager.refreshToken(user, dashId, user.dashTokens);
+        String token = tokenManager.refreshToken(user, dashId);
 
         ctx.writeAndFlush(makeStringMessage(REFRESH_TOKEN, message.id, token), ctx.voidPromise());
     }

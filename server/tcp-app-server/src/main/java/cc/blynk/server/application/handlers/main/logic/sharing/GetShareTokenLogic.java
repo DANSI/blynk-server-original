@@ -6,8 +6,6 @@ import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.Map;
-
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
 
@@ -39,10 +37,9 @@ public class GetShareTokenLogic {
 
         user.profile.validateDashId(dashId);
 
-        Map<Integer, String> tokens = tokenManager.sharedTokenManager.getTokens(user);
-        boolean newToken = tokens.get(dashId) == null;
+        boolean newToken = user.dashShareTokens.get(dashId) == null;
 
-        String token = tokenManager.sharedTokenManager.getToken(user, dashId);
+        String token = tokenManager.getSharedToken(user, dashId);
 
         if (newToken) {
             user.subtractEnergy(PRIVATE_TOKEN_PRICE);
