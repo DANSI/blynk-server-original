@@ -27,7 +27,7 @@ public class UserDao {
 
     private static final Logger log = LogManager.getLogger(UserDao.class);
 
-    public final TokenManagerBase tokenManager;
+    public final TokenManagerBase regularTokenManager;
     public final TokenManagerBase sharedTokenManager;
 
     public final ConcurrentMap<UserKey, User> users;
@@ -36,7 +36,7 @@ public class UserDao {
     public UserDao(ConcurrentMap<UserKey, User> users, String region) {
         //reading DB to RAM.
         this.users = users;
-        this.tokenManager = new TokenManager(users.values());
+        this.regularTokenManager = new RegularTokenManager(users.values());
         this.sharedTokenManager = new SharedTokenManager(users.values());
         this.region = region;
         log.info("Region : {}", region);
@@ -73,7 +73,7 @@ public class UserDao {
     }
 
     public void deleteProject(User user, Integer projectId) {
-        tokenManager.deleteProject(user, projectId);
+        regularTokenManager.deleteProject(user, projectId);
         sharedTokenManager.deleteProject(user, projectId);
     }
 

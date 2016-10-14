@@ -12,11 +12,11 @@ import java.util.Map;
  * Created by Dmitriy Dumanskiy.
  * Created on 22.09.15.
  */
-public class TokenManager extends TokenManagerBase {
+public class RegularTokenManager extends TokenManagerBase {
 
-    private static final Logger log = LogManager.getLogger(TokenManager.class);
+    private static final Logger log = LogManager.getLogger(RegularTokenManager.class);
 
-    public TokenManager(Iterable<User> users) {
+    public RegularTokenManager(Iterable<User> users) {
         super(users);
     }
 

@@ -71,7 +71,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
         String username = message.payload().userName().toLowerCase();
         String token = message.payload().password();
 
-        User user = holder.userDao.tokenManager.getUserByToken(token);
+        User user = holder.userDao.regularTokenManager.getUserByToken(token);
 
         if (user == null || !user.name.equalsIgnoreCase(username)) {
             log.debug("MqttHardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());

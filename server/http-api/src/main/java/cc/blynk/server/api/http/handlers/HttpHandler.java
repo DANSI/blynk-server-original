@@ -35,7 +35,7 @@ public class HttpHandler extends BaseHttpHandler {
         }
 
         //reregister logic
-        User user = userDao.tokenManager.getUserByToken(tokenPathParam);
+        User user = userDao.regularTokenManager.getUserByToken(tokenPathParam);
         if (user == null) {
             log.error("Requested token {} not found.", tokenPathParam);
             ctx.writeAndFlush(Response.badRequest("Invalid token."));

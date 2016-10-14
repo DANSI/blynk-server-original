@@ -128,7 +128,7 @@ public class HttpAPILogic {
     public Response getDashboard(@PathParam("token") String token) {
         globalStats.mark(HTTP_GET_PROJECT);
 
-        User user = userDao.tokenManager.getUserByToken(token);
+        User user = userDao.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.error("Requested token {} not found.", token);
@@ -152,7 +152,7 @@ public class HttpAPILogic {
     public Response isHardwareConnected(@PathParam("token") String token) {
         globalStats.mark(HTTP_IS_HARDWARE_CONNECTED);
 
-        User user = userDao.tokenManager.getUserByToken(token);
+        User user = userDao.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.error("Requested token {} not found.", token);
@@ -176,7 +176,7 @@ public class HttpAPILogic {
     public Response isAppConnected(@PathParam("token") String token) {
         globalStats.mark(HTTP_IS_APP_CONNECTED);
 
-        User user = userDao.tokenManager.getUserByToken(token);
+        User user = userDao.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -212,7 +212,7 @@ public class HttpAPILogic {
 
         globalStats.mark(HTTP_GET_PIN_DATA);
 
-        User user = userDao.tokenManager.getUserByToken(token);
+        User user = userDao.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -259,7 +259,7 @@ public class HttpAPILogic {
     public Response getQR(@PathParam("token") String token) {
         globalStats.mark(HTTP_QR);
 
-        User user = userDao.tokenManager.getUserByToken(token);
+        User user = userDao.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -292,7 +292,7 @@ public class HttpAPILogic {
                                       @PathParam("pin") String pinString) {
         globalStats.mark(HTTP_GET_DATA);
 
-        User user = userDao.tokenManager.getUserByToken(token);
+        User user = userDao.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -381,7 +381,7 @@ public class HttpAPILogic {
             return Response.badRequest("No properties for update provided.");
         }
 
-        User user = userDao.tokenManager.getUserByToken(token);
+        User user = userDao.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -502,7 +502,7 @@ public class HttpAPILogic {
             return Response.badRequest("No pin for update provided.");
         }
 
-        User user = userDao.tokenManager.getUserByToken(token);
+        User user = userDao.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -568,7 +568,7 @@ public class HttpAPILogic {
             return Response.badRequest("No pin for update provided.");
         }
 
-        User user = userDao.tokenManager.getUserByToken(token);
+        User user = userDao.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -627,7 +627,7 @@ public class HttpAPILogic {
 
         globalStats.mark(HTTP_NOTIFY);
 
-        User user = userDao.tokenManager.getUserByToken(token);
+        User user = userDao.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
@@ -674,7 +674,7 @@ public class HttpAPILogic {
 
         globalStats.mark(HTTP_EMAIL);
 
-        User user = userDao.tokenManager.getUserByToken(token);
+        User user = userDao.regularTokenManager.getUserByToken(token);
 
         if (user == null) {
             log.debug("Requested token {} not found.", token);
