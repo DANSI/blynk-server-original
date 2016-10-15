@@ -54,7 +54,7 @@ public class HardProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testInvalidHardwareTokenException() throws Exception {
-        makeCommands("login 123").check(new ResponseMessage(1, INVALID_TOKEN));
+        makeCommands("login 1111111").check(new ResponseMessage(1, INVALID_TOKEN));
     }
 
     @Test

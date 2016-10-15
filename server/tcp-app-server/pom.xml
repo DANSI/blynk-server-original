@@ -18,6 +18,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>cc.blynk.server.redis</groupId>
+            <artifactId>redis-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- used for email validation -->
         <dependency>
             <groupId>commons-validator</groupId>

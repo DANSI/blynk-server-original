@@ -63,6 +63,7 @@ public final class Command {
     public static final short GET_METADATA = 39;
 
     public static final short GET_SERVER = 40;
+    public static final short CONNECT_REDIRECT = 41;
 
     //------------------------------------------
 
@@ -134,6 +135,7 @@ public final class Command {
                 put(GET_METADATA, "GetMetadata");
 
                 put(GET_SERVER, "GetServer");
+                put(CONNECT_REDIRECT, "ConnectRedirect");
 
                 put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
                 put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");

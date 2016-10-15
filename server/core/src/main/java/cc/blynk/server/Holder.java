@@ -14,6 +14,9 @@ import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
+import cc.blynk.server.redis.FakeRedisClient;
+import cc.blynk.server.redis.RealRedisClient;
+import cc.blynk.server.redis.RedisClient;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.ServerProperties;
@@ -40,6 +43,8 @@ public class Holder {
     public final TokenManager tokenManager;
 
     public final ReportingDao reportingDao;
+
+    public final RedisClient redisClient;
 
     public final DBManager dbManager;
 
@@ -75,6 +80,11 @@ public class Holder {
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);
         this.reportingDao = new ReportingDao(reportingFolder, averageAggregator, serverProperties);
+        if ("local".equals(region)) {
+            this.redisClient = new FakeRedisClient();
+        } else {
+            this.redisClient = new RealRedisClient(new ServerProperties(RealRedisClient.REDIS_PROPERTIES));
+        }
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
@@ -116,6 +126,7 @@ public class Holder {
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);
         this.reportingDao = new ReportingDao(reportingFolder, averageAggregator, serverProperties);
+        this.redisClient = new RealRedisClient(new ServerProperties(RealRedisClient.REDIS_PROPERTIES));
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 

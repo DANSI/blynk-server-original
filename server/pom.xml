@@ -27,6 +27,7 @@
         <module>web-socket</module>
 
         <module>launcher</module>
+        <module>redis-client</module>
     </modules>
 
 </project>

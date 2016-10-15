@@ -9,9 +9,11 @@ jdk:
   - oraclejdk8
 
 services:
+  - redis-server
   - postgresql
 
 before_script:
+  - redis-server /etc/redis/redis.conf --requirepass '123'
   - psql -f $TRAVIS_BUILD_DIR/server/core/src/main/resources/create_schema.sql -U postgres
 
 script:

@@ -6,9 +6,6 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static cc.blynk.utils.ByteBufUtil.makeResponse;
 import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
 
@@ -22,37 +19,23 @@ import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
 public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessage> {
 
     private final String[] ips;
-    private final Map<String, String> distributedStorage;
+
 
     public GetServerHandler(String[] ips) {
         super();
         this.ips = ips;
-        this.distributedStorage = new HashMap<>();
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, GetServerMessage msg) throws Exception {
-        final String server = getServer(msg.body);
-        if (server == null) {
+        if (msg.body == null || msg.body.equals("")) {
             ctx.writeAndFlush(makeResponse(msg.id, Response.ILLEGAL_COMMAND));
             return;
         }
+        String server = getSuitableServer(msg.body);
         ctx.writeAndFlush(makeStringMessage(msg.command, msg.id, server));
-    }
 
-    private String getServer(String username) {
-        if (username == null || username.equals("")) {
-            return null;
-        }
-        String server = distributedStorage.get(username);
 
-        if (server != null) {
-            return server;
-        }
-
-        //this is possible in case user is new or value not updated yet from other server
-        //for now second case considered as unreal.
-        return getSuitableServer(username);
     }
 
     //for now support only 1 ip

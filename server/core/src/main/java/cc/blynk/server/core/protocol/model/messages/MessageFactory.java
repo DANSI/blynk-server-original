@@ -34,6 +34,7 @@ import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMess
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.protocol.model.messages.common.PingMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.BridgeMessage;
+import cc.blynk.server.core.protocol.model.messages.hardware.ConnectRedirectMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.HardwareInfoMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.HardwareSyncMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.MailMessage;
@@ -138,6 +139,8 @@ public class MessageFactory {
 
             case GET_SERVER :
                 return new GetServerMessage(messageId, body);
+            case CONNECT_REDIRECT :
+                return new ConnectRedirectMessage(messageId, body);
 
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);
         }
