@@ -23,20 +23,16 @@ public final class Response {
     public static final int INVALID_TOKEN = 9;
     public static final int ILLEGAL_COMMAND_BODY = 11;
     public static final int GET_GRAPH_DATA = 12;
-    public static final int NO_DATA = 17;
-    public static final int DEVICE_WENT_OFFLINE = 18;
-    public static final int SERVER_ERROR = 19;
-
     public static final int NOTIFICATION_INVALID_BODY = 13;
     public static final int NOTIFICATION_NOT_AUTHORIZED = 14;
     public static final int NOTIFICATION_ERROR = 15;
-
-    public static final int NOT_SUPPORTED_VERSION = 20;
-    public static final int ENERGY_LIMIT = 21;
-
     //reserved
     public static final int BLYNK_TIMEOUT = 16;
-
+    public static final int NO_DATA = 17;
+    public static final int DEVICE_WENT_OFFLINE = 18;
+    public static final int SERVER_ERROR = 19;
+    public static final int NOT_SUPPORTED_VERSION = 20;
+    public static final int ENERGY_LIMIT = 21;
 
     //all this code just to make logging more user-friendly
     private final static Map<Integer, String> valuesName = ReflectionUtil.generateMapOfValueNameInteger(Response.class);
