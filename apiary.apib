@@ -113,6 +113,37 @@ We also provide simplified API so you can do updates via GET requests.
 + Response 500 (plain/text)
 
         Unexpected content type. Expecting application/json.
+
+
+## Set Widget Property via GET [/{auth_token}/update/{pin}?{property}={value}]
+
++ Parameters
+    + auth_token (required, string, `4ae3851817194e2596cf1b7103603ef8`) ... authentification token.
+    + pin (required, string, `V0`) ... pin you want to write.
+    + property (required, string, `label`) ... property you want to change `label`, `color`, etc. For reserved characters
+    like space and '#' for color property you meed to use appropriate encoding. For example `#23C48E` should be passed as
+    `%2323C48E` where %23 is encoded '#' character.
+    + value (required, string, `MyNewLabel`) ... property value.
+
+### Set Widget Property via GET
+
++ Response 200
+
++ Response 400 (plain/text)
+
+        Invalid token.
+
++ Response 400 (plain/text)
+
+        Wrong pin format.
+
++ Response 400 (plain/text)
+
+        Requested pin not exists in app.
+
++ Response 500 (plain/text)
+
+        Unexpected content type. Expecting application/json.
         
 
 ## Hardware network status [/{auth_token}/isHardwareConnected]
