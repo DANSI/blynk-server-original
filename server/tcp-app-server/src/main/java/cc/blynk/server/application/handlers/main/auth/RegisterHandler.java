@@ -65,7 +65,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         String appName = messageParts.length == 3 ? messageParts[2] : AppName.BLYNK;
         log.info("Trying register user : {}, app : {}", userName, appName);
 
-        if (!EmailValidator.getInstance().isValid(userName)) {
+        if (userName.length() > 255 || !EmailValidator.getInstance().isValid(userName)) {
             log.error("Register Handler. Wrong email: {}", userName);
             ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
             return;
