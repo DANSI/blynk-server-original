@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The Blynk Project.
@@ -16,7 +17,13 @@ class SharedTokenManager extends TokenManagerBase {
     private static final Logger log = LogManager.getLogger(SharedTokenManager.class);
 
     public SharedTokenManager(Iterable<User> users) {
-        super(users);
+        super(new ConcurrentHashMap<String, User>() {{
+            for (User user : users) {
+                for (String shareToken : user.dashShareTokens.values()) {
+                    put(shareToken, user);
+                }
+            }
+        }});
     }
 
     @Override

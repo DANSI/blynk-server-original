@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.TokenGeneratorUtil;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -16,18 +15,8 @@ abstract class TokenManagerBase {
 
     protected final ConcurrentMap<String, User> cache;
 
-    public TokenManagerBase(Iterable<User> users) {
-        this.cache = initTokenCache(users);
-    }
-
-    private ConcurrentMap<String, User> initTokenCache(Iterable<User> users) {
-        return new ConcurrentHashMap<String, User>() {{
-            for (User user : users) {
-                for (String userToken : getTokens(user).values()) {
-                    put(userToken, user);
-                }
-            }
-        }};
+    public TokenManagerBase(ConcurrentMap<String, User> data) {
+        this.cache = data;
     }
 
     public String getToken(User user, Integer dashboardId) {
