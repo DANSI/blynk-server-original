@@ -19,10 +19,13 @@ import java.util.Properties;
 public class RealRedisClient implements Closeable, RedisClient {
 
     public static final String REDIS_PROPERTIES = "redis.properties";
+    public static final int USER_DB_INDEX = 0;
+    public static final int TOKEN_DB_INDEX = 1;
 
     private static final Logger log = LogManager.getLogger(RealRedisClient.class);
 
-    private final JedisPool pool;
+    private final JedisPool tokenPool;
+    private final JedisPool userPool;
 
     public RealRedisClient(Properties props) {
         this(props.getProperty("redis.host"), props.getProperty("redis.pass"));
@@ -30,42 +33,64 @@ public class RealRedisClient implements Closeable, RedisClient {
 
     protected RealRedisClient(String host, String pass) {
         JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxTotal(20);
+        config.setMaxTotal(10);
         config.setBlockWhenExhausted(true);
-        this.pool = new JedisPool(config, host, Protocol.DEFAULT_PORT, Protocol.DEFAULT_TIMEOUT, pass, Protocol.DEFAULT_DATABASE);
+        this.userPool = new JedisPool(config, host, Protocol.DEFAULT_PORT, Protocol.DEFAULT_TIMEOUT, pass, USER_DB_INDEX);
+        this.tokenPool = new JedisPool(config, host, Protocol.DEFAULT_PORT, Protocol.DEFAULT_TIMEOUT, pass, TOKEN_DB_INDEX);
         checkConnected();
     }
 
     private void checkConnected() {
-        try (Jedis jedis = pool.getResource()) {
+        try (Jedis jedis = userPool.getResource()) {
         }
     }
 
     @Override
     public String getServerByToken(String token) {
-        try (Jedis jedis = pool.getResource()) {
+        try (Jedis jedis = tokenPool.getResource()) {
             return jedis.get(token);
         } catch (Exception e) {
-            log.error("Error making request to redis.", e);
+            log.error("Error getting server by token {}.", token, e);
         }
         return null;
     }
 
     @Override
-    public void setServerByToken(String token, String server) {
-        try (Jedis jedis = pool.getResource()) {
+    public void assignServerToToken(String token, String server) {
+        try (Jedis jedis = tokenPool.getResource()) {
             jedis.set(token, server);
+        } catch (Exception e) {
+            log.error("Error setting server {} to token {}.", server, token, e);
+        }
+    }
+
+    @Override
+    public void assignServerToUser(String username, String server) {
+        try (Jedis jedis = userPool.getResource()) {
+            jedis.set(username, server);
+        }
+    }
+
+    @Override
+    public void removeToken(String token) {
+        try (Jedis jedis = tokenPool.getResource()) {
+            jedis.del(token);
         }
     }
 
     //only for tests
     @Override
-    public Jedis getClient() {
-        return pool.getResource();
+    public Jedis getUserClient() {
+        return userPool.getResource();
+    }
+    @Override
+    public Jedis getTokenClient() {
+        return tokenPool.getResource();
     }
 
     @Override
     public void close() throws IOException {
-        pool.destroy();
+        userPool.destroy();
+        tokenPool.destroy();
     }
 }

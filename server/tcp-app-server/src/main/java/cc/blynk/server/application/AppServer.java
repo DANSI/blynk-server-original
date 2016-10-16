@@ -31,12 +31,15 @@ public class AppServer extends BaseServer {
     public AppServer(Holder holder) {
         super(holder.props.getIntProperty("app.ssl.port"));
 
+        final String[] loadBalancingIPs = holder.props.getCommaSeparatedValueAsArray("load.balancing.ips");
+        final String[] allowedUsers = holder.props.getCommaSeparatedValueAsArray("allowed.users.list");
+
         final AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
-        final RegisterHandler registerHandler = new RegisterHandler(holder.userDao, holder.props.getCommaSeparatedValueAsArray("allowed.users.list"));
+        final RegisterHandler registerHandler = new RegisterHandler(holder.userDao, allowedUsers);
         final AppLoginHandler appLoginHandler = new AppLoginHandler(holder);
         final AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
-        final GetServerHandler getServerHandler = new GetServerHandler(holder.props.getCommaSeparatedValueAsArray("load.balancing.ips"));
+        final GetServerHandler getServerHandler = new GetServerHandler(holder, loadBalancingIPs);
 
         final SslContext sslCtx = SslUtil.initMutualSslContext(
                 holder.props.getProperty("server.ssl.cert"),

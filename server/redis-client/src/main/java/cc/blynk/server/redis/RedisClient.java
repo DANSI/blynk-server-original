@@ -11,8 +11,13 @@ public interface RedisClient {
 
     String getServerByToken(String token);
 
-    void setServerByToken(String token, String server);
+    void assignServerToToken(String token, String server);
 
-    //only for tests
-    Jedis getClient();
+    void assignServerToUser(String username, String server);
+
+    void removeToken(String token);
+
+    Jedis getUserClient();
+
+    Jedis getTokenClient();
 }

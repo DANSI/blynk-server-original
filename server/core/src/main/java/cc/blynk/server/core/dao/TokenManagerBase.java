@@ -19,18 +19,6 @@ abstract class TokenManagerBase {
         this.cache = data;
     }
 
-    public String getToken(User user, Integer dashboardId) {
-        Map<Integer, String> tokens = getTokens(user);
-        String token = tokens.get(dashboardId);
-
-        //if token not exists. generate new one
-        if (token == null) {
-            token = refreshToken(user, dashboardId, tokens);
-        }
-
-        return token;
-    }
-
     public String refreshToken(User user, Integer dashboardId, Map<Integer, String> dashTokens) {
         // Clean old token from cache if exists.
         String oldToken = dashTokens.get(dashboardId);
@@ -51,7 +39,7 @@ abstract class TokenManagerBase {
 
     public abstract Map<Integer, String> getTokens(User user);
 
-    abstract void deleteProject(User user, Integer projectId);
+    abstract String deleteProject(User user, Integer projectId);
 
     abstract void printMessage(String username, Integer dashId, String token);
 

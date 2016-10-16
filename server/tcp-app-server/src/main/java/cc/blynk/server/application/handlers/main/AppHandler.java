@@ -30,7 +30,6 @@ import cc.blynk.server.application.handlers.main.logic.sharing.ShareLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
-import cc.blynk.utils.IPUtils;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.*;
@@ -66,14 +65,13 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
     public AppHandler(Holder holder, AppStateHolder state) {
         super(holder.props, state);
-        this.token = new GetTokenLogic(holder.tokenManager);
+        this.token = new GetTokenLogic(holder);
         this.hardwareApp = new HardwareAppLogic(holder, state.user.name);
-        this.refreshToken = new RefreshTokenLogic(holder.tokenManager);
+        this.refreshToken = new RefreshTokenLogic(holder);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.exportGraphData = new ExportGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor, holder.mailWrapper,
-                holder.props.getProperty("reset-pass.http.host", IPUtils.resolveHostIP()),
-                holder.props.getIntProperty("http.port"))
-        ;
+                holder.currentIp,
+                holder.props.getIntProperty("http.port"));
         this.appMailLogic = new AppMailLogic(holder.blockingIOProcessor, holder.mailWrapper);
         this.getShareTokenLogic = new GetShareTokenLogic(holder.tokenManager);
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(holder.tokenManager, holder.sessionDao);
@@ -89,7 +87,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         final int widgetSize = holder.props.getIntProperty("user.widget.max.size.limit", 10) * 1024;
         this.createWidgetLogic = new CreateWidgetLogic(widgetSize);
         this.updateWidgetLogic = new UpdateWidgetLogic(widgetSize);
-        this.deleteDashLogic = new DeleteDashLogic(holder.tokenManager);
+        this.deleteDashLogic = new DeleteDashLogic(holder);
 
         this.shareLogic = new ShareLogic(holder.sessionDao);
         this.redeemLogic = new RedeemLogic(holder.dbManager, holder.blockingIOProcessor);

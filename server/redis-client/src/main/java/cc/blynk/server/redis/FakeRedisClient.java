@@ -17,12 +17,25 @@ public class FakeRedisClient implements RedisClient {
     }
 
     @Override
-    public void setServerByToken(String token, String server) {
+    public void assignServerToToken(String token, String server) {
+    }
+
+    @Override
+    public void assignServerToUser(String username, String server) {
+    }
+
+    @Override
+    public Jedis getUserClient() {
+        return null;
+    }
+
+    @Override
+    public void removeToken(String token) {
 
     }
 
     @Override
-    public Jedis getClient() {
+    public Jedis getTokenClient() {
         return null;
     }
 }

@@ -37,11 +37,11 @@ public class GetShareTokenLogic {
 
         user.profile.validateDashId(dashId);
 
-        boolean newToken = user.dashShareTokens.get(dashId) == null;
+        String token = user.dashShareTokens.get(dashId);
 
-        String token = tokenManager.getSharedToken(user, dashId);
-
-        if (newToken) {
+        //if token not exists. generate new one
+        if (token == null) {
+            token = tokenManager.refreshSharedToken(user, dashId);
             user.subtractEnergy(PRIVATE_TOKEN_PRICE);
         }
 

@@ -32,12 +32,13 @@ class RegularTokenManager extends TokenManagerBase {
     }
 
     @Override
-    void deleteProject(User user, Integer projectId) {
+    String deleteProject(User user, Integer projectId) {
         String removedToken = user.dashTokens.remove(projectId);
         if (removedToken != null) {
             cache.remove(removedToken);
             log.debug("Deleted {} token.", removedToken);
         }
+        return removedToken;
     }
 
     @Override

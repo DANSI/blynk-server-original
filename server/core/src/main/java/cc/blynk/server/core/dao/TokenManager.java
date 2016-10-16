@@ -12,8 +12,8 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class TokenManager {
 
-    private final TokenManagerBase regularTokenManager;
-    private final TokenManagerBase sharedTokenManager;
+    private final RegularTokenManager regularTokenManager;
+    private final SharedTokenManager sharedTokenManager;
 
     public TokenManager(ConcurrentMap<UserKey, User> users) {
         Collection<User> allUsers = users.values();
@@ -21,9 +21,9 @@ public class TokenManager {
         this.sharedTokenManager = new SharedTokenManager(allUsers);
     }
 
-    public void deleteProject(User user, Integer projectId) {
-        regularTokenManager.deleteProject(user, projectId);
+    public String deleteProject(User user, Integer projectId) {
         sharedTokenManager.deleteProject(user, projectId);
+        return regularTokenManager.deleteProject(user, projectId);
     }
 
     public User getUserByToken(String token) {
@@ -32,14 +32,6 @@ public class TokenManager {
 
     public User getUserBySharedToken(String token) {
         return sharedTokenManager.getUserByToken(token);
-    }
-
-    public String getToken(User user, int projectId) {
-        return regularTokenManager.getToken(user, projectId);
-    }
-
-    public String getSharedToken(User user, int projectId) {
-        return sharedTokenManager.getToken(user, projectId);
     }
 
     public String refreshToken(User user, int dashId) {

@@ -19,6 +19,7 @@ import cc.blynk.server.redis.RealRedisClient;
 import cc.blynk.server.redis.RedisClient;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.FileLoaderUtil;
+import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.ServerProperties;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -66,6 +67,8 @@ public class Holder {
     public final EventorProcessor eventorProcessor;
     public final DefaultAsyncHttpClient asyncHttpClient;
 
+    public final String currentIp;
+
     public Holder(ServerProperties serverProperties) {
         this.props = serverProperties;
 
@@ -109,6 +112,7 @@ public class Holder {
         this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
 
         this.dbManager = new DBManager(blockingIOProcessor);
+        this.currentIp = serverProperties.getProperty("reset-pass.http.host", IPUtils.resolveHostIP());
     }
 
     //for tests only
@@ -150,6 +154,7 @@ public class Holder {
         );
 
         this.dbManager = new DBManager(blockingIOProcessor);
+        this.currentIp = serverProperties.getProperty("reset-pass.http.host", IPUtils.resolveHostIP());
     }
 
 }
