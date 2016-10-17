@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model.widgets.inputs;
+package cc.blynk.server.core.model.widgets.sensors;
 
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 
@@ -7,9 +7,15 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class GPSStreaming extends OnePinWidget {
+public class GPSTrigger extends OnePinWidget {
 
-     public int accuracy;
+    public boolean triggerOnEnter;
+
+    public float triggerLat;
+
+    public float triggerLon;
+
+    public int triggerRadius;
 
     @Override
     public String getModeType() {
@@ -18,6 +24,6 @@ public class GPSStreaming extends OnePinWidget {
 
     @Override
     public int getPrice() {
-        return 0;
+        return 500;
     }
 }

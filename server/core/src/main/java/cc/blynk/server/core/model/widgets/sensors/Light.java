@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model.widgets.inputs;
+package cc.blynk.server.core.model.widgets.sensors;
 
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 
@@ -7,9 +7,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  * Created by Dmitriy Dumanskiy.
  * Created on 06.09.16.
  */
-public class Temperature extends OnePinWidget {
-
-    public boolean isCelsius;
+public class Light extends OnePinWidget {
 
     @Override
     public String getModeType() {
@@ -18,6 +16,6 @@ public class Temperature extends OnePinWidget {
 
     @Override
     public int getPrice() {
-        return 0;
+        return 300;
     }
 }

@@ -1,13 +1,15 @@
-package cc.blynk.server.core.model.widgets.inputs;
+package cc.blynk.server.core.model.widgets.sensors;
 
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
- * Created on 06.09.16.
+ * Created on 21.03.15.
  */
-public class Proximity extends OnePinWidget {
+public class GPSStreaming extends OnePinWidget {
+
+     public int accuracy;
 
     @Override
     public String getModeType() {
@@ -16,6 +18,6 @@ public class Proximity extends OnePinWidget {
 
     @Override
     public int getPrice() {
-        return 0;
+        return 500;
     }
 }

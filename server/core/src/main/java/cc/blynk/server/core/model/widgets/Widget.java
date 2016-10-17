@@ -10,14 +10,6 @@ import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.controls.Terminal;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.controls.TwoAxisJoystick;
-import cc.blynk.server.core.model.widgets.inputs.Accelerometer;
-import cc.blynk.server.core.model.widgets.inputs.Barometer;
-import cc.blynk.server.core.model.widgets.inputs.GPSStreaming;
-import cc.blynk.server.core.model.widgets.inputs.GPSTrigger;
-import cc.blynk.server.core.model.widgets.inputs.Gravity;
-import cc.blynk.server.core.model.widgets.inputs.Light;
-import cc.blynk.server.core.model.widgets.inputs.Proximity;
-import cc.blynk.server.core.model.widgets.inputs.Temperature;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.SMS;
@@ -39,6 +31,15 @@ import cc.blynk.server.core.model.widgets.outputs.LabeledValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.LevelDisplay;
 import cc.blynk.server.core.model.widgets.outputs.Map;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
+import cc.blynk.server.core.model.widgets.sensors.Accelerometer;
+import cc.blynk.server.core.model.widgets.sensors.Barometer;
+import cc.blynk.server.core.model.widgets.sensors.GPSStreaming;
+import cc.blynk.server.core.model.widgets.sensors.GPSTrigger;
+import cc.blynk.server.core.model.widgets.sensors.Gravity;
+import cc.blynk.server.core.model.widgets.sensors.Humidity;
+import cc.blynk.server.core.model.widgets.sensors.Light;
+import cc.blynk.server.core.model.widgets.sensors.Proximity;
+import cc.blynk.server.core.model.widgets.sensors.Temperature;
 import cc.blynk.server.core.model.widgets.ui.Image;
 import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
@@ -82,7 +83,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Video.class, name = "VIDEO"),
         @JsonSubTypes.Type(value = HistoryGraph.class, name = "LOGGER"),
 
-        //inputs
+        //sensors
         @JsonSubTypes.Type(value = GPSTrigger.class, name = "GPS_TRIGGER"),
         @JsonSubTypes.Type(value = GPSStreaming.class, name = "GPS_STREAMING"),
         @JsonSubTypes.Type(value = Light.class, name = "LIGHT"),
@@ -91,6 +92,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Accelerometer.class, name = "ACCELEROMETER"),
         @JsonSubTypes.Type(value = Gravity.class, name = "GRAVITY"),
         @JsonSubTypes.Type(value = Barometer.class, name = "BAROMETER"),
+        @JsonSubTypes.Type(value = Humidity.class, name = "HUMIDITY"),
 
         //notifications
         @JsonSubTypes.Type(value = Twitter.class, name = "TWITTER"),
