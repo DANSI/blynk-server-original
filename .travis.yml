@@ -9,10 +9,11 @@ jdk:
   - oraclejdk8
 
 services:
-  - redis-server --requirepass '123'
+  - redis-server
   - postgresql
 
 before_script:
+  - redis-server --port 6379 --requirepass 123 &
   - psql -f $TRAVIS_BUILD_DIR/server/core/src/main/resources/create_schema.sql -U postgres
 
 script:
