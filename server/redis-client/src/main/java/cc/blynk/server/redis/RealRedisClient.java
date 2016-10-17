@@ -28,15 +28,19 @@ public class RealRedisClient implements Closeable, RedisClient {
     private final JedisPool userPool;
 
     public RealRedisClient(Properties props) {
-        this(props.getProperty("redis.host"), props.getProperty("redis.pass"));
+        this(props.getProperty("redis.host"), props.getProperty("redis.pass"), props.getProperty("redis.port"));
     }
 
-    protected RealRedisClient(String host, String pass) {
+    protected RealRedisClient(String host, String pass, String port) {
+        this(host, pass, (port == null ? Protocol.DEFAULT_PORT : Integer.parseInt(port)));
+    }
+
+    protected RealRedisClient(String host, String pass, int port) {
         JedisPoolConfig config = new JedisPoolConfig();
         config.setMaxTotal(10);
         config.setBlockWhenExhausted(true);
-        this.userPool = new JedisPool(config, host, Protocol.DEFAULT_PORT, Protocol.DEFAULT_TIMEOUT, pass, USER_DB_INDEX);
-        this.tokenPool = new JedisPool(config, host, Protocol.DEFAULT_PORT, Protocol.DEFAULT_TIMEOUT, pass, TOKEN_DB_INDEX);
+        this.userPool = new JedisPool(config, host, port, Protocol.DEFAULT_TIMEOUT, pass, USER_DB_INDEX);
+        this.tokenPool = new JedisPool(config, host, port, Protocol.DEFAULT_TIMEOUT, pass, TOKEN_DB_INDEX);
         checkConnected();
     }
 

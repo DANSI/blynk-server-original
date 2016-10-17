@@ -1,5 +1,6 @@
 package cc.blynk.server.redis;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
@@ -14,13 +15,14 @@ public class RedisClientTest {
 
     @Test(expected = JedisConnectionException.class)
     public void testCreationFailed() {
-        RealRedisClient redisClient = new RealRedisClient("localhost", "");
+        RealRedisClient redisClient = new RealRedisClient("localhost", "", 6378);
         assertEquals(null, redisClient);
     }
 
     @Test
+    @Ignore
     public void testGetTestString() {
-        RealRedisClient redisClient = new RealRedisClient("localhost", "5b56cc09a8e7305b9761706350d277eb7b9a3815cf5fe6932a04ea82170a2917");
+        RealRedisClient redisClient = new RealRedisClient("localhost", "123", 6378);
         String result = redisClient.getServerByToken("test");
         assertEquals("It's working!", result);
     }

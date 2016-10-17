@@ -13,7 +13,7 @@ services:
   - postgresql
 
 before_script:
-  - redis-server --port 6379 --requirepass 123 &
+  - redis-server --port 6378 --requirepass 123 &
   - psql -f $TRAVIS_BUILD_DIR/server/core/src/main/resources/create_schema.sql -U postgres
 
 script:
