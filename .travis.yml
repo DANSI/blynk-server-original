@@ -13,7 +13,7 @@ services:
   - postgresql
 
 before_script:
-  - sudo redis-server /etc/redis/redis.conf --requirepass '123'
+  - sudo redis-server --requirepass '123'
   - psql -f $TRAVIS_BUILD_DIR/server/core/src/main/resources/create_schema.sql -U postgres
 
 script:
