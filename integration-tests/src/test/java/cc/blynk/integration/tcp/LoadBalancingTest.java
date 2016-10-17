@@ -23,6 +23,7 @@ import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.timeout;
@@ -126,7 +127,34 @@ public class LoadBalancingTest extends IntegrationBase {
         String token = workflowForUser(appClient1, username, pass, appName);
         assertEquals( "127.0.0.1", tokenJedis.get(token));
         assertEquals( "127.0.0.1", userJedis.get(username));
+    }
 
+    @Test
+    public void testDeleteTokenFromRedis() throws Exception {
+        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient1.start();
+
+        String username = "test_new@gmail.com";
+        String pass = "a";
+        String appName = "Blynk";
+
+        appClient1.send("getServer " + username);
+        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "127.0.0.1")));
+
+        appClient1.reset();
+
+        Jedis userJedis = holder.redisClient.getUserClient();
+        Jedis tokenJedis = holder.redisClient.getTokenClient();
+
+        String token = workflowForUser(appClient1, username, pass, appName);
+        assertEquals( "127.0.0.1", tokenJedis.get(token));
+        assertEquals( "127.0.0.1", userJedis.get(username));
+
+        appClient1.reset();
+        appClient1.send("deleteDash 1");
+        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        assertNull(tokenJedis.get(token));
+        assertEquals( "127.0.0.1", userJedis.get(username));
     }
 
     private String workflowForUser(TestAppClient appClient, String username, String pass, String appName) throws Exception{

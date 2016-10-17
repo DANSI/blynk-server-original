@@ -54,9 +54,11 @@ public class DeleteDashLogic {
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
         String removedToken = tokenManager.deleteProject(user, dashId);
 
-        blockingIOProcessor.execute(() -> {
-            redisClient.removeToken(removedToken);
-        });
+        if (removedToken != null) {
+            blockingIOProcessor.execute(() -> {
+                redisClient.removeToken(removedToken);
+            });
+        }
 
         user.lastModifiedTs = System.currentTimeMillis();
 
