@@ -9,7 +9,7 @@ jdk:
   - oraclejdk8
 
 services:
-  - redis-server
+  - redis
   - postgresql
 
 before_script:
