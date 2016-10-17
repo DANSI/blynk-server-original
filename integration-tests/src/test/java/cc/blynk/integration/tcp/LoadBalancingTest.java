@@ -94,6 +94,19 @@ public class LoadBalancingTest extends IntegrationBase {
     }
 
     @Test
+    public void testNoRedirectAsTokenIsWrong() throws Exception {
+        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
+        hardClient.start();
+
+        hardClient.send("login 123");
+        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, INVALID_TOKEN)));
+
+        holder.redisClient.assignServerToToken("123", "127.0.0.1");
+        hardClient.send("login 123");
+        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, INVALID_TOKEN)));
+    }
+
+    @Test
     public void testNewUserStoredInRedis() throws Exception {
         TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient1.start();
