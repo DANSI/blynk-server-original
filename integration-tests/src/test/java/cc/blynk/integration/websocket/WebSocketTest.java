@@ -15,12 +15,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Response.OK;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -46,9 +47,9 @@ public class WebSocketTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         if (webSocketServer == null) {
-            webSocketServer = new WebSocketServer(holder).start(transportTypeHolder);
-            appServer = new AppServer(holder).start(transportTypeHolder);
-            hardwareServer = new HardwareServer(holder).start(transportTypeHolder);
+            webSocketServer = new WebSocketServer(holder).start();
+            appServer = new AppServer(holder).start();
+            hardwareServer = new HardwareServer(holder).start();
             clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
         }
     }

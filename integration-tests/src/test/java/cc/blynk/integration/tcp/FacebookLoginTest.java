@@ -26,11 +26,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static org.junit.Assert.*;
+import static cc.blynk.server.core.protocol.enums.Response.OK;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -47,8 +48,8 @@ public class FacebookLoginTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        this.hardwareServer = new HardwareServer(holder).start(transportTypeHolder);
-        this.appServer = new AppServer(holder).start(transportTypeHolder);
+        this.hardwareServer = new HardwareServer(holder).start();
+        this.appServer = new AppServer(holder).start();
     }
 
     @After

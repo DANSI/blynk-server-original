@@ -101,8 +101,8 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        this.hardwareServer = new HardwareServer(holder).start(transportTypeHolder);
-        this.appServer = new AppServer(holder).start(transportTypeHolder);
+        this.hardwareServer = new HardwareServer(holder).start();
+        this.appServer = new AppServer(holder).start();
 
         this.clientPair = initAppAndHardPair();
     }

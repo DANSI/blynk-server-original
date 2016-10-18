@@ -28,7 +28,7 @@ public class WebSocketServer extends BaseServer {
     public static final String WEBSOCKET_PATH = "/websocket";
 
     public WebSocketServer(Holder holder) {
-        super(holder.props.getIntProperty("tcp.websocket.port"));
+        super(holder.props.getIntProperty("tcp.websocket.port"), holder.transportTypeHolder);
 
         final int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder);

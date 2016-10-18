@@ -19,7 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.InputStream;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * The Blynk Project.
@@ -43,7 +43,7 @@ public class HttpAPIProjectTest extends BaseTest {
     @Before
     public void init() throws Exception {
         if (httpServer == null) {
-            httpServer = new HttpAPIServer(holder).start(transportTypeHolder);
+            httpServer = new HttpAPIServer(holder).start();
             httpsServerUrl = String.format("http://localhost:%s/", httpPort);
             httpclient = HttpClients.createDefault();
         }

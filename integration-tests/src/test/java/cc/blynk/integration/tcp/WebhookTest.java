@@ -55,9 +55,9 @@ public class WebhookTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder).start(transportTypeHolder);
-        hardwareServer = new HardwareServer(holder).start(transportTypeHolder);
-        appServer = new AppServer(holder).start(transportTypeHolder);
+        httpServer = new HttpAPIServer(holder).start();
+        hardwareServer = new HardwareServer(holder).start();
+        appServer = new AppServer(holder).start();
         httpServerUrl = String.format("http://localhost:%s/", httpPort);
 
         httpclient = new DefaultAsyncHttpClient(

@@ -12,10 +12,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -35,7 +36,7 @@ public class WebSslSocketTest extends BaseTest {
     @Before
     public void init() throws Exception {
         if (webSocketServer == null) {
-            webSocketServer = new WebSocketSSLServer(holder).start(transportTypeHolder);
+            webSocketServer = new WebSocketSSLServer(holder).start();
         }
     }
 

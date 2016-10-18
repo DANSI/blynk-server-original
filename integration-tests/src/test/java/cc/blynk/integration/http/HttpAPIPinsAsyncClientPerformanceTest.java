@@ -42,7 +42,7 @@ public class HttpAPIPinsAsyncClientPerformanceTest extends BaseTest {
     @Before
     public void init() throws Exception {
         if (httpServer == null) {
-            httpServer = new HttpAPIServer(holder).start(transportTypeHolder);
+            httpServer = new HttpAPIServer(holder).start();
             httpsServerUrl = String.format("http://localhost:%s/", 8080);
             httpclient = new DefaultAsyncHttpClient(
                     new DefaultAsyncHttpClientConfig.Builder()

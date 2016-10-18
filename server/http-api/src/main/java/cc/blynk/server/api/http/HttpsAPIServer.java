@@ -35,7 +35,7 @@ public class HttpsAPIServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HttpsAPIServer(Holder holder, boolean isUnpacked) {
-        super(holder.props.getIntProperty("https.port"));
+        super(holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 
         HandlerRegistry.register(new HttpAPILogic(holder));
         HandlerRegistry.register(new HttpBusinessAPILogic(holder));

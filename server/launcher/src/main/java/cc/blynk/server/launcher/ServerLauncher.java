@@ -1,7 +1,6 @@
 package cc.blynk.server.launcher;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.TransportTypeHolder;
 import cc.blynk.server.admin.http.HttpsAdminServer;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.HttpsAPIServer;
@@ -76,7 +75,7 @@ public class ServerLauncher {
                 new MQTTHardwareServer(holder)
         };
 
-        if (startServers(servers, holder.transportTypeHolder)) {
+        if (startServers(servers)) {
             //Launching all background jobs.
             JobLauncher.start(holder, servers);
 
@@ -86,11 +85,11 @@ public class ServerLauncher {
         }
     }
 
-    private static boolean startServers(BaseServer[] servers, TransportTypeHolder transportType) {
+    private static boolean startServers(BaseServer[] servers) {
         //start servers
         try {
             for (BaseServer server : servers) {
-                server.start(transportType);
+                server.start();
             }
             return true;
         } catch (BindException bindException) {

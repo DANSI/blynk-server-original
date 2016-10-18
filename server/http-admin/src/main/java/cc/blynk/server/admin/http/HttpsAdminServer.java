@@ -31,7 +31,7 @@ public class HttpsAdminServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HttpsAdminServer(Holder holder, boolean isUnpacked) {
-        super(holder.props.getIntProperty("administration.https.port", 7443));
+        super(holder.props.getIntProperty("administration.https.port", 7443), holder.transportTypeHolder);
 
         final String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
 

@@ -20,7 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * The Blynk Project.
@@ -42,7 +42,7 @@ public class HttpAPIKeepAliveServerTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder).start(transportTypeHolder);
+        httpServer = new HttpAPIServer(holder).start();
         httpServerUrl = String.format("http://localhost:%s/", httpPort);
 
         //this http client doesn't close HTTP connection.

@@ -44,9 +44,9 @@ public class TableCommandsTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder).start(transportTypeHolder);
-        hardwareServer = new HardwareServer(holder).start(transportTypeHolder);
-        appServer = new AppServer(holder).start(transportTypeHolder);
+        httpServer = new HttpAPIServer(holder).start();
+        hardwareServer = new HardwareServer(holder).start();
+        appServer = new AppServer(holder).start();
 
         if (clientPair == null) {
             clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);

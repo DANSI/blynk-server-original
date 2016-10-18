@@ -59,7 +59,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         if (httpServer == null) {
-            httpServer = new HttpAPIServer(holder).start(transportTypeHolder);
+            httpServer = new HttpAPIServer(holder).start();
             httpsServerUrl = String.format("http://localhost:%s/", httpPort);
             httpclient = new DefaultAsyncHttpClient(
                     new DefaultAsyncHttpClientConfig.Builder()
@@ -67,8 +67,8 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
                             .setKeepAlive(false)
                             .build()
             );
-            hardwareServer = new HardwareServer(holder).start(transportTypeHolder);
-            appServer = new AppServer(holder).start(transportTypeHolder);
+            hardwareServer = new HardwareServer(holder).start();
+            appServer = new AppServer(holder).start();
             if (clientPair == null) {
                 clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
             }

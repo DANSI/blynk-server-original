@@ -25,13 +25,16 @@ public abstract class BaseServer implements Closeable {
     protected static final Logger log = LogManager.getLogger(BaseServer.class);
 
     private final int port;
+    private final TransportTypeHolder transportTypeHolder;
+
     private ChannelFuture cf;
 
-    protected BaseServer(int port) {
+    protected BaseServer(int port, TransportTypeHolder transportTypeHolder) {
         this.port = port;
+        this.transportTypeHolder = transportTypeHolder;
     }
 
-    public BaseServer start(TransportTypeHolder transportTypeHolder) throws Exception {
+    public BaseServer start() throws Exception {
         buildServerAndRun(
                 transportTypeHolder.bossGroup,
                 transportTypeHolder.workerGroup,

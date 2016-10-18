@@ -44,8 +44,8 @@ public class LoadBalancingTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         holder.props.setProperty("load.balancing.ips", "127.0.0.1");
-        hardwareServer = new HardwareServer(holder).start(transportTypeHolder);
-        appServer = new AppServer(holder).start(transportTypeHolder);
+        hardwareServer = new HardwareServer(holder).start();
+        appServer = new AppServer(holder).start();
         holder.redisClient.getTokenClient().flushDB();
         holder.redisClient.getUserClient().flushDB();
     }

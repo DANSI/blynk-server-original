@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * The Blynk Project.
@@ -41,8 +41,8 @@ public class SimplePerformanceTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         this.sharedNioEventLoopGroup = new NioEventLoopGroup();
-        this.hardwareServer = new HardwareServer(holder).start(transportTypeHolder);
-        this.appServer = new AppServer(holder).start(transportTypeHolder);
+        this.hardwareServer = new HardwareServer(holder).start();
+        this.appServer = new AppServer(holder).start();
     }
 
 

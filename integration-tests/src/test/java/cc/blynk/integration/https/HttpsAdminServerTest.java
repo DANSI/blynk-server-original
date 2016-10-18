@@ -21,11 +21,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.net.ssl.*;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * The Blynk Project.
@@ -41,7 +46,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        this.httpAdminServer = new HttpsAdminServer(holder, true).start(transportTypeHolder);
+        this.httpAdminServer = new HttpsAdminServer(holder, true).start();
 
         httpsServerUrl = String.format("https://localhost:%s/admin/users/", administrationPort);
 

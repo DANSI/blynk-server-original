@@ -29,7 +29,7 @@ public class HttpAPIServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HttpAPIServer(Holder holder) {
-        super(holder.props.getIntProperty("http.port"));
+        super(holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
 
         HandlerRegistry.register(new ResetPasswordLogic(holder.props, holder.userDao, holder.mailWrapper));
         HandlerRegistry.register(new HttpAPILogic(holder));

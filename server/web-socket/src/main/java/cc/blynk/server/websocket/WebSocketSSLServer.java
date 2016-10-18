@@ -31,7 +31,7 @@ public class WebSocketSSLServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public WebSocketSSLServer(Holder holder) {
-        super(holder.props.getIntProperty("ssl.websocket.port"));
+        super(holder.props.getIntProperty("ssl.websocket.port"), holder.transportTypeHolder);
 
         final int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder);
