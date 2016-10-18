@@ -69,7 +69,7 @@ public class UsersLogicTest {
 
     @Test
     public void deleteUserByName() throws Exception {
-        Response response = usersLogic.deleteUserByName(TEST_USER);
+        Response response = usersLogic.deleteUserByName(TEST_USER + "-" + AppName.BLYNK);
 
         assertEquals(OK, response.status());
         assertFalse(Files.exists(userFile));
@@ -78,7 +78,7 @@ public class UsersLogicTest {
 
     @Test
     public void deleteFakeUserByName() throws Exception {
-        Response response = usersLogic.deleteUserByName("fake user");
+        Response response = usersLogic.deleteUserByName("fake user" + "-" + AppName.BLYNK);
 
         assertEquals(NOT_FOUND, response.status());
     }
