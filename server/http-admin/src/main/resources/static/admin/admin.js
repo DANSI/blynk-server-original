@@ -5,7 +5,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         .baseApiUrl(location.protocol + '//' + window.location.hostname + (location.port == 80 ? '' : (':' + location.port)) + location.pathname + '/'); // main API endpoint
     // create a user entity
     // the API endpoint for this entity will be 'http://jsonplaceholder.typicode.com/users/:id
-    var users = nga.entity('users').identifier(nga.field('name'));
+    var users = nga.entity('users').identifier(nga.field('id'));
     // set the fields of the user entity list view
     users.listView()
         .sortField('lastModifiedTs')

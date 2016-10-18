@@ -68,9 +68,12 @@ public class UsersLogic extends HttpLogicUtil {
     }
 
     @GET
-    @Path("/{name}")
-    public Response getUserByName(@PathParam("name") String name) {
-        return ok(userDao.getByName(name, AppName.BLYNK));
+    @Path("/{id}")
+    public Response getUserByName(@PathParam("id") String id) {
+        String[] parts = id.split("-");
+        String name = parts[0];
+        String appName = parts[1];
+        return ok(userDao.getByName(name, appName));
     }
 
     @GET
@@ -88,12 +91,17 @@ public class UsersLogic extends HttpLogicUtil {
 
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
-    @Path("/{name}")
-    public Response updateUser(@PathParam("name") String name,
+    @Path("/{id}")
+    public Response updateUser(@PathParam("id") String id,
                                    User updatedUser) {
 
-        log.debug("Updating user {}", name);
-        User oldUser = userDao.getByName(name, updatedUser.appName);
+        log.debug("Updating user {}", id);
+
+        String[] parts = id.split("-");
+        String name = parts[0];
+        String appName = parts[1];
+
+        User oldUser = userDao.getByName(name, appName);
 
         //if pass was changed, cal hash.
         if (!updatedUser.pass.equals(oldUser.pass)) {
@@ -110,15 +118,18 @@ public class UsersLogic extends HttpLogicUtil {
     }
 
     @DELETE
-    @Path("/{name}")
-    public Response deleteUserByName(@PathParam("name") String name) {
-        //todo pass app name from UI
-        User user = userDao.delete(name, AppName.BLYNK);
+    @Path("/{id}")
+    public Response deleteUserByName(@PathParam("id") String id) {
+        String[] parts = id.split("-");
+        String name = parts[0];
+        String appName = parts[1];
+
+        User user = userDao.delete(name, appName);
         if (user == null) {
             return new Response(HTTP_1_1, NOT_FOUND);
         }
 
-        if (!fileManager.delete(name, user.appName)) {
+        if (!fileManager.delete(name, appName)) {
             return new Response(HTTP_1_1, NOT_FOUND);
         }
 

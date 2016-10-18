@@ -108,7 +108,8 @@ public class HttpsAdminServerTest extends BaseTest {
     @Test
     public void testGetUserFromAdminPage() throws Exception {
         String testUser = "dmitriy@blynk.cc";
-        HttpGet request = new HttpGet(httpsServerUrl + testUser);
+        String appName = "Blynk";
+        HttpGet request = new HttpGet(httpsServerUrl + testUser + "-" + appName);
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

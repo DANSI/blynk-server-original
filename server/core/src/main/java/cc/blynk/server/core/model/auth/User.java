@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.JsonParser;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -58,6 +59,12 @@ public class User {
         this.region = region;
         this.isFacebookUser = isFacebookUser;
     }
+
+    @JsonProperty("id")
+    private String id() {
+        return name + "-" + appName;
+    }
+
 
     public void setProfile(Profile profile) {
         //todo remove later.
