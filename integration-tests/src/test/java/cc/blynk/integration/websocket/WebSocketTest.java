@@ -47,7 +47,7 @@ public class WebSocketTest extends IntegrationBase {
         appServer.close();
         hardwareServer.close();
         clientPair.stop();
-        localHolder.transportTypeHolder.close();
+        localHolder.close();
     }
 
     @BeforeClass

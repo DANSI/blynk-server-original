@@ -48,14 +48,7 @@ public class ShutdownHookWorker implements Runnable {
         profileSaverWorker.close();
 
         System.out.println("Stopping aggregator...");
-        holder.averageAggregator.close();
-
-        System.out.println("Stopping BlockingIOProcessor...");
-        holder.blockingIOProcessor.close();
-
-        holder.dbManager.close();
-
-        holder.transportTypeHolder.close();
+        holder.close();
 
         System.out.println("Done.");
     }

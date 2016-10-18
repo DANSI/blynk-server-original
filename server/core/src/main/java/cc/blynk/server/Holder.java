@@ -24,6 +24,8 @@ import cc.blynk.utils.ServerProperties;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
+import java.io.Closeable;
+
 import static cc.blynk.utils.ReportingUtil.getReportingFolder;
 
 /**
@@ -33,7 +35,7 @@ import static cc.blynk.utils.ReportingUtil.getReportingFolder;
  * Created by Dmitriy Dumanskiy.
  * Created on 28.09.15.
  */
-public class Holder {
+public class Holder implements Closeable {
 
     public final FileManager fileManager;
 
@@ -157,4 +159,20 @@ public class Holder {
         this.currentIp = serverProperties.getProperty("reset-pass.http.host", IPUtils.resolveHostIP());
     }
 
+    @Override
+    public void close() {
+        System.out.println("Stopping aggregator...");
+        this.averageAggregator.close();
+
+        System.out.println("Stopping BlockingIOProcessor...");
+        this.blockingIOProcessor.close();
+
+        System.out.println("Stopping DBManager...");
+        this.dbManager.close();
+
+        System.out.println("Stopping Transport Holder...");
+        transportTypeHolder.close();
+
+        redisClient.close();
+    }
 }

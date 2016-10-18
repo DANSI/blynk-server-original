@@ -97,12 +97,12 @@ public abstract class BaseTest {
 
     @After
     public void closeTransport() {
-        this.holder.transportTypeHolder.close();
+        this.holder.close();
     }
 
     @AfterClass
     public static void closeStaticTransport() {
-        staticHolder.transportTypeHolder.close();
+        staticHolder.close();
     }
 
     public String getDataFolder() {

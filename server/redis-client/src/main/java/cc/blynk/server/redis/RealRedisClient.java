@@ -7,8 +7,6 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -16,7 +14,7 @@ import java.util.Properties;
  * Created by Dmitriy Dumanskiy.
  * Created on 14.10.16.
  */
-public class RealRedisClient implements Closeable, RedisClient {
+public class RealRedisClient implements RedisClient {
 
     public static final String REDIS_PROPERTIES = "redis.properties";
     public static final int USER_DB_INDEX = 0;
@@ -93,8 +91,15 @@ public class RealRedisClient implements Closeable, RedisClient {
     }
 
     @Override
-    public void close() throws IOException {
-        userPool.destroy();
-        tokenPool.destroy();
+    public void close() {
+        System.out.println("Stopping Redis...");
+        try {
+            userPool.destroy();
+        } catch (Exception e) {
+        }
+        try {
+            tokenPool.destroy();
+        } catch (Exception e) {
+        }
     }
 }

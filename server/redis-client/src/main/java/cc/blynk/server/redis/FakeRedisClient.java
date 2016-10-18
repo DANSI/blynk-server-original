@@ -38,4 +38,9 @@ public class FakeRedisClient implements RedisClient {
     public Jedis getTokenClient() {
         return null;
     }
+
+    @Override
+    public void close() {
+
+    }
 }

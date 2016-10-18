@@ -34,7 +34,7 @@ public class HttpBusinessAPITest extends BaseTest {
     public static void shutdown() throws Exception {
         httpclient.close();
         httpServer.close();
-        localHolder.transportTypeHolder.close();
+        localHolder.close();
     }
 
     @BeforeClass
