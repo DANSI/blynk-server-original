@@ -80,6 +80,16 @@
                     <tagNameFormat>v@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin.version}</version>
+                <configuration>
+                    <argLine>-Xmx512m</argLine>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
@@ -119,6 +129,7 @@
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
         <maven.assembly.plugin.version>2.6</maven.assembly.plugin.version>
+        <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
 
         <!-- dependencies -->
         <netty.version>4.1.4.Final</netty.version>
