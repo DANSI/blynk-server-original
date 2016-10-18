@@ -12,8 +12,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static org.mockito.Mockito.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
+import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -34,6 +42,7 @@ public class WidgetWorkflowTest extends IntegrationBase {
         this.appServer = new AppServer(holder).start(transportTypeHolder);
 
         this.clientPair = initAppAndHardPair();
+        Files.deleteIfExists(Paths.get(getDataFolder(), "blynk", "userProfiles"));
     }
 
     @After
@@ -72,6 +81,11 @@ public class WidgetWorkflowTest extends IntegrationBase {
     public void testWidgetAlreadyExists() throws Exception {
         clientPair.appClient.send("createWidget 1\0{\"id\":1,\"type\":\"BUTTON\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
+    }
+
+    @Override
+    public String getDataFolder() {
+        return Paths.get(System.getProperty("java.io.tmpdir"), "userProfiles").toString();
     }
 
 }
