@@ -1,6 +1,7 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
+import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
@@ -16,7 +17,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -36,25 +37,22 @@ public class HttpAPIPinsTest extends BaseTest {
     private static BaseServer httpServer;
     private static CloseableHttpClient httpclient;
     private static String httpsServerUrl;
+    private static Holder localHolder;
+
+    @BeforeClass
+    public static void init() throws Exception {
+        properties.setProperty("data.folder", getRelativeDataFolder("/profiles"));
+        localHolder = new Holder(properties);
+        httpServer = new HttpAPIServer(localHolder).start();
+        httpsServerUrl = String.format("http://localhost:%s/", httpPort);
+        httpclient = HttpClients.createDefault();
+    }
 
     @AfterClass
     public static void shutdown() throws Exception {
         httpclient.close();
         httpServer.close();
-    }
-
-    @Before
-    public void init() throws Exception {
-        if (httpServer == null) {
-            httpServer = new HttpAPIServer(holder).start();
-            httpsServerUrl = String.format("http://localhost:%s/", httpPort);
-            httpclient = HttpClients.createDefault();
-        }
-    }
-
-    @Override
-    public String getDataFolder() {
-        return getRelativeDataFolder("/profiles");
+        localHolder.transportTypeHolder.close();
     }
 
     //----------------------------GET METHODS SECTION

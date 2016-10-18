@@ -19,6 +19,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -63,18 +64,18 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.stop();
     }
 
+    @BeforeClass
+    public static void init() throws Exception {
+        httpServer = new HttpAPIServer(staticHolder).start();
+        hardwareServer = new HardwareServer(staticHolder).start();
+        appServer = new AppServer(staticHolder).start();
+        httpServerUrl = String.format("http://localhost:%s/", httpPort);
+        httpclient = HttpClients.createDefault();
+        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+    }
+
     @Before
-    public void init() throws Exception {
-        if (httpServer == null) {
-            httpServer = new HttpAPIServer(holder).start();
-            hardwareServer = new HardwareServer(holder).start();
-            appServer = new AppServer(holder).start();
-            httpServerUrl = String.format("http://localhost:%s/", httpPort);
-            httpclient = HttpClients.createDefault();
-        }
-        if (clientPair == null) {
-            clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
-        }
+    public void resetBefore() {
         clientPair.hardwareClient.reset();
         clientPair.appClient.reset();
     }
@@ -267,7 +268,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
             assertEquals("false", value);
         }
 
-        clientPair = null;
+        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
     }
 
     @Test

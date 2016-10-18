@@ -18,6 +18,7 @@ import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Response;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -56,23 +57,24 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         clientPair.stop();
     }
 
+    @BeforeClass
+    public static void init() throws Exception {
+        httpServer = new HttpAPIServer(staticHolder).start();
+        httpsServerUrl = String.format("http://localhost:%s/", httpPort);
+        httpclient = new DefaultAsyncHttpClient(
+                new DefaultAsyncHttpClientConfig.Builder()
+                        .setUserAgent("")
+                        .setKeepAlive(false)
+                        .build()
+        );
+        hardwareServer = new HardwareServer(staticHolder).start();
+        appServer = new AppServer(staticHolder).start();
+
+        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+    }
+
     @Before
-    public void init() throws Exception {
-        if (httpServer == null) {
-            httpServer = new HttpAPIServer(holder).start();
-            httpsServerUrl = String.format("http://localhost:%s/", httpPort);
-            httpclient = new DefaultAsyncHttpClient(
-                    new DefaultAsyncHttpClientConfig.Builder()
-                            .setUserAgent("")
-                            .setKeepAlive(false)
-                            .build()
-            );
-            hardwareServer = new HardwareServer(holder).start();
-            appServer = new AppServer(holder).start();
-            if (clientPair == null) {
-                clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
-            }
-        }
+    public void reset() {
         clientPair.appClient.reset();
     }
 

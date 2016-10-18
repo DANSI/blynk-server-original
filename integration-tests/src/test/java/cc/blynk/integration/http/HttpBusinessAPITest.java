@@ -1,6 +1,7 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
+import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -8,7 +9,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -27,25 +28,22 @@ public class HttpBusinessAPITest extends BaseTest {
     private static BaseServer httpServer;
     private static CloseableHttpClient httpclient;
     private static String httpsServerUrl;
+    private static Holder localHolder;
 
     @AfterClass
     public static void shutdown() throws Exception {
         httpclient.close();
         httpServer.close();
+        localHolder.transportTypeHolder.close();
     }
 
-    @Before
-    public void init() throws Exception {
-        if (httpServer == null) {
-            httpServer = new HttpAPIServer(holder).start();
-            httpsServerUrl = String.format("http://localhost:%s/0130aceeb3864280b863c118eb84a8df/query", httpPort);
-            httpclient = HttpClients.createDefault();
-        }
-    }
-
-    @Override
-    public String getDataFolder() {
-        return getRelativeDataFolder("/business_profile");
+    @BeforeClass
+    public static void init() throws Exception {
+        properties.setProperty("data.folder", getRelativeDataFolder("/business_profile"));
+        localHolder = new Holder(properties);
+        httpServer = new HttpAPIServer(localHolder).start();
+        httpsServerUrl = String.format("http://localhost:%s/0130aceeb3864280b863c118eb84a8df/query", httpPort);
+        httpclient = HttpClients.createDefault();
     }
 
     //----------------------------GET METHODS SECTION

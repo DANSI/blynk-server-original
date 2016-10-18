@@ -11,6 +11,8 @@ import cc.blynk.utils.ServerProperties;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.mockito.Mock;
@@ -23,6 +25,8 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.util.List;
 
+import static org.mockito.Mockito.mock;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -32,8 +36,6 @@ public abstract class BaseTest {
 
     public static ServerProperties properties;
 
-    public Holder holder;
-
     //tcp app/hardware ports
     public static int tcpAppPort;
     public static int tcpHardPort;
@@ -42,20 +44,20 @@ public abstract class BaseTest {
     public static int httpPort;
     public static int httpsPort;
 
+    public Holder holder;
     @Mock
     public BlockingIOProcessor blockingIOProcessor;
-
     @Mock
     public TwitterWrapper twitterWrapper;
-
     @Mock
     public MailWrapper mailWrapper;
-
     @Mock
     public GCMWrapper gcmWrapper;
-
     @Mock
     public SMSWrapper smsWrapper;
+
+
+    public static Holder staticHolder;
 
     public static void sleep(int ms) {
         try {
@@ -80,6 +82,8 @@ public abstract class BaseTest {
 
         httpPort = properties.getIntProperty("http.port");
         httpsPort = properties.getIntProperty("https.port");
+
+        staticHolder = new Holder(properties, mock(TwitterWrapper.class), mock(MailWrapper.class), mock(GCMWrapper.class), mock(SMSWrapper.class));
     }
 
     @Before
@@ -89,7 +93,16 @@ public abstract class BaseTest {
         }
 
         this.holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper);
+    }
 
+    @After
+    public void closeTransport() {
+        this.holder.transportTypeHolder.close();
+    }
+
+    @AfterClass
+    public static void closeStaticTransport() {
+        staticHolder.transportTypeHolder.close();
     }
 
     public String getDataFolder() {
@@ -128,3 +141,4 @@ public abstract class BaseTest {
     }
 
 }
+

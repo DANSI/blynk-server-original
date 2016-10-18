@@ -3,6 +3,7 @@ package cc.blynk.integration.websocket;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.websocket.WebSocketClient;
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -10,7 +11,7 @@ import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.websocket.WebSocketServer;
 import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -35,10 +36,10 @@ public class WebSocketTest extends IntegrationBase {
     private static BaseServer hardwareServer;
     private static BaseServer appServer;
     private static ClientPair clientPair;
+    private static Holder localHolder;
 
     //web socket ports
     public static int tcpWebSocketPort;
-
 
     @AfterClass
     public static void shutdown() throws Exception {
@@ -46,22 +47,18 @@ public class WebSocketTest extends IntegrationBase {
         appServer.close();
         hardwareServer.close();
         clientPair.stop();
+        localHolder.transportTypeHolder.close();
     }
 
-    @Before
-    public void init() throws Exception {
+    @BeforeClass
+    public static void init() throws Exception {
+        properties.setProperty("data.folder", getRelativeDataFolder("/profiles"));
+        localHolder = new Holder(properties);
         tcpWebSocketPort = properties.getIntProperty("tcp.websocket.port");
-        if (webSocketServer == null) {
-            webSocketServer = new WebSocketServer(holder).start();
-            appServer = new AppServer(holder).start();
-            hardwareServer = new HardwareServer(holder).start();
-            clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
-        }
-    }
-
-    @Override
-    public String getDataFolder() {
-        return getRelativeDataFolder("/profiles");
+        webSocketServer = new WebSocketServer(localHolder).start();
+        appServer = new AppServer(localHolder).start();
+        hardwareServer = new HardwareServer(localHolder).start();
+        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
     }
 
     @Test

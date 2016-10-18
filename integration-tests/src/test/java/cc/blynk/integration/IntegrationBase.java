@@ -71,7 +71,7 @@ public abstract class IntegrationBase extends BaseTest {
         return new ResponseMessage(msgId, 200);
     }
 
-    public ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
+    public static ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
                                                 ServerProperties properties, int energy) throws Exception {
 
         TestAppClient appClient = new TestAppClient(host, appPort, properties);
@@ -80,7 +80,7 @@ public abstract class IntegrationBase extends BaseTest {
         return initAppAndHardPair(appClient, hardClient, user, jsonProfile, energy);
     }
 
-    public ClientPair initAppAndHardPair(TestAppClient appClient, TestHardClient hardClient, String user,
+    public static ClientPair initAppAndHardPair(TestAppClient appClient, TestHardClient hardClient, String user,
                                                 String jsonProfile, int energy) throws Exception {
 
         appClient.start();
@@ -142,19 +142,19 @@ public abstract class IntegrationBase extends BaseTest {
         return new ClientPair(appClient, hardClient, token);
     }
 
-    public ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {
+    public static ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {
         return initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, DEFAULT_TEST_USER + " 1", null, properties, 10000);
     }
 
-    public ClientPair initAppAndHardPair() throws Exception {
+    public static ClientPair initAppAndHardPair() throws Exception {
         return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER + " 1", null, properties, 10000);
     }
 
-    public ClientPair initAppAndHardPair(int energy) throws Exception {
+    public static ClientPair initAppAndHardPair(int energy) throws Exception {
         return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER + " 1", null, properties, energy);
     }
 
-    public ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
+    public static ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
         return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER + " 1", jsonProfile, properties, 10000);
     }
 
