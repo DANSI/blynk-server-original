@@ -16,6 +16,8 @@ import org.junit.Before;
 import org.mockito.Mock;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
 import java.util.List;
 
 /**
@@ -102,7 +104,11 @@ public abstract class BaseTest {
     }
 
     public String getDataFolder() {
-        return null;
+        try {
+            return Files.createTempDirectory("blynk_test_", new FileAttribute[0]).toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Unable create temp dir.", e);
+        }
     }
 
     @SuppressWarnings("unchecked")

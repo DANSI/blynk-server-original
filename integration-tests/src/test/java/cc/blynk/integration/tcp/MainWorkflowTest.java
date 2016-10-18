@@ -41,13 +41,11 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.FileAttribute;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -1421,12 +1419,4 @@ public class MainWorkflowTest extends IntegrationBase {
 
     }
 
-    @Override
-    public String getDataFolder() {
-         try {
-             return Files.createTempDirectory("blynk_test_", new FileAttribute[0]).toString();
-         } catch (IOException e) {
-             throw new RuntimeException("Unable create temp dir.", e);
-         }
-    }
 }
