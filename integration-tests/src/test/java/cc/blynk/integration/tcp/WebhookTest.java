@@ -17,7 +17,9 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Response;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,22 +51,32 @@ public class WebhookTest extends IntegrationBase {
     private BaseServer httpServer;
     private BaseServer appServer;
     private BaseServer hardwareServer;
-    private AsyncHttpClient httpclient;
-    private String httpServerUrl;
     private ClientPair clientPair;
+
+    private static AsyncHttpClient httpclient;
+    private static String httpServerUrl;
+
+    @BeforeClass
+    public static void initHttpClient() {
+        httpServerUrl = String.format("http://localhost:%s/", httpPort);
+        httpclient = new DefaultAsyncHttpClient(
+                new DefaultAsyncHttpClientConfig.Builder()
+                        .setUserAgent("")
+                        .setKeepAlive(true)
+                        .build());
+    }
+
+    @AfterClass
+    public static void closeHttpClient() throws Exception {
+        httpclient.close();
+    }
 
     @Before
     public void init() throws Exception {
         httpServer = new HttpAPIServer(holder).start();
         hardwareServer = new HardwareServer(holder).start();
         appServer = new AppServer(holder).start();
-        httpServerUrl = String.format("http://localhost:%s/", httpPort);
 
-        httpclient = new DefaultAsyncHttpClient(
-                new DefaultAsyncHttpClientConfig.Builder()
-                        .setUserAgent("")
-                        .setKeepAlive(true)
-                        .build());
 
         if (clientPair == null) {
             clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
