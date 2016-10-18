@@ -63,7 +63,7 @@ public class FacebookLoginTest extends IntegrationBase {
         String host = "localhost";
         String username = "shartax@gmail.com";
 
-        ClientPair clientPair = initAppAndHardPair(host, tcpAppPort, tcpHardPort, username + " 1", null, properties);
+        ClientPair clientPair = initAppAndHardPair(host, tcpAppPort, tcpHardPort, username + " 1", null, properties, 10000);
 
         ChannelFuture channelFuture = clientPair.appClient.stop();
         channelFuture.await();
@@ -121,7 +121,7 @@ public class FacebookLoginTest extends IntegrationBase {
 
         appClient.send("login " + user + "\0" + facebookAuthToken + "\0" + "Android" + "\0" + "1.10.4" + "\0" + "facebook");
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-        appClient.send("addEnergy " + getEnergyForTest() + "\0" + "123");
+        appClient.send("addEnergy " + 10000 + "\0" + "123");
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         saveProfile(appClient, profile.dashBoards);

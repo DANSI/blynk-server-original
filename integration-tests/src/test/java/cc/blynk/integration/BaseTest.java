@@ -12,6 +12,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.mockito.Mock;
 
 import java.io.IOException;
@@ -29,27 +30,17 @@ import java.util.List;
  */
 public abstract class BaseTest {
 
-    public ServerProperties properties;
+    public static ServerProperties properties;
 
     public Holder holder;
 
     //tcp app/hardware ports
-    public int tcpAppPort;
-    public int tcpHardPort;
+    public static int tcpAppPort;
+    public static int tcpHardPort;
 
     //http/s ports
-    public int httpPort;
-    public int httpsPort;
-
-    //administration ports
-    public int administrationPort;
-
-    //web socket ports
-    public int tcpWebSocketPort;
-    public int sslWebSocketPort;
-
-    //mqtt socket port
-    public int mqttPort;
+    public static int httpPort;
+    public static int httpsPort;
 
     @Mock
     public BlockingIOProcessor blockingIOProcessor;
@@ -74,32 +65,31 @@ public abstract class BaseTest {
         }
     }
 
-    @Before
-    public void initBase() throws Exception {
-        this.properties = new ServerProperties();
+    @BeforeClass
+    public static void initProps() {
+        properties = new ServerProperties();
 
         //disable native linux epoll transport for non linux envs.
         if (!SystemUtils.IS_OS_LINUX) {
             System.out.println("WARNING : DISABLING NATIVE EPOLL TRANSPORT. SYSTEM : " + SystemUtils.OS_NAME);
-            this.properties.put("enable.native.epoll.transport", false);
+            properties.put("enable.native.epoll.transport", false);
         }
 
+        tcpAppPort = properties.getIntProperty("app.ssl.port");
+        tcpHardPort = properties.getIntProperty("hardware.default.port");
+
+        httpPort = properties.getIntProperty("http.port");
+        httpsPort = properties.getIntProperty("https.port");
+    }
+
+    @Before
+    public void initHolderAndDataFolder() throws Exception {
         if (getDataFolder() != null) {
-            this.properties.setProperty("data.folder", getDataFolder());
+            properties.setProperty("data.folder", getDataFolder());
         }
+
         this.holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper);
 
-        this.tcpAppPort = properties.getIntProperty("app.ssl.port");
-        this.tcpHardPort = properties.getIntProperty("hardware.default.port");
-
-        this.httpPort = properties.getIntProperty("http.port");
-        this.httpsPort = properties.getIntProperty("https.port");
-
-        this.administrationPort = properties.getIntProperty("administration.https.port");
-
-        this.tcpWebSocketPort = properties.getIntProperty("tcp.websocket.port");
-        this.sslWebSocketPort = properties.getIntProperty("ssl.websocket.port");
-        this.mqttPort = properties.getIntProperty("hardware.mqtt.port");
     }
 
     public String getDataFolder() {

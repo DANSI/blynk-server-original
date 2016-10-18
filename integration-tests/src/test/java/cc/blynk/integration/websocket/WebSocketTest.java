@@ -36,6 +36,10 @@ public class WebSocketTest extends IntegrationBase {
     private static BaseServer appServer;
     private static ClientPair clientPair;
 
+    //web socket ports
+    public static int tcpWebSocketPort;
+
+
     @AfterClass
     public static void shutdown() throws Exception {
         webSocketServer.close();
@@ -46,6 +50,7 @@ public class WebSocketTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
+        tcpWebSocketPort = properties.getIntProperty("tcp.websocket.port");
         if (webSocketServer == null) {
             webSocketServer = new WebSocketServer(holder).start();
             appServer = new AppServer(holder).start();

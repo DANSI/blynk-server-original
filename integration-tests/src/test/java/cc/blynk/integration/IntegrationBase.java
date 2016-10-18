@@ -72,16 +72,16 @@ public abstract class IntegrationBase extends BaseTest {
     }
 
     public ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
-                                                ServerProperties properties) throws Exception {
+                                                ServerProperties properties, int energy) throws Exception {
 
         TestAppClient appClient = new TestAppClient(host, appPort, properties);
         TestHardClient hardClient = new TestHardClient(host, hardPort);
 
-        return initAppAndHardPair(appClient, hardClient, user, jsonProfile);
+        return initAppAndHardPair(appClient, hardClient, user, jsonProfile, energy);
     }
 
     public ClientPair initAppAndHardPair(TestAppClient appClient, TestHardClient hardClient, String user,
-                                                String jsonProfile) throws Exception {
+                                                String jsonProfile, int energy) throws Exception {
 
         appClient.start();
         hardClient.start();
@@ -117,7 +117,7 @@ public abstract class IntegrationBase extends BaseTest {
 
         appClient.send("register " + user);
         appClient.send("login " + user + " Android" + "\0" + "1.10.4");
-        appClient.send("addEnergy " + getEnergyForTest() + "\0" + "123");
+        appClient.send("addEnergy " + energy + "\0" + "123");
         //we should wait until login finished. Only after that we can send commands
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
@@ -143,18 +143,19 @@ public abstract class IntegrationBase extends BaseTest {
     }
 
     public ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {
-        return initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, DEFAULT_TEST_USER + " 1", null, properties);
+        return initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, DEFAULT_TEST_USER + " 1", null, properties, 10000);
     }
 
     public ClientPair initAppAndHardPair() throws Exception {
-        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER + " 1", null, properties);
+        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER + " 1", null, properties, 10000);
+    }
+
+    public ClientPair initAppAndHardPair(int energy) throws Exception {
+        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER + " 1", null, properties, energy);
     }
 
     public ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
-        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER + " 1", jsonProfile, properties);
+        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER + " 1", jsonProfile, properties, 10000);
     }
 
-    public int getEnergyForTest() {
-        return 10000;
-    }
 }

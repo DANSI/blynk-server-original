@@ -101,7 +101,7 @@ public class SimplePerformanceTest extends IntegrationBase {
         TestAppClient appClient = new TestAppClient(host, appPort, properties, sharedNioEventLoopGroup);
         TestHardClient hardClient = new TestHardClient(host, hardPort, sharedNioEventLoopGroup);
 
-        return initAppAndHardPair(appClient, hardClient, user, jsonProfile);
+        return initAppAndHardPair(appClient, hardClient, user, jsonProfile, 10000);
     }
 
 }

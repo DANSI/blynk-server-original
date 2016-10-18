@@ -39,7 +39,7 @@ public class EnergyWorkflowTest extends IntegrationBase {
         this.hardwareServer = new HardwareServer(holder).start();
         this.appServer = new AppServer(holder).start();
 
-        this.clientPair = initAppAndHardPair();
+        this.clientPair = initAppAndHardPair(4500);
     }
 
     @After
@@ -127,8 +127,4 @@ public class EnergyWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(10, GET_ENERGY, "2000")));
     }
 
-    @Override
-    public int getEnergyForTest() {
-        return 4500;
-    }
 }

@@ -26,6 +26,7 @@ import static org.mockito.Mockito.verify;
 public class WebSslSocketTest extends BaseTest {
 
     private static BaseServer webSocketServer;
+    public static int sslWebSocketPort = properties.getIntProperty("ssl.websocket.port");
 
     @AfterClass
     public static void shutdown() throws Exception {

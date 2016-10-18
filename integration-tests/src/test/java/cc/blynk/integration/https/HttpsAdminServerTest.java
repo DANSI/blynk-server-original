@@ -43,8 +43,12 @@ public class HttpsAdminServerTest extends BaseTest {
     private CloseableHttpClient httpclient;
     private String httpsServerUrl;
 
+    //administration ports
+    public static int administrationPort;
+
     @Before
     public void init() throws Exception {
+        administrationPort = properties.getIntProperty("administration.https.port");
         this.httpAdminServer = new HttpsAdminServer(holder, true).start();
 
         httpsServerUrl = String.format("https://localhost:%s/admin/users/", administrationPort);
