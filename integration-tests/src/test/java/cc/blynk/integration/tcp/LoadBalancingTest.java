@@ -10,6 +10,7 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.ConnectRedirectMessage;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.redis.RealRedisClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,11 +44,15 @@ public class LoadBalancingTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        holder.props.setProperty("load.balancing.ips", "127.0.0.1");
         hardwareServer = new HardwareServer(holder).start();
         appServer = new AppServer(holder).start();
-        holder.redisClient.getTokenClient().flushDB();
-        holder.redisClient.getUserClient().flushDB();
+
+        try (Jedis jedis = ((RealRedisClient) holder.redisClient).getTokenPool().getResource()) {
+            jedis.flushDB();
+        }
+        try (Jedis jedis = ((RealRedisClient) holder.redisClient).getUserPool().getResource()) {
+            jedis.flushDB();
+        }
     }
 
     @After
@@ -68,7 +73,7 @@ public class LoadBalancingTest extends IntegrationBase {
         appClient1.send("getServer");
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
 
-        appClient1.send("getServer test@gmmail.com");
+        appClient1.send("getServer " + username + "\0" + appName);
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(2, "127.0.0.1")));
 
         appClient1.send("register " + username + " " + pass + " " + appName);
@@ -77,7 +82,7 @@ public class LoadBalancingTest extends IntegrationBase {
         //we should wait until login finished. Only after that we can send commands
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(4, OK)));
 
-        appClient1.send("getServer test@gmmail.com");
+        appClient1.send("getServer " + username + "\0" + appName);
         verify(appClient1.responseMock, timeout(1000).times(0)).channelRead(any(), eq(new GetServerMessage(5, "127.0.0.1")));
     }
 
@@ -116,17 +121,29 @@ public class LoadBalancingTest extends IntegrationBase {
         String pass = "a";
         String appName = "Blynk";
 
-        appClient1.send("getServer " + username);
+        appClient1.send("getServer " + username + "\0" + appName);
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "127.0.0.1")));
 
         appClient1.reset();
 
-        Jedis userJedis = holder.redisClient.getUserClient();
-        Jedis tokenJedis = holder.redisClient.getTokenClient();
-
         String token = workflowForUser(appClient1, username, pass, appName);
-        assertEquals( "127.0.0.1", tokenJedis.get(token));
-        assertEquals( "127.0.0.1", userJedis.get(username));
+        assertEquals( "127.0.0.1", holder.redisClient.getServerByToken(token));
+        assertEquals( "127.0.0.1", holder.redisClient.getServerByUser(username));
+    }
+
+    @Test
+    public void testUserIsOnOtherServer() throws Exception {
+        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient1.start();
+
+        String username = "test_new@gmail.com";
+        String pass = "a";
+        String appName = "Blynk";
+
+        holder.redisClient.assignServerToUser(username, "100.100.100.100");
+
+        appClient1.send("getServer " + username + "\0" + appName);
+        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "100.100.100.100")));
     }
 
     @Test
@@ -138,23 +155,20 @@ public class LoadBalancingTest extends IntegrationBase {
         String pass = "a";
         String appName = "Blynk";
 
-        appClient1.send("getServer " + username);
+        appClient1.send("getServer " + username + "\0" + appName);
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "127.0.0.1")));
 
         appClient1.reset();
 
-        Jedis userJedis = holder.redisClient.getUserClient();
-        Jedis tokenJedis = holder.redisClient.getTokenClient();
-
         String token = workflowForUser(appClient1, username, pass, appName);
-        assertEquals( "127.0.0.1", tokenJedis.get(token));
-        assertEquals( "127.0.0.1", userJedis.get(username));
+        assertEquals( "127.0.0.1", holder.redisClient.getServerByToken(token));
+        assertEquals( "127.0.0.1", holder.redisClient.getServerByUser(username));
 
         appClient1.reset();
         appClient1.send("deleteDash 1");
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
-        assertNull(tokenJedis.get(token));
-        assertEquals( "127.0.0.1", userJedis.get(username));
+        assertNull(holder.redisClient.getServerByToken(token));
+        assertEquals( "127.0.0.1", holder.redisClient.getServerByUser(username));
     }
 
     private String workflowForUser(TestAppClient appClient, String username, String pass, String appName) throws Exception{

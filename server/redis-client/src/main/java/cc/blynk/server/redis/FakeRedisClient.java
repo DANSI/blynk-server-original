@@ -1,7 +1,5 @@
 package cc.blynk.server.redis;
 
-import redis.clients.jedis.Jedis;
-
 /**
  * No need in redis on local servers.
  *
@@ -25,22 +23,16 @@ public class FakeRedisClient implements RedisClient {
     }
 
     @Override
-    public Jedis getUserClient() {
-        return null;
-    }
-
-    @Override
     public void removeToken(String token) {
 
     }
 
     @Override
-    public Jedis getTokenClient() {
+    public String getServerByUser(String user) {
         return null;
     }
 
     @Override
     public void close() {
-
     }
 }

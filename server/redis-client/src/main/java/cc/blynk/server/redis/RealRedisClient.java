@@ -36,7 +36,6 @@ public class RealRedisClient implements RedisClient {
     protected RealRedisClient(String host, String pass, int port) {
         JedisPoolConfig config = new JedisPoolConfig();
         config.setMaxTotal(10);
-        config.setBlockWhenExhausted(true);
         this.userPool = new JedisPool(config, host, port, Protocol.DEFAULT_TIMEOUT, pass, USER_DB_INDEX);
         this.tokenPool = new JedisPool(config, host, port, Protocol.DEFAULT_TIMEOUT, pass, TOKEN_DB_INDEX);
         checkConnected();
@@ -45,6 +44,16 @@ public class RealRedisClient implements RedisClient {
     private void checkConnected() {
         try (Jedis jedis = userPool.getResource()) {
         }
+    }
+
+    @Override
+    public String getServerByUser(String user) {
+        try (Jedis jedis = userPool.getResource()) {
+            return jedis.get(user);
+        } catch (Exception e) {
+            log.error("Error getting server by user {}", user, e);
+        }
+        return null;
     }
 
     @Override
@@ -70,6 +79,8 @@ public class RealRedisClient implements RedisClient {
     public void assignServerToUser(String username, String server) {
         try (Jedis jedis = userPool.getResource()) {
             jedis.set(username, server);
+        } catch (Exception e) {
+            log.error("Error setting server {} to user {}.", server, username, e);
         }
     }
 
@@ -80,14 +91,12 @@ public class RealRedisClient implements RedisClient {
         }
     }
 
-    //only for tests
-    @Override
-    public Jedis getUserClient() {
-        return userPool.getResource();
+    public JedisPool getTokenPool() {
+        return tokenPool;
     }
-    @Override
-    public Jedis getTokenClient() {
-        return tokenPool.getResource();
+
+    public JedisPool getUserPool() {
+        return userPool;
     }
 
     @Override

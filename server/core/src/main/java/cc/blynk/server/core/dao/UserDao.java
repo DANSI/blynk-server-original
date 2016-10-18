@@ -54,6 +54,10 @@ public class UserDao {
         return users.get(new UserKey(name, appName));
     }
 
+    public boolean contains(String name, String appName) {
+        return users.containsKey(new UserKey(name, appName));
+    }
+
     //for tests only
     public Map<UserKey, User> getUsers() {
         return users;

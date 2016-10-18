@@ -1,7 +1,5 @@
 package cc.blynk.server.redis;
 
-import redis.clients.jedis.Jedis;
-
 import java.io.Closeable;
 
 /**
@@ -13,15 +11,13 @@ public interface RedisClient extends Closeable {
 
     String getServerByToken(String token);
 
+    String getServerByUser(String user);
+
     void assignServerToToken(String token, String server);
 
     void assignServerToUser(String username, String server);
 
     void removeToken(String token);
-
-    Jedis getUserClient();
-
-    Jedis getTokenClient();
 
     @Override
     void close();
