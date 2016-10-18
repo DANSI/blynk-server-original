@@ -192,9 +192,6 @@ public class UserDao {
                     }
                     sum += widget.height * widget.width;
                 }
-                if (sum > 74) {
-                    log.warn("Error in profile, too many widgets. User : {}. DashId : {}", user.name, dashBoard.id);
-                }
 
                 String key = String.valueOf(sum);
                 Integer i = filledSpace.getOrDefault(key, 0);
