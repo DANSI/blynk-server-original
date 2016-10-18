@@ -18,9 +18,6 @@ import cc.blynk.utils.StringUtils;
 import org.mockito.ArgumentCaptor;
 
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Response.OK;
@@ -58,22 +55,6 @@ public abstract class IntegrationBase extends BaseTest {
             }
         }
         throw new RuntimeException("Get token message wasn't retrieved.");
-    }
-
-    public static String getProfileFolder(String path) {
-        URL resource = IntegrationBase.class.getResource(path);
-        URI uri = null;
-        try {
-            uri = resource.toURI();
-        } catch (Exception e) {
-        }
-        String resourcesPath = Paths.get(uri).toAbsolutePath().toString();
-        System.out.println("Resource path : " + resourcesPath);
-        return resourcesPath;
-    }
-
-    public static String getProfileFolder() {
-        return getProfileFolder("/profiles");
     }
 
     public static void saveProfile(TestAppClient appClient, DashBoard... dashBoards) {

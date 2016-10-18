@@ -1,7 +1,6 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.http.ResponseUserEntity;
 import cc.blynk.server.admin.http.HttpsAdminServer;
 import cc.blynk.server.core.BaseServer;
@@ -59,7 +58,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Override
     public String getDataFolder() {
-        return IntegrationBase.getProfileFolder();
+        return getRelativeDataFolder("/profiles");
     }
 
     private SSLContext initUnsecuredSSLContext() throws NoSuchAlgorithmException, KeyManagementException {

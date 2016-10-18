@@ -79,11 +79,6 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.reset();
     }
 
-    @Override
-    public String getDataFolder() {
-        return IntegrationBase.getProfileFolder();
-    }
-
     @Test
     public void testChangeNonWidgetPinValueViaHardwareAndGetViaHTTP() throws Exception {
         clientPair.hardwareClient.send("hardware vw 10 200");

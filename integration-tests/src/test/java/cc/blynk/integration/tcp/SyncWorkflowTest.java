@@ -24,9 +24,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.attribute.FileAttribute;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -526,12 +523,4 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1 vw 13 60 143 158"))));
     }
 
-    @Override
-    public String getDataFolder() {
-         try {
-             return Files.createTempDirectory("blynk_test_", new FileAttribute[0]).toString();
-         } catch (IOException e) {
-             throw new RuntimeException("Unable create temp dir.", e);
-         }
-    }
 }

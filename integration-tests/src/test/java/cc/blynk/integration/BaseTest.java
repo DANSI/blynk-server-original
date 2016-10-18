@@ -15,7 +15,10 @@ import org.junit.Before;
 import org.mockito.Mock;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.util.List;
 
@@ -107,18 +110,30 @@ public abstract class BaseTest {
         }
     }
 
+    public static String getRelativeDataFolder(String path) {
+        URL resource = IntegrationBase.class.getResource(path);
+        URI uri = null;
+        try {
+            uri = resource.toURI();
+        } catch (Exception e) {
+        }
+        String resourcesPath = Paths.get(uri).toAbsolutePath().toString();
+        System.out.println("Resource path : " + resourcesPath);
+        return resourcesPath;
+    }
+
     @SuppressWarnings("unchecked")
-    public List<String> consumeJsonPinValues(String response) throws IOException {
+    public static List<String> consumeJsonPinValues(String response) throws IOException {
         return JsonParser.readAny(response, List.class);
     }
 
     @SuppressWarnings("unchecked")
-    public List<String> consumeJsonPinValues(CloseableHttpResponse response) throws IOException {
+    public static List<String> consumeJsonPinValues(CloseableHttpResponse response) throws IOException {
         return JsonParser.readAny(consumeText(response), List.class);
     }
 
     @SuppressWarnings("unchecked")
-    public String consumeText(CloseableHttpResponse response) throws IOException {
+    public static String consumeText(CloseableHttpResponse response) throws IOException {
         return EntityUtils.toString(response.getEntity());
     }
 

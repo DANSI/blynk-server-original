@@ -1,7 +1,6 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.IntegrationBase;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import org.asynchttpclient.AsyncHttpClient;
@@ -51,11 +50,6 @@ public class HttpAPIPinsAsyncClientPerformanceTest extends BaseTest {
                             .build()
             );
         }
-    }
-
-    @Override
-    public String getDataFolder() {
-        return IntegrationBase.getProfileFolder();
     }
 
     //----------------------------GET METHODS SECTION

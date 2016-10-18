@@ -134,10 +134,4 @@ public class MultiAppTest extends IntegrationBase {
         return token;
     }
 
-    @Override
-    public String getDataFolder() {
-        return IntegrationBase.getProfileFolder();
-    }
-
-
 }

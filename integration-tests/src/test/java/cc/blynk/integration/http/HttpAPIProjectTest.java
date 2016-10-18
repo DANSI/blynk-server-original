@@ -1,7 +1,6 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.IntegrationBase;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
@@ -51,7 +50,7 @@ public class HttpAPIProjectTest extends BaseTest {
 
     @Override
     public String getDataFolder() {
-        return IntegrationBase.getProfileFolder();
+        return getRelativeDataFolder("/profiles");
     }
 
     //----------------------------GET METHODS SECTION

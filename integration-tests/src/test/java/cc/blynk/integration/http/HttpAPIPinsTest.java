@@ -1,7 +1,6 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.IntegrationBase;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
@@ -55,7 +54,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Override
     public String getDataFolder() {
-        return IntegrationBase.getProfileFolder();
+        return getRelativeDataFolder("/profiles");
     }
 
     //----------------------------GET METHODS SECTION

@@ -1,7 +1,6 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.IntegrationBase;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -53,7 +52,7 @@ public class HttpAPIKeepAliveServerTest extends BaseTest {
 
     @Override
     public String getDataFolder() {
-        return IntegrationBase.getProfileFolder();
+        return getRelativeDataFolder("/profiles");
     }
 
     @Test

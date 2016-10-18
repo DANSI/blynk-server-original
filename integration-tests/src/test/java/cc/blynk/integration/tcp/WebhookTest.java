@@ -81,6 +81,11 @@ public class WebhookTest extends IntegrationBase {
         clientPair.stop();
     }
 
+    @Override
+    public String getDataFolder() {
+        return getRelativeDataFolder("/profiles");
+    }
+
     @Test
     @Ignore
     public void testThingsSpeakIntegrationTest() throws Exception {
@@ -380,11 +385,5 @@ public class WebhookTest extends IntegrationBase {
         assertEquals("11", values.get(0));
 
     }
-
-    @Override
-    public String getDataFolder() {
-        return IntegrationBase.getProfileFolder();
-    }
-
 
 }

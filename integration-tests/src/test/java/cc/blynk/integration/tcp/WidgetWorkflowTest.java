@@ -83,9 +83,4 @@ public class WidgetWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
     }
 
-    @Override
-    public String getDataFolder() {
-        return Paths.get(System.getProperty("java.io.tmpdir"), "userProfiles").toString();
-    }
-
 }

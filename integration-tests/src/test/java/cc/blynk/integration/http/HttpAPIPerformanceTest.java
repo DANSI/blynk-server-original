@@ -1,7 +1,6 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.IntegrationBase;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -20,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * The Blynk Project.
@@ -37,11 +36,6 @@ public class HttpAPIPerformanceTest extends BaseTest {
     public void init() throws Exception {
         httpsServerUrl = "http://104.40.224.211/";
 
-    }
-
-    @Override
-    public String getDataFolder() {
-        return IntegrationBase.getProfileFolder();
     }
 
     @Test

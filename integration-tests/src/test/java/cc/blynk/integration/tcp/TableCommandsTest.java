@@ -207,10 +207,4 @@ public class TableCommandsTest extends IntegrationBase {
         return (Table) profile.dashBoards[0].findWidgetByPin((byte) 123, PinType.VIRTUAL);
     }
 
-    @Override
-    public String getDataFolder() {
-        return IntegrationBase.getProfileFolder();
-    }
-
-
 }

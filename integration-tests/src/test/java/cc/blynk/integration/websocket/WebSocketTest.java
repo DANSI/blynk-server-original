@@ -56,7 +56,7 @@ public class WebSocketTest extends IntegrationBase {
 
     @Override
     public String getDataFolder() {
-        return IntegrationBase.getProfileFolder();
+        return getRelativeDataFolder("/profiles");
     }
 
     @Test

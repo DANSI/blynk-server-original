@@ -1,7 +1,6 @@
 package cc.blynk.integration.websocket;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.websocket.WebSocketClient;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -42,7 +41,7 @@ public class WebSslSocketTest extends BaseTest {
 
     @Override
     public String getDataFolder() {
-        return IntegrationBase.getProfileFolder();
+        return getRelativeDataFolder("/profiles");
     }
 
     @Test
