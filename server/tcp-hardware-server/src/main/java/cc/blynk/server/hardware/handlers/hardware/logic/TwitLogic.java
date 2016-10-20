@@ -79,6 +79,8 @@ public class TwitLogic extends NotificationBase {
                 log.warn("Duplicate twit status for user {}.", username);
             } else if (errorMessage.contains("Authentication credentials")) {
                 log.warn("Tweet authentication failure for {}.", username);
+            } else if (errorMessage.contains("The request is understood, but it has been refused.")) {
+                log.warn("User twit account is banned by twitter. {}.", username);
             } else {
                 log.error("Error sending twit for user {}. Reason : {}", username, errorMessage);
             }

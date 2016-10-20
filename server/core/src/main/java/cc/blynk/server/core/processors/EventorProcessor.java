@@ -117,7 +117,7 @@ public class EventorProcessor {
             } catch (Exception e) {
                 String errorMessage = e.getMessage();
                 if (errorMessage != null && errorMessage.contains("Eventor. Status is a duplicate")) {
-                    log.error("Error sending twit. Reason : {}", e.getMessage());
+                    log.warn("Error sending twit. Reason : {}", e.getMessage());
                 }
             }
         });
