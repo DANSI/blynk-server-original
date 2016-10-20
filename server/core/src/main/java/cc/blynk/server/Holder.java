@@ -74,22 +74,23 @@ public class Holder implements Closeable {
     public Holder(ServerProperties serverProperties) {
         this.props = serverProperties;
 
-        String dataFolder = serverProperties.getProperty("data.folder");
+        this.region = serverProperties.getProperty("region", "local");
 
+        if ("local".equals(region)) {
+            this.redisClient = new FakeRedisClient();
+        } else {
+            this.redisClient = new RealRedisClient(new ServerProperties(RealRedisClient.REDIS_PROPERTIES));
+        }
+
+        String dataFolder = serverProperties.getProperty("data.folder");
         this.fileManager = new FileManager(dataFolder);
         this.sessionDao = new SessionDao();
-        this.region = serverProperties.getProperty("region", "local");
         this.userDao = new UserDao(fileManager.deserialize(), this.region);
         this.tokenManager = new TokenManager(this.userDao.users);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);
         this.reportingDao = new ReportingDao(reportingFolder, averageAggregator, serverProperties);
-        if ("local".equals(region)) {
-            this.redisClient = new FakeRedisClient();
-        } else {
-            this.redisClient = new RealRedisClient(new ServerProperties(RealRedisClient.REDIS_PROPERTIES));
-        }
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
@@ -121,18 +122,18 @@ public class Holder implements Closeable {
     public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper, MailWrapper mailWrapper, GCMWrapper gcmWrapper, SMSWrapper smsWrapper) {
         this.props = serverProperties;
 
-        String dataFolder = serverProperties.getProperty("data.folder");
+        this.region = "local";
+        this.redisClient = new RealRedisClient(new ServerProperties(RealRedisClient.REDIS_PROPERTIES));
 
+        String dataFolder = serverProperties.getProperty("data.folder");
         this.fileManager = new FileManager(dataFolder);
         this.sessionDao = new SessionDao();
-        this.region = "local";
         this.userDao = new UserDao(fileManager.deserialize(), this.region);
         this.tokenManager = new TokenManager(this.userDao.users);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);
         this.reportingDao = new ReportingDao(reportingFolder, averageAggregator, serverProperties);
-        this.redisClient = new RealRedisClient(new ServerProperties(RealRedisClient.REDIS_PROPERTIES));
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
