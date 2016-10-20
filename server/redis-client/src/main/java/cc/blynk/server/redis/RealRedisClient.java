@@ -39,6 +39,7 @@ public class RealRedisClient implements RedisClient {
         this.userPool = new JedisPool(config, host, port, Protocol.DEFAULT_TIMEOUT, pass, USER_DB_INDEX);
         this.tokenPool = new JedisPool(config, host, port, Protocol.DEFAULT_TIMEOUT, pass, TOKEN_DB_INDEX);
         checkConnected();
+        log.info("Redis pool successfully initialized on {}:{}", host, port);
     }
 
     private void checkConnected() {
