@@ -65,7 +65,11 @@ public class Table extends OnePinWidget {
                         if (values.length > 2) {
                             int oldIndex = ParseUtil.parseInt(values[1]);
                             int newIndex = ParseUtil.parseInt(values[2]);
-                            rows.order(oldIndex, newIndex);
+                            try {
+                                rows.order(oldIndex, newIndex);
+                            } catch (Exception e) {
+                                //ignoring this error. as users may provide wrong indexes.
+                            }
                         }
                         break;
                 }
