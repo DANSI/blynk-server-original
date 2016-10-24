@@ -21,7 +21,7 @@ public class HttpHandler extends BaseHttpHandler {
 
     @Override
     public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, HandlerHolder handlerHolder, Object[] params) {
-        ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, params));
+        ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, params), ctx.voidPromise());
     }
 
 }

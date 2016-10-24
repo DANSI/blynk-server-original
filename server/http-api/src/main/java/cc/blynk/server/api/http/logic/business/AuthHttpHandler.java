@@ -30,7 +30,7 @@ public class AuthHttpHandler extends BaseHttpHandler {
         User user = ctx.channel().attr(AuthCookieHandler.userAttributeKey).get();
 
         if (user == null) {
-            ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, params));
+            ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, params), ctx.voidPromise());
             return;
         }
 

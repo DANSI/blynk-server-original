@@ -69,7 +69,7 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
                 break;
 
             case PINGREQ :
-                ctx.writeAndFlush(MqttMessageFactory.newMessage(msg.fixedHeader(), msg.variableHeader(), null));
+                ctx.writeAndFlush(MqttMessageFactory.newMessage(msg.fixedHeader(), msg.variableHeader(), null), ctx.voidPromise());
                 break;
 
             case DISCONNECT :

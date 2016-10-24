@@ -19,7 +19,7 @@ public class AlreadyLoggedHandler extends SimpleChannelInboundHandler<LoginMessa
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage msg) throws Exception {
-        ctx.writeAndFlush(makeResponse(msg.id, Response.USER_ALREADY_REGISTERED));
+        ctx.writeAndFlush(makeResponse(msg.id, Response.USER_ALREADY_REGISTERED), ctx.voidPromise());
     }
 
     @Override

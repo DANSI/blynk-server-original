@@ -56,7 +56,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
         if (handlerHolder == null) {
             log.debug("Error resolving url. No path found. {} : {}", req.method().name(), req.uri());
             ReferenceCountUtil.release(req);
-            ctx.writeAndFlush(Response.notFound());
+            ctx.writeAndFlush(Response.notFound(), ctx.voidPromise());
             return;
         }
 
@@ -68,10 +68,10 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
             params = handlerHolder.fetchParams(uriDecoder);
         } catch (StringIndexOutOfBoundsException stringE) {
             log.error("{} : '{}'. Error : ", req.method().name(), req.uri(), stringE.getMessage());
-            ctx.writeAndFlush(Response.serverError(stringE.getMessage()));
+            ctx.writeAndFlush(Response.serverError(stringE.getMessage()), ctx.voidPromise());
             return;
         } catch (Exception e) {
-            ctx.writeAndFlush(Response.serverError(e.getMessage()));
+            ctx.writeAndFlush(Response.serverError(e.getMessage()), ctx.voidPromise());
             return;
         } finally {
             ReferenceCountUtil.release(req);

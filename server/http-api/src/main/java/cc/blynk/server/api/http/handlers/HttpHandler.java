@@ -30,7 +30,7 @@ public class HttpHandler extends BaseHttpHandler {
     public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, HandlerHolder handlerHolder, Object[] params) {
         String tokenPathParam = uriDecoder.pathData.get("token");
         if (tokenPathParam == null) {
-            ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, params));
+            ctx.writeAndFlush(HandlerRegistry.invoke(handlerHolder, params), ctx.voidPromise());
             return;
         }
 
@@ -38,7 +38,7 @@ public class HttpHandler extends BaseHttpHandler {
         User user = tokenManager.getUserByToken(tokenPathParam);
         if (user == null) {
             log.error("Requested token {} not found.", tokenPathParam);
-            ctx.writeAndFlush(Response.badRequest("Invalid token."));
+            ctx.writeAndFlush(Response.badRequest("Invalid token."), ctx.voidPromise());
             return;
         }
 

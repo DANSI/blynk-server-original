@@ -45,7 +45,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
         final String[] parts = StringUtils.split2(msg.body);
 
         if (parts.length < 2) {
-            ctx.writeAndFlush(makeResponse(msg.id, Response.ILLEGAL_COMMAND));
+            ctx.writeAndFlush(makeResponse(msg.id, Response.ILLEGAL_COMMAND), ctx.voidPromise());
             return;
         }
 
@@ -53,7 +53,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
         final String appName = parts[1];
 
         if (username == null || username.equals("") || appName == null || appName.equals("")) {
-            ctx.writeAndFlush(makeResponse(msg.id, Response.ILLEGAL_COMMAND));
+            ctx.writeAndFlush(makeResponse(msg.id, Response.ILLEGAL_COMMAND), ctx.voidPromise());
             return;
         }
 
@@ -64,7 +64,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
 
         if (userDao.contains(username, appName)) {
             //user exists on current server. so returning ip of current server
-            ctx.writeAndFlush(makeStringMessage(msg.command, msg.id, currentIp));
+            ctx.writeAndFlush(makeStringMessage(msg.command, msg.id, currentIp), ctx.voidPromise());
         } else {
             //user is on other server
             blockingIOProcessor.execute(() -> {
@@ -75,7 +75,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
                     userServer = currentIp;
                 }
 
-                ctx.writeAndFlush(makeStringMessage(msg.command, msg.id, userServer));
+                ctx.writeAndFlush(makeStringMessage(msg.command, msg.id, userServer), ctx.voidPromise());
             });
         }
     }

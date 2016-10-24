@@ -48,7 +48,7 @@ public class AuthCookieHandler extends ChannelInboundHandlerAdapter {
                 } else {
                     if (request.uri().endsWith("/login") || request.uri().startsWith("/static/business")) {
                     } else {
-                        ctx.writeAndFlush(Response.redirect("/static/business/login.html"));
+                        ctx.writeAndFlush(Response.redirect("/static/business/login.html"), ctx.voidPromise());
                         return;
                     }
                 }
