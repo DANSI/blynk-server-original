@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -68,9 +69,13 @@ public class FileManagerIntegrationTest {
     public void testReadListOfFiles() throws IOException {
         fileManager.overrideUserFile(user1);
         fileManager.overrideUserFile(user2);
+        Path fakeFile = Paths.get(fileManager.getDataDir().toString(), "123.txt");
+        Files.deleteIfExists(fakeFile);
+        Files.createFile(fakeFile);
 
         Map<UserKey, User> users = fileManager.deserialize();
         assertNotNull(users);
+        assertEquals(2, users.size());
         assertNotNull(users.get(new UserKey(user1.name, AppName.BLYNK)));
         assertNotNull(users.get(new UserKey(user2.name, AppName.BLYNK)));
     }
