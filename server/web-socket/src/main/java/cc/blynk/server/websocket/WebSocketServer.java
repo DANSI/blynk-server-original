@@ -31,7 +31,7 @@ public class WebSocketServer extends BaseServer {
         super(holder.props.getIntProperty("tcp.websocket.port"), holder.transportTypeHolder);
 
         final int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
-        final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder);
+        final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder, port);
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 

@@ -96,7 +96,7 @@ public class LoadBalancingTest extends IntegrationBase {
 
         holder.redisClient.assignServerToToken("123", "123.123.123.123");
         hardClient.send("login 123");
-        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ConnectRedirectMessage(2, "123.123.123.123")));
+        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ConnectRedirectMessage(2, b("123.123.123.123 9442"))));
     }
 
     @Test

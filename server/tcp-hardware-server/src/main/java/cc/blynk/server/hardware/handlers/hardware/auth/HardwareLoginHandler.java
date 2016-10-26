@@ -15,6 +15,7 @@ import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
 import cc.blynk.server.redis.RedisClient;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -46,11 +47,13 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     private final Holder holder;
     private final RedisClient redisClient;
     private final BlockingIOProcessor blockingIOProcessor;
+    private final String listenPort;
 
-    public HardwareLoginHandler(Holder holder) {
+    public HardwareLoginHandler(Holder holder, int listenPort) {
         this.holder = holder;
         this.redisClient = holder.redisClient;
         this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.listenPort = String.valueOf(listenPort);
     }
 
     private static void completeLogin(Channel channel, Session session, User user, DashBoard dash, int msgId) {
@@ -115,7 +118,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
                 ctx.writeAndFlush(makeResponse(msgId, INVALID_TOKEN), ctx.voidPromise());
             } else {
                 log.info("Redirecting token '{}', '{}' to {}", token, ctx.channel().remoteAddress(), server);
-                ctx.writeAndFlush(makeStringMessage(CONNECT_REDIRECT, msgId, server), ctx.voidPromise());
+                ctx.writeAndFlush(makeStringMessage(CONNECT_REDIRECT, msgId, server + StringUtils.BODY_SEPARATOR_STRING + listenPort), ctx.voidPromise());
             }
         });
     }

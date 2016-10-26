@@ -24,7 +24,7 @@ public abstract class BaseServer implements Closeable {
 
     protected static final Logger log = LogManager.getLogger(BaseServer.class);
 
-    private final int port;
+    protected final int port;
     private final TransportTypeHolder transportTypeHolder;
 
     private ChannelFuture cf;
