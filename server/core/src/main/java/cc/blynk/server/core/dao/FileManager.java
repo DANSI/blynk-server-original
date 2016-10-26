@@ -126,7 +126,7 @@ public class FileManager {
 
         if (files != null) {
             ConcurrentMap<UserKey, User> tempUsers = Arrays.stream(files).parallel()
-                    .filter(File::isFile)
+                    .filter(file -> file.isFile() && file.getName().endsWith(".user"))
                     .flatMap(file -> {
                         try {
                             User user = JsonParser.parseUserFromFile(file);
