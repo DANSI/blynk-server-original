@@ -12,7 +12,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.utils.AppStateHolderUtil.getAppState;
-import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
  * The Blynk Project.

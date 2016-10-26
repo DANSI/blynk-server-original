@@ -20,9 +20,9 @@ import java.util.Arrays;
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA_RESPONSE;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
-import static cc.blynk.utils.ByteBufUtil.makeBinaryMessage;
-import static cc.blynk.utils.ByteBufUtil.makeResponse;
-import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.ByteUtils.compress;
 
 /**

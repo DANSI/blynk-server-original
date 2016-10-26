@@ -10,7 +10,7 @@ import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
-import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
 
 /**
  * The Blynk Project.

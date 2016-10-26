@@ -19,8 +19,8 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.SYNC;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
-import static cc.blynk.utils.ByteBufUtil.makeResponse;
-import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**

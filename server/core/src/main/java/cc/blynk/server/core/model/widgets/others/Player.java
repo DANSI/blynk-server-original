@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
 
 /**
  * The Blynk Project.

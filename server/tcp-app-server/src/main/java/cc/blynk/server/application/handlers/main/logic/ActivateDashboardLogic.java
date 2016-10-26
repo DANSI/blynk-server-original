@@ -17,9 +17,9 @@ import org.apache.logging.log4j.Logger;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.utils.AppStateHolderUtil.getAppState;
-import static cc.blynk.utils.ByteBufUtil.makeResponse;
-import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
-import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
  * The Blynk Project.

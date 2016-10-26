@@ -14,8 +14,9 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Map;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
 
 /**
  * The Blynk Project.

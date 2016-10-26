@@ -7,7 +7,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
-import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
 
 /**
  * The Blynk Project.

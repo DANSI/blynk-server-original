@@ -26,9 +26,9 @@ import org.apache.logging.log4j.Logger;
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
-import static cc.blynk.utils.ByteBufUtil.makeResponse;
-import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
-import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
  * Handler responsible for managing hardware and apps login messages.

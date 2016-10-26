@@ -13,7 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.utils.AppStateHolderUtil.getAppState;
-import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
  * The Blynk Project.

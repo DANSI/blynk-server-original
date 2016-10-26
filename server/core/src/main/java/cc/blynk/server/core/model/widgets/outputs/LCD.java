@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static cc.blynk.server.core.protocol.enums.Command.SYNC;
-import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**

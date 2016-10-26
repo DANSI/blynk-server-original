@@ -16,8 +16,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashSet;
 import java.util.Set;
 
-import static cc.blynk.utils.ByteBufUtil.makeResponse;
-import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
 import static cc.blynk.utils.StateHolderUtil.getHardState;
 
 /**

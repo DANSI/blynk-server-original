@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**

@@ -24,8 +24,8 @@ import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_ERROR;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
-import static cc.blynk.utils.ByteBufUtil.makeResponse;
-import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
  * Sends graph pins data in csv format via to user email.

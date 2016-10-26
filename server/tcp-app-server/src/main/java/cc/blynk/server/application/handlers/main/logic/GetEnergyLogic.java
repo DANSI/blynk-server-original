@@ -4,10 +4,8 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.utils.ByteBufUtil.*;
-
-
+import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
+import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
 
 /**
  * The Blynk Project.

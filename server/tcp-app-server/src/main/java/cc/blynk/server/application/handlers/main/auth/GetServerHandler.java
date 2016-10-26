@@ -13,8 +13,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.commons.validator.routines.EmailValidator;
 
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
-import static cc.blynk.utils.ByteBufUtil.makeResponse;
-import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
 
 
 /**

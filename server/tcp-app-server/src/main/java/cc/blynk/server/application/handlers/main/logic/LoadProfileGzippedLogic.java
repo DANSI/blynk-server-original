@@ -12,8 +12,8 @@ import java.io.IOException;
 
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
-import static cc.blynk.utils.ByteBufUtil.makeBinaryMessage;
-import static cc.blynk.utils.ByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 
 /**
  * The Blynk Project.

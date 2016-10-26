@@ -13,8 +13,8 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
 import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
-import static cc.blynk.utils.ByteBufUtil.makeResponse;
-import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
  * Handler sends push notifications to Applications. Initiation is on hardware side.

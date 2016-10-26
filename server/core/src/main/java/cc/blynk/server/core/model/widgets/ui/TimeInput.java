@@ -13,7 +13,7 @@ import io.netty.channel.ChannelHandlerContext;
 import java.time.ZoneId;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**

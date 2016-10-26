@@ -9,7 +9,7 @@ import cc.blynk.server.db.model.Purchase;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
 

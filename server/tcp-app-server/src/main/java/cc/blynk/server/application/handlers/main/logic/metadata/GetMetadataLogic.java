@@ -8,7 +8,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.utils.ByteBufUtil.*;
+import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+
+;
 
 /**
  * The Blynk Project.

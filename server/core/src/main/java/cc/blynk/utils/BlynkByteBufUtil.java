@@ -17,7 +17,7 @@ import static cc.blynk.server.core.protocol.enums.Response.OK;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.03.16.
  */
-public class ByteBufUtil {
+public class BlynkByteBufUtil {
 
     public static ByteBuf ok(int msgId) {
         return makeResponse(msgId, OK);

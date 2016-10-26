@@ -29,8 +29,8 @@ import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
 import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_REGISTERED;
-import static cc.blynk.utils.ByteBufUtil.makeResponse;
-import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 
 /**

@@ -11,8 +11,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
-import static cc.blynk.utils.ByteBufUtil.makeResponse;
-import static cc.blynk.utils.ByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
  * The Blynk Project.

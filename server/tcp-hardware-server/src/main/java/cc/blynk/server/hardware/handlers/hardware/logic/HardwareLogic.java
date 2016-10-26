@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
-import static cc.blynk.utils.ByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 import static cc.blynk.utils.StringUtils.split3;
 

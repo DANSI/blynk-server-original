@@ -7,7 +7,7 @@ import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 
 import static cc.blynk.server.core.protocol.enums.Command.SYNC;
-import static cc.blynk.utils.ByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**
