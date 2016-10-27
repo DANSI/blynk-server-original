@@ -34,11 +34,9 @@ public class BlynkByteBufUtil {
         byteBuf.writerIndex(HEADER_LENGTH);
         ByteBufUtil.writeUtf8(byteBuf, data);
 
-        byteBuf.setByte(0, cmd)
+        return byteBuf.setByte(0, cmd)
                .setShort(1, msgId)
                .setShort(3, byteBuf.writerIndex() - HEADER_LENGTH);
-
-        return byteBuf;
     }
 
     public static ByteBuf makeBinaryMessage(short cmd, int msgId, byte[] byteData) {
