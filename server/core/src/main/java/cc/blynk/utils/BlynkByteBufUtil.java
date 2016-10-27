@@ -39,6 +39,16 @@ public class BlynkByteBufUtil {
                .setShort(3, byteBuf.writerIndex() - HEADER_LENGTH);
     }
 
+    public static ByteBuf makeASCIIStringMessage(short cmd, int msgId, String data) {
+        ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH + data.length())
+                .writeByte(cmd)
+                .writeShort(msgId)
+                .writeShort(data.length());
+
+        ByteBufUtil.writeAscii(byteBuf, data);
+        return byteBuf;
+    }
+
     public static ByteBuf makeBinaryMessage(short cmd, int msgId, byte[] byteData) {
         return PooledByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH + byteData.length)
                 .writeByte(cmd)
