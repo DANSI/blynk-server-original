@@ -9,13 +9,13 @@ import java.io.Serializable;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.08.15.
  */
-public class AggregationKey implements Serializable {
+public final class AggregationKey implements Serializable {
 
-    public String username;
-    public int dashId;
-    public PinType pinType;
-    public byte pin;
-    public long ts;
+    public final String username;
+    public final int dashId;
+    public final PinType pinType;
+    public final byte pin;
+    public final long ts;
 
     public AggregationKey(String username, int dashId, PinType pinType, byte pin, long ts) {
         this.username = username;
