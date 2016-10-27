@@ -9,7 +9,8 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cc.blynk.utils.ReportingUtil.*;
+import static cc.blynk.utils.ReportingUtil.read;
+import static cc.blynk.utils.ReportingUtil.write;
 
 /**
  * The Blynk Project.
@@ -19,7 +20,7 @@ import static cc.blynk.utils.ReportingUtil.*;
 public class AverageAggregator implements Closeable {
 
     public static final long MINUTE = 1000 * 60;
-    public static final long HOUR = 1000 * 60 * 60;
+    public static final long HOUR = 60 * MINUTE;
     public static final long DAY = 24 * HOUR;
     public static final String MINUTE_TEMP_FILENAME = "minute_temp.bin";
     public static final String HOURLY_TEMP_FILENAME = "hourly_temp.bin";
