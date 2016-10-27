@@ -65,9 +65,11 @@ public class AddEnergyLogic {
     }
 
     private void insertPurchase(String username, int reward, String transactionId) {
-        blockingIOProcessor.execute(
-                () -> dbManager.insertPurchase(new Purchase(username, reward, transactionId))
-        );
+        if (!transactionId.equals("AdColonyAward")) {
+            blockingIOProcessor.execute(
+                    () -> dbManager.insertPurchase(new Purchase(username, reward, transactionId))
+            );
+        }
     }
 
 }
