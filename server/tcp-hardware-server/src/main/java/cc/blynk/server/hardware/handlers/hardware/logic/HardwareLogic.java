@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.processors.WebhookProcessor;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.ParseUtil;
@@ -63,7 +62,9 @@ public class HardwareLogic {
 
         //minimum command - "ar 1"
         if (body.length() < 4) {
-            throw new IllegalCommandException("HardwareLogic command body too short.");
+            log.debug("HardwareLogic command body too short.");
+            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+            return;
         }
 
         int dashId = state.dashId;
@@ -73,7 +74,9 @@ public class HardwareLogic {
             String[] splitBody = split3(body);
 
             if (splitBody.length < 3 || splitBody[0].length() == 0) {
-                throw new IllegalCommandException("Write command is wrong.");
+                log.debug("Write command is wrong.");
+                ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+                return;
             }
 
             final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
