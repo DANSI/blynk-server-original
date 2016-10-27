@@ -29,7 +29,7 @@ public class BlynkByteBufUtil {
                 .writeShort(responseCode);
     }
 
-    public static ByteBuf makeStringMessage(short cmd, int msgId, String data) {
+    public static ByteBuf makeUTF8StringMessage(short cmd, int msgId, String data) {
         ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH + ByteBufUtil.utf8MaxBytes(data));
         byteBuf.writerIndex(HEADER_LENGTH);
         ByteBufUtil.writeUtf8(byteBuf, data);

@@ -16,7 +16,7 @@ import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.utils.AppStateHolderUtil.getShareState;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.
@@ -58,6 +58,6 @@ public class RefreshShareTokenLogic {
             }
         }
 
-        ctx.writeAndFlush(makeStringMessage(REFRESH_SHARE_TOKEN, message.id, token), ctx.voidPromise());
+        ctx.writeAndFlush(makeUTF8StringMessage(REFRESH_SHARE_TOKEN, message.id, token), ctx.voidPromise());
     }
 }

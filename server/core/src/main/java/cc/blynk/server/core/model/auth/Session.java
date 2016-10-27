@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StateHolderUtil.getHardState;
 
 /**
@@ -96,7 +96,7 @@ public class Session {
         if (channelsNum == 0)
             return true; // -> no active hardware
 
-        ByteBuf msg = makeStringMessage(cmd, msgId, body);
+        ByteBuf msg = makeUTF8StringMessage(cmd, msgId, body);
         if (channelsNum > 1) {
             msg.retain(channelsNum - 1).markReaderIndex();
         }
@@ -136,7 +136,7 @@ public class Session {
         if (channelsNum == 0)
             return;
 
-        ByteBuf msg = makeStringMessage(cmd, msgId, body);
+        ByteBuf msg = makeUTF8StringMessage(cmd, msgId, body);
         if (channelsNum > 1) {
             msg.retain(channelsNum - 1).markReaderIndex();
         }
@@ -162,7 +162,7 @@ public class Session {
         if (channelsNum == 0)
             return;
 
-        ByteBuf msg = makeStringMessage(cmd, msgId, body);
+        ByteBuf msg = makeUTF8StringMessage(cmd, msgId, body);
         if (channelsNum > 1) {
             msg.retain(channelsNum - 1).markReaderIndex();
         }

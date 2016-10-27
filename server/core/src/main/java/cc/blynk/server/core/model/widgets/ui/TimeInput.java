@@ -13,7 +13,7 @@ import io.netty.channel.ChannelHandlerContext;
 import java.time.ZoneId;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**
@@ -51,7 +51,7 @@ public class TimeInput extends OnePinWidget implements HardwareSyncWidget {
     public void send(ChannelHandlerContext ctx, int msgId) {
         String body = makeHardwareBody();
         if (body != null) {
-            ctx.write(makeStringMessage(HARDWARE, msgId, body), ctx.voidPromise());
+            ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
         }
     }
 

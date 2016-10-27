@@ -6,7 +6,7 @@ import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 
 ;
 
@@ -37,7 +37,7 @@ public class Timer extends OnePinWidget implements HardwareSyncWidget {
     @Override
     public void send(ChannelHandlerContext ctx, int msgId) {
         if (value != null) {
-            ctx.write(makeStringMessage(HARDWARE, msgId, value), ctx.voidPromise());
+            ctx.write(makeUTF8StringMessage(HARDWARE, msgId, value), ctx.voidPromise());
         }
     }
 

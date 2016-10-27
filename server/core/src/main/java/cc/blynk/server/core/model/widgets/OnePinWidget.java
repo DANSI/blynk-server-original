@@ -7,7 +7,7 @@ import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 
 import static cc.blynk.server.core.protocol.enums.Command.SYNC;
-import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**
@@ -40,7 +40,7 @@ public abstract class OnePinWidget extends Widget implements SyncOnActivate {
     public void sendSyncOnActivate(Channel appChannel, int dashId) {
         String body = makeHardwareBody();
         if (body != null) {
-            appChannel.write(makeStringMessage(SYNC, 1111, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
+            appChannel.write(makeUTF8StringMessage(SYNC, 1111, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
         }
     }
 

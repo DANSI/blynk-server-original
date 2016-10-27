@@ -10,7 +10,7 @@ import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
-import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.
@@ -50,6 +50,6 @@ public class GetTokenLogic {
             });
         }
 
-        ctx.writeAndFlush(makeStringMessage(GET_TOKEN, message.id, token), ctx.voidPromise());
+        ctx.writeAndFlush(makeUTF8StringMessage(GET_TOKEN, message.id, token), ctx.voidPromise());
     }
 }

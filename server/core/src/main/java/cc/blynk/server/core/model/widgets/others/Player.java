@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.
@@ -38,7 +38,7 @@ public class Player extends OnePinWidget implements HardwareSyncWidget {
     public void send(ChannelHandlerContext ctx, int msgId) {
         String body = makeHardwareBody();
         if (body != null) {
-            ctx.write(makeStringMessage(HARDWARE, msgId, body), ctx.voidPromise());
+            ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
         }
     }
 

@@ -10,7 +10,7 @@ import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
-import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.
@@ -44,6 +44,6 @@ public class RefreshTokenLogic {
             redisClient.assignServerToToken(token, currentIp);
         });
 
-        ctx.writeAndFlush(makeStringMessage(REFRESH_TOKEN, message.id, token), ctx.voidPromise());
+        ctx.writeAndFlush(makeUTF8StringMessage(REFRESH_TOKEN, message.id, token), ctx.voidPromise());
     }
 }

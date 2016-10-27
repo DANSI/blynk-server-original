@@ -14,7 +14,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 
 
 /**
@@ -64,7 +64,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
 
         if (userDao.contains(username, appName)) {
             //user exists on current server. so returning ip of current server
-            ctx.writeAndFlush(makeStringMessage(msg.command, msg.id, currentIp), ctx.voidPromise());
+            ctx.writeAndFlush(makeUTF8StringMessage(msg.command, msg.id, currentIp), ctx.voidPromise());
         } else {
             //user is on other server
             blockingIOProcessor.execute(() -> {
@@ -75,7 +75,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
                     userServer = currentIp;
                 }
 
-                ctx.writeAndFlush(makeStringMessage(msg.command, msg.id, userServer), ctx.voidPromise());
+                ctx.writeAndFlush(makeUTF8StringMessage(msg.command, msg.id, userServer), ctx.voidPromise());
             });
         }
     }

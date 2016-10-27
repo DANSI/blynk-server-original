@@ -20,7 +20,7 @@ import static cc.blynk.server.core.protocol.enums.Command.SYNC;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -70,7 +70,7 @@ public class HardwareAppShareLogic {
                 if (sharedToken != null) {
                     for (Channel appChannel : session.getAppChannels()) {
                         if (appChannel != ctx.channel() && Session.needSync(appChannel, sharedToken)) {
-                            appChannel.writeAndFlush(makeStringMessage(SYNC, message.id, message.body), appChannel.voidPromise());
+                            appChannel.writeAndFlush(makeUTF8StringMessage(SYNC, message.id, message.body), appChannel.voidPromise());
                         }
                     }
                 }

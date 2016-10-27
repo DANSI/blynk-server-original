@@ -41,7 +41,7 @@ public class StringToByteBufPerfTest {
     public ByteBuf optimizedBlynkWay() {
         ByteBuf byteBuf = null;
         try {
-            byteBuf = BlynkByteBufUtil.makeStringMessage((short) 1, 1, data);
+            byteBuf = BlynkByteBufUtil.makeUTF8StringMessage((short) 1, 1, data);
             return byteBuf;
         } finally {
             if (byteBuf != null) {

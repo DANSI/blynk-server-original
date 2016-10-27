@@ -27,7 +27,7 @@ import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
@@ -118,7 +118,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
                 ctx.writeAndFlush(makeResponse(msgId, INVALID_TOKEN), ctx.voidPromise());
             } else {
                 log.info("Redirecting token '{}', '{}' to {}", token, ctx.channel().remoteAddress(), server);
-                ctx.writeAndFlush(makeStringMessage(CONNECT_REDIRECT, msgId, server + StringUtils.BODY_SEPARATOR_STRING + listenPort), ctx.voidPromise());
+                ctx.writeAndFlush(makeUTF8StringMessage(CONNECT_REDIRECT, msgId, server + StringUtils.BODY_SEPARATOR_STRING + listenPort), ctx.voidPromise());
             }
         });
     }

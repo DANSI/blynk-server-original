@@ -8,7 +8,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 
 ;
 
@@ -24,7 +24,7 @@ public class GetMetadataLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String response = JsonParser.toJson(user.profile.metadata);
-        ctx.writeAndFlush(makeStringMessage(Command.GET_METADATA, message.id, response), ctx.voidPromise());
+        ctx.writeAndFlush(makeUTF8StringMessage(Command.GET_METADATA, message.id, response), ctx.voidPromise());
     }
 
 }

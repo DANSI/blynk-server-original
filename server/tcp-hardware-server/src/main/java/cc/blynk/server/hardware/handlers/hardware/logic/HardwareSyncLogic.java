@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.makeStringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.
@@ -43,7 +43,7 @@ public class HardwareSyncLogic {
             for (Map.Entry<String, String> entry : dash.storagePins.entrySet()) {
                 String pin = entry.getKey();
                 String body = Pin.makeHardwareBody(pin.charAt(0), pin.substring(1), entry.getValue());
-                ctx.write(makeStringMessage(HARDWARE, message.id, body), ctx.voidPromise());
+                ctx.write(makeUTF8StringMessage(HARDWARE, message.id, body), ctx.voidPromise());
             }
 
             ctx.flush();
@@ -65,7 +65,7 @@ public class HardwareSyncLogic {
                     String value = dash.storagePins.get("" + pinType.pintTypeChar + pin);
                     if (value != null) {
                         String body = Pin.makeHardwareBody(pinType, pin, value);
-                        ctx.writeAndFlush(makeStringMessage(HARDWARE, message.id, body), ctx.voidPromise());
+                        ctx.writeAndFlush(makeUTF8StringMessage(HARDWARE, message.id, body), ctx.voidPromise());
                     }
                 } else if (widget instanceof HardwareSyncWidget) {
                     ((HardwareSyncWidget) widget).send(ctx, message.id);
