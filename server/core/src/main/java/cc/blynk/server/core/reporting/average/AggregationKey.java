@@ -1,8 +1,10 @@
 package cc.blynk.server.core.reporting.average;
 
+import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 /**
  * The Blynk Project.
@@ -11,11 +13,13 @@ import java.io.Serializable;
  */
 public final class AggregationKey implements Serializable {
 
+    public static final Comparator<AggregationKey> AGGREGATION_KEY_COMPARATOR = (o1, o2) -> (int) (o1.ts - o2.ts);
+
     public final String username;
     public final int dashId;
     public final PinType pinType;
     public final byte pin;
-    public final long ts;
+    private final long ts;
 
     public AggregationKey(String username, int dashId, PinType pinType, byte pin, long ts) {
         this.username = username;
@@ -23,6 +27,14 @@ public final class AggregationKey implements Serializable {
         this.pinType = pinType;
         this.pin = pin;
         this.ts = ts;
+    }
+
+    public long getTs(GraphType type) {
+        return ts * type.period;
+    }
+
+    public boolean isOutdated(long nowTruncatedToPeriod) {
+        return ts < nowTruncatedToPeriod;
     }
 
     @Override

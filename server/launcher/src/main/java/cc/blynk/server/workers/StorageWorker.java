@@ -15,9 +15,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static cc.blynk.server.core.dao.ReportingDao.*;
+import static cc.blynk.server.core.dao.ReportingDao.generateFilename;
 
 /**
  * Worker that runs once a minute. During run - stores all aggregated reporting data
@@ -30,7 +34,6 @@ import static cc.blynk.server.core.dao.ReportingDao.*;
 public class StorageWorker implements Runnable {
 
     private static final Logger log = LogManager.getLogger(StorageWorker.class);
-    private static final Comparator<AggregationKey> AGGREGATION_KEY_COMPARATOR = (o1, o2) -> (int) (o1.ts - o2.ts);
 
     private final AverageAggregator averageAggregator;
     private final String reportingPath;
@@ -88,13 +91,13 @@ public class StorageWorker implements Runnable {
         long nowTruncatedToPeriod = System.currentTimeMillis() / type.period;
 
         List<AggregationKey> keys = new ArrayList<>(map.keySet());
-        Collections.sort(keys, AGGREGATION_KEY_COMPARATOR);
+        Collections.sort(keys, AggregationKey.AGGREGATION_KEY_COMPARATOR);
 
         Map<AggregationKey, AggregationValue> removedKeys = new HashMap<>();
 
         for (AggregationKey keyToRemove : keys) {
             //if prev hour
-            if (keyToRemove.ts < nowTruncatedToPeriod) {
+            if (keyToRemove.isOutdated(nowTruncatedToPeriod)) {
                 AggregationValue value = map.get(keyToRemove);
 
                 try {
@@ -106,7 +109,7 @@ public class StorageWorker implements Runnable {
                     String fileName = generateFilename(keyToRemove.dashId, keyToRemove.pinType, keyToRemove.pin, type);
                     Path filePath = Paths.get(userReportFolder.toString(), fileName);
 
-                    write(filePath, value.calcAverage(), keyToRemove.ts * type.period);
+                    write(filePath, value.calcAverage(), keyToRemove.getTs(type));
 
                     final AggregationValue removedValue = map.remove(keyToRemove);
                     removedKeys.put(keyToRemove, removedValue);
