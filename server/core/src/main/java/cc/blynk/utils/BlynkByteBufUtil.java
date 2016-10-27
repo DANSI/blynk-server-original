@@ -1,13 +1,12 @@
 package cc.blynk.utils;
 
 import cc.blynk.server.core.protocol.enums.Command;
-import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.PooledByteBufAllocator;
 
-import java.nio.charset.StandardCharsets;
-
 import static cc.blynk.server.core.protocol.enums.Response.OK;
+import static cc.blynk.server.core.protocol.model.messages.MessageBase.HEADER_LENGTH;
 
 /**
  * Utility class that creates native netty buffers instead of java objects.
@@ -24,18 +23,26 @@ public class BlynkByteBufUtil {
     }
 
     public static ByteBuf makeResponse(int msgId, int responseCode) {
-        return PooledByteBufAllocator.DEFAULT.buffer(MessageBase.HEADER_LENGTH)
+        return PooledByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH)
                 .writeByte(Command.RESPONSE)
                 .writeShort(msgId)
                 .writeShort(responseCode);
     }
 
     public static ByteBuf makeStringMessage(short cmd, int msgId, String data) {
-        return makeBinaryMessage(cmd, msgId, data.getBytes(StandardCharsets.UTF_8));
+        ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH + ByteBufUtil.utf8MaxBytes(data));
+        byteBuf.writerIndex(HEADER_LENGTH);
+        ByteBufUtil.writeUtf8(byteBuf, data);
+
+        byteBuf.setByte(0, cmd)
+               .setShort(1, msgId)
+               .setShort(3, byteBuf.writerIndex() - HEADER_LENGTH);
+
+        return byteBuf;
     }
 
     public static ByteBuf makeBinaryMessage(short cmd, int msgId, byte[] byteData) {
-        return PooledByteBufAllocator.DEFAULT.buffer(MessageBase.HEADER_LENGTH + byteData.length)
+        return PooledByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH + byteData.length)
                 .writeByte(cmd)
                 .writeShort(msgId)
                 .writeShort(byteData.length)

@@ -1,7 +1,7 @@
 package cc.blynk.server.core.model.auth;
 
+import cc.blynk.utils.BlynkByteBufUtil;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.PooledByteBufAllocator;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -16,7 +16,6 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.BenchmarkParams;
 
-import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +29,7 @@ public class StringToByteBufPerfTest {
 
     public PooledByteBufAllocator DEFAULT;
 
-    @Param({"", "small", "This is test String!", "ddddddd dddddddddddddd ddddddddddddd ddddddddddddddddddddddddddddddddd"})
+    @Param({"", "small", "This is test String!", "Небольшой текст юникода", "ddddddd dddddddddddddd ddddddddddddd ddddddddddddddddddddddddddddddddd"})
     public String data;
 
     @Setup
@@ -39,11 +38,10 @@ public class StringToByteBufPerfTest {
     }
 
     @Benchmark
-    public ByteBuf javaWay() {
+    public ByteBuf optimizedBlynkWay() {
         ByteBuf byteBuf = null;
         try {
-            byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
-            byteBuf = DEFAULT.buffer(bytes.length).writeBytes(bytes);
+            byteBuf = BlynkByteBufUtil.makeStringMessage((short) 1, 1, data);
             return byteBuf;
         } finally {
             if (byteBuf != null) {
@@ -53,10 +51,10 @@ public class StringToByteBufPerfTest {
     }
 
     @Benchmark
-    public ByteBuf nettyWay() {
+    public ByteBuf blynkWay() {
         ByteBuf byteBuf = null;
         try {
-            byteBuf = ByteBufUtil.encodeString(DEFAULT, CharBuffer.wrap(data), StandardCharsets.UTF_8, 0);
+            byteBuf = makeStringMessage((short) 1, 1, data);
             return byteBuf;
         } finally {
             if (byteBuf != null) {
@@ -65,17 +63,8 @@ public class StringToByteBufPerfTest {
         }
     }
 
-    @Benchmark
-    public ByteBuf nettyWayWriteUtf8() {
-        ByteBuf byteBuf = null;
-        try {
-            byteBuf = ByteBufUtil.writeUtf8(DEFAULT, data);
-            return byteBuf;
-        } finally {
-            if (byteBuf != null) {
-                byteBuf.release();
-            }
-        }
+    public static ByteBuf makeStringMessage(short cmd, int msgId, String data) {
+        return BlynkByteBufUtil.makeBinaryMessage(cmd, msgId, data.getBytes(StandardCharsets.UTF_8));
     }
 
 }
