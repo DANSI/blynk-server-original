@@ -374,9 +374,9 @@ You can change it with next options :
 WARNING : default ```allowed.administrator.ips``` setting allows access only from ```localhost```. In other words 
 administration will not be available from any other machine except those one you are running server on.
         
-## HTTP RESTful
-Blynk HTTP RESTful API allows to easily read and write values to/from Pins in Blynk apps and Hardware. 
-For now API available only for Local Blynk Servers. Http API description could be found [here](http://docs.blynkapi.apiary.io).
+## HTTP/S RESTful
+Blynk HTTP/S RESTful API allows to easily read and write values to/from Pins in Blynk apps and Hardware. 
+Http API description could be found [here](http://docs.blynkapi.apiary.io).
         
 ### Enabling mail on Local server
 In order to enable mail notifications on Local server you need to provide own mail credentials. To do that you need to create file ```mail.properties``` within same folder where server.jar is.
