@@ -81,7 +81,9 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         //no user on current server, trying to find server that user belongs to.
         if (user == null) {
-            checkUserOnOtherServer(ctx, token, message.id);
+            //checkUserOnOtherServer(ctx, token, message.id);
+            log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
+            ctx.writeAndFlush(makeResponse(message.id, INVALID_TOKEN), ctx.voidPromise());
             return;
         }
 
