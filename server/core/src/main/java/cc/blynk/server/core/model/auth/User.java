@@ -41,6 +41,9 @@ public class User {
 
     private int energy;
 
+    public transient int emailMessages;
+    public transient long emailSentTs;
+
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
         this.profile = new Profile();
