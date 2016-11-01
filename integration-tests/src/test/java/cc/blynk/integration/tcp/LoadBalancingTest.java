@@ -13,6 +13,7 @@ import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.redis.RealRedisClient;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -87,6 +88,7 @@ public class LoadBalancingTest extends IntegrationBase {
     }
 
     @Test
+    @Ignore
     public void testConnectRedirect() throws Exception {
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
