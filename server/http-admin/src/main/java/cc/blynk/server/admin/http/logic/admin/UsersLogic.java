@@ -70,7 +70,7 @@ public class UsersLogic extends HttpLogicUtil {
     @GET
     @Path("/{id}")
     public Response getUserByName(@PathParam("id") String id) {
-        String[] parts = id.split("-");
+        String[] parts =  slitByLast(id);
         String name = parts[0];
         String appName = parts[1];
         return ok(userDao.getByName(name, appName));
@@ -97,7 +97,7 @@ public class UsersLogic extends HttpLogicUtil {
 
         log.debug("Updating user {}", id);
 
-        String[] parts = id.split("-");
+        String[] parts =  slitByLast(id);
         String name = parts[0];
         String appName = parts[1];
 
@@ -120,7 +120,7 @@ public class UsersLogic extends HttpLogicUtil {
     @DELETE
     @Path("/{id}")
     public Response deleteUserByName(@PathParam("id") String id) {
-        String[] parts = id.split("-");
+        String[] parts =  slitByLast(id);
         String name = parts[0];
         String appName = parts[1];
 
@@ -139,6 +139,14 @@ public class UsersLogic extends HttpLogicUtil {
         log.info("User {} successfully removed.", name);
 
         return ok();
+    }
+
+    private String[] slitByLast(String id) {
+        int i = id.lastIndexOf("-");
+        return new String[] {
+                id.substring(0, i),
+                id.substring(i + 1)
+        };
     }
 
 }
