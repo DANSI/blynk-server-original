@@ -98,7 +98,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
                     @Override
                     public Response onCompleted(Response response) throws Exception {
                         if (response.getStatusCode() != 200) {
-                            log.error("Error getting facebook token {} for user {}. Reason : {}", token, username, response.getResponseBody());
+                            log.warn("Error getting facebook token {} for user {}. Reason : {}", token, username, response.getResponseBody());
                             ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
                             return response;
                         }

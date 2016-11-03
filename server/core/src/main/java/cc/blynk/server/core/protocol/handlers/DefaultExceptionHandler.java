@@ -52,7 +52,7 @@ public interface DefaultExceptionHandler {
             if (cause.getCause() instanceof UnsupportedCommandException) {
                 log.debug("Input command is invalid. Closing socket. Reason {}. Address {}", cause.getMessage(), ctx.channel().remoteAddress());
             } else if (cause.getCause() instanceof SSLException) {
-                log.error("Unsecured connection attempt. Channel : {}. Reason : {}", ctx.channel().remoteAddress(), cause.getMessage());
+                log.warn("Unsecured connection attempt. Channel : {}. Reason : {}", ctx.channel().remoteAddress(), cause.getMessage());
             } else {
                 log.error("DecoderException.", cause);
             }
