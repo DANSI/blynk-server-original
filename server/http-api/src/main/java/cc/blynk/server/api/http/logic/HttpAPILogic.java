@@ -35,6 +35,7 @@ import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
+import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
@@ -318,12 +319,18 @@ public class HttpAPILogic {
         }
 
         //todo may be optimized
-        java.nio.file.Path path = FileUtils.createCSV(reportingDao, user.name, dashId, pinType, pin);
-        if (path == null) {
+        try {
+            java.nio.file.Path path = FileUtils.createCSV(reportingDao, user.name, dashId, pinType, pin);
+            return redirect("/" + path.getFileName().toString());
+        } catch (IllegalCommandBodyException e1) {
+            log.debug(e1.getMessage());
+            return Response.badRequest(e1.getMessage());
+        } catch (NoDataException noData) {
+            log.debug("No data for pin.");
+            return Response.badRequest("No data for pin.");
+        } catch (Exception e) {
             log.debug("Error getting pin data.");
             return Response.badRequest("Error getting pin data.");
-        } else {
-            return redirect("/" + path.getFileName().toString());
         }
     }
 

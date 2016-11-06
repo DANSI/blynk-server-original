@@ -159,4 +159,21 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         assertEquals("102", values.get(2));
     }
 
+    @Test
+    public void testGetPinData() throws Exception {
+        Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v111?value=10").execute();
+        Response response = f.get();
+        assertEquals(200, response.getStatusCode());
+
+        f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/data/v111").execute();
+        response = f.get();
+        assertEquals(400, response.getStatusCode());
+        assertEquals("No data for pin.", response.getResponseBody());
+
+        f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/data/z111").execute();
+        response = f.get();
+        assertEquals(400, response.getStatusCode());
+        assertEquals("Wrong pin format.", response.getResponseBody());
+    }
+
 }

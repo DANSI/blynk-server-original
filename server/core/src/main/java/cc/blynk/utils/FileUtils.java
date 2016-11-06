@@ -3,6 +3,8 @@ package cc.blynk.utils;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
+import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -81,23 +83,21 @@ public class FileUtils {
 
     public static final int DEFAULT_FETCH_COUNT = 60 * 24 * 30 * 1;
 
-    public static Path createCSV(ReportingDao reportingDao, String username, int dashId, PinType pinType, byte pin) {
-        if (pinType != null && pin > -1) {
-            //data for 1 month
-
-            ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(username, dashId, pinType, pin, DEFAULT_FETCH_COUNT, GraphType.MINUTE);
-            if (onePinData != null) {
-                onePinData.flip();
-                Path path = generateExportCSVPath(username, dashId, pinType, pin);
-                try {
-                    makeGzippedCSVFile(onePinData, path);
-                    return path;
-                } catch (IOException e) {
-                    log.warn("Error making csv file for data export. Reason : {}", e.getMessage());
-                }
-            }
+    public static Path createCSV(ReportingDao reportingDao, String username, int dashId, PinType pinType, byte pin) throws Exception {
+        if (pinType == null || pin == -1) {
+            throw new IllegalCommandBodyException("Wrong pin format.");
         }
-        return null;
+
+        //data for 1 month
+        ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(username, dashId, pinType, pin, DEFAULT_FETCH_COUNT, GraphType.MINUTE);
+        if (onePinData == null) {
+            throw new NoDataException();
+        }
+
+        onePinData.flip();
+        Path path = generateExportCSVPath(username, dashId, pinType, pin);
+        makeGzippedCSVFile(onePinData, path);
+        return path;
     }
 
     private static Path generateExportCSVPath(String username, int dashId, PinType pinType, byte pin) {
