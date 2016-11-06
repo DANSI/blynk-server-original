@@ -67,16 +67,20 @@ public class StorageWorker implements Runnable {
     public void run() {
         Map<AggregationKey, AggregationValue> removedKeys;
 
-        removedKeys = process(averageAggregator.getMinute(), GraphType.MINUTE);
-        dbManager.insertReporting(removedKeys, GraphType.MINUTE);
+        try {
+            removedKeys = process(averageAggregator.getMinute(), GraphType.MINUTE);
+            dbManager.insertReporting(removedKeys, GraphType.MINUTE);
 
-        removedKeys = process(averageAggregator.getHourly(), GraphType.HOURLY);
-        dbManager.insertReporting(removedKeys, GraphType.HOURLY);
+            removedKeys = process(averageAggregator.getHourly(), GraphType.HOURLY);
+            dbManager.insertReporting(removedKeys, GraphType.HOURLY);
 
-        removedKeys = process(averageAggregator.getDaily(), GraphType.DAILY);
-        dbManager.insertReporting(removedKeys, GraphType.DAILY);
+            removedKeys = process(averageAggregator.getDaily(), GraphType.DAILY);
+            dbManager.insertReporting(removedKeys, GraphType.DAILY);
 
-        dbManager.cleanOldReportingRecords(Instant.now());
+            dbManager.cleanOldReportingRecords(Instant.now());
+        } catch (Exception e) {
+            log.error("Error during reporting job.", e);
+        }
     }
 
     /**
