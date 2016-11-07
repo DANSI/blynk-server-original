@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import io.netty.channel.EventLoopGroup;
 import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpHeaderValues;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asynchttpclient.AsyncCompletionHandler;
@@ -74,7 +73,8 @@ public class GCMWrapper {
         }
 
         httpclient.preparePost(gcmURI).setHeader("Authorization", API_KEY)
-                .setHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON.toString())
+                //todo should come from request, not hardcoded
+                .setHeader(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=utf-8")
                 .setBody(message)
                 .execute(new AsyncCompletionHandler<Response>() {
                     @Override
