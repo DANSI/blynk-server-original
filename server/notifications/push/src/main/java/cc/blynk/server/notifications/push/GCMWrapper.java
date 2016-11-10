@@ -73,7 +73,6 @@ public class GCMWrapper {
         }
 
         httpclient.preparePost(gcmURI).setHeader("Authorization", API_KEY)
-                //todo should come from request, not hardcoded
                 .setHeader(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=utf-8")
                 .setBody(message)
                 .execute(new AsyncCompletionHandler<Response>() {
