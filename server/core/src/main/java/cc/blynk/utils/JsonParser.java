@@ -100,6 +100,10 @@ public final class JsonParser {
         return null;
     }
 
+    public static void write(File file, User user) throws IOException {
+        userWriter.writeValue(file, user);
+    }
+
     public static User parseUserFromFile(File userFile) throws IOException {
         return userReader.readValue(userFile);
     }
