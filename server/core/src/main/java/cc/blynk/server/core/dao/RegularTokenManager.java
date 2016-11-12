@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -24,11 +23,6 @@ class RegularTokenManager extends TokenManagerBase {
                 }
             }
         }});
-    }
-
-    @Override
-    public Map<Integer, String> getTokens(User user) {
-        return user.dashTokens;
     }
 
     @Override

@@ -7,9 +7,10 @@ import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.JsonParser;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * User: ddumanskiy
@@ -20,8 +21,8 @@ public class User {
 
     private static final int INITIAL_ENERGY_AMOUNT = 2000;
 
-    public Map<Integer, String> dashShareTokens;
-    public Map<Integer, String> dashTokens;
+    public ConcurrentMap<Integer, String> dashShareTokens;
+    public ConcurrentMap<Integer, String> dashTokens;
 
     //key fields
 	public String name;
@@ -47,8 +48,8 @@ public class User {
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
         this.profile = new Profile();
-        this.dashShareTokens = new HashMap<>();
-        this.dashTokens = new HashMap<>();
+        this.dashShareTokens = new ConcurrentHashMap<>();
+        this.dashTokens = new ConcurrentHashMap<>();
         this.energy = INITIAL_ENERGY_AMOUNT;
         this.isFacebookUser = false;
         this.appName = AppName.BLYNK;
