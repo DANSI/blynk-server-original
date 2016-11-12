@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,7 +41,9 @@ public class FileManager {
     private Path dataDir;
 
     private static final String DELETED_DATA_DIR_NAME = "deleted";
+    private static final String BACKUP_DATA_DIR_NAME = "backup";
     private Path deletedDataDir;
+    private Path backupDataDir;
 
     public FileManager(String dataFolder) {
         if (dataFolder == null || dataFolder.equals("") || dataFolder.equals("/path")) {
@@ -51,6 +55,7 @@ public class FileManager {
             Path dataFolderPath = Paths.get(dataFolder);
             this.dataDir = createDir(dataFolderPath);
             this.deletedDataDir = createDir(Paths.get(dataFolder, DELETED_DATA_DIR_NAME));
+            this.backupDataDir = createDir(Paths.get(dataFolder, BACKUP_DATA_DIR_NAME));
         } catch (RuntimeException e) {
             Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk");
 
@@ -59,6 +64,7 @@ public class FileManager {
 
             this.dataDir = createDir(tempDir);
             this.deletedDataDir = createDir(Paths.get(this.dataDir.toString(), DELETED_DATA_DIR_NAME));
+            this.backupDataDir = createDir(Paths.get(this.dataDir.toString(), BACKUP_DATA_DIR_NAME));
         }
 
         log.info("Using data dir '{}'", dataDir);
@@ -80,6 +86,11 @@ public class FileManager {
 
     public Path generateFileName(String userName, String appName) {
         return Paths.get(dataDir.toString(), userName + "." + appName + ".user");
+    }
+
+    public Path generateBackupFileName(String userName, String appName) {
+        return Paths.get(backupDataDir.toString(), userName + "." + appName + ".user." +
+                new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
     }
 
     public Path generateOldFileName(String userName) {

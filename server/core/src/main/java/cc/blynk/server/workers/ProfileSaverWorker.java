@@ -5,10 +5,12 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.utils.JsonParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.Closeable;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,12 +30,14 @@ public class ProfileSaverWorker implements Runnable, Closeable {
     private final FileManager fileManager;
     private final DBManager dbManager;
     private long lastStart;
+    private long backupTs;
 
     public ProfileSaverWorker(UserDao userDao, FileManager fileManager, DBManager dbManager) {
         this.userDao = userDao;
         this.fileManager = fileManager;
         this.dbManager = dbManager;
         this.lastStart = System.currentTimeMillis();
+        this.backupTs = 0;
     }
 
     private static boolean isUpdated(long lastStart, User user) {
@@ -54,17 +58,37 @@ public class ProfileSaverWorker implements Runnable, Closeable {
         try {
             log.debug("Starting saving user db.");
 
-            long newStart = System.currentTimeMillis();
+            final long now = System.currentTimeMillis();
 
             List<User> users = saveModified();
 
             dbManager.saveUsers(users);
 
-            lastStart = newStart;
+            //backup only for local mode
+            if (!dbManager.isDBEnabled() && users.size() > 0) {
+                archiveUser(now);
+            }
+
+            lastStart = now;
 
             log.debug("Saving user db finished. Modified {} users.", users.size());
         } catch (Throwable t) {
             log.error("Error saving users.", t);
+        }
+    }
+
+    private void archiveUser(long now) {
+        if (now - backupTs > 86_400_000) {
+            //it is time for backup, once per day.
+            backupTs = now;
+            for (User user : userDao.getUsers().values()) {
+                try {
+                    Path path = fileManager.generateBackupFileName(user.name, user.appName);
+                    JsonParser.write(path.toFile(), user);
+                } catch (Exception e) {
+                    //ignore
+                }
+            }
         }
     }
 
