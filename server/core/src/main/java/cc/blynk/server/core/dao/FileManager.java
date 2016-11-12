@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.function.Function.identity;
 
 
@@ -96,9 +97,13 @@ public class FileManager {
     public void overrideUserFile(User user) throws IOException {
         Path file = generateFileName(user.name, user.appName);
 
-        try (BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
-            String userString = user.toString();
-            writer.write(userString);
+        final String userString = user.toString();
+
+        try (BufferedWriter bw = new BufferedWriter(
+                new OutputStreamWriter(Files.newOutputStream(file), UTF_8.newEncoder()),
+                userString.length())
+        ) {
+            bw.write(userString);
         }
 
         removeOldFile(user.name);
