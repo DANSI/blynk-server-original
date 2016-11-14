@@ -1,6 +1,7 @@
 package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.utils.TokenGeneratorUtil;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentMap;
@@ -35,10 +36,12 @@ public class TokenManager {
     }
 
     public String refreshToken(User user, int dashId) {
-        return regularTokenManager.refreshToken(user, dashId, user.dashTokens);
+        final String newToken = TokenGeneratorUtil.generateNewToken();
+        return regularTokenManager.assignToken(user, dashId, newToken, user.dashTokens);
     }
 
     public String refreshSharedToken(User user, int dashId) {
-        return sharedTokenManager.refreshToken(user, dashId, user.dashShareTokens);
+        final String newToken = TokenGeneratorUtil.generateNewToken();
+        return sharedTokenManager.assignToken(user, dashId, newToken, user.dashShareTokens);
     }
 }
