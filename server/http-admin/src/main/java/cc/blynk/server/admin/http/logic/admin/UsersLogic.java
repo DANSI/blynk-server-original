@@ -10,8 +10,10 @@ import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.core.http.model.Filter;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
@@ -26,6 +28,7 @@ import java.util.List;
 
 import static cc.blynk.core.http.Response.appendTotalCountHeader;
 import static cc.blynk.core.http.Response.ok;
+import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -41,12 +44,23 @@ public class UsersLogic extends HttpLogicUtil {
     private final SessionDao sessionDao;
     private final FileManager fileManager;
     private final ProfileSaverWorker profileSaverWorker;
+    private final TokenManager tokenManager;
 
-    public UsersLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager, ProfileSaverWorker profileSaverWorker) {
+    public UsersLogic(Holder holder) {
+        this.userDao = holder.userDao;
+        this.fileManager = holder.fileManager;
+        this.sessionDao = holder.sessionDao;
+        this.profileSaverWorker = holder.profileSaverWorker;
+        this.tokenManager = holder.tokenManager;
+    }
+
+    //for tests only
+    protected UsersLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager, ProfileSaverWorker profileSaverWorker, TokenManager tokenManager) {
         this.userDao = userDao;
         this.fileManager = fileManager;
         this.sessionDao = sessionDao;
         this.profileSaverWorker = profileSaverWorker;
+        this.tokenManager = tokenManager;
     }
 
     @GET
@@ -80,6 +94,20 @@ public class UsersLogic extends HttpLogicUtil {
     @Path("/names/getAll")
     public Response getAllUserNames() {
         return ok(userDao.users.keySet());
+    }
+
+    @GET
+    @Path("/assignToken")
+    public Response getAllUserNames(@QueryParam("old") String oldToken, @QueryParam("new") String newToken) {
+        User user = tokenManager.getUserByToken(oldToken);
+
+        if (user == null) {
+            return new Response(HTTP_1_1, BAD_REQUEST);
+        }
+
+        final Integer dashId = UserDao.getDashIdByToken(user.dashTokens, oldToken, 1);
+        tokenManager.assignToken(user, dashId, newToken);
+        return ok();
     }
 
     @GET

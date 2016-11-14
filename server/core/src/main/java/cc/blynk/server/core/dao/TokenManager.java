@@ -35,6 +35,10 @@ public class TokenManager {
         return sharedTokenManager.getUserByToken(token);
     }
 
+    public void assignToken(User user, int dashId, String newToken) {
+        regularTokenManager.assignToken(user, dashId, newToken, user.dashTokens);
+    }
+
     public String refreshToken(User user, int dashId) {
         final String newToken = TokenGeneratorUtil.generateNewToken();
         return regularTokenManager.assignToken(user, dashId, newToken, user.dashTokens);

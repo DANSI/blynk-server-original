@@ -35,7 +35,7 @@ public class HttpsAdminServer extends BaseServer {
 
         final String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
 
-        HandlerRegistry.register(adminRootPath, new UsersLogic(holder.userDao, holder.sessionDao, holder.fileManager, holder.profileSaverWorker));
+        HandlerRegistry.register(adminRootPath, new UsersLogic(holder));
         HandlerRegistry.register(adminRootPath, new StatsLogic(holder));
         HandlerRegistry.register(adminRootPath, new ConfigsLogic(holder.props, holder.blockingIOProcessor));
         HandlerRegistry.register(adminRootPath, new HardwareStatsLogic(holder.userDao));

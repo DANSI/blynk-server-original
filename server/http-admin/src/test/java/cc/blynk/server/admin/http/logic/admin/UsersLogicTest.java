@@ -57,7 +57,7 @@ public class UsersLogicTest {
         when(userDao.delete(any(), any())).thenReturn(user);
         sessionDao.getOrCreateSessionByUser(new UserKey(user), mock(EventLoop.class));
         FileManager fileManager = new FileManager(null);
-        usersLogic = new UsersLogic(userDao, sessionDao, fileManager, profileSaverWorker);
+        usersLogic = new UsersLogic(userDao, sessionDao, fileManager, profileSaverWorker, null);
 
         userFile = Paths.get(System.getProperty("java.io.tmpdir"), "blynk", TEST_USER + ".Blynk.user");
         deletedUserFile = Paths.get(System.getProperty("java.io.tmpdir"), "blynk", DELETED_DATA_DIR_NAME, TEST_USER + ".Blynk.user");
