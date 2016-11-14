@@ -7,7 +7,6 @@ import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.JsonParser;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -96,22 +95,7 @@ public class User {
         return false;
     }
 
-    public void putToken(Integer dashId, String token, Map<Integer, String> tokens) {
-        cleanTokensForNonExistentDashes(tokens);
-        tokens.put(dashId, token);
-        this.lastModifiedTs = System.currentTimeMillis();
-    }
-
-    private void cleanTokensForNonExistentDashes(Map<Integer, String> tokens) {
-        Iterator<Integer> iterator = tokens.keySet().iterator();
-        while (iterator.hasNext()) {
-            if (!exists(iterator.next())) {
-                iterator.remove();
-            }
-        }
-    }
-
-    private boolean exists(int dashId) {
+    public boolean dashIdExists(int dashId) {
         for (DashBoard dashBoard : profile.dashBoards) {
             if (dashBoard.id == dashId) {
                 return true;

@@ -52,7 +52,7 @@ public class SessionPerfTest {
 
         // create handler with HardwareStateHolder
         User user = new User();
-        user.putToken(DASH_ID, "1", user.dashTokens);
+        user.dashTokens.putIfAbsent(DASH_ID, "1");
 
         HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(DASH_ID, user, "1");
 

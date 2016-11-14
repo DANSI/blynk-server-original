@@ -2,6 +2,8 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.auth.User;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -17,19 +19,31 @@ abstract class TokenManagerBase {
         this.cache = data;
     }
 
-    public String assignToken(User user, Integer dashboardId, String newToken, ConcurrentMap<Integer, String> dashTokens) {
+    public String assignToken(User user, Integer dashboardId, String newToken, ConcurrentMap<Integer, String> tokens) {
         // Clean old token from cache if exists.
-        String oldToken = dashTokens.get(dashboardId);
+        String oldToken = tokens.get(dashboardId);
         if (oldToken != null) {
             cache.remove(oldToken);
         }
 
         //assign new token
-        user.putToken(dashboardId, newToken, dashTokens);
+        cleanTokensForNonExistentDashes(user, tokens);
+        tokens.put(dashboardId, newToken);
+        user.lastModifiedTs = System.currentTimeMillis();
+
         cache.put(newToken, user);
 
         printMessage(user.name, dashboardId, newToken);
         return newToken;
+    }
+
+    private static void cleanTokensForNonExistentDashes(User user, Map<Integer, String> tokens) {
+        Iterator<Integer> iterator = tokens.keySet().iterator();
+        while (iterator.hasNext()) {
+            if (!user.dashIdExists(iterator.next())) {
+                iterator.remove();
+            }
+        }
     }
 
     public User getUserByToken(String token) {
