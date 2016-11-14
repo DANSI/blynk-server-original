@@ -57,21 +57,22 @@ public class HardwareSyncLogic {
             }
 
             PinType pinType = PinType.getPinType(bodyParts[0].charAt(0));
-            byte pin = Byte.parseByte(bodyParts[1]);
 
             if (PinUtil.isReadOperation(bodyParts[0])) {
-                Widget widget = dash.findWidgetByPin(pin, pinType);
-                if (widget == null) {
-                    String value = dash.storagePins.get("" + pinType.pintTypeChar + pin);
-                    if (value != null) {
-                        String body = Pin.makeHardwareBody(pinType, pin, value);
-                        ctx.writeAndFlush(makeUTF8StringMessage(HARDWARE, message.id, body), ctx.voidPromise());
+                for (int i = 1; i < bodyParts.length; i++) {
+                    byte pin = Byte.parseByte(bodyParts[i]);
+                    Widget widget = dash.findWidgetByPin(pin, pinType);
+                    if (widget == null) {
+                        String value = dash.storagePins.get(String.valueOf(pinType.pintTypeChar) + pin);
+                        if (value != null) {
+                            String body = Pin.makeHardwareBody(pinType, pin, value);
+                            ctx.write(makeUTF8StringMessage(HARDWARE, message.id, body), ctx.voidPromise());
+                        }
+                    } else if (widget instanceof HardwareSyncWidget) {
+                        ((HardwareSyncWidget) widget).send(ctx, message.id);
                     }
-                } else if (widget instanceof HardwareSyncWidget) {
-                    ((HardwareSyncWidget) widget).send(ctx, message.id);
-                    ctx.flush();
                 }
-
+                ctx.flush();
             }
         }
     }

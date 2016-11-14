@@ -502,6 +502,21 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("vw 100 101"))));
     }
 
+    @Test
+    public void testSyncForMultiPins() throws Exception {
+        clientPair.appClient.send("createWidget 1\0{\"id\":155, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("hardware vw 100 100");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 100 100"))));
+
+        clientPair.hardwareClient.send("hardware vw 101 101");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1 vw 101 101"))));
+
+        clientPair.hardwareClient.send("hardsync vr 100 101");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("vw 100 100"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("vw 101 101"))));
+    }
 
     @Test
     public void testActivateAndGetSync() throws Exception {
