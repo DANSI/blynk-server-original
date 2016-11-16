@@ -16,6 +16,8 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  */
 public abstract class MultiPinWidget extends Widget implements SyncOnActivate {
 
+    public int deviceId;
+
     public Pin[] pins;
 
     @Override

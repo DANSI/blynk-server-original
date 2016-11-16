@@ -18,6 +18,8 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 //todo all this should be replaced with 1 Pin field.
 public abstract class OnePinWidget extends Widget implements SyncOnActivate {
 
+    public int deviceId;
+
     public PinType pinType;
 
     public byte pin = -1;

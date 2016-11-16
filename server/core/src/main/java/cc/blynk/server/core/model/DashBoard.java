@@ -30,6 +30,9 @@ public class DashBoard {
 
     public Widget[] widgets = {};
 
+    public Device[] devices = {};
+
+    //todo should be removed after migration
     public String boardType;
 
     public String theme = "Blynk";
@@ -122,6 +125,19 @@ public class DashBoard {
             }
         }
         throw new IllegalCommandException("Widget with passed id not found.");
+    }
+
+    public int getDeviceIndexById(int id) {
+        for (int i = 0; i < devices.length; i++) {
+            if (devices[i].id == id) {
+                return i;
+            }
+        }
+        throw new IllegalCommandException("Device with passed id not found.");
+    }
+
+    public Device getDeviceById(int id) {
+        return devices[getDeviceIndexById(id)];
     }
 
     public Widget getWidgetById(long id) {

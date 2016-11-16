@@ -1,5 +1,7 @@
 package cc.blynk.server.core.dao;
 
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Device;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
@@ -136,6 +138,25 @@ public class FileManager {
                     .flatMap(file -> {
                         try {
                             User user = JsonParser.parseUserFromFile(file);
+
+
+
+
+                            //todo this is migration code. remove during next deploy.
+                            for (DashBoard dashBoard : user.profile.dashBoards) {
+                                final Integer dashId = dashBoard.id;
+                                String token = user.dashTokens.get(dashId);
+                                if (token != null && !"".equals(token)) {
+                                    dashBoard.devices = new Device[] {
+                                        new Device(0, "My Device", dashBoard.boardType, token, null)
+                                    };
+                                    user.dashTokens.remove(dashId);
+                                }
+                            }
+
+
+
+
                             return Stream.of(user);
                         } catch (IOException ioe) {
                             log.error("Error parsing file '{}'. Error : {}", file, ioe.getMessage());
