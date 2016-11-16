@@ -13,13 +13,13 @@ import java.util.concurrent.ConcurrentMap;
  */
 abstract class TokenManagerBase {
 
-    protected final ConcurrentMap<String, User> cache;
+    protected final ConcurrentMap<String, TokenValue> cache;
 
-    public TokenManagerBase(ConcurrentMap<String, User> data) {
+    public TokenManagerBase(ConcurrentMap<String, TokenValue> data) {
         this.cache = data;
     }
 
-    public void assignToken(User user, Integer dashboardId, String newToken, ConcurrentMap<Integer, String> tokens) {
+    public void assignToken(User user, int dashboardId, String newToken, ConcurrentMap<Integer, String> tokens) {
         // Clean old token from cache if exists.
         String oldToken = tokens.get(dashboardId);
         if (oldToken != null) {
@@ -31,7 +31,7 @@ abstract class TokenManagerBase {
         tokens.put(dashboardId, newToken);
         user.lastModifiedTs = System.currentTimeMillis();
 
-        cache.put(newToken, user);
+        cache.put(newToken, new TokenValue(user, dashboardId));
 
         printMessage(user.name, dashboardId, newToken);
     }
@@ -45,12 +45,12 @@ abstract class TokenManagerBase {
         }
     }
 
-    public User getUserByToken(String token) {
+    public TokenValue getUserByToken(String token) {
         return cache.get(token);
     }
 
     abstract String deleteProject(User user, Integer projectId);
 
-    abstract void printMessage(String username, Integer dashId, String token);
+    abstract void printMessage(String username, int dashId, String token);
 
 }

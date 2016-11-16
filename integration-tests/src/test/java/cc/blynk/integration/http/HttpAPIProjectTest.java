@@ -5,6 +5,7 @@ import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.exceptions.InvalidTokenException;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -17,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.InputStream;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -63,13 +65,22 @@ public class HttpAPIProjectTest extends BaseTest {
         InputStream is = getClass().getResourceAsStream("/profiles/u_dmitriy@blynk.cc.user");
         User user = JsonParser.mapper.readValue(is, User.class);
 
-        Integer dashId = user.getDashIdByToken(token);
+        Integer dashId = getDashIdByToken(user.dashTokens, token, 0);
         dashBoard = user.profile.getDashById(dashId);
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals(dashBoard.toString(), consumeText(response));
         }
+    }
+
+    public static Integer getDashIdByToken(Map<Integer, String> tokens, String token, int msgId) {
+        for (Map.Entry<Integer, String> dashToken : tokens.entrySet()) {
+            if (dashToken.getValue().equals(token)) {
+                return dashToken.getKey();
+            }
+        }
+        throw new InvalidTokenException("Error getting dashId. Wrong token.", msgId);
     }
 
 

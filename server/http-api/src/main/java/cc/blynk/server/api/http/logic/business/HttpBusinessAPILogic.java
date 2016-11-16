@@ -8,8 +8,8 @@ import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.pojo.business.BusinessProject;
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import org.apache.logging.log4j.LogManager;
@@ -149,14 +149,14 @@ public class HttpBusinessAPILogic {
                                  @QueryParam("pin") String pin,
                                  @QueryParam("value") String value) {
 
-        User user = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getUserByToken(token);
 
-        if (user == null) {
+        if (tokenValue == null) {
             log.error("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
-        List<DashBoard> projects = Arrays.asList(user.profile.dashBoards).stream()
+        List<DashBoard> projects = Arrays.asList(tokenValue.user.profile.dashBoards).stream()
             .filter(filterByProjectName(name))
             .filter(filterByValue(pin, value))
                 .collect(Collectors.toList());

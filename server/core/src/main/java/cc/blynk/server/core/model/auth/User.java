@@ -7,7 +7,6 @@ import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.JsonParser;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -84,17 +83,6 @@ public class User {
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    public boolean hasActive() {
-        if (profile != null) {
-            for (DashBoard dashBoard : profile.dashBoards) {
-                if (dashBoard.isActive) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public boolean dashIdExists(int dashId) {
         for (DashBoard dashBoard : profile.dashBoards) {
             if (dashBoard.id == dashId) {
@@ -103,16 +91,6 @@ public class User {
         }
 
         return false;
-    }
-
-    public Integer getDashIdByToken(String token) {
-        for (Map.Entry<Integer, String> entry : dashTokens.entrySet()) {
-            if (entry.getValue().equals(token)) {
-                return entry.getKey();
-            }
-        }
-
-        return null;
     }
 
     public String getName() {

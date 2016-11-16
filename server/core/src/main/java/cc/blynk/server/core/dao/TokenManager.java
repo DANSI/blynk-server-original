@@ -27,11 +27,11 @@ public class TokenManager {
         return regularTokenManager.deleteProject(user, projectId);
     }
 
-    public User getUserByToken(String token) {
+    public TokenValue getUserByToken(String token) {
         return regularTokenManager.getUserByToken(token);
     }
 
-    public User getUserBySharedToken(String token) {
+    public TokenValue getUserBySharedToken(String token) {
         return sharedTokenManager.getUserByToken(token);
     }
 

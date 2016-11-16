@@ -7,9 +7,9 @@ import cc.blynk.core.http.rest.HandlerRegistry;
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.Session;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -35,14 +35,14 @@ public class HttpHandler extends BaseHttpHandler {
         }
 
         //reregister logic
-        User user = tokenManager.getUserByToken(tokenPathParam);
-        if (user == null) {
+        TokenValue tokenValue = tokenManager.getUserByToken(tokenPathParam);
+        if (tokenValue == null) {
             log.error("Requested token {} not found.", tokenPathParam);
             ctx.writeAndFlush(Response.badRequest("Invalid token."), ctx.voidPromise());
             return;
         }
 
-        Session session = sessionDao.getOrCreateSessionByUser(new UserKey(user), ctx.channel().eventLoop());
+        Session session = sessionDao.getOrCreateSessionByUser(new UserKey(tokenValue.user), ctx.channel().eventLoop());
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering http channel. {}", ctx.channel());
             reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), HandlerRegistry.invoke(handlerHolder, params)));
