@@ -36,7 +36,7 @@ public class TokenManager {
     }
 
     public void assignToken(User user, int dashId, String newToken) {
-        regularTokenManager.assignToken(user, dashId, newToken, user.dashTokens);
+        regularTokenManager.assignToken(user, dashId, newToken);
     }
 
     public String refreshToken(User user, int dashId) {
@@ -47,7 +47,7 @@ public class TokenManager {
 
     public String refreshSharedToken(User user, int dashId) {
         final String newToken = TokenGeneratorUtil.generateNewToken();
-        sharedTokenManager.assignToken(user, dashId, newToken, user.dashShareTokens);
+        sharedTokenManager.assignToken(user, dashId, newToken);
         return newToken;
     }
 }

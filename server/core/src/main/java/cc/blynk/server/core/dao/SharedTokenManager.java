@@ -26,6 +26,23 @@ class SharedTokenManager extends TokenManagerBase {
         }});
     }
 
+    public void assignToken(User user, int dashboardId, String newToken) {
+        // Clean old token from cache if exists.
+        String oldToken = user.dashShareTokens.get(dashboardId);
+        if (oldToken != null) {
+            cache.remove(oldToken);
+        }
+
+        //assign new token
+        cleanTokensForNonExistentDashes(user, user.dashShareTokens);
+        user.dashShareTokens.put(dashboardId, newToken);
+        user.lastModifiedTs = System.currentTimeMillis();
+
+        cache.put(newToken, new TokenValue(user, dashboardId));
+
+        printMessage(user.name, dashboardId, newToken);
+    }
+
     @Override
     String deleteProject(User user, Integer projectId) {
         String removedToken = user.dashShareTokens.remove(projectId);
