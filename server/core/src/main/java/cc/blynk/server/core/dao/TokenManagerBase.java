@@ -19,7 +19,7 @@ abstract class TokenManagerBase {
         this.cache = data;
     }
 
-    public String assignToken(User user, Integer dashboardId, String newToken, ConcurrentMap<Integer, String> tokens) {
+    public void assignToken(User user, Integer dashboardId, String newToken, ConcurrentMap<Integer, String> tokens) {
         // Clean old token from cache if exists.
         String oldToken = tokens.get(dashboardId);
         if (oldToken != null) {
@@ -34,7 +34,6 @@ abstract class TokenManagerBase {
         cache.put(newToken, user);
 
         printMessage(user.name, dashboardId, newToken);
-        return newToken;
     }
 
     private static void cleanTokensForNonExistentDashes(User user, Map<Integer, String> tokens) {
