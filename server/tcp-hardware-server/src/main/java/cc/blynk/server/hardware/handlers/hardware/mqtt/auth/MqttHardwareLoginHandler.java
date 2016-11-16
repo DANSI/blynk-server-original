@@ -1,7 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware.mqtt.auth;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -71,15 +71,16 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
         String username = message.payload().userName().toLowerCase();
         String token = message.payload().password();
 
-        User user = holder.tokenManager.getUserByToken(token);
+        final TokenValue tokenValue = holder.tokenManager.getUserByToken(token);
 
-        if (user == null || !user.name.equalsIgnoreCase(username)) {
+        if (tokenValue == null || !tokenValue.user.name.equalsIgnoreCase(username)) {
             log.debug("MqttHardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
             ctx.writeAndFlush(createConnAckMessage(CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD), ctx.voidPromise());
             return;
         }
 
-        final Integer dashId = UserDao.getDashIdByToken(user.dashTokens, token, -1);
+        final User user = tokenValue.user;
+        final int dashId = tokenValue.dashId;
 
         DashBoard dash = user.profile.getDashById(dashId);
         if (dash == null) {

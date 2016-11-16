@@ -21,6 +21,7 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Pin;
@@ -129,19 +130,15 @@ public class HttpAPILogic {
     public Response getDashboard(@PathParam("token") String token) {
         globalStats.mark(HTTP_GET_PROJECT);
 
-        User user = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getUserByToken(token);
 
-        if (user == null) {
+        if (tokenValue == null) {
             log.error("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
-        Integer dashId = user.getDashIdByToken(token);
-
-        if (dashId == null) {
-            log.error("Dash id for token {} not found. User {}", token, user.name);
-            return Response.badRequest("Didn't find dash id for token.");
-        }
+        final User user = tokenValue.user;
+        final int dashId = tokenValue.dashId;
 
         DashBoard dashBoard = user.profile.getDashById(dashId);
 
@@ -153,19 +150,15 @@ public class HttpAPILogic {
     public Response isHardwareConnected(@PathParam("token") String token) {
         globalStats.mark(HTTP_IS_HARDWARE_CONNECTED);
 
-        User user = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getUserByToken(token);
 
-        if (user == null) {
+        if (tokenValue == null) {
             log.error("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
-        Integer dashId = user.getDashIdByToken(token);
-
-        if (dashId == null) {
-            log.error("Dash id for token {} not found. User {}", token, user.name);
-            return Response.badRequest("Didn't find dash id for token.");
-        }
+        final User user = tokenValue.user;
+        final int dashId = tokenValue.dashId;
 
         final Session session = sessionDao.userSession.get(new UserKey(user));
 
@@ -177,19 +170,15 @@ public class HttpAPILogic {
     public Response isAppConnected(@PathParam("token") String token) {
         globalStats.mark(HTTP_IS_APP_CONNECTED);
 
-        User user = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getUserByToken(token);
 
-        if (user == null) {
+        if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
-        Integer dashId = user.getDashIdByToken(token);
-
-        if (dashId == null) {
-            log.debug("Dash id for token {} not found. User {}", token, user.name);
-            return Response.badRequest("Didn't find dash id for token.");
-        }
+        final User user = tokenValue.user;
+        final int dashId = tokenValue.dashId;
 
         final DashBoard dashBoard = user.profile.getDashById(dashId);
 
@@ -213,19 +202,15 @@ public class HttpAPILogic {
 
         globalStats.mark(HTTP_GET_PIN_DATA);
 
-        User user = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getUserByToken(token);
 
-        if (user == null) {
+        if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
-        Integer dashId = user.getDashIdByToken(token);
-
-        if (dashId == null) {
-            log.debug("Dash id for token {} not found. User {}", token, user.name);
-            return Response.badRequest("Didn't find dash id for token.");
-        }
+        final User user = tokenValue.user;
+        final int dashId = tokenValue.dashId;
 
         DashBoard dashBoard = user.profile.getDashById(dashId);
 
@@ -260,19 +245,15 @@ public class HttpAPILogic {
     public Response getQR(@PathParam("token") String token) {
         globalStats.mark(HTTP_QR);
 
-        User user = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getUserByToken(token);
 
-        if (user == null) {
+        if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
-        Integer dashId = user.getDashIdByToken(token);
-
-        if (dashId == null) {
-            log.debug("Dash id for token {} not found. User {}", token, user.name);
-            return Response.badRequest("Didn't find dash id for token.");
-        }
+        final User user = tokenValue.user;
+        final int dashId = tokenValue.dashId;
 
         DashBoard dashBoard = user.profile.getDashById(dashId);
 
@@ -293,19 +274,15 @@ public class HttpAPILogic {
                                       @PathParam("pin") String pinString) {
         globalStats.mark(HTTP_GET_DATA);
 
-        User user = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getUserByToken(token);
 
-        if (user == null) {
+        if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
-        Integer dashId = user.getDashIdByToken(token);
-
-        if (dashId == null) {
-            log.debug("Dash id for token {} not found. User {}", token, user.name);
-            return Response.badRequest("Didn't find dash id for token.");
-        }
+        final User user = tokenValue.user;
+        final int dashId = tokenValue.dashId;
 
         PinType pinType;
         byte pin;
@@ -388,19 +365,15 @@ public class HttpAPILogic {
             return Response.badRequest("No properties for update provided.");
         }
 
-        User user = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getUserByToken(token);
 
-        if (user == null) {
+        if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
-        Integer dashId = user.getDashIdByToken(token);
-
-        if (dashId == null) {
-            log.debug("Dash id for token {} not found. User {}", token, user.name);
-            return Response.badRequest("Didn't find dash id for token.");
-        }
+        final User user = tokenValue.user;
+        final int dashId = tokenValue.dashId;
 
         DashBoard dash = user.profile.getDashById(dashId);
 
@@ -509,19 +482,15 @@ public class HttpAPILogic {
             return Response.badRequest("No pin for update provided.");
         }
 
-        User user = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getUserByToken(token);
 
-        if (user == null) {
+        if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
-        Integer dashId = user.getDashIdByToken(token);
-
-        if (dashId == null) {
-            log.debug("Dash id for token {} not found. User {}", token, user.name);
-            return Response.badRequest("Didn't find dash id for token.");
-        }
+        final User user = tokenValue.user;
+        final int dashId = tokenValue.dashId;
 
         DashBoard dash = user.profile.getDashById(dashId);
 
@@ -575,19 +544,15 @@ public class HttpAPILogic {
             return Response.badRequest("No pin for update provided.");
         }
 
-        User user = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getUserByToken(token);
 
-        if (user == null) {
+        if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
-        Integer dashId = user.getDashIdByToken(token);
-
-        if (dashId == null) {
-            log.debug("Dash id for token {} not found. User {}", token, user.name);
-            return Response.badRequest("Didn't find dash id for token.");
-        }
+        final User user = tokenValue.user;
+        final int dashId = tokenValue.dashId;
 
         DashBoard dash = user.profile.getDashById(dashId);
 
@@ -634,19 +599,15 @@ public class HttpAPILogic {
 
         globalStats.mark(HTTP_NOTIFY);
 
-        User user = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getUserByToken(token);
 
-        if (user == null) {
+        if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
-        Integer dashId = user.getDashIdByToken(token);
-
-        if (dashId == null) {
-            log.debug("Dash id for token {} not found. User {}", token, user.name);
-            return Response.badRequest("Didn't find dash id for token.");
-        }
+        final User user = tokenValue.user;
+        final int dashId = tokenValue.dashId;
 
         if (message == null || Notification.isWrongBody(message.body)) {
             log.debug("Notification body is wrong. '{}'", message == null ? "" : message.body);
@@ -681,23 +642,16 @@ public class HttpAPILogic {
 
         globalStats.mark(HTTP_EMAIL);
 
-        User user = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getUserByToken(token);
 
-        if (user == null) {
+        if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
-        Integer dashId = user.getDashIdByToken(token);
+        DashBoard dash = tokenValue.user.profile.getDashById(tokenValue.dashId);
 
-        if (dashId == null) {
-            log.debug("Dash id for token {} not found. User {}", token, user.name);
-            return Response.badRequest("Didn't find dash id for token.");
-        }
-
-        DashBoard dash = user.profile.getDashById(dashId);
-
-        if (!dash.isActive) {
+        if (dash == null || !dash.isActive) {
             log.debug("Project is not active.");
             return Response.badRequest("Project is not active.");
         }
@@ -716,8 +670,8 @@ public class HttpAPILogic {
             return Response.badRequest("Email body is wrong. Missing or empty fields 'to', 'subj'.");
         }
 
-        log.trace("Sending Mail for user {}, with message : '{}'.", user.name, message.subj);
-        mail(user.name, message.to, message.subj, message.title);
+        log.trace("Sending Mail for user {}, with message : '{}'.", tokenValue.user.name, message.subj);
+        mail(tokenValue.user.name, message.to, message.subj, message.title);
 
         return Response.ok();
     }

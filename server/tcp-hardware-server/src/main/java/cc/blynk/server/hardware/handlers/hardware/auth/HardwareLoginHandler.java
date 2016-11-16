@@ -2,7 +2,7 @@ package cc.blynk.server.hardware.handlers.hardware.auth;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -76,18 +76,19 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
-        String token = message.body.trim();
-        User user = holder.tokenManager.getUserByToken(token);
+        final String token = message.body.trim();
+        final TokenValue tokenValue = holder.tokenManager.getUserByToken(token);
 
         //no user on current server, trying to find server that user belongs to.
-        if (user == null) {
+        if (tokenValue == null) {
             //checkUserOnOtherServer(ctx, token, message.id);
             log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
             ctx.writeAndFlush(makeResponse(message.id, INVALID_TOKEN), ctx.voidPromise());
             return;
         }
 
-        final Integer dashId = UserDao.getDashIdByToken(user.dashTokens, token, message.id);
+        final User user = tokenValue.user;
+        final int dashId = tokenValue.dashId;
 
         DashBoard dash = user.profile.getDashById(dashId);
         if (dash == null) {

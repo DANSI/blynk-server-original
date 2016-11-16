@@ -6,7 +6,7 @@ import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.OsType;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
 import cc.blynk.server.application.handlers.sharing.AppShareHandler;
-import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -71,15 +71,16 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
     private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String token, OsType osType, String version, String uid) {
         String userName = username.toLowerCase();
 
-        User user = holder.tokenManager.getUserBySharedToken(token);
+        TokenValue tokenValue = holder.tokenManager.getUserBySharedToken(token);
 
-        if (user == null || !user.name.equals(userName)) {
+        if (tokenValue == null || !tokenValue.user.name.equals(userName)) {
             log.debug("Share token is invalid. User : {}, token {}, {}", userName, token, ctx.channel().remoteAddress());
             ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
             return;
         }
 
-        Integer dashId = UserDao.getDashIdByToken(user.dashShareTokens, token, messageId);
+        final User user = tokenValue.user;
+        final int dashId = tokenValue.dashId;
 
         DashBoard dash = user.profile.getDashById(dashId);
         if (!dash.isShared) {

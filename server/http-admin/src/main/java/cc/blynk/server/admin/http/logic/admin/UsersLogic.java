@@ -14,6 +14,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
@@ -99,14 +100,13 @@ public class UsersLogic extends HttpLogicUtil {
     @GET
     @Path("/assignToken")
     public Response getAllUserNames(@QueryParam("old") String oldToken, @QueryParam("new") String newToken) {
-        User user = tokenManager.getUserByToken(oldToken);
+        TokenValue tokenValue = tokenManager.getUserByToken(oldToken);
 
-        if (user == null) {
+        if (tokenValue == null) {
             return new Response(HTTP_1_1, BAD_REQUEST);
         }
 
-        final Integer dashId = UserDao.getDashIdByToken(user.dashTokens, oldToken, 1);
-        tokenManager.assignToken(user, dashId, newToken);
+        tokenManager.assignToken(tokenValue.user, tokenValue.dashId, newToken);
         return ok();
     }
 

@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -16,10 +17,10 @@ class RegularTokenManager extends TokenManagerBase {
     private static final Logger log = LogManager.getLogger(RegularTokenManager.class);
 
     public RegularTokenManager(Iterable<User> users) {
-        super(new ConcurrentHashMap<String, User>() {{
+        super(new ConcurrentHashMap<String, TokenValue>() {{
             for (User user : users) {
-                for (String regularToken : user.dashTokens.values()) {
-                    put(regularToken, user);
+                for (Map.Entry<Integer, String> entry : user.dashTokens.entrySet()) {
+                    put(entry.getValue(), new TokenValue(user, entry.getKey().intValue()));
                 }
             }
         }});
@@ -36,7 +37,7 @@ class RegularTokenManager extends TokenManagerBase {
     }
 
     @Override
-    void printMessage(String username, Integer dashId, String token) {
+    void printMessage(String username, int dashId, String token) {
         log.debug("Generated token for user {} and dashId {} is {}.", username, dashId, token);
     }
 }

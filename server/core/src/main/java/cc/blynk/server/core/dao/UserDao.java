@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
-import cc.blynk.server.core.protocol.exceptions.InvalidTokenException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,15 +34,6 @@ public class UserDao {
         this.users = users;
         this.region = region;
         log.info("Region : {}", region);
-    }
-
-    public static Integer getDashIdByToken(Map<Integer, String> tokens, String token, int msgId) {
-        for (Map.Entry<Integer, String> dashToken : tokens.entrySet()) {
-            if (dashToken.getValue().equals(token)) {
-                return dashToken.getKey();
-            }
-        }
-        throw new InvalidTokenException("Error getting dashId. Wrong token.", msgId);
     }
 
     public boolean isUserExists(String name, String appName) {

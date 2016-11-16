@@ -27,11 +27,11 @@ public class TokenManager {
         return regularTokenManager.deleteProject(user, projectId);
     }
 
-    public User getUserByToken(String token) {
+    public TokenValue getUserByToken(String token) {
         return regularTokenManager.getUserByToken(token);
     }
 
-    public User getUserBySharedToken(String token) {
+    public TokenValue getUserBySharedToken(String token) {
         return sharedTokenManager.getUserByToken(token);
     }
 
@@ -41,11 +41,13 @@ public class TokenManager {
 
     public String refreshToken(User user, int dashId) {
         final String newToken = TokenGeneratorUtil.generateNewToken();
-        return regularTokenManager.assignToken(user, dashId, newToken, user.dashTokens);
+        assignToken(user, dashId, newToken);
+        return newToken;
     }
 
     public String refreshSharedToken(User user, int dashId) {
         final String newToken = TokenGeneratorUtil.generateNewToken();
-        return sharedTokenManager.assignToken(user, dashId, newToken, user.dashShareTokens);
+        sharedTokenManager.assignToken(user, dashId, newToken, user.dashShareTokens);
+        return newToken;
     }
 }
