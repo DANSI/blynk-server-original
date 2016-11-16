@@ -19,24 +19,7 @@ abstract class TokenManagerBase {
         this.cache = data;
     }
 
-    public void assignToken(User user, int dashboardId, String newToken, ConcurrentMap<Integer, String> tokens) {
-        // Clean old token from cache if exists.
-        String oldToken = tokens.get(dashboardId);
-        if (oldToken != null) {
-            cache.remove(oldToken);
-        }
-
-        //assign new token
-        cleanTokensForNonExistentDashes(user, tokens);
-        tokens.put(dashboardId, newToken);
-        user.lastModifiedTs = System.currentTimeMillis();
-
-        cache.put(newToken, new TokenValue(user, dashboardId));
-
-        printMessage(user.name, dashboardId, newToken);
-    }
-
-    private static void cleanTokensForNonExistentDashes(User user, Map<Integer, String> tokens) {
+    protected static void cleanTokensForNonExistentDashes(User user, Map<Integer, String> tokens) {
         Iterator<Integer> iterator = tokens.keySet().iterator();
         while (iterator.hasNext()) {
             if (!user.dashIdExists(iterator.next())) {
