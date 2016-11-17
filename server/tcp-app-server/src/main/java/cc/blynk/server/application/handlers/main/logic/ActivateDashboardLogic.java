@@ -50,7 +50,7 @@ public class ActivateDashboardLogic {
 
         Session session = sessionDao.userSession.get(state.userKey);
 
-        if (session.hasHardwareOnline(dashId)) {
+        if (session.isHardwareConnected(dashId)) {
             session.sendMessageToHardware(ctx, dashId, HARDWARE, 1, dash.buildPMMessage());
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
