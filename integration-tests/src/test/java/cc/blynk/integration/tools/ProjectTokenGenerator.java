@@ -46,7 +46,7 @@ public class ProjectTokenGenerator {
 
         List<String> tokens = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
-            tokens.add(tokenManager.refreshToken(user, i));
+            tokens.add(tokenManager.refreshToken(user, i, 0));
         }
 
         write("/path/300_tokens.txt", tokens);

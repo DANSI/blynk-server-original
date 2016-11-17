@@ -97,7 +97,7 @@ public class BusinessLogic {
         newProject.id = findMaxId(user.profile.dashBoards) + 1;
         String token = user.dashTokens.get(newProject.id);
         if (token == null) {
-            tokenManager.refreshToken(user, newProject.id);
+            tokenManager.refreshToken(user, newProject.id, 0);
         }
 
         user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newProject);
@@ -121,8 +121,10 @@ public class BusinessLogic {
         log.debug("Deleting project {}", projectId);
 
         int index = user.profile.getDashIndexOrThrow(projectId);
+        DashBoard dash = user.profile.dashBoards[index];
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
-        tokenManager.deleteProject(user, projectId);
+
+        tokenManager.deleteProject(user, dash);
 
         user.lastModifiedTs = System.currentTimeMillis();
 

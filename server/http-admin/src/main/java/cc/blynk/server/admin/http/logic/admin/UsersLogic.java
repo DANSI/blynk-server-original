@@ -106,7 +106,7 @@ public class UsersLogic extends HttpLogicUtil {
             return new Response(HTTP_1_1, BAD_REQUEST);
         }
 
-        tokenManager.assignToken(tokenValue.user, tokenValue.dashId, newToken);
+        tokenManager.assignToken(tokenValue.user, tokenValue.dashId, tokenValue.deviceId, newToken);
         return ok();
     }
 

@@ -1,12 +1,15 @@
 package cc.blynk.server.application.handlers.main.logic;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Device;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.ParseUtil;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -32,22 +35,32 @@ public class AppMailLogic {
     private final BlockingIOProcessor blockingIOProcessor;
     private final MailWrapper mailWrapper;
 
-    public AppMailLogic(BlockingIOProcessor blockingIOProcessor, MailWrapper mailWrapper) {
-        this.blockingIOProcessor = blockingIOProcessor;
+    public AppMailLogic(Holder holder) {
+        this.blockingIOProcessor = holder.blockingIOProcessor;
         this.BODY = blockingIOProcessor.tokenBody;
-        this.mailWrapper = mailWrapper;
+        this.mailWrapper =  holder.mailWrapper;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String dashBoardIdString = message.body;
+        String[] split = StringUtils.split2(message.body);
+
+        String dashBoardIdString = split[0];
+        String deviceIdString = "0";
+
+        if (split.length == 2) {
+            deviceIdString = split[1];
+        }
 
         int dashId = ParseUtil.parseInt(dashBoardIdString);
+        int deviceId = ParseUtil.parseInt(deviceIdString);
 
         DashBoard dashBoard = user.profile.getDashByIdOrThrow(dashId);
-        String token = user.dashTokens.get(dashId);
+        Device device = dashBoard.getDeviceById(deviceId);
+
+        String token = device.token;
 
         if (token == null) {
-            throw new IllegalCommandBodyException("Wrong dash id.");
+            throw new IllegalCommandBodyException("Wrong device id.");
         }
 
         String to = user.name;

@@ -1,60 +1,75 @@
 package cc.blynk.server.core.dao;
 
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Device;
 import cc.blynk.server.core.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 22.09.15.
  */
-class RegularTokenManager extends TokenManagerBase {
+class RegularTokenManager {
 
     private static final Logger log = LogManager.getLogger(RegularTokenManager.class);
 
+    private final ConcurrentMap<String, TokenValue> cache;
+
     public RegularTokenManager(Iterable<User> users) {
-        super(new ConcurrentHashMap<String, TokenValue>() {{
+        this.cache = new ConcurrentHashMap<String, TokenValue>() {{
             for (User user : users) {
-                for (Map.Entry<Integer, String> entry : user.dashTokens.entrySet()) {
-                    put(entry.getValue(), new TokenValue(user, entry.getKey().intValue()));
+                if (user.profile != null) {
+                    for (DashBoard dashBoard : user.profile.dashBoards) {
+                        for (Device device : dashBoard.devices) {
+                            put(device.token, new TokenValue(user, dashBoard.id, device.id));
+                        }
+                    }
                 }
             }
-        }});
+        }};
     }
 
-    public void assignToken(User user, int dashboardId, String newToken) {
+    public void assignToken(User user, int dashId, int deviceId, String newToken) {
         // Clean old token from cache if exists.
-        String oldToken = user.dashTokens.get(dashboardId);
-        if (oldToken != null) {
-            cache.remove(oldToken);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        Device device = dash.getDeviceById(deviceId);
+
+        TokenValue tokenValue = null;
+        if (device != null && device.token != null) {
+            tokenValue = cache.remove(device.token);
+        }
+
+        if (tokenValue == null) {
+            tokenValue = new TokenValue(user, dashId, deviceId);
         }
 
         //assign new token
-        cleanTokensForNonExistentDashes(user, user.dashTokens);
-        user.dashTokens.put(dashboardId, newToken);
+        device.token = newToken;
+        cache.put(newToken, tokenValue);
         user.lastModifiedTs = System.currentTimeMillis();
 
-        cache.put(newToken, new TokenValue(user, dashboardId));
-
-        printMessage(user.name, dashboardId, newToken);
+        log.debug("Generated token for user {}, dashId {}, deviceId {} is {}.", user.name, dashId, deviceId, newToken);
     }
 
-    @Override
-    String deleteProject(User user, Integer projectId) {
-        String removedToken = user.dashTokens.remove(projectId);
-        if (removedToken != null) {
-            cache.remove(removedToken);
-            log.debug("Deleted {} token.", removedToken);
+    public TokenValue getUserByToken(String token) {
+        return cache.get(token);
+    }
+
+    String[] deleteProject(DashBoard dash) {
+        String[] removedTokens = new String[dash.devices.length];
+        for (int i = 0; i < dash.devices.length; i++) {
+            Device device = dash.devices[i];
+            if (device != null && device.token != null) {
+                cache.remove(device.token);
+                removedTokens[i] = device.token;
+            }
         }
-        return removedToken;
+        return removedTokens;
     }
 
-    @Override
-    void printMessage(String username, int dashId, String token) {
-        log.debug("Generated token for user {} and dashId {} is {}.", username, dashId, token);
-    }
 }

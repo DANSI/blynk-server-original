@@ -137,7 +137,12 @@ public class DashBoard {
     }
 
     public Device getDeviceById(int id) {
-        return devices[getDeviceIndexById(id)];
+        for (Device device : devices) {
+            if (device.id == id) {
+                return device;
+            }
+        }
+        return null;
     }
 
     public Widget getWidgetById(long id) {

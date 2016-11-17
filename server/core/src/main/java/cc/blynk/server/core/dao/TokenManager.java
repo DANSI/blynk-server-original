@@ -1,5 +1,6 @@
 package cc.blynk.server.core.dao;
 
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.TokenGeneratorUtil;
 
@@ -22,26 +23,26 @@ public class TokenManager {
         this.sharedTokenManager = new SharedTokenManager(allUsers);
     }
 
-    public String deleteProject(User user, Integer projectId) {
-        sharedTokenManager.deleteProject(user, projectId);
-        return regularTokenManager.deleteProject(user, projectId);
+    public String[] deleteProject(User user, DashBoard dash) {
+        sharedTokenManager.deleteProject(user, dash.id);
+        return regularTokenManager.deleteProject(dash);
     }
 
     public TokenValue getUserByToken(String token) {
         return regularTokenManager.getUserByToken(token);
     }
 
-    public TokenValue getUserBySharedToken(String token) {
+    public SharedTokenValue getUserBySharedToken(String token) {
         return sharedTokenManager.getUserByToken(token);
     }
 
-    public void assignToken(User user, int dashId, String newToken) {
-        regularTokenManager.assignToken(user, dashId, newToken);
+    public void assignToken(User user, int dashId, int deviceId, String newToken) {
+        regularTokenManager.assignToken(user, dashId, deviceId, newToken);
     }
 
-    public String refreshToken(User user, int dashId) {
+    public String refreshToken(User user, int dashId, int deviceId) {
         final String newToken = TokenGeneratorUtil.generateNewToken();
-        assignToken(user, dashId, newToken);
+        assignToken(user, dashId, deviceId, newToken);
         return newToken;
     }
 

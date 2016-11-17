@@ -3,10 +3,13 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Device;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.redis.RedisClient;
 import cc.blynk.utils.ParseUtil;
+import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
@@ -36,14 +39,24 @@ public class GetTokenLogic {
         String dashBoardIdString = message.body;
 
         int dashId = ParseUtil.parseInt(dashBoardIdString);
+        int deviceId = 0;
 
-        user.profile.validateDashId(dashId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        String token = user.dashTokens.get(dashId);
+        Device device = dash.getDeviceById(deviceId);
+        String token = device == null ? null : device.token;
 
         //if token not exists. generate new one
         if (token == null) {
-            token = tokenManager.refreshToken(user, dashId);
+            //todo back compatibility code. remove in future
+            dash.devices = new Device[] {
+                new Device(deviceId, dash.name, dash.boardType)
+            };
+            //
+
+            token = TokenGeneratorUtil.generateNewToken();
+            tokenManager.assignToken(user, dashId, deviceId, token);
+
             final String newToken = token;
             blockingIOProcessor.execute(() -> {
                 redisClient.assignServerToToken(newToken, currentIp);

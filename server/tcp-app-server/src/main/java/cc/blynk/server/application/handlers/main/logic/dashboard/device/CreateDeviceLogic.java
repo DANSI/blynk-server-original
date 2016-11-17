@@ -10,6 +10,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
+import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,8 +59,8 @@ public class CreateDeviceLogic {
             }
         }
 
-        //final String newToken = TokenGeneratorUtil.generateNewToken();
-        //tokenManager.assignToken(user, dashId, newToken, user.dashTokens);
+        final String newToken = TokenGeneratorUtil.generateNewToken();
+        tokenManager.assignToken(user, dashId, newDevice.id, newToken);
 
         dash.devices = ArrayUtil.add(dash.devices, newDevice);
         dash.updatedAt = System.currentTimeMillis();

@@ -138,24 +138,8 @@ public class FileManager {
                     .flatMap(file -> {
                         try {
                             User user = JsonParser.parseUserFromFile(file);
-
-
-
-
                             //todo this is migration code. remove during next deploy.
-                            for (DashBoard dashBoard : user.profile.dashBoards) {
-                                final Integer dashId = dashBoard.id;
-                                String token = user.dashTokens.get(dashId);
-                                if (token != null && !"".equals(token)) {
-                                    dashBoard.devices = new Device[] {
-                                        new Device(0, "My Device", dashBoard.boardType, token, null)
-                                    };
-                                    user.dashTokens.remove(dashId);
-                                }
-                            }
-
-
-
+                            migrateOldProfile(user);
 
                             return Stream.of(user);
                         } catch (IOException ioe) {
@@ -171,6 +155,19 @@ public class FileManager {
 
         log.debug("Reading user DB finished.");
         return new ConcurrentHashMap<>();
+    }
+
+    public static void migrateOldProfile(User user) {
+        for (DashBoard dashBoard : user.profile.dashBoards) {
+            final Integer dashId = dashBoard.id;
+            String token = user.dashTokens.get(dashId);
+            if (token != null && !"".equals(token)) {
+                dashBoard.devices = new Device[] {
+                        new Device(0, "My Device", dashBoard.boardType, token, null)
+                };
+                user.dashTokens.remove(dashId);
+            }
+        }
     }
 
     private File[] userFilesList() {

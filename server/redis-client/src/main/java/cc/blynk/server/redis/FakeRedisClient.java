@@ -23,7 +23,7 @@ public class FakeRedisClient implements RedisClient {
     }
 
     @Override
-    public void removeToken(String token) {
+    public void removeToken(String[] tokens) {
 
     }
 

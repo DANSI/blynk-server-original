@@ -72,7 +72,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.exportGraphData = new ExportGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor, holder.mailWrapper,
                 holder.currentIp,
                 holder.props.getIntProperty("http.port"));
-        this.appMailLogic = new AppMailLogic(holder.blockingIOProcessor, holder.mailWrapper);
+        this.appMailLogic = new AppMailLogic(holder);
         this.getShareTokenLogic = new GetShareTokenLogic(holder.tokenManager);
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(holder.tokenManager, holder.sessionDao);
         this.getSharedDashLogic = new GetSharedDashLogic(holder.tokenManager);

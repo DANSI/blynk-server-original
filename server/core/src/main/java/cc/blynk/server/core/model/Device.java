@@ -28,6 +28,12 @@ public class Device {
         this.connectionType = connectionType;
     }
 
+    public Device(int id, String name, String boardType) {
+        this.id = id;
+        this.name = name;
+        this.boardType = boardType;
+    }
+
     public void update(Device newDevice) {
         this.name = newDevice.name;
         this.boardType = newDevice.boardType;

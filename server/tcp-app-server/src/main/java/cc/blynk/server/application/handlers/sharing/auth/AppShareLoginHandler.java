@@ -6,7 +6,7 @@ import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.OsType;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
 import cc.blynk.server.application.handlers.sharing.AppShareHandler;
-import cc.blynk.server.core.dao.TokenValue;
+import cc.blynk.server.core.dao.SharedTokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -71,7 +71,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
     private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String token, OsType osType, String version, String uid) {
         String userName = username.toLowerCase();
 
-        TokenValue tokenValue = holder.tokenManager.getUserBySharedToken(token);
+        SharedTokenValue tokenValue = holder.tokenManager.getUserBySharedToken(token);
 
         if (tokenValue == null || !tokenValue.user.name.equals(userName)) {
             log.debug("Share token is invalid. User : {}, token {}, {}", userName, token, ctx.channel().remoteAddress());

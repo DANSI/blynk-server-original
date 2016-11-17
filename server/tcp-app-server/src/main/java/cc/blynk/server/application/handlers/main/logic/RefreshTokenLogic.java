@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.redis.RedisClient;
 import cc.blynk.utils.ParseUtil;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
@@ -33,13 +34,23 @@ public class RefreshTokenLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String dashBoardIdString = message.body;
+        String[] split = StringUtils.split2(message.body);
 
-        int dashId = ParseUtil.parseInt(dashBoardIdString);
+        String dashIdString = split[0];
+        String deviceIdString = "0";
+
+        //new command for multi devices
+        if (split.length == 2) {
+            //new multi devices code
+            deviceIdString = split[1];
+        }
+
+        int dashId = ParseUtil.parseInt(dashIdString);
+        int deviceId = ParseUtil.parseInt(deviceIdString);
 
         user.profile.validateDashId(dashId);
 
-        String token = tokenManager.refreshToken(user, dashId);
+        String token = tokenManager.refreshToken(user, dashId, deviceId);
         blockingIOProcessor.execute(() -> {
             redisClient.assignServerToToken(token, currentIp);
         });
