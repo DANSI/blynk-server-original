@@ -31,7 +31,7 @@ public class TokenManager {
         this.currentIp = currentIp;
     }
 
-    public void deleteProject(User user, DashBoard dash) {
+    public void deleteDash(User user, DashBoard dash) {
         sharedTokenManager.deleteProject(user, dash.id);
         String[] removedTokens = regularTokenManager.deleteProject(dash);
 

@@ -46,7 +46,7 @@ public class DeleteDashLogic {
         }
 
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
-        tokenManager.deleteProject(user, dash);
+        tokenManager.deleteDash(user, dash);
 
         user.lastModifiedTs = System.currentTimeMillis();
 
