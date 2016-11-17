@@ -4,6 +4,7 @@ import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.redis.FakeRedisClient;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
 
@@ -25,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ProjectTokenGenerator {
 
     public static void main(String[] args) throws Exception {
-        TokenManager tokenManager = new TokenManager(new ConcurrentHashMap<>());
+        TokenManager tokenManager = new TokenManager(new ConcurrentHashMap<>(), null, new FakeRedisClient(), "");
         String username = "dmitriy@blynk.cc";
         String pass = "b";
         String appName = AppName.BLYNK;

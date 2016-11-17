@@ -86,7 +86,7 @@ public class RealRedisClient implements RedisClient {
     }
 
     @Override
-    public void removeToken(String[] tokens) {
+    public void removeToken(String... tokens) {
         try (Jedis jedis = tokenPool.getResource()) {
             jedis.del(tokens);
         }

@@ -34,26 +34,30 @@ class RegularTokenManager {
         }};
     }
 
-    public void assignToken(User user, int dashId, int deviceId, String newToken) {
+    String assignToken(User user, int dashId, int deviceId, String newToken) {
         // Clean old token from cache if exists.
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         Device device = dash.getDeviceById(deviceId);
 
-        TokenValue tokenValue = null;
-        if (device != null && device.token != null) {
-            tokenValue = cache.remove(device.token);
-        }
-
-        if (tokenValue == null) {
-            tokenValue = new TokenValue(user, dashId, deviceId);
-        }
+        String oldToken = removeOldToken(device);
 
         //assign new token
         device.token = newToken;
-        cache.put(newToken, tokenValue);
+        cache.put(newToken, new TokenValue(user, dashId, deviceId));
+
         user.lastModifiedTs = System.currentTimeMillis();
 
         log.debug("Generated token for user {}, dashId {}, deviceId {} is {}.", user.name, dashId, deviceId, newToken);
+
+        return oldToken;
+    }
+
+    private String removeOldToken(Device device) {
+        if (device != null && device.token != null) {
+            cache.remove(device.token);
+            return device.token;
+        }
+        return null;
     }
 
     public TokenValue getUserByToken(String token) {

@@ -75,6 +75,7 @@ public class Holder implements Closeable {
         this.props = serverProperties;
 
         this.region = serverProperties.getProperty("region", "local");
+        this.currentIp = serverProperties.getProperty("reset-pass.http.host", IPUtils.resolveHostIP());
 
         if ("local".equals(region)) {
             this.redisClient = new FakeRedisClient();
@@ -86,7 +87,12 @@ public class Holder implements Closeable {
         this.fileManager = new FileManager(dataFolder);
         this.sessionDao = new SessionDao();
         this.userDao = new UserDao(fileManager.deserialize(), this.region);
-        this.tokenManager = new TokenManager(this.userDao.users);
+        this.blockingIOProcessor = new BlockingIOProcessor(
+                serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
+                serverProperties.getIntProperty("notifications.queue.limit", 10000),
+                FileLoaderUtil.readFileAsString(BlockingIOProcessor.TOKEN_MAIL_BODY)
+        );
+        this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, currentIp);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);
@@ -106,16 +112,10 @@ public class Holder implements Closeable {
         this.gcmWrapper = new GCMWrapper(new ServerProperties(GCMWrapper.GCM_PROPERTIES_FILENAME), transportTypeHolder.workerGroup);
         this.smsWrapper = new SMSWrapper(new ServerProperties(SMSWrapper.SMS_PROPERTIES_FILENAME), transportTypeHolder.workerGroup);
 
-        this.blockingIOProcessor = new BlockingIOProcessor(
-                serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
-                serverProperties.getIntProperty("notifications.queue.limit", 10000),
-                FileLoaderUtil.readFileAsString(BlockingIOProcessor.TOKEN_MAIL_BODY)
-        );
 
         this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
 
         this.dbManager = new DBManager(blockingIOProcessor);
-        this.currentIp = serverProperties.getProperty("reset-pass.http.host", IPUtils.resolveHostIP());
     }
 
     //for tests only
@@ -123,13 +123,19 @@ public class Holder implements Closeable {
         this.props = serverProperties;
 
         this.region = "local";
+        this.currentIp = serverProperties.getProperty("reset-pass.http.host", IPUtils.resolveHostIP());
         this.redisClient = new RealRedisClient(new ServerProperties(RealRedisClient.REDIS_PROPERTIES));
 
         String dataFolder = serverProperties.getProperty("data.folder");
         this.fileManager = new FileManager(dataFolder);
         this.sessionDao = new SessionDao();
         this.userDao = new UserDao(fileManager.deserialize(), this.region);
-        this.tokenManager = new TokenManager(this.userDao.users);
+        this.blockingIOProcessor = new BlockingIOProcessor(
+                serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
+                serverProperties.getIntProperty("notifications.queue.limit", 10000),
+                FileLoaderUtil.readFileAsString(BlockingIOProcessor.TOKEN_MAIL_BODY)
+        );
+        this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, currentIp);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.averageAggregator = new AverageAggregator(reportingFolder);
@@ -142,11 +148,7 @@ public class Holder implements Closeable {
         this.gcmWrapper = gcmWrapper;
         this.smsWrapper = smsWrapper;
 
-        this.blockingIOProcessor = new BlockingIOProcessor(
-                serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
-                serverProperties.getIntProperty("notifications.queue.limit", 10000),
-                FileLoaderUtil.readFileAsString(BlockingIOProcessor.TOKEN_MAIL_BODY)
-        );
+
 
         this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
@@ -157,7 +159,6 @@ public class Holder implements Closeable {
         );
 
         this.dbManager = new DBManager(blockingIOProcessor);
-        this.currentIp = serverProperties.getProperty("reset-pass.http.host", IPUtils.resolveHostIP());
     }
 
     @Override

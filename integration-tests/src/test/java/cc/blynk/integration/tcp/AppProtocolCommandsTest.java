@@ -116,7 +116,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
         makeCommands("login dmitriy@mail.ua 1", "addEnergy 5000" + "\0" + "123", "createDash " + profile.dashBoards[0]).check(3, OK);
 
         //todo fix?
-        makeCommands("login dmitriy@mail.ua 1", "refreshToken 1", "refreshToken 1")
+        makeCommands("login dmitriy@mail.ua 1", "getToken 1", "refreshToken 1")
                 .check(OK);
                 //.check(2, produce(1, REFRESH_TOKEN, "12345678901234567890123456789012"));
     }

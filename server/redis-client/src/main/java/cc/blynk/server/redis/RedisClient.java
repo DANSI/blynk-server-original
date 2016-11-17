@@ -17,7 +17,7 @@ public interface RedisClient extends Closeable {
 
     void assignServerToUser(String username, String server);
 
-    void removeToken(String[] tokens);
+    void removeToken(String... tokens);
 
     @Override
     void close();

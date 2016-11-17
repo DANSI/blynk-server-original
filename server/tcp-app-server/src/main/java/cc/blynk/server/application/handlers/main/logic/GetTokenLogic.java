@@ -1,13 +1,11 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Device;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.redis.RedisClient;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,15 +22,9 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 public class GetTokenLogic {
 
     private final TokenManager tokenManager;
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final RedisClient redisClient;
-    private final String currentIp;
 
     public GetTokenLogic(Holder holder) {
         this.tokenManager = holder.tokenManager;
-        this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.redisClient = holder.redisClient;
-        this.currentIp = holder.currentIp;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -56,11 +48,6 @@ public class GetTokenLogic {
 
             token = TokenGeneratorUtil.generateNewToken();
             tokenManager.assignToken(user, dashId, deviceId, token);
-
-            final String newToken = token;
-            blockingIOProcessor.execute(() -> {
-                redisClient.assignServerToToken(newToken, currentIp);
-            });
         }
 
         ctx.writeAndFlush(makeUTF8StringMessage(GET_TOKEN, message.id, token), ctx.voidPromise());

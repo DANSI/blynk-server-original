@@ -1,12 +1,10 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.redis.RedisClient;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -26,13 +24,9 @@ public class DeleteDashLogic {
     private static final Logger log = LogManager.getLogger(DeleteDashLogic.class);
 
     private final TokenManager tokenManager;
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final RedisClient redisClient;
 
     public DeleteDashLogic(Holder holder) {
         this.tokenManager = holder.tokenManager;
-        this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.redisClient = holder.redisClient;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -52,13 +46,7 @@ public class DeleteDashLogic {
         }
 
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
-        String[] removedTokens = tokenManager.deleteProject(user, dash);
-
-        if (removedTokens.length > 0) {
-            blockingIOProcessor.execute(() -> {
-                redisClient.removeToken(removedTokens);
-            });
-        }
+        tokenManager.deleteProject(user, dash);
 
         user.lastModifiedTs = System.currentTimeMillis();
 
