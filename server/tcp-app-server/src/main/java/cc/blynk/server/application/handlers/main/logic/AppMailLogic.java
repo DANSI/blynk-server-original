@@ -44,15 +44,13 @@ public class AppMailLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] split = StringUtils.split2(message.body);
 
-        String dashBoardIdString = split[0];
-        String deviceIdString = "0";
+        int dashId = ParseUtil.parseInt(split[0]);
+        int deviceId = 0;
 
+        //new value for multi devices
         if (split.length == 2) {
-            deviceIdString = split[1];
+            deviceId = ParseUtil.parseInt(split[1]);
         }
-
-        int dashId = ParseUtil.parseInt(dashBoardIdString);
-        int deviceId = ParseUtil.parseInt(deviceIdString);
 
         DashBoard dashBoard = user.profile.getDashByIdOrThrow(dashId);
         Device device = dashBoard.getDeviceById(deviceId);

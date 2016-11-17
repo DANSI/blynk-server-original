@@ -28,17 +28,13 @@ public class RefreshTokenLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] split = StringUtils.split2(message.body);
 
-        String dashIdString = split[0];
-        String deviceIdString = "0";
+        int dashId = ParseUtil.parseInt(split[0]);
+        int deviceId = 0;
 
-        //new command for multi devices
+        //new value for multi devices
         if (split.length == 2) {
-            //new multi devices code
-            deviceIdString = split[1];
+            deviceId = ParseUtil.parseInt(split[1]);
         }
-
-        int dashId = ParseUtil.parseInt(dashIdString);
-        int deviceId = ParseUtil.parseInt(deviceIdString);
 
         user.profile.validateDashId(dashId);
 
