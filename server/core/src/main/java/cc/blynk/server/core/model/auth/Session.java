@@ -121,13 +121,11 @@ public class Session {
         }
     }
 
-    public boolean hasHardwareOnline(int activeDashId) {
+    public boolean isHardwareConnected(int dashId) {
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null) {
-                if (hardwareState.dashId == activeDashId) {
-                    return true;
-                }
+            if (hardwareState != null && hardwareState.dashId == dashId) {
+                return true;
             }
         }
         return false;
@@ -177,17 +175,6 @@ public class Session {
             }
         }
     }
-
-    public boolean isHardwareConnected(int dashId) {
-        for (Channel channel : hardwareChannels) {
-            HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null && hardwareState.dashId == dashId) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     public boolean isAppConnected() {
         return appChannels.size() > 0;
