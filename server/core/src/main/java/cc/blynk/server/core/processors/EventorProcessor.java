@@ -146,13 +146,13 @@ public class EventorProcessor {
     }
 
     private void execute(Session session, DashBoard dash, int deviceId, SetPinAction action) {
-        execute(session, dash.isActive, dash.id, action.pin, action.value);
+        execute(session, dash.isActive, dash.id, deviceId, action.pin, action.value);
         dash.update(deviceId, action.pin.pin, action.pin.pinType, action.value);
     }
 
-    private void execute(Session session, boolean isActive, int dashId, Pin pin, String value) {
+    private void execute(Session session, boolean isActive, int dashId, int deviceId, Pin pin, String value) {
         final String body = Pin.makeHardwareBody(pin.pwmMode, pin.pinType, pin.pin, value);
-        session.sendMessageToHardware(dashId, HARDWARE, 888, body);
+        session.sendMessageToHardware(dashId, HARDWARE, 888, body, deviceId);
         if (isActive) {
             session.sendToApps(HARDWARE, 888, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
         }

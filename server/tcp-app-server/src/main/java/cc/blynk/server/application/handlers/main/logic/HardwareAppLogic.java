@@ -84,7 +84,7 @@ public class HardwareAppLogic {
                     String sharedToken = state.user.dashShareTokens.get(dashId);
                     session.sendToSharedApps(ctx.channel(), sharedToken, SYNC, message.id, message.body);
                 }
-                session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1]);
+                session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceId);
 
                 //todo this temp catch. remove in next update.
                 try {
@@ -103,11 +103,11 @@ public class HardwareAppLogic {
 
                 if (widget instanceof FrequencyWidget) {
                     if (((FrequencyWidget) widget).isTicked(split[1])) {
-                        session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1]);
+                        session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceId);
                     }
                 } else {
                     //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
-                    session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1]);
+                    session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceId);
                 }
                 break;
         }

@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
@@ -83,11 +84,12 @@ public class Session {
         }
     }
 
-    public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body) {
+    public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int... deviceIds) {
         final Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null && hardwareState.dashId == activeDashId) {
+            if (hardwareState != null && hardwareState.dashId == activeDashId &&
+                    (deviceIds.length == 0 || IntStream.of(deviceIds).anyMatch(x -> x == hardwareState.deviceId))) {
                 targetChannels.add(channel);
             }
         }
@@ -112,8 +114,8 @@ public class Session {
         return false; // -> there is active hardware
     }
 
-    public void sendMessageToHardware(ChannelHandlerContext ctx, int activeDashId, short cmd, int msgId, String body) {
-        if (sendMessageToHardware(activeDashId, cmd, msgId, body)) {
+    public void sendMessageToHardware(ChannelHandlerContext ctx, int activeDashId, short cmd, int msgId, String body, int... deviceIds) {
+        if (sendMessageToHardware(activeDashId, cmd, msgId, body, deviceIds)) {
             log.debug("No device in session.");
             ctx.writeAndFlush(makeResponse(msgId, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
         }

@@ -524,7 +524,7 @@ public class HttpAPILogic {
 
         eventorProcessor.process(session, dash, deviceId, pin, pinType, pinValue);
 
-        session.sendMessageToHardware(dashId, HARDWARE, 111, body);
+        session.sendMessageToHardware(dashId, HARDWARE, 111, body, deviceId);
 
         if (dash.isActive) {
             session.sendToApps(HARDWARE, 111, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
@@ -585,7 +585,7 @@ public class HttpAPILogic {
                 log.error("No session for user {}.", user.name);
                 return Response.ok();
             }
-            session.sendMessageToHardware(dashId, HARDWARE, 111, body);
+            session.sendMessageToHardware(dashId, HARDWARE, 111, body, deviceId);
 
             if (dash.isActive) {
                 session.sendToApps(HARDWARE, 111, dashId + StringUtils.BODY_SEPARATOR_STRING + body);

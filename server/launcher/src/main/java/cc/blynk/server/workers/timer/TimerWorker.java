@@ -73,23 +73,23 @@ public class TimerWorker implements Runnable {
 
     private void send(User user, Timer timer, long curSeconds, int dashId) {
         if (isTicked(curSeconds, timer.startTime, timer.startValue)) {
-            triggerTimer(user, timer.startValue, dashId);
+            triggerTimer(user, timer.startValue, dashId, timer.deviceId);
             timer.value = timer.startValue;
         }
 
         if (isTicked(curSeconds, timer.stopTime, timer.stopValue)) {
-            triggerTimer(user, timer.stopValue, dashId);
+            triggerTimer(user, timer.stopValue, dashId, timer.deviceId);
             timer.value = timer.stopValue;
         }
     }
 
-    private void triggerTimer(User user, String value, int dashId) {
+    private void triggerTimer(User user, String value, int dashId, int deviceId) {
         tickedTimers++;
         Session session = sessionDao.userSession.get(new UserKey(user));
         if (session != null) {
             onlineTimers++;
             if (session.getHardwareChannels().size() > 0) {
-                session.sendMessageToHardware(dashId, HARDWARE, 7777, value);
+                session.sendMessageToHardware(dashId, HARDWARE, 7777, value, deviceId);
             }
         }
     }

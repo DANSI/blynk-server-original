@@ -66,10 +66,10 @@ public class WebhookProcessor extends NotificationBase {
             log.debug("Webhook quota limit reached. Ignoring hook.");
             return;
         }
-        process(session, dash.id, widget, triggerValue);
+        process(session, dash.id, deviceId, widget, triggerValue);
     }
 
-    private void process(Session session, int dashId, WebHook webHook, String triggerValue) {
+    private void process(Session session, int dashId, int deviceId,  WebHook webHook, String triggerValue) {
         if (!webHook.isValid()) {
             return;
         }
@@ -115,7 +115,7 @@ public class WebhookProcessor extends NotificationBase {
                         //todo could be optimized
                         String body = Pin.makeHardwareBody(webHook.pinType, webHook.pin, response.getResponseBody(CharsetUtil.UTF_8));
                         log.trace("Sending webhook to hardware. {}", body);
-                        session.sendMessageToHardware(dashId, Command.HARDWARE, 888, body);
+                        session.sendMessageToHardware(dashId, Command.HARDWARE, 888, body, deviceId);
                     }
                 } else {
                     webHook.failureCounter++;

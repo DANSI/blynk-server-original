@@ -82,7 +82,7 @@ public class HardwareAppShareLogic {
                         }
                     }
                 }
-                session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1]);
+                session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceId);
                 break;
             case 'r':
                 Widget widget = dash.findWidgetByPin(deviceId, split[1].split(StringUtils.BODY_SEPARATOR_STRING));
@@ -92,11 +92,11 @@ public class HardwareAppShareLogic {
 
                 if (widget instanceof FrequencyWidget) {
                     if (((FrequencyWidget) widget).isTicked(split[1])) {
-                        session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1]);
+                        session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceId);
                     }
                 } else {
                     //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
-                    session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1]);
+                    session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceId);
                 }
                 break;
         }
