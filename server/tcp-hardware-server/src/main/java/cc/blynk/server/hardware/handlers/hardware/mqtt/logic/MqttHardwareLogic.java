@@ -81,7 +81,7 @@ public class MqttHardwareLogic {
 
             reportingDao.process(state.user.name, dashId, pin, pinType, value);
 
-            dash.update(pin, pinType, value);
+            dash.update(0, pin, pinType, value);
         }
 
         //todo do not send if no widget pin

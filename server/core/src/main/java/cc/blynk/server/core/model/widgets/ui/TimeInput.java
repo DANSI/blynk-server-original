@@ -56,8 +56,8 @@ public class TimeInput extends OnePinWidget implements HardwareSyncWidget {
     }
 
     @Override
-    public boolean updateIfSame(byte pin, PinType type, String value) {
-        if (super.updateIfSame(pin, type, value)) {
+    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
+        if (super.updateIfSame(deviceId, pin, type, value)) {
             String[] values = value.split(BODY_SEPARATOR_STRING);
             if (values.length > 2) {
                 startAt = calcTime(values[0]);

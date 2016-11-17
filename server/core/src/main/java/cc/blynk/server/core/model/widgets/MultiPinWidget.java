@@ -21,9 +21,9 @@ public abstract class MultiPinWidget extends Widget implements SyncOnActivate {
     public Pin[] pins;
 
     @Override
-    public boolean updateIfSame(byte pinIn, PinType type, String value) {
+    public boolean updateIfSame(int deviceId, byte pinIn, PinType type, String value) {
         boolean isSame = false;
-        if (pins != null) {
+        if (pins != null && this.deviceId == deviceId) {
             for (Pin pin : pins) {
                 if (pin.isSame(pinIn, type)) {
                     pin.value = value;
@@ -35,8 +35,8 @@ public abstract class MultiPinWidget extends Widget implements SyncOnActivate {
     }
 
     @Override
-    public boolean isSame(byte pinIn, PinType pinType) {
-        if (pins != null) {
+    public boolean isSame(int deviceId, byte pinIn, PinType pinType) {
+        if (pins != null && this.deviceId == deviceId) {
             for (Pin pin : pins) {
                 if (pin.isSame(pinIn, pinType)) {
                     return true;

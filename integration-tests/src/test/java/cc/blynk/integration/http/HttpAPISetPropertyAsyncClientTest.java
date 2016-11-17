@@ -92,7 +92,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        Widget widget = profile.dashBoards[0].findWidgetByPin((byte) 4, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals("My-New-Label", widget.label);
     }
@@ -111,7 +111,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        Widget widget = profile.dashBoards[0].findWidgetByPin((byte) 4, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals(255, widget.color);
     }
@@ -133,7 +133,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        Button button = (Button) profile.dashBoards[0].findWidgetByPin((byte) 1, PinType.VIRTUAL);
+        Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (byte) 1, PinType.VIRTUAL);
         assertNotNull(button);
         assertEquals("newOnButtonLabel", button.onLabel);
     }
@@ -156,7 +156,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        Button button = (Button) profile.dashBoards[0].findWidgetByPin((byte) 1, PinType.VIRTUAL);
+        Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (byte) 1, PinType.VIRTUAL);
         assertNotNull(button);
         assertEquals("newOffButtonLabel", button.offLabel);
     }

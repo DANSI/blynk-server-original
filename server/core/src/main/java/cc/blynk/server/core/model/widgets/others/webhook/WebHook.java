@@ -30,17 +30,17 @@ public class WebHook extends OnePinWidget {
     }
 
     //a bit ugly but as quick fix ok
-    public boolean isSameWebHook(byte pin, PinType type) {
-        return super.isSame(pin, type);
+    public boolean isSameWebHook(int deviceId, byte pin, PinType type) {
+        return super.isSame(deviceId, pin, type);
     }
 
     @Override
-    public boolean isSame(byte pin, PinType type) {
+    public boolean isSame(int deviceId, byte pin, PinType type) {
         return false;
     }
 
     @Override
-    public boolean updateIfSame(byte pin, PinType type, String value) {
+    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
         return false;
     }
 

@@ -112,8 +112,8 @@ public class HttpAPILogic {
         this.eventorProcessor = eventorProcessor;
     }
 
-    private static String makeBody(DashBoard dash, byte pin, PinType pinType, String pinValue) {
-        Widget widget = dash.findWidgetByPin(pin, pinType);
+    private static String makeBody(DashBoard dash, int deviceId, byte pin, PinType pinType, String pinValue) {
+        Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
         if (widget == null) {
             return Pin.makeHardwareBody(pinType, pin, pinValue);
         } else {
@@ -211,6 +211,7 @@ public class HttpAPILogic {
 
         final User user = tokenValue.user;
         final int dashId = tokenValue.dashId;
+        final int deviceId = tokenValue.deviceId;
 
         DashBoard dashBoard = user.profile.getDashById(dashId);
 
@@ -225,7 +226,7 @@ public class HttpAPILogic {
             return Response.badRequest("Wrong pin format.");
         }
 
-        Widget widget = dashBoard.findWidgetByPin(pin, pinType);
+        Widget widget = dashBoard.findWidgetByPin(deviceId, pin, pinType);
 
         if (widget == null) {
             String value = dashBoard.storagePins.get("" + pinType.pintTypeChar + pin);
@@ -374,6 +375,7 @@ public class HttpAPILogic {
 
         final User user = tokenValue.user;
         final int dashId = tokenValue.dashId;
+        final int deviceId = tokenValue.deviceId;
 
         DashBoard dash = user.profile.getDashById(dashId);
 
@@ -393,7 +395,7 @@ public class HttpAPILogic {
         }
 
         //for now supporting only virtual pins
-        Widget widget = dash.findWidgetByPin(pin, pinType);
+        Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
 
         if (widget == null || pinType != PinType.VIRTUAL) {
             log.debug("No widget for SetWidgetProperty command.");
@@ -491,6 +493,7 @@ public class HttpAPILogic {
 
         final User user = tokenValue.user;
         final int dashId = tokenValue.dashId;
+        final int deviceId = tokenValue.deviceId;
 
         DashBoard dash = user.profile.getDashById(dashId);
 
@@ -509,9 +512,9 @@ public class HttpAPILogic {
 
         reportingDao.process(user.name, dashId, pin, pinType, pinValue);
 
-        dash.update(pin, pinType, pinValue);
+        dash.update(deviceId, pin, pinType, pinValue);
 
-        String body = makeBody(dash, pin, pinType, pinValue);
+        String body = makeBody(dash, deviceId, pin, pinType, pinValue);
 
         Session session = sessionDao.userSession.get(new UserKey(user));
         if (session == null) {
@@ -519,7 +522,7 @@ public class HttpAPILogic {
             return Response.ok();
         }
 
-        eventorProcessor.process(session, dash, pin, pinType, pinValue);
+        eventorProcessor.process(session, dash, deviceId, pin, pinType, pinValue);
 
         session.sendMessageToHardware(dashId, HARDWARE, 111, body);
 
@@ -553,6 +556,7 @@ public class HttpAPILogic {
 
         final User user = tokenValue.user;
         final int dashId = tokenValue.dashId;
+        final int deviceId = tokenValue.deviceId;
 
         DashBoard dash = user.profile.getDashById(dashId);
 
@@ -571,9 +575,9 @@ public class HttpAPILogic {
             reportingDao.process(user.name, dashId, pin, pinType, pinData.value, pinData.timestamp);
         }
 
-        dash.update(pin, pinType, pinsData[0].value);
+        dash.update(deviceId, pin, pinType, pinsData[0].value);
 
-        String body = makeBody(dash, pin, pinType, pinsData[0].value);
+        String body = makeBody(dash, deviceId, pin, pinType, pinsData[0].value);
 
         if (body != null) {
             Session session = sessionDao.userSession.get(new UserKey(user));

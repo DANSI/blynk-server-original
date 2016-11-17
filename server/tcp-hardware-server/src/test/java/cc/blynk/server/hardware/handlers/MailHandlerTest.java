@@ -23,7 +23,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 /**
  * The Blynk Project.
@@ -73,7 +73,7 @@ public class MailHandlerTest {
         when(profile.getDashByIdOrThrow(1)).thenReturn(dashBoard);
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(null);
 
-        HardwareStateHolder state = new HardwareStateHolder(1, user, "x");
+        HardwareStateHolder state = new HardwareStateHolder(0, 1, user, "x");
         mailHandler.messageReceived(ctx, state, mailMessage);
     }
 
@@ -87,7 +87,7 @@ public class MailHandlerTest {
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(mail);
         dashBoard.isActive = true;
 
-        HardwareStateHolder state = new HardwareStateHolder(1, user, "x");
+        HardwareStateHolder state = new HardwareStateHolder(0, 1, user, "x");
         mailHandler.messageReceived(ctx, state, mailMessage);
     }
 
@@ -100,7 +100,7 @@ public class MailHandlerTest {
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(new Mail());
         dashBoard.isActive = true;
 
-        HardwareStateHolder state = new HardwareStateHolder(1, user, "x");
+        HardwareStateHolder state = new HardwareStateHolder(0, 1, user, "x");
         mailHandler.messageReceived(ctx, state, mailMessage);
     }
 

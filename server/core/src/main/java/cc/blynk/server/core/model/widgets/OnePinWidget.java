@@ -54,8 +54,8 @@ public abstract class OnePinWidget extends Widget implements SyncOnActivate {
     }
 
     @Override
-    public boolean updateIfSame(byte pin, PinType type, String value) {
-        if (isSame(pin, type)) {
+    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
+        if (isSame(deviceId, pin, type)) {
             this.value = value;
             return true;
         }
@@ -63,8 +63,8 @@ public abstract class OnePinWidget extends Widget implements SyncOnActivate {
     }
 
     //todo cover with test
-    public boolean isSame(byte pin, PinType type) {
-        return this.pin == pin && (
+    public boolean isSame(int deviceId, byte pin, PinType type) {
+        return this.deviceId == deviceId && this.pin == pin && (
                 (type == this.pinType) ||
                 (this.isPWMSupported() && type == PinType.ANALOG) ||
                 (type == PinType.DIGITAL && this.pinType == PinType.ANALOG)

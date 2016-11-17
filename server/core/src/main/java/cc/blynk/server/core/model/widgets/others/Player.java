@@ -18,8 +18,8 @@ public class Player extends OnePinWidget implements HardwareSyncWidget {
     public boolean isOnPlay;
 
     @Override
-    public boolean updateIfSame(byte pin, PinType type, String value) {
-        if (isSame(pin, type)) {
+    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
+        if (isSame(deviceId, pin, type)) {
             this.value = value;
             switch (value) {
                 case "play" :

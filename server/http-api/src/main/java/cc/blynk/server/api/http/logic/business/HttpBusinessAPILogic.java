@@ -97,25 +97,25 @@ public class HttpBusinessAPILogic {
         }
     }
 
-    private static Predicate<DashBoard> filterByValue(String pin, String value) {
+    private static Predicate<DashBoard> filterByValue(int deviceId, String pin, String value) {
         if (value == null) {
             return x -> true;
         }
 
         if (pin != null) {
-            return filterByValueAndPin(pin, value);
+            return filterByValueAndPin(deviceId, pin, value);
         }
 
         return filterByValue(value);
     }
 
-    private static Predicate<DashBoard> filterByValueAndPin(String pin, String value) {
+    private static Predicate<DashBoard> filterByValueAndPin(int deviceId, String pin, String value) {
         PinType pinType = PinType.getPinType(pin.charAt(0));
         byte pinIndex = Byte.parseByte(pin.substring(1));
 
         return
                 project -> {
-                    Widget widget = project.findWidgetByPin(pinIndex, pinType);
+                    Widget widget = project.findWidgetByPin(deviceId, pinIndex, pinType);
                     if (widget == null) {
                         return false;
                     }
@@ -158,7 +158,7 @@ public class HttpBusinessAPILogic {
 
         List<DashBoard> projects = Arrays.asList(tokenValue.user.profile.dashBoards).stream()
             .filter(filterByProjectName(name))
-            .filter(filterByValue(pin, value))
+            .filter(filterByValue(tokenValue.deviceId, pin, value))
                 .collect(Collectors.toList());
 
         if (groupByList == null || aggregation == null) {

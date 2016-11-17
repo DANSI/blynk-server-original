@@ -204,7 +204,7 @@ public class TableCommandsTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        return (Table) profile.dashBoards[0].findWidgetByPin((byte) 123, PinType.VIRTUAL);
+        return (Table) profile.dashBoards[0].findWidgetByPin(0, (byte) 123, PinType.VIRTUAL);
     }
 
 }

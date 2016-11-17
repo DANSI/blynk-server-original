@@ -27,8 +27,8 @@ public class Terminal extends OnePinWidget {
     public boolean textLightOn;
 
     @Override
-    public boolean updateIfSame(byte pin, PinType type, String value) {
-        if (isSame(pin, type)) {
+    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
+        if (isSame(deviceId, pin, type)) {
             this.value = value;
             this.lastCommands.add(value);
             return true;

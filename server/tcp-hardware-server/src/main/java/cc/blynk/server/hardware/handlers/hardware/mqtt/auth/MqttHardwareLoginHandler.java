@@ -81,6 +81,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
 
         final User user = tokenValue.user;
         final int dashId = tokenValue.dashId;
+        final int deviceId = tokenValue.deviceId;
 
         DashBoard dash = user.profile.getDashById(dashId);
         if (dash == null) {
@@ -91,7 +92,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
 
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(UserNotLoggedHandler.class);
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(dashId, user, token);
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(dashId, deviceId, user, token);
         ctx.pipeline().addLast("HHArdwareMqttHandler", new MqttHardwareHandler(holder, hardwareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionByUser(hardwareStateHolder.userKey, ctx.channel().eventLoop());

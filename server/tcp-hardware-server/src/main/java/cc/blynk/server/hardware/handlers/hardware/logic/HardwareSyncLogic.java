@@ -61,7 +61,7 @@ public class HardwareSyncLogic {
             if (PinUtil.isReadOperation(bodyParts[0])) {
                 for (int i = 1; i < bodyParts.length; i++) {
                     byte pin = Byte.parseByte(bodyParts[i]);
-                    Widget widget = dash.findWidgetByPin(pin, pinType);
+                    Widget widget = dash.findWidgetByPin(state.deviceId, pin, pinType);
                     if (widget == null) {
                         String value = dash.storagePins.get(String.valueOf(pinType.pintTypeChar) + pin);
                         if (value != null) {

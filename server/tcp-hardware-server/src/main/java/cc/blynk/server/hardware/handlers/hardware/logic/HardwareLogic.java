@@ -67,7 +67,9 @@ public class HardwareLogic {
             return;
         }
 
-        int dashId = state.dashId;
+        final int dashId = state.dashId;
+        final int deviceId = state.deviceId;
+
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         if (isWriteOperation(body)) {
@@ -91,11 +93,11 @@ public class HardwareLogic {
 
             reportingDao.process(state.user.name, dashId, pin, pinType, value);
 
-            dash.update(pin, pinType, value);
+            dash.update(deviceId, pin, pinType, value);
 
             //todo this temp catch. remove in next update.
             try {
-                process(dash, session, pin, pinType, value);
+                process(dash, deviceId, session, pin, pinType, value);
             } catch (Exception e) {
                 log.error("Error processing.", e);
             }
@@ -108,9 +110,9 @@ public class HardwareLogic {
         }
     }
 
-    private void process(DashBoard dash, Session session, byte pin, PinType pinType, String value) {
-        eventorProcessor.process(session, dash, pin, pinType, value);
-        webhookProcessor.process(session, dash, pin, pinType, value);
+    private void process(DashBoard dash, int deviceId, Session session, byte pin, PinType pinType, String value) {
+        eventorProcessor.process(session, dash, deviceId, pin, pinType, value);
+        webhookProcessor.process(session, dash, deviceId, pin, pinType, value);
     }
 
 }

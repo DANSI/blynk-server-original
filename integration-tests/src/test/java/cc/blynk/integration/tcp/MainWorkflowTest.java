@@ -338,7 +338,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         profile = JsonParser.parseProfile(clientPair.appClient.getBody());
         assertEquals(17, profile.dashBoards[0].widgets.length);
-        assertNotNull(profile.dashBoards[0].findWidgetByPin((byte) 17, PinType.DIGITAL));
+        assertNotNull(profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.DIGITAL));
     }
 
     @Test
@@ -377,8 +377,8 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         profile = JsonParser.parseProfile(clientPair.appClient.getBody());
         assertEquals(18, profile.dashBoards[0].widgets.length);
-        assertNull(profile.dashBoards[0].findWidgetByPin((byte) 17, PinType.DIGITAL));
-        assertNotNull(profile.dashBoards[0].findWidgetByPin((byte) 18, PinType.DIGITAL));
+        assertNull(profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.DIGITAL));
+        assertNotNull(profile.dashBoards[0].findWidgetByPin(0, (byte) 18, PinType.DIGITAL));
     }
 
     @Test
@@ -943,7 +943,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        Player player = (Player) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        Player player = (Player) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(player);
         assertTrue(player.isOnPlay);
 
@@ -953,7 +953,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        player = (Player) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        player = (Player) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(player);
         assertFalse(player.isOnPlay);
     }
@@ -971,7 +971,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(82860, timeInput.stopAt);
@@ -985,7 +985,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(82860, timeInput.stopAt);
@@ -998,7 +998,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(-1, timeInput.stopAt);
@@ -1011,7 +1011,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(-1, timeInput.stopAt);
@@ -1024,7 +1024,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(-1, timeInput.startAt);
         assertEquals(-1, timeInput.stopAt);
@@ -1037,7 +1037,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(82800, timeInput.stopAt);
@@ -1050,7 +1050,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(-2, timeInput.startAt);
         assertEquals(-3, timeInput.stopAt);

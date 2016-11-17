@@ -22,12 +22,12 @@ public class Eventor extends NoPinWidget {
     }
 
     @Override
-    public boolean updateIfSame(byte pin, PinType type, String value) {
+    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
         return false;
     }
 
     @Override
-    public boolean isSame(byte pin, PinType type) {
+    public boolean isSame(int deviceId, byte pin, PinType type) {
         return false;
     }
 

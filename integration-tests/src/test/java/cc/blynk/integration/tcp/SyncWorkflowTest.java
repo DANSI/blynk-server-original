@@ -372,7 +372,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin((byte) 99, PinType.VIRTUAL);
+        TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(82860, timeInput.stopAt);
@@ -383,7 +383,7 @@ public class SyncWorkflowTest extends IntegrationBase {
     @Test
     public void testSyncForTimer() throws Exception {
         User user = holder.userDao.users.get(new UserKey("dima@mail.ua", "Blynk"));
-        Widget widget = user.profile.dashBoards[0].findWidgetByPin((byte) 5, PinType.DIGITAL);
+        Widget widget = user.profile.dashBoards[0].findWidgetByPin(0, (byte) 5, PinType.DIGITAL);
         Timer timer = (Timer) widget;
         timer.value = b("dw 5 100500");
 

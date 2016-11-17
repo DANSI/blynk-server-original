@@ -54,8 +54,8 @@ public class WebhookProcessor extends NotificationBase {
         this.username = username;
     }
 
-    public void process(Session session, DashBoard dash, byte pin, PinType pinType, String triggerValue) {
-        WebHook widget = dash.findWebhookByPin(pin, pinType);
+    public void process(Session session, DashBoard dash, int deviceId, byte pin, PinType pinType, String triggerValue) {
+        WebHook widget = dash.findWebhookByPin(deviceId, pin, pinType);
         if (widget == null) {
             return;
         }

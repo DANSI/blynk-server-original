@@ -146,9 +146,9 @@ public abstract class Widget {
                 .append(pinMode);
     }
 
-    public abstract boolean updateIfSame(byte pin, PinType type, String value);
+    public abstract boolean updateIfSame(int deviceId, byte pin, PinType type, String value);
 
-    public abstract boolean isSame(byte pin, PinType type);
+    public abstract boolean isSame(int deviceId, byte pin, PinType type);
 
     public abstract String getJsonValue();
 

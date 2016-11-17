@@ -52,7 +52,15 @@ public class HardwareAppLogic {
         Session session = sessionDao.userSession.get(state.userKey);
 
         String[] split = split2(message.body);
-        int dashId = ParseUtil.parseInt(split[0]);
+
+        String[] dashIdAndDeviceIdString = split[0].split("-");
+        int dashId = ParseUtil.parseInt(dashIdAndDeviceIdString[0]);
+        int deviceId = 0;
+
+        //new logic for multi devices
+        if (dashIdAndDeviceIdString.length == 2) {
+            deviceId = ParseUtil.parseInt(dashIdAndDeviceIdString[1]);
+        }
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
@@ -69,7 +77,7 @@ public class HardwareAppLogic {
                 final byte pin = ParseUtil.parseByte(splitBody[1]);
                 final String value = splitBody[2];
 
-                dash.update(pin, pinType, value);
+                dash.update(deviceId, pin, pinType, value);
 
                 //if dash was shared. check for shared channels
                 if (state.user.dashShareTokens != null) {
@@ -80,13 +88,13 @@ public class HardwareAppLogic {
 
                 //todo this temp catch. remove in next update.
                 try {
-                    webhookProcessor.process(session, dash, pin, pinType, value);
+                    webhookProcessor.process(session, dash, deviceId, pin, pinType, value);
                 } catch (Exception e) {
                     log.error("Error app processing.", e);
                 }
                 break;
             case 'r' :
-                Widget widget = dash.findWidgetByPin(split[1].split(StringUtils.BODY_SEPARATOR_STRING));
+                Widget widget = dash.findWidgetByPin(deviceId, split[1].split(StringUtils.BODY_SEPARATOR_STRING));
                 if (widget == null) {
                     log.debug("No widget for read command.");
                     ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());

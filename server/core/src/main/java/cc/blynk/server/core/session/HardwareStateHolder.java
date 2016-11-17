@@ -10,11 +10,13 @@ import cc.blynk.server.core.model.auth.User;
 public class HardwareStateHolder extends StateHolder {
 
     public final int dashId;
+    public final int deviceId;
     public final String token;
 
-    public HardwareStateHolder(int dashId, User user, String token) {
+    public HardwareStateHolder(int dashId, int deviceId, User user, String token) {
         super(user);
         this.dashId = dashId;
+        this.deviceId = deviceId;
         this.token = token;
     }
 

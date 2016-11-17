@@ -28,8 +28,8 @@ public class Table extends OnePinWidget {
     public boolean isClickableRows;
 
     @Override
-    public boolean updateIfSame(byte pin, PinType type, String value) {
-        if (isSame(pin, type)) {
+    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
+        if (isSame(deviceId, pin, type)) {
             String[] values = value.split(BODY_SEPARATOR_STRING);
             if (values.length > 0) {
                 String tableCommand = values[0];

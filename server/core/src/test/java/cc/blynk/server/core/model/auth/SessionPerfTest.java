@@ -54,7 +54,7 @@ public class SessionPerfTest {
         User user = new User();
         user.dashTokens.putIfAbsent(DASH_ID, "1");
 
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(DASH_ID, user, "1");
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(0, DASH_ID, user, "1");
 
         // create 1 hardware channel and a session
         session1 = new Session(null);

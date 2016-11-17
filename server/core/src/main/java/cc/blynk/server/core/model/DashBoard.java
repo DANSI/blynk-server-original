@@ -56,20 +56,20 @@ public class DashBoard {
         return name;
     }
 
-    public void update(String body) {
-        update(split3(body));
+    public void update(int deviceId, String body) {
+        update(deviceId, split3(body));
     }
 
-    private void update(String[] splitted) {
+    private void update(int deviceId, String[] splitted) {
         final PinType type = PinType.getPinType(splitted[0].charAt(0));
         final byte pin = ParseUtil.parseByte(splitted[1]);
-        update(pin, type, splitted[2]);
+        update(deviceId, pin, type, splitted[2]);
     }
 
-    public void update(final byte pin, final PinType type, final String value) {
+    public void update(final int deviceId, final byte pin, final PinType type, final String value) {
         boolean hasWidget = false;
         for (Widget widget : widgets) {
-            if (widget.updateIfSame(pin, type, value)) {
+            if (widget.updateIfSame(deviceId, pin, type, value)) {
                 hasWidget = true;
             }
         }
@@ -91,26 +91,26 @@ public class DashBoard {
         updatedAt = System.currentTimeMillis();
     }
 
-    public Widget findWidgetByPin(String[] splitted) {
+    public Widget findWidgetByPin(int deviceId, String[] splitted) {
         final PinType type = PinType.getPinType(splitted[0].charAt(0));
         final byte pin = ParseUtil.parseByte(splitted[1]);
-        return findWidgetByPin(pin, type);
+        return findWidgetByPin(deviceId, pin, type);
     }
 
-    public Widget findWidgetByPin(byte pin, PinType pinType) {
+    public Widget findWidgetByPin(int deviceId, byte pin, PinType pinType) {
         for (Widget widget : widgets) {
-            if (widget.isSame(pin, pinType)) {
+            if (widget.isSame(deviceId, pin, pinType)) {
                 return widget;
             }
         }
         return null;
     }
 
-    public WebHook findWebhookByPin(byte pin, PinType pinType) {
+    public WebHook findWebhookByPin(int deviceId, byte pin, PinType pinType) {
         for (Widget widget : widgets) {
             if (widget instanceof WebHook) {
                 WebHook webHook = (WebHook) widget;
-                if (webHook.isSameWebHook(pin, pinType)) {
+                if (webHook.isSameWebHook(deviceId, pin, pinType)) {
                     return webHook;
                 }
             }

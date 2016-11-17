@@ -17,7 +17,7 @@ public class HistoryGraph extends MultiPinWidget {
     public boolean showLegends;
     
     @Override
-    public boolean isSame(byte pinIn, PinType pinType) {
+    public boolean isSame(int deviceId, byte pinIn, PinType pinType) {
         return false;
     }
 
@@ -27,7 +27,7 @@ public class HistoryGraph extends MultiPinWidget {
     }
 
     @Override
-    public boolean updateIfSame(byte pin, PinType type, String value) {
+    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
         return false;
     }
 

@@ -63,7 +63,7 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin((byte)4, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte)4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals("Some Text", widget.label);
 
@@ -75,7 +75,7 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         profile = JsonParser.parseProfile(clientPair.appClient.getBody());
 
-        widget = profile.dashBoards[0].findWidgetByPin((byte)4, PinType.VIRTUAL);
+        widget = profile.dashBoards[0].findWidgetByPin(0, (byte)4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals("MyNewLabel", widget.label);
     }
@@ -93,7 +93,7 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin((byte) 17, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
         assertNotNull(widget);
         assertTrue(widget instanceof Player);
         Player playerWidget = (Player) widget;
@@ -114,7 +114,7 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin((byte) 17, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
         assertNotNull(widget);
         assertTrue(widget instanceof Menu);
         Menu menuWidget = (Menu) widget;
@@ -182,7 +182,7 @@ public class SetPropertyTest extends IntegrationBase {
         Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin((byte) 4, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertEquals(600084223, widget.color);
 
     }

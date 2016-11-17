@@ -17,7 +17,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * The Blynk Project.
@@ -55,7 +59,7 @@ public class HardwareInfoLogicTest {
         User user = new User();
         user.profile = new Profile();
         user.profile.dashBoards = new DashBoard[0];
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(1, user, null);
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(0, 1, user, null);
 
         HardwareInfoMessage hardwareInfoLogic = new HardwareInfoMessage(1, "ver 0.3.2-beta h-beat 60 buff-in 256 dev ESP8266".replaceAll(" ", "\0"));
         logic.messageReceived(ctx, hardwareStateHolder, hardwareInfoLogic);

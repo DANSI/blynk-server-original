@@ -43,9 +43,9 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     }
 
     @Override
-    public boolean updateIfSame(byte pinIn, PinType type, String value) {
+    public boolean updateIfSame(int deviceId, byte pinIn, PinType type, String value) {
         boolean isSame = false;
-        if (pins != null) {
+        if (pins != null && this.deviceId == deviceId) {
             for (Pin pin : pins) {
                 if (pin.isSame(pinIn, type)) {
                     pin.value = value;

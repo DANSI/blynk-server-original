@@ -49,7 +49,7 @@ public class EventorProcessor {
         this.globalStats = stats;
     }
 
-    public void process(Session session, DashBoard dash, byte pin, PinType type, String triggerValue) {
+    public void process(Session session, DashBoard dash, int deviceId, byte pin, PinType type, String triggerValue) {
         Eventor eventor = dash.getWidgetByType(Eventor.class);
         if (eventor == null || eventor.rules == null) {
             return;
@@ -69,7 +69,7 @@ public class EventorProcessor {
                         for (BaseAction action : rule.actions) {
                             if (action.isValid()) {
                                 if (action instanceof SetPinAction) {
-                                    execute(session, dash, (SetPinAction) action);
+                                    execute(session, dash, deviceId, (SetPinAction) action);
                                 } else if (action instanceof NotificationAction) {
                                     execute(dash, triggerValue, (NotificationAction) action);
                                 }
@@ -145,9 +145,9 @@ public class EventorProcessor {
         widget.push(gcmWrapper, body, dash.id);
     }
 
-    private void execute(Session session, DashBoard dash, SetPinAction action) {
+    private void execute(Session session, DashBoard dash, int deviceId, SetPinAction action) {
         execute(session, dash.isActive, dash.id, action.pin, action.value);
-        dash.update(action.pin.pin, action.pin.pinType, action.value);
+        dash.update(deviceId, action.pin.pin, action.pin.pinType, action.value);
     }
 
     private void execute(Session session, boolean isActive, int dashId, Pin pin, String value) {

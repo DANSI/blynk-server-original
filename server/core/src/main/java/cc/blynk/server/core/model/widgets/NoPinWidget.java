@@ -10,12 +10,12 @@ import cc.blynk.server.core.model.enums.PinType;
 public abstract class NoPinWidget extends Widget {
 
     @Override
-    public boolean updateIfSame(byte pin, PinType type, String values) {
+    public boolean updateIfSame(int deviceId, byte pin, PinType type, String values) {
         return false;
     }
 
     @Override
-    public boolean isSame(byte pin, PinType type) {
+    public boolean isSame(int deviceId, byte pin, PinType type) {
         return false;
     }
 

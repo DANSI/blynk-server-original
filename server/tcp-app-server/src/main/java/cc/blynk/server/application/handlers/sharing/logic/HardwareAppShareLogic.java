@@ -43,7 +43,15 @@ public class HardwareAppShareLogic {
         Session session = sessionDao.userSession.get(state.userKey);
 
         String[] split = split2(message.body);
-        int dashId = ParseUtil.parseInt(split[0]);
+
+        String[] dashIdAndDeviceIdString = split[0].split("-");
+        int dashId = ParseUtil.parseInt(dashIdAndDeviceIdString[0]);
+        int deviceId = 0;
+
+        //new logic for multi devices
+        if (dashIdAndDeviceIdString.length == 2) {
+            deviceId = ParseUtil.parseInt(dashIdAndDeviceIdString[1]);
+        }
 
         DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(dashId);
 
@@ -64,7 +72,7 @@ public class HardwareAppShareLogic {
 
         switch (operation) {
             case 'w':
-                dash.update(split[1]);
+                dash.update(deviceId, split[1]);
 
                 String sharedToken = state.user.dashShareTokens.get(dashId);
                 if (sharedToken != null) {
@@ -77,7 +85,7 @@ public class HardwareAppShareLogic {
                 session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1]);
                 break;
             case 'r':
-                Widget widget = dash.findWidgetByPin(split[1].split(StringUtils.BODY_SEPARATOR_STRING));
+                Widget widget = dash.findWidgetByPin(deviceId, split[1].split(StringUtils.BODY_SEPARATOR_STRING));
                 if (widget == null) {
                     throw new IllegalCommandBodyException("No frequency widget for read command.");
                 }

@@ -67,7 +67,7 @@ public class SetWidgetPropertyLogic {
         }
 
         //for now supporting only virtual pins
-        Widget widget = dash.findWidgetByPin(pin, PinType.VIRTUAL);
+        Widget widget = dash.findWidgetByPin(state.deviceId, pin, PinType.VIRTUAL);
 
         if (widget == null) {
             log.error("No widget for SetWidgetProperty command. {}", message.body);
