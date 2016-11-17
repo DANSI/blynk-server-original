@@ -28,7 +28,7 @@ import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMess
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
-import cc.blynk.server.workers.StorageWorker;
+import cc.blynk.server.workers.ReportingWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.JsonParser;
@@ -545,8 +545,8 @@ public class MainWorkflowTest extends IntegrationBase {
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, PinType.DIGITAL, (byte) 8, GraphType.HOURLY));
 
-        StorageWorker.write(pinReportingDataPath, 1.11D, 1111111);
-        StorageWorker.write(pinReportingDataPath, 1.22D, 2222222);
+        ReportingWorker.write(pinReportingDataPath, 1.11D, 1111111);
+        ReportingWorker.write(pinReportingDataPath, 1.22D, 2222222);
 
         clientPair.appClient.send("getgraphdata 1 d 8 24 h");
 
@@ -605,8 +605,8 @@ public class MainWorkflowTest extends IntegrationBase {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
         Files.createDirectories(userReportDirectory);
         Path userReportFile = Paths.get(userReportDirectory.toString(), ReportingDao.generateFilename(1, PinType.ANALOG, (byte) 7, GraphType.MINUTE));
-        StorageWorker.write(userReportFile, 1.1, 1L);
-        StorageWorker.write(userReportFile, 2.2, 2L);
+        ReportingWorker.write(userReportFile, 1.1, 1L);
+        ReportingWorker.write(userReportFile, 2.2, 2L);
 
         clientPair.appClient.send("export 1 14");
         verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/dima@mail.ua_1_a7.csv.gz"));

@@ -2,7 +2,7 @@ package cc.blynk.server.storage;
 
 import cc.blynk.server.core.model.graph.GraphKey;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
-import cc.blynk.server.workers.StorageWorker;
+import cc.blynk.server.workers.ReportingWorker;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -42,7 +42,7 @@ public class StorageTest {
         //now - 365 days.
         long ts  = (System.currentTimeMillis() / AverageAggregator.DAY - 365);
         for (int i = 0; i < 365; i++ ) {
-            StorageWorker.write(path, i, (ts + i) * AverageAggregator.DAY);
+            ReportingWorker.write(path, i, (ts + i) * AverageAggregator.DAY);
         }
     }
 
@@ -54,7 +54,7 @@ public class StorageTest {
         //now - 1 week.
         long ts  = (System.currentTimeMillis() / AverageAggregator.HOUR - count);
         for (int i = 0; i < count; i++ ) {
-            StorageWorker.write(path, i, (ts + i) * AverageAggregator.HOUR);
+            ReportingWorker.write(path, i, (ts + i) * AverageAggregator.HOUR);
         }
     }
 

@@ -31,15 +31,15 @@ import static cc.blynk.server.core.dao.ReportingDao.generateFilename;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.08.15.
  */
-public class StorageWorker implements Runnable {
+public class ReportingWorker implements Runnable {
 
-    private static final Logger log = LogManager.getLogger(StorageWorker.class);
+    private static final Logger log = LogManager.getLogger(ReportingWorker.class);
 
     private final AverageAggregator averageAggregator;
     private final String reportingPath;
     private final DBManager dbManager;
 
-    public StorageWorker(AverageAggregator averageAggregator, String reportingPath, DBManager dbManager) {
+    public ReportingWorker(AverageAggregator averageAggregator, String reportingPath, DBManager dbManager) {
         this.averageAggregator = averageAggregator;
         this.reportingPath = reportingPath;
         this.dbManager = dbManager;

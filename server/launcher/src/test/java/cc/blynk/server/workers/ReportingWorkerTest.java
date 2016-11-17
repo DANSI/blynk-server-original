@@ -27,10 +27,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cc.blynk.server.core.dao.ReportingDao.*;
-import static cc.blynk.utils.ReportingUtil.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static cc.blynk.server.core.dao.ReportingDao.generateFilename;
+import static cc.blynk.utils.ReportingUtil.getReportingFolder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 /**
  * The Blynk Project.
@@ -38,7 +41,7 @@ import static org.mockito.Mockito.*;
  * Created on 11.08.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class StorageWorkerTest {
+public class ReportingWorkerTest {
 
     private final String reportingFolder = getReportingFolder(System.getProperty("java.io.tmpdir"));
 
@@ -64,7 +67,7 @@ public class StorageWorkerTest {
 
     @Test
     public void testStore() throws IOException {
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager(blockingIOProcessor));
+        ReportingWorker reportingWorker = new ReportingWorker(averageAggregator, reportingFolder, new DBManager(blockingIOProcessor));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -88,7 +91,7 @@ public class StorageWorkerTest {
         when(averageAggregator.getHourly()).thenReturn(map);
         when(averageAggregator.getDaily()).thenReturn(new ConcurrentHashMap<>());
 
-        storageWorker.run();
+        reportingWorker.run();
 
         assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
         assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
@@ -114,7 +117,7 @@ public class StorageWorkerTest {
 
     @Test
     public void testStore2() throws IOException {
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager(blockingIOProcessor));
+        ReportingWorker reportingWorker = new ReportingWorker(averageAggregator, reportingFolder, new DBManager(blockingIOProcessor));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -138,7 +141,7 @@ public class StorageWorkerTest {
         when(averageAggregator.getHourly()).thenReturn(map);
         when(averageAggregator.getDaily()).thenReturn(new ConcurrentHashMap<>());
 
-        storageWorker.run();
+        reportingWorker.run();
 
         assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
 
@@ -171,7 +174,7 @@ public class StorageWorkerTest {
 
     @Test
     public void testDeleteCommand() throws IOException {
-        StorageWorker storageWorker = new StorageWorker(averageAggregator, reportingFolder, new DBManager(blockingIOProcessor));
+        ReportingWorker reportingWorker = new ReportingWorker(averageAggregator, reportingFolder, new DBManager(blockingIOProcessor));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -196,7 +199,7 @@ public class StorageWorkerTest {
         when(averageAggregator.getDaily()).thenReturn(new ConcurrentHashMap<>());
         when(properties.getProperty("data.folder")).thenReturn(System.getProperty("java.io.tmpdir"));
 
-        storageWorker.run();
+        reportingWorker.run();
 
         assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, PinType.ANALOG, (byte) 1, GraphType.HOURLY))));
         assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(2, PinType.ANALOG, (byte) 2, GraphType.HOURLY))));
