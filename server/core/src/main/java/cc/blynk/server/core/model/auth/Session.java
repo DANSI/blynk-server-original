@@ -4,7 +4,6 @@ import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.utils.StringUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -21,6 +20,8 @@ import java.util.stream.IntStream;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StateHolderUtil.getHardState;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
+import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 
 /**
  * The Blynk Project.
@@ -132,11 +133,25 @@ public class Session {
         return false;
     }
 
-    public void sendToApps(short cmd, int msgId, int dashId, String body) {
-        sendToApps(cmd, msgId, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
+    public void sendToApps(short cmd, int msgId, int dashId, int deviceId) {
+        //todo this is only for back compatibility. remove in future versions.
+        if (deviceId == 0) {
+            sendToApps(cmd, msgId, String.valueOf(dashId));
+        } else {
+            sendToApps(cmd, msgId, dashId + DEVICE_SEPARATOR + deviceId);
+        }
     }
 
-    public void sendToApps(short cmd, int msgId, String body) {
+    public void sendToApps(short cmd, int msgId, int dashId, int deviceId, String body) {
+        //todo this is only for back compatibility. remove in future versions.
+        if (deviceId == 0) {
+            sendToApps(cmd, msgId, dashId + BODY_SEPARATOR_STRING + body);
+        } else {
+            sendToApps(cmd, msgId, dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR_STRING + body);
+        }
+    }
+
+    private void sendToApps(short cmd, int msgId, String body) {
         int channelsNum = appChannels.size();
         if (channelsNum == 0)
             return;

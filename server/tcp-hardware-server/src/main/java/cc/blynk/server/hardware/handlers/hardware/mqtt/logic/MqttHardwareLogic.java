@@ -57,7 +57,9 @@ public class MqttHardwareLogic {
             return;
         }
 
-        int dashId = state.dashId;
+        final int dashId = state.dashId;
+        final int deviceId = state.deviceId;
+
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         if (isWriteOperation(body)) {
@@ -85,7 +87,7 @@ public class MqttHardwareLogic {
 
         //todo do not send if no widget pin
         if (dash.isActive) {
-            session.sendToApps(HARDWARE, msg.variableHeader().messageId(), dashId, body);
+            session.sendToApps(HARDWARE, msg.variableHeader().messageId(), dashId, deviceId, body);
         } else {
             log.debug("No active dashboard.");
         }

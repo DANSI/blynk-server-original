@@ -56,7 +56,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         this.listenPort = String.valueOf(listenPort);
     }
 
-    private static void completeLogin(Channel channel, Session session, User user, DashBoard dash, int msgId) {
+    private static void completeLogin(Channel channel, Session session, User user, DashBoard dash, int deviceId, int msgId) {
         log.debug("completeLogin. {}", channel);
 
         session.addHardChannel(channel);
@@ -69,7 +69,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         channel.flush();
 
-        session.sendToApps(HARDWARE_CONNECTED, msgId, String.valueOf(dash.id));
+        session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, deviceId);
 
         log.info("{} hardware joined.", user.name);
     }
@@ -107,9 +107,9 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering hard channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, dash, message.id));
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, dash, deviceId, message.id));
         } else {
-            completeLogin(ctx.channel(), session, user, dash, message.id);
+            completeLogin(ctx.channel(), session, user, dash, deviceId, message.id);
         }
     }
 

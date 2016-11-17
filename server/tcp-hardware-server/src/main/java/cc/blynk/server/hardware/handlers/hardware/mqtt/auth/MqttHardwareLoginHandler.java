@@ -49,13 +49,13 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
         this.holder = holder;
     }
 
-    private static void completeLogin(Channel channel, Session session, User user, DashBoard dash, int msgId) {
+    private static void completeLogin(Channel channel, Session session, User user, DashBoard dash, int deviceId, int msgId) {
         log.debug("completeLogin. {}", channel);
 
         session.addHardChannel(channel);
         channel.writeAndFlush(ACCEPTED);
 
-        session.sendToApps(HARDWARE_CONNECTED, msgId, String.valueOf(dash.id));
+        session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, deviceId);
 
         log.info("{} mqtt hardware joined.", user.name);
     }
@@ -99,9 +99,9 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering hard channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, dash, -1));
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, dash, deviceId, -1));
         } else {
-            completeLogin(ctx.channel(), session, user, dash, -1);
+            completeLogin(ctx.channel(), session, user, dash, deviceId, -1);
         }
     }
 

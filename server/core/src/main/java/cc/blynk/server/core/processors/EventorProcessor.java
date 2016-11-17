@@ -153,7 +153,7 @@ public class EventorProcessor {
         final String body = Pin.makeHardwareBody(pin.pwmMode, pin.pinType, pin.pin, value);
         session.sendMessageToHardware(dashId, HARDWARE, 888, body, deviceId);
         if (isActive) {
-            session.sendToApps(HARDWARE, 888, dashId, body);
+            session.sendToApps(HARDWARE, 888, dashId, deviceId, body);
         }
         globalStats.mark(EVENTOR);
     }

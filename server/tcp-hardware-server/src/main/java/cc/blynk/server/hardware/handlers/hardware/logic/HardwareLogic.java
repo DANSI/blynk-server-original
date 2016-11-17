@@ -103,7 +103,7 @@ public class HardwareLogic {
         }
 
         if (dash.isActive) {
-            session.sendToApps(HARDWARE, message.id, dashId, body);
+            session.sendToApps(HARDWARE, message.id, dashId, deviceId, body);
         } else {
             log.debug("No active dashboard.");
         }

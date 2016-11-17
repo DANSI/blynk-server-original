@@ -48,6 +48,8 @@ public class SetWidgetPropertyLogic {
             return;
         }
 
+        final int deviceId = state.deviceId;
+
         byte pin = ParseUtil.parseByte(bodyParts[0]);
         String property = bodyParts[1];
         String propertyValue = bodyParts[2];
@@ -66,7 +68,7 @@ public class SetWidgetPropertyLogic {
         }
 
         //for now supporting only virtual pins
-        Widget widget = dash.findWidgetByPin(state.deviceId, pin, PinType.VIRTUAL);
+        Widget widget = dash.findWidgetByPin(deviceId, pin, PinType.VIRTUAL);
 
         if (widget == null) {
             log.error("No widget for SetWidgetProperty command. {}", message.body);
@@ -84,7 +86,7 @@ public class SetWidgetPropertyLogic {
         }
 
         if (isChanged) {
-            session.sendToApps(SET_WIDGET_PROPERTY, message.id, dash.id, message.body);
+            session.sendToApps(SET_WIDGET_PROPERTY, message.id, dash.id, deviceId, message.body);
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
