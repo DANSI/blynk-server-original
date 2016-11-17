@@ -9,6 +9,7 @@ public class StringUtils {
 
     public static final char BODY_SEPARATOR = '\0';
     public static final String BODY_SEPARATOR_STRING = String.valueOf(BODY_SEPARATOR);
+    public static final String DEVICE_SEPARATOR = "-";
 
     public static final String PIN_PATTERN =  "/pin/";
     public static final String PIN_PATTERN_0 =  "/pin[0]/";
