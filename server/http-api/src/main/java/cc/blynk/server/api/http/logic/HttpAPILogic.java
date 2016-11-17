@@ -413,8 +413,7 @@ public class HttpAPILogic {
 
         if (isChanged) {
             Session session = sessionDao.userSession.get(new UserKey(user));
-            session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id + BODY_SEPARATOR_STRING +
-                    pin + BODY_SEPARATOR_STRING + property + BODY_SEPARATOR_STRING + values[0]);
+            session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id, pin + BODY_SEPARATOR_STRING + property + BODY_SEPARATOR_STRING + values[0]);
             return Response.ok();
         }
 
@@ -527,7 +526,7 @@ public class HttpAPILogic {
         session.sendMessageToHardware(dashId, HARDWARE, 111, body, deviceId);
 
         if (dash.isActive) {
-            session.sendToApps(HARDWARE, 111, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
+            session.sendToApps(HARDWARE, 111, dashId, body);
         }
 
         return Response.ok();
@@ -588,7 +587,7 @@ public class HttpAPILogic {
             session.sendMessageToHardware(dashId, HARDWARE, 111, body, deviceId);
 
             if (dash.isActive) {
-                session.sendToApps(HARDWARE, 111, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
+                session.sendToApps(HARDWARE, 111, dashId, body);
             }
         }
 

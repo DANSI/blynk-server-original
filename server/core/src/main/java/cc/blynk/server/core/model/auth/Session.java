@@ -4,6 +4,7 @@ import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
+import cc.blynk.utils.StringUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -129,6 +130,10 @@ public class Session {
             }
         }
         return false;
+    }
+
+    public void sendToApps(short cmd, int msgId, int dashId, String body) {
+        sendToApps(cmd, msgId, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
     }
 
     public void sendToApps(short cmd, int msgId, String body) {

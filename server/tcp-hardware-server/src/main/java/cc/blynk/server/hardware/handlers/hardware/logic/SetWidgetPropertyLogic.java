@@ -9,7 +9,6 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.ReflectionUtil;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -85,7 +84,7 @@ public class SetWidgetPropertyLogic {
         }
 
         if (isChanged) {
-            session.sendToApps(SET_WIDGET_PROPERTY, message.id, dash.id + StringUtils.BODY_SEPARATOR_STRING + message.body);
+            session.sendToApps(SET_WIDGET_PROPERTY, message.id, dash.id, message.body);
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {

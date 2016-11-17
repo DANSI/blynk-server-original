@@ -18,7 +18,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.notificati
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
-import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -154,7 +153,7 @@ public class EventorProcessor {
         final String body = Pin.makeHardwareBody(pin.pwmMode, pin.pinType, pin.pin, value);
         session.sendMessageToHardware(dashId, HARDWARE, 888, body, deviceId);
         if (isActive) {
-            session.sendToApps(HARDWARE, 888, dashId + StringUtils.BODY_SEPARATOR_STRING + body);
+            session.sendToApps(HARDWARE, 888, dashId, body);
         }
         globalStats.mark(EVENTOR);
     }
