@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class GlobalStats {
 
-    private static final int LAST_COMMAND_INDEX = 55;
+    private static final int LAST_COMMAND_INDEX = 72;
     //separate by income/outcome?
     public final Meter totalMessages;
     public final LongAdder[] specificCounters;

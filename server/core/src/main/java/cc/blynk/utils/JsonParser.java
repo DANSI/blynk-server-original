@@ -44,6 +44,7 @@ public final class JsonParser {
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
     private static final ObjectWriter dashboardWriter = mapper.writerFor(DashBoard.class);
+    private static final ObjectWriter deviceWriter = mapper.writerFor(Device.class);
 
     public static ObjectMapper init() {
         return new ObjectMapper()
@@ -64,6 +65,10 @@ public final class JsonParser {
 
     public static String toJson(DashBoard dashBoard) {
         return toJson(dashboardWriter, dashBoard);
+    }
+
+    public static String toJson(Device device) {
+        return toJson(deviceWriter, device);
     }
 
     public static String toJson(ObjectWriter writer, Object o) {
@@ -87,6 +92,15 @@ public final class JsonParser {
     public static String toJson(Collection<?> list) {
         try {
             return mapper.writeValueAsString(list);
+        } catch (Exception e) {
+            log.error("Error jsoning object.", e);
+        }
+        return "[]";
+    }
+
+    public static String toJson(Object[] array) {
+        try {
+            return mapper.writeValueAsString(array);
         } catch (Exception e) {
             log.error("Error jsoning object.", e);
         }

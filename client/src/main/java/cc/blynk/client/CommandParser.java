@@ -72,6 +72,15 @@ public class CommandParser {
             case "info" :
                 return HARDWARE_INFO;
 
+            case "createdevice" :
+                return CREATE_DEVICE;
+            case "updatedevice" :
+                return UPDATE_DEVICE;
+            case "deletedevice" :
+                return DELETE_DEVICE;
+            case "getdevices" :
+                return GET_DEVICES;
+
             case "addenergy" :
                 return ADD_ENERGY;
             case "getenergy" :

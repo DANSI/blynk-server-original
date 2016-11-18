@@ -5,11 +5,14 @@ import cc.blynk.server.core.protocol.model.messages.appllication.ActivateDashboa
 import cc.blynk.server.core.protocol.model.messages.appllication.AddEnergy;
 import cc.blynk.server.core.protocol.model.messages.appllication.AddPushToken;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDashMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateWidget;
 import cc.blynk.server.core.protocol.model.messages.appllication.DeActivateDashboardMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.DeleteDashMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.DeleteDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.DeleteWidget;
 import cc.blynk.server.core.protocol.model.messages.appllication.ExportDataMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetDevices;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetEnergy;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataStringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetMetadata;
@@ -23,6 +26,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage
 import cc.blynk.server.core.protocol.model.messages.appllication.SaveDashMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.SaveMetadata;
 import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.UpdateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateWidget;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.GetShareTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.GetSharedDashMessage;
@@ -126,6 +130,15 @@ public class MessageFactory {
                 return new UpdateWidget(messageId, body);
             case DELETE_WIDGET :
                 return new DeleteWidget(messageId, body);
+
+            case CREATE_DEVICE :
+                return new CreateDevice(messageId, body);
+            case UPDATE_DEVICE :
+                return new UpdateDevice(messageId, body);
+            case DELETE_DEVICE :
+                return new DeleteDevice(messageId, body);
+            case GET_DEVICES :
+                return new GetDevices(messageId, body);
 
             case GET_ENERGY :
                 return new GetEnergy(messageId, body);

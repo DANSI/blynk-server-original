@@ -65,25 +65,30 @@ public final class Command {
     public static final short GET_SERVER = 40;
     public static final short CONNECT_REDIRECT = 41;
 
-    //------------------------------------------
+    public static final short CREATE_DEVICE = 42;
+    public static final short UPDATE_DEVICE = 43;
+    public static final short DELETE_DEVICE = 44;
+    public static final short GET_DEVICES = 45;
 
-    //http codes. Used only for stats
-    public static final short HTTP_IS_HARDWARE_CONNECTED = 42;
-    public static final short HTTP_IS_APP_CONNECTED = 43;
-    public static final short HTTP_GET_PIN_DATA = 44;
-    public static final short HTTP_UPDATE_PIN_DATA = 45;
-    public static final short HTTP_NOTIFY = 46;
-    public static final short HTTP_EMAIL = 47;
-    public static final short HTTP_GET_PROJECT = 48;
-    public static final short HTTP_QR = 49;
-    public static final short HTTP_GET_DATA = 50;
-    public static final short HTTP_TOTAL = 51;
+    //------------------------------------------
 
     //web sockets
     public static final short WEB_SOCKETS = 52;
 
     public static final short EVENTOR = 53;
     public static final short WEB_HOOKS = 54;
+
+    //http codes. Used only for stats
+    public static final short HTTP_IS_HARDWARE_CONNECTED = 62;
+    public static final short HTTP_IS_APP_CONNECTED = 63;
+    public static final short HTTP_GET_PIN_DATA = 64;
+    public static final short HTTP_UPDATE_PIN_DATA = 65;
+    public static final short HTTP_NOTIFY = 66;
+    public static final short HTTP_EMAIL = 67;
+    public static final short HTTP_GET_PROJECT = 68;
+    public static final short HTTP_QR = 69;
+    public static final short HTTP_GET_DATA = 70;
+    public static final short HTTP_TOTAL = 71;
 
 
     //all this code just to make logging more user-friendly
@@ -127,6 +132,11 @@ public final class Command {
                 put(CREATE_WIDGET, "CreateWidget");
                 put(UPDATE_WIDGET, "UpdateWidget");
                 put(DELETE_WIDGET, "DeleteWidget");
+
+                put(CREATE_DEVICE, "CreateDevice");
+                put(UPDATE_DEVICE, "UpdateDevice");
+                put(DELETE_DEVICE, "DeleteDevice");
+                put(GET_DEVICES, "GetDevices");
 
                 put(ADD_ENERGY, "AddEnergy");
                 put(GET_ENERGY, "GetEnergy");

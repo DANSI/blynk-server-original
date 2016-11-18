@@ -16,6 +16,10 @@ import cc.blynk.server.application.handlers.main.logic.RefreshTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.CreateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.DeleteDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.SaveDashLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.CreateDeviceLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.DeleteDeviceLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.UpdateDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.CreateWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.DeleteWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.UpdateWidgetLogic;
@@ -62,6 +66,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final ShareLogic shareLogic;
     private final RedeemLogic redeemLogic;
     private final AddEnergyLogic addEnergyLogic;
+    private final CreateDeviceLogic createDeviceLogic;
+    private final UpdateDeviceLogic updateDeviceLogic;
+    private final DeleteDeviceLogic deleteDeviceLogic;
 
     public AppHandler(Holder holder, AppStateHolder state) {
         super(holder.props, state);
@@ -88,6 +95,10 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.createWidgetLogic = new CreateWidgetLogic(widgetSize);
         this.updateWidgetLogic = new UpdateWidgetLogic(widgetSize);
         this.deleteDashLogic = new DeleteDashLogic(holder);
+
+        this.createDeviceLogic = new CreateDeviceLogic(holder.tokenManager);
+        this.updateDeviceLogic = new UpdateDeviceLogic();
+        this.deleteDeviceLogic = new DeleteDeviceLogic();
 
         this.shareLogic = new ShareLogic(holder.sessionDao);
         this.redeemLogic = new RedeemLogic(holder.dbManager, holder.blockingIOProcessor);
@@ -176,6 +187,18 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case GET_METADATA :
                 GetMetadataLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case CREATE_DEVICE :
+                createDeviceLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case UPDATE_DEVICE :
+                updateDeviceLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case DELETE_DEVICE :
+                deleteDeviceLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case GET_DEVICES :
+                GetDevicesLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }

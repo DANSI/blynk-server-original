@@ -1,5 +1,7 @@
 package cc.blynk.server.core.model;
 
+import cc.blynk.utils.JsonParser;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -40,4 +42,8 @@ public class Device {
         this.connectionType = newDevice.connectionType;
     }
 
+    @Override
+    public String toString() {
+        return JsonParser.toJson(this);
+    }
 }

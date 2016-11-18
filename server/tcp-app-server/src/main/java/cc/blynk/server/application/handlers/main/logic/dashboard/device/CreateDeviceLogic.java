@@ -59,10 +59,11 @@ public class CreateDeviceLogic {
             }
         }
 
+        dash.devices = ArrayUtil.add(dash.devices, newDevice);
+
         final String newToken = TokenGeneratorUtil.generateNewToken();
         tokenManager.assignToken(user, dashId, newDevice.id, newToken);
 
-        dash.devices = ArrayUtil.add(dash.devices, newDevice);
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
 
