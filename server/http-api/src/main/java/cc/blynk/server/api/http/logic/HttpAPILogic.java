@@ -284,6 +284,7 @@ public class HttpAPILogic {
 
         final User user = tokenValue.user;
         final int dashId = tokenValue.dashId;
+        final int deviceId = tokenValue.deviceId;
 
         PinType pinType;
         byte pin;
@@ -298,7 +299,7 @@ public class HttpAPILogic {
 
         //todo may be optimized
         try {
-            java.nio.file.Path path = FileUtils.createCSV(reportingDao, user.name, dashId, pinType, pin);
+            java.nio.file.Path path = FileUtils.createCSV(reportingDao, user.name, dashId, deviceId, pinType, pin);
             return redirect("/" + path.getFileName().toString());
         } catch (IllegalCommandBodyException e1) {
             log.debug(e1.getMessage());
@@ -509,7 +510,7 @@ public class HttpAPILogic {
 
         String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING, pinValues);
 
-        reportingDao.process(user.name, dashId, pin, pinType, pinValue);
+        reportingDao.process(user.name, dashId, deviceId, pin, pinType, pinValue);
 
         dash.update(deviceId, pin, pinType, pinValue);
 
@@ -571,7 +572,7 @@ public class HttpAPILogic {
         }
 
         for (PinData pinData : pinsData) {
-            reportingDao.process(user.name, dashId, pin, pinType, pinData.value, pinData.timestamp);
+            reportingDao.process(user.name, dashId, deviceId, pin, pinType, pinData.value, pinData.timestamp);
         }
 
         dash.update(deviceId, pin, pinType, pinsData[0].value);

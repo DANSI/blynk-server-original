@@ -58,7 +58,17 @@ public class ExportGraphDataLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(messageParts[0]);
+        String[] dashIdAndDeviceId = messageParts[0].split(StringUtils.DEVICE_SEPARATOR);
+        int dashId = ParseUtil.parseInt(dashIdAndDeviceId[0]);
+
+        //todo new device code. remove after migration.
+        int deviceId;
+        if (dashIdAndDeviceId.length == 2) {
+            deviceId = ParseUtil.parseInt(dashIdAndDeviceId[1]);
+        } else {
+            deviceId = 0;
+        }
+
         long widgetId = ParseUtil.parseLong(messageParts[1]);
 
         DashBoard dashBoard = user.profile.getDashByIdOrThrow(dashId);
@@ -77,7 +87,7 @@ public class ExportGraphDataLogic {
                 for (Pin pin : historyGraph.pins) {
                     if (pin != null) {
                         try {
-                            Path path = FileUtils.createCSV(reportingDao, user.name, dashId, pin.pinType, pin.pin);
+                            Path path = FileUtils.createCSV(reportingDao, user.name, dashId, deviceId, pin.pinType, pin.pin);
                             pinsCSVFilePath.add(new FileLink(path.getFileName(), dashName, pin.pinType, pin.pin));
                         } catch (Exception e) {
                             //ignore eny exception.

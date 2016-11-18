@@ -62,12 +62,12 @@ public class AverageAggregator implements Closeable {
         aggregationValue.update(value);
     }
 
-    public void collect(String username, int dashId, PinType pinType, byte pin, long ts, String value) {
+    public void collect(String username, int dashId, int deviceId, PinType pinType, byte pin, long ts, String value) {
         try {
             double val = Double.parseDouble(value);
-            aggregate(minute, new AggregationKey(username, dashId, pinType, pin, ts / MINUTE), val);
-            aggregate(hourly, new AggregationKey(username, dashId, pinType, pin, ts / HOUR), val);
-            aggregate(daily, new AggregationKey(username, dashId, pinType, pin, ts / DAY), val);
+            aggregate(minute, new AggregationKey(username, dashId, deviceId, pinType, pin, ts / MINUTE), val);
+            aggregate(hourly, new AggregationKey(username, dashId, deviceId, pinType, pin, ts / HOUR), val);
+            aggregate(daily, new AggregationKey(username, dashId, deviceId, pinType, pin, ts / DAY), val);
         } catch (NumberFormatException e) {
             //value not a number so ignore. no way to make average aggregation
         }

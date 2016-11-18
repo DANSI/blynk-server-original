@@ -17,13 +17,15 @@ public final class AggregationKey implements Serializable {
 
     public final String username;
     public final int dashId;
+    public final int deviceId;
     public final PinType pinType;
     public final byte pin;
     private final long ts;
 
-    public AggregationKey(String username, int dashId, PinType pinType, byte pin, long ts) {
+    public AggregationKey(String username, int dashId, int deviceId, PinType pinType, byte pin, long ts) {
         this.username = username;
         this.dashId = dashId;
+        this.deviceId = deviceId;
         this.pinType = pinType;
         this.pin = pin;
         this.ts = ts;
@@ -45,6 +47,7 @@ public final class AggregationKey implements Serializable {
         AggregationKey that = (AggregationKey) o;
 
         if (dashId != that.dashId) return false;
+        if (deviceId != that.deviceId) return false;
         if (pin != that.pin) return false;
         if (ts != that.ts) return false;
         if (username != null ? !username.equals(that.username) : that.username != null) return false;
@@ -56,6 +59,7 @@ public final class AggregationKey implements Serializable {
     public int hashCode() {
         int result = username != null ? username.hashCode() : 0;
         result = 31 * result + dashId;
+        result = 31 * result + deviceId;
         result = 31 * result + (pinType != null ? pinType.hashCode() : 0);
         result = 31 * result + (int) pin;
         result = 31 * result + (int) (ts ^ (ts >>> 32));

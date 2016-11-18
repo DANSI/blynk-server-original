@@ -90,7 +90,7 @@ public class HardwareLogic {
                 return;
             }
 
-            reportingDao.process(state.user.name, dashId, pin, pinType, value);
+            reportingDao.process(state.user.name, dashId, deviceId, pin, pinType, value);
 
             dash.update(deviceId, pin, pinType, value);
 

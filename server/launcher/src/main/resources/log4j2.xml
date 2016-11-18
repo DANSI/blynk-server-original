@@ -77,7 +77,7 @@
 
 
         <Routing name="csvDataStorage">
-            <Routes pattern="$${ctx:user}_$${ctx:dashId}_$${ctx:pin}">
+            <Routes pattern="$${ctx:user}_$${ctx:dashId}-$${ctx:deviceId}_$${ctx:pin}">
 
                 <!-- This route is chosen if ThreadContext has a value for "user"
                 The value dynamically determines the name of the log file. -->

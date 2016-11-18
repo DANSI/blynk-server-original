@@ -110,7 +110,7 @@ public class ReportingWorker implements Runnable {
                         Files.createDirectories(userReportFolder);
                     }
 
-                    String fileName = generateFilename(keyToRemove.dashId, keyToRemove.pinType, keyToRemove.pin, type);
+                    String fileName = generateFilename(keyToRemove.dashId, keyToRemove.deviceId, keyToRemove.pinType, keyToRemove.pin, type);
                     Path filePath = Paths.get(userReportFolder.toString(), fileName);
 
                     write(filePath, value.calcAverage(), keyToRemove.getTs(type));

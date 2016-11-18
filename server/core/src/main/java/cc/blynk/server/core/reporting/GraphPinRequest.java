@@ -12,6 +12,8 @@ public abstract class GraphPinRequest {
 
     public int dashId;
 
+    public int deviceId;
+
     public PinType pinType;
 
     public byte pin;

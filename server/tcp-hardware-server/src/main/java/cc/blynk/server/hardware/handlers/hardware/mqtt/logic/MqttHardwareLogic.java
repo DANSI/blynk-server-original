@@ -80,7 +80,7 @@ public class MqttHardwareLogic {
                 return;
             }
 
-            reportingDao.process(state.user.name, dashId, pin, pinType, value);
+            reportingDao.process(state.user.name, dashId, deviceId, pin, pinType, value);
 
             dash.update(0, pin, pinType, value);
         }

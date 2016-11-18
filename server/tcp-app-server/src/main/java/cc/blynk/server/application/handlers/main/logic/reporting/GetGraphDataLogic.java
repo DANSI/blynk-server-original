@@ -10,6 +10,7 @@ import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.utils.ParseUtil;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -57,19 +58,24 @@ public class GetGraphDataLogic {
             deleteGraphData(messageParts, user.name);
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
-            int dashId = ParseUtil.parseInt(messageParts[0]);
+            String[] dashIdDeviceId = messageParts[0].split(StringUtils.DEVICE_SEPARATOR);
+            int dashId = ParseUtil.parseInt(dashIdDeviceId[0]);
+            int deviceId = 0;
+            if (dashIdDeviceId.length == 2) {
+                deviceId = Integer.parseInt(dashIdDeviceId[1]);
+            }
             user.profile.validateDashId(dashId);
-            process(ctx.channel(), dashId, Arrays.copyOfRange(messageParts, 1, messageParts.length), user, message.id, 4);
+            process(ctx.channel(), dashId, deviceId, Arrays.copyOfRange(messageParts, 1, messageParts.length), user, message.id, 4);
         }
     }
 
-    private void process(Channel channel, int dashId, String[] messageParts, User user, int msgId, int valuesPerPin) {
+    private void process(Channel channel, int dashId, int deviceId, String[] messageParts, User user, int msgId, int valuesPerPin) {
         int numberOfPins = messageParts.length / valuesPerPin;
 
         GraphPinRequest[] requestedPins = new GraphPinRequestData[numberOfPins];
 
         for (int i = 0; i < numberOfPins; i++) {
-            requestedPins[i] = new GraphPinRequestData(dashId, messageParts, i, valuesPerPin);
+            requestedPins[i] = new GraphPinRequestData(dashId, deviceId, messageParts, i, valuesPerPin);
         }
 
         readGraphData(channel, user.name, requestedPins, msgId);
@@ -93,14 +99,19 @@ public class GetGraphDataLogic {
 
     private void deleteGraphData(String[] messageParts, String username) {
         try {
-            int dashBoardId = Integer.parseInt(messageParts[0]);
+            String[] dashIdDeviceId = messageParts[0].split(StringUtils.DEVICE_SEPARATOR);
+            int dashBoardId = Integer.parseInt(dashIdDeviceId[0]);
+            int deviceId = 0;
+            if (dashIdDeviceId.length == 2) {
+                deviceId = Integer.parseInt(dashIdDeviceId[1]);
+            }
             PinType pinType = PinType.getPinType(messageParts[1].charAt(0));
             byte pin = Byte.parseByte(messageParts[2]);
             String cmd = messageParts[3];
             if (!"del".equals(cmd)) {
                 throw new IllegalCommandBodyException("Wrong body format. Expecting 'del'.");
             }
-            reportingDao.delete(username, dashBoardId, pinType, pin);
+            reportingDao.delete(username, dashBoardId, deviceId, pinType, pin);
         } catch (NumberFormatException e) {
             throw new IllegalCommandException("HardwareLogic command body incorrect.");
         }

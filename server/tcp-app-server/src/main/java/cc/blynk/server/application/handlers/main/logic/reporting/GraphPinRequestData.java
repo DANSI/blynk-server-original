@@ -12,9 +12,10 @@ import cc.blynk.server.core.reporting.GraphPinRequest;
  */
 public class GraphPinRequestData extends GraphPinRequest {
 
-    public GraphPinRequestData(int dashId, String[] messageParts, final int pinIndex, int valuesPerPin) {
+    public GraphPinRequestData(int dashId, int deviceId, String[] messageParts, final int pinIndex, int valuesPerPin) {
         try {
             this.dashId = dashId;
+            this.deviceId = deviceId;
             pinType = PinType.getPinType(messageParts[pinIndex * valuesPerPin].charAt(0));
             pin = Byte.parseByte(messageParts[pinIndex * valuesPerPin + 1]);
             count = Integer.parseInt(messageParts[pinIndex * valuesPerPin + 2]);
