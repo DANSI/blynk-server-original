@@ -94,7 +94,7 @@ public class DBManagerTest {
              PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
 
             for (int i = 0; i < 1000; i++) {
-                ReportingDBDao.prepareReportingInsert(ps, userName, 1, (byte) 0, PinType.VIRTUAL, minute, (double) i);
+                ReportingDBDao.prepareReportingInsert(ps, userName, 1, 0, (byte) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
                 minute += AverageAggregator.MINUTE;
                 a++;
@@ -142,7 +142,7 @@ public class DBManagerTest {
             long minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
 
             for (int i = 0; i < 100; i++) {
-                ReportingDBDao.prepareReportingInsert(ps, userName, 1, (byte) 0, PinType.VIRTUAL, minute, (double) i);
+                ReportingDBDao.prepareReportingInsert(ps, userName, 1, 0, (byte) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
                 minute += AverageAggregator.MINUTE;
                 a++;
@@ -179,7 +179,7 @@ public class DBManagerTest {
             minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
 
             for (int i = 0; i < 370; i++) {
-                ReportingDBDao.prepareReportingInsert(ps, "test1111@gmail.com", 1, (byte) 0, PinType.VIRTUAL, minute, (double) i);
+                ReportingDBDao.prepareReportingInsert(ps, "test1111@gmail.com", 1, 0, (byte) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
                 minute += AverageAggregator.MINUTE;
             }

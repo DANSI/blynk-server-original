@@ -22,9 +22,9 @@ import java.util.Map;
  */
 public class ReportingDBDao {
 
-    public static final String insertMinute = "INSERT INTO reporting_average_minute VALUES (?, ?, ?, ?, ?, ?)";
-    public static final String insertHourly = "INSERT INTO reporting_average_hourly VALUES (?, ?, ?, ?, ?, ?)";
-    public static final String insertDaily = "INSERT INTO reporting_average_daily VALUES (?, ?, ?, ?, ?, ?)";
+    public static final String insertMinute = "INSERT INTO reporting_average_minute (username, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public static final String insertHourly = "INSERT INTO reporting_average_hourly (username, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public static final String insertDaily = "INSERT INTO reporting_average_daily (username, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
     public static final String selectMinute = "SELECT ts, value FROM reporting_average_minute WHERE ts > ? ORDER BY ts DESC limit ?";
     public static final String selectHourly = "SELECT ts, value FROM reporting_average_hourly WHERE ts > ? ORDER BY ts DESC limit ?";
     public static final String selectDaily = "SELECT ts, value FROM reporting_average_daily WHERE ts > ? ORDER BY ts DESC limit ?";
@@ -48,22 +48,24 @@ public class ReportingDBDao {
                                                GraphType type) throws SQLException {
         final AggregationKey key = entry.getKey();
         final AggregationValue value = entry.getValue();
-        prepareReportingInsert(ps, key.username, key.dashId, key.pin, key.pinType, key.getTs(type), value.calcAverage());
+        prepareReportingInsert(ps, key.username, key.dashId, key.deviceId, key.pin, key.pinType, key.getTs(type), value.calcAverage());
     }
 
     public static void prepareReportingInsert(PreparedStatement ps,
                                                  String username,
                                                  int dashId,
+                                                 int deviceId,
                                                  byte pin,
                                                  PinType pinType,
                                                  long ts,
                                                  double value) throws SQLException {
         ps.setString(1, username);
         ps.setInt(2, dashId);
-        ps.setByte(3, pin);
-        ps.setString(4, pinType.pinTypeString);
-        ps.setLong(5, ts);
-        ps.setDouble(6, value);
+        ps.setInt(3, deviceId);
+        ps.setByte(4, pin);
+        ps.setString(5, pinType.pinTypeString);
+        ps.setLong(6, ts);
+        ps.setDouble(7, value);
     }
 
     private static String getTableByGraphType(GraphType graphType) {
@@ -126,3 +128,4 @@ public class ReportingDBDao {
     }
 
 }
+
