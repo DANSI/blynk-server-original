@@ -2,10 +2,12 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.model.Device;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.JsonParser;
 import org.junit.After;
@@ -19,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -51,7 +54,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    public void testAddNewDevice() throws Exception {
+    public void testSendHardwareCommandToMultipleDevices() throws Exception {
         Device device0 = new Device(0, "My Dashboard", "UNO");
         Device device1 = new Device(1, "My Device", "ESP8266");
 
@@ -69,6 +72,25 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         assertEqualDevice(device0, devices[0]);
         assertEqualDevice(device1, devices[1]);
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.send("login " + devices[1].token);
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.appClient.send("hardware 1 vw 100 100");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("vw 100 100"))));
+        verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(2, b("vw 1 100"))));
+
+        clientPair.appClient.send("hardware 1-0 vw 100 101");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("vw 100 101"))));
+        verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(3, b("vw 1 101"))));
+
+        clientPair.appClient.send("hardware 1-1 vw 100 102");
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(4, b("vw 100 102"))));
+        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new HardwareMessage(4, b("vw 100 102"))));
+
     }
 
     private static void assertEqualDevice(Device expected, Device real) {
