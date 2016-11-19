@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.utils.StringUtils;
 
 /**
  * The Blynk Project.
@@ -40,5 +41,10 @@ public final class PinStorageKey {
         result = 31 * result + (int) pin;
         result = 31 * result + (pinType != null ? pinType.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return deviceId + StringUtils.DEVICE_SEPARATOR + pinType.pintTypeChar + pin;
     }
 }

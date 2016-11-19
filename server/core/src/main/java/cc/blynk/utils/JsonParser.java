@@ -1,7 +1,6 @@
 package cc.blynk.utils;
 
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.User;
@@ -40,7 +39,6 @@ public final class JsonParser {
     private static final ObjectReader dashboardReader = mapper.readerFor(DashBoard.class);
     private static final ObjectReader widgetReader = mapper.readerFor(Widget.class);
     private static final ObjectReader deviceReader = mapper.readerFor(Device.class);
-    private static final ObjectReader pinStorageKeyReader = mapper.readerFor(PinStorageKey.class);
     private static final ObjectReader facebookTokenReader = mapper.readerFor(FacebookTokenResponse.class);
 
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
@@ -120,10 +118,6 @@ public final class JsonParser {
 
     public static void write(File file, User user) throws IOException {
         userWriter.writeValue(file, user);
-    }
-
-    public static PinStorageKey parsePinStorageKeyFromString(String pinStorageKey) throws IOException {
-        return pinStorageKeyReader.readValue(pinStorageKey);
     }
 
     public static User parseUserFromFile(File userFile) throws IOException {
