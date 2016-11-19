@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model;
+package cc.blynk.server.core.model.device;
 
 /**
  * The Blynk Project.

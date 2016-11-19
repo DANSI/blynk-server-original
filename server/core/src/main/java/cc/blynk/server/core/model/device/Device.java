@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model;
+package cc.blynk.server.core.model.device;
 
 import cc.blynk.utils.JsonParser;
 

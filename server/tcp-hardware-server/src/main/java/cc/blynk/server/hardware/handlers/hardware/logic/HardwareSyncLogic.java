@@ -2,6 +2,7 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
@@ -28,6 +29,7 @@ public class HardwareSyncLogic {
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         final int dashId = state.dashId;
+        final int deviceId = state.deviceId;
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         if (message.length == 0) {
@@ -40,10 +42,12 @@ public class HardwareSyncLogic {
                     }
                 }
             }
-            for (Map.Entry<String, String> entry : dash.storagePins.entrySet()) {
-                String pin = entry.getKey();
-                String body = Pin.makeHardwareBody(pin.charAt(0), pin.substring(1), entry.getValue());
-                ctx.write(makeUTF8StringMessage(HARDWARE, message.id, body), ctx.voidPromise());
+            for (Map.Entry<PinStorageKey, String> entry : dash.pinsStorage.entrySet()) {
+                PinStorageKey key = entry.getKey();
+                if (deviceId == key.deviceId) {
+                    String body = Pin.makeHardwareBody(key.pinType, key.pin, entry.getValue());
+                    ctx.write(makeUTF8StringMessage(HARDWARE, message.id, body), ctx.voidPromise());
+                }
             }
 
             ctx.flush();
@@ -63,7 +67,7 @@ public class HardwareSyncLogic {
                     byte pin = Byte.parseByte(bodyParts[i]);
                     Widget widget = dash.findWidgetByPin(state.deviceId, pin, pinType);
                     if (widget == null) {
-                        String value = dash.storagePins.get(String.valueOf(pinType.pintTypeChar) + pin);
+                        String value = dash.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
                         if (value != null) {
                             String body = Pin.makeHardwareBody(pinType, pin, value);
                             ctx.write(makeUTF8StringMessage(HARDWARE, message.id, body), ctx.voidPromise());

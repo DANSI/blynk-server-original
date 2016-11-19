@@ -1,11 +1,13 @@
 package cc.blynk.server.core.model;
 
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,7 +52,8 @@ public class DashBoard {
 
     public Map<String, Object> metadata = new HashMap<>();
 
-    public Map<String, String> storagePins = new HashMap<>();
+    @JsonDeserialize(keyUsing = PinStorageKeyDeserializer.class)
+    public Map<PinStorageKey, String> pinsStorage = new HashMap<>();
 
     public String getName() {
         return name;
@@ -75,7 +78,7 @@ public class DashBoard {
         }
         //special case. #237 if no widget - storing without widget.
         if (!hasWidget) {
-            storagePins.put(String.valueOf(type.pintTypeChar) + pin, value);
+            pinsStorage.put(new PinStorageKey(deviceId, type, pin), value);
         }
 
         this.updatedAt = System.currentTimeMillis();

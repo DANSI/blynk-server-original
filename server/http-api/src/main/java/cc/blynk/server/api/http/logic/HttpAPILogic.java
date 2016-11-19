@@ -25,6 +25,7 @@ import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
@@ -229,7 +230,7 @@ public class HttpAPILogic {
         Widget widget = dashBoard.findWidgetByPin(deviceId, pin, pinType);
 
         if (widget == null) {
-            String value = dashBoard.storagePins.get("" + pinType.pintTypeChar + pin);
+            String value = dashBoard.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
             if (value == null) {
                 log.debug("Requested pin {} not found. User {}", pinString, user.name);
                 return Response.badRequest("Requested pin not exists in app.");
