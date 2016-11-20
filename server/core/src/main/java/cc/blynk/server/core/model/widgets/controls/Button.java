@@ -19,8 +19,6 @@ public class Button extends OnePinWidget implements HardwareSyncWidget {
 
     public String offLabel;
 
-    public boolean invertedOn = false;
-
     @Override
     public void send(ChannelHandlerContext ctx, int msgId) {
         String body = makeHardwareBody();
