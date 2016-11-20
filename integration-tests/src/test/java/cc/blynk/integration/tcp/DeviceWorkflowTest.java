@@ -7,6 +7,7 @@ import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.JsonParser;
@@ -16,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -51,6 +53,12 @@ public class DeviceWorkflowTest extends IntegrationBase {
         this.appServer.close();
         this.hardwareServer.close();
         this.clientPair.stop();
+    }
+
+    @Test
+    public void testSendHardwareCommandToNonExistingDevices() throws Exception {
+        clientPair.appClient.send("hardware 1-1 vw 100 100");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
     }
 
     @Test
@@ -90,7 +98,34 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("hardware 1-1 vw 100 102");
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(4, b("vw 100 102"))));
         verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new HardwareMessage(4, b("vw 100 102"))));
+    }
 
+    @Test
+    public void testSendHardwareCommandToAppFromMultipleDevices() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody();
+
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.send("login " + devices[1].token);
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-1")));
+
+        clientPair.hardwareClient.send("hardware vw 100 101");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 100 101"))));
+
+        hardClient2.send("hardware vw 100 100");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1-1 vw 100 100"))));
     }
 
     private static void assertEqualDevice(Device expected, Device real) {

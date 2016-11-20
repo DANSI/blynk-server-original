@@ -70,6 +70,9 @@ public class HardwareAppLogic {
             return;
         }
 
+        //validating device id
+        dash.getDeviceIndexById(deviceId);
+
         final char operation = split[1].charAt(1);
         switch (operation) {
             case 'w' :
