@@ -51,20 +51,20 @@ public class SaveDashLogic {
         log.debug("Saving dashboard.");
 
         int index = user.profile.getDashIndexOrThrow(updatedDash.id);
-        //do not accept isActive field from "saveDash" command
-        updatedDash.isActive = user.profile.dashBoards[index].isActive;
+
+        DashBoard existingDash = user.profile.dashBoards[index];
+        existingDash.updateFields(updatedDash);
 
         Notification newNotification = updatedDash.getWidgetByType(Notification.class);
         if (newNotification != null) {
-            Notification oldNotification = user.profile.dashBoards[index].getWidgetByType(Notification.class);
+            Notification oldNotification = existingDash.getWidgetByType(Notification.class);
             if (oldNotification != null) {
                 newNotification.iOSTokens = oldNotification.iOSTokens;
                 newNotification.androidTokens = oldNotification.androidTokens;
             }
         }
 
-        user.profile.dashBoards[index] = updatedDash;
-        user.lastModifiedTs = System.currentTimeMillis();
+        user.lastModifiedTs = existingDash.updatedAt;
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

@@ -19,7 +19,9 @@ import org.mockito.Mockito;
 import java.util.List;
 import java.util.Random;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -46,11 +48,16 @@ public class TestAppClient extends AppClient {
         this.nioEventLoopGroup = nioEventLoopGroup;
     }
 
+
     public String getBody() throws Exception {
+        return getBody(1);
+    }
+
+    public String getBody(int expectedMessageOrder) throws Exception {
         ArgumentCaptor<MessageBase> objectArgumentCaptor = ArgumentCaptor.forClass(MessageBase.class);
-        verify(responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(responseMock, timeout(1000).times(expectedMessageOrder)).channelRead(any(), objectArgumentCaptor.capture());
         List<MessageBase> arguments = objectArgumentCaptor.getAllValues();
-        MessageBase messageBase = arguments.get(0);
+        MessageBase messageBase = arguments.get(expectedMessageOrder - 1);
         if (messageBase instanceof StringMessage) {
             return ((StringMessage) messageBase).body;
         } else if (messageBase instanceof LoadProfileGzippedBinaryMessage) {

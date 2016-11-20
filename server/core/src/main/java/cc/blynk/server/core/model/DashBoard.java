@@ -178,6 +178,16 @@ public class DashBoard {
         return sum;
     }
 
+    public void updateFields(DashBoard updatedDashboard) {
+        this.name = updatedDashboard.name;
+        this.isShared = updatedDashboard.isShared;
+        this.boardType = updatedDashboard.boardType;
+        this.keepScreenOn = updatedDashboard.keepScreenOn;
+        this.theme = updatedDashboard.theme;
+        this.widgets = updatedDashboard.widgets;
+        this.updatedAt = System.currentTimeMillis();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

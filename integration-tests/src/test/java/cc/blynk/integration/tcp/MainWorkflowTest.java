@@ -23,7 +23,6 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
@@ -459,15 +458,20 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("deleteDash 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(6, ILLEGAL_COMMAND)));
 
-        String expectedDash;
+        Profile responseProfile;
+        DashBoard responseDash;
 
-        expectedDash = "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}";
         clientPair.appClient.send("loadProfileGzipped");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(7, ByteUtils.compress(expectedDash))));
+        responseProfile = JsonParser.parseProfile(clientPair.appClient.getBody(7));
+        responseProfile.dashBoards[0].updatedAt = 0;
+        responseProfile.dashBoards[0].createdAt = 0;
+        assertEquals("{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}", responseProfile.toString());
 
-        expectedDash = "{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}";
         clientPair.appClient.send("loadProfileGzipped 10");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(8, ByteUtils.compress(expectedDash))));
+        responseDash = JsonParser.parseDashboard(clientPair.appClient.getBody(8));
+        responseDash.updatedAt = 0;
+        responseDash.createdAt = 0;
+        assertEquals("{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}", responseDash.toString());
 
         clientPair.appClient.send("loadProfileGzipped 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(9, ILLEGAL_COMMAND)));
@@ -475,18 +479,22 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("activate 10");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(10, DEVICE_NOT_IN_NETWORK)));
 
-        clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
-        expectedDash = String.format("{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":%d,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}", profile.dashBoards[0].updatedAt);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(1, ByteUtils.compress(expectedDash))));
+        responseProfile = JsonParser.parseProfile(clientPair.appClient.getBody(11));
+        responseProfile.dashBoards[0].updatedAt = 0;
+        responseProfile.dashBoards[0].createdAt = 0;
+        String expectedProfile = "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}";
+        assertEquals(expectedProfile, responseProfile.toString());
 
         clientPair.appClient.send("saveDash {\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
-        expectedDash = "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}";
+        expectedProfile = "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}";
         clientPair.appClient.send("loadProfileGzipped");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(3, ByteUtils.compress(expectedDash))));
+        responseProfile = JsonParser.parseProfile(clientPair.appClient.getBody(13));
+        responseProfile.dashBoards[0].updatedAt = 0;
+        responseProfile.dashBoards[0].createdAt = 0;
+        assertEquals(expectedProfile, responseProfile.toString());
     }
 
     @Test
