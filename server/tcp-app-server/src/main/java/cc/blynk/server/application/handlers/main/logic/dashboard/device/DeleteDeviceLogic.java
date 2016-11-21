@@ -32,6 +32,10 @@ public class DeleteDeviceLogic {
         int dashId = ParseUtil.parseInt(split[0]) ;
         int deviceId = ParseUtil.parseInt(split[1]);
 
+        if (deviceId == 0) {
+            throw new IllegalCommandException("You are not allowed to remove device with id 0.");
+        }
+
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         log.debug("Deleting device with id {}.", deviceId);
