@@ -41,6 +41,10 @@ public abstract class IntegrationBase extends BaseTest {
         return profileReader.readValue(reader);
     }
 
+    public static Profile parseProfile(String reader) throws Exception {
+        return profileReader.readValue(reader);
+    }
+
     public static String readTestUserProfile(String fileName) throws Exception{
         if (fileName == null) {
             fileName = "user_profile_json.txt";
@@ -93,7 +97,7 @@ public abstract class IntegrationBase extends BaseTest {
         hardClient.start();
 
         String userProfileString = readTestUserProfile(jsonProfile);
-        Profile profile = JsonParser.parseProfile(userProfileString);
+        Profile profile = parseProfile(userProfileString);
 
         int expectedSyncCommandsCount = 0;
         for (Widget widget : profile.dashBoards[0].widgets) {

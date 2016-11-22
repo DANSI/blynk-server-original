@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.utils.JsonParser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,7 +82,7 @@ public class AddPushLogicTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
 
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         assertNotNull(notification);
@@ -109,7 +108,7 @@ public class AddPushLogicTest extends IntegrationBase {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(appClient.getBody());
+        Profile profile = parseProfile(appClient.getBody());
 
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         assertNotNull(notification);

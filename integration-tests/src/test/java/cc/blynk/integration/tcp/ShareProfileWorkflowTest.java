@@ -106,7 +106,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         serverDash.devices = null;
 
         assertNotNull(dashboard);
-        Profile profile = JsonParser.parseProfile(readTestUserProfile());
+        Profile profile = parseProfile(readTestUserProfile());
         Twitter twitter = profile.dashBoards[0].getWidgetByType(Twitter.class);
         twitter.cleanPrivateData();
         Notification notification = profile.dashBoards[0].getWidgetByType(Notification.class);
@@ -238,7 +238,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         String profileString = clientPair.appClient.getBody();
         assertNotNull(profileString);
-        Profile profile = JsonParser.parseProfile(profileString);
+        Profile profile = parseProfile(profileString);
 
         OnePinWidget tmp = getWidgetByPin(profile, 3);
 
@@ -254,7 +254,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         profileString = clientPair.appClient.getBody();
         assertNotNull(profileString);
-        profile = JsonParser.parseProfile(profileString);
+        profile = parseProfile(profileString);
 
         tmp = getWidgetByPin(profile, 3);
 
@@ -269,7 +269,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         profileString = clientPair.appClient.getBody();
         assertNotNull(profileString);
-        profile = JsonParser.parseProfile(profileString);
+        profile = parseProfile(profileString);
 
         tmp = getWidgetByPin(profile, 3);
 
@@ -324,7 +324,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         String profileString = clientPair.appClient.getBody();
         assertNotNull(profileString);
-        Profile profile = JsonParser.parseProfile(profileString);
+        Profile profile = parseProfile(profileString);
 
         OnePinWidget tmp = getWidgetByPin(profile, 3);
 
@@ -474,7 +474,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         serverDash.devices = null;
 
         assertNotNull(dashboard);
-        Profile profile = JsonParser.parseProfile(readTestUserProfile());
+        Profile profile = parseProfile(readTestUserProfile());
         Twitter twitter = profile.dashBoards[0].getWidgetByType(Twitter.class);
         twitter.cleanPrivateData();
         Notification notification = profile.dashBoards[0].getWidgetByType(Notification.class);

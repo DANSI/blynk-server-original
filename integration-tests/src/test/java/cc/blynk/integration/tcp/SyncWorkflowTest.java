@@ -15,7 +15,6 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.utils.JsonParser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -371,7 +370,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -419,7 +418,7 @@ public class SyncWorkflowTest extends IntegrationBase {
     @Test
     public void testTerminalSendsSyncOnActivate() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");

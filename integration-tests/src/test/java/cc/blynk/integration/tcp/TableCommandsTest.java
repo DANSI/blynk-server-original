@@ -203,7 +203,7 @@ public class TableCommandsTest extends IntegrationBase {
     private Table loadTable() throws Exception {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         return (Table) profile.dashBoards[0].findWidgetByPin(0, (byte) 123, PinType.VIRTUAL);
     }
 

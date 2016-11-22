@@ -11,7 +11,6 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
 import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.utils.JsonParser;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -91,7 +90,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals("My-New-Label", widget.label);
@@ -110,7 +109,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals(255, widget.color);
@@ -132,7 +131,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (byte) 1, PinType.VIRTUAL);
         assertNotNull(button);
         assertEquals("newOnButtonLabel", button.onLabel);
@@ -155,7 +154,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (byte) 1, PinType.VIRTUAL);
         assertNotNull(button);
         assertEquals("newOffButtonLabel", button.offLabel);

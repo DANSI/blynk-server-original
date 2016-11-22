@@ -14,7 +14,6 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.utils.JsonParser;
 import io.netty.channel.ChannelFuture;
 import org.junit.After;
 import org.junit.Before;
@@ -79,7 +78,7 @@ public class FacebookLoginTest extends IntegrationBase {
         appClient.send("loadProfileGzipped");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), any());
 
-        Profile profile = JsonParser.parseProfile(appClient.getBody());
+        Profile profile = parseProfile(appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         assertEquals(expected, profile.toString());
     }
@@ -97,7 +96,7 @@ public class FacebookLoginTest extends IntegrationBase {
         hardClient.start();
 
         String userProfileString = readTestUserProfile(null);
-        Profile profile = JsonParser.parseProfile(userProfileString);
+        Profile profile = parseProfile(userProfileString);
 
         int expectedSyncCommandsCount = 0;
         for (Widget widget : profile.dashBoards[0].widgets) {

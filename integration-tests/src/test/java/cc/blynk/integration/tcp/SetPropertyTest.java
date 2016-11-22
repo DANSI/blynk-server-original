@@ -12,7 +12,6 @@ import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
 import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.utils.JsonParser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,7 +60,7 @@ public class SetPropertyTest extends IntegrationBase {
     @Test
     public void testSetWidgetProperty() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte)4, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -73,7 +72,7 @@ public class SetPropertyTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile = parseProfile(clientPair.appClient.getBody());
 
         widget = profile.dashBoards[0].findWidgetByPin(0, (byte)4, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -91,7 +90,7 @@ public class SetPropertyTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -112,7 +111,7 @@ public class SetPropertyTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -127,7 +126,7 @@ public class SetPropertyTest extends IntegrationBase {
     @Test
     public void testSetWrongWidgetProperty() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         //todo fix
         profile.dashBoards[0].devices = null;
@@ -139,7 +138,7 @@ public class SetPropertyTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile = parseProfile(clientPair.appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         //todo fix
         profile.dashBoards[0].devices = null;
@@ -150,7 +149,7 @@ public class SetPropertyTest extends IntegrationBase {
     @Test
     public void testSetWrongWidgetProperty2() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         //todo fix
         profile.dashBoards[0].devices = null;
@@ -162,7 +161,7 @@ public class SetPropertyTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile = parseProfile(clientPair.appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         //todo fix
         profile.dashBoards[0].devices = null;
@@ -179,7 +178,7 @@ public class SetPropertyTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);

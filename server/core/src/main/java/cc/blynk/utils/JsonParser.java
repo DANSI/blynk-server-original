@@ -35,7 +35,6 @@ public final class JsonParser {
     public static final ObjectMapper mapper = init();
 
     private static final ObjectReader userReader = mapper.readerFor(User.class);
-    private static final ObjectReader profileReader = mapper.readerFor(Profile.class);
     private static final ObjectReader dashboardReader = mapper.readerFor(DashBoard.class);
     private static final ObjectReader widgetReader = mapper.readerFor(Widget.class);
     private static final ObjectReader deviceReader = mapper.readerFor(Device.class);
@@ -77,6 +76,10 @@ public final class JsonParser {
         return toJson(statWriter, stat);
     }
 
+    public static void writeUser(File file, User user) throws IOException {
+        userWriter.writeValue(file, user);
+    }
+
     private static String toJson(ObjectWriter writer, Object o) {
         try {
             return writer.writeValueAsString(o);
@@ -104,10 +107,6 @@ public final class JsonParser {
         return null;
     }
 
-    public static void write(File file, User user) throws IOException {
-        userWriter.writeValue(file, user);
-    }
-
     public static User parseUserFromFile(File userFile) throws IOException {
         return userReader.readValue(userFile);
     }
@@ -126,15 +125,6 @@ public final class JsonParser {
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new IllegalCommandBodyException("Error parsing dashboard.");
-        }
-    }
-
-    public static Profile parseProfile(String reader) {
-        try {
-            return profileReader.readValue(reader);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing user profile.");
         }
     }
 

@@ -107,7 +107,7 @@ public class FileManager {
     public void overrideUserFile(User user) throws IOException {
         Path path = generateFileName(user.name, user.appName);
 
-        JsonParser.write(path.toFile(), user);
+        JsonParser.writeUser(path.toFile(), user);
 
         removeOldFile(user.name);
     }

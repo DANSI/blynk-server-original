@@ -134,7 +134,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(appClient.getBody());
+        Profile profile = parseProfile(appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
@@ -145,7 +145,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(appClient.getBody());
+        profile = parseProfile(appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false},{\"type\":\"BUTTON\",\"id\":2,\"x\":2,\"y\":2,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text 2\",\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":2,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
 
@@ -155,7 +155,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(appClient.getBody());
+        profile = parseProfile(appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false},{\"type\":\"BUTTON\",\"id\":2,\"x\":2,\"y\":2,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"new label\",\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":3,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
 
@@ -171,7 +171,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(appClient.getBody());
+        profile = parseProfile(appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
     }
@@ -202,7 +202,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(appClient.getBody());
+        Profile profile = parseProfile(appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
 
         assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"label\":\"Some Text\",\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
@@ -253,7 +253,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardwareDeviceWentOffline() throws Exception {
-        Profile profile = JsonParser.parseProfile(readTestUserProfile());
+        Profile profile = parseProfile(readTestUserProfile());
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         notification.notifyWhenOffline = false;
 
@@ -275,7 +275,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testTerminalStorageRemembersCommands() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -293,7 +293,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile = parseProfile(clientPair.appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         //todo fix
         profile.dashBoards[0].devices = null;
@@ -304,7 +304,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testAddAndRemoveTabs() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -324,7 +324,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile = parseProfile(clientPair.appClient.getBody());
         assertEquals(19, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("deleteWidget 1\0" + "100");
@@ -335,7 +335,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile = parseProfile(clientPair.appClient.getBody());
         assertEquals(17, profile.dashBoards[0].widgets.length);
         assertNotNull(profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.DIGITAL));
     }
@@ -343,7 +343,7 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testAddAndUpdateTabs() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -363,7 +363,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile = parseProfile(clientPair.appClient.getBody());
         assertEquals(19, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("updateWidget 1\0{\"id\":100, \"x\":0, \"y\":0, \"tabs\":[{\"label\":\"tab 1\"}, {\"label\":\"tab 2\"}], \"type\":\"TABS\"}");
@@ -374,7 +374,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile = parseProfile(clientPair.appClient.getBody());
         assertEquals(18, profile.dashBoards[0].widgets.length);
         assertNull(profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.DIGITAL));
         assertNotNull(profile.dashBoards[0].findWidgetByPin(0, (byte) 18, PinType.DIGITAL));
@@ -462,7 +462,7 @@ public class MainWorkflowTest extends IntegrationBase {
         DashBoard responseDash;
 
         clientPair.appClient.send("loadProfileGzipped");
-        responseProfile = JsonParser.parseProfile(clientPair.appClient.getBody(7));
+        responseProfile = parseProfile(clientPair.appClient.getBody(7));
         responseProfile.dashBoards[0].updatedAt = 0;
         responseProfile.dashBoards[0].createdAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}]}", responseProfile.toString());
@@ -480,7 +480,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(10, DEVICE_NOT_IN_NETWORK)));
 
         clientPair.appClient.send("loadProfileGzipped");
-        responseProfile = JsonParser.parseProfile(clientPair.appClient.getBody(11));
+        responseProfile = parseProfile(clientPair.appClient.getBody(11));
         responseProfile.dashBoards[0].updatedAt = 0;
         responseProfile.dashBoards[0].createdAt = 0;
         String expectedProfile = "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}";
@@ -491,7 +491,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         expectedProfile = "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":true}]}";
         clientPair.appClient.send("loadProfileGzipped");
-        responseProfile = JsonParser.parseProfile(clientPair.appClient.getBody(13));
+        responseProfile = parseProfile(clientPair.appClient.getBody(13));
         responseProfile.dashBoards[0].updatedAt = 0;
         responseProfile.dashBoards[0].createdAt = 0;
         assertEquals(expectedProfile, responseProfile.toString());
@@ -535,7 +535,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
 
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         //todo fix
         profile.dashBoards[0].devices = null;
@@ -673,7 +673,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("deactivate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        Profile newProfile = JsonParser.parseProfile(readTestUserProfile("user_profile_json_3_dashes.txt"));
+        Profile newProfile = parseProfile(readTestUserProfile("user_profile_json_3_dashes.txt"));
         clientPair.appClient.send("createDash " + newProfile.dashBoards[1]);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
@@ -724,7 +724,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
 
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         profile.dashBoards[0].updatedAt = 0;
         //todo fix
         profile.dashBoards[0].devices = null;
@@ -739,7 +739,7 @@ public class MainWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        Profile newProfile = JsonParser.parseProfile(readTestUserProfile("user_profile_json_3_dashes.txt"));
+        Profile newProfile = parseProfile(readTestUserProfile("user_profile_json_3_dashes.txt"));
         clientPair.appClient.send("createDash " + newProfile.dashBoards[1]);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
@@ -950,7 +950,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         Player player = (Player) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(player);
         assertTrue(player.isOnPlay);
@@ -960,7 +960,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile = parseProfile(clientPair.appClient.getBody());
         player = (Player) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(player);
         assertFalse(player.isOnPlay);
@@ -978,7 +978,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody());
         TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -992,7 +992,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile = parseProfile(clientPair.appClient.getBody());
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -1005,7 +1005,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile = parseProfile(clientPair.appClient.getBody());
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -1018,7 +1018,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile = parseProfile(clientPair.appClient.getBody());
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -1031,7 +1031,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile = parseProfile(clientPair.appClient.getBody());
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(-1, timeInput.startAt);
@@ -1044,7 +1044,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile = parseProfile(clientPair.appClient.getBody());
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -1057,7 +1057,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = JsonParser.parseProfile(clientPair.appClient.getBody());
+        profile = parseProfile(clientPair.appClient.getBody());
         timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(-2, timeInput.startAt);
