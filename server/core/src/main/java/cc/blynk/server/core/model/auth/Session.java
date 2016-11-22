@@ -134,8 +134,12 @@ public class Session {
     }
 
     public void sendToApps(short cmd, int msgId, int dashId, int deviceId) {
-        //todo this is only for back compatibility. remove in future versions.
+        if (appChannels.size() == 0) {
+            return;
+        }
+
         if (deviceId == 0) {
+            //todo this is only for back compatibility. remove in future versions.
             sendToApps(cmd, msgId, String.valueOf(dashId));
         } else {
             sendToApps(cmd, msgId, dashId + DEVICE_SEPARATOR + deviceId);
@@ -143,8 +147,12 @@ public class Session {
     }
 
     public void sendToApps(short cmd, int msgId, int dashId, int deviceId, String body) {
-        //todo this is only for back compatibility. remove in future versions.
+        if (appChannels.size() == 0) {
+            return;
+        }
+
         if (deviceId == 0) {
+            //todo this is only for back compatibility. remove in future versions.
             sendToApps(cmd, msgId, dashId + BODY_SEPARATOR_STRING + body);
         } else {
             sendToApps(cmd, msgId, dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR_STRING + body);
@@ -153,8 +161,6 @@ public class Session {
 
     private void sendToApps(short cmd, int msgId, String body) {
         int channelsNum = appChannels.size();
-        if (channelsNum == 0)
-            return;
 
         ByteBuf msg = makeUTF8StringMessage(cmd, msgId, body);
         if (channelsNum > 1) {
