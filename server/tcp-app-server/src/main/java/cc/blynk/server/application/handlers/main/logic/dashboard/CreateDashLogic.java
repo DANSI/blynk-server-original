@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.logic.dashboard;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
@@ -45,6 +46,9 @@ public class CreateDashLogic {
 
         log.debug("Trying to parse user newDash : {}", dashString);
         DashBoard newDash = JsonParser.parseDashboard(dashString);
+
+        //todo this may be removed later. or generate device tokens
+        newDash.devices = new Device[0];
 
         log.info("Creating new dashboard.");
 
