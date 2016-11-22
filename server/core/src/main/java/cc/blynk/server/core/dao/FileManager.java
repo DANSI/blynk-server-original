@@ -130,7 +130,7 @@ public class FileManager {
     public ConcurrentMap<UserKey, User> deserialize() {
         log.debug("Starting reading user DB.");
 
-        final File[] files = userFilesList();
+        final File[] files = dataDir.toFile().listFiles();
 
         if (files != null) {
             ConcurrentMap<UserKey, User> tempUsers = Arrays.stream(files).parallel()
@@ -170,18 +170,13 @@ public class FileManager {
         }
     }
 
-    private File[] userFilesList() {
-        return dataDir.toFile().listFiles();
-    }
-
     public Map<String, Integer> getUserProfilesSize() {
-        final Map<String, Integer> userProfileSize = new HashMap<>();
-        final File[] files = userFilesList();
-        for (File file : files) {
-            if (file.isFile()) {
-                String filename = file.getName();
-                if (filename.startsWith("u_")){
-                    userProfileSize.put(filename, (int) file.length());
+        Map<String, Integer> userProfileSize = new HashMap<>();
+        File[] files = dataDir.toFile().listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile() && file.getName().endsWith(".user")) {
+                    userProfileSize.put(file.getName(), (int) file.length());
                 }
             }
         }
