@@ -11,6 +11,7 @@ public enum ConnectionType {
     WI_FI,
     USB,
     BLUETOOTH,
+    BLE,
     GSM
 
 }
