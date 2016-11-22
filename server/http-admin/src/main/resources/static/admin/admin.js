@@ -115,6 +115,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                                     {value: 'WI_FI', label: 'WI_FI'},
                                     {value: 'USB', label: 'USB'},
                                     {value: 'BLUETOOTH', label: 'BLUETOOTH'},
+                                    {value: 'BLE', label: 'BLE'},
                                     {value: 'GSM', label: 'GSM'}
                                     ]
                             )
