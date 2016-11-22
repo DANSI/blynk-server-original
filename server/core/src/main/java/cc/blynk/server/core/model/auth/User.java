@@ -69,22 +69,6 @@ public class User {
         return name + "-" + appName;
     }
 
-
-    public void setProfile(Profile profile) {
-        //todo remove later.
-        for (DashBoard dashBoard : profile.dashBoards) {
-            for (DashBoard curDash : this.profile.dashBoards) {
-                if (dashBoard.id == curDash.id) {
-                    dashBoard.isActive = curDash.isActive;
-                    break;
-                }
-            }
-        }
-
-        this.profile = profile;
-        this.lastModifiedTs = System.currentTimeMillis();
-    }
-
     public boolean dashIdExists(int dashId) {
         for (DashBoard dashBoard : profile.dashBoards) {
             if (dashBoard.id == dashId) {
@@ -93,10 +77,6 @@ public class User {
         }
 
         return false;
-    }
-
-    public String getName() {
-        return name;
     }
 
     private void checkPrice(int price) {
