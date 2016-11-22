@@ -62,9 +62,10 @@ public class AppMailLogic {
         }
 
         String to = user.name;
-        String name = dashBoard.name == null ? "New Project" : dashBoard.name;
-        String subj = "Auth Token for " + name + " project";
-        String body = String.format(BODY, name, token);
+        String dashName = dashBoard.name == null ? "New Project" : dashBoard.name;
+        String deviceName = device.name == null ? "" : device.name;
+        String subj = "Auth Token for " + dashName + " project and device " + deviceName;
+        String body = String.format(BODY, dashName, token);
 
         log.trace("Sending Mail for user {}, with token : '{}'.", user.name, token);
         mail(ctx.channel(), user.name, to, subj, body, message.id);
