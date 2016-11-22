@@ -3,6 +3,7 @@ package cc.blynk.server.hardware.handlers.hardware;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
@@ -63,31 +64,37 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     private void sentOfflineMessage(HardwareStateHolder state) {
         DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(state.dashId);
-        if (dashBoard.isActive) {
-            Notification notification = dashBoard.getWidgetByType(Notification.class);
-            if (notification == null || !notification.notifyWhenOffline) {
-                Session session = sessionDao.userSession.get(state.userKey);
-                if (session.getAppChannels().size() > 0) {
-                    for (Channel appChannel : session.getAppChannels()) {
-                        appChannel.writeAndFlush(
-                                new ResponseWithBodyMessage(
-                                        0, Command.RESPONSE, DEVICE_WENT_OFFLINE, state.dashId
-                                ),
-                                appChannel.voidPromise()
-                        );
-                    }
-                }
-            } else {
-                String boardType = dashBoard.boardType;
-                String dashName = dashBoard.name;
-                dashName = dashName == null ? "" : dashName;
-                String message = "Your " + boardType + " went offline. \"" + dashName + "\" project is disconnected.";
-                notification.push(gcmWrapper,
-                        message,
-                        state.dashId
-                );
-            }
+        if (!dashBoard.isActive) {
+            return;
         }
+
+        Notification notification = dashBoard.getWidgetByType(Notification.class);
+        if (notification == null || !notification.notifyWhenOffline) {
+            Session session = sessionDao.userSession.get(state.userKey);
+            if (session.getAppChannels().size() > 0) {
+                for (Channel appChannel : session.getAppChannels()) {
+                    appChannel.writeAndFlush(
+                            new ResponseWithBodyMessage(
+                                    0, Command.RESPONSE, DEVICE_WENT_OFFLINE, state.dashId
+                            ),
+                            appChannel.voidPromise()
+                    );
+                }
+            }
+        } else {
+            sendPushNotification(dashBoard, notification, state.dashId, state.deviceId);
+        }
+    }
+
+    private void sendPushNotification(DashBoard dashBoard, Notification notification, int dashId, int deviceId) {
+        Device device = dashBoard.getDeviceById(deviceId);
+        final String dashName = dashBoard.name == null ? "" : dashBoard.name;
+        final String deviceName = device.name == null ? "device" : device.name;
+        String message = "Your " + deviceName + " went offline. \"" + dashName + "\" project is disconnected.";
+        notification.push(gcmWrapper,
+                message,
+                dashId
+        );
     }
 
 }

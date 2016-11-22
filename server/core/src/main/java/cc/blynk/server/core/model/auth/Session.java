@@ -160,7 +160,7 @@ public class Session {
     }
 
     private void sendToApps(short cmd, int msgId, String body) {
-        int channelsNum = appChannels.size();
+        final int channelsNum = appChannels.size();
 
         ByteBuf msg = makeUTF8StringMessage(cmd, msgId, body);
         if (channelsNum > 1) {

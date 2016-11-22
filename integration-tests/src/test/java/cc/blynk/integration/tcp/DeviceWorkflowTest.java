@@ -11,11 +11,14 @@ import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
+import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.utils.JsonParser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
@@ -103,6 +106,33 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("hardware 1-1 vw 100 102");
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(4, b("vw 100 102"))));
         verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new HardwareMessage(4, b("vw 100 102"))));
+    }
+
+    @Test
+    public void testDeviceWentOfflineMessage() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.send("login " + device.token);
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        hardClient2.stop().await();
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        AndroidGCMMessage message = objectArgumentCaptor.getValue();
+
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your My Device went offline. \"My Dashboard\" project is disconnected.", 1).toJson();
+        assertEquals(expectedJson, message.toJson());
     }
 
     @Test
