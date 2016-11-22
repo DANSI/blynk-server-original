@@ -10,8 +10,6 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 
-;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -24,6 +22,9 @@ public class GetMetadataLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String response = JsonParser.toJson(user.profile.metadata);
+        if (response == null) {
+            response = "{}";
+        }
         ctx.writeAndFlush(makeUTF8StringMessage(Command.GET_METADATA, message.id, response), ctx.voidPromise());
     }
 

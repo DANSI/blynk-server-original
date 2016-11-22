@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.utils.JsonParser;
-import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +21,6 @@ public class Stat {
 
     private final static long ONE_DAY = 24 * 60 * 60 * 1000;
     private final static long THREE_DAYS = 3 * ONE_DAY;
-
-    private static final ObjectWriter statWriter = JsonParser.init().writerWithDefaultPrettyPrinter().forType(Stat.class);
 
     public final Map<String, Long> messages = new HashMap<>();
     public final Map<String, Long> http = new HashMap<>();
@@ -106,6 +103,6 @@ public class Stat {
     }
 
     public String toJson() {
-        return JsonParser.toJson(statWriter, this);
+        return JsonParser.toJson(this);
     }
 }

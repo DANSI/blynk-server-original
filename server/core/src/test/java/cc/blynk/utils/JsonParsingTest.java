@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.RGB;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectReader;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -28,13 +29,21 @@ import static org.junit.Assert.assertTrue;
  */
 public class JsonParsingTest {
 
-    //TODO Tests for all widget types!!!
+    private static final ObjectReader profileReader = JsonParser.init().readerFor(Profile.class);
+
+    public static Profile parseProfile(InputStream reader) {
+        try {
+            return profileReader.readValue(reader);
+        } catch (Exception e) {
+            throw new RuntimeException("Error parsing profile");
+        }
+    }
 
     @Test
     public void testParseUserProfile() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json.txt");
 
-        Profile profile = JsonParser.parseProfile(is);
+        Profile profile = parseProfile(is);
         assertNotNull(profile);
         assertNotNull(profile.dashBoards);
         assertEquals(profile.dashBoards.length, 1);
@@ -63,7 +72,7 @@ public class JsonParsingTest {
     public void testUserProfileToJson() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json.txt");
 
-        Profile profile = JsonParser.parseProfile(is);
+        Profile profile = parseProfile(is);
         String userProfileString = profile.toString();
 
         assertNotNull(userProfileString);
@@ -74,7 +83,7 @@ public class JsonParsingTest {
     public void testParseIOSProfile() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_ios_profile_json.txt");
 
-        Profile profile = JsonParser.parseProfile(is);
+        Profile profile = parseProfile(is);
 
         assertNotNull(profile);
         assertNotNull(profile.dashBoards);
@@ -90,7 +99,7 @@ public class JsonParsingTest {
     public void testJSONToRGB() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json_RGB.txt");
 
-        Profile profile = JsonParser.parseProfile(is);
+        Profile profile = parseProfile(is);
 
         assertNotNull(profile);
         assertNotNull(profile.dashBoards);
@@ -127,7 +136,7 @@ public class JsonParsingTest {
     public void testUserProfileToJson2() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json_2.txt");
 
-        Profile profile = JsonParser.parseProfile(is);
+        Profile profile = parseProfile(is);
         String userProfileString = profile.toString();
 
         assertNotNull(userProfileString);
@@ -138,7 +147,7 @@ public class JsonParsingTest {
     public void testUserProfileToJson3() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json_3.txt");
 
-        Profile profile = JsonParser.parseProfile(is);
+        Profile profile = parseProfile(is);
         String userProfileString = profile.toString();
 
         assertNotNull(userProfileString);
@@ -149,7 +158,7 @@ public class JsonParsingTest {
     public void testUserProfileToJsonWithTimer() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_with_timer.txt");
 
-        Profile profile = JsonParser.parseProfile(is);
+        Profile profile = parseProfile(is);
         String userProfileString = profile.toString();
 
         assertNotNull(userProfileString);

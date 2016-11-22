@@ -27,7 +27,9 @@ public class GetDevicesLogic {
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         String response = JsonParser.toJson(dash.devices);
-
+        if (response == null) {
+            response = "[]";
+        }
         ctx.writeAndFlush(makeUTF8StringMessage(GET_DEVICES, message.id, response), ctx.voidPromise());
     }
 

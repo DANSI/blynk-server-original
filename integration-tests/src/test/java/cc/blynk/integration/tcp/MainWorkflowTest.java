@@ -718,7 +718,7 @@ public class MainWorkflowTest extends IntegrationBase {
         hardwareInfo.connectionType = "W5100";
 
         InputStream is = IntegrationBase.class.getResourceAsStream("/json_test/user_profile_json.txt");
-        Profile expectedProfile = JsonParser.parseProfile(is);
+        Profile expectedProfile = parseProfile(is);
         expectedProfile.dashBoards[0].hardwareInfo = hardwareInfo;
 
         clientPair.appClient.send("loadProfileGzipped");

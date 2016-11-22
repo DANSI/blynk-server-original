@@ -15,6 +15,7 @@ import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMess
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
 import cc.blynk.utils.StringUtils;
+import com.fasterxml.jackson.databind.ObjectReader;
 import org.mockito.ArgumentCaptor;
 
 import java.io.InputStream;
@@ -34,17 +35,22 @@ import static org.mockito.Mockito.verify;
 public abstract class IntegrationBase extends BaseTest {
 
     public static final String DEFAULT_TEST_USER = "dima@mail.ua";
+    private static final ObjectReader profileReader = JsonParser.init().readerFor(Profile.class);
 
-    public static String readTestUserProfile(String fileName) {
+    public static Profile parseProfile(InputStream reader) throws Exception {
+        return profileReader.readValue(reader);
+    }
+
+    public static String readTestUserProfile(String fileName) throws Exception{
         if (fileName == null) {
             fileName = "user_profile_json.txt";
         }
         InputStream is = IntegrationBase.class.getResourceAsStream("/json_test/" + fileName);
-        Profile profile = JsonParser.parseProfile(is);
+        Profile profile = parseProfile(is);
         return profile.toString();
     }
 
-    public static String readTestUserProfile() {
+    public static String readTestUserProfile() throws Exception {
         return readTestUserProfile(null);
     }
 

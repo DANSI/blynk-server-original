@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.RGB;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
+import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
 
@@ -19,11 +20,21 @@ import static org.junit.Assert.assertEquals;
  */
 public class PinValuesUpdateCorrectTest {
 
+    private static final ObjectReader profileReader = JsonParser.init().readerFor(Profile.class);
+
+    public static Profile parseProfile(InputStream reader) {
+        try {
+            return profileReader.readValue(reader);
+        } catch (Exception e) {
+            throw new RuntimeException("Error parsing profile");
+        }
+    }
+
     @Test
     public void testHas1Pin() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json.txt");
 
-        Profile profile = JsonParser.parseProfile(is);
+        Profile profile = parseProfile(is);
         DashBoard dash = profile.dashBoards[0];
         dash.isActive = true;
 

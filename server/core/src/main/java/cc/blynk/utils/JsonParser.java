@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
+import cc.blynk.server.core.stats.Stat;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -19,9 +20,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Map;
 import java.util.StringJoiner;
 
 /**
@@ -31,9 +29,11 @@ import java.util.StringJoiner;
  */
 public final class JsonParser {
 
+    private static final Logger log = LogManager.getLogger(JsonParser.class);
+
     //it is threadsafe
     public static final ObjectMapper mapper = init();
-    private static final Logger log = LogManager.getLogger(JsonParser.class);
+
     private static final ObjectReader userReader = mapper.readerFor(User.class);
     private static final ObjectReader profileReader = mapper.readerFor(Profile.class);
     private static final ObjectReader dashboardReader = mapper.readerFor(DashBoard.class);
@@ -45,6 +45,8 @@ public final class JsonParser {
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
     private static final ObjectWriter dashboardWriter = mapper.writerFor(DashBoard.class);
     private static final ObjectWriter deviceWriter = mapper.writerFor(Device.class);
+
+    private static final ObjectWriter statWriter = init().writerWithDefaultPrettyPrinter().forType(Stat.class);
 
     public static ObjectMapper init() {
         return new ObjectMapper()
@@ -71,7 +73,11 @@ public final class JsonParser {
         return toJson(deviceWriter, device);
     }
 
-    public static String toJson(ObjectWriter writer, Object o) {
+    public static String toJson(Stat stat) {
+        return toJson(statWriter, stat);
+    }
+
+    private static String toJson(ObjectWriter writer, Object o) {
         try {
             return writer.writeValueAsString(o);
         } catch (Exception e) {
@@ -80,31 +86,13 @@ public final class JsonParser {
         return "{}";
     }
 
-    public static String toJson(Map<?, ?> map) {
+    public static String toJson(Object o) {
         try {
-            return mapper.writeValueAsString(map);
+            return mapper.writeValueAsString(o);
         } catch (Exception e) {
             log.error("Error jsoning object.", e);
         }
-        return "{}";
-    }
-
-    public static String toJson(Collection<?> list) {
-        try {
-            return mapper.writeValueAsString(list);
-        } catch (Exception e) {
-            log.error("Error jsoning object.", e);
-        }
-        return "[]";
-    }
-
-    public static String toJson(Object[] array) {
-        try {
-            return mapper.writeValueAsString(array);
-        } catch (Exception e) {
-            log.error("Error jsoning object.", e);
-        }
-        return "[]";
+        return null;
     }
 
     public static <T> T readAny(String val, Class<T> c) {
@@ -165,16 +153,6 @@ public final class JsonParser {
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new IllegalCommandBodyException("Error parsing device.");
-        }
-    }
-
-    //only for tests
-    public static Profile parseProfile(InputStream reader) {
-        try {
-            return profileReader.readValue(reader);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing user profile.");
         }
     }
 

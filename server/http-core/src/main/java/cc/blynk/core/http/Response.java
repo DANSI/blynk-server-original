@@ -122,15 +122,18 @@ public class Response extends DefaultFullHttpResponse {
     }
 
     public static Response ok(List<?> list, int page, int size) {
-        return ok(JsonParser.toJson(subList(list, page, size)));
+        String data = JsonParser.toJson(subList(list, page, size));
+        return ok(data == null ? "[]" : data);
     }
 
     public static Response ok(Map<?, ?> map) {
-        return ok(JsonParser.toJson(map));
+        String data = JsonParser.toJson(map);
+        return ok(data == null ? "{}" : data);
     }
 
     public static Response ok(Collection<?> list) {
-        return ok(JsonParser.toJson(list));
+        String data = JsonParser.toJson(list);
+        return ok(data == null ? "[]" : data);
     }
 
     public static Response appendTotalCountHeader(Response response, int count) {
