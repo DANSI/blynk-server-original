@@ -592,7 +592,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         appClient.send("email 1");
-        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project"), startsWith("Auth Token for My Dashboard project"));
+        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device UNO"), startsWith("Auth Token for My Dashboard project"));
     }
 
     @Test
