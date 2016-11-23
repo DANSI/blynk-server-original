@@ -10,6 +10,10 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
+ * Java properties class wrapper.
+ * Loads properties file from class path. After that loads properties
+ * from dir where jar file is. On every stage properties override previous.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/12/2015.
