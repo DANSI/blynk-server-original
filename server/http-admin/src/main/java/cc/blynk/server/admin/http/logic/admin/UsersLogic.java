@@ -18,8 +18,10 @@ import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.HttpLogicUtil;
 import cc.blynk.utils.JsonParser;
@@ -131,10 +133,20 @@ public class UsersLogic extends HttpLogicUtil {
 
         User oldUser = userDao.getByName(name, appName);
 
-        //if pass was changed, cal hash.
+        //if pass was changed, call hash function.
         if (!updatedUser.pass.equals(oldUser.pass)) {
             log.debug("Updating pass for {}.", updatedUser.name);
             updatedUser.pass = SHA256Util.makeHash(updatedUser.pass, updatedUser.name);
+        }
+
+        //user name was changed
+        if (!updatedUser.name.equals(oldUser.name)) {
+            deleteUserByName(id);
+            for (DashBoard dashBoard : oldUser.profile.dashBoards) {
+                for (Device device : dashBoard.devices) {
+                    tokenManager.assignToken(updatedUser, dashBoard.id, device.id, device.token);
+                }
+            }
         }
 
         userDao.add(updatedUser);
