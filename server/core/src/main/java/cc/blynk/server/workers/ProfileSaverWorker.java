@@ -81,7 +81,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
         if (now - backupTs > 86_400_000) {
             //it is time for backup, once per day.
             backupTs = now;
-            for (User user : userDao.getUsers().values()) {
+            for (User user : userDao.users.values()) {
                 try {
                     Path path = fileManager.generateBackupFileName(user.name, user.appName);
                     JsonParser.writeUser(path.toFile(), user);
@@ -95,7 +95,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
     private List<User> saveModified() {
         List<User> users = new ArrayList<>();
 
-        for (User user : userDao.getUsers().values()) {
+        for (User user : userDao.users.values()) {
             if (isUpdated(lastStart, user)) {
                 try {
                     fileManager.overrideUserFile(user);
