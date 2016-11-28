@@ -40,7 +40,7 @@ public class User {
 
     public boolean isFacebookUser;
 
-    private int energy;
+    private volatile int energy;
 
     public transient int emailMessages;
     public transient long emailSentTs;

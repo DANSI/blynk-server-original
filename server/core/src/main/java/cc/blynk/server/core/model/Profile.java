@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class Profile {
 
-    public DashBoard[] dashBoards;
+    public volatile DashBoard[] dashBoards;
 
     public Map<String, Object> metadata;
 

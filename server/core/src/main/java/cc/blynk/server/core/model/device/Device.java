@@ -11,13 +11,13 @@ public class Device {
 
     public int id;
 
-    public String name;
+    public volatile String name;
 
-    public String boardType;
+    public volatile String boardType;
 
-    public String token;
+    public volatile String token;
 
-    public ConnectionType connectionType;
+    public volatile ConnectionType connectionType;
 
     public Device() {
     }

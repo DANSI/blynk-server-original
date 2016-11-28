@@ -6,8 +6,9 @@ import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * The Blynk Project.
@@ -18,9 +19,9 @@ public class Notification extends NoPinWidget {
 
     private static final int MAX_PUSH_BODY_SIZE = 255;
 
-    public Map<String, String> androidTokens = new HashMap<>();
+    public ConcurrentMap<String, String> androidTokens = new ConcurrentHashMap<>();
 
-    public Map<String, String> iOSTokens = new HashMap<>();
+    public ConcurrentMap<String, String> iOSTokens = new ConcurrentHashMap<>();
 
     public boolean notifyWhenOffline;
 
@@ -33,8 +34,8 @@ public class Notification extends NoPinWidget {
     }
 
     public void cleanPrivateData() {
-        androidTokens = new HashMap<>();
-        iOSTokens = new HashMap<>();
+        androidTokens = new ConcurrentHashMap<>();
+        iOSTokens = new ConcurrentHashMap<>();
     }
 
     public boolean hasNoToken() {

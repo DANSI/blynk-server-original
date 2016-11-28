@@ -6,9 +6,9 @@ import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import org.junit.Test;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * The Blynk Project.
@@ -28,9 +28,9 @@ public class TestHideSecureInfoForCloning {
         twitter.username = "username";
         dashBoard.widgets[0] = twitter;
         Notification notification = new Notification();
-        notification.iOSTokens = new HashMap<>();
+        notification.iOSTokens = new ConcurrentHashMap<>();
         notification.iOSTokens.put("uid", "token");
-        notification.androidTokens = new HashMap<>();
+        notification.androidTokens = new ConcurrentHashMap<>();
         notification.androidTokens.put("uid2", "token2");
         dashBoard.widgets[1] = notification;
 

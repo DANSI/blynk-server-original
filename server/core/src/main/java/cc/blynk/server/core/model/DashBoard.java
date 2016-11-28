@@ -24,26 +24,26 @@ public class DashBoard {
 
     public int id;
 
-    public String name;
+    public volatile String name;
 
     public long createdAt;
 
-    public long updatedAt;
+    public volatile long updatedAt;
 
-    public Widget[] widgets = {};
+    public volatile Widget[] widgets = {};
 
-    public Device[] devices = {};
+    public volatile Device[] devices = {};
 
     //todo should be removed after migration
     public String boardType;
 
-    public String theme = "Blynk";
+    public volatile String theme = "Blynk";
 
-    public boolean keepScreenOn;
+    public volatile boolean keepScreenOn;
 
-    public boolean isShared;
+    public volatile boolean isShared;
 
-    public boolean isActive;
+    public volatile boolean isActive;
 
     public HardwareInfo hardwareInfo;
 
