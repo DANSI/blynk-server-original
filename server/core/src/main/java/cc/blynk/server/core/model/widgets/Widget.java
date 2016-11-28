@@ -160,5 +160,5 @@ public abstract class Widget {
 
     public abstract int getPrice();
 
-    public abstract void append(StringBuilder sb);
+    public abstract void append(StringBuilder sb, int deviceId);
 }

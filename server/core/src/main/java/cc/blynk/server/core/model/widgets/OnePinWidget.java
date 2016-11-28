@@ -90,8 +90,10 @@ public abstract class OnePinWidget extends Widget implements SyncOnActivate {
     }
 
     @Override
-    public void append(StringBuilder sb) {
-        append(sb, pin, pinType, getModeType());
+    public void append(StringBuilder sb, int deviceId) {
+        if (this.deviceId == deviceId) {
+            append(sb, pin, pinType, getModeType());
+        }
     }
 
     public boolean isPWMSupported() {

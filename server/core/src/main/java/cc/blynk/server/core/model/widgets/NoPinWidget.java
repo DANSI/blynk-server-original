@@ -40,7 +40,7 @@ public abstract class NoPinWidget extends Widget {
     }
 
     @Override
-    public void append(StringBuilder sb) {
+    public void append(StringBuilder sb, int deviceId) {
     }
 
 }

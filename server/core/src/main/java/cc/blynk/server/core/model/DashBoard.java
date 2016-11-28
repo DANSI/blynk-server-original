@@ -161,10 +161,10 @@ public class DashBoard {
         return null;
     }
 
-    public String buildPMMessage() {
+    public String buildPMMessage(int deviceId) {
         StringBuilder sb = new StringBuilder("pm");
         for (Widget widget : widgets) {
-            widget.append(sb);
+            widget.append(sb, deviceId);
         }
         return sb.toString();
     }

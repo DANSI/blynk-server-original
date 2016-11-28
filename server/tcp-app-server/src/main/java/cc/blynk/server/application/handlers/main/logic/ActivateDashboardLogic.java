@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.SyncOnActivate;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -51,7 +52,9 @@ public class ActivateDashboardLogic {
         Session session = sessionDao.userSession.get(state.userKey);
 
         if (session.isHardwareConnected(dashId)) {
-            session.sendMessageToHardware(ctx, dashId, HARDWARE, 1, dash.buildPMMessage());
+            for (Device device : dash.devices) {
+                session.sendMessageToHardware(ctx, dashId, HARDWARE, 1, dash.buildPMMessage(device.id), device.id);
+            }
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {

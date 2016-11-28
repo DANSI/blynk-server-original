@@ -98,8 +98,8 @@ public abstract class MultiPinWidget extends Widget implements SyncOnActivate {
     }
 
     @Override
-    public void append(StringBuilder sb) {
-        if (pins != null) {
+    public void append(StringBuilder sb, int deviceId) {
+        if (pins != null && this.deviceId == deviceId) {
             for (Pin pin : pins) {
                 append(sb, pin.pin, pin.pinType, getModeType());
             }

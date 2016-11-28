@@ -62,7 +62,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         session.addHardChannel(channel);
         channel.write(ok(msgId));
 
-        StringMessage pinModeMessage = new HardwareMessage(1, dash.buildPMMessage());
+        StringMessage pinModeMessage = new HardwareMessage(1, dash.buildPMMessage(deviceId));
         if (dash.isActive && pinModeMessage.length > 2) {
             channel.write(pinModeMessage);
         }

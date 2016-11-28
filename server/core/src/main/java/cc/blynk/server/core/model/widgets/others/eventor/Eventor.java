@@ -14,6 +14,8 @@ public class Eventor extends NoPinWidget {
 
     public Rule[] rules;
 
+    public int deviceId;
+
     public Eventor() {
     }
 
@@ -52,8 +54,8 @@ public class Eventor extends NoPinWidget {
     }
 
     @Override
-    public void append(StringBuilder sb) {
-        if (rules != null) {
+    public void append(StringBuilder sb, int deviceId) {
+        if (rules != null && this.deviceId == deviceId) {
             for (Rule rule : rules) {
                 if (rule.actions != null) {
                     for (BaseAction action : rule.actions) {
