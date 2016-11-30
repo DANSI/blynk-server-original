@@ -93,5 +93,12 @@ public class StringUtils {
         return new String[] {body.substring(0, i1), body.substring(i1 + 1, body.length())};
     }
 
+    //todo this is back compatibility code. remove in future versions
+    public static String makeBody(int dashId, int deviceId, String body) {
+        if (deviceId == 0) {
+            return dashId + BODY_SEPARATOR_STRING + body;
+        }
+        return dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR_STRING + body;
+    }
 
 }

@@ -3,12 +3,12 @@ package cc.blynk.server.core.model.widgets;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.SyncOnActivate;
 import cc.blynk.utils.JsonParser;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 
 import static cc.blynk.server.core.protocol.enums.Command.SYNC;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
+import static cc.blynk.utils.StringUtils.makeBody;
 
 /**
  * The Blynk Project.
@@ -40,11 +40,13 @@ public abstract class OnePinWidget extends Widget implements SyncOnActivate {
 
     @Override
     public void sendSyncOnActivate(Channel appChannel, int dashId) {
-        String body = makeHardwareBody();
-        if (body != null) {
-            appChannel.write(makeUTF8StringMessage(SYNC, 1111, dashId + StringUtils.BODY_SEPARATOR_STRING + body));
+        String hardBody = makeHardwareBody();
+        if (hardBody != null) {
+            String body = makeBody(dashId, deviceId, hardBody);
+            appChannel.write(makeUTF8StringMessage(SYNC, 1111, body));
         }
     }
+
 
     public String makeHardwareBody() {
         if (pin == -1 || value == null || pinType == null) {

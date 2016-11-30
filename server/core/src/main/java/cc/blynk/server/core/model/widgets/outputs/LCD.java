@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static cc.blynk.server.core.protocol.enums.Command.SYNC;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
+import static cc.blynk.utils.StringUtils.makeBody;
 
 /**
  * The Blynk Project.
@@ -35,9 +35,9 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     private static final int POOL_SIZE = ParseUtil.parseInt(System.getProperty("lcd.strings.pool.size", "6"));
     private transient final LimitedArrayDeque<String> lastCommands = new LimitedArrayDeque<>(POOL_SIZE);
 
-    private static void sendSyncOnActivate(Pin pin, int dashId, Channel appChannel) {
+    private static void sendSyncOnActivate(Pin pin, int dashId, int deviceId, Channel appChannel) {
         if (pin.notEmpty()) {
-            String body = dashId + BODY_SEPARATOR_STRING + pin.makeHardwareBody();
+            String body = makeBody(dashId, deviceId, pin.makeHardwareBody());
             appChannel.write(makeUTF8StringMessage(SYNC, 1111, body), appChannel.voidPromise());
         }
     }
@@ -67,11 +67,11 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
         if (advancedMode) {
             for (String command : lastCommands) {
                 pins[0].value = command;
-                sendSyncOnActivate(pins[0], dashId, appChannel);
+                sendSyncOnActivate(pins[0], dashId, deviceId, appChannel);
             }
         } else {
             for (Pin pin : pins) {
-                sendSyncOnActivate(pin, dashId, appChannel);
+                sendSyncOnActivate(pin, dashId, deviceId, appChannel);
             }
         }
     }

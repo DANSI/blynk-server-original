@@ -8,7 +8,7 @@ import io.netty.channel.Channel;
 
 import static cc.blynk.server.core.protocol.enums.Command.SYNC;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
+import static cc.blynk.utils.StringUtils.makeBody;
 
 /**
  * The Blynk Project.
@@ -42,8 +42,8 @@ public class Terminal extends OnePinWidget {
             return;
         }
         for (String storedValue : lastCommands) {
-            String body = makeHardwareBody(pinType, pin, storedValue);
-            appChannel.write(makeUTF8StringMessage(SYNC, 1111, dashId + BODY_SEPARATOR_STRING + body));
+            String body = makeBody(dashId, deviceId, makeHardwareBody(pinType, pin, storedValue));
+            appChannel.write(makeUTF8StringMessage(SYNC, 1111, body));
         }
     }
 

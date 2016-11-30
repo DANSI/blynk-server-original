@@ -11,6 +11,7 @@ import java.util.StringJoiner;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.SYNC;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.utils.StringUtils.makeBody;
 
 /**
  * The Blynk Project.
@@ -49,13 +50,13 @@ public class RGB extends MultiPinWidget implements HardwareSyncWidget {
         if (isSplitMode()) {
             for (Pin pin : pins) {
                 if (pin.notEmpty()) {
-                    String body = dashId + StringUtils.BODY_SEPARATOR_STRING + pin.makeHardwareBody();
+                    String body = makeBody(dashId, deviceId, pin.makeHardwareBody());
                     appChannel.write(makeUTF8StringMessage(SYNC, 1111, body), appChannel.voidPromise());
                 }
             }
         } else {
             if (pins[0].notEmpty()) {
-                String body = dashId + StringUtils.BODY_SEPARATOR_STRING + pins[0].makeHardwareBody();
+                String body = makeBody(dashId, deviceId, pins[0].makeHardwareBody());
                 appChannel.write(makeUTF8StringMessage(SYNC, 1111, body), appChannel.voidPromise());
             }
         }
