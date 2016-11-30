@@ -20,8 +20,8 @@ import java.util.stream.IntStream;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StateHolderUtil.getHardState;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
+import static cc.blynk.utils.StringUtils.makeBody;
 
 /**
  * The Blynk Project.
@@ -151,12 +151,7 @@ public class Session {
             return;
         }
 
-        if (deviceId == 0) {
-            //todo this is only for back compatibility. remove in future versions.
-            sendToApps(cmd, msgId, dashId + BODY_SEPARATOR_STRING + body);
-        } else {
-            sendToApps(cmd, msgId, dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR_STRING + body);
-        }
+        sendToApps(cmd, msgId, makeBody(dashId, deviceId, body));
     }
 
     private void sendToApps(short cmd, int msgId, String body) {
