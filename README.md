@@ -429,6 +429,9 @@ For instance
         10,1438022081332
         
 Where 10 - value of pin, and 1438022081332 - the difference, measured in milliseconds, between the current time and midnight, January 1, 1970 UTC.
+To display the date/time in excel you may use formula:
+
+        =((COLUMN/(60*60*24)/1000+25569))
 
 Raw data files are rotated every day and gzipped.
 
