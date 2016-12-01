@@ -11,6 +11,8 @@ public class Map extends OnePinWidget {
 
     public boolean isPinToLatestPoint;
 
+    public boolean isMyLocationSupported;
+
     public String labelFormat;
 
     public int radius; //zoom level / radius which user selected.
