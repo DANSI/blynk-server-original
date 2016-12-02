@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets.outputs;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
+import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.structure.LimitedArrayDeque;
 import io.netty.channel.Channel;
@@ -36,6 +37,7 @@ public class Map extends OnePinWidget {
     @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
         if (isSame(deviceId, pin, type)) {
+            this.value = value;
             this.lastCommands.add(value);
             return true;
         }
@@ -51,6 +53,11 @@ public class Map extends OnePinWidget {
             String body = makeBody(dashId, deviceId, makeHardwareBody(pinType, pin, storedValue));
             appChannel.write(makeUTF8StringMessage(SYNC, 1111, body));
         }
+    }
+
+    @Override
+    public String getJsonValue() {
+        return JsonParser.toJson(lastCommands);
     }
 
     @Override
