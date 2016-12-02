@@ -64,7 +64,7 @@ public class Holder implements Closeable {
     public final GCMWrapper gcmWrapper;
     public final SMSWrapper smsWrapper;
     public final String region;
-    public ProfileSaverWorker profileSaverWorker;
+    public final ProfileSaverWorker profileSaverWorker;
 
     public final EventorProcessor eventorProcessor;
     public final DefaultAsyncHttpClient asyncHttpClient;
@@ -112,10 +112,9 @@ public class Holder implements Closeable {
         this.gcmWrapper = new GCMWrapper(new ServerProperties(GCMWrapper.GCM_PROPERTIES_FILENAME), transportTypeHolder.workerGroup);
         this.smsWrapper = new SMSWrapper(new ServerProperties(SMSWrapper.SMS_PROPERTIES_FILENAME), transportTypeHolder.workerGroup);
 
-
         this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
-
         this.dbManager = new DBManager(blockingIOProcessor);
+        this.profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, dbManager);
     }
 
     //for tests only
@@ -148,8 +147,6 @@ public class Holder implements Closeable {
         this.gcmWrapper = gcmWrapper;
         this.smsWrapper = smsWrapper;
 
-
-
         this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
                 .setUserAgent(null)
@@ -159,6 +156,7 @@ public class Holder implements Closeable {
         );
 
         this.dbManager = new DBManager(blockingIOProcessor);
+        this.profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, dbManager);
     }
 
     @Override

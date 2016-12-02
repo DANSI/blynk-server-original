@@ -11,7 +11,6 @@ import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.hardware.MQTTHardwareServer;
 import cc.blynk.server.websocket.WebSocketSSLServer;
 import cc.blynk.server.websocket.WebSocketServer;
-import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
 import cc.blynk.utils.ServerProperties;
@@ -61,8 +60,6 @@ public class ServerLauncher {
 
     private static void start(ServerProperties serverProperties, boolean isUnpacked) {
         final Holder holder = new Holder(serverProperties);
-
-        holder.profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
 
         final BaseServer[] servers = new BaseServer[] {
                 new HardwareServer(holder),
