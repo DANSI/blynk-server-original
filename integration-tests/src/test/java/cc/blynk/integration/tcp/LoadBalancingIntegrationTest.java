@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
 import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.server.redis.RealRedisClient;
 import cc.blynk.utils.ServerProperties;
 import org.junit.After;
 import org.junit.Before;
@@ -49,10 +48,10 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         hardwareServer1 = new HardwareServer(holder).start();
         appServer1 = new AppServer(holder).start();
 
-        try (Jedis jedis = ((RealRedisClient) holder.redisClient).getTokenPool().getResource()) {
+        try (Jedis jedis = holder.redisClient.getTokenPool().getResource()) {
             jedis.flushDB();
         }
-        try (Jedis jedis = ((RealRedisClient) holder.redisClient).getUserPool().getResource()) {
+        try (Jedis jedis = holder.redisClient.getUserPool().getResource()) {
             jedis.flushDB();
         }
 

@@ -15,14 +15,14 @@ public class RedisClientTest {
 
     @Test(expected = JedisConnectionException.class)
     public void testCreationFailed() {
-        RealRedisClient redisClient = new RealRedisClient("localhost", "", 6378);
+        RedisClient redisClient = new RedisClient("localhost", "", 6378, false);
         assertEquals(null, redisClient);
     }
 
     @Test
     @Ignore
     public void testGetTestString() {
-        RealRedisClient redisClient = new RealRedisClient("localhost", "123", 6378);
+        RedisClient redisClient = new RedisClient("localhost", "123", 6378, false);
         String result = redisClient.getServerByToken("test");
         assertEquals("It's working!", result);
     }

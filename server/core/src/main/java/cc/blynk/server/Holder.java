@@ -14,8 +14,6 @@ import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
-import cc.blynk.server.redis.FakeRedisClient;
-import cc.blynk.server.redis.RealRedisClient;
 import cc.blynk.server.redis.RedisClient;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.FileLoaderUtil;
@@ -77,11 +75,7 @@ public class Holder implements Closeable {
         this.region = serverProperties.getProperty("region", "local");
         this.currentIp = serverProperties.getProperty("reset-pass.http.host", IPUtils.resolveHostIP());
 
-        if ("local".equals(region)) {
-            this.redisClient = new FakeRedisClient();
-        } else {
-            this.redisClient = new RealRedisClient(new ServerProperties(RealRedisClient.REDIS_PROPERTIES));
-        }
+        this.redisClient = new RedisClient(new ServerProperties(RedisClient.REDIS_PROPERTIES), region);
 
         String dataFolder = serverProperties.getProperty("data.folder");
         this.fileManager = new FileManager(dataFolder);
@@ -123,7 +117,7 @@ public class Holder implements Closeable {
 
         this.region = "local";
         this.currentIp = serverProperties.getProperty("reset-pass.http.host", IPUtils.resolveHostIP());
-        this.redisClient = new RealRedisClient(new ServerProperties(RealRedisClient.REDIS_PROPERTIES));
+        this.redisClient = new RedisClient(new ServerProperties(RedisClient.REDIS_PROPERTIES), "real");
 
         String dataFolder = serverProperties.getProperty("data.folder");
         this.fileManager = new FileManager(dataFolder);
