@@ -348,6 +348,25 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     admin.addEntity(connectionType);
     admin.addEntity(webHookHosts);
     admin.addEntity(config);
+
+    admin.dashboard(nga.dashboard().addCollection(
+            nga.collection(realtime)
+                .title('Realtime stats')
+                .batchActions([])
+                .sortField('count')
+                .fields([
+                    nga.field('oneMinRate').label('1 min request rate'),
+                    nga.field('total').label('Total registrations'),
+                    nga.field('active').label('Logged in 24h'),
+                    nga.field('active3').label('Logged in 72h'),
+                    nga.field('connected').label('Hard and App connected'),
+                    nga.field('onlineApps').label('App connections'),
+                    nga.field('onlineHards').label('Hardware connections')
+                ])
+
+    )
+    );
+
     // attach the admin application to the DOM and execute it
     nga.configure(admin);
 }]);
