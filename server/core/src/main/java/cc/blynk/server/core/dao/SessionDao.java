@@ -5,8 +5,8 @@ import io.netty.channel.EventLoop;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Holds session info related to specific user.
@@ -19,7 +19,7 @@ public class SessionDao {
 
     private static final Logger log = LogManager.getLogger(SessionDao.class);
 
-    public final Map<UserKey, Session> userSession = new ConcurrentHashMap<>();
+    public final ConcurrentMap<UserKey, Session> userSession = new ConcurrentHashMap<>();
 
     //threadsafe
     public Session getOrCreateSessionByUser(UserKey key, EventLoop initialEventLoop) {
