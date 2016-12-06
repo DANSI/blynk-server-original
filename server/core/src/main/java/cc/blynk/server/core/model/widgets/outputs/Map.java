@@ -37,8 +37,16 @@ public class Map extends OnePinWidget {
     @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
         if (isSame(deviceId, pin, type)) {
-            this.value = value;
-            this.lastCommands.add(value);
+            switch (value) {
+                case "clr" :
+                    this.value = null;
+                    this.lastCommands.clear();
+                    break;
+                default:
+                    this.value = value;
+                    this.lastCommands.add(value);
+                    break;
+            }
             return true;
         }
         return false;
