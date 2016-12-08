@@ -29,7 +29,7 @@ public class SaveDashLogic {
         this.DASH_MAX_SIZE = maxDashSize;
     }
 
-    //todo should accept only dash info and ignore widgets.
+    //todo should accept only dash info and ignore widgets. should be fixed after migration
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String dashString = message.body;
 
@@ -53,7 +53,6 @@ public class SaveDashLogic {
         int index = user.profile.getDashIndexOrThrow(updatedDash.id);
 
         DashBoard existingDash = user.profile.dashBoards[index];
-        existingDash.updateFields(updatedDash);
 
         Notification newNotification = updatedDash.getWidgetByType(Notification.class);
         if (newNotification != null) {
@@ -64,6 +63,7 @@ public class SaveDashLogic {
             }
         }
 
+        existingDash.updateFields(updatedDash);
         user.lastModifiedTs = existingDash.updatedAt;
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
