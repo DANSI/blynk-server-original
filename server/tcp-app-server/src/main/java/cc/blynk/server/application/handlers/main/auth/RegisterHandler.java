@@ -60,7 +60,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        String userName = messageParts[0].toLowerCase();
+        String userName = messageParts[0].trim().toLowerCase();
         String pass = messageParts[1];
         String appName = messageParts.length == 3 ? messageParts[2] : AppName.BLYNK;
         log.info("Trying register user : {}, app : {}", userName, appName);
