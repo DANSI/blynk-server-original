@@ -65,17 +65,14 @@ public class ReportingWorker implements Runnable {
 
     @Override
     public void run() {
-        Map<AggregationKey, AggregationValue> removedKeys;
-
         try {
-            removedKeys = process(averageAggregator.getMinute(), GraphType.MINUTE);
-            dbManager.insertReporting(removedKeys, GraphType.MINUTE);
+            Map<AggregationKey, AggregationValue> removedKeysMinute = process(averageAggregator.getMinute(), GraphType.MINUTE);
+            Map<AggregationKey, AggregationValue> removedKeysHour = process(averageAggregator.getHourly(), GraphType.HOURLY);
+            Map<AggregationKey, AggregationValue> removedKeysDay = process(averageAggregator.getDaily(), GraphType.DAILY);
 
-            removedKeys = process(averageAggregator.getHourly(), GraphType.HOURLY);
-            dbManager.insertReporting(removedKeys, GraphType.HOURLY);
-
-            removedKeys = process(averageAggregator.getDaily(), GraphType.DAILY);
-            dbManager.insertReporting(removedKeys, GraphType.DAILY);
+            dbManager.insertReporting(removedKeysMinute, GraphType.MINUTE);
+            dbManager.insertReporting(removedKeysHour, GraphType.HOURLY);
+            dbManager.insertReporting(removedKeysDay, GraphType.DAILY);
 
             dbManager.cleanOldReportingRecords(Instant.now());
         } catch (Exception e) {
