@@ -6,8 +6,12 @@ import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.stats.Stat;
+import cc.blynk.utils.serialization.NotificationIgnoreMixIn;
+import cc.blynk.utils.serialization.TwitterIgnoreMixIn;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -44,6 +48,10 @@ public final class JsonParser {
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
     private static final ObjectWriter dashboardWriter = mapper.writerFor(DashBoard.class);
     private static final ObjectWriter deviceWriter = mapper.writerFor(Device.class);
+    //new init() here is necessary
+    private static final ObjectWriter sharedDashboardWriter = init()
+            .addMixIn(Notification.class, NotificationIgnoreMixIn.class)
+            .addMixIn(Twitter.class, TwitterIgnoreMixIn.class).writerFor(DashBoard.class);
 
     private static final ObjectWriter statWriter = init().writerWithDefaultPrettyPrinter().forType(Stat.class);
 
@@ -66,6 +74,10 @@ public final class JsonParser {
 
     public static String toJson(DashBoard dashBoard) {
         return toJson(dashboardWriter, dashBoard);
+    }
+
+    public static String toJsonSharedDashboard(DashBoard dashBoard) {
+        return toJson(sharedDashboardWriter, dashBoard);
     }
 
     public static String toJson(Device device) {

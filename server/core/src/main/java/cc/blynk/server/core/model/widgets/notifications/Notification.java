@@ -33,11 +33,6 @@ public class Notification extends NoPinWidget {
         return body == null || body.equals("") || body.length() > MAX_PUSH_BODY_SIZE;
     }
 
-    public void cleanPrivateData() {
-        androidTokens = new ConcurrentHashMap<>();
-        iOSTokens = new ConcurrentHashMap<>();
-    }
-
     public boolean hasNoToken() {
         return iOSTokens.size() == 0 && androidTokens.size() == 0;
     }

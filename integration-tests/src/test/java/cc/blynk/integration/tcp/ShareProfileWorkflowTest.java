@@ -105,20 +105,30 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         //todo fix
         serverDash.devices = null;
 
-        assertNotNull(dashboard);
         Profile profile = parseProfile(readTestUserProfile());
         Twitter twitter = profile.dashBoards[0].getWidgetByType(Twitter.class);
-        twitter.cleanPrivateData();
+        clearPrivateData(twitter);
         Notification notification = profile.dashBoards[0].getWidgetByType(Notification.class);
-        notification.cleanPrivateData();
+        clearPrivateData(notification);
 
         //one field update, cause it is hard to compare.
-        DashBoard temp = JsonParser.parseDashboard(dashboard);
-        profile.dashBoards[0].updatedAt = temp.updatedAt;
-
+        profile.dashBoards[0].updatedAt = serverDash.updatedAt;
 
         assertEquals(profile.dashBoards[0].toString(), serverDash.toString());
-        //System.out.println(dashboard);
+
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = parseProfile(clientPair.appClient.getBody(2));
+
+        profile.dashBoards[0].updatedAt = 0;
+        Notification originalNotification = profile.dashBoards[0].getWidgetByType(Notification.class);
+        assertNotNull(originalNotification);
+        assertEquals(1, originalNotification.androidTokens.size());
+        assertEquals("token", originalNotification.androidTokens.get("uid"));
+
+        Twitter originalTwitter = profile.dashBoards[0].getWidgetByType(Twitter.class);
+        assertNotNull(originalTwitter);
+        assertEquals("token", originalTwitter.token);
+        assertEquals("secret", originalTwitter.secret);
     }
 
     @Test
@@ -476,9 +486,9 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(dashboard);
         Profile profile = parseProfile(readTestUserProfile());
         Twitter twitter = profile.dashBoards[0].getWidgetByType(Twitter.class);
-        twitter.cleanPrivateData();
+        clearPrivateData(twitter);
         Notification notification = profile.dashBoards[0].getWidgetByType(Notification.class);
-        notification.cleanPrivateData();
+        clearPrivateData(notification);
 
         //one field update, cause it is hard to compare.
         DashBoard temp = JsonParser.parseDashboard(dashboard);
@@ -503,5 +513,15 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, b("1 vw 2 2"))));
     }
 
+    private static void clearPrivateData(Notification n) {
+        n.iOSTokens.clear();
+        n.androidTokens.clear();
+    }
+
+    private static void clearPrivateData(Twitter t) {
+        t.username = null;
+        t.token = null;
+        t.secret = null;
+    }
 
 }

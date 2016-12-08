@@ -4,10 +4,9 @@ import cc.blynk.server.core.dao.SharedTokenValue;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.protocol.exceptions.InvalidTokenException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.utils.JsonParser;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Map;
@@ -38,18 +37,6 @@ public class GetSharedDashLogic {
         return null;
     }
 
-    private static void cleanPrivateData(DashBoard dashBoard) {
-        Twitter twitter = dashBoard.getWidgetByType(Twitter.class);
-        if (twitter != null) {
-            twitter.cleanPrivateData();
-        }
-
-        Notification notification = dashBoard.getWidgetByType(Notification.class);
-        if (notification != null) {
-            notification.cleanPrivateData();
-        }
-    }
-
     public void messageReceived(ChannelHandlerContext ctx, StringMessage message) {
         String token = message.body;
 
@@ -68,9 +55,8 @@ public class GetSharedDashLogic {
         }
 
         DashBoard dashBoard = userThatShared.profile.getDashByIdOrThrow(dashId);
-        cleanPrivateData(dashBoard);
 
-        ctx.writeAndFlush(produce(message.id, message.command, dashBoard.toString()), ctx.voidPromise());
+        ctx.writeAndFlush(produce(message.id, message.command, JsonParser.toJsonSharedDashboard(dashBoard)), ctx.voidPromise());
     }
 
 }

@@ -17,12 +17,6 @@ public class Twitter extends NoPinWidget {
 
     public String username;
 
-    public void cleanPrivateData() {
-        token = null;
-        secret = null;
-        username = null;
-    }
-
     public static boolean isWrongBody(String body) {
        return body == null || body.equals("") || body.length() > MAX_TWITTER_BODY_SIZE;
     }
