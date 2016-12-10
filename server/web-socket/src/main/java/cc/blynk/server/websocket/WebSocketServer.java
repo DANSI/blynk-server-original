@@ -25,7 +25,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 public class WebSocketServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
-    public static final String WEBSOCKET_PATH = "/websocket";
+    public static final String WEBSOCKET_PATH = "/websockets";
 
     public WebSocketServer(Holder holder) {
         super(holder.props.getIntProperty("tcp.websocket.port"), holder.transportTypeHolder);
