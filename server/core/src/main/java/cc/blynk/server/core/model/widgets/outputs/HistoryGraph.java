@@ -14,6 +14,12 @@ public class HistoryGraph extends MultiPinWidget {
 
     public GraphPeriod period;
 
+    public int max;
+
+    public int min;
+
+    public boolean autoYCoords;
+
     public boolean showLegends;
     
     @Override
