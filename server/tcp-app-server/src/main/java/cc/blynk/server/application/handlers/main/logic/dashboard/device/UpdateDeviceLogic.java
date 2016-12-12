@@ -45,6 +45,10 @@ public class UpdateDeviceLogic {
 
         Device existingDevice = dash.getDeviceById(newDevice.id);
 
+        if (existingDevice == null) {
+            throw new IllegalCommandException("Attempt to update device with non existing id.");
+        }
+
         existingDevice.update(newDevice);
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
