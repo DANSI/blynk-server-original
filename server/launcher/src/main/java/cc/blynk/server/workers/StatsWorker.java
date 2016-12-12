@@ -31,8 +31,12 @@ public class StatsWorker implements Runnable {
 
     @Override
     public void run() {
-        Stat stat = Stat.calcStats(sessionDao, userDao, stats, true);
-        log.info(stat.toJson());
+        try {
+            Stat stat = Stat.calcStats(sessionDao, userDao, stats, true);
+            log.info(stat.toJson());
+        } catch (Exception e) {
+            log.error("Error making stats.");
+        }
     }
 
 }
