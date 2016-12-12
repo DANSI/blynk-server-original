@@ -42,7 +42,7 @@ public class SetWidgetPropertyLogic {
         String[] bodyParts = split3(message.body);
 
         if (bodyParts.length != 3) {
-            log.error("SetWidgetProperty command body has wrong format. {}", message.body);
+            log.debug("SetWidgetProperty command body has wrong format. {}", message.body);
             ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
             return;
         }
@@ -54,7 +54,7 @@ public class SetWidgetPropertyLogic {
         String propertyValue = bodyParts[2];
 
         if (property.length() == 0 || propertyValue.length() == 0) {
-            log.error("SetWidgetProperty command body has wrong format. {}", message.body);
+            log.debug("SetWidgetProperty command body has wrong format. {}", message.body);
             ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
             return;
         }
@@ -70,7 +70,7 @@ public class SetWidgetPropertyLogic {
         Widget widget = dash.findWidgetByPin(deviceId, pin, PinType.VIRTUAL);
 
         if (widget == null) {
-            log.error("No widget for SetWidgetProperty command. {}", message.body);
+            log.debug("No widget for SetWidgetProperty command. {}", message.body);
             ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
             return;
         }
@@ -78,7 +78,7 @@ public class SetWidgetPropertyLogic {
         try {
             widget.setProperty(property, propertyValue);
         } catch (Exception e) {
-            log.error("Error setting widget property. Reason : {}", e.getMessage());
+            log.debug("Error setting widget property. Reason : {}", e.getMessage());
             ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
             return;
         }
