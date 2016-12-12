@@ -52,4 +52,15 @@ public class Player extends OnePinWidget implements HardwareSyncWidget {
         return 400;
     }
 
+    @Override
+    public void setProperty(String property, String propertyValue) {
+        switch (property) {
+            case "isOnPlay" :
+                this.isOnPlay = Boolean.parseBoolean(propertyValue);
+                break;
+            default:
+                super.setProperty(property, propertyValue);
+                break;
+        }
+    }
 }

@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets.ui;
 
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -36,4 +37,15 @@ public class Menu extends OnePinWidget implements HardwareSyncWidget {
         return 400;
     }
 
+    @Override
+    public void setProperty(String property, String propertyValue) {
+        switch (property) {
+            case "labels" :
+                this.labels = propertyValue.split(StringUtils.BODY_SEPARATOR_STRING);
+                break;
+            default:
+                super.setProperty(property, propertyValue);
+                break;
+        }
+    }
 }

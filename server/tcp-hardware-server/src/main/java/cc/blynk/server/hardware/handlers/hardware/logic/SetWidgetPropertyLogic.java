@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.ParseUtil;
-import cc.blynk.utils.ReflectionUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,22 +75,16 @@ public class SetWidgetPropertyLogic {
             return;
         }
 
-        boolean isChanged;
         try {
-            isChanged = ReflectionUtil.setProperty(widget, property, propertyValue);
+            widget.setProperty(property, propertyValue);
         } catch (Exception e) {
             log.error("Error setting widget property. Reason : {}", e.getMessage());
             ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
             return;
         }
 
-        if (isChanged) {
-            session.sendToApps(SET_WIDGET_PROPERTY, message.id, dash.id, deviceId, message.body);
-
-            ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
-        } else {
-            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
-        }
+        session.sendToApps(SET_WIDGET_PROPERTY, message.id, dash.id, deviceId, message.body);
+        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
 }

@@ -83,4 +83,22 @@ public class ByteUtils {
             throw new AssertionError(e);
         }
     }
+
+    public static int parseColor(String fieldValue) {
+        int decodedColor = Integer.decode(fieldValue);
+        return convertARGBtoRGBA(setAlphaComponent(decodedColor, 255));
+    }
+
+    private static int convertARGBtoRGBA(int color) {
+        final int a = (color & 0xff000000) >> 24;
+        final int r = (color & 0x00ff0000) >> 16;
+        final int g = (color & 0x0000ff00) >> 8;
+        final int b = (color & 0x000000ff);
+
+        return (r << 24) | (g << 16) | (b << 8) | (a & 0xff);
+    }
+
+    private static int setAlphaComponent(int color, int alpha) {
+        return (color & 0x00ffffff) | (alpha << 24);
+    }
 }

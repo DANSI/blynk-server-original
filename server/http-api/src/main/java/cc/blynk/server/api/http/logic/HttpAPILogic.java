@@ -44,7 +44,6 @@ import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
-import cc.blynk.utils.ReflectionUtil;
 import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import net.glxn.qrgen.core.image.ImageType;
@@ -404,22 +403,17 @@ public class HttpAPILogic {
             return Response.badRequest("No widget for SetWidgetProperty command.");
         }
 
-        boolean isChanged;
         try {
             //todo for now supporting only single property
-            isChanged = ReflectionUtil.setProperty(widget, property, values[0]);
+            widget.setProperty(property, values[0]);
         } catch (Exception e) {
             log.debug("Error setting widget property. Reason : {}", e.getMessage());
             return Response.badRequest("Error setting widget property.");
         }
 
-        if (isChanged) {
-            Session session = sessionDao.userSession.get(new UserKey(user));
-            session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id, deviceId, pin + BODY_SEPARATOR_STRING + property + BODY_SEPARATOR_STRING + values[0]);
-            return Response.ok();
-        }
-
-        return Response.badRequest("Error setting widget property.");
+        Session session = sessionDao.userSession.get(new UserKey(user));
+        session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id, deviceId, pin + BODY_SEPARATOR_STRING + property + BODY_SEPARATOR_STRING + values[0]);
+        return Response.ok();
     }
 
     //todo it is a bit ugly right now. could be simplified by passing map of query params.

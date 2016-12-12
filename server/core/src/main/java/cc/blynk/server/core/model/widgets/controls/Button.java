@@ -36,4 +36,19 @@ public class Button extends OnePinWidget implements HardwareSyncWidget {
     public int getPrice() {
         return 200;
     }
+
+    @Override
+    public void setProperty(String property, String propertyValue) {
+        switch (property) {
+            case "onLabel" :
+                this.onLabel = propertyValue;
+                break;
+            case "offLabel" :
+                this.offLabel = propertyValue;
+                break;
+            default:
+                super.setProperty(property, propertyValue);
+                break;
+        }
+    }
 }

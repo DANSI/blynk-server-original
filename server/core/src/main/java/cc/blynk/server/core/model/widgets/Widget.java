@@ -45,6 +45,7 @@ import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
+import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -161,4 +162,17 @@ public abstract class Widget {
     public abstract int getPrice();
 
     public abstract void append(StringBuilder sb, int deviceId);
+
+    public void setProperty(String property, String propertyValue) {
+        switch (property) {
+            case "label" :
+                this.label = propertyValue;
+                break;
+            case "color" :
+                this.color = ByteUtils.parseColor(propertyValue);
+                break;
+            default:
+                throw new RuntimeException("Error setting widget property.");
+        }
+    }
 }
