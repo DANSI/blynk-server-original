@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -93,6 +94,14 @@ public class DeviceCommandsTest extends IntegrationBase {
         assertEquals(1, devices.length);
 
         assertEqualDevice(device0, devices[0]);
+    }
+
+    @Test
+    public void testUpdateNonExistingDevice() throws Exception {
+        Device device = new Device(100, "My Dashboard Updated", "UNO");
+
+        clientPair.appClient.send("updateDevice 1\0" + device.toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
     }
 
     @Test

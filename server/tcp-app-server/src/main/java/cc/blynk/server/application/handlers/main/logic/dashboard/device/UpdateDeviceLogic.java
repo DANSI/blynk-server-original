@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.JsonParser;
@@ -46,7 +47,7 @@ public class UpdateDeviceLogic {
         Device existingDevice = dash.getDeviceById(newDevice.id);
 
         if (existingDevice == null) {
-            throw new IllegalCommandException("Attempt to update device with non existing id.");
+            throw new IllegalCommandBodyException("Attempt to update device with non existing id.");
         }
 
         existingDevice.update(newDevice);
