@@ -4,9 +4,11 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.AppHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
@@ -182,6 +184,12 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     private void completeLogin(Channel channel, Session session, User user, int msgId) {
         session.addAppChannel(channel);
         channel.writeAndFlush(ok(msgId), channel.voidPromise());
+        for (DashBoard dashBoard : user.profile.dashBoards) {
+            if (dashBoard.isAppConnectedOn && dashBoard.isActive) {
+                log.trace("{}-{}. Sendeind App Connected event to hardware.", user.name, user.appName);
+                session.sendMessageToHardware(dashBoard.id, Command.APP_CONNECTED, 7777, "");
+            }
+        }
         log.info("{} {}-app joined.", user.name, user.appName);
     }
 

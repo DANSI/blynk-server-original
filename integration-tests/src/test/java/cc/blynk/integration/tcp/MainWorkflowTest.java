@@ -26,6 +26,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
+import cc.blynk.server.core.protocol.model.messages.hardware.AppConnectedMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
@@ -214,6 +215,20 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testDoubleLogin() throws Exception {
         clientPair.hardwareClient.send("login " + DEFAULT_TEST_USER + " 1");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, USER_ALREADY_REGISTERED)));
+    }
+
+    @Test
+    public void appConnectedEvent() throws Exception {
+        clientPair.appClient.send("saveDash {\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+
+        appClient.send("login " + DEFAULT_TEST_USER + " 1 Android 1.13.3");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new AppConnectedMessage(7777)));
     }
 
     @Test

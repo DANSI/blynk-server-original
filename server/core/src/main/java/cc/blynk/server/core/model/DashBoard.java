@@ -187,6 +187,7 @@ public class DashBoard {
         this.keepScreenOn = updatedDashboard.keepScreenOn;
         this.theme = updatedDashboard.theme;
         this.widgets = updatedDashboard.widgets;
+        this.isAppConnectedOn = updatedDashboard.isAppConnectedOn;
         this.updatedAt = System.currentTimeMillis();
     }
 

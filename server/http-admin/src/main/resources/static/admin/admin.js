@@ -122,7 +122,8 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                         ]),
                     nga.field('keepScreenOn', 'boolean'),
                     nga.field('isShared', 'boolean'),
-                    nga.field('isActive', 'boolean')
+                    nga.field('isActive', 'boolean'),
+                    nga.field('isAppConnectedOn', 'boolean')
                 ]),
             nga.field('dashShareTokens', 'json')
         );
