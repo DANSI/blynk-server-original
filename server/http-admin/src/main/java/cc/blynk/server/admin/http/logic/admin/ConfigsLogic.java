@@ -56,7 +56,7 @@ public class ConfigsLogic {
         configs.add(new Config(GCMWrapper.GCM_PROPERTIES_FILENAME));
         configs.add(new Config(DBManager.DB_PROPERTIES_FILENAME));
         configs.add(new Config("twitter4j.properties"));
-        configs.add(new Config("token_mail_body.txt"));
+        configs.add(new Config("single_token_mail_body.txt"));
 
         return appendTotalCountHeader(
                                 ok(sort(configs, sortField, sortOrder), page, size), configs.size()
@@ -67,7 +67,7 @@ public class ConfigsLogic {
     @Path("/{name}")
     public Response getUserByName(@PathParam("name") String name) {
         switch (name) {
-            case "token_mail_body.txt" :
+            case "single_token_mail_body.txt":
                 return ok(new Config(name, blockingIOProcessor.tokenBody).toString());
             case ServerProperties.SERVER_PROPERTIES_FILENAME :
                 return ok(new Config(name, serverProperties).toString());
@@ -87,7 +87,7 @@ public class ConfigsLogic {
         log.info("{}", updatedConfig.body);
 
         switch (name) {
-            case "token_mail_body.txt" :
+            case "single_token_mail_body.txt":
                 blockingIOProcessor.tokenBody = updatedConfig.body;
                 break;
             case ServerProperties.SERVER_PROPERTIES_FILENAME :

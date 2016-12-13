@@ -1,4 +1,3 @@
-Auth Token for %s project "%s"
 
 Happy Blynking!
 -

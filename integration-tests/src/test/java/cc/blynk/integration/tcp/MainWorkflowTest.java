@@ -10,6 +10,7 @@ import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.HardwareInfo;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -22,6 +23,7 @@ import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.hardware.HardwareServer;
@@ -584,15 +586,64 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testSendEmail() throws Exception {
-        blockingIOProcessor.tokenBody = "Auth Token for %s project";
-
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
         appClient.send("login dima@mail.ua 1");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         appClient.send("email 1");
-        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device UNO"), startsWith("Auth Token for My Dashboard project"));
+        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device UNO"), startsWith("Auth Token : "));
+    }
+
+    @Test
+    public void testSendEmailForDevice() throws Exception {
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+        appClient.send("login dima@mail.ua 1");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        appClient.send("email 1 0");
+        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device UNO"), startsWith("Auth Token : "));
+    }
+
+    @Test
+    public void testSendEmailForMultiDevices() throws Exception {
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+        appClient.send("login dima@mail.ua 1");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody(2);
+
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+
+        appClient.send("email 1");
+
+        String expectedBody = String.format("Auth Token for device 'UNO' : %s\n" +
+                "Auth Token for device 'My Device' : %s\n" +
+                "\n" +
+                "Happy Blynking!\n" +
+                "-\n" +
+                "Getting Started Guide -> http://www.blynk.cc/getting-started\n" +
+                "Documentation -> http://docs.blynk.cc/\n" +
+                "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.1/Blynk_Release_v0.4.1.zip\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.20.1/server-0.20.1.jar\n" +
+                "-\n" +
+                "http://www.blynk.cc\n" +
+                "twitter.com/blynk_app\n" +
+                "www.facebook.com/blynkapp\n", devices[0].token, devices[1].token);
+
+        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Tokens for My Dashboard project and 2 devices"), eq(expectedBody));
     }
 
     @Test

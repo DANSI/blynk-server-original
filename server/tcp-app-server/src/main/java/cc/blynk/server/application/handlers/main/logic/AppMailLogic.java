@@ -45,30 +45,54 @@ public class AppMailLogic {
         String[] split = StringUtils.split2(message.body);
 
         int dashId = ParseUtil.parseInt(split[0]);
-        int deviceId = 0;
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        //new value for multi devices
         if (split.length == 2) {
-            deviceId = ParseUtil.parseInt(split[1]);
+            int deviceId = ParseUtil.parseInt(split[1]);
+            Device device = dash.getDeviceById(deviceId);
+
+            if (device == null || device.token == null) {
+                throw new IllegalCommandBodyException("Wrong device id.");
+            }
+
+            makeSingleTokenEmail(ctx, dash, device, user.name, message.id);
+        } else {
+            if (dash.devices.length == 1) {
+                makeSingleTokenEmail(ctx, dash, dash.devices[0], user.name, message.id);
+            } else {
+                sendMultiTokenEmail(ctx, dash, user.name, message.id);
+            }
+
         }
+    }
 
-        DashBoard dashBoard = user.profile.getDashByIdOrThrow(dashId);
-        Device device = dashBoard.getDeviceById(deviceId);
-
-        String token = device.token;
-
-        if (token == null) {
-            throw new IllegalCommandBodyException("Wrong device id.");
-        }
-
-        String to = user.name;
-        String dashName = dashBoard.name == null ? "New Project" : dashBoard.name;
-        String deviceName = device.name == null ? "" : device.name;
+    private void makeSingleTokenEmail(ChannelHandlerContext ctx, DashBoard dash, Device device, String to, int msgId) {
+        String dashName = dash.name == null ? "New Project" : dash.name;
+        String deviceName = device.name == null ? "New Device" : device.name;
         String subj = "Auth Token for " + dashName + " project and device " + deviceName;
-        String body = String.format(BODY, dashName, token);
+        String body = "Auth Token : " + device.token;
 
-        log.trace("Sending Mail for user {}, with token : '{}'.", user.name, token);
-        mail(ctx.channel(), user.name, to, subj, body, message.id);
+        log.trace("Sending single token mail for user {}, with token : '{}'.", to, device.token);
+        mail(ctx.channel(), to, to, subj, body + BODY, msgId);
+    }
+
+    private void sendMultiTokenEmail(ChannelHandlerContext ctx, DashBoard dash, String to, int msgId) {
+        String dashName = dash.name == null ? "New Project" : dash.name;
+        String subj = "Auth Tokens for " + dashName + " project and " + dash.devices.length + " devices";
+
+        StringBuilder body = new StringBuilder();
+        for (Device device : dash.devices) {
+            body.append("Auth Token for device '")
+                .append(device.name == null ? "New Device" : device.name)
+                .append("' : ")
+                .append(device.token)
+                .append("\n");
+        }
+
+        body.append(BODY);
+
+        log.trace("Sending multi tokens mail for user {}, with {} tokens.", to, dash.devices.length);
+        mail(ctx.channel(), to, to, subj, body.toString(), msgId);
     }
 
     private void mail(Channel channel, String username, String to, String subj, String body, int msgId) {
