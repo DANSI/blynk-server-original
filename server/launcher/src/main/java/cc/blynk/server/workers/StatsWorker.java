@@ -35,7 +35,7 @@ public class StatsWorker implements Runnable {
             Stat stat = Stat.calcStats(sessionDao, userDao, stats, true);
             log.info(stat.toJson());
         } catch (Exception e) {
-            log.error("Error making stats.");
+            log.error("Error making stats.", e);
         }
     }
 
