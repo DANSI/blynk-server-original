@@ -115,7 +115,7 @@ You can also use [this](https://github.com/blynkkk/blynk-server/tree/master/scri
 
 ## Update instruction for unix-like systems
 
-In order to update your server with new version you need to kill old process and start new one.
+Server update should always go before app update. In order to update your server with new version you need to kill old process and start new one.
 
 + Find process id of Blynk server
 
@@ -132,6 +132,9 @@ In order to update your server with new version you need to kill old process and
 10539 - blynk server process id from command output above.
  
 + Start new server [as usual](https://github.com/blynkkk/blynk-server#quick-local-server-setup)
+
+After this steps you are ready to update app. Server version downgrade is not supported. Please do not revert your server 
+to lower versions
 
 ## Update instruction for Windows
 
