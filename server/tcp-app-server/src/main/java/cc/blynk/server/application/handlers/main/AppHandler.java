@@ -15,7 +15,7 @@ import cc.blynk.server.application.handlers.main.logic.RedeemLogic;
 import cc.blynk.server.application.handlers.main.logic.RefreshTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.CreateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.DeleteDashLogic;
-import cc.blynk.server.application.handlers.main.logic.dashboard.SaveDashLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.UpdateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.CreateDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.DeleteDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesLogic;
@@ -57,7 +57,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final RefreshShareTokenLogic refreshShareTokenLogic;
     private final GetSharedDashLogic getSharedDashLogic;
     private final CreateDashLogic createDashLogic;
-    private final SaveDashLogic saveDashLogic;
+    private final UpdateDashLogic updateDashLogic;
     private final ActivateDashboardLogic activateDashboardLogic;
     private final DeActivateDashboardLogic deActivateDashboardLogic;
     private final CreateWidgetLogic createWidgetLogic;
@@ -86,7 +86,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
         final int profileMaxSize = holder.props.getIntProperty("user.profile.max.size", 10) * 1024;
         this.createDashLogic = new CreateDashLogic(holder.props.getIntProperty("user.dashboard.max.limit"), profileMaxSize);
-        this.saveDashLogic = new SaveDashLogic(profileMaxSize);
+        this.updateDashLogic = new UpdateDashLogic(profileMaxSize);
 
         this.activateDashboardLogic = new ActivateDashboardLogic(holder.sessionDao);
         this.deActivateDashboardLogic = new DeActivateDashboardLogic(holder.sessionDao);
@@ -159,7 +159,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 createDashLogic.messageReceived(ctx, state.user, msg);
                 break;
             case SAVE_DASH :
-                saveDashLogic.messageReceived(ctx, state.user, msg);
+                updateDashLogic.messageReceived(ctx, state.user, msg);
                 break;
             case DELETE_DASH :
                 deleteDashLogic.messageReceived(ctx, state.user, msg);

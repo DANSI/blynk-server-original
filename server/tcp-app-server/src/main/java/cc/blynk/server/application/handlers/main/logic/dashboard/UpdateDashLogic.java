@@ -19,13 +19,13 @@ import static cc.blynk.utils.BlynkByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class SaveDashLogic {
+public class UpdateDashLogic {
 
-    private static final Logger log = LogManager.getLogger(SaveDashLogic.class);
+    private static final Logger log = LogManager.getLogger(UpdateDashLogic.class);
 
     private final int DASH_MAX_SIZE;
 
-    public SaveDashLogic(int maxDashSize) {
+    public UpdateDashLogic(int maxDashSize) {
         this.DASH_MAX_SIZE = maxDashSize;
     }
 
