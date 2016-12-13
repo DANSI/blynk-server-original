@@ -133,8 +133,8 @@ Server update should always go before app update. In order to update your server
  
 + Start new server [as usual](https://github.com/blynkkk/blynk-server#quick-local-server-setup)
 
-After this steps you are ready to update app. Server version downgrade is not supported. Please do not revert your server 
-to lower versions
+After this steps you are ready to update app. Server version downgrade is not supported. Please **do not** revert your server 
+to lower versions. Tou may loss data in that case.
 
 ## Update instruction for Windows
 
