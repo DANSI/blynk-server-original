@@ -82,8 +82,8 @@
                 <!-- This route is chosen if ThreadContext has a value for "user"
                 The value dynamically determines the name of the log file. -->
                 <Route>
-                    <RollingFile name="$${ctx:user}_$${ctx:dashId}-$${ctx:deviceId}_$${ctx:pin}" fileName="${sys:data.folder}/data/${ctx:user}/${ctx:dashId}-$${ctx:deviceId}_${ctx:pin}.csv"
-                                 filePattern="${sys:data.folder}/data/${ctx:user}/${ctx:dashId}-$${ctx:deviceId}_${ctx:pin}-%d{yyyy-MM-dd}.csv.gz">
+                    <RollingFile name="$${ctx:user}_$${ctx:dashId}-$${ctx:deviceId}_$${ctx:pin}" fileName="${sys:data.folder}/data/${ctx:user}/${ctx:dashId}-${ctx:deviceId}_${ctx:pin}.csv"
+                                 filePattern="${sys:data.folder}/data/${ctx:user}/${ctx:dashId}-${ctx:deviceId}_${ctx:pin}-%d{yyyy-MM-dd}.csv.gz">
                         <PatternLayout>
                             <pattern>%msg%n</pattern>
                         </PatternLayout>
