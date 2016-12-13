@@ -41,6 +41,8 @@ public class DashBoard {
 
     public volatile boolean keepScreenOn;
 
+    public volatile boolean isAppConnectedOn;
+
     public volatile boolean isShared;
 
     public volatile boolean isActive;
