@@ -6,7 +6,9 @@ import cc.blynk.integration.tcp.EventorTest;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
+import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.JsonParser;
@@ -137,6 +139,29 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
             List<String> values = consumeJsonPinValues(response);
             assertEquals(1, values.size());
             assertEquals("201", values.get(0));
+        }
+    }
+
+    @Test
+    public void testRTCWorksViaHttpAPI() throws Exception {
+        RTC rtc = new RTC();
+        rtc.pin = 113;
+        rtc.pinType = PinType.VIRTUAL;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(rtc));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        reset(clientPair.appClient.responseMock);
+
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+
+        HttpGet request = new HttpGet(httpServerUrl + token + "/pin/v113");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
         }
     }
 

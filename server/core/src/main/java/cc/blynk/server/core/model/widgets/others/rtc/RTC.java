@@ -63,4 +63,9 @@ public class RTC extends OnePinWidget implements HardwareSyncWidget {
         LocalDateTime ldt = LocalDateTime.now(zone);
         return String.valueOf(ldt.toEpochSecond(ZoneOffset.UTC));
     }
+
+    @Override
+    public String getJsonValue() {
+        return "[" + getTime() + "]";
+    }
 }
