@@ -147,6 +147,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         RTC rtc = new RTC();
         rtc.pin = 113;
         rtc.pinType = PinType.VIRTUAL;
+        rtc.id = 434;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(rtc));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
