@@ -40,7 +40,7 @@ public class FileUtils {
 
     public static boolean deleteQuietly(Path path) {
         try {
-            return path.toFile().delete();
+            return Files.deleteIfExists(path);
         } catch (Exception ignored) {
             return false;
         }

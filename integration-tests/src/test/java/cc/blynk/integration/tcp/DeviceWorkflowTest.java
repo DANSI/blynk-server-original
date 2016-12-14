@@ -71,6 +71,13 @@ public class DeviceWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testDeleteGraphCommandWorks() throws Exception {
+        clientPair.appClient.send("getgraphdata 1-0 d 8 del");
+
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+    }
+
+    @Test
     public void testSendHardwareCommandToMultipleDevices() throws Exception {
         Device device0 = new Device(0, "My Dashboard", "UNO");
         Device device1 = new Device(1, "My Device", "ESP8266");
