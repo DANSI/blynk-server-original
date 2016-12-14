@@ -622,6 +622,7 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    //todo fix this test
     public void testSendEmailForMultiDevices() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
@@ -652,7 +653,7 @@ public class MainWorkflowTest extends IntegrationBase {
                 "Getting Started Guide -> http://www.blynk.cc/getting-started\n" +
                 "Documentation -> http://docs.blynk.cc/\n" +
                 "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.1/Blynk_Release_v0.4.1.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.20.1/server-0.20.1.jar\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.20.2/server-0.20.2.jar\n" +
                 "-\n" +
                 "http://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
