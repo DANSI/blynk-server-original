@@ -101,6 +101,8 @@ public class RedisClient implements Closeable {
         if (isEnabled) {
             try (Jedis jedis = tokenPool.getResource()) {
                 jedis.del(tokens);
+            } catch (Exception e) {
+                log.error("Error removing tokens {}.", tokens, e);
             }
         }
     }
