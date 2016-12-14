@@ -1,6 +1,8 @@
 package cc.blynk.server.core.reporting.average;
 
+import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.utils.ServerProperties;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -141,6 +143,12 @@ public class AverageAggregatorTest {
         assertEquals(1, averageAggregator.getDaily().size());
         assertEquals(expectedDailyAverage, averageAggregator.getDaily().get(new AggregationKey(username, dashId, 0, pinType, pin, getMillis(2015, 8, 1, 0, 0) / DAY)).calcAverage(), 0);
 
+        assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregator.HOURLY_TEMP_FILENAME)));
+        assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregator.DAILY_TEMP_FILENAME)));
+
+        ReportingDao reportingDao = new ReportingDao(reportingFolder, null, new ServerProperties());
+
+        reportingDao.delete(username, dashId, 0, pinType, pin);
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregator.HOURLY_TEMP_FILENAME)));
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregator.DAILY_TEMP_FILENAME)));
     }
