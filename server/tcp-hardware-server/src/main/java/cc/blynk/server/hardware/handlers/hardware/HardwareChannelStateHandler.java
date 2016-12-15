@@ -89,7 +89,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     private void sendPushNotification(DashBoard dashBoard, Notification notification, int dashId, int deviceId) {
         Device device = dashBoard.getDeviceById(deviceId);
         final String dashName = dashBoard.name == null ? "" : dashBoard.name;
-        final String deviceName = device.name == null ? "device" : device.name;
+        final String deviceName = ((device == null || device.name == null) ? "device" : device.name);
         String message = "Your " + deviceName + " went offline. \"" + dashName + "\" project is disconnected.";
         notification.push(gcmWrapper,
                 message,
