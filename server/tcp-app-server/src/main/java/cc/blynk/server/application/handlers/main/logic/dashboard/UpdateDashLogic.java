@@ -2,7 +2,6 @@ package cc.blynk.server.application.handlers.main.logic.dashboard;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -53,16 +52,6 @@ public class UpdateDashLogic {
         int index = user.profile.getDashIndexOrThrow(updatedDash.id);
 
         DashBoard existingDash = user.profile.dashBoards[index];
-
-        Notification newNotification = updatedDash.getWidgetByType(Notification.class);
-        if (newNotification != null) {
-            Notification oldNotification = existingDash.getWidgetByType(Notification.class);
-            if (oldNotification != null) {
-                newNotification.iOSTokens = oldNotification.iOSTokens;
-                newNotification.androidTokens = oldNotification.androidTokens;
-            }
-        }
-
         existingDash.updateFields(updatedDash);
         user.lastModifiedTs = existingDash.updatedAt;
 

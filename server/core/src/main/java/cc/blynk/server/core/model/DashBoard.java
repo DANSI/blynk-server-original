@@ -3,6 +3,7 @@ package cc.blynk.server.core.model;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.JsonParser;
@@ -186,6 +187,16 @@ public class DashBoard {
         this.boardType = updatedDashboard.boardType;
         this.keepScreenOn = updatedDashboard.keepScreenOn;
         this.theme = updatedDashboard.theme;
+
+        Notification newNotification = updatedDashboard.getWidgetByType(Notification.class);
+        if (newNotification != null) {
+            Notification oldNotification = this.getWidgetByType(Notification.class);
+            if (oldNotification != null) {
+                newNotification.iOSTokens = oldNotification.iOSTokens;
+                newNotification.androidTokens = oldNotification.androidTokens;
+            }
+        }
+
         this.widgets = updatedDashboard.widgets;
         this.isAppConnectedOn = updatedDashboard.isAppConnectedOn;
         this.updatedAt = System.currentTimeMillis();

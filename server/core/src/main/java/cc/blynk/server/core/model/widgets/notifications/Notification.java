@@ -19,9 +19,9 @@ public class Notification extends NoPinWidget {
 
     private static final int MAX_PUSH_BODY_SIZE = 255;
 
-    public ConcurrentMap<String, String> androidTokens = new ConcurrentHashMap<>();
+    public volatile ConcurrentMap<String, String> androidTokens = new ConcurrentHashMap<>();
 
-    public ConcurrentMap<String, String> iOSTokens = new ConcurrentHashMap<>();
+    public volatile ConcurrentMap<String, String> iOSTokens = new ConcurrentHashMap<>();
 
     public boolean notifyWhenOffline;
 
