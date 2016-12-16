@@ -19,6 +19,12 @@ public class Device {
 
     public volatile ConnectionType connectionType;
 
+    //todo make transient
+    public Status status;
+
+    //todo make transient
+    public long disconnectTime;
+
     public Device() {
     }
 
@@ -40,6 +46,15 @@ public class Device {
         this.name = newDevice.name;
         this.boardType = newDevice.boardType;
         this.connectionType = newDevice.connectionType;
+    }
+
+    public void disconnected() {
+        this.status = Status.OFFLINE;
+        this.disconnectTime = System.currentTimeMillis();
+    }
+
+    public void connected() {
+        this.status = Status.ONLINE;
     }
 
     @Override

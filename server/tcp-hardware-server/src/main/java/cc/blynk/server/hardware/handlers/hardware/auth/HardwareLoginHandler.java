@@ -6,6 +6,7 @@ import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
@@ -70,6 +71,10 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         channel.flush();
 
         session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, deviceId);
+        Device device = dash.getDeviceById(deviceId);
+        if (device != null) {
+            device.connected();
+        }
 
         log.info("{} hardware joined.", user.name);
     }

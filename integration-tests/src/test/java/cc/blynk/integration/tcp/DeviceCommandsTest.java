@@ -5,6 +5,7 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.hardware.HardwareServer;
@@ -55,7 +56,9 @@ public class DeviceCommandsTest extends IntegrationBase {
     @Test
     public void testAddNewDevice() throws Exception {
         Device device0 = new Device(0, "My Dashboard", "UNO");
+        device0.status = Status.ONLINE;
         Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
@@ -80,6 +83,7 @@ public class DeviceCommandsTest extends IntegrationBase {
     @Test
     public void testUpdateExistingDevice() throws Exception {
         Device device0 = new Device(0, "My Dashboard Updated", "UNO");
+        device0.status = Status.ONLINE;
 
         clientPair.appClient.send("updateDevice 1\0" + device0.toString());
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -107,6 +111,7 @@ public class DeviceCommandsTest extends IntegrationBase {
     @Test
     public void testGetDevices() throws Exception {
         Device device0 = new Device(0, "My Dashboard", "UNO");
+        device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
@@ -121,6 +126,7 @@ public class DeviceCommandsTest extends IntegrationBase {
     @Test
     public void testTokenNotUpdatedForExistingDevice() throws Exception {
         Device device0 = new Device(0, "My Dashboard", "UNO");
+        device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
@@ -156,7 +162,9 @@ public class DeviceCommandsTest extends IntegrationBase {
     @Test
     public void testDeletedNewlyAddedDevice() throws Exception {
         Device device0 = new Device(0, "My Dashboard", "UNO");
+        device0.status = Status.ONLINE;
         Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
@@ -198,6 +206,7 @@ public class DeviceCommandsTest extends IntegrationBase {
         //assertEquals(expected.name, real.name);
         assertEquals(expected.boardType, real.boardType);
         assertNotNull(real.token);
+        assertEquals(expected.status, real.status);
     }
 
 }

@@ -69,6 +69,9 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         }
 
         Notification notification = dashBoard.getWidgetByType(Notification.class);
+        Device device = dashBoard.getDeviceById(state.deviceId);
+        device.disconnected();
+
         if (notification == null || !notification.notifyWhenOffline) {
             Session session = sessionDao.userSession.get(state.userKey);
             if (session.getAppChannels().size() > 0) {
@@ -82,12 +85,11 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                 }
             }
         } else {
-            sendPushNotification(dashBoard, notification, state.dashId, state.deviceId);
+            sendPushNotification(dashBoard, notification, state.dashId, device);
         }
     }
 
-    private void sendPushNotification(DashBoard dashBoard, Notification notification, int dashId, int deviceId) {
-        Device device = dashBoard.getDeviceById(deviceId);
+    private void sendPushNotification(DashBoard dashBoard, Notification notification, int dashId, Device device) {
         final String dashName = dashBoard.name == null ? "" : dashBoard.name;
         final String deviceName = ((device == null || device.name == null) ? "device" : device.name);
         String message = "Your " + deviceName + " went offline. \"" + dashName + "\" project is disconnected.";

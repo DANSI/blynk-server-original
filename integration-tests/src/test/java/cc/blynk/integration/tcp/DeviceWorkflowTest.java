@@ -6,6 +6,7 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
@@ -80,7 +81,9 @@ public class DeviceWorkflowTest extends IntegrationBase {
     @Test
     public void testSendHardwareCommandToMultipleDevices() throws Exception {
         Device device0 = new Device(0, "My Dashboard", "UNO");
+        device0.status = Status.ONLINE;
         Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
@@ -106,6 +109,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         hardClient2.send("login " + devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        device1.status = Status.ONLINE;
 
         clientPair.appClient.send("hardware 1 vw 100 100");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("vw 100 100"))));
@@ -303,11 +307,59 @@ public class DeviceWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SyncMessage(1111, b("1-1 dw 33 1"))));
     }
 
+    @Test
+    public void testOfflineOnlineStatusForMultiDevices() throws Exception {
+        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.send("login " + device.token);
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        device0.status = Status.ONLINE;
+        device1.status = Status.ONLINE;
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody();
+
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        assertNotNull(devices);
+        assertEquals(2, devices.length);
+
+        assertEqualDevice(device0, devices[0]);
+        assertEqualDevice(device1, devices[1]);
+
+        hardClient2.stop().await();
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("getDevices 1");
+        response = clientPair.appClient.getBody();
+
+        devices = JsonParser.mapper.readValue(response, Device[].class);
+        assertNotNull(devices);
+        assertEquals(2, devices.length);
+
+        assertEqualDevice(device0, devices[0]);
+        assertEqualDevice(device1, devices[1]);
+    }
+
     private static void assertEqualDevice(Device expected, Device real) {
         assertEquals(expected.id, real.id);
         //assertEquals(expected.name, real.name);
         assertEquals(expected.boardType, real.boardType);
         assertNotNull(real.token);
+        assertEquals(expected.status, real.status);
     }
 
 }
