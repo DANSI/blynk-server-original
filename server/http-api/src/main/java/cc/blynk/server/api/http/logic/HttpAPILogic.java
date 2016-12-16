@@ -624,7 +624,11 @@ public class HttpAPILogic {
 
         if (notification == null || notification.hasNoToken()) {
             log.debug("No notification tokens.");
-            return Response.badRequest("No notification widget or widget not initialized.");
+            if (notification == null) {
+                return Response.badRequest("No notification widget.");
+            } else {
+                return Response.badRequest("Notification widget not initialized.");
+            }
         }
 
         log.trace("Sending push for user {}, with message : '{}'.", user.name, message.body);
