@@ -13,7 +13,6 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.ParseUtil;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +25,8 @@ import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_ERROR;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
+import static cc.blynk.utils.StringUtils.split2Device;
 
 /**
  * Sends graph pins data in csv format via to user email.
@@ -52,13 +53,13 @@ public class ExportGraphDataLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+        String[] messageParts = message.body.split(BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        String[] dashIdAndDeviceId = messageParts[0].split(StringUtils.DEVICE_SEPARATOR);
+        String[] dashIdAndDeviceId = split2Device(messageParts[0]);
         int dashId = ParseUtil.parseInt(dashIdAndDeviceId[0]);
 
         //todo new device code. remove after migration.

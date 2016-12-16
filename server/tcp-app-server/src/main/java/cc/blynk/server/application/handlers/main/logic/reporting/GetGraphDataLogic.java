@@ -9,8 +9,6 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
-import cc.blynk.utils.ParseUtil;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -25,6 +23,7 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.ByteUtils.compress;
+import static cc.blynk.utils.StringUtils.split2Device;
 
 /**
  * The Blynk Project.
@@ -53,17 +52,18 @@ public class GetGraphDataLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
+        String[] dashIdDeviceId = split2Device(messageParts[0]);
+        int dashId = Integer.parseInt(dashIdDeviceId[0]);
+        int deviceId = 0;
+        if (dashIdDeviceId.length == 2) {
+            deviceId = Integer.parseInt(dashIdDeviceId[1]);
+        }
+
         //special case for delete command
         if (messageParts.length == 4) {
-            deleteGraphData(messageParts, user.name);
+            deleteGraphData(messageParts, user.name, dashId, deviceId);
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
-            String[] dashIdDeviceId = messageParts[0].split(StringUtils.DEVICE_SEPARATOR);
-            int dashId = ParseUtil.parseInt(dashIdDeviceId[0]);
-            int deviceId = 0;
-            if (dashIdDeviceId.length == 2) {
-                deviceId = Integer.parseInt(dashIdDeviceId[1]);
-            }
             user.profile.validateDashId(dashId);
             process(ctx.channel(), dashId, deviceId, Arrays.copyOfRange(messageParts, 1, messageParts.length), user, message.id, 4);
         }
@@ -97,21 +97,15 @@ public class GetGraphDataLogic {
         });
     }
 
-    private void deleteGraphData(String[] messageParts, String username) {
+    private void deleteGraphData(String[] messageParts, String username, int dashId, int deviceId) {
         try {
-            String[] dashIdDeviceId = messageParts[0].split(StringUtils.DEVICE_SEPARATOR);
-            int dashBoardId = Integer.parseInt(dashIdDeviceId[0]);
-            int deviceId = 0;
-            if (dashIdDeviceId.length == 2) {
-                deviceId = Integer.parseInt(dashIdDeviceId[1]);
-            }
             PinType pinType = PinType.getPinType(messageParts[1].charAt(0));
             byte pin = Byte.parseByte(messageParts[2]);
             String cmd = messageParts[3];
             if (!"del".equals(cmd)) {
                 throw new IllegalCommandBodyException("Wrong body format. Expecting 'del'.");
             }
-            reportingDao.delete(username, dashBoardId, deviceId, pinType, pin);
+            reportingDao.delete(username, dashId, deviceId, pinType, pin);
         } catch (NumberFormatException e) {
             throw new IllegalCommandException("HardwareLogic command body incorrect.");
         }

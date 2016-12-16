@@ -142,7 +142,7 @@ public class Session {
             //todo this is only for back compatibility. remove in future versions.
             sendToApps(cmd, msgId, String.valueOf(dashId));
         } else {
-            sendToApps(cmd, msgId, dashId + DEVICE_SEPARATOR + deviceId);
+            sendToApps(cmd, msgId, String.valueOf(dashId) + DEVICE_SEPARATOR + deviceId);
         }
     }
 

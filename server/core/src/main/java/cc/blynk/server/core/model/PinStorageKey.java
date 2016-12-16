@@ -45,6 +45,6 @@ public final class PinStorageKey {
 
     @Override
     public String toString() {
-        return deviceId + StringUtils.DEVICE_SEPARATOR + pinType.pintTypeChar + pin;
+        return String.valueOf(deviceId) + StringUtils.DEVICE_SEPARATOR + pinType.pintTypeChar + pin;
     }
 }

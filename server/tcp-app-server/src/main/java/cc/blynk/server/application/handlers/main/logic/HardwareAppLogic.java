@@ -20,8 +20,8 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.SYNC;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static cc.blynk.utils.StringUtils.split2;
+import static cc.blynk.utils.StringUtils.split2Device;
 import static cc.blynk.utils.StringUtils.split3;
 
 /**
@@ -54,7 +54,7 @@ public class HardwareAppLogic {
 
         String[] split = split2(message.body);
 
-        String[] dashIdAndDeviceIdString = split[0].split(DEVICE_SEPARATOR);
+        String[] dashIdAndDeviceIdString = split2Device(split[0]);
         int dashId = ParseUtil.parseInt(dashIdAndDeviceIdString[0]);
         int deviceId = 0;
 

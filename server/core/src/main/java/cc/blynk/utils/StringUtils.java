@@ -9,7 +9,7 @@ public class StringUtils {
 
     public static final char BODY_SEPARATOR = '\0';
     public static final String BODY_SEPARATOR_STRING = String.valueOf(BODY_SEPARATOR);
-    public static final String DEVICE_SEPARATOR = "-";
+    public static final char DEVICE_SEPARATOR = '-';
 
     public static final String PIN_PATTERN =  "/pin/";
     public static final String PIN_PATTERN_0 =  "/pin[0]/";
@@ -84,8 +84,12 @@ public class StringUtils {
         return new String[] {body.substring(0, i1), body.substring(i1 + 1, i2), body.substring(i2 + 1, body.length())};
     }
 
-    public static String[] split2(String body) {
-        final int i1 = body.indexOf(BODY_SEPARATOR, 1);
+    public static String[] split2Device(String body) {
+        return split2(DEVICE_SEPARATOR, body);
+    }
+
+    private static String[] split2(char separator, String body) {
+        final int i1 = body.indexOf(separator, 1);
         if (i1 == -1) {
             return new String[] {body};
         }
@@ -93,12 +97,16 @@ public class StringUtils {
         return new String[] {body.substring(0, i1), body.substring(i1 + 1, body.length())};
     }
 
+    public static String[] split2(String body) {
+        return split2(BODY_SEPARATOR, body);
+    }
+
     public static String makeBody(int dashId, int deviceId, String body) {
         //todo this is back compatibility code. remove in future versions
         if (deviceId == 0) {
             return dashId + BODY_SEPARATOR_STRING + body;
         }
-        return dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR_STRING + body;
+        return String.valueOf(dashId) + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR_STRING + body;
     }
 
 }
