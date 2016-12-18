@@ -58,7 +58,7 @@ public class CommandParser {
             case "createdash" :
                 return CREATE_DASH;
             case "savedash" :
-                return SAVE_DASH;
+                return UPDATE_DASH;
             case "deletedash" :
                 return DELETE_DASH;
             case "createwidget" :

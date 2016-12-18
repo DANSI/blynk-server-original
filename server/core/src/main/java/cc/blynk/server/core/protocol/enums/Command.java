@@ -38,7 +38,7 @@ public final class Command {
     public static final short HARDWARE = 20;
     //app commands
     public static final short CREATE_DASH = 21;
-    public static final short SAVE_DASH = 22;
+    public static final short UPDATE_DASH = 22;
     public static final short DELETE_DASH = 23;
     public static final short LOAD_PROFILE_GZIPPED = 24;
     public static final short SYNC = 25;
@@ -120,7 +120,7 @@ public final class Command {
                 put(REFRESH_SHARE_TOKEN, "RefreshShareToken");
                 put(SHARE_LOGIN, "ShareLogin");
                 put(CREATE_DASH, "CreateProject");
-                put(SAVE_DASH, "SaveProject");
+                put(UPDATE_DASH, "SaveProject");
                 put(DELETE_DASH, "DeleteProject");
                 put(HARDWARE_SYNC, "HardwareSync");
                 put(HARDWARE_INFO, "HardwareInfo");

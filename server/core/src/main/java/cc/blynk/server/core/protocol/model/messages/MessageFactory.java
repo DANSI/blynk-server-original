@@ -23,9 +23,9 @@ import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RedeemMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RefreshTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.SaveDashMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.SaveMetadata;
 import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.UpdateDashMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateWidget;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.GetShareTokenMessage;
@@ -113,8 +113,8 @@ public class MessageFactory {
 
             case CREATE_DASH :
                 return new CreateDashMessage(messageId, body);
-            case SAVE_DASH :
-                return new SaveDashMessage(messageId, body);
+            case UPDATE_DASH:
+                return new UpdateDashMessage(messageId, body);
             case DELETE_DASH :
                 return new DeleteDashMessage(messageId, body);
 

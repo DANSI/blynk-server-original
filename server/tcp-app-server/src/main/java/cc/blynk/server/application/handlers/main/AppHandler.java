@@ -158,7 +158,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case CREATE_DASH :
                 createDashLogic.messageReceived(ctx, state.user, msg);
                 break;
-            case SAVE_DASH :
+            case UPDATE_DASH:
                 updateDashLogic.messageReceived(ctx, state.user, msg);
                 break;
             case DELETE_DASH :
