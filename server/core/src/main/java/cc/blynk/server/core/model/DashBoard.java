@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
@@ -34,6 +35,8 @@ public class DashBoard {
     public volatile Widget[] widgets = {};
 
     public volatile Device[] devices = {};
+
+    public volatile Tag[] tags = {};
 
     //todo should be removed after migration
     public String boardType;
@@ -131,6 +134,24 @@ public class DashBoard {
             }
         }
         throw new IllegalCommandException("Widget with passed id not found.");
+    }
+
+    public int getTagIndexById(int id) {
+        for (int i = 0; i < tags.length; i++) {
+            if (tags[i].id == id) {
+                return i;
+            }
+        }
+        throw new IllegalCommandException("Tag with passed id not found.");
+    }
+
+    public Tag getTagById(int id) {
+        for (Tag tag : tags) {
+            if (tag.id == id) {
+                return tag;
+            }
+        }
+        return null;
     }
 
     public int getDeviceIndexById(int id) {

@@ -60,7 +60,7 @@ public class CreateDeviceLogic {
             }
         }
 
-        dash.devices = ArrayUtil.add(dash.devices, newDevice);
+        dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
 
         final String newToken = TokenGeneratorUtil.generateNewToken();
         tokenManager.assignToken(user, dashId, newDevice.id, newToken);

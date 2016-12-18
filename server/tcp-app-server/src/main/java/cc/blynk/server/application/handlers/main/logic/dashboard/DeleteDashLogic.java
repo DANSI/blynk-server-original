@@ -45,7 +45,7 @@ public class DeleteDashLogic {
             user.purchaseEnergy(1000 - user.getEnergy());
         }
 
-        user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
+        user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index, DashBoard.class);
         tokenManager.deleteDash(user, dash);
 
         user.lastModifiedTs = System.currentTimeMillis();

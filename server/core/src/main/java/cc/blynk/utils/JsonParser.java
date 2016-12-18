@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
@@ -42,6 +43,7 @@ public final class JsonParser {
     private static final ObjectReader dashboardReader = mapper.readerFor(DashBoard.class);
     private static final ObjectReader widgetReader = mapper.readerFor(Widget.class);
     private static final ObjectReader deviceReader = mapper.readerFor(Device.class);
+    private static final ObjectReader tagReader = mapper.readerFor(Tag.class);
     private static final ObjectReader facebookTokenReader = mapper.readerFor(FacebookTokenResponse.class);
 
     private static final ObjectWriter userWriter = mapper.writerFor(User.class);
@@ -157,6 +159,16 @@ public final class JsonParser {
             throw new IllegalCommandBodyException("Error parsing device.");
         }
     }
+
+    public static Tag parseTag(String reader) {
+        try {
+            return tagReader.readValue(reader);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new IllegalCommandBodyException("Error parsing tag.");
+        }
+    }
+
 
     public static String valueToJsonAsString(String[] values) {
         StringJoiner sj = new StringJoiner(",", "[", "]");

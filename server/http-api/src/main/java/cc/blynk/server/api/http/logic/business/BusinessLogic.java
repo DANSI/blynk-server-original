@@ -100,7 +100,7 @@ public class BusinessLogic {
             tokenManager.refreshToken(user, newProject.id, 0);
         }
 
-        user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newProject);
+        user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newProject, DashBoard.class);
         user.lastModifiedTs = System.currentTimeMillis();
 
         return ok(newProject);
@@ -122,7 +122,7 @@ public class BusinessLogic {
 
         int index = user.profile.getDashIndexOrThrow(projectId);
         DashBoard dash = user.profile.dashBoards[index];
-        user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index);
+        user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index, DashBoard.class);
 
         tokenManager.deleteDash(user, dash);
 

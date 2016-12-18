@@ -20,6 +20,10 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.device.CreateDe
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.DeleteDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.UpdateDeviceLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.tags.CreateTagLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.tags.DeleteTagLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.tags.GetTagsLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.tags.UpdateTagLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.CreateWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.DeleteWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.UpdateWidgetLogic;
@@ -199,6 +203,18 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case GET_DEVICES :
                 GetDevicesLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case CREATE_TAG :
+                CreateTagLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case UPDATE_TAG :
+                UpdateTagLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case DELETE_TAG :
+                DeleteTagLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case GET_TAGS :
+                GetTagsLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }

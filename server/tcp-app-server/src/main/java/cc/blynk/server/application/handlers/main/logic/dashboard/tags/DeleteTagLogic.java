@@ -1,8 +1,8 @@
-package cc.blynk.server.application.handlers.main.logic.dashboard.device;
+package cc.blynk.server.application.handlers.main.logic.dashboard.tags;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
@@ -19,11 +19,11 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class DeleteDeviceLogic {
+public class DeleteTagLogic {
 
-    private static final Logger log = LogManager.getLogger(DeleteDeviceLogic.class);
+    private static final Logger log = LogManager.getLogger(DeleteTagLogic.class);
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -31,19 +31,15 @@ public class DeleteDeviceLogic {
         }
 
         int dashId = ParseUtil.parseInt(split[0]) ;
-        int deviceId = ParseUtil.parseInt(split[1]);
-
-        if (deviceId == 0) {
-            throw new IllegalCommandException("You are not allowed to remove device with id 0.");
-        }
+        int tagId = ParseUtil.parseInt(split[1]);
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        log.debug("Deleting device with id {}.", deviceId);
+        log.debug("Deleting tag with id {}.", tagId);
 
-        int existingDeviceIndex = dash.getDeviceIndexById(deviceId);
+        int existingTagIndex = dash.getTagIndexById(tagId);
 
-        dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
+        dash.tags = ArrayUtil.remove(dash.tags, existingTagIndex, Tag.class);
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
 

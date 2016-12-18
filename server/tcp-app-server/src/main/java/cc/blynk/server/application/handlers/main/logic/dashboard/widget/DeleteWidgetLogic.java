@@ -74,7 +74,7 @@ public class DeleteWidgetLogic {
 
     private static void deleteWidget(User user, DashBoard dash, int existingWidgetIndex) {
         user.recycleEnergy(dash.widgets[existingWidgetIndex].getPrice());
-        dash.widgets = ArrayUtil.remove(dash.widgets, existingWidgetIndex);
+        dash.widgets = ArrayUtil.remove(dash.widgets, existingWidgetIndex, Widget.class);
         dash.updatedAt = System.currentTimeMillis();
     }
 

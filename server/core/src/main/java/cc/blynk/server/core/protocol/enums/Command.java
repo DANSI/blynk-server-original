@@ -69,7 +69,13 @@ public final class Command {
     public static final short UPDATE_DEVICE = 43;
     public static final short DELETE_DEVICE = 44;
     public static final short GET_DEVICES = 45;
-    public static final short APP_CONNECTED = 46;
+
+    public static final short CREATE_TAG = 46;
+    public static final short UPDATE_TAG = 47;
+    public static final short DELETE_TAG = 48;
+    public static final short GET_TAGS = 49;
+
+    public static final short APP_CONNECTED = 50;
 
     //------------------------------------------
 

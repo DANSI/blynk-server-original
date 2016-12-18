@@ -67,7 +67,7 @@ public class CreateDashLogic {
         }
 
         user.subtractEnergy(newDash.energySum());
-        user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newDash);
+        user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newDash, DashBoard.class);
         user.lastModifiedTs = System.currentTimeMillis();
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
