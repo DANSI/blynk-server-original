@@ -79,12 +79,41 @@ public class AddPushLogicTest extends IntegrationBase {
         clientPair.appClient.send("addPushToken 1\0uid1\0token1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        clientPair.appClient.reset();
-
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody());
+        Profile profile = parseProfile(clientPair.appClient.getBody(2));
 
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        assertNotNull(notification);
+        assertEquals(2, notification.androidTokens.size());
+        assertEquals(0, notification.iOSTokens.size());
+
+        assertTrue(notification.androidTokens.containsKey("uid1"));
+        assertTrue(notification.androidTokens.containsValue("token1"));
+    }
+
+    @Test
+    public void addPushTokenNotOverridedOnProfileSave() throws Exception {
+        clientPair.appClient.send("addPushToken 1\0uid1\0token1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = parseProfile(clientPair.appClient.getBody(2));
+
+        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        assertNotNull(notification);
+        assertEquals(2, notification.androidTokens.size());
+        assertEquals(0, notification.iOSTokens.size());
+
+        assertTrue(notification.androidTokens.containsKey("uid1"));
+        assertTrue(notification.androidTokens.containsValue("token1"));
+
+        clientPair.appClient.send("saveDash " + profile.getDashById(1).toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
+
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = parseProfile(clientPair.appClient.getBody(4));
+
+        notification = profile.getDashById(1).getWidgetByType(Notification.class);
         assertNotNull(notification);
         assertEquals(2, notification.androidTokens.size());
         assertEquals(0, notification.iOSTokens.size());
