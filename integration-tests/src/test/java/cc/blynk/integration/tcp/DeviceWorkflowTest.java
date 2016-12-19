@@ -4,6 +4,7 @@ import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
+import cc.blynk.server.application.handlers.main.logic.dashboard.device.DeviceStatus;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
@@ -92,7 +93,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        DeviceStatus[] devices = JsonParser.mapper.readValue(response, DeviceStatus[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -370,7 +371,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        DeviceStatus[] devices = JsonParser.mapper.readValue(response, DeviceStatus[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -384,7 +385,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         response = clientPair.appClient.getBody();
 
-        devices = JsonParser.mapper.readValue(response, Device[].class);
+        devices = JsonParser.mapper.readValue(response, DeviceStatus[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -392,7 +393,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         assertEqualDevice(device1, devices[1]);
     }
 
-    private static void assertEqualDevice(Device expected, Device real) {
+    private static void assertEqualDevice(Device expected, DeviceStatus real) {
         assertEquals(expected.id, real.id);
         //assertEquals(expected.name, real.name);
         assertEquals(expected.boardType, real.boardType);

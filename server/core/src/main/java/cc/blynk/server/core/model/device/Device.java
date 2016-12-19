@@ -19,10 +19,8 @@ public class Device {
 
     public volatile ConnectionType connectionType;
 
-    //todo make transient
-    public volatile Status status;
+    public volatile transient Status status;
 
-    //todo make transient
     public volatile long disconnectTime;
 
     public Device() {

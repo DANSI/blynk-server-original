@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
@@ -26,11 +27,22 @@ public class GetDevicesLogic {
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        String response = JsonParser.toJson(dash.devices);
+        DeviceStatus[] deviceStatus = copy(dash.devices);
+
+        String response = JsonParser.toJson(deviceStatus);
         if (response == null) {
             response = "[]";
         }
         ctx.writeAndFlush(makeUTF8StringMessage(GET_DEVICES, message.id, response), ctx.voidPromise());
+    }
+
+    private static DeviceStatus[] copy(Device[] devices) {
+        DeviceStatus[] deviceStatuses = new DeviceStatus[devices.length];
+        int i = 0;
+        for (Device device : devices) {
+            deviceStatuses[i++] = new DeviceStatus(device);
+        }
+        return deviceStatuses;
     }
 
 }
