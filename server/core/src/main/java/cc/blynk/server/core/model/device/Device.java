@@ -19,7 +19,7 @@ public class Device {
 
     public volatile ConnectionType connectionType;
 
-    public volatile transient Status status;
+    public volatile transient Status status = Status.OFFLINE;
 
     public volatile long disconnectTime;
 
