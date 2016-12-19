@@ -4,6 +4,8 @@ import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 
 /**
+ * User key for session. Holds user email and app user belongs to.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 17.05.16.

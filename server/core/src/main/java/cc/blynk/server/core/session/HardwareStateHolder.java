@@ -7,7 +7,7 @@ import cc.blynk.server.core.model.auth.User;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.09.15.
  */
-public class HardwareStateHolder extends StateHolder {
+public final class HardwareStateHolder extends StateHolderBase {
 
     public final int dashId;
     public final int deviceId;
