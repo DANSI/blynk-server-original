@@ -74,7 +74,7 @@ public class HardwareLogic {
         if (isWriteOperation(body)) {
             String[] splitBody = split3(body);
 
-            if (splitBody.length < 3 || splitBody[0].length() == 0) {
+            if (splitBody.length < 3 || splitBody[0].length() == 0 || splitBody[2].length() == 0) {
                 log.debug("Write command is wrong.");
                 ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
                 return;
@@ -84,22 +84,11 @@ public class HardwareLogic {
             final byte pin = ParseUtil.parseByte(splitBody[1]);
             final String value = splitBody[2];
 
-            if (value.length() == 0) {
-                log.debug("Hardware write command doesn't have value for pin. User {}", state.user.name);
-                ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
-                return;
-            }
-
             reportingDao.process(state.user.name, dashId, deviceId, pin, pinType, value);
 
             dash.update(deviceId, pin, pinType, value);
 
-            //todo this temp catch. remove in next update.
-            try {
-                process(dash, deviceId, session, pin, pinType, value);
-            } catch (Exception e) {
-                log.error("Error processing.", e);
-            }
+            process(dash, deviceId, session, pin, pinType, value);
         }
 
         if (dash.isActive) {
@@ -110,8 +99,12 @@ public class HardwareLogic {
     }
 
     private void process(DashBoard dash, int deviceId, Session session, byte pin, PinType pinType, String value) {
-        eventorProcessor.process(session, dash, deviceId, pin, pinType, value);
-        webhookProcessor.process(session, dash, deviceId, pin, pinType, value);
+        try {
+            eventorProcessor.process(session, dash, deviceId, pin, pinType, value);
+            webhookProcessor.process(session, dash, deviceId, pin, pinType, value);
+        } catch (Exception e) {
+            log.error("Error processing eventor/webhook.", e);
+        }
     }
 
 }
