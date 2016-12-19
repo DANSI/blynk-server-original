@@ -8,7 +8,7 @@ import cc.blynk.server.core.session.StateHolderBase;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.09.15.
  */
-public final class AppStateHolder extends StateHolderBase {
+public class AppStateHolder extends StateHolderBase {
 
     public final OsType osType;
     public final String version;

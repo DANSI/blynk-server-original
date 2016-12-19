@@ -9,7 +9,7 @@ import cc.blynk.server.core.model.auth.User;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.09.15.
  */
-public class AppShareStateHolder extends AppStateHolder {
+public final class AppShareStateHolder extends AppStateHolder {
 
     public final String token;
     public final int dashId;
