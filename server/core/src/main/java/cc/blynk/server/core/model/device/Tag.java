@@ -15,6 +15,14 @@ public class Tag {
 
     public volatile int[] deviceIds;
 
+    public Tag() {
+    }
+
+    public Tag(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public void update(Tag tag) {
         this.name = tag.name;
         this.deviceIds = tag.deviceIds;

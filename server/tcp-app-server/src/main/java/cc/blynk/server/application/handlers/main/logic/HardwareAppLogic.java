@@ -54,13 +54,13 @@ public class HardwareAppLogic {
 
         String[] split = split2(message.body);
 
-        String[] dashIdAndDeviceIdString = split2Device(split[0]);
-        int dashId = ParseUtil.parseInt(dashIdAndDeviceIdString[0]);
-        int deviceId = 0;
+        String[] dashIdAndTargetIdString = split2Device(split[0]);
+        int dashId = ParseUtil.parseInt(dashIdAndTargetIdString[0]);
+        int targetId = 0;
 
         //new logic for multi devices
-        if (dashIdAndDeviceIdString.length == 2) {
-            deviceId = ParseUtil.parseInt(dashIdAndDeviceIdString[1]);
+        if (dashIdAndTargetIdString.length == 2) {
+            targetId = ParseUtil.parseInt(dashIdAndTargetIdString[1]);
         }
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
@@ -70,8 +70,12 @@ public class HardwareAppLogic {
             return;
         }
 
-        //validating device id
-        dash.getDeviceIndexById(deviceId);
+        //sending message only if widget assigned to device or tag has assigned devices
+        int[] deviceIds = dash.getDeviceIdsByTarget(targetId);
+        if (deviceIds == null) {
+            log.debug("No assigned target id for received command.");
+            return;
+        }
 
         final char operation = split[1].charAt(1);
         switch (operation) {
@@ -81,24 +85,20 @@ public class HardwareAppLogic {
                 final byte pin = ParseUtil.parseByte(splitBody[1]);
                 final String value = splitBody[2];
 
-                dash.update(deviceId, pin, pinType, value);
+                dash.update(targetId, pin, pinType, value);
 
                 //if dash was shared. check for shared channels
                 if (state.user.dashShareTokens != null) {
                     String sharedToken = state.user.dashShareTokens.get(dashId);
                     session.sendToSharedApps(ctx.channel(), sharedToken, SYNC, message.id, message.body);
                 }
-                session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceId);
 
-                //todo this temp catch. remove in next update.
-                try {
-                    webhookProcessor.process(session, dash, deviceId, pin, pinType, value);
-                } catch (Exception e) {
-                    log.error("Error app processing.", e);
-                }
+                session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceIds);
+                webhookProcessor.process(session, dash, targetId, pin, pinType, value);
+
                 break;
             case 'r' :
-                Widget widget = dash.findWidgetByPin(deviceId, split[1].split(StringUtils.BODY_SEPARATOR_STRING));
+                Widget widget = dash.findWidgetByPin(targetId, split[1].split(StringUtils.BODY_SEPARATOR_STRING));
                 if (widget == null) {
                     log.debug("No widget for read command.");
                     ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
@@ -107,11 +107,11 @@ public class HardwareAppLogic {
 
                 if (widget instanceof FrequencyWidget) {
                     if (((FrequencyWidget) widget).isTicked(split[1])) {
-                        session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceId);
+                        session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], targetId);
                     }
                 } else {
                     //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
-                    session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceId);
+                    session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], targetId);
                 }
                 break;
         }

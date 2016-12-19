@@ -3,7 +3,6 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.tags;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Tag;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.JsonParser;
@@ -51,7 +50,7 @@ public class UpdateTagLogic {
         Tag existingTag = dash.getTagById(newTag.id);
 
         if (existingTag == null) {
-            throw new IllegalCommandBodyException("Attempt to update tag with non existing id.");
+            throw new IllegalCommandException("Attempt to update tag with non existing id.");
         }
 
         existingTag.update(newTag);

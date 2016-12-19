@@ -163,6 +163,27 @@ public class DashBoard {
         throw new IllegalCommandException("Device with passed id not found.");
     }
 
+    /**
+     * Returns list of device ids that should receive user command.
+     * Widget could be assigned to specific device or to tag that
+     * is assigned to few devices.
+     *
+     * @param targetId - deviceId or tagId
+     */
+    public int[] getDeviceIdsByTarget(int targetId) {
+        Device device = getDeviceById(targetId);
+        if (device != null) {
+            return new int[] {device.id};
+        }
+
+        Tag tag = getTagById(targetId);
+        if (tag != null && tag.deviceIds != null && tag.deviceIds.length > 0) {
+            return tag.deviceIds;
+        }
+
+       return null;
+    }
+
     public Device getDeviceById(int id) {
         for (Device device : devices) {
             if (device.id == id) {

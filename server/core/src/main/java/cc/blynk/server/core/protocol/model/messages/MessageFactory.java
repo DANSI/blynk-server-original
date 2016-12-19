@@ -6,10 +6,12 @@ import cc.blynk.server.core.protocol.model.messages.appllication.AddEnergy;
 import cc.blynk.server.core.protocol.model.messages.appllication.AddPushToken;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDashMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
+import cc.blynk.server.core.protocol.model.messages.appllication.CreateTag;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateWidget;
 import cc.blynk.server.core.protocol.model.messages.appllication.DeActivateDashboardMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.DeleteDashMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.DeleteDevice;
+import cc.blynk.server.core.protocol.model.messages.appllication.DeleteTag;
 import cc.blynk.server.core.protocol.model.messages.appllication.DeleteWidget;
 import cc.blynk.server.core.protocol.model.messages.appllication.ExportDataMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetDevices;
@@ -17,6 +19,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.GetEnergy;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataStringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetMetadata;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetTags;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedStringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
@@ -27,6 +30,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.SaveMetadata;
 import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateDashMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateDevice;
+import cc.blynk.server.core.protocol.model.messages.appllication.UpdateTag;
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateWidget;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.GetShareTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.GetSharedDashMessage;
@@ -140,6 +144,15 @@ public class MessageFactory {
                 return new DeleteDevice(messageId, body);
             case GET_DEVICES :
                 return new GetDevices(messageId, body);
+
+            case CREATE_TAG :
+                return new CreateTag(messageId, body);
+            case UPDATE_TAG :
+                return new UpdateTag(messageId, body);
+            case DELETE_TAG :
+                return new DeleteTag(messageId, body);
+            case GET_TAGS :
+                return new GetTags(messageId, body);
 
             case GET_ENERGY :
                 return new GetEnergy(messageId, body);

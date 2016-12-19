@@ -81,6 +81,15 @@ public class CommandParser {
             case "getdevices" :
                 return GET_DEVICES;
 
+            case "createtag" :
+                return CREATE_TAG;
+            case "updatetag" :
+                return UPDATE_TAG;
+            case "deletetag" :
+                return DELETE_TAG;
+            case "gettags" :
+                return GET_TAGS;
+
             case "addenergy" :
                 return ADD_ENERGY;
             case "getenergy" :

@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
@@ -52,7 +51,7 @@ public class CreateTagLogic {
 
         for (Tag tag : dash.tags) {
             if (tag.id == newTag.id || tag.name.equals(newTag.name)) {
-                throw new NotAllowedException("Tag with same id/name already exists.");
+                throw new IllegalCommandException("Tag with same id/name already exists.");
             }
         }
 
