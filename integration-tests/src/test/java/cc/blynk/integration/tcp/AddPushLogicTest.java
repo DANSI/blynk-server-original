@@ -107,7 +107,7 @@ public class AddPushLogicTest extends IntegrationBase {
         assertTrue(notification.androidTokens.containsKey("uid1"));
         assertTrue(notification.androidTokens.containsValue("token1"));
 
-        clientPair.appClient.send("saveDash " + profile.getDashById(1).toString());
+        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
 
         clientPair.appClient.send("loadProfileGzipped");

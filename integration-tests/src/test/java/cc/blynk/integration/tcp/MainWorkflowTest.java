@@ -219,7 +219,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void appConnectedEvent() throws Exception {
-        clientPair.appClient.send("saveDash {\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
+        clientPair.appClient.send("updateDash {\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
@@ -274,7 +274,7 @@ public class MainWorkflowTest extends IntegrationBase {
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         notification.notifyWhenOffline = false;
 
-        clientPair.appClient.send("saveDash " + profile.getDashById(1).toString());
+        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
@@ -455,7 +455,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testDashCommands() throws Exception {
-        clientPair.appClient.send("saveDash {\"id\":10, \"name\":\"test board update\"}");
+        clientPair.appClient.send("updateDash {\"id\":10, \"name\":\"test board update\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
 
         clientPair.appClient.send("createDash {\"id\":10, \"name\":\"test board\"}");
@@ -464,7 +464,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("createDash {\"id\":10, \"name\":\"test board\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, NOT_ALLOWED)));
 
-        clientPair.appClient.send("saveDash {\"id\":10, \"name\":\"test board update\"}");
+        clientPair.appClient.send("updateDash {\"id\":10, \"name\":\"test board update\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
 
         clientPair.hardwareClient.send("ping");
@@ -503,7 +503,7 @@ public class MainWorkflowTest extends IntegrationBase {
         String expectedProfile = "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":true}]}";
         assertEquals(expectedProfile, responseProfile.toString());
 
-        clientPair.appClient.send("saveDash {\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}");
+        clientPair.appClient.send("updateDash {\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         expectedProfile = "{\"dashBoards\":[{\"id\":10,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":true}]}";
@@ -1405,7 +1405,7 @@ public class MainWorkflowTest extends IntegrationBase {
         dashBoard.name = "Test";
         dashBoard.widgets = new Widget[] {timer};
 
-        clientPair.appClient.send("saveDash " + dashBoard.toString());
+        clientPair.appClient.send("updateDash " + dashBoard.toString());
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         clientPair.appClient.send("activate 1");
@@ -1445,7 +1445,7 @@ public class MainWorkflowTest extends IntegrationBase {
         dashBoard.name = "Test";
         dashBoard.widgets = new Widget[] {timer};
 
-        clientPair.appClient.send("saveDash " + dashBoard.toString());
+        clientPair.appClient.send("updateDash " + dashBoard.toString());
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         dashBoard.id = 2;

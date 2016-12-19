@@ -57,7 +57,7 @@ public class CommandParser {
                 return BRIDGE;
             case "createdash" :
                 return CREATE_DASH;
-            case "savedash" :
+            case "updatedash" :
                 return UPDATE_DASH;
             case "deletedash" :
                 return DELETE_DASH;
