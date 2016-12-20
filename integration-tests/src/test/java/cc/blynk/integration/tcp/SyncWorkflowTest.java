@@ -36,6 +36,7 @@ import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertArrayEquals;
@@ -577,6 +578,44 @@ public class SyncWorkflowTest extends IntegrationBase {
 
         hardClient2.send("hardsync");
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 1"))));
+    }
+
+    @Test
+    public void testSyncForMultiDevicesNoWidget() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.send("login " + device.token);
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        hardClient2.reset();
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_CONNECTED, "1-1")));
+
+        clientPair.hardwareClient.send("hardware vw 119 1");
+        hardClient2.send("hardware vw 119 1");
+
+        clientPair.hardwareClient.send("hardsync");
+        verify(clientPair.hardwareClient.responseMock, timeout(1000).times(9)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("dw 1 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("dw 2 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("dw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("aw 3 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 4 244"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("aw 7 3"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("aw 30 3"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 13 60 143 158"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 119 1"))));
+
+        hardClient2.send("hardsync");
+        verify(hardClient2.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 119 1"))));
     }
 
 }
