@@ -1,7 +1,6 @@
 package cc.blynk.server.core.reporting.average;
 
 import cc.blynk.server.core.model.enums.GraphType;
-import cc.blynk.server.core.model.enums.PinType;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -18,11 +17,11 @@ public final class AggregationKey implements Serializable {
     public final String username;
     public final int dashId;
     public final int deviceId;
-    public final PinType pinType;
+    public final char pinType;
     public final byte pin;
     private final long ts;
 
-    public AggregationKey(String username, int dashId, int deviceId, PinType pinType, byte pin, long ts) {
+    public AggregationKey(String username, int dashId, int deviceId, char pinType, byte pin, long ts) {
         this.username = username;
         this.dashId = dashId;
         this.deviceId = deviceId;
@@ -48,10 +47,10 @@ public final class AggregationKey implements Serializable {
 
         if (dashId != that.dashId) return false;
         if (deviceId != that.deviceId) return false;
+        if (pinType != that.pinType) return false;
         if (pin != that.pin) return false;
         if (ts != that.ts) return false;
-        if (username != null ? !username.equals(that.username) : that.username != null) return false;
-        return pinType == that.pinType;
+        return !(username != null ? !username.equals(that.username) : that.username != null);
 
     }
 
@@ -60,7 +59,7 @@ public final class AggregationKey implements Serializable {
         int result = username != null ? username.hashCode() : 0;
         result = 31 * result + dashId;
         result = 31 * result + deviceId;
-        result = 31 * result + (pinType != null ? pinType.hashCode() : 0);
+        result = 31 * result + (int) pinType;
         result = 31 * result + (int) pin;
         result = 31 * result + (int) (ts ^ (ts >>> 32));
         return result;

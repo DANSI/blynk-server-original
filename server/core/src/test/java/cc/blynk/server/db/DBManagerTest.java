@@ -205,7 +205,7 @@ public class DBManagerTest {
         value.update(1);
         long ts = System.currentTimeMillis();
         for (int i = 0; i < 60; i++) {
-            map.put(new AggregationKey("test@test.com", i, 0, PinType.ANALOG, (byte) i, ts), value);
+            map.put(new AggregationKey("test@test.com", i, 0, PinType.ANALOG.pintTypeChar, (byte) i, ts), value);
             dbManager.insertReporting(map, GraphType.MINUTE);
             dbManager.insertReporting(map, GraphType.HOURLY);
             dbManager.insertReporting(map, GraphType.DAILY);

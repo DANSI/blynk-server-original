@@ -1,6 +1,5 @@
 package cc.blynk.server.core.reporting.average;
 
-import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.utils.FileUtils;
 
 import java.io.Closeable;
@@ -62,7 +61,7 @@ public class AverageAggregator implements Closeable {
         aggregationValue.update(value);
     }
 
-    public void collect(String username, int dashId, int deviceId, PinType pinType, byte pin, long ts, String value) {
+    public void collect(String username, int dashId, int deviceId, char pinType, byte pin, long ts, String value) {
         try {
             double val = Double.parseDouble(value);
             aggregate(minute, new AggregationKey(username, dashId, deviceId, pinType, pin, ts / MINUTE), val);

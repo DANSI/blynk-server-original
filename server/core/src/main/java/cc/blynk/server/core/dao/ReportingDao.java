@@ -43,7 +43,7 @@ public class ReportingDao {
         this.ENABLE_RAW_DATA_STORE = serverProperties.getBoolProperty("enable.raw.data.store");
     }
 
-    public static String generateFilename(int dashId, int deviceId, PinType pinType, byte pin, GraphType type) {
+    public static String generateFilename(int dashId, int deviceId, char pinType, byte pin, GraphType type) {
         switch (type) {
             case MINUTE :
                 return formatMinute(dashId, deviceId, pinType, pin);
@@ -55,7 +55,7 @@ public class ReportingDao {
     }
 
     public static ByteBuffer getByteBufferFromDisk(String dataFolder, String username, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphType type) {
-        Path userDataFile = Paths.get(dataFolder, username, generateFilename(dashId, deviceId, pinType, pin, type));
+        Path userDataFile = Paths.get(dataFolder, username, generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type));
         if (Files.notExists(userDataFile)) {
             return null;
         }
@@ -99,32 +99,32 @@ public class ReportingDao {
 
     public void delete(String username, int dashId, int deviceId, PinType pinType, byte pin) {
         log.debug("Removing {}{} pin data for dashId {}, deviceId {}.", pinType.pintTypeChar, pin, dashId, deviceId);
-        Path userDataMinuteFile = Paths.get(dataFolder, username, formatMinute(dashId, deviceId, pinType, pin));
-        Path userDataHourlyFile = Paths.get(dataFolder, username, formatHour(dashId, deviceId, pinType, pin));
-        Path userDataDailyFile = Paths.get(dataFolder, username, formatDaily(dashId, deviceId, pinType, pin));
+        Path userDataMinuteFile = Paths.get(dataFolder, username, formatMinute(dashId, deviceId, pinType.pintTypeChar, pin));
+        Path userDataHourlyFile = Paths.get(dataFolder, username, formatHour(dashId, deviceId, pinType.pintTypeChar, pin));
+        Path userDataDailyFile = Paths.get(dataFolder, username, formatDaily(dashId, deviceId, pinType.pintTypeChar, pin));
         FileUtils.deleteQuietly(userDataMinuteFile);
         FileUtils.deleteQuietly(userDataHourlyFile);
         FileUtils.deleteQuietly(userDataDailyFile);
     }
 
-    protected static String formatMinute(int dashId, int deviceId, PinType pinType, byte pin) {
+    protected static String formatMinute(int dashId, int deviceId, char pinType, byte pin) {
         return format("minute", dashId, deviceId, pinType, pin);
     }
 
-    protected static String formatHour(int dashId, int deviceId, PinType pinType, byte pin) {
+    protected static String formatHour(int dashId, int deviceId, char pinType, byte pin) {
         return format("hourly", dashId, deviceId, pinType, pin);
     }
 
-    protected static String formatDaily(int dashId, int deviceId, PinType pinType, byte pin) {
+    protected static String formatDaily(int dashId, int deviceId, char pinType, byte pin) {
         return format("daily", dashId, deviceId, pinType, pin);
     }
 
-    private static String format(String type, int dashId, int deviceId, PinType pinType, byte pin) {
+    private static String format(String type, int dashId, int deviceId, char pinType, byte pin) {
         //todo this is back compatibility code. should be removed in future versions.
         if (deviceId == 0) {
-            return "history_" + dashId + "_" + pinType.pintTypeChar + pin + "_" + type + ".bin";
+            return "history_" + dashId + "_" + pinType + pin + "_" + type + ".bin";
         }
-        return "history_" + dashId + DEVICE_SEPARATOR + deviceId + "_" + pinType.pintTypeChar + pin + "_" + type + ".bin";
+        return "history_" + dashId + DEVICE_SEPARATOR + deviceId + "_" + pinType + pin + "_" + type + ".bin";
     }
 
     public void process(String username, int dashId, int deviceId, byte pin, PinType pinType, String value, long ts) {
@@ -132,7 +132,7 @@ public class ReportingDao {
             logInCSV(username, dashId, deviceId, pin, pinType, value, ts);
         }
 
-        averageAggregator.collect(username, dashId, deviceId, pinType, pin, ts, value);
+        averageAggregator.collect(username, dashId, deviceId, pinType.pintTypeChar, pin, ts, value);
     }
 
     //This is used only for local servers. A bit ugly. Should be removed in future.

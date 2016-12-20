@@ -36,7 +36,7 @@ public class AverageAggregatorTest {
     public void testAverageWorksOkForOnePin() {
         AverageAggregator averageAggregator = new AverageAggregator("");
         String username = "test";
-        PinType pinType = PinType.VIRTUAL;
+        char pinType = PinType.VIRTUAL.pintTypeChar;
         int dashId = 1;
         byte pin = 1;
 
@@ -62,7 +62,7 @@ public class AverageAggregatorTest {
     public void testAverageWorksForOneDay() {
         AverageAggregator averageAggregator = new AverageAggregator("");
         String username = "test";
-        PinType pinType = PinType.VIRTUAL;
+        char pinType = PinType.VIRTUAL.pintTypeChar;
         int dashId = 1;
         byte pin = 1;
 
@@ -102,7 +102,7 @@ public class AverageAggregatorTest {
         AverageAggregator averageAggregator = new AverageAggregator(reportingFolder);
 
         String username = "test";
-        PinType pinType = PinType.VIRTUAL;
+        char pinType = PinType.VIRTUAL.pintTypeChar;
         int dashId = 1;
         byte pin = 1;
 
@@ -148,7 +148,7 @@ public class AverageAggregatorTest {
 
         ReportingDao reportingDao = new ReportingDao(reportingFolder, null, new ServerProperties());
 
-        reportingDao.delete(username, dashId, 0, pinType, pin);
+        reportingDao.delete(username, dashId, 0, PinType.VIRTUAL, pin);
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregator.HOURLY_TEMP_FILENAME)));
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregator.DAILY_TEMP_FILENAME)));
     }

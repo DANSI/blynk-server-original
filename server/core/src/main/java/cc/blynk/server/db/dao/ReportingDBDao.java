@@ -48,7 +48,7 @@ public class ReportingDBDao {
                                                GraphType type) throws SQLException {
         final AggregationKey key = entry.getKey();
         final AggregationValue value = entry.getValue();
-        prepareReportingInsert(ps, key.username, key.dashId, key.deviceId, key.pin, key.pinType, key.getTs(type), value.calcAverage());
+        prepareReportingInsert(ps, key.username, key.dashId, key.deviceId, key.pin, PinType.getPinType(key.pinType), key.getTs(type), value.calcAverage());
     }
 
     public static void prepareReportingInsert(PreparedStatement ps,
