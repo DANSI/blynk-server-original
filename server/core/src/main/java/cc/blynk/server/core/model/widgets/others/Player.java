@@ -2,18 +2,13 @@ package cc.blynk.server.core.model.widgets.others;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
-import io.netty.channel.ChannelHandlerContext;
-
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 28.03.16.
  */
-public class Player extends OnePinWidget implements HardwareSyncWidget {
+public class Player extends OnePinWidget {
 
     public boolean isOnPlay;
 
@@ -32,14 +27,6 @@ public class Player extends OnePinWidget implements HardwareSyncWidget {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void send(ChannelHandlerContext ctx, int msgId) {
-        String body = makeHardwareBody();
-        if (body != null) {
-            ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
-        }
     }
 
     @Override

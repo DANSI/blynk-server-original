@@ -1,10 +1,13 @@
 package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
 import cc.blynk.server.core.model.widgets.controls.SyncOnActivate;
 import cc.blynk.utils.JsonParser;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.SYNC;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
@@ -16,7 +19,7 @@ import static cc.blynk.utils.StringUtils.makeBody;
  * Created on 02.12.15.
  */
 //todo all this should be replaced with 1 Pin field.
-public abstract class OnePinWidget extends Widget implements SyncOnActivate {
+public abstract class OnePinWidget extends Widget implements SyncOnActivate, HardwareSyncWidget {
 
     public int deviceId;
 
@@ -62,6 +65,16 @@ public abstract class OnePinWidget extends Widget implements SyncOnActivate {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void send(ChannelHandlerContext ctx, int msgId, int deviceId) {
+        if (this.deviceId == deviceId) {
+            String body = makeHardwareBody();
+            if (body != null) {
+                ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
+            }
+        }
     }
 
     //todo cover with test

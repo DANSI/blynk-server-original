@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.outputs;
 
 import cc.blynk.server.core.model.widgets.OnePinWidget;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * The Blynk Project.
@@ -28,6 +29,10 @@ public class Graph extends OnePinWidget implements FrequencyWidget {
     @Override
     public final void setLastRequestTS(String body, long now) {
         this.lastRequestTS = now;
+    }
+
+    @Override
+    public void send(ChannelHandlerContext ctx, int msgId, int deviceId) {
     }
 
     @Override

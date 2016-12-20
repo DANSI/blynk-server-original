@@ -1,18 +1,13 @@
 package cc.blynk.server.core.model.widgets.outputs;
 
 import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
-import io.netty.channel.ChannelHandlerContext;
-
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class ValueDisplay extends OnePinWidget implements FrequencyWidget, HardwareSyncWidget {
+public class ValueDisplay extends OnePinWidget implements FrequencyWidget {
 
     private int frequency;
 
@@ -36,14 +31,6 @@ public class ValueDisplay extends OnePinWidget implements FrequencyWidget, Hardw
     @Override
     public String getModeType() {
         return "in";
-    }
-
-    @Override
-    public void send(ChannelHandlerContext ctx, int msgId) {
-        final String body = makeHardwareBody();
-        if (body != null) {
-            ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
-        }
     }
 
     @Override

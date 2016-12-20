@@ -12,7 +12,7 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public interface HardwareSyncWidget {
 
-    void send(ChannelHandlerContext ctx, int msgId);
+    void send(ChannelHandlerContext ctx, int msgId, int deviceId);
 
     default boolean isRequiredForSyncAll() {
         return true;

@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.sensors;
 
 import cc.blynk.server.core.model.widgets.OnePinWidget;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * The Blynk Project.
@@ -15,7 +16,12 @@ public class Accelerometer extends OnePinWidget {
     }
 
     @Override
+    public void send(ChannelHandlerContext ctx, int msgId, int deviceId) {
+    }
+
+    @Override
     public int getPrice() {
         return 400;
     }
+
 }

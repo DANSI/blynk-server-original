@@ -15,7 +15,7 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class Timer extends OnePinWidget implements HardwareSyncWidget {
+public class Timer extends OnePinWidget {
 
     public long startTime = -1;
 
@@ -35,8 +35,8 @@ public class Timer extends OnePinWidget implements HardwareSyncWidget {
     public volatile String value;
 
     @Override
-    public void send(ChannelHandlerContext ctx, int msgId) {
-        if (value != null) {
+    public void send(ChannelHandlerContext ctx, int msgId, int deviceId) {
+        if (value != null && this.deviceId == deviceId) {
             ctx.write(makeUTF8StringMessage(HARDWARE, msgId, value), ctx.voidPromise());
         }
     }

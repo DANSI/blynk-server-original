@@ -38,7 +38,7 @@ public class HardwareSyncLogic {
                 if (widget instanceof HardwareSyncWidget) {
                     HardwareSyncWidget hardwareSyncWidget = (HardwareSyncWidget) widget;
                     if (hardwareSyncWidget.isRequiredForSyncAll()) {
-                        hardwareSyncWidget.send(ctx, message.id);
+                        hardwareSyncWidget.send(ctx, message.id, deviceId);
                     }
                 }
             }
@@ -73,7 +73,7 @@ public class HardwareSyncLogic {
                             ctx.write(makeUTF8StringMessage(HARDWARE, message.id, body), ctx.voidPromise());
                         }
                     } else if (widget instanceof HardwareSyncWidget) {
-                        ((HardwareSyncWidget) widget).send(ctx, message.id);
+                        ((HardwareSyncWidget) widget).send(ctx, message.id, deviceId);
                     }
                 }
                 ctx.flush();

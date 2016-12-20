@@ -6,6 +6,7 @@ import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.structure.LimitedArrayDeque;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.SYNC;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
@@ -61,6 +62,10 @@ public class Map extends OnePinWidget {
             String body = makeBody(dashId, deviceId, makeHardwareBody(pinType, pin, storedValue));
             appChannel.write(makeUTF8StringMessage(SYNC, 1111, body));
         }
+    }
+
+    @Override
+    public void send(ChannelHandlerContext ctx, int msgId, int deviceId) {
     }
 
     @Override

@@ -2,18 +2,14 @@ package cc.blynk.server.core.model.widgets.ui;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
 import cc.blynk.server.core.model.widgets.others.rtc.StringToZoneId;
 import cc.blynk.server.core.model.widgets.others.rtc.ZoneIdToString;
 import cc.blynk.utils.ParseUtil;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.netty.channel.ChannelHandlerContext;
 
 import java.time.ZoneId;
 
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**
@@ -21,7 +17,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
  * Created by Dmitriy Dumanskiy.
  * Created on 27.08.16.
  */
-public class TimeInput extends OnePinWidget implements HardwareSyncWidget {
+public class TimeInput extends OnePinWidget {
 
     private static final int NEVER = -1;
     private static final int SUNSET = -2;
@@ -46,14 +42,6 @@ public class TimeInput extends OnePinWidget implements HardwareSyncWidget {
     public boolean isSunsetSunriseAllowed;
 
     public boolean isTimezoneAllowed;
-
-    @Override
-    public void send(ChannelHandlerContext ctx, int msgId) {
-        String body = makeHardwareBody();
-        if (body != null) {
-            ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
-        }
-    }
 
     @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {

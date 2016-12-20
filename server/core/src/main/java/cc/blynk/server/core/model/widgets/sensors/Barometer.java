@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.sensors;
 
 import cc.blynk.server.core.model.widgets.OnePinWidget;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * The Blynk Project.
@@ -12,6 +13,10 @@ public class Barometer extends OnePinWidget {
     @Override
     public String getModeType() {
         return "out";
+    }
+
+    @Override
+    public void send(ChannelHandlerContext ctx, int msgId, int deviceId) {
     }
 
     @Override
