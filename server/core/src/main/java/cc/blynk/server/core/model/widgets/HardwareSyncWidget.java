@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model.widgets.controls;
+package cc.blynk.server.core.model.widgets;
 
 import io.netty.channel.ChannelHandlerContext;
 

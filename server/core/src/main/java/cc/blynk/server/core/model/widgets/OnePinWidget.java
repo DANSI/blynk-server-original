@@ -1,8 +1,6 @@
 package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.controls.HardwareSyncWidget;
-import cc.blynk.server.core.model.widgets.controls.SyncOnActivate;
 import cc.blynk.utils.JsonParser;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;

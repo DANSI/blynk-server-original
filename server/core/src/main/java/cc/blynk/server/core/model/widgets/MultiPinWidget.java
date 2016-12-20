@@ -2,7 +2,6 @@ package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.controls.SyncOnActivate;
 import io.netty.channel.Channel;
 
 import java.util.StringJoiner;

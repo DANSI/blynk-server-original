@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets.outputs;
 
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.structure.LimitedArrayDeque;
