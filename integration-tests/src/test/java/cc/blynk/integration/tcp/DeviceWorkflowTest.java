@@ -393,6 +393,67 @@ public class DeviceWorkflowTest extends IntegrationBase {
         assertEqualDevice(device1, devices[1]);
     }
 
+    @Test
+    public void testCorrectOnlineStatusForDisconnect() throws Exception {
+        Device device0 = new Device(0, "My Dashboard", "UNO");
+        device0.status = Status.ONLINE;
+
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody();
+
+        DeviceStatus[] devices = JsonParser.mapper.readValue(response, DeviceStatus[].class);
+        assertNotNull(devices);
+        assertEquals(1, devices.length);
+
+        assertEqualDevice(device0, devices[0]);
+
+        clientPair.hardwareClient.stop().await();
+        device0.status = Status.OFFLINE;
+
+        clientPair.appClient.send("getDevices 1");
+        response = clientPair.appClient.getBody(2);
+
+        devices = JsonParser.mapper.readValue(response, DeviceStatus[].class);
+        assertNotNull(devices);
+        assertEquals(1, devices.length);
+
+        assertEqualDevice(device0, devices[0]);
+    }
+
+    @Test
+    public void testCorrectOnlineStatusForReconnect() throws Exception {
+        Device device0 = new Device(0, "My Dashboard", "UNO");
+        device0.status = Status.ONLINE;
+
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody();
+
+        DeviceStatus[] devices = JsonParser.mapper.readValue(response, DeviceStatus[].class);
+        assertNotNull(devices);
+        assertEquals(1, devices.length);
+
+        assertEqualDevice(device0, devices[0]);
+
+        clientPair.hardwareClient.stop().await();
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.send("login " + devices[0].token);
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getDevices 1");
+        response = clientPair.appClient.getBody();
+
+        devices = JsonParser.mapper.readValue(response, DeviceStatus[].class);
+        assertNotNull(devices);
+        assertEquals(1, devices.length);
+
+        assertEqualDevice(device0, devices[0]);
+    }
+
     private static void assertEqualDevice(Device expected, DeviceStatus real) {
         assertEquals(expected.id, real.id);
         //assertEquals(expected.name, real.name);
