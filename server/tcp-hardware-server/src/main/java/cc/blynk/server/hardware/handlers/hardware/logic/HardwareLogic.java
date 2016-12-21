@@ -58,14 +58,6 @@ public class HardwareLogic {
         Session session = sessionDao.userSession.get(state.userKey);
 
         final String body = message.body;
-
-        //minimum command - "ar 1"
-        if (body.length() < 4) {
-            log.debug("HardwareLogic command body too short.");
-            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
-            return;
-        }
-
         final int dashId = state.dashId;
         final int deviceId = state.deviceId;
 
