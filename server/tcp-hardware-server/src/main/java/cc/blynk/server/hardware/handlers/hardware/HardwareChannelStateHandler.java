@@ -48,7 +48,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             if (session != null) {
                 session.removeHardChannel(ctx.channel());
                 log.trace("Hardware channel disconnect.");
-                sentOfflineMessage(state);
+                sentOfflineMessage(session, state);
             }
         }
     }
@@ -62,18 +62,25 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private void sentOfflineMessage(HardwareStateHolder state) {
+    private void sentOfflineMessage(Session session, HardwareStateHolder state) {
         DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(state.dashId);
+        Device device = dashBoard.getDeviceById(state.deviceId);
+
+        //this is special case.
+        //in case hardware quickly reconnects we do not mark it as disconnected
+        //as it is already online after quick disconnect.
+        //https://github.com/blynkkk/blynk-server/issues/403
+        if (!session.isHardwareConnected(state.dashId, state.deviceId)) {
+            device.disconnected();
+        }
+
         if (!dashBoard.isActive) {
             return;
         }
 
         Notification notification = dashBoard.getWidgetByType(Notification.class);
-        Device device = dashBoard.getDeviceById(state.deviceId);
-        device.disconnected();
 
         if (notification == null || !notification.notifyWhenOffline) {
-            Session session = sessionDao.userSession.get(state.userKey);
             if (session.getAppChannels().size() > 0) {
                 for (Channel appChannel : session.getAppChannels()) {
                     appChannel.writeAndFlush(

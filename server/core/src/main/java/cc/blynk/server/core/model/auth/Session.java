@@ -123,6 +123,16 @@ public class Session {
         }
     }
 
+    public boolean isHardwareConnected(int dashId, int deviceId) {
+        for (Channel channel : hardwareChannels) {
+            HardwareStateHolder hardwareState = getHardState(channel);
+            if (hardwareState != null && hardwareState.dashId == dashId && hardwareState.deviceId == deviceId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isHardwareConnected(int dashId) {
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
