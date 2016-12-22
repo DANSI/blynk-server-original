@@ -94,7 +94,11 @@ public class HardwareAppLogic {
                 }
 
                 session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceIds);
-                webhookProcessor.process(session, dash, targetId, pin, pinType, value);
+                try {
+                    webhookProcessor.process(session, dash, targetId, pin, pinType, value);
+                } catch (Exception e) {
+                    log.warn("Error webhook processing. ", e.getMessage());
+                }
 
                 break;
             case 'r' :
