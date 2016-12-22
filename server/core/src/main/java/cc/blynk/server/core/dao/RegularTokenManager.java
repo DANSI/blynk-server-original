@@ -27,7 +27,9 @@ class RegularTokenManager {
                 if (user.profile != null) {
                     for (DashBoard dashBoard : user.profile.dashBoards) {
                         for (Device device : dashBoard.devices) {
-                            put(device.token, new TokenValue(user, dashBoard.id, device.id));
+                            if (device.token != null) {
+                                put(device.token, new TokenValue(user, dashBoard.id, device.id));
+                            }
                         }
                     }
                 }
