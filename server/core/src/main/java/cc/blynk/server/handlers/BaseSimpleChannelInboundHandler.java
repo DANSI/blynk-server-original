@@ -32,7 +32,7 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
         this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit");
         this.USER_QUOTA_LIMIT_WARN_PERIOD = props.getIntProperty("user.message.quota.limit.exceeded.warning.period");
-        this.USER_MESSAGE_SIZE_LIMIT = props.getIntProperty("user.message.size.limit", 100) * 1024;
+        this.USER_MESSAGE_SIZE_LIMIT = props.getIntProperty("user.message.size.limit", 32) * 1024;
         this.quotaMeter = new InstanceLoadMeter();
         this.state = state;
     }

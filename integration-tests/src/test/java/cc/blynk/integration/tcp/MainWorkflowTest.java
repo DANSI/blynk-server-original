@@ -689,6 +689,16 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testLargeMessageIsNotAccepted() throws Exception {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 32 * 1024 + 1; i++) {
+            sb.append("a");
+        }
+        clientPair.hardwareClient.send("hardware vw 1 " + sb.toString());
+        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), any());
+    }
+
+    @Test
     public void testSendUnicodeChar() throws Exception {
         clientPair.hardwareClient.send("hardware vw 1 °F");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 °F"))));
@@ -721,7 +731,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(new ResponseMessage(2, NO_ACTIVE_DASHBOARD)));
+        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(new ResponseMessage(2, NO_ACTIVE_DASHBOARD)));
     }
 
     @Test
@@ -746,13 +756,13 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(new ResponseMessage(2, NO_ACTIVE_DASHBOARD)));
+        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(new ResponseMessage(2, NO_ACTIVE_DASHBOARD)));
 
         clientPair.appClient.send("activate 2");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, DEVICE_NOT_IN_NETWORK)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(new ResponseMessage(3, NO_ACTIVE_DASHBOARD)));
+        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(new ResponseMessage(3, NO_ACTIVE_DASHBOARD)));
 
         clientPair.appClient.send("activate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
@@ -837,7 +847,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(new ResponseMessage(2, NO_ACTIVE_DASHBOARD)));
+        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(new ResponseMessage(2, NO_ACTIVE_DASHBOARD)));
 
         hardClient2.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("2 aw 1 1"))));
@@ -1266,7 +1276,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), eq(new HardwareConnectedMessage(1, "2")));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(1000).times(0)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, after(1000).never()).channelRead(any(), any());
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("1 aw 1 1"))));
         nonActiveDashHardClient.stop().awaitUninterruptibly();
     }
@@ -1376,8 +1386,8 @@ public class MainWorkflowTest extends IntegrationBase {
             sleep(9);
         }
 
-        verify(clientPair.hardwareClient.responseMock, times(0)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT)));
-        verify(clientPair.appClient.responseMock, times(0)).channelRead(any(), eq(produce(1, HARDWARE, b(body))));
+        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT)));
+        verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(produce(1, HARDWARE, b(body))));
     }
 
     @Test
