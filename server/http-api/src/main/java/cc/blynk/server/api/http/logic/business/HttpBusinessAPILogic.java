@@ -76,7 +76,6 @@ public class HttpBusinessAPILogic {
                                         result.put(groupBy, proj.name);
                                         break;
                                     default:
-                                        result.put(groupBy, proj.metadata.get(groupBy));
                                         break;
                                 }
                             }

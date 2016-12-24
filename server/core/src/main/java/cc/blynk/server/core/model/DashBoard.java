@@ -56,8 +56,6 @@ public class DashBoard {
     //used only for business UI
     public String token;
 
-    public Map<String, Object> metadata = new HashMap<>();
-
     @JsonDeserialize(keyUsing = PinStorageKeyDeserializer.class)
     public Map<PinStorageKey, String> pinsStorage = new HashMap<>();
 

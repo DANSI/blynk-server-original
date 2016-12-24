@@ -422,6 +422,7 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    @Ignore
     public void testProfileMetadata() throws Exception {
         clientPair.appClient.send("saveMetadata {\"lat\":123.123,\"lon\":124.124}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));

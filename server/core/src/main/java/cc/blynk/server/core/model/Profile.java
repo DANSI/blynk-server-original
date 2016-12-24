@@ -4,8 +4,6 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.JsonParser;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -17,11 +15,8 @@ public class Profile {
 
     public volatile DashBoard[] dashBoards;
 
-    public Map<String, Object> metadata;
-
     public Profile() {
         this.dashBoards = new DashBoard[0];
-        this.metadata = new HashMap<>();
     }
 
     /**

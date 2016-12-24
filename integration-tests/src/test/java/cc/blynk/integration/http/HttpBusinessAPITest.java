@@ -10,6 +10,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -82,6 +83,7 @@ public class HttpBusinessAPITest extends BaseTest {
     }
 
     @Test
+    @Ignore
     public void testGroupByMultipleFieldsAndCount() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + "?groupBy=name&groupBy=lat&aggregation=count&pin=V1&value=1");
 
@@ -103,6 +105,7 @@ public class HttpBusinessAPITest extends BaseTest {
     }
 
     @Test
+    @Ignore
     public void testFilterByValue() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + "?value=1");
 
@@ -139,6 +142,7 @@ public class HttpBusinessAPITest extends BaseTest {
     }
 
     @Test
+    @Ignore
     public void testGetSpecificParking() throws Exception {
         HttpGet request = new HttpGet(httpsServerUrl + "?name=parking2");
 

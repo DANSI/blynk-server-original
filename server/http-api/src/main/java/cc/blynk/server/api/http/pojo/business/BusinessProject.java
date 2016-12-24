@@ -4,8 +4,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 
-import java.util.Map;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -17,14 +15,11 @@ public class BusinessProject {
 
     public String name;
 
-    public Map<String, Object> metadata;
-
     public BusinessPin[] pins;
 
     public BusinessProject(DashBoard dashBoard) {
         this.id = dashBoard.id;
         this.name = dashBoard.name;
-        this.metadata = dashBoard.metadata;
         this.pins = new BusinessPin[dashBoard.widgets.length];
 
         for (int i = 0; i < dashBoard.widgets.length; i++) {
