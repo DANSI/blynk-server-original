@@ -70,7 +70,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         //in case hardware quickly reconnects we do not mark it as disconnected
         //as it is already online after quick disconnect.
         //https://github.com/blynkkk/blynk-server/issues/403
-        if (!session.isHardwareConnected(state.dashId, state.deviceId)) {
+        if (device != null && !session.isHardwareConnected(state.dashId, state.deviceId)) {
             device.disconnected();
         }
 
