@@ -18,6 +18,7 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 
 import static cc.blynk.server.websocket.WebSocketServer.WEBSOCKET_PATH;
 
@@ -50,6 +51,8 @@ public class WebSocketSSLServer extends BaseServer {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
+
+                pipeline.addLast(new ChannelTrafficShapingHandler(LIMIT, LIMIT, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
                 if (hardTimeoutSecs > 0) {
                     pipeline.addLast("WSSReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
                 }

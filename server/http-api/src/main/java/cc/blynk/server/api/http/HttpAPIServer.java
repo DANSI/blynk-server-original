@@ -19,6 +19,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 
 /**
  * The Blynk Project.
@@ -42,6 +43,7 @@ public class HttpAPIServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
 
+                pipeline.addLast(new ChannelTrafficShapingHandler(LIMIT, LIMIT, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
                 pipeline.addLast("HttpServerCodec", new HttpServerCodec());
                 pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(65536, true));
                 pipeline.addLast("HttpChunkedWrite", new ChunkedWriteHandler());

@@ -227,7 +227,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v4");
         HttpGet getRequest = new HttpGet(httpServerUrl + token + "/pin/v4");
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 50; i++) {
             request.setEntity(new StringEntity("[\"" + i + "\"]", ContentType.APPLICATION_JSON));
             try (CloseableHttpResponse response = httpclient.execute(request)) {
                 assertEquals(200, response.getStatusLine().getStatusCode());
