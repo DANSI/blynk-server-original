@@ -3,7 +3,6 @@ package cc.blynk.server.handlers;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
-import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.utils.ServerProperties;
@@ -23,7 +22,6 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
     public final StateHolderBase state;
     protected final int USER_QUOTA_LIMIT_WARN_PERIOD;
     protected final int USER_QUOTA_LIMIT;
-    private final int USER_MESSAGE_SIZE_LIMIT;
     private final TypeParameterMatcher matcher;
     private final InstanceLoadMeter quotaMeter;
     private long lastQuotaExceededTime;
@@ -32,7 +30,6 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
         this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit");
         this.USER_QUOTA_LIMIT_WARN_PERIOD = props.getIntProperty("user.message.quota.limit.exceeded.warning.period");
-        this.USER_MESSAGE_SIZE_LIMIT = props.getIntProperty("user.message.size.limit", 32) * 1024;
         this.quotaMeter = new InstanceLoadMeter();
         this.state = state;
     }
@@ -55,11 +52,6 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
                     return;
                 }
                 quotaMeter.mark();
-                if (typedMsg instanceof StringMessage) {
-                    if (((StringMessage) msg).length > USER_MESSAGE_SIZE_LIMIT) {
-                        throw new QuotaLimitException("User has exceeded message size limit.");
-                    }
-                }
                 messageReceived(ctx, typedMsg);
             } catch (Exception e) {
                 handleGeneralException(ctx, e, getMsgId(msg));

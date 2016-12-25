@@ -689,6 +689,7 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    @Ignore
     public void testLargeMessageIsNotAccepted() throws Exception {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 32 * 1024 + 1; i++) {
