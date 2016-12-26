@@ -42,6 +42,10 @@ public class UpdateDeviceLogic {
 
         Device newDevice = JsonParser.parseDevice(deviceString);
 
+        if (newDevice.isNotValid()) {
+            throw new IllegalCommandException("Income device message is not valid.");
+        }
+
         log.debug("Updating new device {}.", deviceString);
 
         Device existingDevice = dash.getDeviceById(newDevice.id);
