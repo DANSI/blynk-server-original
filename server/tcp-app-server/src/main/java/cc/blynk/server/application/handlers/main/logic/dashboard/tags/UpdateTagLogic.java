@@ -41,8 +41,8 @@ public class UpdateTagLogic {
 
         Tag newTag = JsonParser.parseTag(tagString);
 
-        if (newTag.name == null || newTag.name.equals("")) {
-            throw new IllegalCommandException("Income tag name is empty.");
+        if (newTag.isNotValid()) {
+            throw new IllegalCommandException("Income tag name is not valid.");
         }
 
         log.debug("Updating new tag {}.", tagString);

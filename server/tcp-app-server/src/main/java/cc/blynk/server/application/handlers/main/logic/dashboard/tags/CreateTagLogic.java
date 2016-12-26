@@ -43,8 +43,8 @@ public class CreateTagLogic {
 
         Tag newTag = JsonParser.parseTag(deviceString);
 
-        if (newTag.name == null || newTag.name.equals("")) {
-            throw new IllegalCommandException("Income tag name is empty.");
+        if (newTag.isNotValid()) {
+            throw new IllegalCommandException("Income tag name is not valid.");
         }
 
         log.debug("Creating new tag {}.", newTag);

@@ -15,6 +15,10 @@ public class Tag {
 
     public volatile int[] deviceIds;
 
+    public boolean isNotValid() {
+        return name == null || name.equals("") || name.length() > 40 || id < 100_000 || (deviceIds != null && deviceIds.length > 1000);
+    }
+
     public Tag() {
     }
 
