@@ -47,8 +47,7 @@ public class TimerWorker implements Runnable {
 
         LocalTime localTime = LocalTime.now(DateTimeUtils.UTC);
 
-        long curSeconds = localTime.getSecond() + localTime.getMinute() * 60 + localTime.getHour() * 3600;
-        checkTimers(curSeconds);
+        checkTimers(localTime.toSecondOfDay());
 
         //logging only events when timers ticked.
         if (onlineTimers > 0) {
