@@ -41,11 +41,11 @@ public class UpdateTagLogic {
 
         Tag newTag = JsonParser.parseTag(tagString);
 
+        log.debug("Updating new tag {}.", tagString);
+
         if (newTag.isNotValid()) {
             throw new IllegalCommandException("Income tag name is not valid.");
         }
-
-        log.debug("Updating new tag {}.", tagString);
 
         Tag existingTag = dash.getTagById(newTag.id);
 

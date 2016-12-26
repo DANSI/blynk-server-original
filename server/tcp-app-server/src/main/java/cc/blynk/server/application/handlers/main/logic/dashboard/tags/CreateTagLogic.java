@@ -43,11 +43,11 @@ public class CreateTagLogic {
 
         Tag newTag = JsonParser.parseTag(deviceString);
 
+        log.debug("Creating new tag {}.", newTag);
+
         if (newTag.isNotValid()) {
             throw new IllegalCommandException("Income tag name is not valid.");
         }
-
-        log.debug("Creating new tag {}.", newTag);
 
         for (Tag tag : dash.tags) {
             if (tag.id == newTag.id || tag.name.equals(newTag.name)) {
