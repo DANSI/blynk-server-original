@@ -23,11 +23,19 @@ import static cc.blynk.server.workers.timer.TimerType.START;
 import static cc.blynk.server.workers.timer.TimerType.STOP;
 
 /**
+ * Timer worker class responsible for triggering all timers at specified time.
+ * Current implementation is some kind of Hashed Wheel Timer.
+ * In general idea is very simple :
+ *
+ * Select timers at specified cell timer[secondsOfDayNow]
+ * and run it one by one, instead of naive implementation
+ * with iteration over all profiles every second
+ *
+ * + Concurrency around it as timerWorker may be accessed from different threads.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/6/2015.
- *
- * Simplest possible timer implementation.
  *
  */
 public class TimerWorker implements Runnable {
@@ -54,8 +62,8 @@ public class TimerWorker implements Runnable {
                 for (Widget widget : dashBoard.widgets) {
                     if (widget instanceof Timer) {
                         Timer timer = (Timer) widget;
-                        counter++;
                         add(entry.getKey(), timer, dashBoard.id);
+                        counter++;
                     }
                 }
             }
@@ -65,39 +73,46 @@ public class TimerWorker implements Runnable {
 
     public void add(UserKey userKey, Timer timer, int dashId) {
         if (timer.isValidStart()) {
-            ConcurrentMap<TimerKey, String> timers = get(timer.startTime);
+            ConcurrentMap<TimerKey, String> timers = getOrCreateIfEmpty(timer.startTime);
             timers.put(new TimerKey(userKey, timer, dashId, START), timer.startValue);
         }
         if (timer.isValidStop()) {
-            ConcurrentMap<TimerKey, String> timers = get(timer.stopTime);
+            ConcurrentMap<TimerKey, String> timers = getOrCreateIfEmpty(timer.stopTime);
             timers.put(new TimerKey(userKey, timer, dashId, STOP), timer.stopValue);
         }
     }
 
     public void delete(UserKey userKey, Timer timer, int dashId) {
         if (timer.isValidStart()) {
-            ConcurrentMap<TimerKey, String> timers = get(timer.startTime);
+            ConcurrentMap<TimerKey, String> timers = getOrCreateIfEmpty(timer.startTime);
             timers.remove(new TimerKey(userKey, timer, dashId, START));
         }
         if (timer.isValidStop()) {
-            ConcurrentMap<TimerKey, String> timers = get(timer.stopTime);
+            ConcurrentMap<TimerKey, String> timers = getOrCreateIfEmpty(timer.stopTime);
             timers.remove(new TimerKey(userKey, timer, dashId, STOP));
         }
     }
 
+
     /**
-     * Here is small chance that few threads will add timer for same time.
-     * So doing it threadsafe.
+     * Get array cell or fills it with ConcurrentHashMap if was empty before.
+     *
+     * @param index - array cell index
+     * @return return cell ConcurrentMap
      */
-    private ConcurrentMap<TimerKey, String> get(int time) {
-        ConcurrentMap<TimerKey, String> timers = timerExecutors.get(time);
+    private ConcurrentMap<TimerKey, String> getOrCreateIfEmpty(int index) {
+        ConcurrentMap<TimerKey, String> timers = timerExecutors.get(index);
+
+        //Here is small chance that few threads will access this method at same time.
+        //So doing it threadsafe.
         if (timers == null) {
             ConcurrentMap<TimerKey, String>  update = new ConcurrentHashMap<>();
-            if (timerExecutors.compareAndSet(time, null, update)) {
+            if (timerExecutors.compareAndSet(index, null, update)) {
                 return update;
             }
-            return timerExecutors.get(time);
+            return timerExecutors.get(index);
         }
+
         return timers;
     }
 
