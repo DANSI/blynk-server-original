@@ -78,7 +78,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(2000).times(1)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(1500).times(1)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 1")));
     }
 
@@ -99,7 +99,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(2000).times(1)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(1500).times(1)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 0")));
     }
 
@@ -122,7 +122,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(2000).times(2)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 0")));
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 1")));
     }
@@ -150,7 +150,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("deleteWidget 1\0" + 112);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
-        verify(clientPair.hardwareClient.responseMock, after(2000).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, after(2500).never()).channelRead(any(), any());
     }
 
     @Test
@@ -176,7 +176,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(2000).times(2)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 1")));
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 2")));
     }
@@ -200,7 +200,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(2000).times(2)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 0")));
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 1")));
     }
@@ -230,7 +230,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("updateWidget 1\0" + JsonParser.toJson(timer));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(2000).times(2)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 11")));
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 10")));
     }
@@ -257,7 +257,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("deleteDash 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
-        verify(clientPair.hardwareClient.responseMock, after(2000).times(0)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, after(2500).times(0)).channelRead(any(), any());
     }
 
 
