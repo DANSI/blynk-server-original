@@ -116,6 +116,8 @@ public class TimerWorker implements Runnable {
         return timers;
     }
 
+    private int actuallySendTimers;
+
     @Override
     public void run() {
         log.trace("Starting timer...");
@@ -123,15 +125,14 @@ public class TimerWorker implements Runnable {
         int curSeconds = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay();
         ConcurrentMap<TimerKey, String> tickedExecutors = timerExecutors.get(curSeconds);
 
-        if (tickedExecutors != null) {
-            log.trace("222");
-        }
-
-        if (tickedExecutors == null || tickedExecutors.size() == 0) {
+        int readyForTickTimers;
+        if (tickedExecutors == null || ((readyForTickTimers = tickedExecutors.size()) == 0)) {
             return;
         }
 
-        int tickedTimers = 0;
+        final long curTime = System.currentTimeMillis();
+        int activeTimers = 0;
+        actuallySendTimers = 0;
 
         for (Map.Entry<TimerKey, String> entry : tickedExecutors.entrySet()) {
             final TimerKey key = entry.getKey();
@@ -139,7 +140,7 @@ public class TimerWorker implements Runnable {
             if (user != null) {
                 DashBoard dash = user.profile.getDashById(key.dashId);
                 if (dash != null && dash.isActive) {
-                    tickedTimers++;
+                    activeTimers++;
                     final String value = entry.getValue();
                     triggerTimer(sessionDao, key.userKey, value, key.dashId, key.timer.deviceId);
                     key.timer.value = value;
@@ -147,14 +148,18 @@ public class TimerWorker implements Runnable {
             }
         }
 
-        //logging only events when timers ticked.
-        log.info("Timer finished. Ticked {} timers.", tickedTimers);
+        if (activeTimers > 0) {
+            log.info("Timer finished. Ready {}, Active {}, Actual {}. Processing time : {} ms",
+                    readyForTickTimers, activeTimers, actuallySendTimers, System.currentTimeMillis() - curTime);
+        }
     }
 
     private void triggerTimer(SessionDao sessionDao, UserKey userKey, String value, int dashId, int deviceId) {
         Session session = sessionDao.userSession.get(userKey);
         if (session != null) {
-            session.sendMessageToHardware(dashId, HARDWARE, 7777, value, deviceId);
+            if (!session.sendMessageToHardware(dashId, HARDWARE, 7777, value, deviceId)) {
+                actuallySendTimers++;
+            }
         }
     }
 
