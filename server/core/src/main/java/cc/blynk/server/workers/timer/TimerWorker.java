@@ -16,7 +16,6 @@ import java.time.LocalTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.workers.timer.TimerType.START;
@@ -44,15 +43,24 @@ public class TimerWorker implements Runnable {
 
     private final UserDao userDao;
     private final SessionDao sessionDao;
-    private final AtomicReferenceArray<ConcurrentMap<TimerKey, String>> timerExecutors;
+    private final ConcurrentMap<TimerKey, String>[] timerExecutors;
+    private final static int size = 8640;
 
+    @SuppressWarnings("unchecked")
     public TimerWorker(UserDao userDao, SessionDao sessionDao) {
         this.userDao = userDao;
         this.sessionDao = sessionDao;
         //array cell for every second in a day,
-        //yes, it costs at least 350kb of memory, but still cheap :)
-        this.timerExecutors = new AtomicReferenceArray<>(86400);
+        //yes, it costs a bit of memory, but still cheap :)
+        this.timerExecutors = new ConcurrentMap[size];
+        for (int i = 0; i < size; i++) {
+            timerExecutors[i] = new ConcurrentHashMap<>();
+        }
         init(userDao.users);
+    }
+
+    private static int hash(int time) {
+        return time / 10;
     }
 
     private void init(ConcurrentMap<UserKey, User> users) {
@@ -73,47 +81,20 @@ public class TimerWorker implements Runnable {
 
     public void add(UserKey userKey, Timer timer, int dashId) {
         if (timer.isValidStart()) {
-            ConcurrentMap<TimerKey, String> timers = getOrCreateIfEmpty(timer.startTime);
-            timers.put(new TimerKey(userKey, timer, dashId, START), timer.startValue);
+            timerExecutors[hash(timer.startTime)].put(new TimerKey(userKey, timer, timer.startTime, dashId, START), timer.startValue);
         }
         if (timer.isValidStop()) {
-            ConcurrentMap<TimerKey, String> timers = getOrCreateIfEmpty(timer.stopTime);
-            timers.put(new TimerKey(userKey, timer, dashId, STOP), timer.stopValue);
+            timerExecutors[hash(timer.stopTime)].put(new TimerKey(userKey, timer, timer.stopTime, dashId, STOP), timer.stopValue);
         }
     }
 
     public void delete(UserKey userKey, Timer timer, int dashId) {
         if (timer.isValidStart()) {
-            ConcurrentMap<TimerKey, String> timers = getOrCreateIfEmpty(timer.startTime);
-            timers.remove(new TimerKey(userKey, timer, dashId, START));
+            timerExecutors[hash(timer.startTime)].remove(new TimerKey(userKey, timer, timer.startTime, dashId, START));
         }
         if (timer.isValidStop()) {
-            ConcurrentMap<TimerKey, String> timers = getOrCreateIfEmpty(timer.stopTime);
-            timers.remove(new TimerKey(userKey, timer, dashId, STOP));
+            timerExecutors[hash(timer.stopTime)].remove(new TimerKey(userKey, timer, timer.stopTime, dashId, STOP));
         }
-    }
-
-
-    /**
-     * Get array cell or fills it with ConcurrentHashMap if was empty before.
-     *
-     * @param index - array cell index
-     * @return return cell ConcurrentMap
-     */
-    private ConcurrentMap<TimerKey, String> getOrCreateIfEmpty(int index) {
-        ConcurrentMap<TimerKey, String> timers = timerExecutors.get(index);
-
-        //Here is small chance that few threads will access this method at same time.
-        //So doing it threadsafe.
-        if (timers == null) {
-            ConcurrentMap<TimerKey, String>  update = new ConcurrentHashMap<>();
-            if (timerExecutors.compareAndSet(index, null, update)) {
-                return update;
-            }
-            return timerExecutors.get(index);
-        }
-
-        return timers;
     }
 
     private int actuallySendTimers;
@@ -123,10 +104,10 @@ public class TimerWorker implements Runnable {
         log.trace("Starting timer...");
 
         int curSeconds = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay();
-        ConcurrentMap<TimerKey, String> tickedExecutors = timerExecutors.get(curSeconds);
+        ConcurrentMap<TimerKey, String> tickedExecutors = timerExecutors[hash(curSeconds)];
 
-        int readyForTickTimers;
-        if (tickedExecutors == null || ((readyForTickTimers = tickedExecutors.size()) == 0)) {
+        int readyForTickTimers = tickedExecutors.size();
+        if (readyForTickTimers == 0) {
             return;
         }
 
@@ -136,14 +117,16 @@ public class TimerWorker implements Runnable {
 
         for (Map.Entry<TimerKey, String> entry : tickedExecutors.entrySet()) {
             final TimerKey key = entry.getKey();
-            User user = userDao.users.get(key.userKey);
-            if (user != null) {
-                DashBoard dash = user.profile.getDashById(key.dashId);
-                if (dash != null && dash.isActive) {
-                    activeTimers++;
-                    final String value = entry.getValue();
-                    triggerTimer(sessionDao, key.userKey, value, key.dashId, key.timer.deviceId);
-                    key.timer.value = value;
+            if (key.exactlyTime == curSeconds) {
+                User user = userDao.users.get(key.userKey);
+                if (user != null) {
+                    DashBoard dash = user.profile.getDashById(key.dashId);
+                    if (dash != null && dash.isActive) {
+                        activeTimers++;
+                        final String value = entry.getValue();
+                        triggerTimer(sessionDao, key.userKey, value, key.dashId, key.timer.deviceId);
+                        key.timer.value = value;
+                    }
                 }
             }
         }
