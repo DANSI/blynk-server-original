@@ -22,7 +22,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.HttpLogicUtil;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
@@ -46,23 +45,20 @@ public class UsersLogic extends HttpLogicUtil {
     private final UserDao userDao;
     private final SessionDao sessionDao;
     private final FileManager fileManager;
-    private final ProfileSaverWorker profileSaverWorker;
     private final TokenManager tokenManager;
 
     public UsersLogic(Holder holder) {
         this.userDao = holder.userDao;
         this.fileManager = holder.fileManager;
         this.sessionDao = holder.sessionDao;
-        this.profileSaverWorker = holder.profileSaverWorker;
         this.tokenManager = holder.tokenManager;
     }
 
     //for tests only
-    protected UsersLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager, ProfileSaverWorker profileSaverWorker, TokenManager tokenManager) {
+    protected UsersLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager, TokenManager tokenManager) {
         this.userDao = userDao;
         this.fileManager = fileManager;
         this.sessionDao = sessionDao;
-        this.profileSaverWorker = profileSaverWorker;
         this.tokenManager = tokenManager;
     }
 
