@@ -1,10 +1,14 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard;
 
+import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.JsonParser;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -23,13 +27,15 @@ public class UpdateDashLogic {
     private static final Logger log = LogManager.getLogger(UpdateDashLogic.class);
 
     private final int DASH_MAX_SIZE;
+    private final TimerWorker timerWorker;
 
-    public UpdateDashLogic(int maxDashSize) {
+    public UpdateDashLogic(TimerWorker timerWorker, int maxDashSize) {
+        this.timerWorker = timerWorker;
         this.DASH_MAX_SIZE = maxDashSize;
     }
 
     //todo should accept only dash info and ignore widgets. should be fixed after migration
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String dashString = message.body;
 
         if (dashString == null || dashString.equals("")) {
@@ -49,9 +55,22 @@ public class UpdateDashLogic {
 
         log.debug("Saving dashboard.");
 
-        int index = user.profile.getDashIndexOrThrow(updatedDash.id);
+        final User user = state.user;
 
-        DashBoard existingDash = user.profile.dashBoards[index];
+        DashBoard existingDash = user.profile.getDashByIdOrThrow(updatedDash.id);
+
+        for (Widget widget : existingDash.widgets) {
+            if (widget instanceof Timer) {
+                timerWorker.delete(state.userKey, (Timer) widget, existingDash.id);
+            }
+        }
+
+        for (Widget widget : updatedDash.widgets) {
+            if (widget instanceof Timer) {
+                timerWorker.add(state.userKey, (Timer) widget, updatedDash.id);
+            }
+        }
+
         existingDash.updateFields(updatedDash);
         user.lastModifiedTs = existingDash.updatedAt;
 

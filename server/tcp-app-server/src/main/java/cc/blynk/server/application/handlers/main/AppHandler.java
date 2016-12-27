@@ -64,6 +64,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final DeActivateDashboardLogic deActivateDashboardLogic;
     private final CreateWidgetLogic createWidgetLogic;
     private final UpdateWidgetLogic updateWidgetLogic;
+    private final DeleteWidgetLogic deleteWidgetLogic;
     private final DeleteDashLogic deleteDashLogic;
     private final ShareLogic shareLogic;
     private final RedeemLogic redeemLogic;
@@ -87,15 +88,16 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.getSharedDashLogic = new GetSharedDashLogic(holder.tokenManager);
 
         final int profileMaxSize = holder.props.getIntProperty("user.profile.max.size", 10) * 1024;
-        this.createDashLogic = new CreateDashLogic(holder.props.getIntProperty("user.dashboard.max.limit"), profileMaxSize);
-        this.updateDashLogic = new UpdateDashLogic(profileMaxSize);
+        this.createDashLogic = new CreateDashLogic(holder.timerWorker, holder.props.getIntProperty("user.dashboard.max.limit"), profileMaxSize);
+        this.updateDashLogic = new UpdateDashLogic(holder.timerWorker, profileMaxSize);
 
         this.activateDashboardLogic = new ActivateDashboardLogic(holder.sessionDao);
         this.deActivateDashboardLogic = new DeActivateDashboardLogic(holder.sessionDao);
 
         final int widgetSize = holder.props.getIntProperty("user.widget.max.size.limit", 10) * 1024;
-        this.createWidgetLogic = new CreateWidgetLogic(widgetSize);
-        this.updateWidgetLogic = new UpdateWidgetLogic(widgetSize);
+        this.createWidgetLogic = new CreateWidgetLogic(widgetSize, holder.timerWorker);
+        this.updateWidgetLogic = new UpdateWidgetLogic(widgetSize, holder.timerWorker);
+        this.deleteWidgetLogic = new DeleteWidgetLogic(holder.timerWorker);
         this.deleteDashLogic = new DeleteDashLogic(holder);
 
         this.createDeviceLogic = new CreateDeviceLogic(holder.tokenManager);
@@ -158,22 +160,22 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 appMailLogic.messageReceived(ctx, state.user, msg);
                 break;
             case CREATE_DASH :
-                createDashLogic.messageReceived(ctx, state.user, msg);
+                createDashLogic.messageReceived(ctx, state, msg);
                 break;
             case UPDATE_DASH:
-                updateDashLogic.messageReceived(ctx, state.user, msg);
+                updateDashLogic.messageReceived(ctx, state, msg);
                 break;
             case DELETE_DASH :
-                deleteDashLogic.messageReceived(ctx, state.user, msg);
+                deleteDashLogic.messageReceived(ctx, state, msg);
                 break;
             case CREATE_WIDGET :
-                createWidgetLogic.messageReceived(ctx, state.user, msg);
+                createWidgetLogic.messageReceived(ctx, state, msg);
                 break;
             case UPDATE_WIDGET :
-                updateWidgetLogic.messageReceived(ctx, state.user, msg);
+                updateWidgetLogic.messageReceived(ctx, state, msg);
                 break;
             case DELETE_WIDGET :
-                DeleteWidgetLogic.messageReceived(ctx, state.user, msg);
+                deleteWidgetLogic.messageReceived(ctx, state, msg);
                 break;
             case REDEEM :
                 redeemLogic.messageReceived(ctx, state.user, msg);

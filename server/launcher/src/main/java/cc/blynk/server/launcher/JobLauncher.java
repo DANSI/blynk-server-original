@@ -6,7 +6,6 @@ import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.server.workers.ReportingWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
 import cc.blynk.server.workers.StatsWorker;
-import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ReportingUtil;
 
 import java.util.concurrent.Executors;
@@ -48,8 +47,7 @@ class JobLauncher {
         startDelay = 1000 - (System.currentTimeMillis() % 1000);
 
         //separate thread for timer.
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(
-                new TimerWorker(holder.userDao, holder.sessionDao), startDelay, 1000, TimeUnit.MILLISECONDS);
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, startDelay, 1000, TimeUnit.MILLISECONDS);
 
         //shutdown hook thread catcher
         Runtime.getRuntime().addShutdownHook(new Thread(

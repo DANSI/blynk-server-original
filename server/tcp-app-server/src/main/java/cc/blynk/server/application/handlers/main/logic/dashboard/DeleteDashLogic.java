@@ -1,10 +1,14 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,14 +28,17 @@ public class DeleteDashLogic {
     private static final Logger log = LogManager.getLogger(DeleteDashLogic.class);
 
     private final TokenManager tokenManager;
+    private final TimerWorker timerWorker;
 
     public DeleteDashLogic(Holder holder) {
         this.tokenManager = holder.tokenManager;
+        this.timerWorker = holder.timerWorker;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         int dashId = ParseUtil.parseInt(message.body);
 
+        final User user = state.user;
         int index = user.profile.getDashIndexOrThrow(dashId);
 
         log.debug("Deleting dashboard {}.", dashId);
@@ -43,6 +50,12 @@ public class DeleteDashLogic {
         //if last project and we have less than 1000 fill up to 1000
         if (user.profile.dashBoards.length == 1 && user.getEnergy() < 1000 && user.getEnergy() >= 0) {
             user.purchaseEnergy(1000 - user.getEnergy());
+        }
+
+        for (Widget widget : dash.widgets) {
+            if (widget instanceof Timer) {
+                timerWorker.delete(state.userKey, (Timer) widget, dashId);
+            }
         }
 
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index, DashBoard.class);

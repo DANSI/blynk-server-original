@@ -112,13 +112,6 @@ public class UsersLogic extends HttpLogicUtil {
         return ok();
     }
 
-    @GET
-    @Path("/trigger/saveAll")
-    public Response saveAll() {
-        List<User> users = profileSaverWorker.saveAll();
-        return ok("Saved users : " + users.size());
-    }
-
     @PUT
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{id}")

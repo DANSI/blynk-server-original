@@ -1,11 +1,14 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
+import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
@@ -26,12 +29,14 @@ public class CreateWidgetLogic {
     private static final Logger log = LogManager.getLogger(CreateWidgetLogic.class);
 
     private final int MAX_WIDGET_SIZE;
+    private final TimerWorker timerWorker;
 
-    public CreateWidgetLogic(int maxWidgetSize) {
+    public CreateWidgetLogic(int maxWidgetSize, TimerWorker timerWorker) {
         this.MAX_WIDGET_SIZE = maxWidgetSize;
+        this.timerWorker = timerWorker;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -49,6 +54,7 @@ public class CreateWidgetLogic {
             throw new NotAllowedException("Widget is larger then limit.");
         }
 
+        final User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         Widget newWidget = JsonParser.parseWidget(widgetString);
@@ -65,6 +71,11 @@ public class CreateWidgetLogic {
         dash.widgets = ArrayUtil.add(dash.widgets, newWidget, Widget.class);
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
+
+        if (newWidget instanceof Timer) {
+            Timer timer  = (Timer) newWidget;
+            timerWorker.add(state.userKey, timer, dashId);
+        }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

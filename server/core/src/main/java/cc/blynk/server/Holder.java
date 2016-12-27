@@ -16,6 +16,7 @@ import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.redis.RedisClient;
 import cc.blynk.server.workers.ProfileSaverWorker;
+import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.ServerProperties;
@@ -63,6 +64,7 @@ public class Holder implements Closeable {
     public final SMSWrapper smsWrapper;
     public final String region;
     public final ProfileSaverWorker profileSaverWorker;
+    public final TimerWorker timerWorker;
 
     public final EventorProcessor eventorProcessor;
     public final DefaultAsyncHttpClient asyncHttpClient;
@@ -109,6 +111,7 @@ public class Holder implements Closeable {
         this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.dbManager = new DBManager(blockingIOProcessor);
         this.profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, dbManager);
+        this.timerWorker = new TimerWorker(userDao, sessionDao);
     }
 
     //for tests only
@@ -151,6 +154,7 @@ public class Holder implements Closeable {
 
         this.dbManager = new DBManager(blockingIOProcessor);
         this.profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, dbManager);
+        this.timerWorker = new TimerWorker(userDao, sessionDao);
     }
 
     @Override

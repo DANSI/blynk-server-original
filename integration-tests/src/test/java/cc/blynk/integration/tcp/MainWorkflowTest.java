@@ -13,8 +13,6 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
@@ -31,7 +29,6 @@ import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.server.workers.ReportingWorker;
-import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.JsonParser;
 import io.netty.channel.ChannelFuture;
@@ -48,11 +45,8 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -1391,96 +1385,8 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(produce(1, HARDWARE, b(body))));
     }
 
-    @Test
-    public void testTimerWidgetTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(
-                new TimerWorker(holder.userDao, holder.sessionDao), 0, 1000, TimeUnit.MILLISECONDS);
 
-        clientPair.appClient.send("deactivate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        Timer timer = new Timer();
-        timer.id = 1;
-        timer.x = 1;
-        timer.y = 1;
-        timer.pinType = PinType.DIGITAL;
-        timer.pin = 5;
-        timer.startValue = "dw 5 1";
-        timer.stopValue = "dw 5 0";
-        LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
-        long curTime = localDateTime.getSecond() + localDateTime.getMinute() * 60 + localDateTime.getHour() * 3600;
-        timer.startTime = curTime + 1;
-        timer.stopTime = curTime + 2;
-
-        DashBoard dashBoard = new DashBoard();
-        dashBoard.id = 1;
-        dashBoard.name = "Test";
-        dashBoard.widgets = new Widget[] {timer};
-
-        clientPair.appClient.send("updateDash " + dashBoard.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
-
-        clientPair.appClient.send("activate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
-
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 1")));
-        clientPair.hardwareClient.reset();
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 0")));
-    }
-
-    @Test
-    public void testTimerWidgetTriggeredAndSendCommandToCorrectDevice() throws Exception {
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
-        hardClient2.start();
-
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(
-                new TimerWorker(holder.userDao, holder.sessionDao), 0, 1000, TimeUnit.MILLISECONDS);
-
-        clientPair.appClient.send("deactivate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-
-        Timer timer = new Timer();
-        timer.id = 1;
-        timer.x = 1;
-        timer.y = 1;
-        timer.pinType = PinType.DIGITAL;
-        timer.pin = 5;
-        timer.startValue = "dw 5 1";
-        timer.stopValue = "dw 5 0";
-        LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
-        long curTime = localDateTime.getSecond() + localDateTime.getMinute() * 60 + localDateTime.getHour() * 3600;
-        timer.startTime = curTime + 1;
-        timer.stopTime = curTime + 2;
-
-        DashBoard dashBoard = new DashBoard();
-        dashBoard.id = 1;
-        dashBoard.name = "Test";
-        dashBoard.widgets = new Widget[] {timer};
-
-        clientPair.appClient.send("updateDash " + dashBoard.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
-
-        dashBoard.id = 2;
-        clientPair.appClient.send("createDash " + dashBoard.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
-
-        clientPair.appClient.send("activate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
-
-        clientPair.appClient.reset();
-        clientPair.appClient.send("getToken 2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
-        hardClient2.send("login " + clientPair.appClient.getBody());
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-        hardClient2.reset();
-
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 1")));
-        clientPair.hardwareClient.reset();
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 0")));
-
-        verify(hardClient2.responseMock, never()).channelRead(any(), any());
-        hardClient2.stop().awaitUninterruptibly();
-    }
 
     @Test
     @Ignore("hard to test this case...")
