@@ -1,14 +1,17 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
+import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -28,12 +31,14 @@ public class UpdateWidgetLogic {
     private static final Logger log = LogManager.getLogger(UpdateWidgetLogic.class);
 
     private final int MAX_WIDGET_SIZE;
+    private final TimerWorker timerWorker;
 
-    public UpdateWidgetLogic(int maxWidgetSize) {
+    public UpdateWidgetLogic(int maxWidgetSize, TimerWorker timerWorker) {
         this.MAX_WIDGET_SIZE = maxWidgetSize;
+        this.timerWorker = timerWorker;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -51,6 +56,7 @@ public class UpdateWidgetLogic {
             throw new NotAllowedException("Widget is larger then limit.");
         }
 
+        final User user = state.user;
         DashBoard dash = user.profile.getDashById(dashId);
 
         Widget newWidget = JsonParser.parseWidget(widgetString);
@@ -66,8 +72,10 @@ public class UpdateWidgetLogic {
 
         if (newWidget instanceof Tabs) {
             Tabs newTabs = (Tabs) newWidget;
-            DeleteWidgetLogic.deleteTabs(user, dash, newTabs.tabs.length - 1);
+            DeleteWidgetLogic.deleteTabs(timerWorker, user, state.userKey, dash, newTabs.tabs.length - 1);
         }
+
+        Widget prevWidget = dash.widgets[existingWidgetIndex];
 
         //strange issue https://github.com/blynkkk/blynk-server/issues/227
         //just log error for now
@@ -77,6 +85,16 @@ public class UpdateWidgetLogic {
             user.lastModifiedTs = dash.updatedAt;
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new BaseServerException("Error updating widget. " + widgetString, Response.SERVER_ERROR);
+        }
+
+        if (prevWidget instanceof Timer) {
+            Timer prevTimer  = (Timer) prevWidget;
+            timerWorker.delete(state.userKey, prevTimer, dashId);
+        }
+
+        if (newWidget instanceof Timer) {
+            Timer timer  = (Timer) newWidget;
+            timerWorker.add(state.userKey, timer, dashId);
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

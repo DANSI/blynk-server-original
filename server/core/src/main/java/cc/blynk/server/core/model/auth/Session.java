@@ -87,6 +87,10 @@ public class Session {
     }
 
     public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int... deviceIds) {
+        if (hardwareChannels.size() == 0) {
+            return true; // -> no active hardware
+        }
+
         final Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);

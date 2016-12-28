@@ -8,8 +8,6 @@ import io.netty.channel.ChannelHandlerContext;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 
-;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -17,15 +15,13 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
  */
 public class Timer extends OnePinWidget {
 
-    public long startTime = -1;
+    public int startTime = -1;
 
     public String startValue;
 
-    public long stopTime = -1;
+    public int stopTime = -1;
 
     public String stopValue;
-
-    public boolean invertedOn = false;
 
     //this trick called field hiding.
     //it used to avoid volatile in OnePinWidget
@@ -33,6 +29,22 @@ public class Timer extends OnePinWidget {
     //that could be changed via other thread - TimerWorker
     //https://github.com/blynkkk/blynk-server/issues/208
     public volatile String value;
+
+    public boolean isValidStart() {
+        return isValidTime(startTime) && isValidValue(startValue);
+    }
+
+    public boolean isValidStop() {
+        return isValidTime(stopTime) && isValidValue(stopValue);
+    }
+
+    private static boolean isValidTime(int time) {
+        return time > -1 && time < 86400;
+    }
+
+    private static boolean isValidValue(String value) {
+        return value != null && !value.equals("");
+    }
 
     @Override
     public void send(ChannelHandlerContext ctx, int msgId, int deviceId) {
@@ -71,5 +83,21 @@ public class Timer extends OnePinWidget {
     @Override
     public int getPrice() {
         return 200;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Timer)) return false;
+
+        Timer timer = (Timer) o;
+
+        return id == timer.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
     }
 }

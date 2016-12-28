@@ -8,7 +8,6 @@ import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.workers.ProfileSaverWorker;
 import io.netty.channel.EventLoop;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,8 +36,6 @@ public class UsersLogicTest {
     private UserDao userDao;
     @Spy
     private SessionDao sessionDao;
-    @Mock
-    private ProfileSaverWorker profileSaverWorker;
 
     private User user;
 
@@ -57,7 +54,7 @@ public class UsersLogicTest {
         when(userDao.delete(any(), any())).thenReturn(user);
         sessionDao.getOrCreateSessionByUser(new UserKey(user), mock(EventLoop.class));
         FileManager fileManager = new FileManager(null);
-        usersLogic = new UsersLogic(userDao, sessionDao, fileManager, profileSaverWorker, null);
+        usersLogic = new UsersLogic(userDao, sessionDao, fileManager, null);
 
         userFile = Paths.get(System.getProperty("java.io.tmpdir"), "blynk", TEST_USER + ".Blynk.user");
         deletedUserFile = Paths.get(System.getProperty("java.io.tmpdir"), "blynk", DELETED_DATA_DIR_NAME, TEST_USER + ".Blynk.user");
