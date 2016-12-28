@@ -49,7 +49,6 @@ public class User {
         this.lastModifiedTs = System.currentTimeMillis();
         this.profile = new Profile();
         this.dashShareTokens = new ConcurrentHashMap<>();
-        this.dashTokens = new ConcurrentHashMap<>();
         this.energy = INITIAL_ENERGY_AMOUNT;
         this.isFacebookUser = false;
         this.appName = AppName.BLYNK;

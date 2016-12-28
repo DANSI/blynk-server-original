@@ -160,12 +160,14 @@ public class FileManager {
     public static void migrateOldProfile(User user) {
         for (DashBoard dashBoard : user.profile.dashBoards) {
             final Integer dashId = dashBoard.id;
-            String token = user.dashTokens.get(dashId);
-            if (token != null && !"".equals(token)) {
-                dashBoard.devices = new Device[] {
-                        new Device(0, dashBoard.boardType, dashBoard.boardType, token, null)
-                };
-                user.dashTokens.remove(dashId);
+            if (user.dashTokens != null) {
+                String token = user.dashTokens.get(dashId);
+                if (token != null && !"".equals(token)) {
+                    dashBoard.devices = new Device[]{
+                            new Device(0, dashBoard.boardType, dashBoard.boardType, token, null)
+                    };
+                    user.dashTokens.remove(dashId);
+                }
             }
         }
     }
