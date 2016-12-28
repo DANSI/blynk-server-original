@@ -4,13 +4,10 @@ package cc.blynk.server.notifications.sms;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import io.netty.channel.EventLoopGroup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asynchttpclient.AsyncCompletionHandler;
 import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Param;
 import org.asynchttpclient.Response;
 
@@ -37,14 +34,8 @@ public class SMSWrapper {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .readerFor(SmsResponse.class);
 
-    public SMSWrapper(Properties props, EventLoopGroup eventLoop) {
-        this(props.getProperty("nexmo.api.key"), props.getProperty("nexmo.api.secret"),
-                new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
-                        .setUserAgent("")
-                        .setEventLoopGroup(eventLoop)
-                        .setKeepAlive(false)
-                        .build())
-        );
+    public SMSWrapper(Properties props, AsyncHttpClient httpclient) {
+        this(props.getProperty("nexmo.api.key"), props.getProperty("nexmo.api.secret"), httpclient);
     }
 
     private SMSWrapper(String key, String secret, AsyncHttpClient httpclient) {

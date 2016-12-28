@@ -4,14 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import io.netty.channel.EventLoopGroup;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asynchttpclient.AsyncCompletionHandler;
 import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Response;
 
 import java.util.Map;
@@ -34,15 +31,9 @@ public class GCMWrapper {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .readerFor(GCMResponseMessage.class);
 
-    public GCMWrapper(Properties props, EventLoopGroup eventLoop) {
+    public GCMWrapper(Properties props, AsyncHttpClient httpclient) {
         this.API_KEY = "key=" + props.getProperty("gcm.api.key");
-        this.httpclient = new DefaultAsyncHttpClient(
-                new DefaultAsyncHttpClientConfig.Builder()
-                        .setUserAgent(null)
-                        .setEventLoopGroup(eventLoop)
-                        .setKeepAlive(false)
-                        .build()
-        );
+        this.httpclient = httpclient;
         this.gcmURI = props.getProperty("gcm.server");
     }
 
