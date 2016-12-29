@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.sharing;
 
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -35,13 +36,12 @@ public class GetShareTokenLogic {
             throw new NotAllowedException("Dash board id not valid. Id : " + dashBoardIdString);
         }
 
-        user.profile.validateDashId(dashId);
-
-        String token = user.dashShareTokens.get(dashId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        String token = dash.sharedToken;
 
         //if token not exists. generate new one
         if (token == null) {
-            token = tokenManager.refreshSharedToken(user, dashId);
+            token = tokenManager.refreshSharedToken(user, dash);
             user.subtractEnergy(PRIVATE_TOKEN_PRICE);
         }
 

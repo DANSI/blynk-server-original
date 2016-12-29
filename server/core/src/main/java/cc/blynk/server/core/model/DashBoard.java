@@ -53,8 +53,7 @@ public class DashBoard {
 
     public HardwareInfo hardwareInfo;
 
-    //used only for business UI
-    public String token;
+    public volatile String sharedToken;
 
     @JsonDeserialize(keyUsing = PinStorageKeyDeserializer.class)
     public Map<PinStorageKey, String> pinsStorage = new HashMap<>();

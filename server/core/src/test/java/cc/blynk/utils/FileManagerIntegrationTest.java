@@ -53,9 +53,6 @@ public class FileManagerIntegrationTest {
         Map<UserKey, User> users = fileManager.deserialize();
         assertNotNull(users);
         assertNotNull(users.get(new UserKey(user1.name, AppName.BLYNK)));
-        assertNotNull(users.get(new UserKey(user1.name, AppName.BLYNK)).dashShareTokens);
-        assertNotNull(users.get(new UserKey(user1.name, AppName.BLYNK)).dashTokens);
-
     }
 
     @Test

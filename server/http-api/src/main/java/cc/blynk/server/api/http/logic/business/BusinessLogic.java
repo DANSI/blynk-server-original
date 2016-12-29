@@ -66,7 +66,7 @@ public class BusinessLogic {
         List<DashBoard> projects = Arrays.asList(user.profile.dashBoards);
 
         for (DashBoard project : projects) {
-            project.token = user.dashTokens.get(project.id);
+            //project.token = user.dashTokens.get(project.id);
         }
 
         return appendTotalCountHeader(
@@ -80,7 +80,7 @@ public class BusinessLogic {
                              @PathParam("projectId") int projectId) {
 
         DashBoard project = user.profile.getDashById(projectId);
-        project.token = user.dashTokens.get(projectId);
+        //project.token = user.dashTokens.get(projectId);
 
         return ok(project);
     }
@@ -124,7 +124,7 @@ public class BusinessLogic {
         DashBoard dash = user.profile.dashBoards[index];
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index, DashBoard.class);
 
-        tokenManager.deleteDash(user, dash);
+        tokenManager.deleteDash(dash);
 
         user.lastModifiedTs = System.currentTimeMillis();
 

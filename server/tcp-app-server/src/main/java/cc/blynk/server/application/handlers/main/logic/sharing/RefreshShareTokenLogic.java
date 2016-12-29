@@ -4,6 +4,7 @@ import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -45,9 +46,9 @@ public class RefreshShareTokenLogic {
         }
 
         final User user = state.user;
-        user.profile.validateDashId(dashId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        String token = tokenManager.refreshSharedToken(user, dashId);
+        String token = tokenManager.refreshSharedToken(user, dash);
 
         Session session = sessionDao.userSession.get(state.userKey);
         for (Channel appChannel : session.getAppChannels()) {

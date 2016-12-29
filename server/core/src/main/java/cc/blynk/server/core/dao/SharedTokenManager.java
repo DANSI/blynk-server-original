@@ -1,11 +1,10 @@
 package cc.blynk.server.core.dao;
 
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -23,50 +22,42 @@ class SharedTokenManager {
     public SharedTokenManager(Iterable<User> users) {
         this.cache = new ConcurrentHashMap<String, SharedTokenValue>() {{
             for (User user : users) {
-                for (Map.Entry<Integer, String> entry : user.dashShareTokens.entrySet()) {
-                    put(entry.getValue(), new SharedTokenValue(user, entry.getKey().intValue()));
+                for (DashBoard dashBoard : user.profile.dashBoards) {
+                    if (dashBoard.sharedToken != null) {
+                        put(dashBoard.sharedToken, new SharedTokenValue(user, dashBoard.id));
+                    }
                 }
             }
         }};
     }
 
-    public void assignToken(User user, int dashId, String newToken) {
+    public void assignToken(User user, DashBoard dash, String newToken) {
         // Clean old token from cache if exists.
-        String oldToken = user.dashShareTokens.get(dashId);
+        String oldToken = dash.sharedToken;
         if (oldToken != null) {
             cache.remove(oldToken);
         }
 
         //assign new token
-        cleanTokensForNonExistentDashes(user, user.dashShareTokens);
-        user.dashShareTokens.put(dashId, newToken);
-        user.lastModifiedTs = System.currentTimeMillis();
+        dash.sharedToken = newToken;
+        dash.updatedAt = System.currentTimeMillis();
+        user.lastModifiedTs = dash.updatedAt;
 
-        cache.put(newToken, new SharedTokenValue(user, dashId));
+        cache.put(newToken, new SharedTokenValue(user, dash.id));
 
-        log.info("Generated shared token for user {} and dashId {} is {}.", user.name, dashId, newToken);
-    }
-
-    private static void cleanTokensForNonExistentDashes(User user, Map<Integer, String> tokens) {
-        Iterator<Integer> iterator = tokens.keySet().iterator();
-        while (iterator.hasNext()) {
-            if (!user.dashIdExists(iterator.next())) {
-                iterator.remove();
-            }
-        }
+        log.info("Generated shared token for user {} and dashId {} is {}.", user.name, dash.id, newToken);
     }
 
     public SharedTokenValue getUserByToken(String token) {
         return cache.get(token);
     }
 
-    String deleteProject(User user, int projectId) {
-        String removedToken = user.dashShareTokens.remove(projectId);
-        if (removedToken != null) {
-            cache.remove(removedToken);
-            log.info("Deleted {} shared token.", removedToken);
+    String deleteProject(DashBoard dash) {
+        if (dash.sharedToken != null) {
+            cache.remove(dash.sharedToken);
+            log.info("Deleted {} shared token.", dash.sharedToken);
         }
-        return removedToken;
+        return dash.sharedToken;
     }
 
 }

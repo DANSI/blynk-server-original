@@ -113,6 +113,8 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         //one field update, cause it is hard to compare.
         profile.dashBoards[0].updatedAt = serverDash.updatedAt;
+        assertNotNull(serverDash.sharedToken);
+        serverDash.sharedToken = null;
 
         assertEquals(profile.dashBoards[0].toString(), serverDash.toString());
 
@@ -493,6 +495,8 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         //one field update, cause it is hard to compare.
         DashBoard temp = JsonParser.parseDashboard(dashboard);
         profile.dashBoards[0].updatedAt = temp.updatedAt;
+        assertNotNull(serverDash.sharedToken);
+        serverDash.sharedToken = null;
 
         assertEquals(profile.dashBoards[0].toString(), serverDash.toString());
         //System.out.println(dashboard);

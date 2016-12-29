@@ -74,7 +74,7 @@ public class HardwareAppShareLogic {
             case 'w':
                 dash.update(deviceId, split[1]);
 
-                String sharedToken = state.user.dashShareTokens.get(dashId);
+                final String sharedToken = state.token;
                 if (sharedToken != null) {
                     for (Channel appChannel : session.getAppChannels()) {
                         if (appChannel != ctx.channel() && Session.needSync(appChannel, sharedToken)) {

@@ -31,8 +31,9 @@ public class TokenManager {
         this.currentIp = currentIp;
     }
 
-    public void deleteDash(User user, DashBoard dash) {
-        sharedTokenManager.deleteProject(user, dash.id);
+    public void deleteDash(DashBoard dash) {
+        //todo clear shared token from redis?
+        sharedTokenManager.deleteProject(dash);
         String[] removedTokens = regularTokenManager.deleteProject(dash);
 
         if (removedTokens.length > 0) {
@@ -68,9 +69,9 @@ public class TokenManager {
         return newToken;
     }
 
-    public String refreshSharedToken(User user, int dashId) {
+    public String refreshSharedToken(User user, DashBoard dash) {
         final String newToken = TokenGeneratorUtil.generateNewToken();
-        sharedTokenManager.assignToken(user, dashId, newToken);
+        sharedTokenManager.assignToken(user, dash, newToken);
         return newToken;
     }
 }
