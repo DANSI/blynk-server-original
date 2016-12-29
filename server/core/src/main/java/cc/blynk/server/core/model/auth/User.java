@@ -34,6 +34,7 @@ public class User {
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
     public volatile long lastModifiedTs;
 
+    public String lastLoggedIP;
     public long lastLoggedAt;
 
     public Profile profile;

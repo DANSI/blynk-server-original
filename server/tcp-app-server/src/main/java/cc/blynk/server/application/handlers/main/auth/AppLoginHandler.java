@@ -13,6 +13,7 @@ import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.JsonParser;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -171,6 +172,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         ctx.pipeline().addLast("AAppHandler", new AppHandler(holder, appStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, ctx.channel().eventLoop());
+        user.lastLoggedIP = IPUtils.getIp(ctx.channel());
         user.lastLoggedAt = System.currentTimeMillis();
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {

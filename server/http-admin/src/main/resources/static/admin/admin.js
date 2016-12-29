@@ -33,8 +33,9 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             nga.field('pass', 'password'),
             nga.field('lastModifiedTs'),
             nga.field('energy'),
-            nga.field('appName'),
-            nga.field('region'),
+            nga.field('appName').editable(false),
+            nga.field('region').editable(false),
+            nga.field('lastLoggedIP').editable(false),
             nga.field('profile.dashBoards', 'embedded_list')
                 .targetFields([
                     nga.field('id'),
@@ -109,6 +110,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                                 {value: 'WiPy', label: 'WiPy'}
                             ]),
                             nga.field('token').editable(false),
+                            nga.field('lastLoggedIP').editable(false),
                             nga.field('connectionType', 'choice')
                                 .choices([
                                     {value: 'ETHERNET', label: 'ETHERNET'},
@@ -119,6 +121,11 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                                     {value: 'GSM', label: 'GSM'}
                                     ]
                             )
+                        ]),
+                    nga.field('tags', 'embedded_list')
+                        .targetFields([
+                            nga.field('id', 'number'),
+                            nga.field('name', 'string')
                         ]),
                     nga.field('keepScreenOn', 'boolean'),
                     nga.field('isShared', 'boolean'),

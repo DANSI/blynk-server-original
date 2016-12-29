@@ -16,6 +16,7 @@ import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
 import cc.blynk.server.redis.RedisClient;
+import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -74,6 +75,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         Device device = dash.getDeviceById(deviceId);
         if (device != null) {
             device.connected();
+            device.lastLoggedIP = IPUtils.getIp(channel);
         }
 
         log.info("{} hardware joined.", user.name);
