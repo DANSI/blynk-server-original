@@ -298,6 +298,21 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             nga.field('count').label('Number')
         ]);
 
+    var ips = nga.entity('ips').identifier(nga.field('name')).url('stats/ips').readOnly();
+    ips.listView()
+        .title('IP List')
+        .perPage(50)
+        .batchActions([])
+        .sortField('ip')
+        .fields([
+            nga.field('ip'),
+            nga.field('name')
+        ])
+        .filters([
+            nga.field('ip').label('').pinned(true)
+                .template('<div class="input-group"><input type="text" ng-model="value" placeholder="Search" class="form-control"></input><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span></div>')
+        ]);
+
     var config = nga.entity('config').identifier(nga.field('name'));
     config.listView()
         .title('Configurations')
@@ -328,6 +343,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                 .addChild(nga.menu(filledSpace).title('Cells per project').icon(''))
                 .addChild(nga.menu(userProfileSize).title('Size of user profile').icon(''))
                 .addChild(nga.menu(webHookHosts).title('Webhook hosts').icon(''))
+                .addChild(nga.menu(ips).title('IPs').icon(''))
             )
             .addChild(nga.menu().title('Hardware Info')
                 .addChild(nga.menu(libraryVersion).title('Library versions').icon(''))
@@ -355,6 +371,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     admin.addEntity(hardwareBoards);
     admin.addEntity(connectionType);
     admin.addEntity(webHookHosts);
+    admin.addEntity(ips);
     admin.addEntity(config);
 
     admin.dashboard(nga.dashboard().addCollection(

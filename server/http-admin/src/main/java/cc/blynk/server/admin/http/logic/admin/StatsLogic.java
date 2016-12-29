@@ -5,15 +5,20 @@ import cc.blynk.core.http.annotation.GET;
 import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
+import cc.blynk.server.admin.http.response.IpNameResponse;
 import cc.blynk.server.admin.http.response.RequestPerSecondResponse;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.Stat;
 import cc.blynk.utils.HttpLogicUtil;
+import cc.blynk.utils.JsonParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -122,5 +127,55 @@ public class StatsLogic extends HttpLogicUtil {
                                        @QueryParam("_sortDir") String sortOrder) {
         return ok(sort(convertMapToPair(userDao.getWebHookHosts()), sortField, sortOrder, true));
     }
+
+    @GET
+    @Path("/ips")
+    public Response getIps(@QueryParam("_filters") String filterParam,
+                           @QueryParam("_page") int page,
+                           @QueryParam("_perPage") int size,
+                           @QueryParam("_sortField") String sortField,
+                           @QueryParam("_sortDir") String sortOrder) {
+
+        if (filterParam != null) {
+            IpFilter filter = JsonParser.readAny(filterParam, IpFilter.class);
+            filterParam = filter == null ? null : filter.ip;
+        }
+
+        return ok(sort(searchByIP(filterParam), sortField, sortOrder));
+    }
+
+    private static class IpFilter {
+        public String ip;
+    }
+
+    public List<IpNameResponse> searchByIP(String ip) {
+        List<IpNameResponse> res = new ArrayList<>();
+
+        for (User user : userDao.users.values()) {
+            if (user.lastLoggedIP != null) {
+                if (ip == null) {
+                    res.add(new IpNameResponse(user.name + "-" + user.appName, user.lastLoggedIP));
+                } else {
+                    if (user.lastLoggedIP.contains(ip) || deviceContains(user, ip)) {
+                        res.add(new IpNameResponse(user.name + "-" + user.appName, user.lastLoggedIP));
+                    }
+                }
+            }
+        }
+
+        return res;
+    }
+
+    private boolean deviceContains(User user, String ip) {
+        for (DashBoard dash : user.profile.dashBoards) {
+            for (Device device : dash.devices) {
+                if (device.lastLoggedIP != null && device.lastLoggedIP.contains(ip)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
 }
