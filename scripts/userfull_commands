@@ -1,2 +1,4 @@
 View number of open connections : netstat -an | awk '/^tcp/ {print $NF}' | sort | uniq -c | sort -rn
 Number of files : find -maxdepth 1 -type f | wc -l
+View top traffic : iftop -n
+View tcp dump : tcpdump -n host x.x.x.x
