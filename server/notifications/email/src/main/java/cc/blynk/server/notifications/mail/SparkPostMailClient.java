@@ -49,7 +49,7 @@ public class SparkPostMailClient implements MailClient {
 
     @Override
     public void sendHtml(String to, String subj, String body) throws Exception {
-        send(to, subj, body, "text/html");
+        send(to, subj, body, "text/html; charset=UTF-8");
     }
 
     private void send(String to, String subj, String body, String contentType) throws Exception {

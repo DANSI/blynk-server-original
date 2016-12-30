@@ -104,7 +104,7 @@ public class MailLogic extends NotificationBase {
     private void mail(Channel channel, String username, String to, String subj, String body, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
-                mailWrapper.sendText(to, subj, body);
+                mailWrapper.sendHtml(to, subj, body);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending email from hardware. From user {}, to : {}. Reason : {}",  username, to, e.getMessage());
