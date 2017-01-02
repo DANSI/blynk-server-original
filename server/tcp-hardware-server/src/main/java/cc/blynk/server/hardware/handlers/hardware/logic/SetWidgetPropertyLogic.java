@@ -77,6 +77,7 @@ public class SetWidgetPropertyLogic {
 
         try {
             widget.setProperty(property, propertyValue);
+            dash.updatedAt = System.currentTimeMillis();
         } catch (Exception e) {
             log.debug("Error setting widget property. Reason : {}", e.getMessage());
             ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
