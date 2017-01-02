@@ -67,6 +67,7 @@ public class ActivateDashboardLogic {
                 appChannel.write(makeUTF8StringMessage(message.command, message.id, message.body));
             }
 
+            //todo remove after migration to new "AppSync" method
             for (Widget widget : dash.widgets) {
                 if (widget instanceof AppSyncWidget) {
                     ((AppSyncWidget) widget).sendAppSync(appChannel, dashId);
