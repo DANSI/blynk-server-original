@@ -47,7 +47,7 @@ public class Timer extends OnePinWidget {
     }
 
     @Override
-    public void send(ChannelHandlerContext ctx, int msgId, int deviceId) {
+    public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
         if (value != null && this.deviceId == deviceId) {
             ctx.write(makeUTF8StringMessage(HARDWARE, msgId, value), ctx.voidPromise());
         }

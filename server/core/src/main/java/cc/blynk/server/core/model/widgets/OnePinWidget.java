@@ -17,7 +17,7 @@ import static cc.blynk.utils.StringUtils.makeBody;
  * Created on 02.12.15.
  */
 //todo all this should be replaced with 1 Pin field.
-public abstract class OnePinWidget extends Widget implements SyncOnActivate, HardwareSyncWidget {
+public abstract class OnePinWidget extends Widget implements AppSyncWidget, HardwareSyncWidget {
 
     public int deviceId;
 
@@ -40,14 +40,13 @@ public abstract class OnePinWidget extends Widget implements SyncOnActivate, Har
     }
 
     @Override
-    public void sendSyncOnActivate(Channel appChannel, int dashId) {
+    public void sendAppSync(Channel appChannel, int dashId) {
         String hardBody = makeHardwareBody();
         if (hardBody != null) {
             String body = makeBody(dashId, deviceId, hardBody);
             appChannel.write(makeUTF8StringMessage(SYNC, 1111, body));
         }
     }
-
 
     public String makeHardwareBody() {
         if (pin == -1 || value == null || pinType == null) {
@@ -66,7 +65,7 @@ public abstract class OnePinWidget extends Widget implements SyncOnActivate, Har
     }
 
     @Override
-    public void send(ChannelHandlerContext ctx, int msgId, int deviceId) {
+    public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
         if (this.deviceId == deviceId) {
             String body = makeHardwareBody();
             if (body != null) {

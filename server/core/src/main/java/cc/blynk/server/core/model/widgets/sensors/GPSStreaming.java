@@ -18,7 +18,7 @@ public class GPSStreaming extends OnePinWidget {
     }
 
     @Override
-    public void send(ChannelHandlerContext ctx, int msgId, int deviceId) {
+    public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
     }
 
     @Override

@@ -54,7 +54,7 @@ public class Map extends OnePinWidget {
     }
 
     @Override
-    public void sendSyncOnActivate(Channel appChannel, int dashId) {
+    public void sendAppSync(Channel appChannel, int dashId) {
         if (pin == -1 || pinType == null || lastCommands.size() == 0) {
             return;
         }
@@ -65,7 +65,7 @@ public class Map extends OnePinWidget {
     }
 
     @Override
-    public void send(ChannelHandlerContext ctx, int msgId, int deviceId) {
+    public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
     }
 
     @Override

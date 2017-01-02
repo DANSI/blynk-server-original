@@ -2,7 +2,6 @@ package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
-import io.netty.channel.Channel;
 
 import java.util.StringJoiner;
 
@@ -13,7 +12,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  * Created by Dmitriy Dumanskiy.
  * Created on 02.11.15.
  */
-public abstract class MultiPinWidget extends Widget implements SyncOnActivate {
+public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
 
     public int deviceId;
 
@@ -44,9 +43,6 @@ public abstract class MultiPinWidget extends Widget implements SyncOnActivate {
         }
         return false;
     }
-
-    @Override
-    public abstract void sendSyncOnActivate(Channel appChannel, int dashId);
 
     public abstract boolean isSplitMode();
 

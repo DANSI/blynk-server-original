@@ -61,7 +61,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     }
 
     @Override
-    public void sendSyncOnActivate(Channel appChannel, int dashId) {
+    public void sendAppSync(Channel appChannel, int dashId) {
         if (pins == null) {
             return;
         }

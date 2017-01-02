@@ -26,7 +26,7 @@ public class RGB extends MultiPinWidget implements HardwareSyncWidget {
     public boolean sendOnReleaseOn;
 
     @Override
-    public void send(ChannelHandlerContext ctx, int msgId, int deviceId) {
+    public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
         if (pins == null || this.deviceId != deviceId) {
             return;
         }
@@ -44,7 +44,7 @@ public class RGB extends MultiPinWidget implements HardwareSyncWidget {
     }
 
     @Override
-    public void sendSyncOnActivate(Channel appChannel, int dashId) {
+    public void sendAppSync(Channel appChannel, int dashId) {
         if (pins == null) {
             return;
         }

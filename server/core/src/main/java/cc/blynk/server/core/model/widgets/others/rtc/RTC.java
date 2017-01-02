@@ -46,7 +46,7 @@ public class RTC extends OnePinWidget {
     }
 
     @Override
-    public void send(ChannelHandlerContext ctx, int msgId, int deviceId) {
+    public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
         if (this.deviceId == deviceId) {
             final String body = Pin.makeHardwareBody(pinType, pin, getTime());
             ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());

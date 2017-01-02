@@ -11,8 +11,8 @@ import io.netty.channel.Channel;
  * Created by Dmitriy Dumanskiy.
  * Created on 23.08.16.
  */
-public interface SyncOnActivate {
+public interface AppSyncWidget {
 
-    void sendSyncOnActivate(Channel appChannel, int dashId);
+    void sendAppSync(Channel appChannel, int dashId);
 
 }
