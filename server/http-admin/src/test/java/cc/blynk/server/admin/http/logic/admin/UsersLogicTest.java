@@ -51,7 +51,7 @@ public class UsersLogicTest {
     @Before
     public void setUp() throws Exception {
         user = new User(TEST_USER, "123", AppName.BLYNK, "local", false);
-        when(userDao.delete(any(), any())).thenReturn(user);
+        when(userDao.delete(any())).thenReturn(user);
         sessionDao.getOrCreateSessionByUser(new UserKey(user), mock(EventLoop.class));
         FileManager fileManager = new FileManager(null);
         usersLogic = new UsersLogic(userDao, sessionDao, fileManager, null);
