@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.controls;
 
+import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.utils.ParseUtil;
@@ -38,7 +39,7 @@ public class Terminal extends OnePinWidget {
 
     @Override
     public void sendAppSync(Channel appChannel, int dashId, int targetId) {
-        if (pin == -1 || pinType == null || lastCommands.size() == 0) {
+        if (pin == Pin.NO_PIN || pinType == null || lastCommands.size() == 0) {
             return;
         }
         if (targetId == ANY_TARGET || this.deviceId == targetId) {

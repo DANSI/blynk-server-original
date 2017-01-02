@@ -2,7 +2,7 @@ package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
 
-import static cc.blynk.utils.StringUtils.*;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**
  * The Blynk Project.
@@ -11,7 +11,9 @@ import static cc.blynk.utils.StringUtils.*;
  */
 public class Pin {
 
-    public byte pin = -1;
+    public static final int NO_PIN = -1;
+
+    public byte pin = NO_PIN;
 
     public boolean pwmMode;
 

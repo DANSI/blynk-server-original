@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets;
 
+import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.OneAxisJoystick;
@@ -140,7 +141,7 @@ public abstract class Widget {
     public volatile String label;
 
     protected static void append(StringBuilder sb, byte pin, PinType pinType, String pinMode) {
-        if (pin == -1 || pinMode == null || pinType == PinType.VIRTUAL) {
+        if (pin == Pin.NO_PIN || pinMode == null || pinType == PinType.VIRTUAL) {
             return;
         }
         sb.append(StringUtils.BODY_SEPARATOR)

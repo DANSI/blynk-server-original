@@ -1,6 +1,7 @@
 package cc.blynk.utils;
 
 import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
@@ -84,7 +85,7 @@ public class FileUtils {
     public static final int DEFAULT_FETCH_COUNT = 60 * 24 * 30 * 1;
 
     public static Path createCSV(ReportingDao reportingDao, String username, int dashId, int deviceId, PinType pinType, byte pin) throws Exception {
-        if (pinType == null || pin == -1) {
+        if (pinType == null || pin == Pin.NO_PIN) {
             throw new IllegalCommandBodyException("Wrong pin format.");
         }
 

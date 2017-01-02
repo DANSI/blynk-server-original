@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets;
 
+import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.utils.JsonParser;
 import io.netty.channel.Channel;
@@ -51,7 +52,7 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     }
 
     public String makeHardwareBody() {
-        if (pin == -1 || value == null || pinType == null) {
+        if (pin == Pin.NO_PIN || value == null || pinType == null) {
             return null;
         }
         return isPWMSupported() ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
