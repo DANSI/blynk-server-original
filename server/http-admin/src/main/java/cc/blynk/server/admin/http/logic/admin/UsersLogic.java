@@ -153,7 +153,8 @@ public class UsersLogic extends HttpLogicUtil {
         String name = parts[0];
         String appName = parts[1];
 
-        User user = userDao.delete(name, appName);
+        UserKey userKey = new UserKey(name, appName);
+        User user = userDao.delete(userKey);
         if (user == null) {
             return new Response(HTTP_1_1, NOT_FOUND);
         }
@@ -162,8 +163,10 @@ public class UsersLogic extends HttpLogicUtil {
             return new Response(HTTP_1_1, NOT_FOUND);
         }
 
-        Session session = sessionDao.userSession.get(new UserKey(user));
-        session.closeAll();
+        Session session = sessionDao.userSession.remove(userKey);
+        if (session != null) {
+            session.closeAll();
+        }
 
         log.info("User {} successfully removed.", name);
 

@@ -61,8 +61,12 @@ public class UserDao {
         return users.values().stream().filter(user -> user.name.contains(name) && (AppName.ALL.equals(appName) || user.appName.equals(appName))).collect(Collectors.toList());
     }
 
+    public User delete(UserKey userKey) {
+        return users.remove(userKey);
+    }
+
     public User delete(String name, String appName) {
-        return users.remove(new UserKey(name, appName));
+        return delete(new UserKey(name, appName));
     }
 
     public User add(User user) {

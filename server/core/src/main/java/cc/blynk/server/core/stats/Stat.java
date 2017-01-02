@@ -80,13 +80,14 @@ public class Stat {
             UserKey userKey = entry.getKey();
             User user = userDao.users.get(userKey);
 
-            if (now - user.lastModifiedTs < ONE_DAY) {
-                active++;
+            if (user != null) {
+                if (now - user.lastModifiedTs < ONE_DAY) {
+                    active++;
+                }
+                if (now - user.lastModifiedTs < THREE_DAYS) {
+                    active3++;
+                }
             }
-            if (now - user.lastModifiedTs < THREE_DAYS) {
-                active3++;
-            }
-
         }
 
         stat.connected = connectedSessions;
