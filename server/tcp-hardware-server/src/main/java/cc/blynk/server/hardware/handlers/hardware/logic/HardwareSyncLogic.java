@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.HardwareSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -36,13 +37,12 @@ public class HardwareSyncLogic {
         if (message.length == 0) {
             //return all widgets state
             for (Widget widget : dash.widgets) {
-                if (widget instanceof HardwareSyncWidget) {
-                    HardwareSyncWidget hardwareSyncWidget = (HardwareSyncWidget) widget;
-                    if (hardwareSyncWidget.isRequiredForSyncAll()) {
-                        hardwareSyncWidget.sendHardSync(ctx, message.id, deviceId);
-                    }
+                //one exclusion, no need to sync RTC
+                if (widget instanceof HardwareSyncWidget && !(widget instanceof RTC)) {
+                    ((HardwareSyncWidget) widget).sendHardSync(ctx, message.id, deviceId);
                 }
             }
+            //return all static server holders
             for (Map.Entry<PinStorageKey, String> entry : dash.pinsStorage.entrySet()) {
                 PinStorageKey key = entry.getKey();
                 if (deviceId == key.deviceId) {

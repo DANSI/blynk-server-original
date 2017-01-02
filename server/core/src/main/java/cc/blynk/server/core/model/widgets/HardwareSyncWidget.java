@@ -14,7 +14,4 @@ public interface HardwareSyncWidget {
 
     void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId);
 
-    default boolean isRequiredForSyncAll() {
-        return true;
-    }
 }

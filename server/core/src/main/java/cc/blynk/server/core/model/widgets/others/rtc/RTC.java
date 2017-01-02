@@ -41,11 +41,6 @@ public class RTC extends OnePinWidget {
     }
 
     @Override
-    public boolean isRequiredForSyncAll() {
-        return false;
-    }
-
-    @Override
     public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
         if (this.deviceId == deviceId) {
             final String body = Pin.makeHardwareBody(pinType, pin, getTime());
