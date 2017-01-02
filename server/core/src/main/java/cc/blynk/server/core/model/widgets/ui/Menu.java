@@ -10,7 +10,7 @@ import cc.blynk.utils.StringUtils;
  */
 public class Menu extends OnePinWidget {
 
-    public String[] labels;
+    public volatile String[] labels;
 
     public String hint;
 

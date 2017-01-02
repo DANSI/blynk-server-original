@@ -127,7 +127,7 @@ public abstract class Widget {
 
     public int y;
 
-    public int color;
+    public volatile int color;
 
     public int width;
 
@@ -135,7 +135,7 @@ public abstract class Widget {
 
     public int tabId = 0;
 
-    public String label;
+    public volatile String label;
 
     protected static void append(StringBuilder sb, byte pin, PinType pinType, String pinMode) {
         if (pin == -1 || pinMode == null || pinType == PinType.VIRTUAL) {

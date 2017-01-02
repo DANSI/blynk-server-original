@@ -11,9 +11,9 @@ public class Button extends OnePinWidget {
 
     public boolean pushMode;
 
-    public String onLabel;
+    public volatile String onLabel;
 
-    public String offLabel;
+    public volatile String offLabel;
 
     @Override
     public String getModeType() {

@@ -10,7 +10,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  */
 public class Player extends OnePinWidget {
 
-    public boolean isOnPlay;
+    public volatile boolean isOnPlay;
 
     @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
