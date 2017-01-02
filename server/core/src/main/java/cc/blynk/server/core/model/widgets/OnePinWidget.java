@@ -40,11 +40,13 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId) {
-        String hardBody = makeHardwareBody();
-        if (hardBody != null) {
-            String body = makeBody(dashId, deviceId, hardBody);
-            appChannel.write(makeUTF8StringMessage(APP_SYNC, 1111, body));
+    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
+        if (targetId == ANY_TARGET || this.deviceId == targetId) {
+            String hardBody = makeHardwareBody();
+            if (hardBody != null) {
+                String body = makeBody(dashId, deviceId, hardBody);
+                appChannel.write(makeUTF8StringMessage(APP_SYNC, 1111, body));
+            }
         }
     }
 

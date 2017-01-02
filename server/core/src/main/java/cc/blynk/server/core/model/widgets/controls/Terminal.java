@@ -37,13 +37,15 @@ public class Terminal extends OnePinWidget {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
         if (pin == -1 || pinType == null || lastCommands.size() == 0) {
             return;
         }
-        for (String storedValue : lastCommands) {
-            String body = makeBody(dashId, deviceId, makeHardwareBody(pinType, pin, storedValue));
-            appChannel.write(makeUTF8StringMessage(APP_SYNC, 1111, body));
+        if (targetId == ANY_TARGET || this.deviceId == targetId) {
+            for (String storedValue : lastCommands) {
+                String body = makeBody(dashId, deviceId, makeHardwareBody(pinType, pin, storedValue));
+                appChannel.write(makeUTF8StringMessage(APP_SYNC, 1111, body));
+            }
         }
     }
 

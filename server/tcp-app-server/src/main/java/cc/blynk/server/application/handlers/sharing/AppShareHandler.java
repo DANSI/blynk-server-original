@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.sharing;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
+import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.LoadProfileGzippedLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.GetGraphDataLogic;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
@@ -12,6 +13,7 @@ import cc.blynk.server.handlers.common.PingLogic;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
@@ -28,11 +30,13 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     public final AppShareStateHolder state;
     private final HardwareAppShareLogic hardwareApp;
     private final GetGraphDataLogic graphData;
+    private final AppSyncLogic appSyncLogic;
 
     public AppShareHandler(Holder holder, AppShareStateHolder state) {
         super(holder.props, state);
         this.hardwareApp = new HardwareAppShareLogic(holder.sessionDao);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
+        this.appSyncLogic = new AppSyncLogic();
         this.state = state;
     }
 
@@ -54,6 +58,9 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 break;
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);
+                break;
+            case APP_SYNC :
+                appSyncLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

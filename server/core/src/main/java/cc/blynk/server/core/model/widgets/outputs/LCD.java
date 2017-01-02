@@ -61,18 +61,20 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
         if (pins == null) {
             return;
         }
-        if (advancedMode) {
-            for (String command : lastCommands) {
-                pins[0].value = command;
-                sendSyncOnActivate(pins[0], dashId, deviceId, appChannel);
-            }
-        } else {
-            for (Pin pin : pins) {
-                sendSyncOnActivate(pin, dashId, deviceId, appChannel);
+        if (targetId == ANY_TARGET || this.deviceId == targetId) {
+            if (advancedMode) {
+                for (String command : lastCommands) {
+                    pins[0].value = command;
+                    sendSyncOnActivate(pins[0], dashId, deviceId, appChannel);
+                }
+            } else {
+                for (Pin pin : pins) {
+                    sendSyncOnActivate(pin, dashId, deviceId, appChannel);
+                }
             }
         }
     }

@@ -6,6 +6,7 @@ import cc.blynk.server.application.handlers.main.logic.ActivateDashboardLogic;
 import cc.blynk.server.application.handlers.main.logic.AddEnergyLogic;
 import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.AppMailLogic;
+import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.DeActivateDashboardLogic;
 import cc.blynk.server.application.handlers.main.logic.GetEnergyLogic;
 import cc.blynk.server.application.handlers.main.logic.GetTokenLogic;
@@ -72,6 +73,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final CreateDeviceLogic createDeviceLogic;
     private final UpdateDeviceLogic updateDeviceLogic;
     private final DeleteDeviceLogic deleteDeviceLogic;
+    private final AppSyncLogic appSyncLogic;
 
     public AppHandler(Holder holder, AppStateHolder state) {
         super(holder.props, state);
@@ -107,6 +109,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.shareLogic = new ShareLogic(holder.sessionDao);
         this.redeemLogic = new RedeemLogic(holder.dbManager, holder.blockingIOProcessor);
         this.addEnergyLogic = new AddEnergyLogic(holder.dbManager, holder.blockingIOProcessor);
+
+        this.appSyncLogic = new AppSyncLogic();
 
         this.state = state;
     }
@@ -210,6 +214,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case GET_TAGS :
                 GetTagsLogic.messageReceived(ctx, state.user, msg);
                 break;
+            case APP_SYNC :
+                appSyncLogic.messageReceived(ctx, state, msg);
         }
     }
 

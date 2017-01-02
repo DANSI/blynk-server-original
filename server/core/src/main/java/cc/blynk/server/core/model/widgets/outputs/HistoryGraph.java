@@ -38,7 +38,7 @@ public class HistoryGraph extends MultiPinWidget {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
     }
 
     @Override

@@ -46,21 +46,23 @@ public class TwoAxisJoystick extends MultiPinWidget implements HardwareSyncWidge
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
         if (pins == null) {
             return;
         }
-        if (split) {
-            for (Pin pin : pins) {
-                if (pin.notEmpty()) {
-                    String body = makeBody(dashId, deviceId, pin.makeHardwareBody());
+        if (targetId == ANY_TARGET || this.deviceId == targetId) {
+            if (split) {
+                for (Pin pin : pins) {
+                    if (pin.notEmpty()) {
+                        String body = makeBody(dashId, deviceId, pin.makeHardwareBody());
+                        appChannel.write(makeUTF8StringMessage(APP_SYNC, 1111, body), appChannel.voidPromise());
+                    }
+                }
+            } else {
+                if (pins[0].notEmpty()) {
+                    String body = makeBody(dashId, deviceId, pins[0].makeHardwareBody());
                     appChannel.write(makeUTF8StringMessage(APP_SYNC, 1111, body), appChannel.voidPromise());
                 }
-            }
-        } else {
-            if (pins[0].notEmpty()) {
-                String body = makeBody(dashId, deviceId, pins[0].makeHardwareBody());
-                appChannel.write(makeUTF8StringMessage(APP_SYNC, 1111, body), appChannel.voidPromise());
             }
         }
     }
