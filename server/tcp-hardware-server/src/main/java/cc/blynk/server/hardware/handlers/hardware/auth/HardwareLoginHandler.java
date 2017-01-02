@@ -74,6 +74,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, deviceId);
         Device device = dash.getDeviceById(deviceId);
         if (device != null) {
+            log.trace("Connected device id {}, dash id {}", deviceId, dash.id);
             device.connected();
             device.lastLoggedIP = IPUtils.getIp(channel);
         }

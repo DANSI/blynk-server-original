@@ -4,7 +4,6 @@ import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
-import cc.blynk.server.application.handlers.main.logic.dashboard.device.DeviceStatus;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
@@ -93,7 +92,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        DeviceStatus[] devices = JsonParser.mapper.readValue(response, DeviceStatus[].class);
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -371,7 +370,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        DeviceStatus[] devices = JsonParser.mapper.readValue(response, DeviceStatus[].class);
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -385,7 +384,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         response = clientPair.appClient.getBody();
 
-        devices = JsonParser.mapper.readValue(response, DeviceStatus[].class);
+        devices = JsonParser.mapper.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -401,7 +400,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        DeviceStatus[] devices = JsonParser.mapper.readValue(response, DeviceStatus[].class);
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -413,7 +412,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         response = clientPair.appClient.getBody(2);
 
-        devices = JsonParser.mapper.readValue(response, DeviceStatus[].class);
+        devices = JsonParser.mapper.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -428,7 +427,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        DeviceStatus[] devices = JsonParser.mapper.readValue(response, DeviceStatus[].class);
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -447,14 +446,14 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         response = clientPair.appClient.getBody();
 
-        devices = JsonParser.mapper.readValue(response, DeviceStatus[].class);
+        devices = JsonParser.mapper.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
         assertEqualDevice(device0, devices[0]);
     }
 
-    private static void assertEqualDevice(Device expected, DeviceStatus real) {
+    private static void assertEqualDevice(Device expected, Device real) {
         assertEquals(expected.id, real.id);
         //assertEquals(expected.name, real.name);
         assertEquals(expected.boardType, real.boardType);

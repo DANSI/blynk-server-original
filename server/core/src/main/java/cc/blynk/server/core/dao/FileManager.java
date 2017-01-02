@@ -176,6 +176,12 @@ public class FileManager {
                 }
                 user.dashShareTokens.remove(dashId);
             }
+
+            if (dashBoard.devices != null) {
+                for (Device device : dashBoard.devices) {
+                    device.status = null;
+                }
+            }
         }
     }
 

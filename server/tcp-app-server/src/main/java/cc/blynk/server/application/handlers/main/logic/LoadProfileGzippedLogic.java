@@ -36,6 +36,8 @@ public class LoadProfileGzippedLogic {
             body = user.profile.getDashByIdOrThrow(dashId).toString();
         }
 
+        log.debug("Load Gzipped Profile {} ", body);
+
         try {
             byte[] data = ByteUtils.compress(body);
             ctx.writeAndFlush(makeBinaryMessage(LOAD_PROFILE_GZIPPED, message.id, data), ctx.voidPromise());
