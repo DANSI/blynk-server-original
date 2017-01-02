@@ -11,8 +11,6 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 //todo remove FrequencyWidget from LED when users will migrate to new clients.
 public class LED extends OnePinWidget implements FrequencyWidget {
 
-    public int color;
-
     public int frequency;
 
     private transient long lastRequestTS;
