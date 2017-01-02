@@ -35,50 +35,59 @@ public class HardwareSyncLogic {
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         if (message.length == 0) {
-            //return all widgets state
-            for (Widget widget : dash.widgets) {
-                //one exclusion, no need to sync RTC
-                if (widget instanceof HardwareSyncWidget && !(widget instanceof RTC)) {
-                    ((HardwareSyncWidget) widget).sendHardSync(ctx, message.id, deviceId);
-                }
-            }
-            //return all static server holders
-            for (Map.Entry<PinStorageKey, String> entry : dash.pinsStorage.entrySet()) {
-                PinStorageKey key = entry.getKey();
-                if (deviceId == key.deviceId) {
-                    String body = Pin.makeHardwareBody(key.pinType, key.pin, entry.getValue());
-                    ctx.write(makeUTF8StringMessage(HARDWARE, message.id, body), ctx.voidPromise());
-                }
-            }
-
-            ctx.flush();
+            syncAll(ctx, message.id, dash, deviceId);
         } else {
-            //return specific widget state
-            String[] bodyParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+            syncSpecificPins(ctx, message.body, message.id, dash, deviceId);
+        }
+    }
 
-            if (bodyParts.length < 2) {
-                ctx.writeAndFlush(makeResponse(message.id, Response.ILLEGAL_COMMAND), ctx.voidPromise());
-                return;
+    private void syncAll(ChannelHandlerContext ctx, int msgId, DashBoard dash, int deviceId) {
+        //return all widgets state
+        for (Widget widget : dash.widgets) {
+            //one exclusion, no need to sync RTC
+            if (widget instanceof HardwareSyncWidget && !(widget instanceof RTC)) {
+                ((HardwareSyncWidget) widget).sendHardSync(ctx, msgId, deviceId);
             }
+        }
+        //return all static server holders
+        for (Map.Entry<PinStorageKey, String> entry : dash.pinsStorage.entrySet()) {
+            PinStorageKey key = entry.getKey();
+            if (deviceId == key.deviceId) {
+                String body = Pin.makeHardwareBody(key.pinType, key.pin, entry.getValue());
+                ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
+            }
+        }
 
-            PinType pinType = PinType.getPinType(bodyParts[0].charAt(0));
+        ctx.flush();
+    }
 
-            if (PinUtil.isReadOperation(bodyParts[0])) {
-                for (int i = 1; i < bodyParts.length; i++) {
-                    byte pin = ParseUtil.parseByte(bodyParts[i]);
-                    Widget widget = dash.findWidgetByPin(state.deviceId, pin, pinType);
-                    if (widget == null) {
-                        String value = dash.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
-                        if (value != null) {
-                            String body = Pin.makeHardwareBody(pinType, pin, value);
-                            ctx.write(makeUTF8StringMessage(HARDWARE, message.id, body), ctx.voidPromise());
-                        }
-                    } else if (widget instanceof HardwareSyncWidget) {
-                        ((HardwareSyncWidget) widget).sendHardSync(ctx, message.id, deviceId);
+    //message format is "vr 22 33"
+    //return specific widget state
+    private void syncSpecificPins(ChannelHandlerContext ctx, String messageBody, int msgId, DashBoard dash, int deviceId) {
+        String[] bodyParts = messageBody.split(StringUtils.BODY_SEPARATOR_STRING);
+
+        if (bodyParts.length < 2) {
+            ctx.writeAndFlush(makeResponse(msgId, Response.ILLEGAL_COMMAND), ctx.voidPromise());
+            return;
+        }
+
+        PinType pinType = PinType.getPinType(bodyParts[0].charAt(0));
+
+        if (PinUtil.isReadOperation(bodyParts[0])) {
+            for (int i = 1; i < bodyParts.length; i++) {
+                byte pin = ParseUtil.parseByte(bodyParts[i]);
+                Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
+                if (widget == null) {
+                    String value = dash.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
+                    if (value != null) {
+                        String body = Pin.makeHardwareBody(pinType, pin, value);
+                        ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
                     }
+                } else if (widget instanceof HardwareSyncWidget) {
+                    ((HardwareSyncWidget) widget).sendHardSync(ctx, msgId, deviceId);
                 }
-                ctx.flush();
             }
+            ctx.flush();
         }
     }
 
