@@ -23,11 +23,11 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
+import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
-import static cc.blynk.server.core.protocol.enums.Command.SYNC;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
@@ -149,10 +149,10 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("hardware 1 vw 1 1");
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, b("1 vw 1 1"))));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 1 1"))));
 
         appClient2.send("hardware 1 vw 2 2");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, b("1 vw 2 2"))));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 2 2"))));
 
         clientPair.appClient.reset();
         clientPair.hardwareClient.reset();
@@ -235,10 +235,10 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("hardware 1 vw 1 1");
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, b("1 vw 1 1"))));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 1 1"))));
 
         appClient2.send("hardware 1 vw 2 2");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, b("1 vw 2 2"))));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 2 2"))));
 
         clientPair.appClient.reset();
         appClient2.reset();
@@ -511,10 +511,10 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("hardware 1 vw 1 1");
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, SYNC, b("1 vw 1 1"))));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, APP_SYNC, b("1 vw 1 1"))));
 
         appClient2.send("hardware 1 vw 2 2");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, SYNC, b("1 vw 2 2"))));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 2 2"))));
     }
 
     private static void clearPrivateData(Notification n) {

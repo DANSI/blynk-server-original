@@ -16,8 +16,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Command.SYNC;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.StringUtils.split2;
@@ -88,7 +88,7 @@ public class HardwareAppLogic {
                 dash.update(targetId, pin, pinType, value);
 
                 //sending to shared dashes and master-master apps
-                session.sendToSharedApps(ctx.channel(), dash.sharedToken, SYNC, message.id, message.body);
+                session.sendToSharedApps(ctx.channel(), dash.sharedToken, APP_SYNC, message.id, message.body);
 
                 session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceIds);
                 try {

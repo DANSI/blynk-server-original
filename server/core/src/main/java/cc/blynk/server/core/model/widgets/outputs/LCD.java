@@ -11,7 +11,7 @@ import io.netty.channel.Channel;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cc.blynk.server.core.protocol.enums.Command.SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.makeBody;
 
@@ -39,7 +39,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     private static void sendSyncOnActivate(Pin pin, int dashId, int deviceId, Channel appChannel) {
         if (pin.notEmpty()) {
             String body = makeBody(dashId, deviceId, pin.makeHardwareBody());
-            appChannel.write(makeUTF8StringMessage(SYNC, 1111, body), appChannel.voidPromise());
+            appChannel.write(makeUTF8StringMessage(APP_SYNC, 1111, body), appChannel.voidPromise());
         }
     }
 

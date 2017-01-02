@@ -20,7 +20,7 @@ public class CommandParser {
             case "loadprofilegzipped" :
                 return LOAD_PROFILE_GZIPPED;
             case "sync" :
-                return SYNC;
+                return APP_SYNC;
             case "sharing" :
                 return SHARING;
             case "gettoken" :

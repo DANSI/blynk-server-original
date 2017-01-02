@@ -8,7 +8,7 @@ import cc.blynk.utils.structure.LimitedArrayDeque;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.makeBody;
 
@@ -60,7 +60,7 @@ public class Map extends OnePinWidget {
         }
         for (String storedValue : lastCommands) {
             String body = makeBody(dashId, deviceId, makeHardwareBody(pinType, pin, storedValue));
-            appChannel.write(makeUTF8StringMessage(SYNC, 1111, body));
+            appChannel.write(makeUTF8StringMessage(APP_SYNC, 1111, body));
         }
     }
 

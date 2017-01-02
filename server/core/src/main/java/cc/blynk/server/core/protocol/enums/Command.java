@@ -41,7 +41,7 @@ public final class Command {
     public static final short UPDATE_DASH = 22;
     public static final short DELETE_DASH = 23;
     public static final short LOAD_PROFILE_GZIPPED = 24;
-    public static final short SYNC = 25;
+    public static final short APP_SYNC = 25;
     public static final short SHARING = 26;
     public static final short ADD_PUSH_TOKEN = 27;
     public static final short EXPORT_GRAPH_DATA = 28;
@@ -107,7 +107,7 @@ public final class Command {
                 put(REGISTER, "Register");
                 put(LOGIN, "Login");
                 put(LOAD_PROFILE_GZIPPED, "LoadProfile");
-                put(SYNC, "Sync");
+                put(APP_SYNC, "Sync");
                 put(SHARING, "Sharing");
                 put(GET_TOKEN, "GetToken");
                 put(PING, "Ping");

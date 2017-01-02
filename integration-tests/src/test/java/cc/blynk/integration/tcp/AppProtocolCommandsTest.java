@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import static cc.blynk.server.core.protocol.enums.Command.SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
@@ -161,7 +161,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString).check(2, OK);
 
-        makeCommands("activate 1").check(10, SYNC);
+        makeCommands("activate 1").check(10, APP_SYNC);
     }
 
     @Test

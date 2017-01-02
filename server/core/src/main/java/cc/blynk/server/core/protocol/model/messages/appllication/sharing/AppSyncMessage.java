@@ -8,14 +8,14 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 27.10.15.
  */
-public class SyncMessage extends StringMessage {
+public class AppSyncMessage extends StringMessage {
 
-    public SyncMessage(int messageId, String body) {
-        super(messageId, Command.SYNC, body.length(), body);
+    public AppSyncMessage(int messageId, String body) {
+        super(messageId, Command.APP_SYNC, body.length(), body);
     }
 
     @Override
     public String toString() {
-        return "SyncMessage{" + super.toString() + "}";
+        return "AppSyncMessage{" + super.toString() + "}";
     }
 }

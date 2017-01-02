@@ -32,12 +32,12 @@ import cc.blynk.server.core.protocol.model.messages.appllication.UpdateDashMessa
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateTag;
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateWidget;
+import cc.blynk.server.core.protocol.model.messages.appllication.sharing.AppSyncMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.GetShareTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.GetSharedDashMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.RefreshShareTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SharingMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SyncMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.protocol.model.messages.common.PingMessage;
@@ -68,8 +68,8 @@ public class MessageFactory {
                 return new LoginMessage(messageId, body);
             case LOAD_PROFILE_GZIPPED :
                 return new LoadProfileGzippedStringMessage(messageId, body);
-            case SYNC :
-                return new SyncMessage(messageId, body);
+            case APP_SYNC:
+                return new AppSyncMessage(messageId, body);
             case SHARING :
                 return new SharingMessage(messageId, body);
             case GET_TOKEN :
