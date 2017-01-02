@@ -9,6 +9,7 @@ import cc.blynk.utils.ParseUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2Device;
 
 /**
@@ -40,6 +41,7 @@ public class AppSyncLogic {
             }
         }
 
+        ctx.write(ok(message.id), ctx.voidPromise());
         ctx.flush();
     }
 

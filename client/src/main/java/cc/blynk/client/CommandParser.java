@@ -19,7 +19,7 @@ public class CommandParser {
                 return PING;
             case "loadprofilegzipped" :
                 return LOAD_PROFILE_GZIPPED;
-            case "sync" :
+            case "appsync" :
                 return APP_SYNC;
             case "sharing" :
                 return SHARING;
