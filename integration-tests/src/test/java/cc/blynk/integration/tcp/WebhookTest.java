@@ -127,7 +127,7 @@ public class WebhookTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("hardware vw 123 10");
         String expectedResponse = "vw" + StringUtils.BODY_SEPARATOR_STRING + "123" + StringUtils.BODY_SEPARATOR_STRING +
-                "{\"results\":{\"sunrise\":\"5:43:55 AM\",\"sunset\":\"6:55:05 PM\",\"solar_noon\":\"12:19:30 PM\",\"day_length\":\"13:11:10\",\"civil_twilight_begin\":\"5:17:12 AM\",\"civil_twilight_end\":\"7:21:47 PM\",\"nautical_twilight_begin\":\"4:45:18 AM\",\"nautical_twilight_end\":\"7:53:42 PM\",\"astronomical_twilight_begin\":\"4:12:05 AM\",\"astronomical_twilight_end\":\"8:26:55 PM\"},\"status\":\"OK\"}";
+                "{\"results\":{\"sunrise\":\"7:30:27 AM\",\"sunset\":\"5:14:34 PM\",\"solar_noon\":\"12:22:31 PM\",\"day_length\":\"09:44:07\",\"civil_twilight_begin\":\"7:01:53 AM\",\"civil_twilight_end\":\"5:43:08 PM\",\"nautical_twilight_begin\":\"6:29:39 AM\",\"nautical_twilight_end\":\"6:15:23 PM\",\"astronomical_twilight_begin\":\"5:58:15 AM\",\"astronomical_twilight_end\":\"6:46:46 PM\"},\"status\":\"OK\"}";
         verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(888, HARDWARE, expectedResponse)));
     }
 
@@ -146,7 +146,7 @@ public class WebhookTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 123 10"))));
 
         String expectedResponse = "vw" + StringUtils.BODY_SEPARATOR_STRING + "123" + StringUtils.BODY_SEPARATOR_STRING +
-                "{\"results\":{\"sunrise\":\"5:43:55 AM\",\"sunset\":\"6:55:05 PM\",\"solar_noon\":\"12:19:30 PM\",\"day_length\":\"13:11:10\",\"civil_twilight_begin\":\"5:17:12 AM\",\"civil_twilight_end\":\"7:21:47 PM\",\"nautical_twilight_begin\":\"4:45:18 AM\",\"nautical_twilight_end\":\"7:53:42 PM\",\"astronomical_twilight_begin\":\"4:12:05 AM\",\"astronomical_twilight_end\":\"8:26:55 PM\"},\"status\":\"OK\"}";
+                "{\"results\":{\"sunrise\":\"7:30:27 AM\",\"sunset\":\"5:14:34 PM\",\"solar_noon\":\"12:22:31 PM\",\"day_length\":\"09:44:07\",\"civil_twilight_begin\":\"7:01:53 AM\",\"civil_twilight_end\":\"5:43:08 PM\",\"nautical_twilight_begin\":\"6:29:39 AM\",\"nautical_twilight_end\":\"6:15:23 PM\",\"astronomical_twilight_begin\":\"5:58:15 AM\",\"astronomical_twilight_end\":\"6:46:46 PM\"},\"status\":\"OK\"}";
         verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(888, HARDWARE, expectedResponse)));
     }
 
