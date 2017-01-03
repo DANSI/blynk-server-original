@@ -33,6 +33,7 @@ import cc.blynk.server.core.model.widgets.outputs.LabeledValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.LevelDisplay;
 import cc.blynk.server.core.model.widgets.outputs.Map;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
+import cc.blynk.server.core.model.widgets.outputs.VerticalLevelDisplay;
 import cc.blynk.server.core.model.widgets.sensors.Accelerometer;
 import cc.blynk.server.core.model.widgets.sensors.Barometer;
 import cc.blynk.server.core.model.widgets.sensors.GPSStreaming;
@@ -85,6 +86,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = LCD.class, name = "LCD"),
         @JsonSubTypes.Type(value = Graph.class, name = "GRAPH"),
         @JsonSubTypes.Type(value = LevelDisplay.class, name = "LEVEL_DISPLAY"),
+        @JsonSubTypes.Type(value = VerticalLevelDisplay.class, name = "VERTICAL_LEVEL_DISPLAY"),
         @JsonSubTypes.Type(value = Video.class, name = "VIDEO"),
         @JsonSubTypes.Type(value = HistoryGraph.class, name = "LOGGER"),
 
