@@ -4,6 +4,9 @@ import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.utils.properties.GCMProperties;
+import cc.blynk.utils.properties.MailProperties;
+import cc.blynk.utils.properties.SmsProperties;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -14,6 +17,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -41,7 +46,11 @@ public class HttpBusinessAPITest extends BaseTest {
     @BeforeClass
     public static void init() throws Exception {
         properties.setProperty("data.folder", getRelativeDataFolder("/business_profile"));
-        localHolder = new Holder(properties);
+        localHolder = new Holder(properties,
+                new MailProperties(Collections.emptyMap()),
+                new SmsProperties(Collections.emptyMap()),
+                new GCMProperties(Collections.emptyMap())
+        );
         httpServer = new HttpAPIServer(localHolder).start();
         httpsServerUrl = String.format("http://localhost:%s/0130aceeb3864280b863c118eb84a8df/query", httpPort);
         httpclient = HttpClients.createDefault();

@@ -7,6 +7,9 @@ import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.properties.GCMProperties;
+import cc.blynk.utils.properties.MailProperties;
+import cc.blynk.utils.properties.SmsProperties;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -22,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -42,7 +46,11 @@ public class HttpAPIPinsTest extends BaseTest {
     @BeforeClass
     public static void init() throws Exception {
         properties.setProperty("data.folder", getRelativeDataFolder("/profiles"));
-        localHolder = new Holder(properties);
+        localHolder = new Holder(properties,
+                new MailProperties(Collections.emptyMap()),
+                new SmsProperties(Collections.emptyMap()),
+                new GCMProperties(Collections.emptyMap())
+        );
         httpServer = new HttpAPIServer(localHolder).start();
         httpsServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = HttpClients.createDefault();

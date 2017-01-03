@@ -69,7 +69,8 @@ public class Holder implements Closeable {
 
     public final String currentIp;
 
-    public Holder(ServerProperties serverProperties) {
+    public Holder(ServerProperties serverProperties, ServerProperties mailProperties,
+                  ServerProperties smsProperties, ServerProperties gcmProperties) {
         this.props = serverProperties;
 
         this.region = serverProperties.getProperty("region", "local");
@@ -102,9 +103,9 @@ public class Holder implements Closeable {
         );
 
         this.twitterWrapper = new TwitterWrapper();
-        this.mailWrapper = new MailWrapper(new ServerProperties(MailWrapper.MAIL_PROPERTIES_FILENAME));
-        this.gcmWrapper = new GCMWrapper(new ServerProperties(GCMWrapper.GCM_PROPERTIES_FILENAME), asyncHttpClient);
-        this.smsWrapper = new SMSWrapper(new ServerProperties(SMSWrapper.SMS_PROPERTIES_FILENAME), asyncHttpClient);
+        this.mailWrapper = new MailWrapper(mailProperties);
+        this.gcmWrapper = new GCMWrapper(gcmProperties, asyncHttpClient);
+        this.smsWrapper = new SMSWrapper(smsProperties, asyncHttpClient);
 
         this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.dbManager = new DBManager(blockingIOProcessor);

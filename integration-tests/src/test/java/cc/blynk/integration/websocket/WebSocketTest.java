@@ -10,11 +10,16 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.websocket.WebSocketServer;
+import cc.blynk.utils.properties.GCMProperties;
+import cc.blynk.utils.properties.MailProperties;
+import cc.blynk.utils.properties.SmsProperties;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Collections;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
@@ -53,7 +58,11 @@ public class WebSocketTest extends IntegrationBase {
     @BeforeClass
     public static void init() throws Exception {
         properties.setProperty("data.folder", getRelativeDataFolder("/profiles"));
-        localHolder = new Holder(properties);
+        localHolder = new Holder(properties,
+                new MailProperties(Collections.emptyMap()),
+                new SmsProperties(Collections.emptyMap()),
+                new GCMProperties(Collections.emptyMap())
+        );
         tcpWebSocketPort = properties.getIntProperty("tcp.websocket.port");
         webSocketServer = new WebSocketServer(localHolder).start();
         appServer = new AppServer(localHolder).start();

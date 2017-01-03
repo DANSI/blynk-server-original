@@ -4,6 +4,9 @@ import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.utils.properties.GCMProperties;
+import cc.blynk.utils.properties.MailProperties;
+import cc.blynk.utils.properties.SmsProperties;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -14,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -42,7 +46,11 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
     @BeforeClass
     public static void init() throws Exception {
         properties.setProperty("data.folder", getRelativeDataFolder("/profiles"));
-        localHolder = new Holder(properties);
+        localHolder = new Holder(properties,
+                new MailProperties(Collections.emptyMap()),
+                new SmsProperties(Collections.emptyMap()),
+                new GCMProperties(Collections.emptyMap())
+        );
         httpServer = new HttpAPIServer(localHolder).start();
         httpsServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = new DefaultAsyncHttpClient(

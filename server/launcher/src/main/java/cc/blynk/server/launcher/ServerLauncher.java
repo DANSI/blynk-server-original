@@ -14,6 +14,9 @@ import cc.blynk.server.websocket.WebSocketServer;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
 import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.properties.GCMProperties;
+import cc.blynk.utils.properties.MailProperties;
+import cc.blynk.utils.properties.SmsProperties;
 
 import java.io.File;
 import java.net.BindException;
@@ -55,11 +58,17 @@ public class ServerLauncher {
 
         boolean isUnpacked = JarUtil.unpackStaticFiles("static");
 
-        start(serverProperties, isUnpacked);
+        ServerProperties mailProperties = new MailProperties(cmdProperties);
+        ServerProperties smsProperties = new SmsProperties(cmdProperties);
+        ServerProperties gcmProperties = new GCMProperties(cmdProperties);
+
+        start(serverProperties, mailProperties, smsProperties, gcmProperties, isUnpacked);
     }
 
-    private static void start(ServerProperties serverProperties, boolean isUnpacked) {
-        final Holder holder = new Holder(serverProperties);
+    private static void start(ServerProperties serverProperties, ServerProperties mailProperties,
+                              ServerProperties smsProperties, ServerProperties gcmProperties,
+                              boolean isUnpacked) {
+        final Holder holder = new Holder(serverProperties, mailProperties, smsProperties, gcmProperties);
 
         final BaseServer[] servers = new BaseServer[] {
                 new HardwareServer(holder),
