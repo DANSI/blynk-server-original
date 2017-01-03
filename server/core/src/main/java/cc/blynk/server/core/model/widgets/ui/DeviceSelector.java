@@ -10,10 +10,10 @@ import cc.blynk.utils.ParseUtil;
  */
 public class DeviceSelector extends NoPinWidget {
 
-    public volatile int[] value = new int[] {0};
+    public volatile int value = 0;
 
     public void updateValue(String currentDeviceIdString) {
-        this.value = new int[] {ParseUtil.parseInt(currentDeviceIdString)};
+        this.value = ParseUtil.parseInt(currentDeviceIdString);
     }
 
     @Override

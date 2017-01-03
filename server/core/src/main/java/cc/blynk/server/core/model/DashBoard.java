@@ -184,7 +184,7 @@ public class DashBoard {
             Widget widget = getWidgetById(targetId);
             //todo this check should be removed after fix on iOS
             if (widget instanceof DeviceSelector) {
-                return ((DeviceSelector) widget).value;
+                return new int[] {((DeviceSelector) widget).value};
             }
         }
 
