@@ -52,7 +52,8 @@ public class ResetPasswordLogic {
         this.emailBody = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "reset-email.html");
         this.mailWrapper = mailWrapper;
 
-        String host = props.getProperty("reset-pass.http.host", IPUtils.resolveHostIP());
+        String netInterface = props.getProperty("net.interface", "eth");
+        String host = props.getProperty("reset-pass.http.host", IPUtils.resolveHostIP(netInterface));
         this.resetPassUrl = "http://" + host + "/landing?token=";
         this.pageContent = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "enterNewPassword.html");
     }
