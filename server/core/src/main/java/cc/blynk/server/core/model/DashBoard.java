@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
@@ -163,9 +164,9 @@ public class DashBoard {
     /**
      * Returns list of device ids that should receive user command.
      * Widget could be assigned to specific device or to tag that
-     * is assigned to few devices.
+     * is assigned to few devices or to device selector widget.
      *
-     * @param targetId - deviceId or tagId
+     * @param targetId - deviceId or tagId or device selector widget id
      */
     public int[] getDeviceIdsByTarget(int targetId) {
         Device device = getDeviceById(targetId);
@@ -178,7 +179,16 @@ public class DashBoard {
             return tag.deviceIds;
         }
 
-       return null;
+        //means widget assigned to device selector widget.
+        if (targetId >= 200_000) {
+            Widget widget = getWidgetById(targetId);
+            //todo this check should be removed after fix on iOS
+            if (widget instanceof DeviceSelector) {
+                return ((DeviceSelector) widget).value;
+            }
+        }
+
+        return null;
     }
 
     public Device getDeviceById(int id) {

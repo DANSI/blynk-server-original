@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
@@ -79,8 +80,16 @@ public class HardwareAppLogic {
 
         final char operation = split[1].charAt(1);
         switch (operation) {
-            case 'w' :
+            case 'u' :
                 String[] splitBody = split3(split[1]);
+                final int widgetId = ParseUtil.parseInt(splitBody[1]);
+                Widget deviceSelector = dash.getWidgetById(widgetId);
+                if (deviceSelector instanceof DeviceSelector) {
+                    ((DeviceSelector) deviceSelector).updateValue(splitBody[2]);
+                }
+                break;
+            case 'w' :
+                splitBody = split3(split[1]);
                 final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
                 final byte pin = ParseUtil.parseByte(splitBody[1]);
                 final String value = splitBody[2];
