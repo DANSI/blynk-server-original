@@ -33,7 +33,7 @@ public class MailWrapperTest {
         }
 
         String to = "";
-        MailWrapper mailWrapper = new MailWrapper(properties, httpclient);
+        MailWrapper mailWrapper = new MailWrapper(properties);
         mailWrapper.sendText(to, "Hello", "Body!");
     }
 
@@ -48,7 +48,7 @@ public class MailWrapperTest {
         }
 
         String to = "doom369@gmail.com";
-        MailWrapper mailWrapper = new MailWrapper(properties, httpclient);
+        MailWrapper mailWrapper = new MailWrapper(properties);
 
         mailWrapper.sendText(to, "Hello", "Body!");
     }
@@ -65,7 +65,7 @@ public class MailWrapperTest {
 
         String to = "";
 
-        MailWrapper mailWrapper = new MailWrapper(properties, httpclient);
+        MailWrapper mailWrapper = new MailWrapper(properties);
 
         mailWrapper.sendText(to, "Hello", "Happy Blynking!\n" +
                 "-\n" +

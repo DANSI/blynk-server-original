@@ -1,7 +1,5 @@
 package cc.blynk.server.notifications.mail;
 
-import org.asynchttpclient.AsyncHttpClient;
-
 import java.util.Properties;
 
 /**
@@ -15,7 +13,7 @@ public class MailWrapper {
 
     private final MailClient client;
 
-    public MailWrapper(Properties mailProperties, AsyncHttpClient asyncHttpClient) {
+    public MailWrapper(Properties mailProperties) {
         String host = mailProperties.getProperty("mail.smtp.host");
         if (host != null && host.contains("sparkpostmail")) {
             client = new SparkPostMailClient(mailProperties);

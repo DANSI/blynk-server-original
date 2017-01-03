@@ -102,7 +102,7 @@ public class Holder implements Closeable {
         );
 
         this.twitterWrapper = new TwitterWrapper();
-        this.mailWrapper = new MailWrapper(new ServerProperties(MailWrapper.MAIL_PROPERTIES_FILENAME), asyncHttpClient);
+        this.mailWrapper = new MailWrapper(new ServerProperties(MailWrapper.MAIL_PROPERTIES_FILENAME));
         this.gcmWrapper = new GCMWrapper(new ServerProperties(GCMWrapper.GCM_PROPERTIES_FILENAME), asyncHttpClient);
         this.smsWrapper = new SMSWrapper(new ServerProperties(SMSWrapper.SMS_PROPERTIES_FILENAME), asyncHttpClient);
 
