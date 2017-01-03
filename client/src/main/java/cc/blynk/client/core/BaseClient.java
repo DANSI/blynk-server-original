@@ -6,7 +6,11 @@ import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.ServerProperties;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ConnectTimeoutException;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -16,9 +20,10 @@ import org.apache.logging.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.channels.UnresolvedAddressException;
+import java.util.Collections;
 import java.util.Random;
 
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 
 /**
  * The Blynk Project.
@@ -52,7 +57,7 @@ public abstract class BaseClient {
         this.host = host;
         this.port = port;
         this.random = messageIdGenerator;
-        this.props = new ServerProperties();
+        this.props = new ServerProperties(Collections.emptyMap());
         this.nioEventLoopGroup = nioEventLoopGroup;
     }
 

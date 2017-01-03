@@ -16,6 +16,7 @@ import io.netty.channel.socket.SocketChannel;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -34,7 +35,7 @@ public class TestAppClient extends AppClient {
     protected int msgId = 0;
 
     public TestAppClient(String host, int port) {
-        super(host, port, Mockito.mock(Random.class), new ServerProperties());
+        super(host, port, Mockito.mock(Random.class), new ServerProperties(Collections.emptyMap()));
         Mockito.when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
     }
 

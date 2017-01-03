@@ -22,6 +22,7 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.annotations.Warmup;
 
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
@@ -108,7 +109,7 @@ public class SessionPerfTest {
     }
 
     private ChannelHandler newChannelHandler(final HardwareStateHolder hardwareStateHolder) {
-        return new BaseSimpleChannelInboundHandler(new ServerProperties(), hardwareStateHolder) {
+        return new BaseSimpleChannelInboundHandler(new ServerProperties(Collections.emptyMap()), hardwareStateHolder) {
             @Override
             public void messageReceived(ChannelHandlerContext ctx, Object msg) {
                 throw new UnsupportedOperationException();

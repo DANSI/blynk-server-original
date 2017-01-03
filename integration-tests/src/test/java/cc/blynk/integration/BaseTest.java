@@ -23,6 +23,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -69,7 +70,7 @@ public abstract class BaseTest {
 
     @BeforeClass
     public static void initProps() {
-        properties = new ServerProperties();
+        properties = new ServerProperties(Collections.emptyMap());
 
         //disable native linux epoll transport for non linux envs.
         if (!SystemUtils.IS_OS_LINUX) {

@@ -17,6 +17,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collections;
+
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.eq;
@@ -31,7 +33,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class HardwareInfoLogicTest {
 
-    ServerProperties props = new ServerProperties();
+    ServerProperties props = new ServerProperties(Collections.emptyMap());
 
     @Mock
     private ChannelHandlerContext ctx;

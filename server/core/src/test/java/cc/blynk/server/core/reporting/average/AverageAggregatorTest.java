@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 
 import static cc.blynk.server.core.reporting.average.AverageAggregator.DAY;
 import static cc.blynk.server.core.reporting.average.AverageAggregator.HOUR;
@@ -146,7 +147,7 @@ public class AverageAggregatorTest {
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregator.HOURLY_TEMP_FILENAME)));
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregator.DAILY_TEMP_FILENAME)));
 
-        ReportingDao reportingDao = new ReportingDao(reportingFolder, null, new ServerProperties());
+        ReportingDao reportingDao = new ReportingDao(reportingFolder, null, new ServerProperties(Collections.emptyMap()));
 
         reportingDao.delete(username, dashId, 0, PinType.VIRTUAL, pin);
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregator.HOURLY_TEMP_FILENAME)));

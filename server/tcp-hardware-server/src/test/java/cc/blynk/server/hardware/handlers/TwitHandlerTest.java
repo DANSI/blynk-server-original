@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import static org.mockito.Mockito.spy;
@@ -111,7 +112,7 @@ public class TwitHandlerTest {
 	@Test
 	public void testSendQuotaLimitationIsWorking() throws InterruptedException {
 		TwitMessage twitMessage = (TwitMessage) MessageFactory.produce(1, Command.TWEET, "this is a test tweet");
-		ServerProperties props = new ServerProperties();
+		ServerProperties props = new ServerProperties(Collections.emptyMap());
 		props.setProperty("notifications.frequency.user.quota.limit", "1");
 		final long defaultQuotaTime = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
 		TwitLogic tweetHandler = spy(new TwitLogic(blockingIOProcessor, twitterWrapper, 60));

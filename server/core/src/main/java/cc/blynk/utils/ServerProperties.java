@@ -22,14 +22,14 @@ public class ServerProperties extends Properties {
 
     public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
 
-    public ServerProperties() {
-        initProperties(SERVER_PROPERTIES_FILENAME);
+    public ServerProperties(Map<String, String> cmdProperties) {
+        this(cmdProperties, SERVER_PROPERTIES_FILENAME);
     }
 
-    public ServerProperties(Map<String, String> cmdProperties) {
-        String propertiesFileName = cmdProperties.get(SERVER_PROPERTIES_FILENAME);
+    public ServerProperties(Map<String, String> cmdProperties, String serverConfig) {
+        String propertiesFileName = cmdProperties.get(serverConfig);
         if (propertiesFileName == null) {
-            initProperties(SERVER_PROPERTIES_FILENAME);
+            initProperties(serverConfig);
         } else {
             initProperties(Paths.get(propertiesFileName));
         }
