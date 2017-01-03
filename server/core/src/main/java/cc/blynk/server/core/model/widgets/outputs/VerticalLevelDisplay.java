@@ -9,7 +9,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  */
 public class VerticalLevelDisplay extends OnePinWidget {
 
-    public boolean isYAxisFlipOn;
+    public boolean isAxisFlipOn;
 
     @Override
     public String getModeType() {
