@@ -19,12 +19,12 @@ public class IPUtils {
 
     private static final Logger log = LogManager.getLogger(IPUtils.class);
 
-    public static String resolveHostIP() {
+    public static String resolveHostIP(String netInterface) {
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
             while (interfaces.hasMoreElements()) {
                 NetworkInterface networkInterface = interfaces.nextElement();
-                if (networkInterface.getDisplayName().startsWith("eth")) {
+                if (networkInterface.getDisplayName().startsWith(netInterface)) {
                     Enumeration<InetAddress> ips = networkInterface.getInetAddresses();
                     while (ips.hasMoreElements()) {
                         InetAddress inetAddress = ips.nextElement();
