@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.outputs;
 
+import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 
 /**
@@ -7,9 +8,28 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class LevelDisplay extends OnePinWidget {
+public class LevelDisplay extends OnePinWidget implements FrequencyWidget {
 
-    public boolean isAxisFlipOn;
+    private int frequency;
+
+    private transient long lastRequestTS;
+
+    private boolean isAxisFlipOn;
+
+    @Override
+    public final int getFrequency() {
+        return frequency;
+    }
+
+    @Override
+    public final long getLastRequestTS(String body) {
+        return lastRequestTS;
+    }
+
+    @Override
+    public final void setLastRequestTS(String body, long now) {
+        this.lastRequestTS = now;
+    }
 
     @Override
     public String getModeType() {
