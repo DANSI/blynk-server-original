@@ -13,6 +13,7 @@ import io.netty.channel.Channel;
  */
 public interface AppSyncWidget {
 
+    int SYNC_DEFAULT_MESSAGE_ID = 1111;
     int ANY_TARGET = -1;
 
     void sendAppSync(Channel appChannel, int dashId, int targetId);

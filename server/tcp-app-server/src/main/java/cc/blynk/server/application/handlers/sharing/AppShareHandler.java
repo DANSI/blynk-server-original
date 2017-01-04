@@ -30,13 +30,11 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     public final AppShareStateHolder state;
     private final HardwareAppShareLogic hardwareApp;
     private final GetGraphDataLogic graphData;
-    private final AppSyncLogic appSyncLogic;
 
     public AppShareHandler(Holder holder, AppShareStateHolder state) {
         super(holder.props, state);
         this.hardwareApp = new HardwareAppShareLogic(holder.sessionDao);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
-        this.appSyncLogic = new AppSyncLogic();
         this.state = state;
     }
 
@@ -60,7 +58,7 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
             case APP_SYNC :
-                appSyncLogic.messageReceived(ctx, state, msg);
+                AppSyncLogic.messageReceived(ctx, state, msg);
                 break;
         }
     }

@@ -21,7 +21,7 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StateHolderUtil.getHardState;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
-import static cc.blynk.utils.StringUtils.makeBody;
+import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 /**
  * The Blynk Project.
@@ -165,7 +165,7 @@ public class Session {
             return;
         }
 
-        sendToApps(cmd, msgId, makeBody(dashId, deviceId, body));
+        sendToApps(cmd, msgId, prependDashIdAndDeviceId(dashId, deviceId, body));
     }
 
     private void sendToApps(short cmd, int msgId, String body) {

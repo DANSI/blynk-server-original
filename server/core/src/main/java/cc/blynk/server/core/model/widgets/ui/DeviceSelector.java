@@ -1,7 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui;
 
 import cc.blynk.server.core.model.widgets.NoPinWidget;
-import cc.blynk.utils.ParseUtil;
 
 /**
  * The Blynk Project.
@@ -11,10 +10,6 @@ import cc.blynk.utils.ParseUtil;
 public class DeviceSelector extends NoPinWidget {
 
     public volatile int value = 0;
-
-    public void updateValue(String currentDeviceIdString) {
-        this.value = ParseUtil.parseInt(currentDeviceIdString);
-    }
 
     @Override
     public int getPrice() {

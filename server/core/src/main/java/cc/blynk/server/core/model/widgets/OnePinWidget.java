@@ -10,7 +10,7 @@ import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
-import static cc.blynk.utils.StringUtils.makeBody;
+import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 /**
  * The Blynk Project.
@@ -45,8 +45,8 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
         if (targetId == ANY_TARGET || this.deviceId == targetId) {
             String hardBody = makeHardwareBody();
             if (hardBody != null) {
-                String body = makeBody(dashId, deviceId, hardBody);
-                appChannel.write(makeUTF8StringMessage(APP_SYNC, 1111, body));
+                String body = prependDashIdAndDeviceId(dashId, deviceId, hardBody);
+                appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
             }
         }
     }

@@ -85,7 +85,9 @@ public class HardwareAppLogic {
                 final int widgetId = ParseUtil.parseInt(splitBody[1]);
                 Widget deviceSelector = dash.getWidgetById(widgetId);
                 if (deviceSelector instanceof DeviceSelector) {
-                    ((DeviceSelector) deviceSelector).updateValue(splitBody[2]);
+                    final int selectedDeviceId = ParseUtil.parseInt(splitBody[2]);
+                    ((DeviceSelector) deviceSelector).value = selectedDeviceId;
+                    AppSyncLogic.sendSyncAndOk(ctx, dash, selectedDeviceId, message.id, true);
                 }
                 break;
             case 'w' :

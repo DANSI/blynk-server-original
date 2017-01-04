@@ -101,7 +101,7 @@ public class StringUtils {
         return split2(BODY_SEPARATOR, body);
     }
 
-    public static String makeBody(int dashId, int deviceId, String body) {
+    public static String prependDashIdAndDeviceId(int dashId, int deviceId, String body) {
         //todo this is back compatibility code. remove in future versions
         if (deviceId == 0) {
             return dashId + BODY_SEPARATOR_STRING + body;
