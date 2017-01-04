@@ -115,6 +115,7 @@ public class WebhookTest extends IntegrationBase {
     }
 
     @Test
+    @Ignore
     public void testSome3dPartyWeatherServiceTest() throws Exception {
         WebHook webHook = new WebHook();
         webHook.url = "http://api.sunrise-sunset.org/json?lat=36.7201600&lng=-4.4203400&date=2016-08-25";
@@ -132,6 +133,7 @@ public class WebhookTest extends IntegrationBase {
     }
 
     @Test
+    @Ignore
     public void testSome3dPartyWeatherServiceTriggerFromAppTest() throws Exception {
         WebHook webHook = new WebHook();
         webHook.url = "http://api.sunrise-sunset.org/json?lat=36.7201600&lng=-4.4203400&date=2016-08-25";
