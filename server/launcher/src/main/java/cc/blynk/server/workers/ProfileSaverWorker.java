@@ -109,21 +109,6 @@ public class ProfileSaverWorker implements Runnable, Closeable {
         return users;
     }
 
-    public List<User> saveAll() {
-        List<User> users = new ArrayList<>(userDao.users.size());
-
-        for (User user : userDao.getUsers().values()) {
-            try {
-                fileManager.overrideUserFile(user);
-                users.add(user);
-            } catch (Exception e) {
-                log.error("Error saving : {}.", user);
-            }
-        }
-
-        return users;
-    }
-
     @Override
     public void close() {
         run();
