@@ -13,7 +13,7 @@ public class DeviceSelector extends NoPinWidget {
 
     @Override
     public int getPrice() {
-        return 1500;
+        return 1900;
     }
 
 }
