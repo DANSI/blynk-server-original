@@ -20,7 +20,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.any;
@@ -165,20 +167,26 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 89 value_from_device_0"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1-1 vw 89 value_from_device_1"))));
 
+        clientPair.appClient.send("hardware 1 vw 88 100");
+
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 88 100"))));
+
         //change device, expecting syncs and OK
         clientPair.appClient.send("hardware 1 vu 200000 1");
-        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new HardwareMessage(2, b("vu 200000 1"))));
-        verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(2, b("vu 200000 1"))));
-
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(1111, b("1-1 vw 89 value_from_device_1"))));
-
-        clientPair.appClient.send("hardware 1 vu 200000 0");
-        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new HardwareMessage(3, b("vu 200000 0"))));
-        verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(3, b("vu 200000 0"))));
+        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new HardwareMessage(3, b("vu 200000 1"))));
+        verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(3, b("vu 200000 1"))));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(1111, b("1-1 vw 89 value_from_device_1"))));
+
+        //switch device back, expecting syncs and OK
+        clientPair.appClient.send("hardware 1 vu 200000 0");
+        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new HardwareMessage(4, b("vu 200000 0"))));
+        verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(4, b("vu 200000 0"))));
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(1111, b("1 vw 89 value_from_device_0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(1111, b("1 vw 88 100"))));
 
     }
 
