@@ -979,6 +979,19 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testEmailMininalValidation() throws Exception {
+        reset(blockingIOProcessor);
+
+        //adding email widget
+        clientPair.appClient.send("createWidget 1\0{\"id\":432, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.hardwareClient.send("email to subj body");
+        verify(mailWrapper, after(500).never()).sendHtml(eq("to"), eq("subj"), eq("body"));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
+    }
+
+    @Test
     public void testEmailWorks() throws Exception {
         reset(blockingIOProcessor);
 
@@ -990,11 +1003,11 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0{\"id\":432, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        clientPair.hardwareClient.send("email to subj body");
-        verify(mailWrapper, timeout(500)).sendHtml(eq("to"), eq("subj"), eq("body"));
+        clientPair.hardwareClient.send("email to@to.com subj body");
+        verify(mailWrapper, timeout(500)).sendHtml(eq("to@to.com"), eq("subj"), eq("body"));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
-        clientPair.hardwareClient.send("email to subj body");
+        clientPair.hardwareClient.send("email to@to.com subj body");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, QUOTA_LIMIT)));
     }
 

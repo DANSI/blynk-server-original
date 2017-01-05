@@ -83,6 +83,11 @@ public class MailLogic extends NotificationBase {
 
         checkIfNotificationQuotaLimitIsNotReached();
 
+        //minimal validation for receiver.
+        if (!to.contains("@")) {
+            throw new IllegalCommandException("Invalid mail receiver.");
+        }
+
         log.trace("Sending Mail for user {}, with message : '{}'.", state.user.name, message.body);
         mail(ctx.channel(), state.user.name, to, subj, body, message.id);
         state.user.emailMessages++;
