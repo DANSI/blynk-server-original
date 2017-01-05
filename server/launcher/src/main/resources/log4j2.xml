@@ -13,6 +13,16 @@
             </Policies>
         </RollingFile>
 
+        <RollingFile name="nettyLog" fileName="${sys:logs.folder}/netty.log"
+                     filePattern="${sys:logs.folder}/archive/netty.log.%d{yyyy-MM-dd}">
+            <PatternLayout>
+                <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+
         <RollingFile name="workersLog" fileName="${sys:logs.folder}/worker.log"
                      filePattern="${sys:logs.folder}/archive/worker.log.%d{yyyy-MM-dd}">
             <PatternLayout>
@@ -116,6 +126,9 @@
         </Logger>
         <Logger name="com.zaxxer.hikari" level="debug" additivity="false">
             <appender-ref ref="postgresDBLog"/>
+        </Logger>
+        <Logger name="io.netty" level="debug" additivity="false">
+            <appender-ref ref="nettyLog"/>
         </Logger>
 
         <Root>
