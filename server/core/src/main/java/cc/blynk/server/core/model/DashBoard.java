@@ -3,10 +3,10 @@ package cc.blynk.server.core.model;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
@@ -168,25 +168,21 @@ public class DashBoard {
      *
      * @param targetId - deviceId or tagId or device selector widget id
      */
-    public int[] getDeviceIdsByTarget(int targetId) {
+    public Target getDeviceIdsByTarget(int targetId) {
         Device device = getDeviceById(targetId);
         if (device != null) {
-            return new int[] {device.id};
+            return device;
         }
 
         Tag tag = getTagById(targetId);
-        if (tag != null && tag.deviceIds != null && tag.deviceIds.length > 0) {
-            return tag.deviceIds;
+        if (tag != null) {
+            return tag;
         }
 
         //means widget assigned to device selector widget.
-        //todo fix that for iOS
-        if (targetId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-            Widget widget = getWidgetById(targetId);
-            //todo this check should be removed after fix on iOS
-            if (widget instanceof DeviceSelector) {
-                return new int[] {((DeviceSelector) widget).value};
-            }
+        Widget widget = getWidgetById(targetId);
+        if (widget != null) {
+            return (Target) widget;
         }
 
         return null;

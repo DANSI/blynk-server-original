@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
+import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.processors.WebhookProcessor;
@@ -57,6 +58,7 @@ public class HardwareAppLogic {
 
         String[] dashIdAndTargetIdString = split2Device(split[0]);
         int dashId = ParseUtil.parseInt(dashIdAndTargetIdString[0]);
+        //deviceId or tagId or device selector widget id
         int targetId = 0;
 
         //new logic for multi devices
@@ -72,9 +74,16 @@ public class HardwareAppLogic {
         }
 
         //sending message only if widget assigned to device or tag has assigned devices
-        int[] deviceIds = dash.getDeviceIdsByTarget(targetId);
-        if (deviceIds == null) {
+        Target target = dash.getDeviceIdsByTarget(targetId);
+        if (target == null) {
             log.debug("No assigned target id for received command.");
+            return;
+        }
+
+        final int[] deviceIds = target.getDeviceIds();
+
+        if (deviceIds == null) {
+            log.debug("No devices assigned to target.");
             return;
         }
 
@@ -98,6 +107,11 @@ public class HardwareAppLogic {
 
                 for (int deviceId : deviceIds) {
                     dash.update(deviceId, pin, pinType, value);
+                }
+
+                //additional state for tag widget itself
+                if (target.isTag()) {
+                    dash.update(targetId, pin, pinType, value);
                 }
 
                 //sending to shared dashes and master-master apps

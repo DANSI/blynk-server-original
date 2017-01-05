@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.device;
 
+import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.utils.JsonParser;
 
 /**
@@ -7,7 +8,7 @@ import cc.blynk.utils.JsonParser;
  * Created by Dmitriy Dumanskiy.
  * Created on 16.11.16.
  */
-public class Device {
+public class Device implements Target {
 
     public int id;
 
@@ -44,6 +45,11 @@ public class Device {
         this.id = id;
         this.name = name;
         this.boardType = boardType;
+    }
+
+    @Override
+    public int[] getDeviceIds() {
+        return new int[] {id};
     }
 
     public void update(Device newDevice) {
