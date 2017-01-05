@@ -101,7 +101,7 @@ public class WebhookProcessor extends NotificationBase {
                 length += content.length();
 
                 if (length > responseSizeLimit) {
-                    log.debug("Response from webhook is too big for {}. Skipping. Size : {}", username, length);
+                    log.warn("Response from webhook is too big for {}. Skipping. Size : {}", username, length);
                     return State.ABORT;
                 }
                 return super.onBodyPartReceived(content);
@@ -119,7 +119,7 @@ public class WebhookProcessor extends NotificationBase {
                     }
                 } else {
                     webHook.failureCounter++;
-                    log.error("Error sending webhook for {}. Reason {}", username, response.getResponseBody());
+                    log.error("Error sending webhook for {}. Code {}, Reason {}", username, response.getStatusCode(), response.getResponseBody());
                 }
 
                 return null;
