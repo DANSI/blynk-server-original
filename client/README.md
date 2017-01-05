@@ -38,23 +38,13 @@ Where `33bcbe756b994a6768494d55d1543c74` is your Auth Token.
     	login 33bcbe756b994a6768494d55d1543c74
    
 
-You can run as many clients as you want.
+You can run as many clients as you want. You have only 15 seconds for login until your client will be disconnected from server, 
+so hurry up :).
 
 Clients with the same credentials and Auth Token are grouped into one Session and can send messages to each other.
 All client’s commands are human-friendly, so you don't have to remember the codes.
 
 ## Hardware Commands
-
-Before sending any read/write commands to hardware, application must first send “init” command.
-"Init" command is a 'hardware' command which sets all the Pin Modes(pm). Here is an example of "init" command:
-
-    	hardware pm 1 in 13 out 9 out 8 in
-
-// TODO: take description about pin modes from Blynk Arduino library readme
-// TODO Describe separation with Zeroes in pinmode command
-
-In this example you set pin 1 and pin 8 to 'input’ PIN_MODE. This means this pins will read values from hardware (graph, display, etc).
-Pins 13 and 9 have 'output’ PIN_MODE. This means that these pins will we writable (button, slider).
 
 List of hardware commands:
 
