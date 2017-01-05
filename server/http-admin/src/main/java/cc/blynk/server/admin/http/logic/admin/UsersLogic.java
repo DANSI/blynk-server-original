@@ -29,8 +29,8 @@ import cc.blynk.utils.SHA256Util;
 import java.util.List;
 
 import static cc.blynk.core.http.Response.appendTotalCountHeader;
+import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
-import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -96,15 +96,33 @@ public class UsersLogic extends HttpLogicUtil {
     }
 
     @GET
-    @Path("/assignToken")
-    public Response getAllUserNames(@QueryParam("old") String oldToken, @QueryParam("new") String newToken) {
+    @Path("/token/assign")
+    public Response assignToken(@QueryParam("old") String oldToken, @QueryParam("new") String newToken) {
         TokenValue tokenValue = tokenManager.getUserByToken(oldToken);
 
         if (tokenValue == null) {
-            return new Response(HTTP_1_1, BAD_REQUEST);
+            return badRequest("This token not exists.");
         }
 
         tokenManager.assignToken(tokenValue.user, tokenValue.dashId, tokenValue.deviceId, newToken);
+        return ok();
+    }
+
+    @GET
+    @Path("/token/force")
+    public Response forceToken(@QueryParam("username") String username,
+                                    @QueryParam("app") String app,
+                                    @QueryParam("dashId") int dashId,
+                                    @QueryParam("deviceId") int deviceId,
+                                    @QueryParam("new") String newToken) {
+
+        User user = userDao.getUsers().get(new UserKey(username, app));
+
+        if (user == null) {
+            return badRequest("No user with such name.");
+        }
+
+        tokenManager.assignToken(user, dashId, deviceId, newToken);
         return ok();
     }
 

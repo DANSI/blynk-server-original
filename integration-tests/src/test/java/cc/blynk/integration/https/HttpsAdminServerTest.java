@@ -142,7 +142,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Test
     public void testAssignNewToken() throws Exception {
-        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/assignToken?old=4ae3851817194e2596cf1b7103603ef8&new=123");
+        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/token/assign?old=4ae3851817194e2596cf1b7103603ef8&new=123");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -164,12 +164,36 @@ public class HttpsAdminServerTest extends BaseTest {
             assertEquals("100", values.get(0));
         }
 
-        request = new HttpGet(httpsAdminServerUrl + "/users/assignToken?old=4ae3851817194e2596cf1b7103603ef8&new=124");
+        request = new HttpGet(httpsAdminServerUrl + "/users/token/assign?old=4ae3851817194e2596cf1b7103603ef8&new=124");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
         }
+    }
 
+    @Test
+    public void testForceAssignNewToken() throws Exception {
+        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/token/force?username=dmitriy@blynk.cc&app=Blynk&dashId=79780619&deviceId=0&new=123");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpPut put = new HttpPut(httpServerUrl + "123/pin/v10");
+        put.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(put)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet get = new HttpGet(httpServerUrl + "123/pin/v10");
+
+        try (CloseableHttpResponse response = httpclient.execute(get)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("100", values.get(0));
+        }
     }
 
     private class MyHostVerifier implements HostnameVerifier {
