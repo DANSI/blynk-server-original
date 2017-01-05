@@ -13,6 +13,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Map;
 
+import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.SYNC_DEFAULT_MESSAGE_ID;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
@@ -42,10 +43,10 @@ public class AppSyncLogic {
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
-        sendSyncAndOk(ctx, dash, targetId, message.id, false);
+        sendSyncAndOk(ctx, dash, targetId, message.id);
     }
 
-    public static void sendSyncAndOk(ChannelHandlerContext ctx, DashBoard dash, int targetId, int msgId, boolean syncPinsStorage) {
+    public static void sendSyncAndOk(ChannelHandlerContext ctx, DashBoard dash, int targetId, int msgId) {
         ctx.write(ok(msgId), ctx.voidPromise());
 
         final Channel appChannel = ctx.channel();
@@ -55,13 +56,11 @@ public class AppSyncLogic {
             }
         }
 
-        if (syncPinsStorage) {
-            for (Map.Entry<PinStorageKey, String> entry : dash.pinsStorage.entrySet()) {
-                PinStorageKey key = entry.getKey();
-                if (targetId == key.deviceId) {
-                    String body = prependDashIdAndDeviceId(dash.id, targetId, Pin.makeHardwareBody(key.pinType, key.pin, entry.getValue()));
-                    ctx.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body), ctx.voidPromise());
-                }
+        for (Map.Entry<PinStorageKey, String> entry : dash.pinsStorage.entrySet()) {
+            PinStorageKey key = entry.getKey();
+            if (targetId == ANY_TARGET || targetId == key.deviceId) {
+                String body = prependDashIdAndDeviceId(dash.id, key.deviceId, Pin.makeHardwareBody(key.pinType, key.pin, entry.getValue()));
+                ctx.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body), ctx.voidPromise());
             }
         }
 

@@ -180,7 +180,8 @@ public class DashBoard {
         }
 
         //means widget assigned to device selector widget.
-        if (targetId >= 200_000) {
+        //todo fix that for iOS
+        if (targetId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
             Widget widget = getWidgetById(targetId);
             //todo this check should be removed after fix on iOS
             if (widget instanceof DeviceSelector) {

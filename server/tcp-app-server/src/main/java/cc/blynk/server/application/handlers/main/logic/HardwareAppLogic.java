@@ -87,7 +87,7 @@ public class HardwareAppLogic {
                 if (deviceSelector instanceof DeviceSelector) {
                     final int selectedDeviceId = ParseUtil.parseInt(splitBody[2]);
                     ((DeviceSelector) deviceSelector).value = selectedDeviceId;
-                    AppSyncLogic.sendSyncAndOk(ctx, dash, selectedDeviceId, message.id, true);
+                    AppSyncLogic.sendSyncAndOk(ctx, dash, selectedDeviceId, message.id);
                 }
                 break;
             case 'w' :
@@ -96,7 +96,9 @@ public class HardwareAppLogic {
                 final byte pin = ParseUtil.parseByte(splitBody[1]);
                 final String value = splitBody[2];
 
-                dash.update(targetId, pin, pinType, value);
+                for (int deviceId : deviceIds) {
+                    dash.update(deviceId, pin, pinType, value);
+                }
 
                 //sending to shared dashes and master-master apps
                 session.sendToSharedApps(ctx.channel(), dash.sharedToken, APP_SYNC, message.id, message.body);
