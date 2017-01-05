@@ -27,6 +27,7 @@ import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -367,7 +368,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         hardClient3.send("hardsync ar 13");
         verify(hardClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 13 13"))));
         hardClient3.send("hardsync ar 13");
-        verify(hardClient3.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(2, HARDWARE, b("aw 13 13"))));
+        verify(hardClient3.responseMock, never()).channelRead(any(), eq(produce(2, HARDWARE, b("aw 13 13"))));
     }
 
 }
