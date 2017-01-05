@@ -133,7 +133,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Test
     public void testAssignNewTokenForNonExistingToken() throws Exception {
-        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/assignToken?old=123&new=123");
+        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/token/assing?old=123&new=123");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
