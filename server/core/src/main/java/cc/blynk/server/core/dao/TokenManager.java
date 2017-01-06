@@ -3,6 +3,7 @@ package cc.blynk.server.core.dao;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.redis.RedisClient;
 import cc.blynk.utils.TokenGeneratorUtil;
 
@@ -29,6 +30,15 @@ public class TokenManager {
         this.blockingIOProcessor = blockingIOProcessor;
         this.redisClient = redisClient;
         this.currentIp = currentIp;
+    }
+
+    public void deleteDevice(Device device) {
+        String token = regularTokenManager.deleteDeviceToken(device);
+        if (token != null) {
+            blockingIOProcessor.execute(() -> {
+                redisClient.removeToken(token);
+            });
+        }
     }
 
     public void deleteDash(DashBoard dash) {

@@ -103,7 +103,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
         this.createDeviceLogic = new CreateDeviceLogic(holder.tokenManager);
         this.updateDeviceLogic = new UpdateDeviceLogic();
-        this.deleteDeviceLogic = new DeleteDeviceLogic();
+        this.deleteDeviceLogic = new DeleteDeviceLogic(holder.tokenManager, holder.sessionDao);
 
         this.shareLogic = new ShareLogic(holder.sessionDao);
         this.redeemLogic = new RedeemLogic(holder.dbManager, holder.blockingIOProcessor);
@@ -194,7 +194,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 updateDeviceLogic.messageReceived(ctx, state.user, msg);
                 break;
             case DELETE_DEVICE :
-                deleteDeviceLogic.messageReceived(ctx, state.user, msg);
+                deleteDeviceLogic.messageReceived(ctx, state, msg);
                 break;
             case GET_DEVICES :
                 GetDevicesLogic.messageReceived(ctx, state.user, msg);

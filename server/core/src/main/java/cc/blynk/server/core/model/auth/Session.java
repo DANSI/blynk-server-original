@@ -231,6 +231,15 @@ public class Session {
         return hardwareChannels;
     }
 
+    public void closeHardwareChannelByDeviceId(int dashId, int deviceId) {
+        for (Channel channel : hardwareChannels) {
+            HardwareStateHolder hardwareState = getHardState(channel);
+            if (hardwareState != null && hardwareState.dashId == dashId && hardwareState.deviceId == deviceId) {
+                channel.close();
+            }
+        }
+    }
+
     public void closeAll() {
         hardwareChannels.forEach(io.netty.channel.Channel::close);
         appChannels.forEach(io.netty.channel.Channel::close);

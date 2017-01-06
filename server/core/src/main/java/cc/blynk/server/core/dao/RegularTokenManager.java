@@ -42,7 +42,7 @@ class RegularTokenManager {
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         Device device = dash.getDeviceById(deviceId);
 
-        String oldToken = removeOldToken(device);
+        String oldToken = deleteDeviceToken(device);
 
         //todo should never happen. but due to back compatibility
         if (device == null) {
@@ -60,7 +60,7 @@ class RegularTokenManager {
         return oldToken;
     }
 
-    private String removeOldToken(Device device) {
+    public String deleteDeviceToken(Device device) {
         if (device != null && device.token != null) {
             cache.remove(device.token);
             return device.token;
