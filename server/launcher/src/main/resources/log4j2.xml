@@ -127,7 +127,7 @@
         <Logger name="com.zaxxer.hikari" level="debug" additivity="false">
             <appender-ref ref="postgresDBLog"/>
         </Logger>
-        <Logger name="io.netty" level="debug" additivity="false">
+        <Logger name="io.netty" level="info" additivity="false">
             <appender-ref ref="nettyLog"/>
         </Logger>
 

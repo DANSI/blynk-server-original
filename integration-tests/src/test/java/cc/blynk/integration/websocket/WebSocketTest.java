@@ -72,7 +72,7 @@ public class WebSocketTest extends IntegrationBase {
 
     @Test
     public void testBasicWebSocketCommandsOk() throws Exception{
-        WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, false);
+        WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, WebSocketServer.WEBSOCKET_PATH, false);
         webSocketClient.start();
         webSocketClient.send("login 4ae3851817194e2596cf1b7103603ef8");
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -87,7 +87,7 @@ public class WebSocketTest extends IntegrationBase {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-        WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, false);
+        WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, WebSocketServer.WEBSOCKET_PATH, false);
         webSocketClient.start();
         webSocketClient.send("login " + token);
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
@@ -103,7 +103,7 @@ public class WebSocketTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 4 3"))));
 
         clientPair.appClient.reset();
-        WebSocketClient webSocketClient2 = new WebSocketClient("localhost", tcpWebSocketPort, false);
+        WebSocketClient webSocketClient2 = new WebSocketClient("localhost", tcpWebSocketPort, WebSocketServer.WEBSOCKET_PATH, false);
         webSocketClient2.start();
         webSocketClient2.send("login " + token);
         verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
