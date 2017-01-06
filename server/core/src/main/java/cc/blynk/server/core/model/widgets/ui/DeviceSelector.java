@@ -12,7 +12,11 @@ public class DeviceSelector extends NoPinWidget implements Target {
 
     public static final int DEVICE_SELECTOR_STARTING_ID = 200_000;
 
+    //this is selected deviceId in widget
     public volatile int value = 0;
+
+    //this is only for UI. to show only those devices in picker.
+    public int[] deviceIds;
 
     @Override
     public int[] getDeviceIds() {
