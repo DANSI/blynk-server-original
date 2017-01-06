@@ -24,8 +24,6 @@ public class Timer extends OnePinWidget {
 
     public String stopValue;
 
-    public int[] days;
-
     //this trick called field hiding.
     //it used to avoid volatile in OnePinWidget
     //so timer has it's own field "value"
