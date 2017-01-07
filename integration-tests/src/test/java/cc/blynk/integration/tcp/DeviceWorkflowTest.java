@@ -496,8 +496,9 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         hardClient2.send("login " + device.token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-1")));
 
-        clientPair.appClient.send("deleteDevice 1");
+        clientPair.appClient.send("deleteDevice 1\0" + "1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         assertFalse(clientPair.hardwareClient.isClosed());
