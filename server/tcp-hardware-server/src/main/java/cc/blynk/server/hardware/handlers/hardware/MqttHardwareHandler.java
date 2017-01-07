@@ -36,7 +36,7 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
     private final HardwareInfoLogic info;
 
     public MqttHardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
-        super(holder.props, stateHolder);
+        super(holder.limits, stateHolder);
         this.hardware = new MqttHardwareLogic(holder.sessionDao, holder.reportingDao);
 
         final long defaultNotificationQuotaLimit = holder.props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;

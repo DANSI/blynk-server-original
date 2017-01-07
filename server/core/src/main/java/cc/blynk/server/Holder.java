@@ -67,6 +67,8 @@ public class Holder implements Closeable {
     public final EventorProcessor eventorProcessor;
     public final DefaultAsyncHttpClient asyncHttpClient;
 
+    public final Limits limits;
+
     public final String currentIp;
 
     public Holder(ServerProperties serverProperties, ServerProperties mailProperties,
@@ -111,6 +113,7 @@ public class Holder implements Closeable {
         this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.dbManager = new DBManager(blockingIOProcessor);
         this.timerWorker = new TimerWorker(userDao, sessionDao);
+        this.limits = new Limits(props);
     }
 
     //for tests only
@@ -154,6 +157,7 @@ public class Holder implements Closeable {
 
         this.dbManager = new DBManager(blockingIOProcessor);
         this.timerWorker = new TimerWorker(userDao, sessionDao);
+        this.limits = new Limits(props);
     }
 
     @Override

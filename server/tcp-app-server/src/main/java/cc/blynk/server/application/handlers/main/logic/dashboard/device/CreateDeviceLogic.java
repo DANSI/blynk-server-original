@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
@@ -31,9 +32,9 @@ public class CreateDeviceLogic {
     private final TokenManager tokenManager;
     private final int DEVICE_LIMIT;
 
-    public CreateDeviceLogic(TokenManager tokenManager, int deviceLimit) {
-        this.tokenManager = tokenManager;
-        this.DEVICE_LIMIT = deviceLimit;
+    public CreateDeviceLogic(Holder holder) {
+        this.tokenManager = holder.tokenManager;
+        this.DEVICE_LIMIT = holder.limits.DEVICE_LIMIT;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {

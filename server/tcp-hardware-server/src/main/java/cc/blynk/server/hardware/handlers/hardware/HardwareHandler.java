@@ -46,15 +46,14 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final HardwareInfoLogic info;
 
     public HardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
-        super(holder.props, stateHolder);
+        super(holder.limits, stateHolder);
         this.hardware = new HardwareLogic(holder, stateHolder.user.name);
         this.bridge = new BridgeLogic(holder.sessionDao, hardware);
 
-        final long defaultNotificationQuotaLimit = holder.props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
-        this.email = new MailLogic(holder.blockingIOProcessor, holder.mailWrapper, defaultNotificationQuotaLimit);
-        this.push = new PushLogic(holder.gcmWrapper, defaultNotificationQuotaLimit);
-        this.tweet = new TwitLogic(holder.blockingIOProcessor, holder.twitterWrapper, defaultNotificationQuotaLimit);
-        this.smsLogic = new SmsLogic(holder.smsWrapper, defaultNotificationQuotaLimit);
+        this.email = new MailLogic(holder.blockingIOProcessor, holder.mailWrapper, holder.limits.NOTIFICATION_PERIOD_LIMIT_SEC);
+        this.push = new PushLogic(holder.gcmWrapper, holder.limits.NOTIFICATION_PERIOD_LIMIT_SEC);
+        this.tweet = new TwitLogic(holder.blockingIOProcessor, holder.twitterWrapper, holder.limits.NOTIFICATION_PERIOD_LIMIT_SEC);
+        this.smsLogic = new SmsLogic(holder.smsWrapper, holder.limits.NOTIFICATION_PERIOD_LIMIT_SEC);
         this.propertyLogic = new SetWidgetPropertyLogic(holder.sessionDao);
         this.sync = new HardwareSyncLogic();
         this.info = new HardwareInfoLogic(holder.props.getIntProperty("hard.socket.idle.timeout", 0));
@@ -64,42 +63,37 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
-        //todo this temporary try catch. should be removed in next releases.
-        try {
-            switch (msg.command) {
-                case HARDWARE:
-                    hardware.messageReceived(ctx, state, msg);
-                    break;
-                case PING:
-                    PingLogic.messageReceived(ctx, msg.id);
-                    break;
-                case BRIDGE:
-                    bridge.messageReceived(ctx, state, msg);
-                    break;
-                case EMAIL:
-                    email.messageReceived(ctx, state, msg);
-                    break;
-                case PUSH_NOTIFICATION:
-                    push.messageReceived(ctx, state, msg);
-                    break;
-                case TWEET:
-                    tweet.messageReceived(ctx, state, msg);
-                    break;
-                case SMS:
-                    smsLogic.messageReceived(ctx, state, msg);
-                    break;
-                case HARDWARE_SYNC:
-                    sync.messageReceived(ctx, state, msg);
-                    break;
-                case HARDWARE_INFO:
-                    info.messageReceived(ctx, state, msg);
-                    break;
-                case SET_WIDGET_PROPERTY:
-                    propertyLogic.messageReceived(ctx, state, msg);
-                    break;
-            }
-        } catch (ArrayIndexOutOfBoundsException e) {
-            log.error("Unexpected error in hardware handler. User {}.", (state.user == null ? "" : state.user.name), e);
+        switch (msg.command) {
+            case HARDWARE:
+                hardware.messageReceived(ctx, state, msg);
+                break;
+            case PING:
+                PingLogic.messageReceived(ctx, msg.id);
+                break;
+            case BRIDGE:
+                bridge.messageReceived(ctx, state, msg);
+                break;
+            case EMAIL:
+                email.messageReceived(ctx, state, msg);
+                break;
+            case PUSH_NOTIFICATION:
+                push.messageReceived(ctx, state, msg);
+                break;
+            case TWEET:
+                tweet.messageReceived(ctx, state, msg);
+                break;
+            case SMS:
+                smsLogic.messageReceived(ctx, state, msg);
+                break;
+            case HARDWARE_SYNC:
+                sync.messageReceived(ctx, state, msg);
+                break;
+            case HARDWARE_INFO:
+                info.messageReceived(ctx, state, msg);
+                break;
+            case SET_WIDGET_PROPERTY:
+                propertyLogic.messageReceived(ctx, state, msg);
+                break;
         }
     }
 

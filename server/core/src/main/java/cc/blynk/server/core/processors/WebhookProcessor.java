@@ -50,7 +50,7 @@ public class WebhookProcessor extends NotificationBase {
         super(quotaFrequencyLimit);
         this.httpclient = httpclient;
         this.globalStats = stats;
-        this.responseSizeLimit = responseSizeLimit * 1024;
+        this.responseSizeLimit = responseSizeLimit;
         this.username = username;
     }
 

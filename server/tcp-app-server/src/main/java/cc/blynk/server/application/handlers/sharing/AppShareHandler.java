@@ -32,7 +32,7 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final GetGraphDataLogic graphData;
 
     public AppShareHandler(Holder holder, AppShareStateHolder state) {
-        super(holder.props, state);
+        super(holder.limits, state);
         this.hardwareApp = new HardwareAppShareLogic(holder.sessionDao);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.state = state;

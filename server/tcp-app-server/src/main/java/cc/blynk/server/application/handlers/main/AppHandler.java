@@ -75,7 +75,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final DeleteDeviceLogic deleteDeviceLogic;
 
     public AppHandler(Holder holder, AppStateHolder state) {
-        super(holder.props, state);
+        super(holder.limits, state);
         this.token = new GetTokenLogic(holder);
         this.hardwareApp = new HardwareAppLogic(holder, state.user.name);
         this.refreshToken = new RefreshTokenLogic(holder);
@@ -88,20 +88,18 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(holder.tokenManager, holder.sessionDao);
         this.getSharedDashLogic = new GetSharedDashLogic(holder.tokenManager);
 
-        final int profileMaxSize = holder.props.getIntProperty("user.profile.max.size", 10) * 1024;
-        this.createDashLogic = new CreateDashLogic(holder.timerWorker, holder.props.getIntProperty("user.dashboard.max.limit"), profileMaxSize);
-        this.updateDashLogic = new UpdateDashLogic(holder.timerWorker, profileMaxSize);
+        this.createDashLogic = new CreateDashLogic(holder.timerWorker, holder.limits.DASHBOARDS_LIMIT, holder.limits.PROFILE_SIZE_LIMIT_BYTES);
+        this.updateDashLogic = new UpdateDashLogic(holder.timerWorker, holder.limits.PROFILE_SIZE_LIMIT_BYTES);
 
         this.activateDashboardLogic = new ActivateDashboardLogic(holder.sessionDao);
         this.deActivateDashboardLogic = new DeActivateDashboardLogic(holder.sessionDao);
 
-        final int widgetSize = holder.props.getIntProperty("user.widget.max.size.limit", 10) * 1024;
-        this.createWidgetLogic = new CreateWidgetLogic(widgetSize, holder.timerWorker);
-        this.updateWidgetLogic = new UpdateWidgetLogic(widgetSize, holder.timerWorker);
+        this.createWidgetLogic = new CreateWidgetLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES, holder.timerWorker);
+        this.updateWidgetLogic = new UpdateWidgetLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES, holder.timerWorker);
         this.deleteWidgetLogic = new DeleteWidgetLogic(holder.timerWorker);
         this.deleteDashLogic = new DeleteDashLogic(holder);
 
-        this.createDeviceLogic = new CreateDeviceLogic(holder.tokenManager, holder.props.getIntProperty("user.devices.limit", 25));
+        this.createDeviceLogic = new CreateDeviceLogic(holder);
         this.updateDeviceLogic = new UpdateDeviceLogic();
         this.deleteDeviceLogic = new DeleteDeviceLogic(holder.tokenManager, holder.sessionDao);
 
