@@ -2,8 +2,10 @@ package cc.blynk.server.application.handlers.main.logic.dashboard;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
+import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
@@ -29,10 +31,12 @@ public class DeleteDashLogic {
 
     private final TokenManager tokenManager;
     private final TimerWorker timerWorker;
+    private final SessionDao sessionDao;
 
     public DeleteDashLogic(Holder holder) {
         this.tokenManager = holder.tokenManager;
         this.timerWorker = holder.timerWorker;
+        this.sessionDao = holder.sessionDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
@@ -60,7 +64,8 @@ public class DeleteDashLogic {
 
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index, DashBoard.class);
         tokenManager.deleteDash(dash);
-
+        Session session = sessionDao.userSession.get(state.userKey);
+        session.closeHardwareChannelByDashId(dashId);
         user.lastModifiedTs = System.currentTimeMillis();
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

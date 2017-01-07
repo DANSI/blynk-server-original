@@ -30,7 +30,9 @@ import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
@@ -452,6 +454,56 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         assertEqualDevice(device0, devices[0]);
     }
+
+
+    @Test
+    public void testHardwareChannelClosedOnDashRemoval() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.send("login " + device.token);
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.appClient.send("deleteDash 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+
+        assertTrue(clientPair.hardwareClient.isClosed());
+        assertTrue(hardClient2.isClosed());
+    }
+
+    @Test
+    public void testHardwareChannelClosedOnDeviceRemoval() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.send("login " + device.token);
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.appClient.send("deleteDevice 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+
+        assertFalse(clientPair.hardwareClient.isClosed());
+        assertTrue(hardClient2.isClosed());
+    }
+
 
     private static void assertEqualDevice(Device expected, Device real) {
         assertEquals(expected.id, real.id);

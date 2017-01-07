@@ -510,6 +510,14 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testHardwareChannelClosedOnDashRemoval() throws Exception {
+        clientPair.appClient.send("deleteDash 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        assertTrue(clientPair.hardwareClient.isClosed());
+    }
+
+    @Test
     public void deleteDashDeletesTokensAlso() throws Exception {
         clientPair.appClient.send("createDash {\"id\":10, \"name\":\"test board\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
