@@ -70,7 +70,7 @@ That's it!
         
 + Download Blynk server jar file (or manually copy it to raspberry via ssh and scp command) : 
    
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.21.4/server-0.21.5.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.21.5/server-0.21.5.jar"
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
