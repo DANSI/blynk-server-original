@@ -44,8 +44,8 @@ public class HardwareLogic {
         this.reportingDao = holder.reportingDao;
         this.eventorProcessor = holder.eventorProcessor;
         this.webhookProcessor = new WebhookProcessor(holder.asyncHttpClient,
-                holder.props.getLongProperty("webhooks.frequency.user.quota.limit", 1000),
-                holder.props.getIntProperty("webhooks.response.size.limit", 64),
+                holder.limits.WEBHOOK_PERIOD_LIMITATION,
+                holder.limits.WEBHOOK_RESPONSE_SUZE_LIMIT_BYTES,
                 holder.stats,
                 username);
     }
