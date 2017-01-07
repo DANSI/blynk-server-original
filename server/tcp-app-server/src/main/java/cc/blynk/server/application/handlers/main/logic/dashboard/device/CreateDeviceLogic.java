@@ -29,9 +29,11 @@ public class CreateDeviceLogic {
     private static final Logger log = LogManager.getLogger(CreateDeviceLogic.class);
 
     private final TokenManager tokenManager;
+    private final int DEVICE_LIMIT;
 
-    public CreateDeviceLogic(TokenManager tokenManager) {
+    public CreateDeviceLogic(TokenManager tokenManager, int deviceLimit) {
         this.tokenManager = tokenManager;
+        this.DEVICE_LIMIT = deviceLimit;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -49,6 +51,10 @@ public class CreateDeviceLogic {
         }
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+
+        if (dash.devices.length > DEVICE_LIMIT) {
+            throw new NotAllowedException("Device limit is reached.");
+        }
 
         Device newDevice = JsonParser.parseDevice(deviceString);
 

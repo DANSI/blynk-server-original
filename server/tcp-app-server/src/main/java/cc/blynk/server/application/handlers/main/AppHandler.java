@@ -101,7 +101,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.deleteWidgetLogic = new DeleteWidgetLogic(holder.timerWorker);
         this.deleteDashLogic = new DeleteDashLogic(holder);
 
-        this.createDeviceLogic = new CreateDeviceLogic(holder.tokenManager);
+        this.createDeviceLogic = new CreateDeviceLogic(holder.tokenManager, holder.props.getIntProperty("user.devices.limit", 25));
         this.updateDeviceLogic = new UpdateDeviceLogic();
         this.deleteDeviceLogic = new DeleteDeviceLogic(holder.tokenManager, holder.sessionDao);
 
