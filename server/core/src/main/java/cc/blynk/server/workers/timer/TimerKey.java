@@ -12,20 +12,20 @@ public class TimerKey {
 
     public final UserKey userKey;
 
+    public final int dashId;
+
     public final Timer timer;
 
     public final int exactlyTime;
 
-    public final int dashId;
+    public final String value;
 
-    public final TimerType type;
-
-    public TimerKey(UserKey userKey, Timer timer, int exactlyTime, int dashId, TimerType type) {
+    public TimerKey(UserKey userKey, int dashId, Timer timer, int exactlyTime, String value) {
         this.userKey = userKey;
+        this.dashId = dashId;
         this.timer = timer;
         this.exactlyTime = exactlyTime;
-        this.dashId = dashId;
-        this.type = type;
+        this.value = value;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class TimerKey {
         if (dashId != timerKey.dashId) return false;
         if (userKey != null ? !userKey.equals(timerKey.userKey) : timerKey.userKey != null) return false;
         if (timer != null ? !timer.equals(timerKey.timer) : timerKey.timer != null) return false;
-        return type == timerKey.type;
+        return !(value != null ? !value.equals(timerKey.value) : timerKey.value != null);
 
     }
 
@@ -49,7 +49,7 @@ public class TimerKey {
         result = 31 * result + (timer != null ? timer.hashCode() : 0);
         result = 31 * result + exactlyTime;
         result = 31 * result + dashId;
-        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (value != null ? value.hashCode() : 0);
         return result;
     }
 }

@@ -18,8 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.workers.timer.TimerType.START;
-import static cc.blynk.server.workers.timer.TimerType.STOP;
 
 /**
  * Timer worker class responsible for triggering all timers at specified time.
@@ -45,6 +43,7 @@ public class TimerWorker implements Runnable {
     private final SessionDao sessionDao;
     private final ConcurrentMap<TimerKey, String>[] timerExecutors;
     private final static int size = 8640;
+    private final static String EMPTY_VALUE = "";
 
     @SuppressWarnings("unchecked")
     public TimerWorker(UserDao userDao, SessionDao sessionDao) {
@@ -81,19 +80,19 @@ public class TimerWorker implements Runnable {
 
     public void add(UserKey userKey, Timer timer, int dashId) {
         if (timer.isValidStart()) {
-            timerExecutors[hash(timer.startTime)].put(new TimerKey(userKey, timer, timer.startTime, dashId, START), timer.startValue);
+            timerExecutors[hash(timer.startTime)].put(new TimerKey(userKey, dashId, timer, timer.startTime, timer.startValue), EMPTY_VALUE);
         }
         if (timer.isValidStop()) {
-            timerExecutors[hash(timer.stopTime)].put(new TimerKey(userKey, timer, timer.stopTime, dashId, STOP), timer.stopValue);
+            timerExecutors[hash(timer.stopTime)].put(new TimerKey(userKey, dashId, timer, timer.stopTime, timer.stopValue), EMPTY_VALUE);
         }
     }
 
     public void delete(UserKey userKey, Timer timer, int dashId) {
         if (timer.isValidStart()) {
-            timerExecutors[hash(timer.startTime)].remove(new TimerKey(userKey, timer, timer.startTime, dashId, START));
+            timerExecutors[hash(timer.startTime)].remove(new TimerKey(userKey, dashId, timer, timer.startTime, timer.startValue));
         }
         if (timer.isValidStop()) {
-            timerExecutors[hash(timer.stopTime)].remove(new TimerKey(userKey, timer, timer.stopTime, dashId, STOP));
+            timerExecutors[hash(timer.stopTime)].remove(new TimerKey(userKey, dashId, timer, timer.stopTime, timer.stopValue));
         }
     }
 
@@ -115,17 +114,15 @@ public class TimerWorker implements Runnable {
         int activeTimers = 0;
         actuallySendTimers = 0;
 
-        for (Map.Entry<TimerKey, String> entry : tickedExecutors.entrySet()) {
-            final TimerKey key = entry.getKey();
+        for (TimerKey key : tickedExecutors.keySet()) {
             if (key.exactlyTime == curSeconds) {
                 User user = userDao.users.get(key.userKey);
                 if (user != null) {
                     DashBoard dash = user.profile.getDashById(key.dashId);
                     if (dash != null && dash.isActive) {
                         activeTimers++;
-                        final String value = entry.getValue();
-                        triggerTimer(sessionDao, key.userKey, value, key.dashId, key.timer.deviceId);
-                        key.timer.value = value;
+                        triggerTimer(sessionDao, key.userKey, key.value, key.dashId, key.timer.deviceId);
+                        key.timer.value = key.value;
                     }
                 }
             }
