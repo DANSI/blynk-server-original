@@ -81,6 +81,7 @@ public class UpdateWidgetLogic {
         //just log error for now
         try {
             dash.widgets[existingWidgetIndex] = newWidget;
+            dash.cleanPinStorage(newWidget);
             dash.updatedAt = System.currentTimeMillis();
             user.lastModifiedTs = dash.updatedAt;
         } catch (ArrayIndexOutOfBoundsException e) {

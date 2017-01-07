@@ -3,6 +3,8 @@ package cc.blynk.server.core.model;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.MultiPinWidget;
+import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
@@ -227,6 +229,22 @@ public class DashBoard {
         return sum;
     }
 
+    public void cleanPinStorage(Widget widget) {
+        if (widget instanceof OnePinWidget) {
+            OnePinWidget onePinWidget = (OnePinWidget) widget;
+            pinsStorage.remove(new PinStorageKey(onePinWidget.deviceId, onePinWidget.pinType, onePinWidget.pin));
+        } else if (widget instanceof MultiPinWidget) {
+            MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+            if (multiPinWidget.pins != null) {
+                for (Pin pin : multiPinWidget.pins) {
+                    if (pin != null) {
+                        pinsStorage.remove(new PinStorageKey(multiPinWidget.deviceId, pin.pinType, pin.pin));
+                    }
+                }
+            }
+        }
+    }
+
     public void updateFields(DashBoard updatedDashboard) {
         this.name = updatedDashboard.name;
         this.isShared = updatedDashboard.isShared;
@@ -244,6 +262,11 @@ public class DashBoard {
         }
 
         this.widgets = updatedDashboard.widgets;
+
+        for (Widget widget : widgets) {
+            cleanPinStorage(widget);
+        }
+
         this.isAppConnectedOn = updatedDashboard.isAppConnectedOn;
         this.updatedAt = System.currentTimeMillis();
     }
