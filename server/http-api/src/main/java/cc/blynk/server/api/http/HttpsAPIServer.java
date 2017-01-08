@@ -11,7 +11,6 @@ import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.business.AuthCookieHandler;
 import cc.blynk.server.api.http.logic.business.AuthHttpHandler;
 import cc.blynk.server.api.http.logic.business.BusinessAuthLogic;
-import cc.blynk.server.api.http.logic.business.BusinessLogic;
 import cc.blynk.server.api.http.logic.business.HttpBusinessAPILogic;
 import cc.blynk.server.api.http.logic.business.SessionHolder;
 import cc.blynk.server.core.BaseServer;
@@ -45,7 +44,6 @@ public class HttpsAPIServer extends BaseServer {
 
         final SessionHolder sessionHolder = new SessionHolder();
 
-        HandlerRegistry.register(businessRootPath, new BusinessLogic(holder.tokenManager, holder.sessionDao, holder.fileManager));
         HandlerRegistry.register(businessRootPath, new BusinessAuthLogic(holder.userDao, holder.sessionDao, holder.fileManager, sessionHolder));
 
         final SslContext sslCtx = SslUtil.initSslContext(
