@@ -8,7 +8,6 @@ import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.HardwareInfo;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.GraphType;
@@ -40,7 +39,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -772,47 +770,6 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, HARDWARE, b("1 aw 1 1"))));
-    }
-
-    @Test
-    public void testHardwareLoginWithInfo() throws Exception {
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
-        hardClient2.start();
-
-        clientPair.appClient.send("getToken 1");
-        String token2 = clientPair.appClient.getBody();
-        hardClient2.send("login " + token2);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-
-        hardClient2.send("info " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100"));
-
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
-
-        clientPair.appClient.reset();
-
-
-        HardwareInfo hardwareInfo = new HardwareInfo();
-        hardwareInfo.version = "0.3.1";
-        hardwareInfo.heartbeatInterval = 10;
-        hardwareInfo.boardType = "Arduino";
-        hardwareInfo.cpuType = "ATmega328P";
-        hardwareInfo.connectionType = "W5100";
-
-        InputStream is = IntegrationBase.class.getResourceAsStream("/json_test/user_profile_json.txt");
-        Profile expectedProfile = parseProfile(is);
-        expectedProfile.dashBoards[0].hardwareInfo = hardwareInfo;
-
-        clientPair.appClient.send("loadProfileGzipped");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
-
-        Profile profile = parseProfile(clientPair.appClient.getBody());
-        profile.dashBoards[0].updatedAt = 0;
-        //todo fix
-        profile.dashBoards[0].devices = null;
-        assertEquals(expectedProfile.toString(), profile.toString());
-
-
-        hardClient2.stop().awaitUninterruptibly();
     }
 
     @Test
