@@ -9,7 +9,11 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  */
 public class Step extends OnePinWidget {
 
-    public int step;
+    public float step;
+
+    public boolean isArrowsOn;
+
+    public boolean isLoopOn;
 
     @Override
     public String getModeType() {
@@ -18,6 +22,6 @@ public class Step extends OnePinWidget {
 
     @Override
     public int getPrice() {
-        return 200;
+        return 500;
     }
 }

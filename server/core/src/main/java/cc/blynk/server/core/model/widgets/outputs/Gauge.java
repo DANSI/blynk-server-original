@@ -14,6 +14,8 @@ public class Gauge extends OnePinWidget implements FrequencyWidget {
 
     private transient long lastRequestTS;
 
+    private String valueFormatting;
+
     @Override
     public final int getFrequency() {
         return frequency;
