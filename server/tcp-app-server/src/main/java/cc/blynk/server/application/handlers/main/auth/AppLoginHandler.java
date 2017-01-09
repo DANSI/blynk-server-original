@@ -189,7 +189,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.isAppConnectedOn && dashBoard.isActive) {
                 log.trace("{}-{}. Sendeind App Connected event to hardware.", user.name, user.appName);
-                session.sendMessageToHardware(dashBoard.id, Command.APP_CONNECTED, 7777, "");
+                session.sendMessageToHardware(dashBoard.id, Command.BLYNK_INTERNAL, 7777, "acon");
             }
         }
         log.info("{} {}-app joined.", user.name, user.appName);

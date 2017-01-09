@@ -2,7 +2,9 @@ package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.protocol.enums.Command;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -37,6 +39,13 @@ public class AppChannelStateHandler extends ChannelInboundHandlerAdapter {
             if (session != null) {
                 session.removeAppChannel(ctx.channel());
                 log.trace("Application channel disconnect. {}", ctx.channel());
+
+                for (DashBoard dashBoard : state.user.profile.dashBoards) {
+                    if (dashBoard.isAppConnectedOn && dashBoard.isActive) {
+                        log.trace("{}-{}. Sendeind App Disconnected event to hardware.", state.user.name, state.user.appName);
+                        session.sendMessageToHardware(dashBoard.id, Command.BLYNK_INTERNAL, 7777, "adis");
+                    }
+                }
             }
         }
     }

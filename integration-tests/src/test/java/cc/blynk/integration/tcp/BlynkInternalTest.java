@@ -2,12 +2,14 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.HardwareInfo;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
 import org.junit.Before;
@@ -111,6 +113,30 @@ public class BlynkInternalTest extends IntegrationBase {
 
 
         hardClient2.stop().awaitUninterruptibly();
+    }
+
+    @Test
+    public void appConnectedEvent() throws Exception {
+        clientPair.appClient.send("updateDash {\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+
+        appClient.send("login " + DEFAULT_TEST_USER + " 1 Android 1.13.3");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, "acon")));
+    }
+
+    @Test
+    public void appDisconnectedEvent() throws Exception {
+        clientPair.appClient.send("updateDash {\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.appClient.stop().await();
+
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, "adis")));
     }
 
 }
