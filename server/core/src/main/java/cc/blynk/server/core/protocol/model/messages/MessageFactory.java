@@ -42,9 +42,9 @@ import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMess
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.protocol.model.messages.common.PingMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.AppConnectedMessage;
+import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.BridgeMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.ConnectRedirectMessage;
-import cc.blynk.server.core.protocol.model.messages.hardware.HardwareInfoMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.HardwareSyncMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.MailMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.PushMessage;
@@ -126,8 +126,8 @@ public class MessageFactory {
                 return new AddPushToken(messageId, body);
             case HARDWARE_SYNC :
                 return new HardwareSyncMessage(messageId, body);
-            case HARDWARE_INFO :
-                return new HardwareInfoMessage(messageId, body);
+            case BLYNK_INTERNAL:
+                return new BlynkInternalMessage(messageId, body);
 
             case CREATE_WIDGET :
                 return new CreateWidget(messageId, body);

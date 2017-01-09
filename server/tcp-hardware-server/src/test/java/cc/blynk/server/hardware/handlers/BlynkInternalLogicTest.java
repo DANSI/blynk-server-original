@@ -3,9 +3,9 @@ package cc.blynk.server.hardware.handlers;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.protocol.model.messages.hardware.HardwareInfoMessage;
+import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.hardware.handlers.hardware.logic.HardwareInfoLogic;
+import cc.blynk.server.hardware.handlers.hardware.logic.BlynkInternalLogic;
 import cc.blynk.utils.ServerProperties;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
  * Created on 04.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HardwareInfoLogicTest {
+public class BlynkInternalLogicTest {
 
     ServerProperties props = new ServerProperties(Collections.emptyMap());
 
@@ -49,7 +49,7 @@ public class HardwareInfoLogicTest {
 
     @Test
     public void testCorrectBehavior() {
-        HardwareInfoLogic logic = new HardwareInfoLogic(props.getIntProperty("hard.socket.idle.timeout", 0));
+        BlynkInternalLogic logic = new BlynkInternalLogic(props.getIntProperty("hard.socket.idle.timeout", 0));
 
         when(ctx.pipeline()).thenReturn(pipeline);
         when(ctx.alloc()).thenReturn(allocator);
@@ -60,10 +60,12 @@ public class HardwareInfoLogicTest {
 
         User user = new User();
         user.profile = new Profile();
-        user.profile.dashBoards = new DashBoard[0];
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(0, 1, user, null);
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 1;
+        user.profile.dashBoards = new DashBoard[] {dashBoard};
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(1, 0, user, null);
 
-        HardwareInfoMessage hardwareInfoLogic = new HardwareInfoMessage(1, "ver 0.3.2-beta h-beat 60 buff-in 256 dev ESP8266".replaceAll(" ", "\0"));
+        BlynkInternalMessage hardwareInfoLogic = new BlynkInternalMessage(1, "ver 0.3.2-beta h-beat 60 buff-in 256 dev ESP8266".replaceAll(" ", "\0"));
         logic.messageReceived(ctx, hardwareStateHolder, hardwareInfoLogic);
 
         verify(pipeline).remove(ReadTimeoutHandler.class);

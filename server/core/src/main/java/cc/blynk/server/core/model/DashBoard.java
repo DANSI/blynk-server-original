@@ -54,7 +54,7 @@ public class DashBoard {
 
     public volatile boolean isActive;
 
-    public HardwareInfo hardwareInfo;
+    public volatile HardwareInfo hardwareInfo;
 
     public volatile String sharedToken;
 

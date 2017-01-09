@@ -58,31 +58,4 @@ public class HardwareInfo {
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        HardwareInfo that = (HardwareInfo) o;
-
-        if (heartbeatInterval != that.heartbeatInterval) return false;
-        if (version != null ? !version.equals(that.version) : that.version != null) return false;
-        if (boardType != null ? !boardType.equals(that.boardType) : that.boardType != null) return false;
-        if (cpuType != null ? !cpuType.equals(that.cpuType) : that.cpuType != null) return false;
-        if (connectionType != null ? !connectionType.equals(that.connectionType) : that.connectionType != null)
-            return false;
-        return !(buildDate != null ? !buildDate.equals(that.buildDate) : that.buildDate != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = version != null ? version.hashCode() : 0;
-        result = 31 * result + (boardType != null ? boardType.hashCode() : 0);
-        result = 31 * result + (cpuType != null ? cpuType.hashCode() : 0);
-        result = 31 * result + (connectionType != null ? connectionType.hashCode() : 0);
-        result = 31 * result + (buildDate != null ? buildDate.hashCode() : 0);
-        result = 31 * result + heartbeatInterval;
-        return result;
-    }
 }

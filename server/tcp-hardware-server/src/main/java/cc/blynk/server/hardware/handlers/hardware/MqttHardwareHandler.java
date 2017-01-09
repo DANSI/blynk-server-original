@@ -3,7 +3,7 @@ package cc.blynk.server.hardware.handlers.hardware;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.hardware.handlers.hardware.logic.HardwareInfoLogic;
+import cc.blynk.server.hardware.handlers.hardware.logic.BlynkInternalLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.HardwareSyncLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.MailLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.PushLogic;
@@ -33,7 +33,7 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
     private final SmsLogic smsLogic;
     private final SetWidgetPropertyLogic propertyLogic;
     private final HardwareSyncLogic sync;
-    private final HardwareInfoLogic info;
+    private final BlynkInternalLogic info;
 
     public MqttHardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
         super(holder.limits, stateHolder);
@@ -46,7 +46,7 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
         this.smsLogic = new SmsLogic(holder.smsWrapper, defaultNotificationQuotaLimit);
         this.propertyLogic = new SetWidgetPropertyLogic(holder.sessionDao);
         this.sync = new HardwareSyncLogic();
-        this.info = new HardwareInfoLogic(holder.props.getIntProperty("hard.socket.idle.timeout", 0));
+        this.info = new BlynkInternalLogic(holder.props.getIntProperty("hard.socket.idle.timeout", 0));
 
         this.state = stateHolder;
     }

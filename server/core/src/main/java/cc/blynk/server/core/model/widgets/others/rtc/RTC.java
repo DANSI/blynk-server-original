@@ -19,6 +19,7 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
+//todo RTC should be NoPinWidget. fix after migration.
 public class RTC extends OnePinWidget {
 
     @JsonSerialize(using = ZoneIdToString.class)
@@ -41,6 +42,7 @@ public class RTC extends OnePinWidget {
     }
 
     @Override
+    //todo remove after migration.
     public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
         if (this.deviceId == deviceId) {
             final String body = Pin.makeHardwareBody(pinType, pin, getTime());
@@ -48,7 +50,7 @@ public class RTC extends OnePinWidget {
         }
     }
 
-    private String getTime() {
+    public String getTime() {
         ZoneId zone;
         if (tzName != null) {
             zone = tzName;

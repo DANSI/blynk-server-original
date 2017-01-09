@@ -32,7 +32,7 @@ public final class Command {
     public static final short PUSH_NOTIFICATION = 14;
     public static final short BRIDGE = 15;
     public static final short HARDWARE_SYNC = 16;
-    public static final short HARDWARE_INFO = 17;
+    public static final short BLYNK_INTERNAL = 17;
     public static final short SMS = 18;
     public static final short SET_WIDGET_PROPERTY = 19;
     public static final short HARDWARE = 20;
@@ -129,7 +129,7 @@ public final class Command {
                 put(UPDATE_DASH, "SaveProject");
                 put(DELETE_DASH, "DeleteProject");
                 put(HARDWARE_SYNC, "HardwareSync");
-                put(HARDWARE_INFO, "HardwareInfo");
+                put(BLYNK_INTERNAL, "Internal");
                 put(ADD_PUSH_TOKEN, "AddPushToken");
 
                 put(TWEET, "Tweet");

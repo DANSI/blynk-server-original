@@ -4,13 +4,23 @@ import cc.blynk.client.core.BaseClient;
 import cc.blynk.client.handlers.decoders.ClientMessageDecoder;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.utils.ByteUtils;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import java.util.List;
 import java.util.Random;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -34,6 +44,24 @@ public class TestHardClient extends BaseClient {
 
         this.responseMock = Mockito.mock(SimpleClientHandler.class);
         this.msgId = 0;
+    }
+
+    public String getBody() throws Exception {
+        return getBody(1);
+    }
+
+    public String getBody(int expectedMessageOrder) throws Exception {
+        ArgumentCaptor<MessageBase> objectArgumentCaptor = ArgumentCaptor.forClass(MessageBase.class);
+        verify(responseMock, timeout(1000).times(expectedMessageOrder)).channelRead(any(), objectArgumentCaptor.capture());
+        List<MessageBase> arguments = objectArgumentCaptor.getAllValues();
+        MessageBase messageBase = arguments.get(expectedMessageOrder - 1);
+        if (messageBase instanceof StringMessage) {
+            return ((StringMessage) messageBase).body;
+        } else if (messageBase instanceof LoadProfileGzippedBinaryMessage) {
+            return new String(ByteUtils.decompress(messageBase.getBytes()));
+        }
+
+        throw new RuntimeException("Unexpected message");
     }
 
     @Override

@@ -69,8 +69,8 @@ public class CommandParser {
                 return DELETE_WIDGET;
             case "hardsync" :
                 return HARDWARE_SYNC;
-            case "info" :
-                return HARDWARE_INFO;
+            case "internal" :
+                return BLYNK_INTERNAL;
 
             case "createdevice" :
                 return CREATE_DEVICE;
