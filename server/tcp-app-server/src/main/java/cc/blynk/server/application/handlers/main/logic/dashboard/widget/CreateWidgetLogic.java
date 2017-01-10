@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
+import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -64,6 +65,13 @@ public class CreateWidgetLogic {
         for (Widget widget : dash.widgets) {
             if (widget.id == newWidget.id) {
                 throw new NotAllowedException("Widget with same id already exists.");
+            }
+        }
+
+        if (newWidget instanceof WebHook) {
+            String url = ((WebHook) newWidget).url;
+            if (url != null && !url.toLowerCase().startsWith("http")) {
+                throw new IllegalCommandException("Url for webhook doesn't have scheme.");
             }
         }
 
