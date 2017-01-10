@@ -4,7 +4,7 @@ Happy Blynking!
 Getting Started Guide -> http://www.blynk.cc/getting-started
 Documentation -> http://docs.blynk.cc/
 Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.3/Blynk_Release_v0.4.3.zip
-Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.21.5/server-0.21.5.jar
+Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.21.5/server-0.21.6.jar
 -
 http://www.blynk.cc
 twitter.com/blynk_app

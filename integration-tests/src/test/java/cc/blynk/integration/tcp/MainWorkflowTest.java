@@ -639,7 +639,7 @@ public class MainWorkflowTest extends IntegrationBase {
                 "Getting Started Guide -> http://www.blynk.cc/getting-started\n" +
                 "Documentation -> http://docs.blynk.cc/\n" +
                 "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.3/Blynk_Release_v0.4.3.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.21.5/server-0.21.5.jar\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.21.5/server-0.21.6.jar\n" +
                 "-\n" +
                 "http://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
