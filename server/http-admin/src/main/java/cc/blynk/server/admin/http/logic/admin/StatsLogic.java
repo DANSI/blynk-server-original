@@ -153,11 +153,19 @@ public class StatsLogic extends HttpLogicUtil {
 
         for (User user : userDao.users.values()) {
             if (user.lastLoggedIP != null) {
+                final String name = user.name + "-" + user.appName;
                 if (ip == null) {
-                    res.add(new IpNameResponse(user.name + "-" + user.appName, user.lastLoggedIP));
+                    res.add(new IpNameResponse(name, user.lastLoggedIP));
+                    for (DashBoard dashBoard : user.profile.dashBoards) {
+                        for (Device device : dashBoard.devices) {
+                            if (device.lastLoggedIP != null) {
+                                res.add(new IpNameResponse(name, device.lastLoggedIP));
+                            }
+                        }
+                    }
                 } else {
                     if (user.lastLoggedIP.contains(ip) || deviceContains(user, ip)) {
-                        res.add(new IpNameResponse(user.name + "-" + user.appName, user.lastLoggedIP));
+                        res.add(new IpNameResponse(name, user.lastLoggedIP));
                     }
                 }
             }
