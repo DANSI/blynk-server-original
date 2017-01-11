@@ -25,15 +25,15 @@ public class Stat {
     public final CommandStat commands = new CommandStat();
     public final HttpStat http = new HttpStat();
 
-    long oneMinRate;
-    long total;
-    long active;
-    long active3;
-    long connected;
-    long onlineApps;
-    long totalOnlineApps;
-    long onlineHards;
-    long totalOnlineHards;
+    final long oneMinRate;
+    final long total;
+    final long active;
+    final long active3;
+    final long connected;
+    final long onlineApps;
+    final long totalOnlineApps;
+    final long onlineHards;
+    final long totalOnlineHards;
 
     public Stat(SessionDao sessionDao, UserDao userDao, GlobalStats localStats, boolean reset) {
         //yeap, some stats updates may be lost (because of sumThenReset()),
