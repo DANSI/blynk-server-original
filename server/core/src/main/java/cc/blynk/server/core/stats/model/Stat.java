@@ -36,9 +36,8 @@ public class Stat {
     long onlineHards;
     long totalOnlineHards;
 
-    public static Stat calcStats(SessionDao sessionDao, UserDao userDao, GlobalStats localStats, boolean reset) {
-        Stat stat = new Stat();
-        stat.oneMinRate = (long) localStats.totalMessages.getOneMinuteRate();
+    public Stat(SessionDao sessionDao, UserDao userDao, GlobalStats localStats, boolean reset) {
+        this.oneMinRate = (long) localStats.totalMessages.getOneMinuteRate();
 
         //yeap, some stats updates may be lost (because of sumThenReset()),
         //but we don't care, cause this is just for general monitoring
@@ -46,9 +45,9 @@ public class Stat {
             LongAdder longAdder = localStats.specificCounters[counterEntry.getKey()];
             String key = counterEntry.getValue();
             if (key.startsWith("Http")) {
-                stat.http.put(key, reset ? longAdder.sumThenReset() : longAdder.sum());
+                this.http.put(key, reset ? longAdder.sumThenReset() : longAdder.sum());
             } else {
-                stat.messages.put(key, reset ? longAdder.sumThenReset() : longAdder.sum());
+                this.messages.put(key, reset ? longAdder.sumThenReset() : longAdder.sum());
             }
         }
 
@@ -91,17 +90,15 @@ public class Stat {
             }
         }
 
-        stat.connected = connectedSessions;
-        stat.onlineApps = appActive;
-        stat.totalOnlineApps = totalOnlineApps;
-        stat.onlineHards = hardActive;
-        stat.totalOnlineHards = totalOnlineHards;
+        this.connected = connectedSessions;
+        this.onlineApps = appActive;
+        this.totalOnlineApps = totalOnlineApps;
+        this.onlineHards = hardActive;
+        this.totalOnlineHards = totalOnlineHards;
 
-        stat.active = active;
-        stat.active3 = active3;
-        stat.total = userDao.users.size();
-
-        return stat;
+        this.active = active;
+        this.active3 = active3;
+        this.total = userDao.users.size();
     }
 
     public String toJson() {

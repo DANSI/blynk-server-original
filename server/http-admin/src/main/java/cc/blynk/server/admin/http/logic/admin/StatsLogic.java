@@ -50,7 +50,7 @@ public class StatsLogic extends HttpLogicUtil {
     @GET
     @Path("/realtime")
     public Response getReatime() {
-       return ok(Collections.singletonList(Stat.calcStats(sessionDao, userDao, stats, false)));
+       return ok(Collections.singletonList(new Stat(sessionDao, userDao, stats, false)));
     }
 
     @GET
@@ -75,7 +75,7 @@ public class StatsLogic extends HttpLogicUtil {
     @Path("/messages")
     public Response getMessages(@QueryParam("_sortField") String sortField,
                                     @QueryParam("_sortDir") String sortOrder) {
-        return ok(sort(convertMapToPair(Stat.calcStats(sessionDao, userDao, stats, false).messages), sortField, sortOrder));
+        return ok(sort(convertMapToPair(new Stat(sessionDao, userDao, stats, false).messages), sortField, sortOrder));
     }
 
     @GET
