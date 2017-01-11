@@ -33,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
         //controls
         @JsonSubTypes.Type(value = Button.class, name = "BUTTON"),
+        @JsonSubTypes.Type(value = FieldInput.class, name = "FIELD_INPUT"),
         @JsonSubTypes.Type(value = Slider.class, name = "SLIDER"),
         @JsonSubTypes.Type(value = VerticalSlider.class, name = "VERTICAL_SLIDER"),
         @JsonSubTypes.Type(value = RGB.class, name = "RGB"),
