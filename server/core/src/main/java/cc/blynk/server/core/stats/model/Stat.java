@@ -9,7 +9,6 @@ import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.JsonParser;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -23,8 +22,8 @@ public class Stat {
     private final static long ONE_DAY = 24 * 60 * 60 * 1000;
     private final static long THREE_DAYS = 3 * ONE_DAY;
 
-    public final Map<String, Long> messages = new HashMap<>();
-    public final Map<String, Long> http = new HashMap<>();
+    public final CommandStat commands = new CommandStat();
+    public final HttpStat http = new HttpStat();
 
     long oneMinRate;
     long total;
@@ -37,20 +36,17 @@ public class Stat {
     long totalOnlineHards;
 
     public Stat(SessionDao sessionDao, UserDao userDao, GlobalStats localStats, boolean reset) {
-        this.oneMinRate = (long) localStats.totalMessages.getOneMinuteRate();
-
         //yeap, some stats updates may be lost (because of sumThenReset()),
         //but we don't care, cause this is just for general monitoring
-        for (Map.Entry<Short, String> counterEntry : Command.valuesName.entrySet()) {
-            LongAdder longAdder = localStats.specificCounters[counterEntry.getKey()];
-            String key = counterEntry.getValue();
-            if (key.startsWith("Http")) {
-                this.http.put(key, reset ? longAdder.sumThenReset() : longAdder.sum());
-            } else {
-                this.messages.put(key, reset ? longAdder.sumThenReset() : longAdder.sum());
-            }
+        for (Short command : Command.valuesName.keySet()) {
+            LongAdder longAdder = localStats.specificCounters[command];
+            long val = reset ? longAdder.sumThenReset() : longAdder.sum();
+
+            this.http.assign(command, val);
+            this.commands.assign(command, val);
         }
 
+        this.oneMinRate = (long) localStats.totalMessages.getOneMinuteRate();
         int connectedSessions = 0;
 
         int hardActive = 0;

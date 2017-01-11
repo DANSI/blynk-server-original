@@ -59,9 +59,6 @@ public final class Command {
     public static final short GET_ENERGY = 36;
     public static final short ADD_ENERGY = 37;
 
-    public static final short SAVE_METADATA = 38;
-    public static final short GET_METADATA = 39;
-
     public static final short GET_SERVER = 40;
     public static final short CONNECT_REDIRECT = 41;
 
@@ -107,7 +104,7 @@ public final class Command {
                 put(REGISTER, "Register");
                 put(LOGIN, "Login");
                 put(LOAD_PROFILE_GZIPPED, "LoadProfile");
-                put(APP_SYNC, "Sync");
+                put(APP_SYNC, "AppSync");
                 put(SHARING, "Sharing");
                 put(GET_TOKEN, "GetToken");
                 put(PING, "Ping");
@@ -126,7 +123,7 @@ public final class Command {
                 put(REFRESH_SHARE_TOKEN, "RefreshShareToken");
                 put(SHARE_LOGIN, "ShareLogin");
                 put(CREATE_DASH, "CreateProject");
-                put(UPDATE_DASH, "SaveProject");
+                put(UPDATE_DASH, "UpdateProject");
                 put(DELETE_DASH, "DeleteProject");
                 put(HARDWARE_SYNC, "HardwareSync");
                 put(BLYNK_INTERNAL, "Internal");
@@ -147,9 +144,6 @@ public final class Command {
 
                 put(ADD_ENERGY, "AddEnergy");
                 put(GET_ENERGY, "GetEnergy");
-
-                put(SAVE_METADATA, "SaveMetadata");
-                put(GET_METADATA, "GetMetadata");
 
                 put(GET_SERVER, "GetServer");
                 put(CONNECT_REDIRECT, "ConnectRedirect");

@@ -17,7 +17,6 @@ import cc.blynk.server.core.protocol.model.messages.appllication.ExportDataMessa
 import cc.blynk.server.core.protocol.model.messages.appllication.GetDevices;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetEnergy;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataStringMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.GetMetadata;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTags;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
@@ -26,7 +25,6 @@ import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RedeemMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RefreshTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.SaveMetadata;
 import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateDashMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateDevice;
@@ -158,11 +156,6 @@ public class MessageFactory {
                 return new GetEnergy(messageId, body);
             case ADD_ENERGY :
                 return new AddEnergy(messageId, body);
-
-            case SAVE_METADATA :
-                return new SaveMetadata(messageId, body);
-            case GET_METADATA :
-                return new GetMetadata(messageId, body);
 
             case GET_SERVER :
                 return new GetServerMessage(messageId, body);

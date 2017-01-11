@@ -75,7 +75,7 @@ public class StatsLogic extends HttpLogicUtil {
     @Path("/messages")
     public Response getMessages(@QueryParam("_sortField") String sortField,
                                     @QueryParam("_sortDir") String sortOrder) {
-        return ok(sort(convertMapToPair(new Stat(sessionDao, userDao, stats, false).messages), sortField, sortOrder));
+        return ok(sort(convertObjectToMap(new Stat(sessionDao, userDao, stats, false).commands), sortField, sortOrder));
     }
 
     @GET

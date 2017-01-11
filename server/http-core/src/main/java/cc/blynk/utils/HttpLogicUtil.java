@@ -1,6 +1,7 @@
 package cc.blynk.utils;
 
 import cc.blynk.core.http.model.NameCountResponse;
+import cc.blynk.server.core.stats.model.CommandStat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,6 +47,10 @@ public class HttpLogicUtil {
         return map.entrySet().stream().map(NameCountResponse::new).collect(Collectors.toList());
     }
 
+    @SuppressWarnings("unchecked")
+    public static List<NameCountResponse> convertObjectToMap(CommandStat commandStat) {
+        return convertMapToPair(JsonParser.mapper.convertValue(commandStat, Map.class));
+    }
 
     /**
      * The Blynk Project.

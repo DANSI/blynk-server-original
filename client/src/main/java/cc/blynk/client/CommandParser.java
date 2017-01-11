@@ -95,11 +95,6 @@ public class CommandParser {
             case "getenergy" :
                 return GET_ENERGY;
 
-            case "savemetadata" :
-                return SAVE_METADATA;
-            case "getmetadata" :
-                return GET_METADATA;
-
             case "getserver" :
                 return GET_SERVER;
 
