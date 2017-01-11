@@ -16,7 +16,7 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.core.stats.Stat;
+import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.utils.HttpLogicUtil;
 import cc.blynk.utils.JsonParser;
 

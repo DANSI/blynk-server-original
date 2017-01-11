@@ -1,4 +1,4 @@
-package cc.blynk.server.core.stats;
+package cc.blynk.server.core.stats.model;
 
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
@@ -6,6 +6,7 @@ import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.JsonParser;
 
 import java.util.HashMap;

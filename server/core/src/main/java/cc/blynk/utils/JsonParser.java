@@ -10,7 +10,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
-import cc.blynk.server.core.stats.Stat;
+import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.utils.serialization.NotificationIgnoreMixIn;
 import cc.blynk.utils.serialization.TwitterIgnoreMixIn;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
