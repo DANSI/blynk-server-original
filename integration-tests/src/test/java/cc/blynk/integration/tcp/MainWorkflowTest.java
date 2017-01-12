@@ -47,37 +47,10 @@ import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
-import static cc.blynk.server.core.protocol.enums.Response.DEVICE_WENT_OFFLINE;
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
-import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_INVALID_BODY;
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
-import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
-import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
-import static cc.blynk.server.core.protocol.enums.Response.USER_ALREADY_REGISTERED;
+import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.contains;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.startsWith;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -638,8 +611,8 @@ public class MainWorkflowTest extends IntegrationBase {
                 "-\n" +
                 "Getting Started Guide -> http://www.blynk.cc/getting-started\n" +
                 "Documentation -> http://docs.blynk.cc/\n" +
-                "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.3/Blynk_Release_v0.4.3.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.21.5/server-0.21.6.jar\n" +
+                "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.4/Blynk_Release_v0.4.4.zip\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.21.7/server-0.21.7.jar\n" +
                 "-\n" +
                 "http://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
