@@ -4,6 +4,8 @@ import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
+import cc.blynk.server.core.reporting.average.AverageAggregator;
+import cc.blynk.server.core.stats.model.Stat;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,12 +27,18 @@ public class ReportingDBDao {
     public static final String insertMinute = "INSERT INTO reporting_average_minute (username, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
     public static final String insertHourly = "INSERT INTO reporting_average_hourly (username, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
     public static final String insertDaily = "INSERT INTO reporting_average_daily (username, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
     public static final String selectMinute = "SELECT ts, value FROM reporting_average_minute WHERE ts > ? ORDER BY ts DESC limit ?";
     public static final String selectHourly = "SELECT ts, value FROM reporting_average_hourly WHERE ts > ? ORDER BY ts DESC limit ?";
     public static final String selectDaily = "SELECT ts, value FROM reporting_average_daily WHERE ts > ? ORDER BY ts DESC limit ?";
+
     public static final String deleteMinute = "DELETE FROM reporting_average_minute WHERE ts < ?";
     public static final String deleteHour = "DELETE FROM reporting_average_hourly WHERE ts < ?";
     public static final String deleteDaily = "DELETE FROM reporting_average_daily WHERE ts < ?";
+
+    public static final String insertStatMinute = "INSERT INTO reporting_stats_minute VALUES()";
+    public static final String insertStatCommandsMinute = "INSERT INTO reporting_stats_commands_minute VALUES()";
+
     private static final Logger log = LogManager.getLogger(ReportingDBDao.class);
     private final HikariDataSource ds;
 
@@ -76,6 +84,29 @@ public class ReportingDBDao {
                 return insertHourly;
             default :
                 return insertDaily;
+        }
+    }
+
+    public void insertStat(String region, Stat stat) {
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(insertStatMinute)) {
+
+            ps.setString(1, region);
+            ps.setLong(2, (stat.ts / AverageAggregator.MINUTE) * AverageAggregator.MINUTE);
+            ps.setLong(3, stat.active);
+            ps.setLong(4, stat.activeWeek);
+            ps.setLong(5, stat.oneMinRate);
+            ps.setLong(6, stat.connected);
+            ps.setLong(7, stat.onlineApps);
+            ps.setLong(8, stat.onlineHards);
+            ps.setLong(9, stat.totalOnlineApps);
+            ps.setLong(10, stat.totalOnlineHards);
+            ps.setLong(11, stat.registrations);
+
+            ps.executeUpdate();
+            connection.commit();
+        } catch (Exception e) {
+            log.error("Error inserting real time stat in DB.", e);
         }
     }
 

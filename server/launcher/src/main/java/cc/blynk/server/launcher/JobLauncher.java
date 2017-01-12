@@ -42,7 +42,7 @@ class JobLauncher {
         scheduler.scheduleAtFixedRate(profileSaverWorker, 1000,
                 holder.props.getIntProperty("profile.save.worker.period"), TimeUnit.MILLISECONDS);
 
-        StatsWorker statsWorker = new StatsWorker(holder.stats, holder.sessionDao, holder.userDao);
+        StatsWorker statsWorker = new StatsWorker(holder);
         scheduler.scheduleAtFixedRate(statsWorker, 1000,
                 holder.props.getIntProperty("stats.print.worker.period"), TimeUnit.MILLISECONDS);
 

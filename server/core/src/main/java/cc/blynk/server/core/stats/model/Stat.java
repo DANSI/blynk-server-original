@@ -21,20 +21,23 @@ import java.util.concurrent.atomic.LongAdder;
 public class Stat {
 
     private final static long ONE_DAY = 24 * 60 * 60 * 1000;
-    private final static long THREE_DAYS = 3 * ONE_DAY;
+    private final static long ONE_WEEK = 7 * ONE_DAY;
+    private final static long ONE_MONTH = 30 * ONE_DAY;
 
     public final CommandStat commands = new CommandStat();
     public final HttpStat http = new HttpStat();
 
-    final long oneMinRate;
-    final long total;
-    final long active;
-    final long active3;
-    final long connected;
-    final long onlineApps;
-    final long totalOnlineApps;
-    final long onlineHards;
-    final long totalOnlineHards;
+    public final long oneMinRate;
+    public final long registrations;
+    public final long active;
+    public final long activeWeek;
+    public final long activeMonth;
+    public final long connected;
+    public final long onlineApps;
+    public final long totalOnlineApps;
+    public final long onlineHards;
+    public final long totalOnlineHards;
+    public final transient long ts;
 
     public Stat(SessionDao sessionDao, UserDao userDao, GlobalStats globalStats, boolean reset) {
         //yeap, some stats updates may be lost (because of sumThenReset()),
@@ -60,9 +63,10 @@ public class Stat {
         int totalOnlineApps = 0;
 
         int active = 0;
-        int active3 = 0;
+        int activeWeek = 0;
+        int activeMonth = 0;
 
-        long now = System.currentTimeMillis();
+        this.ts = System.currentTimeMillis();
         for (Map.Entry<UserKey, Session> entry: sessionDao.userSession.entrySet()) {
             Session session = entry.getValue();
 
@@ -81,13 +85,19 @@ public class Stat {
             User user = userDao.users.get(userKey);
 
             if (user != null) {
-                if (now - user.lastModifiedTs < ONE_DAY || dashUpdated(user, now, ONE_DAY)) {
+                if (this.ts - user.lastModifiedTs < ONE_DAY || dashUpdated(user, this.ts, ONE_DAY)) {
                     active++;
-                    active3++;
+                    activeWeek++;
+                    activeMonth++;
                     continue;
                 }
-                if (now - user.lastModifiedTs < THREE_DAYS || dashUpdated(user, now, THREE_DAYS)) {
-                    active3++;
+                if (this.ts - user.lastModifiedTs < ONE_WEEK || dashUpdated(user, this.ts, ONE_WEEK)) {
+                    activeWeek++;
+                    activeMonth++;
+                    continue;
+                }
+                if (this.ts - user.lastModifiedTs < ONE_MONTH || dashUpdated(user, this.ts, ONE_MONTH)) {
+                    activeMonth++;
                 }
             }
         }
@@ -99,8 +109,9 @@ public class Stat {
         this.totalOnlineHards = totalOnlineHards;
 
         this.active = active;
-        this.active3 = active3;
-        this.total = userDao.users.size();
+        this.activeWeek = activeWeek;
+        this.activeMonth = activeMonth;
+        this.registrations = userDao.users.size();
     }
 
     private boolean dashUpdated(User user, long now, long period) {

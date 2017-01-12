@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
+import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.PurchaseDBDao;
 import cc.blynk.server.db.dao.RedeemDBDao;
 import cc.blynk.server.db.dao.ReportingDBDao;
@@ -31,19 +32,16 @@ import java.util.Map;
  */
 public class DBManager implements Closeable {
 
-    private static final Logger log = LogManager.getLogger(DBManager.class);
-
     public static final String DB_PROPERTIES_FILENAME = "db.properties";
-
+    private static final Logger log = LogManager.getLogger(DBManager.class);
     private final HikariDataSource ds;
 
     private final BlockingIOProcessor blockingIOProcessor;
-
-    private ReportingDBDao reportingDBDao;
+    private final boolean cleanOldReporting;
     public UserDBDao userDBDao;
+    private ReportingDBDao reportingDBDao;
     private RedeemDBDao redeemDBDao;
     private PurchaseDBDao purchaseDBDao;
-    private final boolean cleanOldReporting;
 
     public DBManager(BlockingIOProcessor blockingIOProcessor) {
         this(DB_PROPERTIES_FILENAME, blockingIOProcessor);
@@ -108,6 +106,12 @@ public class DBManager implements Closeable {
     public void saveUsers(List<User> users) {
         if (isDBEnabled() && users.size() > 0) {
             blockingIOProcessor.execute(() -> userDBDao.save(users));
+        }
+    }
+
+    public void insertStat(String region, Stat stat) {
+        if (isDBEnabled()) {
+            reportingDBDao.insertStat(region, stat);
         }
     }
 
