@@ -80,6 +80,8 @@ public class Stat {
             if (user != null) {
                 if (now - user.lastModifiedTs < ONE_DAY || dashUpdated(user, now, ONE_DAY)) {
                     active++;
+                    active3++;
+                    continue;
                 }
                 if (now - user.lastModifiedTs < THREE_DAYS || dashUpdated(user, now, THREE_DAYS)) {
                     active3++;
