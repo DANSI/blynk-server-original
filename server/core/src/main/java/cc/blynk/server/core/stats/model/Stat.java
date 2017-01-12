@@ -36,18 +36,21 @@ public class Stat {
     final long onlineHards;
     final long totalOnlineHards;
 
-    public Stat(SessionDao sessionDao, UserDao userDao, GlobalStats localStats, boolean reset) {
+    public Stat(SessionDao sessionDao, UserDao userDao, GlobalStats globalStats, boolean reset) {
         //yeap, some stats updates may be lost (because of sumThenReset()),
         //but we don't care, cause this is just for general monitoring
         for (Short command : Command.valuesName.keySet()) {
-            LongAdder longAdder = localStats.specificCounters[command];
+            LongAdder longAdder = globalStats.specificCounters[command];
             long val = reset ? longAdder.sumThenReset() : longAdder.sum();
 
             this.http.assign(command, val);
             this.commands.assign(command, val);
         }
 
-        this.oneMinRate = (long) localStats.totalMessages.getOneMinuteRate();
+        this.commands.appTotal = globalStats.getTotalAppCounter(reset);
+        this.commands.hardTotal = globalStats.getTotalHardCounter(reset);
+
+        this.oneMinRate = (long) globalStats.totalMessages.getOneMinuteRate();
         int connectedSessions = 0;
 
         int hardActive = 0;

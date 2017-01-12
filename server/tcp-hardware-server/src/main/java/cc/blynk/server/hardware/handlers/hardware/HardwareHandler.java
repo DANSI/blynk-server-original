@@ -3,29 +3,13 @@ package cc.blynk.server.hardware.handlers.hardware;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.BlynkInternalLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.BridgeLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.HardwareLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.HardwareSyncLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.MailLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.PushLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.SetWidgetPropertyLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.SmsLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.TwitLogic;
+import cc.blynk.server.hardware.handlers.hardware.logic.*;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
-import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
-import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.PING;
-import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
-import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
-import static cc.blynk.server.core.protocol.enums.Command.SMS;
-import static cc.blynk.server.core.protocol.enums.Command.TWEET;
+import static cc.blynk.server.core.protocol.enums.Command.*;
 
 /**
  * The Blynk Project.
@@ -44,6 +28,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final SetWidgetPropertyLogic propertyLogic;
     private final HardwareSyncLogic sync;
     private final BlynkInternalLogic info;
+    private final GlobalStats stats;
 
     public HardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
         super(holder.limits, stateHolder);
@@ -59,10 +44,12 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.info = new BlynkInternalLogic(holder.props.getIntProperty("hard.socket.idle.timeout", 0));
 
         this.state = stateHolder;
+        this.stats = holder.stats;
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
+        this.stats.incrementHardStat();
         switch (msg.command) {
             case HARDWARE:
                 hardware.messageReceived(ctx, state, msg);

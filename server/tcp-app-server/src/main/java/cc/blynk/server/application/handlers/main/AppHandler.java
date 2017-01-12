@@ -2,18 +2,7 @@ package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.application.handlers.main.logic.ActivateDashboardLogic;
-import cc.blynk.server.application.handlers.main.logic.AddEnergyLogic;
-import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
-import cc.blynk.server.application.handlers.main.logic.AppMailLogic;
-import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
-import cc.blynk.server.application.handlers.main.logic.DeActivateDashboardLogic;
-import cc.blynk.server.application.handlers.main.logic.GetEnergyLogic;
-import cc.blynk.server.application.handlers.main.logic.GetTokenLogic;
-import cc.blynk.server.application.handlers.main.logic.HardwareAppLogic;
-import cc.blynk.server.application.handlers.main.logic.LoadProfileGzippedLogic;
-import cc.blynk.server.application.handlers.main.logic.RedeemLogic;
-import cc.blynk.server.application.handlers.main.logic.RefreshTokenLogic;
+import cc.blynk.server.application.handlers.main.logic.*;
 import cc.blynk.server.application.handlers.main.logic.dashboard.CreateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.DeleteDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.UpdateDashLogic;
@@ -35,6 +24,7 @@ import cc.blynk.server.application.handlers.main.logic.sharing.GetSharedDashLogi
 import cc.blynk.server.application.handlers.main.logic.sharing.RefreshShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.ShareLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
 import io.netty.channel.ChannelHandlerContext;
@@ -73,6 +63,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final CreateDeviceLogic createDeviceLogic;
     private final UpdateDeviceLogic updateDeviceLogic;
     private final DeleteDeviceLogic deleteDeviceLogic;
+    private final GlobalStats stats;
 
     public AppHandler(Holder holder, AppStateHolder state) {
         super(holder.limits, state);
@@ -108,10 +99,12 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.addEnergyLogic = new AddEnergyLogic(holder.dbManager, holder.blockingIOProcessor);
 
         this.state = state;
+        this.stats = holder.stats;
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
+        this.stats.incrementAppStat();
         switch (msg.command) {
             case HARDWARE:
                 hardwareApp.messageReceived(ctx, state, msg);

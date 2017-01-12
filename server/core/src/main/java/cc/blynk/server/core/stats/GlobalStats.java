@@ -9,9 +9,15 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class GlobalStats {
 
-    private static final int LAST_COMMAND_INDEX = 72;
+    private static final int LAST_COMMAND_INDEX = 72 + 2;
+
+    private static final int APP_STAT_COUNTER_INDEX = LAST_COMMAND_INDEX - 1;
+    private static final int HARD_STAT_COUNTER_INDEX = LAST_COMMAND_INDEX - 2;
+
     //separate by income/outcome?
     public final Meter totalMessages;
+
+    //2 last load adders are used as separate counters
     public final LongAdder[] specificCounters;
 
     public GlobalStats() {
@@ -27,6 +33,24 @@ public class GlobalStats {
     public void mark(final short cmd) {
         totalMessages.mark(1);
         specificCounters[cmd].increment();
+    }
+
+    public void incrementAppStat() {
+        specificCounters[APP_STAT_COUNTER_INDEX].increment();
+    }
+
+    public void incrementHardStat() {
+        specificCounters[HARD_STAT_COUNTER_INDEX].increment();
+    }
+
+    public long getTotalAppCounter(boolean reset) {
+        LongAdder longAdder = specificCounters[APP_STAT_COUNTER_INDEX];
+        return reset ? longAdder.sumThenReset() : longAdder.sum();
+    }
+
+    public long getTotalHardCounter(boolean reset) {
+        LongAdder longAdder = specificCounters[HARD_STAT_COUNTER_INDEX];
+        return reset ? longAdder.sumThenReset() : longAdder.sum();
     }
 
 }

@@ -8,16 +8,12 @@ import cc.blynk.server.application.handlers.main.logic.reporting.GetGraphDataLog
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.application.handlers.sharing.logic.HardwareAppShareLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
-import static cc.blynk.server.core.protocol.enums.Command.PING;
+import static cc.blynk.server.core.protocol.enums.Command.*;
 
 /**
  * The Blynk Project.
@@ -30,16 +26,19 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     public final AppShareStateHolder state;
     private final HardwareAppShareLogic hardwareApp;
     private final GetGraphDataLogic graphData;
+    private final GlobalStats stats;
 
     public AppShareHandler(Holder holder, AppShareStateHolder state) {
         super(holder.limits, state);
         this.hardwareApp = new HardwareAppShareLogic(holder.sessionDao);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.state = state;
+        this.stats = holder.stats;
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
+        this.stats.incrementAppStat();
         switch (msg.command) {
             case HARDWARE:
                 hardwareApp.messageReceived(ctx, state, msg);

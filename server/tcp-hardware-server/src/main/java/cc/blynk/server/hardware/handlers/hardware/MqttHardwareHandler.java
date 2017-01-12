@@ -2,14 +2,9 @@ package cc.blynk.server.hardware.handlers.hardware;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.hardware.handlers.hardware.logic.BlynkInternalLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.HardwareSyncLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.MailLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.PushLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.SetWidgetPropertyLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.SmsLogic;
-import cc.blynk.server.hardware.handlers.hardware.logic.TwitLogic;
+import cc.blynk.server.hardware.handlers.hardware.logic.*;
 import cc.blynk.server.hardware.handlers.hardware.mqtt.logic.MqttHardwareLogic;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttMessage;
@@ -34,6 +29,7 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
     private final SetWidgetPropertyLogic propertyLogic;
     private final HardwareSyncLogic sync;
     private final BlynkInternalLogic info;
+    private final GlobalStats stats;
 
     public MqttHardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
         super(holder.limits, stateHolder);
@@ -49,10 +45,12 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
         this.info = new BlynkInternalLogic(holder.props.getIntProperty("hard.socket.idle.timeout", 0));
 
         this.state = stateHolder;
+        this.stats = holder.stats;
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MqttMessage msg) {
+        this.stats.incrementHardStat();
         MqttMessageType messageType = msg.fixedHeader().messageType();
 
         switch (messageType) {

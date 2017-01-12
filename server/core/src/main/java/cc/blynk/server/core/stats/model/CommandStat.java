@@ -63,6 +63,9 @@ public class CommandStat {
     public long eventor;
     public long webhooks;
 
+    public long appTotal;
+    public long hardTotal;
+
     public void assign(short field, long val) {
         switch (field) {
             case RESPONSE :
