@@ -3,6 +3,7 @@ package cc.blynk.server.core.stats.model;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.enums.Command;
@@ -77,10 +78,10 @@ public class Stat {
             User user = userDao.users.get(userKey);
 
             if (user != null) {
-                if (now - user.lastModifiedTs < ONE_DAY) {
+                if (now - user.lastModifiedTs < ONE_DAY || dashUpdated(user, now, ONE_DAY)) {
                     active++;
                 }
-                if (now - user.lastModifiedTs < THREE_DAYS) {
+                if (now - user.lastModifiedTs < THREE_DAYS || dashUpdated(user, now, THREE_DAYS)) {
                     active3++;
                 }
             }
@@ -95,6 +96,15 @@ public class Stat {
         this.active = active;
         this.active3 = active3;
         this.total = userDao.users.size();
+    }
+
+    private boolean dashUpdated(User user, long now, long period) {
+        for (DashBoard dash : user.profile.dashBoards) {
+            if (now - dash.updatedAt < period) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String toJson() {
