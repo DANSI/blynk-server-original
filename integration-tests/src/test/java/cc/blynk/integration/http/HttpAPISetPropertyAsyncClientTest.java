@@ -120,7 +120,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
         clientPair.appClient.reset();
-        clientPair.appClient.send("updateWidget 1\0{\"id\":1, \"x\":1, \"y\":1, \"label\":\"Some Text\", \"type\":\"BUTTON\",         \"pinType\":\"VIRTUAL\", \"pin\":1, \"value\":\"1\"}");
+        clientPair.appClient.send("updateWidget 1\0{\"id\":1, \"width\":1, \"height\":1,  \"x\":1, \"y\":1, \"label\":\"Some Text\", \"type\":\"BUTTON\",         \"pinType\":\"VIRTUAL\", \"pin\":1, \"value\":\"1\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + token + "/update/v1?onLabel=newOnButtonLabel").execute();
@@ -143,7 +143,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
         clientPair.appClient.reset();
-        clientPair.appClient.send("updateWidget 1\0{\"id\":1, \"x\":1, \"y\":1, \"label\":\"Some Text\", \"type\":\"BUTTON\",         \"pinType\":\"VIRTUAL\", \"pin\":1, \"value\":\"1\"}");
+        clientPair.appClient.send("updateWidget 1\0{\"id\":1, \"width\":1, \"height\":1, \"x\":1, \"y\":1, \"label\":\"Some Text\", \"type\":\"BUTTON\",         \"pinType\":\"VIRTUAL\", \"pin\":1, \"value\":\"1\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + token + "/update/v1?offLabel=newOffButtonLabel").execute();

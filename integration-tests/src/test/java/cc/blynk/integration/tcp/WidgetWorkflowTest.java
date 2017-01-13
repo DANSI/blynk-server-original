@@ -79,26 +79,33 @@ public class WidgetWorkflowTest extends IntegrationBase {
 
     @Test
     public void testCanCreateWebHookWithScheme() throws Exception {
-        clientPair.appClient.send("createWidget 1\0{\"id\":1111,\"url\":\"http://123.com\",\"type\":\"WEBHOOK\"}");
+        clientPair.appClient.send("createWidget 1\0{\"id\":1111, \"width\":1, \"height\":1,\"url\":\"http://123.com\",\"type\":\"WEBHOOK\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":1112,\"type\":\"WEBHOOK\"}");
+        clientPair.appClient.send("createWidget 1\0{\"id\":1112, \"width\":1, \"height\":1,\"type\":\"WEBHOOK\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":1113,\"url\":\"https://123.com\",\"type\":\"WEBHOOK\"}");
+        clientPair.appClient.send("createWidget 1\0{\"id\":1113, \"width\":1, \"height\":1,\"url\":\"https://123.com\",\"type\":\"WEBHOOK\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
     }
 
     @Test
     public void testCantCreateWebHookWithNoScheme() throws Exception {
-        clientPair.appClient.send("createWidget 1\0{\"id\":1111,\"url\":\"123.com\",\"type\":\"WEBHOOK\"}");
+        clientPair.appClient.send("createWidget 1\0{\"id\":1111, \"width\":1, \"height\":1,\"url\":\"123.com\",\"type\":\"WEBHOOK\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
     }
 
     @Test
     public void testWidgetAlreadyExists() throws Exception {
-        clientPair.appClient.send("createWidget 1\0{\"id\":1,\"type\":\"BUTTON\"}");
+        clientPair.appClient.send("createWidget 1\0{\"id\":1, \"width\":1, \"height\":1,\"type\":\"BUTTON\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
     }
+
+    @Test
+    public void testWidgetWrongSize() throws Exception {
+        clientPair.appClient.send("createWidget 1\0{\"id\":22222, \"width\":1, \"height\":0,\"type\":\"BUTTON\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
+    }
+
 
 }

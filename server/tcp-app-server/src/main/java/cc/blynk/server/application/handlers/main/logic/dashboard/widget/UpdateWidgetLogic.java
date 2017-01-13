@@ -57,16 +57,15 @@ public class UpdateWidgetLogic {
         }
 
         final User user = state.user;
-        DashBoard dash = user.profile.getDashById(dashId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         Widget newWidget = JsonParser.parseWidget(widgetString);
 
-        log.debug("Updating widget {}.", widgetString);
-
-        if (dash == null || newWidget == null) {
-            log.error("Error updating widget {}. Project : {}", widgetString, dash);
-            throw new IllegalCommandException("Empty widget or project.");
+        if (newWidget.width < 1 || newWidget.height < 1) {
+            throw new NotAllowedException("Widget has wrong dimensions.");
         }
+
+        log.debug("Updating widget {}.", widgetString);
 
         int existingWidgetIndex = dash.getWidgetIndexById(newWidget.id);
 

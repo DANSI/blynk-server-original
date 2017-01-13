@@ -60,6 +60,10 @@ public class CreateWidgetLogic {
 
         Widget newWidget = JsonParser.parseWidget(widgetString);
 
+        if (newWidget.width < 1 || newWidget.height < 1) {
+            throw new NotAllowedException("Widget has wrong dimensions.");
+        }
+
         log.debug("Creating new widget {}.", widgetString);
 
         for (Widget widget : dash.widgets) {

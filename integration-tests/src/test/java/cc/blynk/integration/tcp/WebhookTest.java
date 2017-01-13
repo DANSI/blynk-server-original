@@ -161,6 +161,8 @@ public class WebhookTest extends IntegrationBase {
         webHook.body = "[\"124\"]";
         webHook.pin = 123;
         webHook.pinType = PinType.VIRTUAL;
+        webHook.width = 2;
+        webHook.height = 1;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -186,6 +188,8 @@ public class WebhookTest extends IntegrationBase {
         webHook.body = "[\"/pin/\"]";
         webHook.pin = 123;
         webHook.pinType = PinType.VIRTUAL;
+        webHook.width = 2;
+        webHook.height = 1;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -208,6 +212,8 @@ public class WebhookTest extends IntegrationBase {
         webHook.body = "[%s]";
         webHook.pin = 123;
         webHook.pinType = PinType.VIRTUAL;
+        webHook.width = 2;
+        webHook.height = 1;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -233,6 +239,8 @@ public class WebhookTest extends IntegrationBase {
         webHook.body = "[/pin[0]/,/pin[1]/,/pin[2]/]";
         webHook.pin = 123;
         webHook.pinType = PinType.VIRTUAL;
+        webHook.width = 2;
+        webHook.height = 1;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -260,6 +268,8 @@ public class WebhookTest extends IntegrationBase {
         webHook.body = "[/pin[0]/]";
         webHook.pin = 123;
         webHook.pinType = PinType.VIRTUAL;
+        webHook.width = 2;
+        webHook.height = 1;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -285,6 +295,8 @@ public class WebhookTest extends IntegrationBase {
         webHook.body = "[%s]";
         webHook.pin = 123;
         webHook.pinType = PinType.VIRTUAL;
+        webHook.width = 2;
+        webHook.height = 1;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -333,6 +345,8 @@ public class WebhookTest extends IntegrationBase {
         webHook.body = "[\"124\"]";
         webHook.pin = 123;
         webHook.pinType = PinType.VIRTUAL;
+        webHook.width = 2;
+        webHook.height = 1;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -359,6 +373,8 @@ public class WebhookTest extends IntegrationBase {
         webHook.body = "[\"/pin/\"]";
         webHook.pin = 123;
         webHook.pinType = PinType.VIRTUAL;
+        webHook.width = 2;
+        webHook.height = 1;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));

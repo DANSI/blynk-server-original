@@ -148,6 +148,8 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         rtc.pin = 113;
         rtc.pinType = PinType.VIRTUAL;
         rtc.id = 434;
+        rtc.height = 1;
+        rtc.width = 2;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(rtc));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -169,6 +171,8 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     @Test
     public void testEventorWorksViaHttpAPI() throws Exception {
         Eventor eventor = EventorTest.oneRuleEventor("if v100 = 37 then setpin v2 123");
+        eventor.height = 1;
+        eventor.width = 2;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -367,7 +371,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":222, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
+        clientPair.appClient.send("createWidget 1\0{\"id\":222, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         HttpPut request = new HttpPut(httpServerUrl + token + "/pin/V100");

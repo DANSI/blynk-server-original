@@ -70,6 +70,8 @@ public class TableCommandsTest extends IntegrationBase {
         table.pinType = PinType.VIRTUAL;
         table.isClickableRows = true;
         table.isReoderingAllowed = true;
+        table.height = 2;
+        table.width = 2;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(table));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -172,6 +174,8 @@ public class TableCommandsTest extends IntegrationBase {
         table.pinType = PinType.VIRTUAL;
         table.isClickableRows = true;
         table.isReoderingAllowed = true;
+        table.width = 2;
+        table.height = 2;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(table));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));

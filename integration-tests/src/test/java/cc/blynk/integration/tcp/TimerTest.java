@@ -68,6 +68,8 @@ public class TimerTest extends IntegrationBase {
         timer.id = 112;
         timer.x = 1;
         timer.y = 1;
+        timer.width = 2;
+        timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
         timer.startValue = "dw 5 1";
@@ -89,6 +91,8 @@ public class TimerTest extends IntegrationBase {
         timer.id = 112;
         timer.x = 1;
         timer.y = 1;
+        timer.width = 2;
+        timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
         timer.stopValue = "dw 5 0";
@@ -112,6 +116,8 @@ public class TimerTest extends IntegrationBase {
         timer.y = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
+        timer.width = 2;
+        timer.height = 1;
         timer.startValue = "dw 5 1";
         timer.stopValue = "dw 5 0";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
@@ -137,6 +143,8 @@ public class TimerTest extends IntegrationBase {
         timer.y = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
+        timer.width = 2;
+        timer.height = 1;
         timer.startValue = "dw 5 1";
         timer.stopValue = "dw 5 0";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
@@ -163,6 +171,8 @@ public class TimerTest extends IntegrationBase {
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
         timer.startValue = "dw 5 1";
+        timer.width = 2;
+        timer.height = 1;
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -190,6 +200,8 @@ public class TimerTest extends IntegrationBase {
         timer.y = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
+        timer.width = 2;
+        timer.height = 1;
         timer.startValue = "dw 5 0";
         timer.stopValue = "dw 5 1";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
@@ -212,6 +224,8 @@ public class TimerTest extends IntegrationBase {
         timer.id = 112;
         timer.x = 1;
         timer.y = 1;
+        timer.width = 2;
+        timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
         timer.startValue = "dw 5 1";
@@ -242,6 +256,8 @@ public class TimerTest extends IntegrationBase {
         timer.id = 112;
         timer.x = 1;
         timer.y = 1;
+        timer.width = 2;
+        timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
         timer.startValue = "dw 5 1";

@@ -17,9 +17,12 @@ public class Eventor extends NoPinWidget {
     public int deviceId;
 
     public Eventor() {
+        this.width = 2;
+        this.height = 1;
     }
 
     public Eventor(Rule[] rules) {
+        this();
         this.rules = rules;
     }
 
