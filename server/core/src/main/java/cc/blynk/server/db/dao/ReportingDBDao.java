@@ -36,8 +36,8 @@ public class ReportingDBDao {
     public static final String deleteHour = "DELETE FROM reporting_average_hourly WHERE ts < ?";
     public static final String deleteDaily = "DELETE FROM reporting_average_daily WHERE ts < ?";
 
-    public static final String insertStatMinute = "INSERT INTO reporting_stats_minute VALUES()";
-    public static final String insertStatCommandsMinute = "INSERT INTO reporting_stats_commands_minute VALUES()";
+    public static final String insertStatMinute = "INSERT INTO reporting_app_stat_minute (region, ts, active, active_week, active_month, minute_rate, connected, online_apps, online_hards, total_online_apps, total_online_hards, registrations) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
+    public static final String insertStatCommandsMinute = "INSERT INTO reporting_app_stat_command_minute VALUES()";
 
     private static final Logger log = LogManager.getLogger(ReportingDBDao.class);
     private final HikariDataSource ds;
@@ -93,15 +93,16 @@ public class ReportingDBDao {
 
             ps.setString(1, region);
             ps.setLong(2, (stat.ts / AverageAggregator.MINUTE) * AverageAggregator.MINUTE);
-            ps.setLong(3, stat.active);
-            ps.setLong(4, stat.activeWeek);
-            ps.setLong(5, stat.oneMinRate);
-            ps.setLong(6, stat.connected);
-            ps.setLong(7, stat.onlineApps);
-            ps.setLong(8, stat.onlineHards);
-            ps.setLong(9, stat.totalOnlineApps);
-            ps.setLong(10, stat.totalOnlineHards);
-            ps.setLong(11, stat.registrations);
+            ps.setInt(3, stat.active);
+            ps.setInt(4, stat.activeWeek);
+            ps.setInt(5, stat.activeMonth);
+            ps.setInt(6, stat.oneMinRate);
+            ps.setInt(7, stat.connected);
+            ps.setInt(8, stat.onlineApps);
+            ps.setInt(9, stat.onlineHards);
+            ps.setInt(10, stat.totalOnlineApps);
+            ps.setInt(11, stat.totalOnlineHards);
+            ps.setInt(12, stat.registrations);
 
             ps.executeUpdate();
             connection.commit();

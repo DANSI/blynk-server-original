@@ -62,6 +62,22 @@ CREATE TABLE reporting_average_daily (
   PRIMARY KEY (username, project_id, device_id, pin, pinType, ts)
 );
 
+CREATE TABLE reporting_app_stat_minute (
+  region text,
+  ts int8,
+  active int4,
+  active_week int4,
+  active_month int4,
+  minute_rate int4,
+  connected int4,
+  online_apps int4,
+  online_hards int4,
+  total_online_apps int4,
+  total_online_hards int4,
+  registrations int4,
+  PRIMARY KEY (region, ts)
+);
+
 create user test with password 'test';
 GRANT CONNECT ON DATABASE blynk TO test;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO test;

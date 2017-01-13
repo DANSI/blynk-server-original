@@ -27,17 +27,34 @@ public class Stat {
     public final CommandStat commands = new CommandStat();
     public final HttpStat http = new HttpStat();
 
-    public final long oneMinRate;
-    public final long registrations;
-    public final long active;
-    public final long activeWeek;
-    public final long activeMonth;
-    public final long connected;
-    public final long onlineApps;
-    public final long totalOnlineApps;
-    public final long onlineHards;
-    public final long totalOnlineHards;
+    public final int oneMinRate;
+    public final int registrations;
+    public final int active;
+    public final int activeWeek;
+    public final int activeMonth;
+    public final int connected;
+    public final int onlineApps;
+    public final int totalOnlineApps;
+    public final int onlineHards;
+    public final int totalOnlineHards;
     public final transient long ts;
+
+    //for tests only
+    public Stat(int oneMinRate, int registrations, int active, int activeWeek,
+                int activeMonth, int connected, int onlineApps,
+                int totalOnlineApps, int onlineHards, int totalOnlineHards, long ts) {
+        this.oneMinRate = oneMinRate;
+        this.registrations = registrations;
+        this.active = active;
+        this.activeWeek = activeWeek;
+        this.activeMonth = activeMonth;
+        this.connected = connected;
+        this.onlineApps = onlineApps;
+        this.totalOnlineApps = totalOnlineApps;
+        this.onlineHards = onlineHards;
+        this.totalOnlineHards = totalOnlineHards;
+        this.ts = ts;
+    }
 
     public Stat(SessionDao sessionDao, UserDao userDao, GlobalStats globalStats, boolean reset) {
         //yeap, some stats updates may be lost (because of sumThenReset()),
@@ -53,7 +70,7 @@ public class Stat {
         this.commands.appTotal = globalStats.getTotalAppCounter(reset);
         this.commands.hardTotal = globalStats.getTotalHardCounter(reset);
 
-        this.oneMinRate = (long) globalStats.totalMessages.getOneMinuteRate();
+        this.oneMinRate = (int) globalStats.totalMessages.getOneMinuteRate();
         int connectedSessions = 0;
 
         int hardActive = 0;
