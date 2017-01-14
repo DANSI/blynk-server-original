@@ -2,6 +2,7 @@ package cc.blynk.server.db;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
+import cc.blynk.server.core.stats.model.CommandStat;
 import cc.blynk.server.core.stats.model.Stat;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -47,13 +48,68 @@ public class RealtimeStatsDBTest {
         dbManager.executeSQL("DELETE FROM purchase");
         dbManager.executeSQL("DELETE FROM redeem");
         dbManager.executeSQL("DELETE FROM reporting_app_stat_minute");
+        dbManager.executeSQL("DELETE FROM reporting_app_command_stat_minute");
     }
 
     @Test
-    public void testInsert1000RecordsAndSelect() throws Exception {
+    public void testRealTimeStatsInsertWroks() throws Exception {
         String region = "ua";
         long now = System.currentTimeMillis();
+
         Stat stat = new Stat(1,2,3,4,5,6,7,8,9,10,now);
+        final CommandStat cs = stat.commands;
+
+        int i = 0;
+        cs.response = i++;
+        cs.register = i++;
+        cs.login = i++;
+        cs.loadProfile = i++;
+        cs.appSync = i++;
+        cs.sharing = i++;
+        cs.getToken = i++;
+        cs.ping = i++;
+        cs.activate = i++;
+        cs.deactivate = i++;
+        cs.refreshToken = i++;
+        cs.getGraphData = i++;
+        cs.exportGraphData = i++;
+        cs.setWidgetProperty = i++;
+        cs.bridge = i++;
+        cs.hardware = i++;
+        cs.getSharedDash = i++;
+        cs.getShareToken = i++;
+        cs.refreshShareToken = i++;
+        cs.shareLogin = i++;
+        cs.createProject = i++;
+        cs.updateProject = i++;
+        cs.deleteProject = i++;
+        cs.hardwareSync = i++;
+        cs.internal = i++;
+        cs.sms = i++;
+        cs.tweet = i++;
+        cs.email = i++;
+        cs.push = i++;
+        cs.addPushToken = i++;
+        cs.createWidget = i++;
+        cs.updateWidget = i++;
+        cs.deleteWidget = i++;
+        cs.createDevice = i++;
+        cs.updateDevice = i++;
+        cs.deleteDevice = i++;
+        cs.getDevices = i++;
+        cs.createTag = i++;
+        cs.updateTag = i++;
+        cs.deleteTag = i++;
+        cs.getTags = i++;
+        cs.addEnergy = i++;
+        cs.getEnergy = i++;
+        cs.getServer = i++;
+        cs.connectRedirect = i++;
+        cs.webSockets = i++;
+        cs.eventor = i++;
+        cs.webhooks = i++;
+        cs.appTotal = i++;
+        cs.hardTotal = i;
 
         dbManager.insertStat(region, stat);
 
@@ -62,7 +118,7 @@ public class RealtimeStatsDBTest {
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery("select * from reporting_app_stat_minute")) {
 
-            int i = 0;
+
             while (rs.next()) {
                 assertEquals(region, rs.getString("region"));
                 assertEquals((now / AverageAggregator.MINUTE) * AverageAggregator.MINUTE, rs.getLong("ts"));
@@ -78,6 +134,70 @@ public class RealtimeStatsDBTest {
                 assertEquals(9, rs.getInt("online_hards"));
                 assertEquals(10, rs.getInt("total_online_hards"));
             }
+
+            connection.commit();
+        }
+
+        try (Connection connection = dbManager.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery("select * from reporting_app_command_stat_minute")) {
+            i = 0;
+            while (rs.next()) {
+                assertEquals(region, rs.getString("region"));
+                assertEquals((now / AverageAggregator.MINUTE) * AverageAggregator.MINUTE, rs.getLong("ts"));
+
+                assertEquals(i++, rs.getInt("response"));
+                assertEquals(i++, rs.getInt("register"));
+                assertEquals(i++, rs.getInt("login"));
+                assertEquals(i++, rs.getInt("load_profile"));
+                assertEquals(i++, rs.getInt("app_sync"));
+                assertEquals(i++, rs.getInt("sharing"));
+                assertEquals(i++, rs.getInt("get_token"));
+                assertEquals(i++, rs.getInt("ping"));
+                assertEquals(i++, rs.getInt("activate"));
+                assertEquals(i++, rs.getInt("deactivate"));
+                assertEquals(i++, rs.getInt("refresh_token"));
+                assertEquals(i++, rs.getInt("get_graph_data"));
+                assertEquals(i++, rs.getInt("export_graph_data"));
+                assertEquals(i++, rs.getInt("set_widget_property"));
+                assertEquals(i++, rs.getInt("bridge"));
+                assertEquals(i++, rs.getInt("hardware"));
+                assertEquals(i++, rs.getInt("get_share_dash"));
+                assertEquals(i++, rs.getInt("get_share_token"));
+                assertEquals(i++, rs.getInt("refresh_share_token"));
+                assertEquals(i++, rs.getInt("share_login"));
+                assertEquals(i++, rs.getInt("create_project"));
+                assertEquals(i++, rs.getInt("update_project"));
+                assertEquals(i++, rs.getInt("delete_project"));
+                assertEquals(i++, rs.getInt("hardware_sync"));
+                assertEquals(i++, rs.getInt("internal"));
+                assertEquals(i++, rs.getInt("sms"));
+                assertEquals(i++, rs.getInt("tweet"));
+                assertEquals(i++, rs.getInt("email"));
+                assertEquals(i++, rs.getInt("push"));
+                assertEquals(i++, rs.getInt("add_push_token"));
+                assertEquals(i++, rs.getInt("create_widget"));
+                assertEquals(i++, rs.getInt("update_widget"));
+                assertEquals(i++, rs.getInt("delete_widget"));
+                assertEquals(i++, rs.getInt("create_device"));
+                assertEquals(i++, rs.getInt("update_device"));
+                assertEquals(i++, rs.getInt("delete_device"));
+                assertEquals(i++, rs.getInt("get_devices"));
+                assertEquals(i++, rs.getInt("create_tag"));
+                assertEquals(i++, rs.getInt("update_tag"));
+                assertEquals(i++, rs.getInt("delete_tag"));
+                assertEquals(i++, rs.getInt("get_tags"));
+                assertEquals(i++, rs.getInt("add_energy"));
+                assertEquals(i++, rs.getInt("get_energy"));
+                assertEquals(i++, rs.getInt("get_server"));
+                assertEquals(i++, rs.getInt("connect_redirect"));
+                assertEquals(i++, rs.getInt("web_sockets"));
+                assertEquals(i++, rs.getInt("eventor"));
+                assertEquals(i++, rs.getInt("webhooks"));
+                assertEquals(i++, rs.getInt("appTotal"));
+                assertEquals(i, rs.getInt("hardTotal"));
+            }
+
             connection.commit();
         }
 
