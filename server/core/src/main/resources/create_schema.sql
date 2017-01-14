@@ -135,6 +135,22 @@ CREATE TABLE reporting_app_command_stat_minute (
   PRIMARY KEY (region, ts)
 );
 
+CREATE TABLE reporting_http_command_stat_minute (
+  region text,
+  ts int8,
+  is_hardware_connected int4,
+  is_app_connected int4,
+  get_pin_data int4,
+  update_pin int4,
+  email int4,
+  push int4,
+  get_project int4,
+  qr int4,
+  get_history_pin_data int4,
+  total int4,
+  PRIMARY KEY (region, ts)
+);
+
 create user test with password 'test';
 GRANT CONNECT ON DATABASE blynk TO test;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO test;

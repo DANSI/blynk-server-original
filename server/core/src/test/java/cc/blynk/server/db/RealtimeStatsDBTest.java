@@ -3,6 +3,7 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.server.core.stats.model.CommandStat;
+import cc.blynk.server.core.stats.model.HttpStat;
 import cc.blynk.server.core.stats.model.Stat;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -49,6 +50,7 @@ public class RealtimeStatsDBTest {
         dbManager.executeSQL("DELETE FROM redeem");
         dbManager.executeSQL("DELETE FROM reporting_app_stat_minute");
         dbManager.executeSQL("DELETE FROM reporting_app_command_stat_minute");
+        dbManager.executeSQL("DELETE FROM reporting_http_command_stat_minute");
     }
 
     @Test
@@ -57,9 +59,23 @@ public class RealtimeStatsDBTest {
         long now = System.currentTimeMillis();
 
         Stat stat = new Stat(1,2,3,4,5,6,7,8,9,10,now);
-        final CommandStat cs = stat.commands;
+        int i;
 
-        int i = 0;
+        final HttpStat hs = stat.http;
+        i = 0;
+        hs.isHardwareConnected = i++;
+        hs.isAppConnected = i++;
+        hs.getPinData = i++;
+        hs.updatePinData = i++;
+        hs.email = i++;
+        hs.notify = i++;
+        hs.getProject = i++;
+        hs.qr = i++;
+        hs.getHistoryPinData = i++;
+        hs.total = i;
+
+        final CommandStat cs = stat.commands;
+        i = 0;
         cs.response = i++;
         cs.register = i++;
         cs.login = i++;
@@ -113,7 +129,6 @@ public class RealtimeStatsDBTest {
 
         dbManager.insertStat(region, stat);
 
-
         try (Connection connection = dbManager.getConnection();
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery("select * from reporting_app_stat_minute")) {
@@ -133,6 +148,29 @@ public class RealtimeStatsDBTest {
                 assertEquals(8, rs.getInt("total_online_apps"));
                 assertEquals(9, rs.getInt("online_hards"));
                 assertEquals(10, rs.getInt("total_online_hards"));
+            }
+
+            connection.commit();
+        }
+
+        try (Connection connection = dbManager.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery("select * from reporting_http_command_stat_minute")) {
+            i = 0;
+            while (rs.next()) {
+                assertEquals(region, rs.getString("region"));
+                assertEquals((now / AverageAggregator.MINUTE) * AverageAggregator.MINUTE, rs.getLong("ts"));
+
+                assertEquals(i++, rs.getInt("is_hardware_connected"));
+                assertEquals(i++, rs.getInt("is_app_connected"));
+                assertEquals(i++, rs.getInt("get_pin_data"));
+                assertEquals(i++, rs.getInt("update_pin"));
+                assertEquals(i++, rs.getInt("email"));
+                assertEquals(i++, rs.getInt("push"));
+                assertEquals(i++, rs.getInt("get_project"));
+                assertEquals(i++, rs.getInt("qr"));
+                assertEquals(i++, rs.getInt("get_history_pin_data"));
+                assertEquals(i++, rs.getInt("total"));
             }
 
             connection.commit();

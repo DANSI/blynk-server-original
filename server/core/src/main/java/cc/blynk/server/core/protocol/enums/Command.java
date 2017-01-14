@@ -91,7 +91,7 @@ public final class Command {
     public static final short HTTP_EMAIL = 67;
     public static final short HTTP_GET_PROJECT = 68;
     public static final short HTTP_QR = 69;
-    public static final short HTTP_GET_DATA = 70;
+    public static final short HTTP_GET_HISTORY_DATA = 70;
     public static final short HTTP_TOTAL = 71;
 
 
@@ -155,6 +155,8 @@ public final class Command {
                 put(HTTP_NOTIFY, "HttpNotify");
                 put(HTTP_EMAIL, "HttpEmail");
                 put(HTTP_GET_PROJECT, "HttpGetProject");
+                put(HTTP_QR, "QR");
+                put(HTTP_GET_HISTORY_DATA, "HttpGetHistoryData");
                 put(HTTP_TOTAL, "HttpTotal");
 
                 put(WEB_SOCKETS, "WebSockets");

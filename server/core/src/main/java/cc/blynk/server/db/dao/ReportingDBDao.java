@@ -6,6 +6,7 @@ import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.server.core.stats.model.CommandStat;
+import cc.blynk.server.core.stats.model.HttpStat;
 import cc.blynk.server.core.stats.model.Stat;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
@@ -39,6 +40,7 @@ public class ReportingDBDao {
 
     public static final String insertStatMinute = "INSERT INTO reporting_app_stat_minute (region, ts, active, active_week, active_month, minute_rate, connected, online_apps, online_hards, total_online_apps, total_online_hards, registrations) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
     public static final String insertStatCommandsMinute = "INSERT INTO reporting_app_command_stat_minute (region, ts, response, register, login, load_profile, app_sync, sharing, get_token, ping, activate, deactivate, refresh_token, get_graph_data, export_graph_data, set_widget_property, bridge, hardware, get_share_dash, get_share_token, refresh_share_token, share_login, create_project, update_project, delete_project, hardware_sync, internal, sms, tweet, email, push, add_push_token, create_widget, update_widget, delete_widget, create_device, update_device, delete_device, get_devices, create_tag, update_tag, delete_tag, get_tags, add_energy, get_energy, get_server, connect_redirect, web_sockets, eventor, webhooks, appTotal, hardTotal) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    public static final String insertStatHttpCommandMinute = "INSERT INTO reporting_http_command_stat_minute (region, ts, is_hardware_connected, is_app_connected, get_pin_data, update_pin, email, push, get_project, qr, get_history_pin_data, total) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
     private static final Logger log = LogManager.getLogger(ReportingDBDao.class);
     private final HikariDataSource ds;
@@ -93,7 +95,8 @@ public class ReportingDBDao {
 
         try (Connection connection = ds.getConnection();
              PreparedStatement appStatPS = connection.prepareStatement(insertStatMinute);
-             PreparedStatement commandStatPS = connection.prepareStatement(insertStatCommandsMinute)) {
+             PreparedStatement commandStatPS = connection.prepareStatement(insertStatCommandsMinute);
+             PreparedStatement httpStatPS = connection.prepareStatement(insertStatHttpCommandMinute)) {
 
             appStatPS.setString(1, region);
             appStatPS.setLong(2, ts);
@@ -108,6 +111,22 @@ public class ReportingDBDao {
             appStatPS.setInt(11, stat.totalOnlineHards);
             appStatPS.setInt(12, stat.registrations);
             appStatPS.executeUpdate();
+
+            final HttpStat hs = stat.http;
+            httpStatPS.setString(1, region);
+            httpStatPS.setLong(2, ts);
+            httpStatPS.setInt(3, hs.isHardwareConnected);
+            httpStatPS.setInt(4, hs.isAppConnected);
+            httpStatPS.setInt(5, hs.getPinData);
+            httpStatPS.setInt(6, hs.updatePinData);
+            httpStatPS.setInt(7, hs.email);
+            httpStatPS.setInt(8, hs.notify);
+            httpStatPS.setInt(9, hs.getProject);
+            httpStatPS.setInt(10, hs.qr);
+            httpStatPS.setInt(11, hs.getHistoryPinData);
+            httpStatPS.setInt(12, hs.total);
+
+            httpStatPS.executeUpdate();
 
             final CommandStat cs = stat.commands;
             commandStatPS.setString(1, region);

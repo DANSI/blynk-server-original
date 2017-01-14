@@ -55,7 +55,7 @@ import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.redirect;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_EMAIL;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_HISTORY_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PROJECT;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_IS_APP_CONNECTED;
@@ -268,7 +268,7 @@ public class HttpAPILogic {
     @Path("{token}/data/{pin}")
     public Response getPinHistoryData(@PathParam("token") String token,
                                       @PathParam("pin") String pinString) {
-        globalStats.mark(HTTP_GET_DATA);
+        globalStats.mark(HTTP_GET_HISTORY_DATA);
 
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
