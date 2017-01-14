@@ -52,6 +52,11 @@ public class CommandStat {
     public int deleteDevice;
     public int getDevices;
 
+    public int createTag;
+    public int updateTag;
+    public int deleteTag;
+    public int getTags;
+
     public int addEnergy;
     public int getEnergy;
 
@@ -184,6 +189,18 @@ public class CommandStat {
                 break;
             case GET_DEVICES :
                 this.getDevices = val;
+                break;
+            case CREATE_TAG :
+                this.createTag = val;
+                break;
+            case UPDATE_TAG :
+                this.updateTag = val;
+                break;
+            case DELETE_TAG :
+                this.deleteTag = val;
+                break;
+            case GET_TAGS :
+                this.getTags = val;
                 break;
             case ADD_ENERGY :
                 this.addEnergy = val;

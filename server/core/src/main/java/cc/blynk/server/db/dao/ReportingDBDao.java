@@ -38,7 +38,7 @@ public class ReportingDBDao {
     public static final String deleteDaily = "DELETE FROM reporting_average_daily WHERE ts < ?";
 
     public static final String insertStatMinute = "INSERT INTO reporting_app_stat_minute (region, ts, active, active_week, active_month, minute_rate, connected, online_apps, online_hards, total_online_apps, total_online_hards, registrations) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
-    public static final String insertStatCommandsMinute = "INSERT INTO reporting_app_command_stat_minute (region, ts, response, register, login, load_profile, app_sync, sharing, get_token, ping, activate, deactivate, refresh_token, get_graph_data, export_graph_data, set_widget_property, bridge, hardware, get_share_dash, get_share_token, refresh_share_token, share_login, create_project, update_project, delete_project, hardware_sync, internal, sms, tweet, email, push, add_push_token, create_widget, update_widget, delete_widget, create_device, update_device, delete_device, get_devices, add_energy, get_energy, get_server, connect_redirect, web_sockets, eventor, webhooks, appTotal, hardTotal) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    public static final String insertStatCommandsMinute = "INSERT INTO reporting_app_command_stat_minute (region, ts, response, register, login, load_profile, app_sync, sharing, get_token, ping, activate, deactivate, refresh_token, get_graph_data, export_graph_data, set_widget_property, bridge, hardware, get_share_dash, get_share_token, refresh_share_token, share_login, create_project, update_project, delete_project, hardware_sync, internal, sms, tweet, email, push, add_push_token, create_widget, update_widget, delete_widget, create_device, update_device, delete_device, get_devices, create_tag, update_tag, delete_tag, get_tags, add_energy, get_energy, get_server, connect_redirect, web_sockets, eventor, webhooks, appTotal, hardTotal) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
     private static final Logger log = LogManager.getLogger(ReportingDBDao.class);
     private final HikariDataSource ds;
@@ -149,15 +149,19 @@ public class ReportingDBDao {
             commandStatPS.setInt(37, cs.updateDevice);
             commandStatPS.setInt(38, cs.deleteDevice);
             commandStatPS.setInt(39, cs.getDevices);
-            commandStatPS.setInt(40, cs.addEnergy);
-            commandStatPS.setInt(41, cs.getEnergy);
-            commandStatPS.setInt(42, cs.getServer);
-            commandStatPS.setInt(43, cs.connectRedirect);
-            commandStatPS.setInt(44, cs.webSockets);
-            commandStatPS.setInt(45, cs.eventor);
-            commandStatPS.setInt(46, cs.webhooks);
-            commandStatPS.setInt(47, cs.appTotal);
-            commandStatPS.setInt(48, cs.hardTotal);
+            commandStatPS.setInt(40, cs.createTag);
+            commandStatPS.setInt(41, cs.updateTag);
+            commandStatPS.setInt(42, cs.deleteTag);
+            commandStatPS.setInt(43, cs.getTags);
+            commandStatPS.setInt(44, cs.addEnergy);
+            commandStatPS.setInt(45, cs.getEnergy);
+            commandStatPS.setInt(46, cs.getServer);
+            commandStatPS.setInt(47, cs.connectRedirect);
+            commandStatPS.setInt(48, cs.webSockets);
+            commandStatPS.setInt(49, cs.eventor);
+            commandStatPS.setInt(50, cs.webhooks);
+            commandStatPS.setInt(51, cs.appTotal);
+            commandStatPS.setInt(52, cs.hardTotal);
             commandStatPS.executeUpdate();
 
             connection.commit();
