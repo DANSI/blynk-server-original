@@ -9,64 +9,64 @@ import static cc.blynk.server.core.protocol.enums.Command.*;
  */
 public class CommandStat {
 
-    public long response;
-    public long redeem;
-    public long hardwareConnected;
-    public long register;
-    public long login;
-    public long loadProfile;
-    public long appSync;
-    public long sharing;
-    public long getToken;
-    public long ping;
-    public long activate;
-    public long deactivate;
-    public long refreshToken;
-    public long getGraphData;
-    public long exportGraphData;
-    public long setWidgetProperty;
-    public long bridge;
-    public long hardware;
-    public long getSharedDash;
-    public long getShareToken;
-    public long refreshShareToken;
-    public long shareLogin;
-    public long createProject;
-    public long updateProject;
-    public long deleteProject;
-    public long hardwareSync;
-    public long internal;
+    public int response;
+    public int redeem;
+    public int hardwareConnected;
+    public int register;
+    public int login;
+    public int loadProfile;
+    public int appSync;
+    public int sharing;
+    public int getToken;
+    public int ping;
+    public int activate;
+    public int deactivate;
+    public int refreshToken;
+    public int getGraphData;
+    public int exportGraphData;
+    public int setWidgetProperty;
+    public int bridge;
+    public int hardware;
+    public int getSharedDash;
+    public int getShareToken;
+    public int refreshShareToken;
+    public int shareLogin;
+    public int createProject;
+    public int updateProject;
+    public int deleteProject;
+    public int hardwareSync;
+    public int internal;
 
-    public long sms;
-    public long tweet;
-    public long email;
-    public long push;
-    public long addPushToken;
+    public int sms;
+    public int tweet;
+    public int email;
+    public int push;
+    public int addPushToken;
 
-    public long createWidget;
-    public long updateWidget;
-    public long deleteWidget;
+    public int createWidget;
+    public int updateWidget;
+    public int deleteWidget;
 
-    public long createDevice;
-    public long updateDevice;
-    public long deleteDevice;
-    public long getDevices;
+    public int createDevice;
+    public int updateDevice;
+    public int deleteDevice;
+    public int getDevices;
 
-    public long addEnergy;
-    public long getEnergy;
+    public int addEnergy;
+    public int getEnergy;
 
-    public long getServer;
-    public long connectRedirect;
+    public int getServer;
+    public int connectRedirect;
 
-    public long webSockets;
+    public int webSockets;
 
-    public long eventor;
-    public long webhooks;
+    public int eventor;
+    public int webhooks;
 
-    public long appTotal;
-    public long hardTotal;
+    public int appTotal;
+    public int hardTotal;
 
-    public void assign(short field, long val) {
+    public void assign(short field, int val) {
         switch (field) {
             case RESPONSE :
                 this.response = val;

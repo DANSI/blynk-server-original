@@ -16,16 +16,16 @@ import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
  */
 public class HttpStat {
 
-    public long isHardwareConnectedCount;
-    public long isAppConnectedCount;
-    public long getPinDataCount;
-    public long updatePinDataCount;
-    public long notifyCount;
-    public long emailCount;
-    public long getProjectCount;
-    public long totalCount;
+    public int isHardwareConnectedCount;
+    public int isAppConnectedCount;
+    public int getPinDataCount;
+    public int updatePinDataCount;
+    public int notifyCount;
+    public int emailCount;
+    public int getProjectCount;
+    public int totalCount;
 
-    public void assign(short field, long val) {
+    public void assign(short field, int val) {
         switch (field) {
             case HTTP_IS_HARDWARE_CONNECTED :
                 this.isHardwareConnectedCount = val;

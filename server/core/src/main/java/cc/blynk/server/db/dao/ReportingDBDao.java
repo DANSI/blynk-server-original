@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
+import cc.blynk.server.core.stats.model.CommandStat;
 import cc.blynk.server.core.stats.model.Stat;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
@@ -36,8 +37,8 @@ public class ReportingDBDao {
     public static final String deleteHour = "DELETE FROM reporting_average_hourly WHERE ts < ?";
     public static final String deleteDaily = "DELETE FROM reporting_average_daily WHERE ts < ?";
 
-    public static final String insertStatMinute = "INSERT INTO reporting_app_stat_minute (region, ts, active, active_week, active_month, minute_rate, connected, online_apps, online_hards, total_online_apps, total_online_hards, registrations) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
-    public static final String insertStatCommandsMinute = "INSERT INTO reporting_app_stat_command_minute VALUES()";
+    public static final String insertStatMinute = "INSERT INTO reporting_app_stat_minute (region, ts, active, active_week, active_month, minute_rate, connected, online_apps, online_hards, total_online_apps, total_online_hards, registrations) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+    public static final String insertStatCommandsMinute = "INSERT INTO reporting_app_command_stat_minute (region, ts, response, register, login, load_profile, app_sync, sharing, get_token, ping, activate, deactivate, refresh_token, get_graph_data, export_graph_data, set_widget_property, bridge, hardware, get_share_dash, get_share_token, refresh_share_token, share_login, create_project, update_project, delete_project, hardware_sync, internal, sms, tweet, email, push, add_push_token, create_widget, update_widget, delete_widget, create_device, update_device, delete_device, get_devices, add_energy, get_energy, get_server, connect_redirect, web_sockets, eventor, webhooks, appTotal, hardTotal) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
     private static final Logger log = LogManager.getLogger(ReportingDBDao.class);
     private final HikariDataSource ds;
@@ -88,23 +89,77 @@ public class ReportingDBDao {
     }
 
     public void insertStat(String region, Stat stat) {
+        final long ts = (stat.ts / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
+
         try (Connection connection = ds.getConnection();
-             PreparedStatement ps = connection.prepareStatement(insertStatMinute)) {
+             PreparedStatement appStatPS = connection.prepareStatement(insertStatMinute);
+             PreparedStatement commandStatPS = connection.prepareStatement(insertStatCommandsMinute)) {
 
-            ps.setString(1, region);
-            ps.setLong(2, (stat.ts / AverageAggregator.MINUTE) * AverageAggregator.MINUTE);
-            ps.setInt(3, stat.active);
-            ps.setInt(4, stat.activeWeek);
-            ps.setInt(5, stat.activeMonth);
-            ps.setInt(6, stat.oneMinRate);
-            ps.setInt(7, stat.connected);
-            ps.setInt(8, stat.onlineApps);
-            ps.setInt(9, stat.onlineHards);
-            ps.setInt(10, stat.totalOnlineApps);
-            ps.setInt(11, stat.totalOnlineHards);
-            ps.setInt(12, stat.registrations);
+            appStatPS.setString(1, region);
+            appStatPS.setLong(2, ts);
+            appStatPS.setInt(3, stat.active);
+            appStatPS.setInt(4, stat.activeWeek);
+            appStatPS.setInt(5, stat.activeMonth);
+            appStatPS.setInt(6, stat.oneMinRate);
+            appStatPS.setInt(7, stat.connected);
+            appStatPS.setInt(8, stat.onlineApps);
+            appStatPS.setInt(9, stat.onlineHards);
+            appStatPS.setInt(10, stat.totalOnlineApps);
+            appStatPS.setInt(11, stat.totalOnlineHards);
+            appStatPS.setInt(12, stat.registrations);
+            appStatPS.executeUpdate();
 
-            ps.executeUpdate();
+            final CommandStat cs = stat.commands;
+            commandStatPS.setString(1, region);
+            commandStatPS.setLong(2, ts);
+            commandStatPS.setInt(3, cs.response);
+            commandStatPS.setInt(4, cs.register);
+            commandStatPS.setInt(5, cs.login);
+            commandStatPS.setInt(6, cs.loadProfile);
+            commandStatPS.setInt(7, cs.appSync);
+            commandStatPS.setInt(8, cs.sharing);
+            commandStatPS.setInt(9, cs.getToken);
+            commandStatPS.setInt(10, cs.ping);
+            commandStatPS.setInt(11, cs.activate);
+            commandStatPS.setInt(12, cs.deactivate);
+            commandStatPS.setInt(13, cs.refreshToken);
+            commandStatPS.setInt(14, cs.getGraphData);
+            commandStatPS.setInt(15, cs.exportGraphData);
+            commandStatPS.setInt(16, cs.setWidgetProperty);
+            commandStatPS.setInt(17, cs.bridge);
+            commandStatPS.setInt(18, cs.hardware);
+            commandStatPS.setInt(19, cs.getSharedDash);
+            commandStatPS.setInt(20, cs.getShareToken);
+            commandStatPS.setInt(21, cs.refreshShareToken);
+            commandStatPS.setInt(22, cs.shareLogin);
+            commandStatPS.setInt(23, cs.createProject);
+            commandStatPS.setInt(24, cs.updateProject);
+            commandStatPS.setInt(25, cs.deleteProject);
+            commandStatPS.setInt(26, cs.hardwareSync);
+            commandStatPS.setInt(27, cs.internal);
+            commandStatPS.setInt(28, cs.sms);
+            commandStatPS.setInt(29, cs.tweet);
+            commandStatPS.setInt(30, cs.email);
+            commandStatPS.setInt(31, cs.push);
+            commandStatPS.setInt(32, cs.addPushToken);
+            commandStatPS.setInt(33, cs.createWidget);
+            commandStatPS.setInt(34, cs.updateWidget);
+            commandStatPS.setInt(35, cs.deleteWidget);
+            commandStatPS.setInt(36, cs.createDevice);
+            commandStatPS.setInt(37, cs.updateDevice);
+            commandStatPS.setInt(38, cs.deleteDevice);
+            commandStatPS.setInt(39, cs.getDevices);
+            commandStatPS.setInt(40, cs.addEnergy);
+            commandStatPS.setInt(41, cs.getEnergy);
+            commandStatPS.setInt(42, cs.getServer);
+            commandStatPS.setInt(43, cs.connectRedirect);
+            commandStatPS.setInt(44, cs.webSockets);
+            commandStatPS.setInt(45, cs.eventor);
+            commandStatPS.setInt(46, cs.webhooks);
+            commandStatPS.setInt(47, cs.appTotal);
+            commandStatPS.setInt(48, cs.hardTotal);
+            commandStatPS.executeUpdate();
+
             connection.commit();
         } catch (Exception e) {
             log.error("Error inserting real time stat in DB.", e);

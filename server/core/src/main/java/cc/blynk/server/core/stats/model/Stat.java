@@ -61,14 +61,14 @@ public class Stat {
         //but we don't care, cause this is just for general monitoring
         for (Short command : Command.valuesName.keySet()) {
             LongAdder longAdder = globalStats.specificCounters[command];
-            long val = reset ? longAdder.sumThenReset() : longAdder.sum();
+            int val = (int) (reset ? longAdder.sumThenReset() : longAdder.sum());
 
             this.http.assign(command, val);
             this.commands.assign(command, val);
         }
 
-        this.commands.appTotal = globalStats.getTotalAppCounter(reset);
-        this.commands.hardTotal = globalStats.getTotalHardCounter(reset);
+        this.commands.appTotal = (int) globalStats.getTotalAppCounter(reset);
+        this.commands.hardTotal = (int) globalStats.getTotalHardCounter(reset);
 
         this.oneMinRate = (int) globalStats.totalMessages.getOneMinuteRate();
         int connectedSessions = 0;
