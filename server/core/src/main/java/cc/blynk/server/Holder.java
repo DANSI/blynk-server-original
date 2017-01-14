@@ -101,7 +101,7 @@ public class Holder implements Closeable {
         this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
                 .setUserAgent(null)
                 .setEventLoopGroup(transportTypeHolder.workerGroup)
-                .setKeepAlive(false)
+                .setKeepAlive(true)
                 .build()
         );
 
