@@ -1,7 +1,6 @@
 package cc.blynk.server.core;
 
 import cc.blynk.server.TransportTypeHolder;
-import cc.blynk.utils.BlynkByteBufUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -56,8 +55,6 @@ public abstract class BaseServer implements Closeable {
             b.group(bossGroup, workerGroup)
                     .channel(channelClass)
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
-                    .childOption(ChannelOption.ALLOCATOR, BlynkByteBufUtil.ALLOCATOR)
-                    .option(ChannelOption.ALLOCATOR, BlynkByteBufUtil.ALLOCATOR)
                     .childHandler(getChannelInitializer());
 
             this.cf = b.bind(port).sync();
