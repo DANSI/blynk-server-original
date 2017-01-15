@@ -71,6 +71,16 @@ public class WebSocketTest extends IntegrationBase {
     }
 
     @Test
+    public void testBasicWebSocketCommandsOk2() throws Exception{
+        WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, "/websockets", false);
+        webSocketClient.start();
+        webSocketClient.send("login 4ae3851817194e2596cf1b7103603ef8");
+        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        webSocketClient.send("ping");
+        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+    }
+
+    @Test
     public void testBasicWebSocketCommandsOk() throws Exception{
         WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, WebSocketServer.WEBSOCKET_PATH, false);
         webSocketClient.start();

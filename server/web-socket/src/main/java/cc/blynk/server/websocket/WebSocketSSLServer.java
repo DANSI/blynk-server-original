@@ -52,14 +52,14 @@ public class WebSocketSSLServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
 
-                pipeline.addLast(new ChannelTrafficShapingHandler(LIMIT, LIMIT, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
+                pipeline.addLast(new ChannelTrafficShapingHandler(LIMIT / 5, LIMIT / 5, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
                 if (hardTimeoutSecs > 0) {
                     pipeline.addLast("WSSReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
                 }
                 pipeline.addLast("WSSContext", sslCtx.newHandler(ch.alloc()));
                 pipeline.addLast("WSSHttpServerCodec", new HttpServerCodec());
                 pipeline.addLast("WSSHttpObjectAggregator", new HttpObjectAggregator(65536));
-                pipeline.addLast("WSSWebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(WEBSOCKET_PATH));
+                pipeline.addLast("WSSWebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(WEBSOCKET_PATH, true));
                 pipeline.addLast("WSSWebSocket", new WebSocketHandler(holder.stats));
 
                 //hardware handlers

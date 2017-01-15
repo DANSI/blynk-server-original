@@ -26,7 +26,7 @@ import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 public class WebSocketServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
-    public static final String WEBSOCKET_PATH = "/websockets";
+    public static final String WEBSOCKET_PATH = "/websocket";
 
     public WebSocketServer(Holder holder) {
         super(holder.props.getIntProperty("tcp.websocket.port"), holder.transportTypeHolder);
@@ -41,13 +41,13 @@ public class WebSocketServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
 
-                pipeline.addLast(new ChannelTrafficShapingHandler(LIMIT, LIMIT, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
+                pipeline.addLast(new ChannelTrafficShapingHandler(LIMIT / 5, LIMIT / 5, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
                 if (hardTimeoutSecs > 0) {
                     pipeline.addLast("WSReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
                 }
                 pipeline.addLast("WSHttpServerCodec", new HttpServerCodec());
                 pipeline.addLast("WSHttpObjectAggregator", new HttpObjectAggregator(65536));
-                pipeline.addLast("WSWebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(WEBSOCKET_PATH));
+                pipeline.addLast("WSWebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(WEBSOCKET_PATH, true));
                 pipeline.addLast("WSWebSocket", new WebSocketHandler(holder.stats));
 
                 //hardware handlers
