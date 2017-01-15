@@ -3,7 +3,7 @@ package cc.blynk.utils;
 import cc.blynk.server.core.protocol.enums.Command;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
-import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.UnpooledByteBufAllocator;
 
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageBase.HEADER_LENGTH;
@@ -18,21 +18,21 @@ import static cc.blynk.server.core.protocol.model.messages.MessageBase.HEADER_LE
  */
 public class BlynkByteBufUtil {
 
-    public static final PooledByteBufAllocator ALLOCATOR = PooledByteBufAllocator.DEFAULT;
+    public static final UnpooledByteBufAllocator ALLOCATOR = UnpooledByteBufAllocator.DEFAULT;
 
     public static ByteBuf ok(int msgId) {
         return makeResponse(msgId, OK);
     }
 
     public static ByteBuf makeResponse(int msgId, int responseCode) {
-        return ALLOCATOR.buffer(HEADER_LENGTH)
+        return ALLOCATOR.heapBuffer(HEADER_LENGTH)
                 .writeByte(Command.RESPONSE)
                 .writeShort(msgId)
                 .writeShort(responseCode);
     }
 
     public static ByteBuf makeUTF8StringMessage(short cmd, int msgId, String data) {
-        ByteBuf byteBuf = ALLOCATOR.buffer(HEADER_LENGTH + ByteBufUtil.utf8MaxBytes(data));
+        ByteBuf byteBuf = ALLOCATOR.heapBuffer(HEADER_LENGTH + ByteBufUtil.utf8MaxBytes(data));
         byteBuf.writerIndex(HEADER_LENGTH);
         ByteBufUtil.writeUtf8(byteBuf, data);
 
@@ -42,7 +42,7 @@ public class BlynkByteBufUtil {
     }
 
     public static ByteBuf makeASCIIStringMessage(short cmd, int msgId, String data) {
-        ByteBuf byteBuf = ALLOCATOR.buffer(HEADER_LENGTH + data.length())
+        ByteBuf byteBuf = ALLOCATOR.heapBuffer(HEADER_LENGTH + data.length())
                 .writeByte(cmd)
                 .writeShort(msgId)
                 .writeShort(data.length());
@@ -52,7 +52,7 @@ public class BlynkByteBufUtil {
     }
 
     public static ByteBuf makeBinaryMessage(short cmd, int msgId, byte[] byteData) {
-        return ALLOCATOR.buffer(HEADER_LENGTH + byteData.length)
+        return ALLOCATOR.heapBuffer(HEADER_LENGTH + byteData.length)
                 .writeByte(cmd)
                 .writeShort(msgId)
                 .writeShort(byteData.length)

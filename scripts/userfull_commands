@@ -4,3 +4,4 @@ View top traffic : iftop -n
 View tcp dump : tcpdump -n host x.x.x.x
 Ban IP : iptables -A INPUT -s IP -j DROP
        : iptables -A OUTPUT -d IP -j DROP
+Dump java heap : jmap -dump:format=b,file=heap.bin <pid>

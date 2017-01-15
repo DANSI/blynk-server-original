@@ -46,7 +46,6 @@ public class ServerLauncher {
 
     public static void main(String[] args) throws Exception {
         System.setProperty("io.netty.leakDetection.level", "disabled");
-        System.setProperty("io.netty.noPreferDirect", "true");
         Map<String, String> cmdProperties = ArgumentsParser.parse(args);
 
         ServerProperties serverProperties = new ServerProperties(cmdProperties);
