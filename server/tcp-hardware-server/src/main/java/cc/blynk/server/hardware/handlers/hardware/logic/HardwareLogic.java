@@ -83,10 +83,10 @@ public class HardwareLogic {
             final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
             final byte pin = ParseUtil.parseByte(splitBody[1]);
             final String value = splitBody[2];
+            final long now = System.currentTimeMillis();
 
-            reportingDao.process(state.user.name, dashId, deviceId, pin, pinType, value);
-
-            dash.update(deviceId, pin, pinType, value);
+            reportingDao.process(state.user.name, dashId, deviceId, pin, pinType, value, now);
+            dash.update(deviceId, pin, pinType, value, now);
 
             process(dash, deviceId, session, pin, pinType, value);
         }

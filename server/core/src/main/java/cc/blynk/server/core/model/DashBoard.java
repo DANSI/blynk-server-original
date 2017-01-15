@@ -75,7 +75,7 @@ public class DashBoard {
         update(deviceId, pin, type, splitted[2]);
     }
 
-    public void update(final int deviceId, final byte pin, final PinType type, final String value) {
+    public void update(final int deviceId, final byte pin, final PinType type, final String value, final long now) {
         boolean hasWidget = false;
         for (Widget widget : widgets) {
             if (widget.updateIfSame(deviceId, pin, type, value)) {
@@ -87,7 +87,11 @@ public class DashBoard {
             pinsStorage.put(new PinStorageKey(deviceId, type, pin), value);
         }
 
-        this.updatedAt = System.currentTimeMillis();
+        this.updatedAt = now;
+    }
+
+    public void update(final int deviceId, final byte pin, final PinType type, final String value) {
+        update(deviceId, pin, type, value, System.currentTimeMillis());
     }
 
     public void activate() {
