@@ -19,9 +19,6 @@ public class User {
     private static final int INITIAL_ENERGY_AMOUNT = 2000;
 
     //todo remove after migration
-    public ConcurrentMap<Integer, String> dashShareTokens;
-
-    //todo remove after migration
     public ConcurrentMap<Integer, String> dashTokens;
 
     //key fields

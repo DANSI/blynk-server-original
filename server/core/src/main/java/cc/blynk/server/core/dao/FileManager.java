@@ -170,13 +170,6 @@ public class FileManager {
                     user.dashTokens.remove(dashId);
                 }
             }
-            if (user.dashShareTokens != null) {
-                String sharedToken = user.dashShareTokens.get(dashId);
-                if (sharedToken != null && !"".equals(sharedToken)) {
-                    dashBoard.sharedToken = sharedToken;
-                }
-                user.dashShareTokens.remove(dashId);
-            }
 
             if (dashBoard.devices != null) {
                 for (Device device : dashBoard.devices) {

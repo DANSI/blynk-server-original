@@ -34,7 +34,6 @@ public class AverageAggregator implements Closeable {
 
         Path path;
 
-        //todo move this logic to separate class?
         path = Paths.get(dataFolder, MINUTE_TEMP_FILENAME);
         this.minute = read(path);
         FileUtils.deleteQuietly(path);
