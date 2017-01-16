@@ -57,7 +57,8 @@ public class HttpsAPIServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
 
-                pipeline.addLast(new ChannelTrafficShapingHandler(LIMIT, LIMIT, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
+                pipeline.addLast(new ChannelTrafficShapingHandler(holder.limits.TRAFFIC_LIMIT,
+                        holder.limits.TRAFFIC_LIMIT, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
                 pipeline.addLast("HttpsSslContext", sslCtx.newHandler(ch.alloc()));
                 pipeline.addLast("HttpsServerCodec", new HttpServerCodec());
                 pipeline.addLast("HttpsObjectAggregator", new HttpObjectAggregator(65536, true));

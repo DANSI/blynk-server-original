@@ -25,9 +25,6 @@ public abstract class BaseServer implements Closeable {
 
     protected static final Logger log = LogManager.getLogger(BaseServer.class);
 
-    //todo move to properties
-    protected static final long LIMIT = 512 * 1024;
-
     protected final int port;
     private final TransportTypeHolder transportTypeHolder;
 

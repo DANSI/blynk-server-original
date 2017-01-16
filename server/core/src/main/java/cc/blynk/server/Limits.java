@@ -18,6 +18,7 @@ public class Limits {
     public final int DASHBOARDS_LIMIT;
     public final int WIDGET_SIZE_LIMIT_BYTES;
     public final int PROFILE_SIZE_LIMIT_BYTES;
+    public final long TRAFFIC_LIMIT;
 
     //hardware side limits
     public final long NOTIFICATION_PERIOD_LIMIT_SEC;
@@ -33,6 +34,7 @@ public class Limits {
         this.DASHBOARDS_LIMIT = props.getIntProperty("user.dashboard.max.limit", 100);
         this.WIDGET_SIZE_LIMIT_BYTES = props.getIntProperty("user.widget.max.size.limit", 10) * 1024;
         this.PROFILE_SIZE_LIMIT_BYTES = props.getIntProperty("user.profile.max.size", 64) * 1024;
+        this.TRAFFIC_LIMIT = props.getIntProperty("user.traffic.limit", 256) * 1024;
 
         this.NOTIFICATION_PERIOD_LIMIT_SEC = props.getLongProperty("notifications.frequency.user.quota.limit", 15L) * 1000L;
         this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit", 100);

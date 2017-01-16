@@ -41,7 +41,8 @@ public class WebSocketServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
 
-                pipeline.addLast(new ChannelTrafficShapingHandler(LIMIT / 5, LIMIT / 5, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
+                pipeline.addLast(new ChannelTrafficShapingHandler(holder.limits.TRAFFIC_LIMIT,
+                        holder.limits.TRAFFIC_LIMIT, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
                 if (hardTimeoutSecs > 0) {
                     pipeline.addLast("WSReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
                 }

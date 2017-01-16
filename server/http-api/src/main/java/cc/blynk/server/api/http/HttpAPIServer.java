@@ -43,7 +43,8 @@ public class HttpAPIServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
 
-                pipeline.addLast(new ChannelTrafficShapingHandler(LIMIT, LIMIT, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
+                pipeline.addLast(new ChannelTrafficShapingHandler(holder.limits.TRAFFIC_LIMIT,
+                        holder.limits.TRAFFIC_LIMIT, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
                 pipeline.addLast("HttpServerCodec", new HttpServerCodec());
                 pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(65536, true));
                 pipeline.addLast("HttpChunkedWrite", new ChunkedWriteHandler());
