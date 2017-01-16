@@ -2,8 +2,8 @@ package cc.blynk.utils;
 
 import cc.blynk.server.core.protocol.enums.Command;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufUtil;
-import io.netty.buffer.UnpooledByteBufAllocator;
 
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageBase.HEADER_LENGTH;
@@ -18,7 +18,7 @@ import static cc.blynk.server.core.protocol.model.messages.MessageBase.HEADER_LE
  */
 public class BlynkByteBufUtil {
 
-    public static final UnpooledByteBufAllocator ALLOCATOR = UnpooledByteBufAllocator.DEFAULT;
+    public static final ByteBufAllocator ALLOCATOR = ByteBufAllocator.DEFAULT;
 
     public static ByteBuf ok(int msgId) {
         return makeResponse(msgId, OK);

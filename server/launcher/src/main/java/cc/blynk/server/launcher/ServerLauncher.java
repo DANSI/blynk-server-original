@@ -45,7 +45,6 @@ import java.util.Map;
 public class ServerLauncher {
 
     public static void main(String[] args) throws Exception {
-        System.setProperty("io.netty.leakDetection.level", "disabled");
         Map<String, String> cmdProperties = ArgumentsParser.parse(args);
 
         ServerProperties serverProperties = new ServerProperties(cmdProperties);
