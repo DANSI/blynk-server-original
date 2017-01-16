@@ -18,6 +18,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static cc.blynk.utils.ArrayUtil.EMPTY_DEVICES;
+import static cc.blynk.utils.ArrayUtil.EMPTY_TAGS;
+import static cc.blynk.utils.ArrayUtil.EMPTY_WIDGETS;
 import static cc.blynk.utils.StringUtils.split3;
 
 /**
@@ -35,11 +38,11 @@ public class DashBoard {
 
     public volatile long updatedAt;
 
-    public volatile Widget[] widgets = {};
+    public volatile Widget[] widgets = EMPTY_WIDGETS;
 
-    public volatile Device[] devices = {};
+    public volatile Device[] devices = EMPTY_DEVICES;
 
-    public volatile Tag[] tags = {};
+    public volatile Tag[] tags = EMPTY_TAGS;
 
     //todo should be removed after migration
     public String boardType;

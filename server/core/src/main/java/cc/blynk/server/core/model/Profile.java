@@ -5,6 +5,7 @@ import cc.blynk.utils.JsonParser;
 
 import java.util.Arrays;
 
+import static cc.blynk.utils.ArrayUtil.EMPTY_DASHBOARDS;
 
 /**
  * User: ddumanskiy
@@ -13,11 +14,7 @@ import java.util.Arrays;
  */
 public class Profile {
 
-    public volatile DashBoard[] dashBoards;
-
-    public Profile() {
-        this.dashBoards = new DashBoard[0];
-    }
+    public volatile DashBoard[] dashBoards = EMPTY_DASHBOARDS;
 
     /**
      * Check if dashboardId is real and exists in user profile.

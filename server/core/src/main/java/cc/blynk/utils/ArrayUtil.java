@@ -1,5 +1,10 @@
 package cc.blynk.utils;
 
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.widgets.Widget;
+
 import java.lang.reflect.Array;
 
 /**
@@ -8,6 +13,11 @@ import java.lang.reflect.Array;
  * Created on 04.01.16.
  */
 public class ArrayUtil {
+
+    public static final DashBoard[] EMPTY_DASHBOARDS = {};
+    public static final Tag[] EMPTY_TAGS = {};
+    public static final Device[] EMPTY_DEVICES = {};
+    public static final Widget[] EMPTY_WIDGETS = {};
 
     public static <T> T[] add(T[] array, T element, Class<T> type) {
         T[] newArray = copyArrayGrow1(array, type);
