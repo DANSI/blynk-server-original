@@ -12,7 +12,6 @@ import cc.blynk.utils.ServerProperties;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.Assert.assertEquals;
 
@@ -55,9 +53,8 @@ public class SimplePerformanceTest extends IntegrationBase {
     }
 
     @Test
-    @Ignore
     public void testConnectAppAndHardware() throws Exception {
-        int clientNumber = 400;
+        int clientNumber = 200;
         ExecutorService executorService = Executors.newFixedThreadPool(4);
 
         ClientPair[] clients = new ClientPair[clientNumber];
@@ -68,7 +65,7 @@ public class SimplePerformanceTest extends IntegrationBase {
             String usernameAndPass = "dima" + i +  "@mail.ua 1";
 
             Future<ClientPair> future = executorService.submit(
-                    () -> initClientsWithSharedNio("YOUR_SERVER_IP", 8443, 8442, usernameAndPass, null, properties)
+                    () -> initClientsWithSharedNio("localhost", tcpAppPort, tcpHardPort, usernameAndPass, null, properties)
             );
             futures.add(future);
         }
@@ -85,24 +82,21 @@ public class SimplePerformanceTest extends IntegrationBase {
         System.out.println(clientNumber + " client pairs created in " + (System.currentTimeMillis() - start));
         assertEquals(clientNumber, counter);
 
+        /*
         System.currentTimeMillis();
-
-        int i = 0;
         while (true) {
-            if (++i % 2 == 0) {
-                continue;
-            }
             for (ClientPair clientPair : clients) {
-                //clientPair.appClient.send("hardware aw 10 10");
-                clientPair.hardwareClient.send("hardware vw " + ThreadLocalRandom.current().nextInt(1, 128) + " " + ThreadLocalRandom.current().nextFloat());
+                clientPair.appClient.send("hardware aw 10 10");
+                clientPair.hardwareClient.send("hardware vw 11 11");
             }
-            sleep(20);
+            sleep(10);
         }
+        */
     }
 
 
     ClientPair initClientsWithSharedNio(String host, int appPort, int hardPort, String user, String jsonProfile,
-                                  ServerProperties properties) throws Exception {
+                                        ServerProperties properties) throws Exception {
 
         TestAppClient appClient = new TestAppClient(host, appPort, properties, sharedNioEventLoopGroup);
         TestHardClient hardClient = new TestHardClient(host, hardPort, sharedNioEventLoopGroup);
