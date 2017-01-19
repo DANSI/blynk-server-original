@@ -190,7 +190,7 @@ public class DashBoard {
 
         //means widget assigned to device selector widget.
         Widget widget = getWidgetById(targetId);
-        if (widget != null) {
+        if (widget != null && widget instanceof Target) {
             return (Target) widget;
         }
 
