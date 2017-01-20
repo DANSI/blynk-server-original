@@ -14,7 +14,6 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 
 /**
  * The Blynk Project.
@@ -45,9 +44,6 @@ public class HardwareSSLServer extends BaseServer {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
-
-                pipeline.addLast(new ChannelTrafficShapingHandler(holder.limits.TRAFFIC_LIMIT,
-                        holder.limits.TRAFFIC_LIMIT, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
                 if (hardTimeoutSecs > 0) {
                     pipeline.addLast("HSSLReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
                 }

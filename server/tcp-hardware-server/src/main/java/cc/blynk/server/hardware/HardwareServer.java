@@ -12,7 +12,6 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 
 /**
  * The Blynk Project.
@@ -36,9 +35,6 @@ public class HardwareServer extends BaseServer {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
-
-                pipeline.addLast(new ChannelTrafficShapingHandler(holder.limits.TRAFFIC_LIMIT,
-                        holder.limits.TRAFFIC_LIMIT, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
                 //non-sharable handlers
                 if (hardTimeoutSecs > 0) {
                     pipeline.addLast("H_ReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));

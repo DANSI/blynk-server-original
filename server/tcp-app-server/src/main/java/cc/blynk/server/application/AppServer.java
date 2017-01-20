@@ -16,7 +16,6 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 
 /**
  * Class responsible for handling all Application connections and netty pipeline initialization.
@@ -57,8 +56,6 @@ public class AppServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
 
-                pipeline.addLast(new ChannelTrafficShapingHandler(2 * holder.limits.TRAFFIC_LIMIT,
-                        2 * holder.limits.TRAFFIC_LIMIT, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
                 if (appTimeoutSecs > 0) {
                     pipeline.addLast("AReadTimeout", new ReadTimeoutHandler(appTimeoutSecs));
                 }

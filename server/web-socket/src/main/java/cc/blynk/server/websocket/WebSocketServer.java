@@ -16,7 +16,6 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 
 /**
  * The Blynk Project.
@@ -40,9 +39,6 @@ public class WebSocketServer extends BaseServer {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
-
-                pipeline.addLast(new ChannelTrafficShapingHandler(holder.limits.TRAFFIC_LIMIT,
-                        holder.limits.TRAFFIC_LIMIT, ChannelTrafficShapingHandler.DEFAULT_CHECK_INTERVAL, 5000));
                 if (hardTimeoutSecs > 0) {
                     pipeline.addLast("WSReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
                 }
