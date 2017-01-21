@@ -39,7 +39,8 @@ class JobLauncher {
 
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
 
-        scheduler.scheduleAtFixedRate(profileSaverWorker, 1000,
+        //running 1 sec later after reporting
+        scheduler.scheduleAtFixedRate(profileSaverWorker, startDelay + 1000,
                 holder.props.getIntProperty("profile.save.worker.period"), TimeUnit.MILLISECONDS);
 
         StatsWorker statsWorker = new StatsWorker(holder);
