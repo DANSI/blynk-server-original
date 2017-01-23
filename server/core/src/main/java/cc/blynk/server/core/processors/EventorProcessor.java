@@ -84,7 +84,7 @@ public class EventorProcessor {
     }
 
     private void execute(DashBoard dash, String triggerValue, NotificationAction notificationAction) {
-        String body = notificationAction.message.replaceAll(PIN_PATTERN, triggerValue);
+        String body = PIN_PATTERN.matcher(notificationAction.message).replaceAll(triggerValue);
         if (notificationAction instanceof NotifyAction) {
             push(dash, body);
         } else if (notificationAction instanceof TwitAction) {

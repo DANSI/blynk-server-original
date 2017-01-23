@@ -141,24 +141,24 @@ public class WebhookProcessor extends NotificationBase {
     private String format(String data, String triggerValue, boolean doBlynkCheck) {
         //this is an ugly hack to make it work with Blynk HTTP API.
         if (doBlynkCheck || !data.toLowerCase().contains("/pin/v")) {
-            data = data.replace(PIN_PATTERN, triggerValue);
+            data = PIN_PATTERN.matcher(data).replaceFirst(triggerValue);
         }
         data = data.replace("%s", triggerValue);
         String[] splitted = triggerValue.split(StringUtils.BODY_SEPARATOR_STRING);
         switch (splitted.length) {
             case 5 :
-                data = data.replace(PIN_PATTERN_4, splitted[4]);
+                data = PIN_PATTERN_4.matcher(data).replaceFirst(splitted[4]);
             case 4 :
-                data = data.replace(PIN_PATTERN_3, splitted[3]);
+                data = PIN_PATTERN_3.matcher(data).replaceFirst(splitted[3]);
             case 3 :
-                data = data.replace(PIN_PATTERN_2, splitted[2]);
+                data = PIN_PATTERN_2.matcher(data).replaceFirst(splitted[2]);
             case 2 :
-                data = data.replace(PIN_PATTERN_1, splitted[1]);
+                data = PIN_PATTERN_1.matcher(data).replaceFirst(splitted[1]);
             case 1 :
-                data = data.replace(PIN_PATTERN_0, splitted[0]);
+                data = PIN_PATTERN_0.matcher(data).replaceFirst(splitted[0]);
         }
 
-        data = data.replace(DATETIME_PATTERN, Instant.now().toString());
+        data = DATETIME_PATTERN.matcher(data).replaceFirst(Instant.now().toString());
 
         return data;
     }

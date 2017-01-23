@@ -1,5 +1,7 @@
 package cc.blynk.utils;
 
+import java.util.regex.Pattern;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -11,14 +13,14 @@ public class StringUtils {
     public static final String BODY_SEPARATOR_STRING = String.valueOf(BODY_SEPARATOR);
     public static final char DEVICE_SEPARATOR = '-';
 
-    public static final String PIN_PATTERN =  "/pin/";
-    public static final String PIN_PATTERN_0 =  "/pin[0]/";
-    public static final String PIN_PATTERN_1 =  "/pin[1]/";
-    public static final String PIN_PATTERN_2 =  "/pin[2]/";
-    public static final String PIN_PATTERN_3 =  "/pin[3]/";
-    public static final String PIN_PATTERN_4 =  "/pin[4]/";
+    public static final Pattern PIN_PATTERN =  Pattern.compile("/pin/", Pattern.LITERAL);
+    public static final Pattern PIN_PATTERN_0 =  Pattern.compile("/pin[0]/", Pattern.LITERAL);
+    public static final Pattern PIN_PATTERN_1 =  Pattern.compile("/pin[1]/", Pattern.LITERAL);
+    public static final Pattern PIN_PATTERN_2 =  Pattern.compile("/pin[2]/", Pattern.LITERAL);
+    public static final Pattern PIN_PATTERN_3 =  Pattern.compile("/pin[3]/", Pattern.LITERAL);
+    public static final Pattern PIN_PATTERN_4 =  Pattern.compile("/pin[4]/", Pattern.LITERAL);
 
-    public static final String DATETIME_PATTERN =  "/datetime_iso/";
+    public static final Pattern DATETIME_PATTERN =  Pattern.compile("/datetime_iso/", Pattern.LITERAL);
 
     /**
      * Parses string similar to this : "xw 1 xxxx"
