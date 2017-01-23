@@ -33,6 +33,7 @@ import static cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhook
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
@@ -201,6 +202,34 @@ public class WebhookTest extends IntegrationBase {
         Response response = f.get();
 
         assertEquals(400, response.getStatusCode());
+    }
+
+    @Test
+    public void testWebhookWorksWithBlynkHttpApiWithDateTimePlaceholder() throws Exception {
+        WebHook webHook = new WebHook();
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
+        webHook.method = PUT;
+        webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
+        webHook.body = "[\"/datetime_iso/\"]";
+        webHook.pin = 123;
+        webHook.pinType = PinType.VIRTUAL;
+        webHook.width = 2;
+        webHook.height = 1;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("hardware vw 123 10");
+        verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
+
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Response response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        List<String> values = consumeJsonPinValues(response.getResponseBody());
+        assertEquals(1, values.size());
+        assertTrue(values.get(0).endsWith("Z"));
+        assertTrue(values.get(0).contains("T"));
     }
 
     @Test

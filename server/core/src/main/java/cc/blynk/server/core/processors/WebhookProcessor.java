@@ -21,7 +21,10 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.HttpResponseBodyPart;
 import org.asynchttpclient.Response;
 
+import java.time.Instant;
+
 import static cc.blynk.server.core.protocol.enums.Command.WEB_HOOKS;
+import static cc.blynk.utils.StringUtils.DATETIME_PATTERN;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN_0;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN_1;
@@ -154,6 +157,9 @@ public class WebhookProcessor extends NotificationBase {
             case 1 :
                 data = data.replace(PIN_PATTERN_0, splitted[0]);
         }
+
+        data = data.replace(DATETIME_PATTERN, Instant.now().toString());
+
         return data;
     }
 

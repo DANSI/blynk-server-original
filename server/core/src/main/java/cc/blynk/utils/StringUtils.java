@@ -18,6 +18,8 @@ public class StringUtils {
     public static final String PIN_PATTERN_3 =  "/pin[3]/";
     public static final String PIN_PATTERN_4 =  "/pin[4]/";
 
+    public static final String DATETIME_PATTERN =  "/datetime_iso/";
+
     /**
      * Parses string similar to this : "xw 1 xxxx"
      * Every hard message has at least 3 starting chars we don't need.
