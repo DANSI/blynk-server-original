@@ -1,6 +1,7 @@
 package cc.blynk.server.core.reporting.average;
 
 import cc.blynk.utils.FileUtils;
+import cc.blynk.utils.NumberUtil;
 
 import java.io.Closeable;
 import java.nio.file.Path;
@@ -62,12 +63,15 @@ public class AverageAggregator implements Closeable {
 
     public void collect(String username, int dashId, int deviceId, char pinType, byte pin, long ts, String value) {
         try {
-            double val = Double.parseDouble(value);
+            double val = NumberUtil.parseDouble(value);
+            if (val == NumberUtil.NO_RESULT) {
+                return;
+            }
             aggregate(minute, new AggregationKey(username, dashId, deviceId, pinType, pin, ts / MINUTE), val);
             aggregate(hourly, new AggregationKey(username, dashId, deviceId, pinType, pin, ts / HOUR), val);
             aggregate(daily, new AggregationKey(username, dashId, deviceId, pinType, pin, ts / DAY), val);
-        } catch (NumberFormatException e) {
-            //value not a number so ignore. no way to make average aggregation
+        } catch (Exception e) {
+            //just in case
         }
     }
 

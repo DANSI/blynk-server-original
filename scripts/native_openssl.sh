@@ -9,5 +9,5 @@ sudo apt-get install git
 sudo apt-get install autoconf automake libtool make tar libapr1-dev libssl-dev
 git clone https://github.com/netty/netty-tcnative.git
 cd netty-tcnative
-git checkout netty-tcnative-parent-1.1.33.Fork25
+git checkout netty-tcnative-parent-1.1.33.Fork26
 ~/apache-maven-3.3.9/bin/mvn clean install
