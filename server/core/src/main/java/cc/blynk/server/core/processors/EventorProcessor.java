@@ -18,6 +18,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.notificati
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
+import cc.blynk.utils.NumberUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,8 +57,12 @@ public class EventorProcessor {
 
         double valueParsed;
         try {
-            valueParsed = Double.parseDouble(triggerValue);
-        } catch (NumberFormatException nfe) {
+            valueParsed = NumberUtil.parseDouble(triggerValue);
+            if (valueParsed == NumberUtil.NO_RESULT) {
+                return;
+            }
+        } catch (Exception e) {
+            //should never happen. just in case.
             return;
         }
 
