@@ -46,6 +46,7 @@ public class HardwareLogic {
         this.webhookProcessor = new WebhookProcessor(holder.asyncHttpClient,
                 holder.limits.WEBHOOK_PERIOD_LIMITATION,
                 holder.limits.WEBHOOK_RESPONSE_SUZE_LIMIT_BYTES,
+                holder.limits.WEBHOOK_FAILURE_LIMIT,
                 holder.stats,
                 username);
     }

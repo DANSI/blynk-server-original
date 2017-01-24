@@ -47,14 +47,19 @@ public class WebhookProcessor extends NotificationBase {
     private final GlobalStats globalStats;
     private final int responseSizeLimit;
     private final String username;
+    private final int WEBHOOK_FAILURE_LIMIT;
 
-    public WebhookProcessor(DefaultAsyncHttpClient httpclient, long quotaFrequencyLimit, int responseSizeLimit,
+    public WebhookProcessor(DefaultAsyncHttpClient httpclient,
+                            long quotaFrequencyLimit,
+                            int responseSizeLimit,
+                            int failureLimit,
                             GlobalStats stats, String username) {
         super(quotaFrequencyLimit);
         this.httpclient = httpclient;
         this.globalStats = stats;
         this.responseSizeLimit = responseSizeLimit;
         this.username = username;
+        this.WEBHOOK_FAILURE_LIMIT = failureLimit;
     }
 
     public void process(Session session, DashBoard dash, int deviceId, byte pin, PinType pinType, String triggerValue) {
@@ -73,7 +78,7 @@ public class WebhookProcessor extends NotificationBase {
     }
 
     private void process(Session session, int dashId, int deviceId,  WebHook webHook, String triggerValue) {
-        if (!webHook.isValid()) {
+        if (!webHook.isValid(WEBHOOK_FAILURE_LIMIT)) {
             return;
         }
 
