@@ -28,6 +28,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -302,6 +303,15 @@ public class SyncWorkflowTest extends IntegrationBase {
         assertEquals(expectedTS2, ts, 2);
     }
 
+    @Test(expected = DateTimeException.class)
+    public void testWrongAsiaTimeZone() {
+        ZoneId zoneId = ZoneId.of("Asia/Hanoi");
+    }
+
+    @Test
+    public void testCorrectAsiaTimeZone() {
+        ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");
+    }
 
     @Test
     public void testHardSyncReturnRTCWithUTCTimezonePlus3() throws Exception {
