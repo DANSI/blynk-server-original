@@ -2,7 +2,18 @@ package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.application.handlers.main.logic.*;
+import cc.blynk.server.application.handlers.main.logic.ActivateDashboardLogic;
+import cc.blynk.server.application.handlers.main.logic.AddEnergyLogic;
+import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
+import cc.blynk.server.application.handlers.main.logic.AppMailLogic;
+import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
+import cc.blynk.server.application.handlers.main.logic.DeActivateDashboardLogic;
+import cc.blynk.server.application.handlers.main.logic.GetEnergyLogic;
+import cc.blynk.server.application.handlers.main.logic.GetTokenLogic;
+import cc.blynk.server.application.handlers.main.logic.HardwareAppLogic;
+import cc.blynk.server.application.handlers.main.logic.LoadProfileGzippedLogic;
+import cc.blynk.server.application.handlers.main.logic.RedeemLogic;
+import cc.blynk.server.application.handlers.main.logic.RefreshTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.CreateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.DeleteDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.UpdateDashLogic;
@@ -79,7 +90,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(holder.tokenManager, holder.sessionDao);
         this.getSharedDashLogic = new GetSharedDashLogic(holder.tokenManager);
 
-        this.createDashLogic = new CreateDashLogic(holder.timerWorker, holder.limits.DASHBOARDS_LIMIT, holder.limits.PROFILE_SIZE_LIMIT_BYTES);
+        this.createDashLogic = new CreateDashLogic(holder.timerWorker, holder.tokenManager, holder.limits.DASHBOARDS_LIMIT, holder.limits.PROFILE_SIZE_LIMIT_BYTES);
         this.updateDashLogic = new UpdateDashLogic(holder.timerWorker, holder.limits.PROFILE_SIZE_LIMIT_BYTES);
 
         this.activateDashboardLogic = new ActivateDashboardLogic(holder.sessionDao);
