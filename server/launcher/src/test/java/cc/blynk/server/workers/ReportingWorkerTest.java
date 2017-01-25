@@ -49,9 +49,8 @@ public class ReportingWorkerTest {
     @Mock
     public AverageAggregatorProcessor averageAggregator;
 
-    @Mock
     @InjectMocks
-    public ReportingDao reportingDao;
+    public ReportingDao reportingDaoMock;
 
     @Mock
     public ServerProperties properties;
@@ -68,11 +67,13 @@ public class ReportingWorkerTest {
         Path dataFolder2 = Paths.get(reportingFolder, "test2");
         FileUtils.deleteDirectory(dataFolder2.toFile());
         ReportingUtil.createReportingFolder(reportingFolder, "test2");
+
+        reportingDaoMock = new ReportingDao(reportingFolder, averageAggregator, properties);
     }
 
     @Test
     public void testStore() throws IOException {
-        ReportingWorker reportingWorker = new ReportingWorker(reportingDao, reportingFolder, new DBManager(blockingIOProcessor));
+        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock, reportingFolder, new DBManager(blockingIOProcessor));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -122,7 +123,7 @@ public class ReportingWorkerTest {
 
     @Test
     public void testStore2() throws IOException {
-        ReportingWorker reportingWorker = new ReportingWorker(reportingDao, reportingFolder, new DBManager(blockingIOProcessor));
+        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock, reportingFolder, new DBManager(blockingIOProcessor));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -179,7 +180,7 @@ public class ReportingWorkerTest {
 
     @Test
     public void testDeleteCommand() throws IOException {
-        ReportingWorker reportingWorker = new ReportingWorker(reportingDao, reportingFolder, new DBManager(blockingIOProcessor));
+        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock, reportingFolder, new DBManager(blockingIOProcessor));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 

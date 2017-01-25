@@ -40,6 +40,14 @@ public class ReportingDao implements Closeable {
 
     private final boolean ENABLE_RAW_DB_DATA_STORE;
 
+    //for test only
+    public ReportingDao(String reportingFolder, AverageAggregatorProcessor averageAggregator, ServerProperties serverProperties) {
+        this.averageAggregator = averageAggregator;
+        this.dataFolder = reportingFolder;
+        this.ENABLE_RAW_DB_DATA_STORE = serverProperties.getBoolProperty("enable.raw.db.data.store");
+        this.rawDataProcessor = ENABLE_RAW_DB_DATA_STORE ? new RawDataProcessor() : null;
+    }
+
     public ReportingDao(String reportingFolder , ServerProperties serverProperties) {
         this.averageAggregator = new AverageAggregatorProcessor(reportingFolder);
         this.dataFolder = reportingFolder;
