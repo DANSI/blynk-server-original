@@ -41,7 +41,7 @@ public class NumberUtilTest {
         for (int i = 0; i < 10_000; i++) {
             double random = ThreadLocalRandom.current().nextDouble();
             double parsed = parseDouble(String.valueOf(random));
-            System.out.println(random);
+            //System.out.println(random);
             assertEquals(random, parsed, 0.0000000001);
         }
     }
