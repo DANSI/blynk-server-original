@@ -85,26 +85,6 @@
         </Routing>
         -->
 
-
-        <Routing name="csvDataStorage">
-            <Routes pattern="$${ctx:user}_$${ctx:dashId}-$${ctx:deviceId}_$${ctx:pin}">
-
-                <!-- This route is chosen if ThreadContext has a value for "user"
-                The value dynamically determines the name of the log file. -->
-                <Route>
-                    <RollingFile name="$${ctx:user}_$${ctx:dashId}-$${ctx:deviceId}_$${ctx:pin}" fileName="${sys:data.folder}/data/${ctx:user}/${ctx:dashId}-${ctx:deviceId}_${ctx:pin}.csv"
-                                 filePattern="${sys:data.folder}/data/${ctx:user}/${ctx:dashId}-${ctx:deviceId}_${ctx:pin}-%d{yyyy-MM-dd}.csv.gz">
-                        <PatternLayout>
-                            <pattern>%msg%n</pattern>
-                        </PatternLayout>
-                        <Policies>
-                            <TimeBasedTriggeringPolicy/>
-                        </Policies>
-                    </RollingFile>
-                </Route>
-            </Routes>
-        </Routing>
-
     </Appenders>
 
     <Loggers>
@@ -117,9 +97,6 @@
         </Logger>
         <Logger name="cc.blynk.server.workers.StatsWorker" level="debug" additivity="false">
             <appender-ref ref="statsLog"/>
-        </Logger>
-        <Logger name="cc.blynk.server.core.dao.ReportingDao" level="info" additivity="false">
-            <appender-ref ref="csvDataStorage"/>
         </Logger>
         <Logger name="cc.blynk.server.db" level="debug" additivity="false">
             <appender-ref ref="postgresDBLog"/>

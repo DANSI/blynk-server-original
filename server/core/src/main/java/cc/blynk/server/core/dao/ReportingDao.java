@@ -7,7 +7,6 @@ import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.ServerProperties;
-import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,12 +34,12 @@ public class ReportingDao {
 
     private final String dataFolder;
 
-    private final boolean ENABLE_RAW_DATA_STORE;
+    private final boolean ENABLE_RAW_DB_DATA_STORE;
 
     public ReportingDao(String reportingFolder, AverageAggregator averageAggregator, ServerProperties serverProperties) {
         this.averageAggregator = averageAggregator;
         this.dataFolder = reportingFolder;
-        this.ENABLE_RAW_DATA_STORE = serverProperties.getBoolProperty("enable.raw.data.store");
+        this.ENABLE_RAW_DB_DATA_STORE = serverProperties.getBoolProperty("enable.raw.db.data.store");
     }
 
     public static String generateFilename(int dashId, int deviceId, char pinType, byte pin, GraphType type) {
@@ -128,22 +127,11 @@ public class ReportingDao {
     }
 
     public void process(String username, int dashId, int deviceId, byte pin, PinType pinType, String value, long ts) {
-        if (ENABLE_RAW_DATA_STORE) {
-            logInCSV(username, dashId, deviceId, pin, pinType, value, ts);
+        if (ENABLE_RAW_DB_DATA_STORE) {
+            //do nothing for now
         }
 
         averageAggregator.collect(username, dashId, deviceId, pinType.pintTypeChar, pin, ts, value);
-    }
-
-    //This is used only for local servers. A bit ugly. Should be removed in future.
-    //need to ask users if they use it... There are alternative methods already.
-    private static void logInCSV(String username, int dashId, int deviceId, byte pin, PinType pinType, String value, long ts) {
-        try (final CloseableThreadContext.Instance ctx = CloseableThreadContext.put("user", username)
-                .put("dashId", Integer.toString(dashId))
-                .put("deviceId", Integer.toString(deviceId))
-                .put("pin", String.valueOf(pinType.pintTypeChar) + pin)) {
-            log.info("{},{}", value, ts);
-        }
     }
 
     public void process(String username, int dashId, int deviceId, byte pin, PinType pinType, String value) {
