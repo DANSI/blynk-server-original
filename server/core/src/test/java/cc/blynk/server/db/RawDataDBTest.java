@@ -46,7 +46,7 @@ public class RawDataDBTest {
 
     @Test
     public void testInsertStringAsRawData() throws Exception {
-        RawDataProcessor rawDataProcessor = new RawDataProcessor();
+        RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
         rawDataProcessor.collect("test@test.com", 1, 2, 'v', (byte) 3, 1111111111, "Lamp is ON", NumberUtil.NO_RESULT);
 
         //invoking directly dao to avoid separate thread execution
@@ -75,7 +75,7 @@ public class RawDataDBTest {
 
     @Test
     public void testInsertDoubleAsRawData() throws Exception {
-        RawDataProcessor rawDataProcessor = new RawDataProcessor();
+        RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
         rawDataProcessor.collect("test@test.com", 1, 2, 'v', (byte) 3, 1111111111, "Lamp is ON", 1.33D);
 
         //invoking directly dao to avoid separate thread execution

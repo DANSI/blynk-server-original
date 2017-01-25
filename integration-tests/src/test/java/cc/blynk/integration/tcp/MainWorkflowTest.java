@@ -64,6 +64,7 @@ import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produc
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -1348,8 +1349,33 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(produce(1, HARDWARE, b(body))));
     }
 
+    @Test
+    public void testCreateProjectWithDevicesGeneratesNewTokens() throws Exception {
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 2;
+        dashBoard.name = "Test Dash";
 
+        Device device = new Device();
+        device.id = 1;
+        device.name = "MyDevice";
+        device.token = "aaa";
+        dashBoard.devices = new Device[] {
+                device
+        };
 
+        clientPair.appClient.send("createDash " + dashBoard.toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.appClient.send("getDevices 2");
+        String response = clientPair.appClient.getBody(2);
+
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        assertNotNull(devices);
+        assertEquals(1, devices.length);
+        assertEquals(1, devices[0].id);
+        assertEquals("MyDevice", devices[0].name);
+        assertNotEquals("aaa", devices[0].token);
+    }
 
     @Test
     @Ignore("hard to test this case...")
