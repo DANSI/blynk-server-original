@@ -78,7 +78,7 @@ public class BridgeLogic {
                 boolean messageWasSent = false;
                 message.body = message.body.substring(message.body.indexOf(StringUtils.BODY_SEPARATOR_STRING) + 1);
                 for (Channel channel : session.getHardwareChannels()) {
-                    if (channel != ctx.channel()) {
+                    if (channel != ctx.channel() && channel.isWritable()) {
                         HardwareStateHolder hardwareState = getHardState(channel);
                         if (hardwareState != null && token.equals(hardwareState.token)) {
                             messageWasSent = true;

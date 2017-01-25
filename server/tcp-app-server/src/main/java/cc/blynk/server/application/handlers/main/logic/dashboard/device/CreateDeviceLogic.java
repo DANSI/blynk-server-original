@@ -79,7 +79,9 @@ public class CreateDeviceLogic {
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
 
-        ctx.writeAndFlush(makeUTF8StringMessage(CREATE_DEVICE, message.id, newDevice.toString()), ctx.voidPromise());
+        if (ctx.channel().isWritable()) {
+            ctx.writeAndFlush(makeUTF8StringMessage(CREATE_DEVICE, message.id, newDevice.toString()), ctx.voidPromise());
+        }
     }
 
 }

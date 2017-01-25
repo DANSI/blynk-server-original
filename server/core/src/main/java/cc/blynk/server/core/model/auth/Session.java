@@ -94,7 +94,7 @@ public class Session {
         final Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null && hardwareState.dashId == activeDashId &&
+            if (hardwareState != null && hardwareState.dashId == activeDashId && channel.isWritable() &&
                     (deviceIds.length == 0 || IntStream.of(deviceIds).anyMatch(x -> x == hardwareState.deviceId))) {
                 targetChannels.add(channel);
             }
@@ -123,7 +123,9 @@ public class Session {
     public void sendMessageToHardware(ChannelHandlerContext ctx, int activeDashId, short cmd, int msgId, String body, int... deviceIds) {
         if (sendMessageToHardware(activeDashId, cmd, msgId, body, deviceIds)) {
             log.debug("No device in session.");
-            ctx.writeAndFlush(makeResponse(msgId, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+            if (ctx.channel().isWritable()) {
+                ctx.writeAndFlush(makeResponse(msgId, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+            }
         }
     }
 
@@ -177,8 +179,10 @@ public class Session {
         }
 
         for (Channel channel : appChannels) {
-            log.trace("Sending {} to app {}", body, channel);
-            channel.writeAndFlush(msg, channel.voidPromise());
+            if (channel.isWritable()) {
+                log.trace("Sending {} to app {}", body, channel);
+                channel.writeAndFlush(msg, channel.voidPromise());
+            }
             if (msg.refCnt() > 0) {
                 msg.resetReaderIndex();
             }
@@ -188,7 +192,7 @@ public class Session {
     public void sendToSharedApps(Channel sendingChannel, String sharedToken, short cmd, int msgId, String body) {
         final Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : appChannels) {
-            if (channel != sendingChannel && needSync(channel, sharedToken)) {
+            if (channel != sendingChannel && channel.isWritable() && needSync(channel, sharedToken)) {
                 targetChannels.add(channel);
             }
         }

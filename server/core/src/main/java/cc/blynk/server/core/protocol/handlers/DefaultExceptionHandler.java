@@ -27,7 +27,9 @@ public interface DefaultExceptionHandler {
         if (cause instanceof BaseServerException) {
             BaseServerException baseServerException = (BaseServerException) cause;
             log.debug(baseServerException.getMessage());
-            ctx.writeAndFlush(makeResponse(msgId, baseServerException.errorCode), ctx.voidPromise());
+            if (ctx.channel().isWritable()) {
+                ctx.writeAndFlush(makeResponse(msgId, baseServerException.errorCode), ctx.voidPromise());
+            }
         } else {
             handleUnexpectedException(ctx, cause);
         }
@@ -38,7 +40,9 @@ public interface DefaultExceptionHandler {
             BaseServerException baseServerException = (BaseServerException) cause;
             //no need for stack trace for known exceptions
             log.debug(baseServerException.getMessage());
-            ctx.writeAndFlush(makeResponse(baseServerException.msgId, baseServerException.errorCode), ctx.voidPromise());
+            if (ctx.channel().isWritable()) {
+                ctx.writeAndFlush(makeResponse(baseServerException.msgId, baseServerException.errorCode), ctx.voidPromise());
+            }
         } else {
             handleUnexpectedException(ctx, cause);
         }

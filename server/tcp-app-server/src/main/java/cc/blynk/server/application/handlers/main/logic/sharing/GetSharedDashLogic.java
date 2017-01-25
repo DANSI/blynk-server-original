@@ -38,7 +38,9 @@ public class GetSharedDashLogic {
 
         DashBoard dashBoard = userThatShared.profile.getDashByIdOrThrow(tokenValue.dashId);
 
-        ctx.writeAndFlush(produce(message.id, message.command, JsonParser.toJsonSharedDashboard(dashBoard)), ctx.voidPromise());
+        if (ctx.channel().isWritable()) {
+            ctx.writeAndFlush(produce(message.id, message.command, JsonParser.toJsonSharedDashboard(dashBoard)), ctx.voidPromise());
+        }
     }
 
 }

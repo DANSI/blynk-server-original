@@ -4,11 +4,10 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.ParseUtil;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.io.IOException;
 
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
@@ -38,12 +37,17 @@ public class LoadProfileGzippedLogic {
 
         log.debug("Load Gzipped Profile {} ", body);
 
+        ByteBuf outputMsg;
         try {
             byte[] data = ByteUtils.compress(body);
-            ctx.writeAndFlush(makeBinaryMessage(LOAD_PROFILE_GZIPPED, message.id, data), ctx.voidPromise());
-        } catch (IOException e) {
+            outputMsg = makeBinaryMessage(LOAD_PROFILE_GZIPPED, message.id, data);
+        } catch (Exception e) {
             log.error("Error compressing data.", e);
-            ctx.writeAndFlush(makeResponse(message.id, NO_DATA));
+            outputMsg = makeResponse(message.id, NO_DATA);
+        }
+
+        if (ctx.channel().isWritable()) {
+            ctx.writeAndFlush(outputMsg, ctx.voidPromise());
         }
     }
 

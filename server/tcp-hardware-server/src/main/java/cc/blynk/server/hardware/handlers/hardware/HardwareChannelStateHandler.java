@@ -82,21 +82,18 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
         Notification notification = dashBoard.getWidgetByType(Notification.class);
 
-        //do not send "hardware offline message in case we reconnected quickly"
-        //if (isHardwareConnected) {
-        //    return;
-        //}
-
         if (notification == null || !notification.notifyWhenOffline) {
             if (session.getAppChannels().size() > 0) {
                 log.trace("Sending device offline message.");
                 for (Channel appChannel : session.getAppChannels()) {
-                    appChannel.writeAndFlush(
-                            new ResponseWithBodyMessage(
-                                    0, Command.RESPONSE, DEVICE_WENT_OFFLINE, state.dashId
-                            ),
-                            appChannel.voidPromise()
-                    );
+                    if (appChannel.isWritable()) {
+                        appChannel.writeAndFlush(
+                                new ResponseWithBodyMessage(
+                                        0, Command.RESPONSE, DEVICE_WENT_OFFLINE, state.dashId
+                                ),
+                                appChannel.voidPromise()
+                        );
+                    }
                 }
             }
         } else {

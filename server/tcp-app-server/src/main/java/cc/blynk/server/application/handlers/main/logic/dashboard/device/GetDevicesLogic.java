@@ -33,7 +33,9 @@ public class GetDevicesLogic {
 
         log.debug("Returning devices : {}", response);
 
-        ctx.writeAndFlush(makeUTF8StringMessage(GET_DEVICES, message.id, response), ctx.voidPromise());
+        if (ctx.channel().isWritable()) {
+            ctx.writeAndFlush(makeUTF8StringMessage(GET_DEVICES, message.id, response), ctx.voidPromise());
+        }
     }
 
 }

@@ -87,7 +87,9 @@ public class GetGraphDataLogic {
                 byte[][] data = reportingDao.getAllFromDisk(username, requestedPins);
                 byte[] compressed = compress(requestedPins[0].dashId, data);
 
-                channel.writeAndFlush(makeBinaryMessage(GET_GRAPH_DATA_RESPONSE, msgId, compressed), channel.voidPromise());
+                if (channel.isWritable()) {
+                    channel.writeAndFlush(makeBinaryMessage(GET_GRAPH_DATA_RESPONSE, msgId, compressed), channel.voidPromise());
+                }
             } catch (NoDataException noDataException) {
                 channel.writeAndFlush(makeResponse(msgId, NO_DATA), channel.voidPromise());
             } catch (Exception e) {
