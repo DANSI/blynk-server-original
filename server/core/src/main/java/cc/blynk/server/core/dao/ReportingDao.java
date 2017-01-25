@@ -45,14 +45,14 @@ public class ReportingDao implements Closeable {
         this.averageAggregator = averageAggregator;
         this.dataFolder = reportingFolder;
         this.ENABLE_RAW_DB_DATA_STORE = serverProperties.getBoolProperty("enable.raw.db.data.store");
-        this.rawDataProcessor = ENABLE_RAW_DB_DATA_STORE ? new RawDataProcessor() : null;
+        this.rawDataProcessor = new RawDataProcessor(ENABLE_RAW_DB_DATA_STORE);
     }
 
     public ReportingDao(String reportingFolder , ServerProperties serverProperties) {
         this.averageAggregator = new AverageAggregatorProcessor(reportingFolder);
         this.dataFolder = reportingFolder;
         this.ENABLE_RAW_DB_DATA_STORE = serverProperties.getBoolProperty("enable.raw.db.data.store");
-        this.rawDataProcessor = ENABLE_RAW_DB_DATA_STORE ? new RawDataProcessor() : null;
+        this.rawDataProcessor = new RawDataProcessor(ENABLE_RAW_DB_DATA_STORE);
     }
 
     public static String generateFilename(int dashId, int deviceId, char pinType, byte pin, GraphType type) {

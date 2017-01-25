@@ -3,6 +3,8 @@ package cc.blynk.server.core.reporting.raw;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.utils.NumberUtil;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -16,7 +18,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RawDataProcessor {
 
-    public final ConcurrentHashMap<AggregationKey, Object> rawStorage = new ConcurrentHashMap<>();
+    public final Map<AggregationKey, Object> rawStorage;
+
+    public RawDataProcessor(boolean enable) {
+        if (enable) {
+            rawStorage = new ConcurrentHashMap<>();
+        } else {
+            rawStorage = Collections.emptyMap();
+        }
+    }
 
     //todo 2 millis is minimum allowed interval for data pushing.
     public void collect(String username, int dashId, int deviceId, char pinType, byte pin, long ts, String stringValue, double doubleValue) {
