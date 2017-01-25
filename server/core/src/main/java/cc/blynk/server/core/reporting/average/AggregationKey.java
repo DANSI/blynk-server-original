@@ -19,7 +19,7 @@ public final class AggregationKey implements Serializable {
     public final int deviceId;
     public final char pinType;
     public final byte pin;
-    private final long ts;
+    public final long ts;
 
     public AggregationKey(String username, int dashId, int deviceId, char pinType, byte pin, long ts) {
         this.username = username;

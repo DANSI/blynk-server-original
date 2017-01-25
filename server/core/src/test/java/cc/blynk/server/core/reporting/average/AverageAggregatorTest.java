@@ -48,7 +48,7 @@ public class AverageAggregatorTest {
         double expectedAverage = 0;
         for (int i = 0; i < COUNT; i++) {
             expectedAverage += i;
-            averageAggregator.collect(username, dashId, 0, pinType, pin, ts, String.valueOf(i));
+            averageAggregator.collect(username, dashId, 0, pinType, pin, ts, i);
         }
         expectedAverage /= COUNT;
 
@@ -77,7 +77,7 @@ public class AverageAggregatorTest {
             double expectedAverage = 0;
             for (int i = 0; i < COUNT; i++) {
                 expectedAverage += i;
-                averageAggregator.collect(username, dashId, 0, pinType, pin, ts, String.valueOf(i));
+                averageAggregator.collect(username, dashId, 0, pinType, pin, ts, i);
             }
             expectedDailyAverage += expectedAverage;
             expectedAverage /= COUNT;
@@ -117,7 +117,7 @@ public class AverageAggregatorTest {
             double expectedAverage = 0;
             for (int i = 0; i < COUNT; i++) {
                 expectedAverage += i;
-                averageAggregator.collect(username, dashId, 0, pinType, pin, ts, String.valueOf(i));
+                averageAggregator.collect(username, dashId, 0, pinType, pin, ts, i);
             }
             expectedDailyAverage += expectedAverage;
             expectedAverage /= COUNT;

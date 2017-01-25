@@ -94,7 +94,7 @@ public class DBManagerTest {
              PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
 
             for (int i = 0; i < 1000; i++) {
-                ReportingDBDao.prepareReportingInsert(ps, userName, 1, 0, (byte) 0, PinType.VIRTUAL, minute, (double) i);
+                ReportingDBDao.prepareReportingInsert(ps, userName, 1, 2, (byte) 0, 'v', minute, (double) i);
                 ps.addBatch();
                 minute += AverageAggregatorProcessor.MINUTE;
                 a++;
@@ -116,6 +116,7 @@ public class DBManagerTest {
             while (rs.next()) {
                 assertEquals(userName, rs.getString("username"));
                 assertEquals(1, rs.getInt("project_id"));
+                assertEquals(2, rs.getInt("device_id"));
                 assertEquals(0, rs.getByte("pin"));
                 assertEquals("v", rs.getString("pinType"));
                 assertEquals(startMinute, rs.getLong("ts"));
@@ -142,7 +143,7 @@ public class DBManagerTest {
             long minute = (System.currentTimeMillis() / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
 
             for (int i = 0; i < 100; i++) {
-                ReportingDBDao.prepareReportingInsert(ps, userName, 1, 0, (byte) 0, PinType.VIRTUAL, minute, (double) i);
+                ReportingDBDao.prepareReportingInsert(ps, userName, 1, 0, (byte) 0, 'v', minute, (double) i);
                 ps.addBatch();
                 minute += AverageAggregatorProcessor.MINUTE;
                 a++;
@@ -179,7 +180,7 @@ public class DBManagerTest {
             minute = (System.currentTimeMillis() / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
 
             for (int i = 0; i < 370; i++) {
-                ReportingDBDao.prepareReportingInsert(ps, "test1111@gmail.com", 1, 0, (byte) 0, PinType.VIRTUAL, minute, (double) i);
+                ReportingDBDao.prepareReportingInsert(ps, "test1111@gmail.com", 1, 0, (byte) 0, 'v', minute, (double) i);
                 ps.addBatch();
                 minute += AverageAggregatorProcessor.MINUTE;
             }

@@ -29,6 +29,20 @@ CREATE TABLE purchase (
   PRIMARY KEY (username, transactionId)
 );
 
+CREATE TABLE reporting_raw_data (
+  username text,
+  project_id int4,
+  device_id int4,
+  pin int2,
+  pinType char,
+  ts int8,
+
+  stringValue text,
+  doubleValue float8,
+
+  PRIMARY KEY (username, project_id, device_id, pin, pinType, ts)
+);
+
 CREATE TABLE reporting_average_minute (
   username text,
   project_id int4,

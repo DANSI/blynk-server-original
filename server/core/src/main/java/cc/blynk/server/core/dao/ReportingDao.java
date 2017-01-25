@@ -5,7 +5,9 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
+import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.utils.FileUtils;
+import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.ServerProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +34,7 @@ public class ReportingDao implements Closeable {
     private static final Logger log = LogManager.getLogger(ReportingDao.class);
 
     public final AverageAggregatorProcessor averageAggregator;
+    public final RawDataProcessor rawDataProcessor;
 
     private final String dataFolder;
 
@@ -41,6 +44,7 @@ public class ReportingDao implements Closeable {
         this.averageAggregator = new AverageAggregatorProcessor(reportingFolder);
         this.dataFolder = reportingFolder;
         this.ENABLE_RAW_DB_DATA_STORE = serverProperties.getBoolProperty("enable.raw.db.data.store");
+        this.rawDataProcessor = ENABLE_RAW_DB_DATA_STORE ? new RawDataProcessor() : null;
     }
 
     public static String generateFilename(int dashId, int deviceId, char pinType, byte pin, GraphType type) {
@@ -127,16 +131,27 @@ public class ReportingDao implements Closeable {
         return "history_" + dashId + DEVICE_SEPARATOR + deviceId + "_" + pinType + pin + "_" + type + ".bin";
     }
 
-    public void process(String username, int dashId, int deviceId, byte pin, PinType pinType, String value, long ts) {
-        if (ENABLE_RAW_DB_DATA_STORE) {
-            //do nothing for now
+    public void process(String username, int dashId, int deviceId, byte pin, PinType pinType, String value) {
+        try {
+            double doubleVal = NumberUtil.parseDouble(value);
+            process(username, dashId, deviceId, pin, pinType, value, System.currentTimeMillis(), doubleVal);
+        } catch (Exception e) {
+            //just in case
+            log.trace("Error collecting reporting entry.");
         }
-
-        averageAggregator.collect(username, dashId, deviceId, pinType.pintTypeChar, pin, ts, value);
     }
 
-    public void process(String username, int dashId, int deviceId, byte pin, PinType pinType, String value) {
-        process(username, dashId, deviceId, pin, pinType, value, System.currentTimeMillis());
+    public void process(String username, int dashId, int deviceId, byte pin, PinType pinType, String value, long ts, double doubleVal) {
+        if (ENABLE_RAW_DB_DATA_STORE) {
+            rawDataProcessor.collect(username, dashId, deviceId, pinType.pintTypeChar, pin, ts, value, doubleVal);
+        }
+
+        //not a number, nothing to aggregate
+        if (doubleVal == NumberUtil.NO_RESULT) {
+            return;
+        }
+
+        averageAggregator.collect(username, dashId, deviceId, pinType.pintTypeChar, pin, ts, doubleVal);
     }
 
     public byte[][] getAllFromDisk(String username, GraphPinRequest[] requestedPins) {

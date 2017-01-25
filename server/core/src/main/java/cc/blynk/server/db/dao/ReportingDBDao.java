@@ -15,8 +15,10 @@ import org.apache.logging.log4j.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -29,6 +31,8 @@ public class ReportingDBDao {
     public static final String insertMinute = "INSERT INTO reporting_average_minute (username, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
     public static final String insertHourly = "INSERT INTO reporting_average_hourly (username, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
     public static final String insertDaily = "INSERT INTO reporting_average_daily (username, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+    public static final String insertRawData = "INSERT INTO reporting_raw_data (username, project_id, device_id, pin, pinType, ts, stringValue, doubleValue) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     public static final String selectMinute = "SELECT ts, value FROM reporting_average_minute WHERE ts > ? ORDER BY ts DESC limit ?";
     public static final String selectHourly = "SELECT ts, value FROM reporting_average_hourly WHERE ts > ? ORDER BY ts DESC limit ?";
@@ -59,7 +63,7 @@ public class ReportingDBDao {
                                                GraphType type) throws SQLException {
         final AggregationKey key = entry.getKey();
         final AggregationValue value = entry.getValue();
-        prepareReportingInsert(ps, key.username, key.dashId, key.deviceId, key.pin, PinType.getPinType(key.pinType), key.getTs(type), value.calcAverage());
+        prepareReportingInsert(ps, key.username, key.dashId, key.deviceId, key.pin, key.pinType, key.getTs(type), value.calcAverage());
     }
 
     public static void prepareReportingInsert(PreparedStatement ps,
@@ -67,14 +71,14 @@ public class ReportingDBDao {
                                                  int dashId,
                                                  int deviceId,
                                                  byte pin,
-                                                 PinType pinType,
+                                                 char pinType,
                                                  long ts,
                                                  double value) throws SQLException {
         ps.setString(1, username);
         ps.setInt(2, dashId);
         ps.setInt(3, deviceId);
         ps.setByte(4, pin);
-        ps.setString(5, pinType.pinTypeString);
+        ps.setString(5, PinType.getPinTypeString(pinType));
         ps.setLong(6, ts);
         ps.setDouble(7, value);
     }
@@ -88,6 +92,50 @@ public class ReportingDBDao {
             default :
                 return insertDaily;
         }
+    }
+
+    public void insertRawData(Map<AggregationKey, Object> rawData) {
+        long start = System.currentTimeMillis();
+
+        log.info("Storing raw reporting...");
+        int counter = 0;
+
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(insertRawData)) {
+
+            for (Iterator<Map.Entry<AggregationKey, Object>> iter = rawData.entrySet().iterator(); iter.hasNext(); ) {
+                Map.Entry<AggregationKey, Object> entry = iter.next();
+
+                final AggregationKey key = entry.getKey();
+                final Object value = entry.getValue();
+
+                ps.setString(1, key.username);
+                ps.setInt(2, key.dashId);
+                ps.setInt(3, key.deviceId);
+                ps.setByte(4, key.pin);
+                ps.setString(5, PinType.getPinTypeString(key.pinType));
+                ps.setLong(6, key.ts);
+
+                if (value instanceof String) {
+                    ps.setString(7, (String) value);
+                    ps.setNull(8, Types.DOUBLE);
+                } else {
+                    ps.setNull(7, Types.VARCHAR);
+                    ps.setDouble(8, (Double) value);
+                }
+
+                ps.addBatch();
+                counter++;
+                iter.remove();
+            }
+
+            ps.executeBatch();
+            connection.commit();
+        } catch (Exception e) {
+            log.error("Error inserting raw reporting data in DB.", e);
+        }
+
+        log.info("Storing raw reporting finished. Time {}. Records saved {}", System.currentTimeMillis() - start, counter);
     }
 
     public void insertStat(String region, Stat stat) {

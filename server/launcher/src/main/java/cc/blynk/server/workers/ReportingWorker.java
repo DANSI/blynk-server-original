@@ -74,6 +74,8 @@ public class ReportingWorker implements Runnable {
             dbManager.insertReporting(removedKeysHour, GraphType.HOURLY);
             dbManager.insertReporting(removedKeysDay, GraphType.DAILY);
 
+            dbManager.insertReportingRaw(reportingDao.rawDataProcessor.rawStorage);
+
             dbManager.cleanOldReportingRecords(Instant.now());
         } catch (Exception e) {
             log.error("Error during reporting job.", e);

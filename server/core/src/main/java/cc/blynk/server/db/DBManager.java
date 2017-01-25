@@ -38,10 +38,10 @@ public class DBManager implements Closeable {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final boolean cleanOldReporting;
-    public UserDBDao userDBDao;
-    private ReportingDBDao reportingDBDao;
-    private RedeemDBDao redeemDBDao;
-    private PurchaseDBDao purchaseDBDao;
+    protected UserDBDao userDBDao;
+    protected ReportingDBDao reportingDBDao;
+    protected RedeemDBDao redeemDBDao;
+    protected PurchaseDBDao purchaseDBDao;
 
     public DBManager(BlockingIOProcessor blockingIOProcessor) {
         this(DB_PROPERTIES_FILENAME, blockingIOProcessor);
@@ -118,6 +118,12 @@ public class DBManager implements Closeable {
     public void insertReporting(Map<AggregationKey, AggregationValue> map, GraphType graphType) {
         if (isDBEnabled() && map.size() > 0) {
             blockingIOProcessor.execute(() -> reportingDBDao.insert(map, graphType));
+        }
+    }
+
+    public void insertReportingRaw(Map<AggregationKey, Object> rawData) {
+        if (isDBEnabled() && rawData.size() > 0) {
+            blockingIOProcessor.execute(() -> reportingDBDao.insertRawData(rawData));
         }
     }
 

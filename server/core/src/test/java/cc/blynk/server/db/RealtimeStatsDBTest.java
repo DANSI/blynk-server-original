@@ -42,12 +42,6 @@ public class RealtimeStatsDBTest {
     @Before
     public void cleanAll() throws Exception {
         //clean everything just in case
-        dbManager.executeSQL("DELETE FROM users");
-        dbManager.executeSQL("DELETE FROM reporting_average_minute");
-        dbManager.executeSQL("DELETE FROM reporting_average_hourly");
-        dbManager.executeSQL("DELETE FROM reporting_average_daily");
-        dbManager.executeSQL("DELETE FROM purchase");
-        dbManager.executeSQL("DELETE FROM redeem");
         dbManager.executeSQL("DELETE FROM reporting_app_stat_minute");
         dbManager.executeSQL("DELETE FROM reporting_app_command_stat_minute");
         dbManager.executeSQL("DELETE FROM reporting_http_command_stat_minute");
@@ -127,7 +121,7 @@ public class RealtimeStatsDBTest {
         cs.appTotal = i++;
         cs.hardTotal = i;
 
-        dbManager.insertStat(region, stat);
+        dbManager.reportingDBDao.insertStat(region, stat);
 
         try (Connection connection = dbManager.getConnection();
              Statement statement = connection.createStatement();
