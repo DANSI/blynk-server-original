@@ -25,14 +25,14 @@ public class BlynkByteBufUtil {
     }
 
     public static ByteBuf makeResponse(int msgId, int responseCode) {
-        return ALLOCATOR.heapBuffer(HEADER_LENGTH)
+        return ALLOCATOR.buffer(HEADER_LENGTH)
                 .writeByte(Command.RESPONSE)
                 .writeShort(msgId)
                 .writeShort(responseCode);
     }
 
     public static ByteBuf makeUTF8StringMessage(short cmd, int msgId, String data) {
-        ByteBuf byteBuf = ALLOCATOR.heapBuffer(HEADER_LENGTH + ByteBufUtil.utf8MaxBytes(data));
+        ByteBuf byteBuf = ALLOCATOR.buffer(HEADER_LENGTH + ByteBufUtil.utf8MaxBytes(data));
         byteBuf.writerIndex(HEADER_LENGTH);
         ByteBufUtil.writeUtf8(byteBuf, data);
 
@@ -42,7 +42,7 @@ public class BlynkByteBufUtil {
     }
 
     public static ByteBuf makeASCIIStringMessage(short cmd, int msgId, String data) {
-        ByteBuf byteBuf = ALLOCATOR.heapBuffer(HEADER_LENGTH + data.length())
+        ByteBuf byteBuf = ALLOCATOR.buffer(HEADER_LENGTH + data.length())
                 .writeByte(cmd)
                 .writeShort(msgId)
                 .writeShort(data.length());
@@ -52,7 +52,7 @@ public class BlynkByteBufUtil {
     }
 
     public static ByteBuf makeBinaryMessage(short cmd, int msgId, byte[] byteData) {
-        return ALLOCATOR.heapBuffer(HEADER_LENGTH + byteData.length)
+        return ALLOCATOR.buffer(HEADER_LENGTH + byteData.length)
                 .writeByte(cmd)
                 .writeShort(msgId)
                 .writeShort(byteData.length)
