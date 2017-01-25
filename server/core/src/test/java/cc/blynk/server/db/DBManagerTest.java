@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
-import cc.blynk.server.core.reporting.average.AverageAggregator;
+import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.model.Purchase;
 import cc.blynk.server.db.model.Redeem;
@@ -87,7 +87,7 @@ public class DBManagerTest {
         String userName = "test@gmail.com";
 
         long start = System.currentTimeMillis();
-        long minute = (start / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
+        long minute = (start / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
         long startMinute = minute;
 
         try (Connection connection = dbManager.getConnection();
@@ -96,7 +96,7 @@ public class DBManagerTest {
             for (int i = 0; i < 1000; i++) {
                 ReportingDBDao.prepareReportingInsert(ps, userName, 1, 0, (byte) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
-                minute += AverageAggregator.MINUTE;
+                minute += AverageAggregatorProcessor.MINUTE;
                 a++;
             }
 
@@ -120,7 +120,7 @@ public class DBManagerTest {
                 assertEquals("v", rs.getString("pinType"));
                 assertEquals(startMinute, rs.getLong("ts"));
                 assertEquals((double) i, rs.getDouble("value"), 0.0001);
-                startMinute += AverageAggregator.MINUTE;
+                startMinute += AverageAggregatorProcessor.MINUTE;
                 i++;
             }
             connection.commit();
@@ -139,12 +139,12 @@ public class DBManagerTest {
              PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
 
             String userName = "test@gmail.com";
-            long minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
+            long minute = (System.currentTimeMillis() / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
 
             for (int i = 0; i < 100; i++) {
                 ReportingDBDao.prepareReportingInsert(ps, userName, 1, 0, (byte) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
-                minute += AverageAggregator.MINUTE;
+                minute += AverageAggregatorProcessor.MINUTE;
                 a++;
             }
 
@@ -176,12 +176,12 @@ public class DBManagerTest {
         try (Connection connection = dbManager.getConnection();
              PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
 
-            minute = (System.currentTimeMillis() / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
+            minute = (System.currentTimeMillis() / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
 
             for (int i = 0; i < 370; i++) {
                 ReportingDBDao.prepareReportingInsert(ps, "test1111@gmail.com", 1, 0, (byte) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
-                minute += AverageAggregator.MINUTE;
+                minute += AverageAggregatorProcessor.MINUTE;
             }
 
             ps.executeBatch();

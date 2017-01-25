@@ -4,7 +4,7 @@ import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
-import cc.blynk.server.core.reporting.average.AverageAggregator;
+import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.stats.model.CommandStat;
 import cc.blynk.server.core.stats.model.HttpStat;
 import cc.blynk.server.core.stats.model.Stat;
@@ -91,7 +91,7 @@ public class ReportingDBDao {
     }
 
     public void insertStat(String region, Stat stat) {
-        final long ts = (stat.ts / AverageAggregator.MINUTE) * AverageAggregator.MINUTE;
+        final long ts = (stat.ts / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
 
         try (Connection connection = ds.getConnection();
              PreparedStatement appStatPS = connection.prepareStatement(insertStatMinute);

@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
-import cc.blynk.server.core.reporting.average.AverageAggregator;
+import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.ReportingUtil;
 import cc.blynk.utils.ServerProperties;
@@ -47,7 +47,7 @@ public class ReportingWorkerTest {
     private final String reportingFolder = getReportingFolder(System.getProperty("java.io.tmpdir"));
 
     @Mock
-    public AverageAggregator averageAggregator;
+    public AverageAggregatorProcessor averageAggregator;
 
     @Mock
     @InjectMocks
@@ -76,7 +76,7 @@ public class ReportingWorkerTest {
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
-        long ts = getTS() / AverageAggregator.HOUR;
+        long ts = getTS() / AverageAggregatorProcessor.HOUR;
 
         AggregationKey aggregationKey = new AggregationKey("test", 1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, ts);
         AggregationValue aggregationValue = new AggregationValue();
@@ -107,17 +107,17 @@ public class ReportingWorkerTest {
         assertEquals(32, data.capacity());
 
         assertEquals(150.54, data.getDouble(), 0.001);
-        assertEquals((ts - 1) * AverageAggregator.HOUR, data.getLong());
+        assertEquals((ts - 1) * AverageAggregatorProcessor.HOUR, data.getLong());
 
         assertEquals(100.0, data.getDouble(), 0.001);
-        assertEquals(ts * AverageAggregator.HOUR, data.getLong());
+        assertEquals(ts * AverageAggregatorProcessor.HOUR, data.getLong());
 
         data = ReportingDao.getByteBufferFromDisk(reportingFolder, "test2", 2, 0, PinType.ANALOG, (byte) 2, 1, GraphType.HOURLY);
         assertNotNull(data);
         data.flip();
         assertEquals(16, data.capacity());
         assertEquals(200.0, data.getDouble(), 0.001);
-        assertEquals(ts * AverageAggregator.HOUR, data.getLong());
+        assertEquals(ts * AverageAggregatorProcessor.HOUR, data.getLong());
     }
 
     @Test
@@ -126,7 +126,7 @@ public class ReportingWorkerTest {
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
-        long ts = getTS() / AverageAggregator.HOUR;
+        long ts = getTS() / AverageAggregatorProcessor.HOUR;
 
         AggregationKey aggregationKey = new AggregationKey("test", 1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, ts);
         AggregationValue aggregationValue = new AggregationValue();
@@ -157,7 +157,7 @@ public class ReportingWorkerTest {
         assertEquals(16, data.capacity());
 
         assertEquals(100.0, data.getDouble(), 0.001);
-        assertEquals(ts * AverageAggregator.HOUR, data.getLong());
+        assertEquals(ts * AverageAggregatorProcessor.HOUR, data.getLong());
 
 
         //take more
@@ -167,13 +167,13 @@ public class ReportingWorkerTest {
         assertEquals(48, data.capacity());
 
         assertEquals(200.0, data.getDouble(), 0.001);
-        assertEquals((ts - 2) * AverageAggregator.HOUR, data.getLong());
+        assertEquals((ts - 2) * AverageAggregatorProcessor.HOUR, data.getLong());
 
         assertEquals(150.54, data.getDouble(), 0.001);
-        assertEquals((ts - 1) * AverageAggregator.HOUR, data.getLong());
+        assertEquals((ts - 1) * AverageAggregatorProcessor.HOUR, data.getLong());
 
         assertEquals(100.0, data.getDouble(), 0.001);
-        assertEquals(ts * AverageAggregator.HOUR, data.getLong());
+        assertEquals(ts * AverageAggregatorProcessor.HOUR, data.getLong());
     }
 
 
@@ -183,7 +183,7 @@ public class ReportingWorkerTest {
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
-        long ts = getTS() / AverageAggregator.HOUR;
+        long ts = getTS() / AverageAggregatorProcessor.HOUR;
 
         AggregationKey aggregationKey = new AggregationKey("test", 1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, ts);
         AggregationValue aggregationValue = new AggregationValue();

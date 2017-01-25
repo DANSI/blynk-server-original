@@ -17,7 +17,7 @@ import static cc.blynk.utils.ReportingUtil.write;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.08.15.
  */
-public class AverageAggregator implements Closeable {
+public class AverageAggregatorProcessor implements Closeable {
 
     public static final long MINUTE = 1000 * 60;
     public static final long HOUR = 60 * MINUTE;
@@ -30,7 +30,7 @@ public class AverageAggregator implements Closeable {
     private final ConcurrentHashMap<AggregationKey, AggregationValue> hourly;
     private final ConcurrentHashMap<AggregationKey, AggregationValue> daily;
 
-    public AverageAggregator(String dataFolder) {
+    public AverageAggregatorProcessor(String dataFolder) {
         this.dataFolder = dataFolder;
 
         Path path;

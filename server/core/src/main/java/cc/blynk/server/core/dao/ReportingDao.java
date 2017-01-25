@@ -4,7 +4,7 @@ import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
-import cc.blynk.server.core.reporting.average.AverageAggregator;
+import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.ServerProperties;
 import org.apache.logging.log4j.LogManager;
@@ -31,14 +31,14 @@ public class ReportingDao implements Closeable {
 
     private static final Logger log = LogManager.getLogger(ReportingDao.class);
 
-    public final AverageAggregator averageAggregator;
+    public final AverageAggregatorProcessor averageAggregator;
 
     private final String dataFolder;
 
     private final boolean ENABLE_RAW_DB_DATA_STORE;
 
     public ReportingDao(String reportingFolder , ServerProperties serverProperties) {
-        this.averageAggregator = new AverageAggregator(reportingFolder);
+        this.averageAggregator = new AverageAggregatorProcessor(reportingFolder);
         this.dataFolder = reportingFolder;
         this.ENABLE_RAW_DB_DATA_STORE = serverProperties.getBoolProperty("enable.raw.db.data.store");
     }

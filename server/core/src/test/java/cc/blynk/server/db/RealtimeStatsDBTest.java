@@ -1,7 +1,7 @@
 package cc.blynk.server.db;
 
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.reporting.average.AverageAggregator;
+import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.stats.model.CommandStat;
 import cc.blynk.server.core.stats.model.HttpStat;
 import cc.blynk.server.core.stats.model.Stat;
@@ -136,7 +136,7 @@ public class RealtimeStatsDBTest {
 
             while (rs.next()) {
                 assertEquals(region, rs.getString("region"));
-                assertEquals((now / AverageAggregator.MINUTE) * AverageAggregator.MINUTE, rs.getLong("ts"));
+                assertEquals((now / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE, rs.getLong("ts"));
 
                 assertEquals(1, rs.getInt("minute_rate"));
                 assertEquals(2, rs.getInt("registrations"));
@@ -159,7 +159,7 @@ public class RealtimeStatsDBTest {
             i = 0;
             while (rs.next()) {
                 assertEquals(region, rs.getString("region"));
-                assertEquals((now / AverageAggregator.MINUTE) * AverageAggregator.MINUTE, rs.getLong("ts"));
+                assertEquals((now / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE, rs.getLong("ts"));
 
                 assertEquals(i++, rs.getInt("is_hardware_connected"));
                 assertEquals(i++, rs.getInt("is_app_connected"));
@@ -182,7 +182,7 @@ public class RealtimeStatsDBTest {
             i = 0;
             while (rs.next()) {
                 assertEquals(region, rs.getString("region"));
-                assertEquals((now / AverageAggregator.MINUTE) * AverageAggregator.MINUTE, rs.getLong("ts"));
+                assertEquals((now / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE, rs.getLong("ts"));
 
                 assertEquals(i++, rs.getInt("response"));
                 assertEquals(i++, rs.getInt("register"));

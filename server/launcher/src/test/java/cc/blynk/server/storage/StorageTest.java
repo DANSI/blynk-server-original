@@ -1,7 +1,7 @@
 package cc.blynk.server.storage;
 
 import cc.blynk.server.core.model.graph.GraphKey;
-import cc.blynk.server.core.reporting.average.AverageAggregator;
+import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.workers.ReportingWorker;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -40,9 +40,9 @@ public class StorageTest {
     public void generateDailyHistoryData() throws IOException {
         Path path = Paths.get("/home/doom369/blynk/data/dmitriy@blynk.cc/daily_data.bin");
         //now - 365 days.
-        long ts  = (System.currentTimeMillis() / AverageAggregator.DAY - 365);
+        long ts  = (System.currentTimeMillis() / AverageAggregatorProcessor.DAY - 365);
         for (int i = 0; i < 365; i++ ) {
-            ReportingWorker.write(path, i, (ts + i) * AverageAggregator.DAY);
+            ReportingWorker.write(path, i, (ts + i) * AverageAggregatorProcessor.DAY);
         }
     }
 
@@ -52,9 +52,9 @@ public class StorageTest {
         int count = 7 * 24;
         Path path = Paths.get("/home/doom369/blynk/data/dmitriy@blynk.cc/hourly_data.bin");
         //now - 1 week.
-        long ts  = (System.currentTimeMillis() / AverageAggregator.HOUR - count);
+        long ts  = (System.currentTimeMillis() / AverageAggregatorProcessor.HOUR - count);
         for (int i = 0; i < count; i++ ) {
-            ReportingWorker.write(path, i, (ts + i) * AverageAggregator.HOUR);
+            ReportingWorker.write(path, i, (ts + i) * AverageAggregatorProcessor.HOUR);
         }
     }
 
