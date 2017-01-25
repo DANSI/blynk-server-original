@@ -457,7 +457,7 @@ public class HttpAPILogic {
 
         String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING, pinValues);
 
-        reportingDao.process(user.name, dashId, deviceId, pin, pinType, pinValue);
+        reportingDao.process(user.name, dashId, deviceId, pin, pinType, pinValue, System.currentTimeMillis());
 
         dash.update(deviceId, pin, pinType, pinValue);
 

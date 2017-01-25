@@ -131,17 +131,17 @@ public class ReportingDao implements Closeable {
         return "history_" + dashId + DEVICE_SEPARATOR + deviceId + "_" + pinType + pin + "_" + type + ".bin";
     }
 
-    public void process(String username, int dashId, int deviceId, byte pin, PinType pinType, String value) {
+    public void process(String username, int dashId, int deviceId, byte pin, PinType pinType, String value, long ts) {
         try {
             double doubleVal = NumberUtil.parseDouble(value);
-            process(username, dashId, deviceId, pin, pinType, value, System.currentTimeMillis(), doubleVal);
+            process(username, dashId, deviceId, pin, pinType, value, ts, doubleVal);
         } catch (Exception e) {
             //just in case
             log.trace("Error collecting reporting entry.");
         }
     }
 
-    public void process(String username, int dashId, int deviceId, byte pin, PinType pinType, String value, long ts, double doubleVal) {
+    private void process(String username, int dashId, int deviceId, byte pin, PinType pinType, String value, long ts, double doubleVal) {
         if (ENABLE_RAW_DB_DATA_STORE) {
             rawDataProcessor.collect(username, dashId, deviceId, pinType.pintTypeChar, pin, ts, value, doubleVal);
         }

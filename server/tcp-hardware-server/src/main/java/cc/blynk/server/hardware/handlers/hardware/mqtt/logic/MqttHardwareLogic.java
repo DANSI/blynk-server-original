@@ -80,9 +80,11 @@ public class MqttHardwareLogic {
                 return;
             }
 
-            reportingDao.process(state.user.name, dashId, deviceId, pin, pinType, value);
+            final long now = System.currentTimeMillis();
 
-            dash.update(0, pin, pinType, value);
+            reportingDao.process(state.user.name, dashId, deviceId, pin, pinType, value, now);
+
+            dash.update(0, pin, pinType, value, now);
         }
 
         //todo do not send if no widget pin
