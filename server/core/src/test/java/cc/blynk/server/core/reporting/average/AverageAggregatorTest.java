@@ -147,7 +147,7 @@ public class AverageAggregatorTest {
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregator.HOURLY_TEMP_FILENAME)));
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregator.DAILY_TEMP_FILENAME)));
 
-        ReportingDao reportingDao = new ReportingDao(reportingFolder, null, new ServerProperties(Collections.emptyMap()));
+        ReportingDao reportingDao = new ReportingDao(reportingFolder, new ServerProperties(Collections.emptyMap()));
 
         reportingDao.delete(username, dashId, 0, PinType.VIRTUAL, pin);
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregator.HOURLY_TEMP_FILENAME)));

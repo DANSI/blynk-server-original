@@ -7,7 +7,6 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.processors.EventorProcessor;
-import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -53,8 +52,6 @@ public class Holder implements Closeable {
 
     public final ServerProperties props;
 
-    public final AverageAggregator averageAggregator;
-
     public final BlockingIOProcessor blockingIOProcessor;
     public final TransportTypeHolder transportTypeHolder;
     public final TwitterWrapper twitterWrapper;
@@ -93,8 +90,7 @@ public class Holder implements Closeable {
         this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, currentIp);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
-        this.averageAggregator = new AverageAggregator(reportingFolder);
-        this.reportingDao = new ReportingDao(reportingFolder, averageAggregator, serverProperties);
+        this.reportingDao = new ReportingDao(reportingFolder, serverProperties);
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
@@ -137,8 +133,7 @@ public class Holder implements Closeable {
         this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, currentIp);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
-        this.averageAggregator = new AverageAggregator(reportingFolder);
-        this.reportingDao = new ReportingDao(reportingFolder, averageAggregator, serverProperties);
+        this.reportingDao = new ReportingDao(reportingFolder, serverProperties);
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
@@ -162,8 +157,7 @@ public class Holder implements Closeable {
 
     @Override
     public void close() {
-        System.out.println("Stopping aggregator...");
-        this.averageAggregator.close();
+        this.reportingDao.close();
 
         System.out.println("Stopping BlockingIOProcessor...");
         this.blockingIOProcessor.close();

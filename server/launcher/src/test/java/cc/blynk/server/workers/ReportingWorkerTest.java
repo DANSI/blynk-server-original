@@ -14,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -49,6 +50,10 @@ public class ReportingWorkerTest {
     public AverageAggregator averageAggregator;
 
     @Mock
+    @InjectMocks
+    public ReportingDao reportingDao;
+
+    @Mock
     public ServerProperties properties;
 
     private BlockingIOProcessor blockingIOProcessor;
@@ -67,7 +72,7 @@ public class ReportingWorkerTest {
 
     @Test
     public void testStore() throws IOException {
-        ReportingWorker reportingWorker = new ReportingWorker(averageAggregator, reportingFolder, new DBManager(blockingIOProcessor));
+        ReportingWorker reportingWorker = new ReportingWorker(reportingDao, reportingFolder, new DBManager(blockingIOProcessor));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -117,7 +122,7 @@ public class ReportingWorkerTest {
 
     @Test
     public void testStore2() throws IOException {
-        ReportingWorker reportingWorker = new ReportingWorker(averageAggregator, reportingFolder, new DBManager(blockingIOProcessor));
+        ReportingWorker reportingWorker = new ReportingWorker(reportingDao, reportingFolder, new DBManager(blockingIOProcessor));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -174,7 +179,7 @@ public class ReportingWorkerTest {
 
     @Test
     public void testDeleteCommand() throws IOException {
-        ReportingWorker reportingWorker = new ReportingWorker(averageAggregator, reportingFolder, new DBManager(blockingIOProcessor));
+        ReportingWorker reportingWorker = new ReportingWorker(reportingDao, reportingFolder, new DBManager(blockingIOProcessor));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -204,7 +209,7 @@ public class ReportingWorkerTest {
         assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphType.HOURLY))));
         assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(2, 0, PinType.ANALOG.pintTypeChar, (byte) 2, GraphType.HOURLY))));
 
-        new ReportingDao(reportingFolder, null, properties).delete("test", 1, 0, PinType.ANALOG, (byte) 1);
+        new ReportingDao(reportingFolder, properties).delete("test", 1, 0, PinType.ANALOG, (byte) 1);
         assertFalse(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphType.HOURLY))));
     }
 

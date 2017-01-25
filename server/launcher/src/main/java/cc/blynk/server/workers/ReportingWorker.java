@@ -1,9 +1,9 @@
 package cc.blynk.server.workers;
 
+import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
-import cc.blynk.server.core.reporting.average.AverageAggregator;
 import cc.blynk.server.db.DBManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,12 +35,12 @@ public class ReportingWorker implements Runnable {
 
     private static final Logger log = LogManager.getLogger(ReportingWorker.class);
 
-    private final AverageAggregator averageAggregator;
+    private final ReportingDao reportingDao;
     private final String reportingPath;
     private final DBManager dbManager;
 
-    public ReportingWorker(AverageAggregator averageAggregator, String reportingPath, DBManager dbManager) {
-        this.averageAggregator = averageAggregator;
+    public ReportingWorker(ReportingDao reportingDao, String reportingPath, DBManager dbManager) {
+        this.reportingDao = reportingDao;
         this.reportingPath = reportingPath;
         this.dbManager = dbManager;
     }
@@ -66,9 +66,9 @@ public class ReportingWorker implements Runnable {
     @Override
     public void run() {
         try {
-            Map<AggregationKey, AggregationValue> removedKeysMinute = process(averageAggregator.getMinute(), GraphType.MINUTE);
-            Map<AggregationKey, AggregationValue> removedKeysHour = process(averageAggregator.getHourly(), GraphType.HOURLY);
-            Map<AggregationKey, AggregationValue> removedKeysDay = process(averageAggregator.getDaily(), GraphType.DAILY);
+            Map<AggregationKey, AggregationValue> removedKeysMinute = process(reportingDao.averageAggregator.getMinute(), GraphType.MINUTE);
+            Map<AggregationKey, AggregationValue> removedKeysHour = process(reportingDao.averageAggregator.getHourly(), GraphType.HOURLY);
+            Map<AggregationKey, AggregationValue> removedKeysDay = process(reportingDao.averageAggregator.getDaily(), GraphType.DAILY);
 
             dbManager.insertReporting(removedKeysMinute, GraphType.MINUTE);
             dbManager.insertReporting(removedKeysHour, GraphType.HOURLY);

@@ -28,7 +28,7 @@ class JobLauncher {
         long startDelay;
 
         ReportingWorker reportingWorker = new ReportingWorker(
-                holder.averageAggregator,
+                holder.reportingDao,
                 ReportingUtil.getReportingFolder(holder.props.getProperty("data.folder")),
                 holder.dbManager
         );

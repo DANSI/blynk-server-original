@@ -10,6 +10,7 @@ import cc.blynk.utils.ServerProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
@@ -26,18 +27,18 @@ import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/18/2015.
  */
-public class ReportingDao {
+public class ReportingDao implements Closeable {
 
     private static final Logger log = LogManager.getLogger(ReportingDao.class);
 
-    private final AverageAggregator averageAggregator;
+    public final AverageAggregator averageAggregator;
 
     private final String dataFolder;
 
     private final boolean ENABLE_RAW_DB_DATA_STORE;
 
-    public ReportingDao(String reportingFolder, AverageAggregator averageAggregator, ServerProperties serverProperties) {
-        this.averageAggregator = averageAggregator;
+    public ReportingDao(String reportingFolder , ServerProperties serverProperties) {
+        this.averageAggregator = new AverageAggregator(reportingFolder);
         this.dataFolder = reportingFolder;
         this.ENABLE_RAW_DB_DATA_STORE = serverProperties.getBoolProperty("enable.raw.db.data.store");
     }
@@ -156,4 +157,9 @@ public class ReportingDao {
         return values;
     }
 
+    @Override
+    public void close() {
+        System.out.println("Stopping aggregator...");
+        this.averageAggregator.close();
+    }
 }
