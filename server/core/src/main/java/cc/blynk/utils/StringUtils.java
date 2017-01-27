@@ -19,6 +19,7 @@ public class StringUtils {
     public static final Pattern PIN_PATTERN_2 =  Pattern.compile("/pin[2]/", Pattern.LITERAL);
     public static final Pattern PIN_PATTERN_3 =  Pattern.compile("/pin[3]/", Pattern.LITERAL);
     public static final Pattern PIN_PATTERN_4 =  Pattern.compile("/pin[4]/", Pattern.LITERAL);
+    public static final Pattern PIN_PATTERN_5 =  Pattern.compile("/pin[5]/", Pattern.LITERAL);
 
     public static final Pattern DATETIME_PATTERN =  Pattern.compile("/datetime_iso/", Pattern.LITERAL);
 

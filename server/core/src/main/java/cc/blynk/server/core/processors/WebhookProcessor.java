@@ -31,6 +31,7 @@ import static cc.blynk.utils.StringUtils.PIN_PATTERN_1;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN_2;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN_3;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN_4;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_5;
 
 /**
  * Handles all webhooks logic.
@@ -152,6 +153,8 @@ public class WebhookProcessor extends NotificationBase {
         data = data.replace("%s", triggerValue);
         String[] splitted = triggerValue.split(StringUtils.BODY_SEPARATOR_STRING);
         switch (splitted.length) {
+            case 6 :
+                data = PIN_PATTERN_5.matcher(data).replaceFirst(splitted[4]);
             case 5 :
                 data = PIN_PATTERN_4.matcher(data).replaceFirst(splitted[4]);
             case 4 :
