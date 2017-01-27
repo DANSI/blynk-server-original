@@ -154,7 +154,7 @@ public class WebhookProcessor extends NotificationBase {
         String[] splitted = triggerValue.split(StringUtils.BODY_SEPARATOR_STRING);
         switch (splitted.length) {
             case 6 :
-                data = PIN_PATTERN_5.matcher(data).replaceFirst(splitted[4]);
+                data = PIN_PATTERN_5.matcher(data).replaceFirst(splitted[5]);
             case 5 :
                 data = PIN_PATTERN_4.matcher(data).replaceFirst(splitted[4]);
             case 4 :
