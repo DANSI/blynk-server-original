@@ -143,7 +143,7 @@
         <javax.mail.version>1.5.5</javax.mail.version>
         <commons-validator.version>1.5.0</commons-validator.version>
         <postgresql.version>9.4.1208</postgresql.version>
-        <HikariCP.version>2.5.1</HikariCP.version>
+        <HikariCP.version>2.6.0</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>
 
         <!-- test dependencies -->
