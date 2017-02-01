@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -35,6 +36,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static cc.blynk.server.workers.timer.TimerWorker.TIMER_MSG_ID;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
@@ -103,6 +105,14 @@ public class TimerTest extends IntegrationBase {
 
         verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+    }
+
+    @Test
+    public void testIsTimeMethod() {
+        ZonedDateTime currentDateTime = ZonedDateTime.now(DateTimeUtils.UTC).withHour(23);
+        //kiev is +2, so as currentDateTime has 23 hour. kiev should be always ahead.
+        LocalDateTime userDateTime = currentDateTime.withZoneSameInstant(ZoneId.of("Europe/Kiev")).toLocalDateTime();
+        assertNotEquals(currentDateTime.getDayOfWeek(), userDateTime.getDayOfWeek());
     }
 
     @Test

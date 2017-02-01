@@ -6,8 +6,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
-import cc.blynk.server.core.model.widgets.others.eventor.Rule;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -90,23 +88,9 @@ public class CreateWidgetLogic {
         user.lastModifiedTs = dash.updatedAt;
 
         if (newWidget instanceof Timer) {
-            Timer timer  = (Timer) newWidget;
-            timerWorker.add(state.userKey, timer, dashId);
+            timerWorker.add(state.userKey, (Timer) newWidget, dashId);
         } else if (newWidget instanceof Eventor) {
-            Eventor eventor = (Eventor) newWidget;
-            if (eventor.rules != null) {
-                for (Rule rule : eventor.rules) {
-                    if (rule.triggerTime != null && rule.actions != null && rule.actions.length > 0) {
-                        if (rule.actions[0] instanceof SetPinAction) {
-                            SetPinAction setPinAction = (SetPinAction) rule.actions[0];
-                            if (setPinAction.isValid()) {
-                                timerWorker.add(state.userKey, dashId, eventor.deviceId, eventor.id,
-                                        rule.triggerTime.id, rule.triggerTime, setPinAction);
-                            }
-                        }
-                    }
-                }
-            }
+            timerWorker.add(state.userKey, (Eventor) newWidget, dashId);
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

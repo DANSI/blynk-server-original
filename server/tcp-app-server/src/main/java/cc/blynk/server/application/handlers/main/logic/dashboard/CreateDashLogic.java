@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
+import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
@@ -93,6 +94,9 @@ public class CreateDashLogic {
         for (Widget widget : newDash.widgets) {
             if (widget instanceof Timer) {
                 timerWorker.add(state.userKey, (Timer) widget, newDash.id);
+            }
+            if (widget instanceof Eventor) {
+                timerWorker.add(state.userKey, (Eventor) widget, newDash.id);
             }
         }
 

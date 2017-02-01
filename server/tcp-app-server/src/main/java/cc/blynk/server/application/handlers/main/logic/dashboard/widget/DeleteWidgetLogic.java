@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
+import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -62,8 +63,9 @@ public class DeleteWidgetLogic {
         deleteWidget(user, dash, existingWidgetIndex);
 
         if (widgetToDelete instanceof Timer) {
-            Timer timer  = (Timer) widgetToDelete;
-            timerWorker.delete(state.userKey, timer, dashId);
+            timerWorker.delete(state.userKey, (Timer) widgetToDelete, dashId);
+        } else if (widgetToDelete instanceof Eventor) {
+            timerWorker.delete(state.userKey, (Eventor) widgetToDelete, dashId);
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
@@ -79,8 +81,9 @@ public class DeleteWidgetLogic {
             if (widgetToDelete.tabId > lastTabIndex) {
                 removedWidgetPrice += widgetToDelete.getPrice();
                 if (widgetToDelete instanceof Timer) {
-                    Timer timer  = (Timer) widgetToDelete;
-                    timerWorker.delete(userKey, timer, dash.id);
+                    timerWorker.delete(userKey, (Timer) widgetToDelete, dash.id);
+                } else if (widgetToDelete instanceof Eventor) {
+                    timerWorker.delete(userKey, (Eventor) widgetToDelete, dash.id);
                 }
             } else {
                 zeroTabWidgets.add(widgetToDelete);

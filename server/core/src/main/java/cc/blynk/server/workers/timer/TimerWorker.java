@@ -8,6 +8,8 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
+import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
+import cc.blynk.server.core.model.widgets.others.eventor.Rule;
 import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.utils.ArrayUtil;
@@ -77,12 +79,29 @@ public class TimerWorker implements Runnable {
                         add(entry.getKey(), timer, dashBoard.id);
                         counter++;
                     }
+                    if (widget instanceof Eventor) {
+                        Eventor eventor = (Eventor) widget;
+                        add(entry.getKey(), eventor, dashBoard.id);
+                        counter++;
+                    }
                 }
             }
         }
         log.info("Timers : {}", counter);
     }
 
+    public void add(UserKey userKey, Eventor eventor, int dashId) {
+        if (eventor.rules != null) {
+            for (Rule rule : eventor.rules) {
+                if (rule.isValidTimerRule()) {
+                    add(userKey, dashId, eventor.deviceId, eventor.id,
+                            rule.triggerTime.id, rule.triggerTime, rule.actions[0]);
+                }
+            }
+        }
+    }
+
+    //todo remove after migration
     public void add(UserKey userKey, Timer timer, int dashId) {
         if (timer.isValidStart()) {
             add(userKey, dashId, timer.deviceId, timer.id, 0, new TimerTime(timer.startTime), timer.startValue);
@@ -96,6 +115,18 @@ public class TimerWorker implements Runnable {
         timerExecutors[hash(time.time)].put(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time), value);
     }
 
+    public void delete(UserKey userKey, Eventor eventor, int dashId) {
+        if (eventor.rules != null) {
+            for (Rule rule : eventor.rules) {
+                if (rule.isValidTimerRule()) {
+                    delete(userKey, dashId, eventor.deviceId, eventor.id, rule.triggerTime.id, rule.triggerTime);
+                }
+            }
+        }
+    }
+
+
+    //todo remove after migration
     public void delete(UserKey userKey, Timer timer, int dashId) {
         if (timer.isValidStart()) {
             delete(userKey, dashId, timer.deviceId, timer.id, 0, new TimerTime(timer.startTime));
@@ -164,9 +195,14 @@ public class TimerWorker implements Runnable {
                                 //ignore. this code should be removed anyway, after migration.
                             }
                         } else {
-                            SetPinAction setPinAction = (SetPinAction) objValue;
-                            value = setPinAction.makeHardwareBody();
-                            dash.update(key.deviceId, setPinAction.pin.pin, setPinAction.pin.pinType, setPinAction.value, nowMillis);
+                            if (objValue instanceof SetPinAction) {
+                                SetPinAction setPinAction = (SetPinAction) objValue;
+                                value = setPinAction.makeHardwareBody();
+                                dash.update(key.deviceId, setPinAction.pin.pin, setPinAction.pin.pinType, setPinAction.value, nowMillis);
+                            } else {
+                                //todo other type of actions not supported yet. maybe in future.
+                                continue;
+                            }
                         }
                         triggerTimer(sessionDao, key.userKey, value, key.dashId, key.deviceId);
                     }
@@ -177,6 +213,7 @@ public class TimerWorker implements Runnable {
         return activeTimers;
     }
 
+    //todo cover this use case with test
     private boolean isTime(TimerTime timerTime, ZonedDateTime currentDateTime) {
         LocalDateTime userDateTime = currentDateTime.withZoneSameInstant(timerTime.tzName).toLocalDateTime();
         final int dayOfWeek = userDateTime.getDayOfWeek().ordinal() + 1;

@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
+import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -62,12 +63,16 @@ public class UpdateDashLogic {
         for (Widget widget : existingDash.widgets) {
             if (widget instanceof Timer) {
                 timerWorker.delete(state.userKey, (Timer) widget, existingDash.id);
+            } else if (widget instanceof Eventor) {
+                timerWorker.delete(state.userKey, (Eventor) widget, existingDash.id);
             }
         }
 
         for (Widget widget : updatedDash.widgets) {
             if (widget instanceof Timer) {
                 timerWorker.add(state.userKey, (Timer) widget, updatedDash.id);
+            } else if (widget instanceof Eventor) {
+                timerWorker.add(state.userKey, (Eventor) widget, updatedDash.id);
             }
         }
 

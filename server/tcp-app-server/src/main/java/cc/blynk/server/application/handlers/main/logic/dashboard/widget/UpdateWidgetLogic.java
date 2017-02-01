@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
+import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.BaseServerException;
@@ -88,13 +89,15 @@ public class UpdateWidgetLogic {
         }
 
         if (prevWidget instanceof Timer) {
-            Timer prevTimer  = (Timer) prevWidget;
-            timerWorker.delete(state.userKey, prevTimer, dashId);
+            timerWorker.delete(state.userKey, (Timer) prevWidget, dashId);
+        } else if (prevWidget instanceof Eventor) {
+            timerWorker.delete(state.userKey, (Eventor) prevWidget, dashId);
         }
 
         if (newWidget instanceof Timer) {
-            Timer timer  = (Timer) newWidget;
-            timerWorker.add(state.userKey, timer, dashId);
+            timerWorker.add(state.userKey, (Timer) newWidget, dashId);
+        } else if (newWidget instanceof Eventor) {
+            timerWorker.add(state.userKey, (Eventor) newWidget, dashId);
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

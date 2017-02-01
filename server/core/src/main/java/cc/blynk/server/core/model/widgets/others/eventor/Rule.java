@@ -41,6 +41,10 @@ public class Rule {
         return isActive && notEmpty() && triggerPin.isSame(pin, pinType);
     }
 
+    public boolean isValidTimerRule() {
+        return triggerTime != null && actions != null && actions.length > 0 && actions[0].isValid();
+    }
+
     public boolean isValid(double value) {
         return condition.isValid(value);
     }
