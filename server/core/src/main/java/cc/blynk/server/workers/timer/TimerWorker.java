@@ -38,6 +38,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 public class TimerWorker implements Runnable {
 
     private static final Logger log = LogManager.getLogger(TimerWorker.class);
+    public static final int TIMER_MSG_ID = 7777;
 
     private final UserDao userDao;
     private final SessionDao sessionDao;
@@ -80,20 +81,28 @@ public class TimerWorker implements Runnable {
 
     public void add(UserKey userKey, Timer timer, int dashId) {
         if (timer.isValidStart()) {
-            timerExecutors[hash(timer.startTime)].put(new TimerKey(userKey, dashId, timer, timer.startTime, timer.startValue), EMPTY_VALUE);
+            add(userKey, dashId, timer.deviceId, timer.id, timer.startTime, timer.startValue);
         }
         if (timer.isValidStop()) {
-            timerExecutors[hash(timer.stopTime)].put(new TimerKey(userKey, dashId, timer, timer.stopTime, timer.stopValue), EMPTY_VALUE);
+            add(userKey, dashId, timer.deviceId, timer.id, timer.stopTime, timer.stopValue);
         }
+    }
+
+    public void add(UserKey userKey, int dashId, int deviceId, long widgetId, int time, String value) {
+        timerExecutors[hash(time)].put(new TimerKey(userKey, dashId, deviceId, widgetId, time, value), EMPTY_VALUE);
     }
 
     public void delete(UserKey userKey, Timer timer, int dashId) {
         if (timer.isValidStart()) {
-            timerExecutors[hash(timer.startTime)].remove(new TimerKey(userKey, dashId, timer, timer.startTime, timer.startValue));
+            delete(userKey, dashId, timer.deviceId, timer.id, timer.startTime, timer.startValue);
         }
         if (timer.isValidStop()) {
-            timerExecutors[hash(timer.stopTime)].remove(new TimerKey(userKey, dashId, timer, timer.stopTime, timer.stopValue));
+            delete(userKey, dashId, timer.deviceId, timer.id, timer.stopTime, timer.stopValue);
         }
+    }
+
+    public void delete(UserKey userKey, int dashId, int deviceId, long widgetId, int time, String value) {
+        timerExecutors[hash(time)].remove(new TimerKey(userKey, dashId, deviceId, widgetId, time, value));
     }
 
     private int actuallySendTimers;
@@ -121,8 +130,13 @@ public class TimerWorker implements Runnable {
                     DashBoard dash = user.profile.getDashById(key.dashId);
                     if (dash != null && dash.isActive) {
                         activeTimers++;
-                        triggerTimer(sessionDao, key.userKey, key.value, key.dashId, key.timer.deviceId);
-                        key.timer.value = key.value;
+                        try {
+                            Timer timer = (Timer) dash.getWidgetById(key.widgetId);
+                            triggerTimer(sessionDao, key.userKey, key.value, key.dashId, key.deviceId);
+                            timer.value = key.value;
+                        } catch (Exception e) {
+                            //ignore, that's fine.
+                        }
                     }
                 }
             }
@@ -137,7 +151,7 @@ public class TimerWorker implements Runnable {
     private void triggerTimer(SessionDao sessionDao, UserKey userKey, String value, int dashId, int deviceId) {
         Session session = sessionDao.userSession.get(userKey);
         if (session != null) {
-            if (!session.sendMessageToHardware(dashId, HARDWARE, 7777, value, deviceId)) {
+            if (!session.sendMessageToHardware(dashId, HARDWARE, TIMER_MSG_ID, value, deviceId)) {
                 actuallySendTimers++;
             }
         }

@@ -1,7 +1,6 @@
 package cc.blynk.server.workers.timer;
 
 import cc.blynk.server.core.dao.UserKey;
-import cc.blynk.server.core.model.widgets.controls.Timer;
 
 /**
  * The Blynk Project.
@@ -14,16 +13,19 @@ public class TimerKey {
 
     public final int dashId;
 
-    public final Timer timer;
+    public final int deviceId;
+
+    public final long widgetId;
 
     public final int exactlyTime;
 
     public final String value;
 
-    public TimerKey(UserKey userKey, int dashId, Timer timer, int exactlyTime, String value) {
+    public TimerKey(UserKey userKey, int dashId, int deviceId, long widgetId, int exactlyTime, String value) {
         this.userKey = userKey;
         this.dashId = dashId;
-        this.timer = timer;
+        this.deviceId = deviceId;
+        this.widgetId = widgetId;
         this.exactlyTime = exactlyTime;
         this.value = value;
     }
@@ -35,10 +37,11 @@ public class TimerKey {
 
         TimerKey timerKey = (TimerKey) o;
 
-        if (exactlyTime != timerKey.exactlyTime) return false;
         if (dashId != timerKey.dashId) return false;
+        if (deviceId != timerKey.deviceId) return false;
+        if (widgetId != timerKey.widgetId) return false;
+        if (exactlyTime != timerKey.exactlyTime) return false;
         if (userKey != null ? !userKey.equals(timerKey.userKey) : timerKey.userKey != null) return false;
-        if (timer != null ? !timer.equals(timerKey.timer) : timerKey.timer != null) return false;
         return !(value != null ? !value.equals(timerKey.value) : timerKey.value != null);
 
     }
@@ -46,9 +49,10 @@ public class TimerKey {
     @Override
     public int hashCode() {
         int result = userKey != null ? userKey.hashCode() : 0;
-        result = 31 * result + (timer != null ? timer.hashCode() : 0);
-        result = 31 * result + exactlyTime;
         result = 31 * result + dashId;
+        result = 31 * result + deviceId;
+        result = 31 * result + (int) (widgetId ^ (widgetId >>> 32));
+        result = 31 * result + exactlyTime;
         result = 31 * result + (value != null ? value.hashCode() : 0);
         return result;
     }
