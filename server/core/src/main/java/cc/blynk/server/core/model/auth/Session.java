@@ -4,6 +4,7 @@ import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
+import cc.blynk.utils.ArrayUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -15,7 +16,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.IntStream;
 
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
@@ -95,7 +95,7 @@ public class Session {
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
             if (hardwareState != null && hardwareState.dashId == activeDashId && channel.isWritable() &&
-                    (deviceIds.length == 0 || IntStream.of(deviceIds).anyMatch(x -> x == hardwareState.deviceId))) {
+                    (deviceIds.length == 0 || ArrayUtil.contains(deviceIds, hardwareState.deviceId))) {
                 targetChannels.add(channel);
             }
         }
