@@ -43,4 +43,13 @@ public class ArrayUtil {
         return result;
     }
 
+    public static boolean contains(final int[] ar, final int val) {
+        for (final int arVal : ar) {
+            if (arVal == val) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -86,6 +86,7 @@ public class Session {
         }
     }
 
+    //todo avoid allocations of varargs?
     public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int... deviceIds) {
         if (hardwareChannels.size() == 0) {
             return true; // -> no active hardware

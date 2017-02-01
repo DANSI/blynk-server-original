@@ -1,6 +1,7 @@
 package cc.blynk.server.workers.timer;
 
 import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
 
 /**
  * The Blynk Project.
@@ -19,15 +20,15 @@ public class TimerKey {
 
     public final int additionalId;
 
-    public final int exactlyTime;
+    public final TimerTime time;
 
-    public TimerKey(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, int exactlyTime) {
+    public TimerKey(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, TimerTime time) {
         this.userKey = userKey;
         this.dashId = dashId;
         this.deviceId = deviceId;
         this.widgetId = widgetId;
         this.additionalId = additionalId;
-        this.exactlyTime = exactlyTime;
+        this.time = time;
     }
 
     @Override
@@ -41,9 +42,8 @@ public class TimerKey {
         if (deviceId != timerKey.deviceId) return false;
         if (widgetId != timerKey.widgetId) return false;
         if (additionalId != timerKey.additionalId) return false;
-        if (exactlyTime != timerKey.exactlyTime) return false;
-        return !(userKey != null ? !userKey.equals(timerKey.userKey) : timerKey.userKey != null);
-
+        if (userKey != null ? !userKey.equals(timerKey.userKey) : timerKey.userKey != null) return false;
+        return !(time != null ? !time.equals(timerKey.time) : timerKey.time != null);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class TimerKey {
         result = 31 * result + deviceId;
         result = 31 * result + (int) (widgetId ^ (widgetId >>> 32));
         result = 31 * result + additionalId;
-        result = 31 * result + exactlyTime;
+        result = 31 * result + (time != null ? time.hashCode() : 0);
         return result;
     }
 }

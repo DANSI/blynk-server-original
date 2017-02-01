@@ -14,6 +14,8 @@ public class Rule {
 
     public Pin triggerPin;
 
+    public TimerTime triggerTime;
+
     public BaseCondition condition;
 
     public BaseAction[] actions;

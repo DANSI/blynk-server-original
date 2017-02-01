@@ -2,7 +2,6 @@ package cc.blynk.server.core.processors;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
@@ -150,12 +149,12 @@ public class EventorProcessor {
     }
 
     private void execute(Session session, DashBoard dash, int deviceId, SetPinAction action) {
-        execute(session, dash.isActive, dash.id, deviceId, action.pin, action.value);
+        execute(session, dash.isActive, dash.id, deviceId, action);
         dash.update(deviceId, action.pin.pin, action.pin.pinType, action.value);
     }
 
-    private void execute(Session session, boolean isActive, int dashId, int deviceId, Pin pin, String value) {
-        final String body = Pin.makeHardwareBody(pin.pwmMode, pin.pinType, pin.pin, value);
+    private void execute(Session session, boolean isActive, int dashId, int deviceId, SetPinAction action) {
+        final String body = action.makeHardwareBody();
         session.sendMessageToHardware(dashId, HARDWARE, 888, body, deviceId);
         if (isActive) {
             session.sendToApps(HARDWARE, 888, dashId, deviceId, body);

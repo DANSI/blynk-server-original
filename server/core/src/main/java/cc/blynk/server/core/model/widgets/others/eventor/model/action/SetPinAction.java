@@ -21,6 +21,10 @@ public class SetPinAction extends BaseAction {
         this.value = value;
     }
 
+    public String makeHardwareBody() {
+        return Pin.makeHardwareBody(pin.pwmMode, pin.pinType, pin.pin, value);
+    }
+
     @Override
     public boolean isValid() {
         return pin != null && pin.pinType != null && pin.pin > -1 && value != null;

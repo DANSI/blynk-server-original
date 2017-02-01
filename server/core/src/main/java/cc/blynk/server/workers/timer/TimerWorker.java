@@ -8,11 +8,15 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
+import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
+import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.DateTimeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -42,7 +46,8 @@ public class TimerWorker implements Runnable {
 
     private final UserDao userDao;
     private final SessionDao sessionDao;
-    private final ConcurrentMap<TimerKey, String>[] timerExecutors;
+    //todo refactor after migration
+    private final ConcurrentMap<TimerKey, Object>[] timerExecutors;
     private final static int size = 8640;
 
     @SuppressWarnings("unchecked")
@@ -80,28 +85,28 @@ public class TimerWorker implements Runnable {
 
     public void add(UserKey userKey, Timer timer, int dashId) {
         if (timer.isValidStart()) {
-            add(userKey, dashId, timer.deviceId, timer.id, 0, timer.startTime, timer.startValue);
+            add(userKey, dashId, timer.deviceId, timer.id, 0, new TimerTime(timer.startTime), timer.startValue);
         }
         if (timer.isValidStop()) {
-            add(userKey, dashId, timer.deviceId, timer.id, 1, timer.stopTime, timer.stopValue);
+            add(userKey, dashId, timer.deviceId, timer.id, 1, new TimerTime(timer.stopTime), timer.stopValue);
         }
     }
 
-    public void add(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, int time, String value) {
-        timerExecutors[hash(time)].put(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time), value);
+    public void add(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, TimerTime time, Object value) {
+        timerExecutors[hash(time.time)].put(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time), value);
     }
 
     public void delete(UserKey userKey, Timer timer, int dashId) {
         if (timer.isValidStart()) {
-            delete(userKey, dashId, timer.deviceId, timer.id, 0, timer.startTime);
+            delete(userKey, dashId, timer.deviceId, timer.id, 0, new TimerTime(timer.startTime));
         }
         if (timer.isValidStop()) {
-            delete(userKey, dashId, timer.deviceId, timer.id, 1, timer.stopTime);
+            delete(userKey, dashId, timer.deviceId, timer.id, 1, new TimerTime(timer.stopTime));
         }
     }
 
-    public void delete(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, int time) {
-        timerExecutors[hash(time)].remove(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time));
+    public void delete(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, TimerTime time) {
+        timerExecutors[hash(time.time)].remove(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time));
     }
 
     private int actuallySendTimers;
@@ -110,43 +115,72 @@ public class TimerWorker implements Runnable {
     public void run() {
         log.trace("Starting timer...");
 
-        int curSeconds = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay();
-        ConcurrentMap<TimerKey, String> tickedExecutors = timerExecutors[hash(curSeconds)];
+        final ZonedDateTime currentDateTime = ZonedDateTime.now(DateTimeUtils.UTC);
+        final int curSeconds = currentDateTime.toLocalTime().toSecondOfDay();
+
+        ConcurrentMap<TimerKey, ?> tickedExecutors = timerExecutors[hash(curSeconds)];
 
         int readyForTickTimers = tickedExecutors.size();
         if (readyForTickTimers == 0) {
             return;
         }
 
-        final long curTime = System.currentTimeMillis();
+        final long nowMillis = System.currentTimeMillis();
+        int activeTimers = 0;
+
+        try {
+            activeTimers = send(tickedExecutors, currentDateTime, curSeconds, nowMillis);
+        } catch (Exception e) {
+            log.error("Error running timers. ", e);
+        }
+
+        if (activeTimers > 0) {
+            log.info("Timer finished. Ready {}, Active {}, Actual {}. Processing time : {} ms",
+                    readyForTickTimers, activeTimers, actuallySendTimers, System.currentTimeMillis() - nowMillis);
+        }
+    }
+
+    private int send(ConcurrentMap<TimerKey, ?> tickedExecutors, ZonedDateTime currentDateTime, int curSeconds, long nowMillis) {
         int activeTimers = 0;
         actuallySendTimers = 0;
 
-        for (Map.Entry<TimerKey, String> entry : tickedExecutors.entrySet()) {
+        for (Map.Entry<TimerKey, ?> entry : tickedExecutors.entrySet()) {
             final TimerKey key = entry.getKey();
-            final String value = entry.getValue();
-            if (key.exactlyTime == curSeconds) {
+            final Object objValue = entry.getValue();
+            if (key.time.time == curSeconds && isTime(key.time, currentDateTime)) {
                 User user = userDao.users.get(key.userKey);
                 if (user != null) {
                     DashBoard dash = user.profile.getDashById(key.dashId);
                     if (dash != null && dash.isActive) {
                         activeTimers++;
-                        try {
-                            Timer timer = (Timer) dash.getWidgetById(key.widgetId);
-                            triggerTimer(sessionDao, key.userKey, value, key.dashId, key.deviceId);
-                            timer.value = value;
-                        } catch (Exception e) {
-                            //ignore, that's fine.
+                        String value;
+                        //todo remove after migration
+                        if (objValue instanceof String) {
+                            value = (String) objValue;
+                            try {
+                                Timer timer = (Timer) dash.getWidgetById(key.widgetId);
+                                timer.value = value;
+                            } catch (Exception e) {
+                                //ignore. this code should be removed anyway, after migration.
+                            }
+                        } else {
+                            SetPinAction setPinAction = (SetPinAction) objValue;
+                            value = setPinAction.makeHardwareBody();
+                            dash.update(key.deviceId, setPinAction.pin.pin, setPinAction.pin.pinType, setPinAction.value, nowMillis);
                         }
+                        triggerTimer(sessionDao, key.userKey, value, key.dashId, key.deviceId);
                     }
                 }
             }
         }
 
-        if (activeTimers > 0) {
-            log.info("Timer finished. Ready {}, Active {}, Actual {}. Processing time : {} ms",
-                    readyForTickTimers, activeTimers, actuallySendTimers, System.currentTimeMillis() - curTime);
-        }
+        return activeTimers;
+    }
+
+    private boolean isTime(TimerTime timerTime, ZonedDateTime currentDateTime) {
+        LocalDateTime userDateTime = currentDateTime.withZoneSameInstant(timerTime.tzName).toLocalDateTime();
+        final int dayOfWeek = userDateTime.getDayOfWeek().ordinal() + 1;
+        return ArrayUtil.contains(timerTime.days, dayOfWeek);
     }
 
     private void triggerTimer(SessionDao sessionDao, UserKey userKey, String value, int dashId, int deviceId) {
@@ -155,6 +189,7 @@ public class TimerWorker implements Runnable {
             if (!session.sendMessageToHardware(dashId, HARDWARE, TIMER_MSG_ID, value, deviceId)) {
                 actuallySendTimers++;
             }
+            session.sendToApps(HARDWARE, TIMER_MSG_ID, dashId, deviceId, value);
         }
     }
 
