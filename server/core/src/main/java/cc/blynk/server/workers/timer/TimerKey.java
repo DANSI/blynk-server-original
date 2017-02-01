@@ -17,17 +17,17 @@ public class TimerKey {
 
     public final long widgetId;
 
+    public final int additionalId;
+
     public final int exactlyTime;
 
-    public final String value;
-
-    public TimerKey(UserKey userKey, int dashId, int deviceId, long widgetId, int exactlyTime, String value) {
+    public TimerKey(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, int exactlyTime) {
         this.userKey = userKey;
         this.dashId = dashId;
         this.deviceId = deviceId;
         this.widgetId = widgetId;
+        this.additionalId = additionalId;
         this.exactlyTime = exactlyTime;
-        this.value = value;
     }
 
     @Override
@@ -40,9 +40,9 @@ public class TimerKey {
         if (dashId != timerKey.dashId) return false;
         if (deviceId != timerKey.deviceId) return false;
         if (widgetId != timerKey.widgetId) return false;
+        if (additionalId != timerKey.additionalId) return false;
         if (exactlyTime != timerKey.exactlyTime) return false;
-        if (userKey != null ? !userKey.equals(timerKey.userKey) : timerKey.userKey != null) return false;
-        return !(value != null ? !value.equals(timerKey.value) : timerKey.value != null);
+        return !(userKey != null ? !userKey.equals(timerKey.userKey) : timerKey.userKey != null);
 
     }
 
@@ -52,8 +52,8 @@ public class TimerKey {
         result = 31 * result + dashId;
         result = 31 * result + deviceId;
         result = 31 * result + (int) (widgetId ^ (widgetId >>> 32));
+        result = 31 * result + additionalId;
         result = 31 * result + exactlyTime;
-        result = 31 * result + (value != null ? value.hashCode() : 0);
         return result;
     }
 }

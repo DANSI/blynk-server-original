@@ -44,7 +44,6 @@ public class TimerWorker implements Runnable {
     private final SessionDao sessionDao;
     private final ConcurrentMap<TimerKey, String>[] timerExecutors;
     private final static int size = 8640;
-    private final static String EMPTY_VALUE = "";
 
     @SuppressWarnings("unchecked")
     public TimerWorker(UserDao userDao, SessionDao sessionDao) {
@@ -81,28 +80,28 @@ public class TimerWorker implements Runnable {
 
     public void add(UserKey userKey, Timer timer, int dashId) {
         if (timer.isValidStart()) {
-            add(userKey, dashId, timer.deviceId, timer.id, timer.startTime, timer.startValue);
+            add(userKey, dashId, timer.deviceId, timer.id, 0, timer.startTime, timer.startValue);
         }
         if (timer.isValidStop()) {
-            add(userKey, dashId, timer.deviceId, timer.id, timer.stopTime, timer.stopValue);
+            add(userKey, dashId, timer.deviceId, timer.id, 1, timer.stopTime, timer.stopValue);
         }
     }
 
-    public void add(UserKey userKey, int dashId, int deviceId, long widgetId, int time, String value) {
-        timerExecutors[hash(time)].put(new TimerKey(userKey, dashId, deviceId, widgetId, time, value), EMPTY_VALUE);
+    public void add(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, int time, String value) {
+        timerExecutors[hash(time)].put(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time), value);
     }
 
     public void delete(UserKey userKey, Timer timer, int dashId) {
         if (timer.isValidStart()) {
-            delete(userKey, dashId, timer.deviceId, timer.id, timer.startTime, timer.startValue);
+            delete(userKey, dashId, timer.deviceId, timer.id, 0, timer.startTime);
         }
         if (timer.isValidStop()) {
-            delete(userKey, dashId, timer.deviceId, timer.id, timer.stopTime, timer.stopValue);
+            delete(userKey, dashId, timer.deviceId, timer.id, 1, timer.stopTime);
         }
     }
 
-    public void delete(UserKey userKey, int dashId, int deviceId, long widgetId, int time, String value) {
-        timerExecutors[hash(time)].remove(new TimerKey(userKey, dashId, deviceId, widgetId, time, value));
+    public void delete(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, int time) {
+        timerExecutors[hash(time)].remove(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time));
     }
 
     private int actuallySendTimers;
@@ -123,7 +122,9 @@ public class TimerWorker implements Runnable {
         int activeTimers = 0;
         actuallySendTimers = 0;
 
-        for (TimerKey key : tickedExecutors.keySet()) {
+        for (Map.Entry<TimerKey, String> entry : tickedExecutors.entrySet()) {
+            final TimerKey key = entry.getKey();
+            final String value = entry.getValue();
             if (key.exactlyTime == curSeconds) {
                 User user = userDao.users.get(key.userKey);
                 if (user != null) {
@@ -132,8 +133,8 @@ public class TimerWorker implements Runnable {
                         activeTimers++;
                         try {
                             Timer timer = (Timer) dash.getWidgetById(key.widgetId);
-                            triggerTimer(sessionDao, key.userKey, key.value, key.dashId, key.deviceId);
-                            timer.value = key.value;
+                            triggerTimer(sessionDao, key.userKey, value, key.dashId, key.deviceId);
+                            timer.value = value;
                         } catch (Exception e) {
                             //ignore, that's fine.
                         }
