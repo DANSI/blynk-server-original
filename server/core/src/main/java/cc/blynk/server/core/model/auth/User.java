@@ -1,7 +1,6 @@
 package cc.blynk.server.core.model.auth;
 
 import cc.blynk.server.core.model.AppName;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.JsonParser;
@@ -38,7 +37,7 @@ public class User {
 
     public boolean isFacebookUser;
 
-    private volatile int energy;
+    public volatile int energy;
 
     public transient int emailMessages;
     public transient long emailSentTs;
@@ -65,40 +64,23 @@ public class User {
         return name + "-" + appName;
     }
 
-    public boolean dashIdExists(int dashId) {
-        for (DashBoard dashBoard : profile.dashBoards) {
-            if (dashBoard.id == dashId) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private void checkPrice(int price) {
+    public void subtractEnergy(int price) {
         if (AppName.BLYNK.equals(appName) && price > energy) {
             throw new EnergyLimitException("Not enough energy.");
         }
-    }
-
-    public void subtractEnergy(int price) {
-        checkPrice(price);
+        //non-atomic. we are fine with that
         this.energy -= price;
         this.lastModifiedTs = System.currentTimeMillis();
     }
 
     public void recycleEnergy(int price) {
-        this.energy += price;
-        this.lastModifiedTs = System.currentTimeMillis();
+        purchaseEnergy(price);
     }
 
     public void purchaseEnergy(int price) {
+        //non-atomic. we are fine with that
         this.energy += price;
         this.lastModifiedTs = System.currentTimeMillis();
-    }
-
-    public int getEnergy() {
-        return energy;
     }
 
     @Override

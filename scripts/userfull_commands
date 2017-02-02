@@ -1,5 +1,6 @@
 View number of open connections : netstat -an | awk '/^tcp/ {print $NF}' | sort | uniq -c | sort -rn
 Number of files : find -maxdepth 1 -type f | wc -l
+Delete filed older than 180 days : find ./data/data/ -type f -mtime +180 -delete
 View top traffic : iftop -n
 Find files less than 200 bytes : find data -maxdepth 1 -type f -size -200c
 View tcp dump : tcpdump -n host x.x.x.x

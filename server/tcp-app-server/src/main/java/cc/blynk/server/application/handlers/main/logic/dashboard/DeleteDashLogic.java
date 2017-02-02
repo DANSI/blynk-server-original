@@ -52,11 +52,6 @@ public class DeleteDashLogic {
 
         user.recycleEnergy(dash.energySum());
 
-        //if last project and we have less than 1000 fill up to 1000
-        if (user.profile.dashBoards.length == 1 && user.getEnergy() < 1000 && user.getEnergy() >= 0) {
-            user.purchaseEnergy(1000 - user.getEnergy());
-        }
-
         for (Widget widget : dash.widgets) {
             if (widget instanceof Timer) {
                 timerWorker.delete(state.userKey, (Timer) widget, dashId);

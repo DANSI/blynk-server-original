@@ -15,7 +15,7 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 public class GetEnergyLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        ctx.writeAndFlush(makeUTF8StringMessage(GET_ENERGY, message.id, "" + user.getEnergy()), ctx.voidPromise());
+        ctx.writeAndFlush(makeUTF8StringMessage(GET_ENERGY, message.id, "" + user.energy), ctx.voidPromise());
     }
 
 }
