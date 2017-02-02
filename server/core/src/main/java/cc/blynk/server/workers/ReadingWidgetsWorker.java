@@ -34,6 +34,15 @@ public class ReadingWidgetsWorker implements Runnable {
     public void run() {
         log.debug("Starting reading widget worker.");
         long now = System.currentTimeMillis();
+        try {
+            int tickedWidgets = process(now);
+            log.debug("Starting reading widget worker. Ticket widgets : {}. Time : {}", tickedWidgets, System.currentTimeMillis() - now);
+        } catch (Exception e) {
+            log.error("Error processing reading widgets. ", e);
+        }
+    }
+
+    private int process(long now) {
         int tickedWidgets = 0;
         for (Map.Entry<UserKey, Session> entry : sessionDao.userSession.entrySet()) {
             final Session session = entry.getValue();
@@ -58,7 +67,7 @@ public class ReadingWidgetsWorker implements Runnable {
                 }
             }
         }
-        log.debug("Starting reading widget worker. Ticket widgets : {}. Time : {}", tickedWidgets, System.currentTimeMillis() - now);
+        return tickedWidgets;
     }
 
 }

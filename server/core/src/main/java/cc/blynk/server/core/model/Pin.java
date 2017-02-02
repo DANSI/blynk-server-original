@@ -70,7 +70,11 @@ public class Pin {
         return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
+    public boolean isNotValid() {
+        return pin == NO_PIN || pinType == null;
+    }
+
     public boolean notEmpty() {
-        return pinType != null && value != null && pin > -1;
+        return value != null && !isNotValid();
     }
 }

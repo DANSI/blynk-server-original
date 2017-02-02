@@ -57,8 +57,12 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
         }
     }
 
+    public boolean isNotValid() {
+        return pin == Pin.NO_PIN || pinType == null;
+    }
+
     public String makeHardwareBody() {
-        if (pin == Pin.NO_PIN || value == null || pinType == null) {
+        if (isNotValid() || value == null) {
             return null;
         }
         return isPWMSupported() ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);

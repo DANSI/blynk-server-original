@@ -37,6 +37,9 @@ public class Gauge extends OnePinWidget implements FrequencyWidget {
 
     @Override
     public void sendReadingCommand(Session session, int dashId) {
+        if (isNotValid()) {
+            return;
+        }
         session.sendMessageToHardware(dashId, HARDWARE, READING_MSG_ID, Pin.makeReadingHardwareBody(pinType.pintTypeChar, pin), deviceId);
     }
 
