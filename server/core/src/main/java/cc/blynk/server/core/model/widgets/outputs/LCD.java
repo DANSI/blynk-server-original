@@ -84,18 +84,12 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     }
 
     @Override
-    public final int getFrequency() {
-        return frequency;
-    }
-
-    @Override
-    public final long getLastRequestTS() {
-        return lastRequestTS;
-    }
-
-    @Override
-    public final void setLastRequestTS(long now) {
-        this.lastRequestTS = now;
+    public boolean isTicked(long now) {
+        if (frequency > 0 && now > lastRequestTS + frequency) {
+            this.lastRequestTS = now;
+            return true;
+        }
+        return false;
     }
 
     @Override
