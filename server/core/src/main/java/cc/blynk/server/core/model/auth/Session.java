@@ -130,6 +130,10 @@ public class Session {
         }
     }
 
+    public boolean isHardwareConnected() {
+        return hardwareChannels.size() > 0;
+    }
+
     public boolean isHardwareConnected(int dashId, int deviceId) {
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);

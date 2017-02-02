@@ -14,6 +14,7 @@ import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.redis.RedisClient;
+import cc.blynk.server.workers.ReadingWidgetsWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.IPUtils;
@@ -60,6 +61,7 @@ public class Holder implements Closeable {
     public final SMSWrapper smsWrapper;
     public final String region;
     public final TimerWorker timerWorker;
+    public final ReadingWidgetsWorker readingWidgetsWorker;
 
     public final EventorProcessor eventorProcessor;
     public final DefaultAsyncHttpClient asyncHttpClient;
@@ -109,6 +111,7 @@ public class Holder implements Closeable {
         this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.dbManager = new DBManager(blockingIOProcessor);
         this.timerWorker = new TimerWorker(userDao, sessionDao);
+        this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
     }
 
@@ -152,6 +155,7 @@ public class Holder implements Closeable {
 
         this.dbManager = new DBManager(blockingIOProcessor);
         this.timerWorker = new TimerWorker(userDao, sessionDao);
+        this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
     }
 

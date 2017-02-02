@@ -50,8 +50,10 @@ class JobLauncher {
         //millis we need to wait to start scheduler at the beginning of a second.
         startDelay = 1000 - (System.currentTimeMillis() % 1000);
 
-        //separate thread for timer.
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, startDelay, 1000, TimeUnit.MILLISECONDS);
+        //separate thread for timer and reading widgets
+        ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
+        ses.scheduleAtFixedRate(holder.timerWorker, startDelay, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.readingWidgetsWorker, startDelay + 400, 1000, TimeUnit.MILLISECONDS);
 
         //shutdown hook thread catcher
         Runtime.getRuntime().addShutdownHook(new Thread(

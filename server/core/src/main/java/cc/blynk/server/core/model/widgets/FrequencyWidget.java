@@ -1,5 +1,7 @@
 package cc.blynk.server.core.model.widgets;
 
+import cc.blynk.server.core.model.auth.Session;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -9,14 +11,16 @@ public interface FrequencyWidget {
 
     int getFrequency();
 
-    long getLastRequestTS(String body);
+    long getLastRequestTS();
 
-    void setLastRequestTS(String body, long now);
+    void setLastRequestTS(long now);
 
-    default boolean isTicked(String body) {
-        final long now = System.currentTimeMillis();
-        if (getFrequency() > 0 && now > getLastRequestTS(body) + getFrequency()) {
-            setLastRequestTS(body, now);
+    void sendReadingCommand(Session session, int dashId);
+
+    default boolean isTicked(long now) {
+        final int frequency = getFrequency();
+        if (frequency > 0 && now > getLastRequestTS() + frequency) {
+            setLastRequestTS(now);
             return true;
         }
         return false;

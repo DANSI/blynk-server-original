@@ -42,6 +42,10 @@ public class Pin {
         this.pinType = pinType;
     }
 
+    public static String makeReadingHardwareBody(char pinType, byte pin) {
+        return "" + pinType + 'r' + BODY_SEPARATOR_STRING + pin;
+    }
+
     public static String makeHardwareBody(char pinType, String pin, String value) {
         return "" + pinType + 'w'
                 + BODY_SEPARATOR_STRING + pin

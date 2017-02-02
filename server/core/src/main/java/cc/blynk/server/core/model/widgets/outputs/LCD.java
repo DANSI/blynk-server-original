@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.outputs;
 
 import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
@@ -8,10 +9,8 @@ import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.structure.LimitedArrayDeque;
 import io.netty.channel.Channel;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
@@ -31,7 +30,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
 
     private int frequency;
 
-    private transient Map<String, Long> lastRequestTS = new HashMap<>();
+    private transient long lastRequestTS;
 
     private static final int POOL_SIZE = ParseUtil.parseInt(System.getProperty("lcd.strings.pool.size", "6"));
     private transient final LimitedArrayDeque<String> lastCommands = new LimitedArrayDeque<>(POOL_SIZE);
@@ -90,13 +89,23 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     }
 
     @Override
-    public final long getLastRequestTS(String body) {
-        return lastRequestTS.getOrDefault(body, 0L);
+    public final long getLastRequestTS() {
+        return lastRequestTS;
     }
 
     @Override
-    public final void setLastRequestTS(String body, long now) {
-        this.lastRequestTS.put(body, now);
+    public final void setLastRequestTS(long now) {
+        this.lastRequestTS = now;
+    }
+
+    @Override
+    public void sendReadingCommand(Session session, int dashId) {
+        if (pins == null) {
+            return;
+        }
+        for (Pin pin : pins) {
+            session.sendMessageToHardware(dashId, HARDWARE, 7778, Pin.makeReadingHardwareBody(pin.pinType.pintTypeChar, pin.pin), deviceId);
+        }
     }
 
     @Override

@@ -161,7 +161,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         appClient2.send("hardware 1 ar 30");
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("ar 30"))));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(produce(1, HARDWARE, b("ar 30"))));
 
         clientPair.appClient.send("hardware 1 ar 30");
         verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
@@ -176,7 +176,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("hardware 1 ar 30");
         verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("ar 30"))));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(produce(2, HARDWARE, b("ar 30"))));
 
         clientPair.appClient.send("hardware 1 pm 2 2");
         verify(appClient2.responseMock, after(250).never()).channelRead(any(), any());

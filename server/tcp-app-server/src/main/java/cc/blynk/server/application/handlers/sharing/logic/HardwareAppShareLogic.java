@@ -84,17 +84,16 @@ public class HardwareAppShareLogic {
                 }
                 session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceId);
                 break;
+
+
+            //todo fully remove this section???
             case 'r':
                 Widget widget = dash.findWidgetByPin(deviceId, split[1].split(StringUtils.BODY_SEPARATOR_STRING));
                 if (widget == null) {
                     throw new IllegalCommandBodyException("No frequency widget for read command.");
                 }
 
-                if (widget instanceof FrequencyWidget) {
-                    if (((FrequencyWidget) widget).isTicked(split[1])) {
-                        session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceId);
-                    }
-                } else {
+                if (!(widget instanceof FrequencyWidget)) {
                     //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
                     session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceId);
                 }

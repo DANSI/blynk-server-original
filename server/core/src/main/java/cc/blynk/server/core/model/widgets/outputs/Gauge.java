@@ -1,7 +1,11 @@
 package cc.blynk.server.core.model.widgets.outputs;
 
+import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
+
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 
 /**
  * The Blynk Project.
@@ -22,13 +26,18 @@ public class Gauge extends OnePinWidget implements FrequencyWidget {
     }
 
     @Override
-    public final long getLastRequestTS(String body) {
+    public final long getLastRequestTS() {
         return lastRequestTS;
     }
 
     @Override
-    public final void setLastRequestTS(String body, long now) {
+    public final void setLastRequestTS(long now) {
         this.lastRequestTS = now;
+    }
+
+    @Override
+    public void sendReadingCommand(Session session, int dashId) {
+        session.sendMessageToHardware(dashId, HARDWARE, 7778, Pin.makeReadingHardwareBody(pinType.pintTypeChar, pin), deviceId);
     }
 
     @Override

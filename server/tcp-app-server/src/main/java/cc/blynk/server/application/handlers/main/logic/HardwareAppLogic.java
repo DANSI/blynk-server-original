@@ -126,6 +126,9 @@ public class HardwareAppLogic {
                 }
 
                 break;
+
+
+            //todo fully remove this section???
             case 'r' :
                 Widget widget = dash.findWidgetByPin(targetId, split[1].split(StringUtils.BODY_SEPARATOR_STRING));
                 if (widget == null) {
@@ -133,13 +136,8 @@ public class HardwareAppLogic {
                     ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
                     return;
                 }
-
-                if (widget instanceof FrequencyWidget) {
-                    if (((FrequencyWidget) widget).isTicked(split[1])) {
-                        session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], targetId);
-                    }
-                } else {
-                    //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
+                //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
+                if (!(widget instanceof FrequencyWidget)) {
                     session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], targetId);
                 }
                 break;
