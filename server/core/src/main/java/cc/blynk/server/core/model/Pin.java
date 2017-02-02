@@ -2,7 +2,7 @@ package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
 
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
  * The Blynk Project.
@@ -43,19 +43,19 @@ public class Pin {
     }
 
     public static String makeReadingHardwareBody(char pinType, byte pin) {
-        return "" + pinType + 'r' + BODY_SEPARATOR_STRING + pin;
+        return "" + pinType + 'r' + BODY_SEPARATOR + pin;
     }
 
     public static String makeHardwareBody(char pinType, String pin, String value) {
         return "" + pinType + 'w'
-                + BODY_SEPARATOR_STRING + pin
-                + BODY_SEPARATOR_STRING + value;
+                + BODY_SEPARATOR + pin
+                + BODY_SEPARATOR + value;
     }
 
     public static String makeHardwareBody(PinType pinType, byte pin, String value) {
         return "" + pinType.pintTypeChar + 'w'
-                + BODY_SEPARATOR_STRING + pin
-                + BODY_SEPARATOR_STRING + value;
+                + BODY_SEPARATOR + pin
+                + BODY_SEPARATOR + value;
     }
 
     public static String makeHardwareBody(boolean pwmMode, PinType pinType, byte pin, String value) {

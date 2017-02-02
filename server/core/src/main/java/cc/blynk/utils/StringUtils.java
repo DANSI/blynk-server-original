@@ -109,9 +109,9 @@ public class StringUtils {
     public static String prependDashIdAndDeviceId(int dashId, int deviceId, String body) {
         //todo this is back compatibility code. remove in future versions
         if (deviceId == 0) {
-            return dashId + BODY_SEPARATOR_STRING + body;
+            return "" + dashId + BODY_SEPARATOR + body;
         }
-        return String.valueOf(dashId) + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR_STRING + body;
+        return "" + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR+ body;
     }
 
 }

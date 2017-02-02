@@ -64,7 +64,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HTTP_NOTIFY;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_QR;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
  * The Blynk Project.
@@ -364,7 +364,7 @@ public class HttpAPILogic {
         }
 
         Session session = sessionDao.userSession.get(new UserKey(user));
-        session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id, deviceId, pin + BODY_SEPARATOR_STRING + property + BODY_SEPARATOR_STRING + values[0]);
+        session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id, deviceId, "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + values[0]);
         return Response.ok();
     }
 

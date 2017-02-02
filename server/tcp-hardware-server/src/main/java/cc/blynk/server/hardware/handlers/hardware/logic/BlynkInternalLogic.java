@@ -16,7 +16,7 @@ import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
  *
@@ -67,7 +67,7 @@ public class BlynkInternalLogic {
         DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(state.dashId);
         RTC rtc = dashBoard.getWidgetByType(RTC.class);
         if (rtc != null) {
-            ctx.writeAndFlush(makeASCIIStringMessage(BLYNK_INTERNAL, msgId, "rtc" + BODY_SEPARATOR_STRING + rtc.getTime()), ctx.voidPromise());
+            ctx.writeAndFlush(makeASCIIStringMessage(BLYNK_INTERNAL, msgId, "rtc" + BODY_SEPARATOR + rtc.getTime()), ctx.voidPromise());
         }
     }
 

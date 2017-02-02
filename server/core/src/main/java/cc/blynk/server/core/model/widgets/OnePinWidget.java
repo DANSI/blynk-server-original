@@ -10,7 +10,7 @@ import io.netty.channel.ChannelHandlerContext;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 /**
@@ -38,7 +38,7 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     public String value;
 
     protected static String makeHardwareBody(PinType pinType, byte pin, String value) {
-        return String.valueOf(pinType.pintTypeChar) + 'w' + BODY_SEPARATOR_STRING + pin + BODY_SEPARATOR_STRING + value;
+        return "" + pinType.pintTypeChar + 'w' + BODY_SEPARATOR + pin + BODY_SEPARATOR + value;
     }
 
     @Override

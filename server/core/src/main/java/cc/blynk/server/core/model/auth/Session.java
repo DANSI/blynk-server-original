@@ -161,9 +161,9 @@ public class Session {
 
         if (deviceId == 0) {
             //todo this is only for back compatibility. remove in future versions.
-            sendToApps(cmd, msgId, String.valueOf(dashId));
+            sendToApps(cmd, msgId, "" + dashId);
         } else {
-            sendToApps(cmd, msgId, String.valueOf(dashId) + DEVICE_SEPARATOR + deviceId);
+            sendToApps(cmd, msgId, "" + dashId + DEVICE_SEPARATOR + deviceId);
         }
     }
 

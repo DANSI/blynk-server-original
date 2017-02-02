@@ -130,7 +130,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
                 ctx.writeAndFlush(makeResponse(msgId, INVALID_TOKEN), ctx.voidPromise());
             } else {
                 log.info("Redirecting token '{}', '{}' to {}", token, ctx.channel().remoteAddress(), server);
-                ctx.writeAndFlush(makeASCIIStringMessage(CONNECT_REDIRECT, msgId, server + StringUtils.BODY_SEPARATOR_STRING + listenPort), ctx.voidPromise());
+                ctx.writeAndFlush(makeASCIIStringMessage(CONNECT_REDIRECT, msgId, server + StringUtils.BODY_SEPARATOR + listenPort), ctx.voidPromise());
             }
         });
     }

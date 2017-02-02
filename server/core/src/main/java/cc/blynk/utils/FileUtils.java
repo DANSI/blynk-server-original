@@ -74,9 +74,9 @@ public class FileUtils {
                 double value = onePinData.getDouble();
                 long ts = onePinData.getLong();
 
-                writer.write(String.valueOf(value));
+                writer.write("" + value);
                 writer.write(',');
-                writer.write(String.valueOf(ts));
+                writer.write("" + ts);
                 writer.write('\n');
             }
         }

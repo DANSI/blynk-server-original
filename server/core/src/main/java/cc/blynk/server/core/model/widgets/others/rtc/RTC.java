@@ -59,7 +59,7 @@ public class RTC extends OnePinWidget {
         }
 
         LocalDateTime ldt = LocalDateTime.now(zone);
-        return String.valueOf(ldt.toEpochSecond(ZoneOffset.UTC));
+        return "" + ldt.toEpochSecond(ZoneOffset.UTC);
     }
 
     @Override
