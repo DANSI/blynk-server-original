@@ -104,7 +104,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
             return;
         }
         for (Pin pin : pins) {
-            session.sendMessageToHardware(dashId, HARDWARE, 7778, Pin.makeReadingHardwareBody(pin.pinType.pintTypeChar, pin.pin), deviceId);
+            session.sendMessageToHardware(dashId, HARDWARE, READING_MSG_ID, Pin.makeReadingHardwareBody(pin.pinType.pintTypeChar, pin.pin), deviceId);
         }
     }
 

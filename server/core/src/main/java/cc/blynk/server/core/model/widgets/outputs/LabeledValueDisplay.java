@@ -39,7 +39,7 @@ public class LabeledValueDisplay extends OnePinWidget implements FrequencyWidget
 
     @Override
     public void sendReadingCommand(Session session, int dashId) {
-        session.sendMessageToHardware(dashId, HARDWARE, 7778, Pin.makeReadingHardwareBody(pinType.pintTypeChar, pin), deviceId);
+        session.sendMessageToHardware(dashId, HARDWARE, READING_MSG_ID, Pin.makeReadingHardwareBody(pinType.pintTypeChar, pin), deviceId);
     }
 
     @Override

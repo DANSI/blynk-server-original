@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static cc.blynk.server.core.model.widgets.FrequencyWidget.READING_MSG_ID;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
@@ -842,8 +843,8 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testServerSendReadingCommandWithReadingWorkerEnabled() throws Exception {
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 1000, TimeUnit.MILLISECONDS);
-        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(7778, HARDWARE, b("ar 7"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(7778, HARDWARE, b("ar 30"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("ar 7"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("ar 30"))));
     }
 
     @Test
@@ -853,7 +854,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0{\"id\":155, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        verify(clientPair.hardwareClient.responseMock, after(1000).times(2)).channelRead(any(), eq(produce(7778, HARDWARE, b("vr 100"))));
+        verify(clientPair.hardwareClient.responseMock, after(1000).times(2)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
     }
 
     @Test
@@ -1264,13 +1265,13 @@ public class MainWorkflowTest extends IntegrationBase {
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7778, HARDWARE, b("vr 100"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7778, HARDWARE, b("vr 101"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 101"))));
 
         clientPair.hardwareClient.reset();
 
-        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(7778, HARDWARE, b("vr 100"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(7778, HARDWARE, b("vr 101"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 101"))));
     }
 
     @Test

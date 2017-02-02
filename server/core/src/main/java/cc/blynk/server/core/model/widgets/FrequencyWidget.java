@@ -9,6 +9,8 @@ import cc.blynk.server.core.model.auth.Session;
  */
 public interface FrequencyWidget {
 
+    int READING_MSG_ID = 7778;
+
     int getFrequency();
 
     long getLastRequestTS();
