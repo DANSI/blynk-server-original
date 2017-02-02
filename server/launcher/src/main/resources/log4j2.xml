@@ -90,6 +90,9 @@
     <Loggers>
 
         <Logger name="cc.blynk.server.workers" level="debug" additivity="false">
+            <appender-ref ref="workersLog"/>
+        </Logger>
+        <Logger name="cc.blynk.server.workers.StatsWorker" level="debug" additivity="false">
             <appender-ref ref="statsLog"/>
         </Logger>
         <Logger name="cc.blynk.server.db" level="debug" additivity="false">
