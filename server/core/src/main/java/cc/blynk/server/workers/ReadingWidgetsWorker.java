@@ -32,11 +32,10 @@ public class ReadingWidgetsWorker implements Runnable {
 
     @Override
     public void run() {
-        log.debug("Starting reading widget worker.");
         long now = System.currentTimeMillis();
         try {
             int tickedWidgets = process(now);
-            log.debug("Starting reading widget worker. Ticket widgets : {}. Time : {}", tickedWidgets, System.currentTimeMillis() - now);
+            log.debug("Ticket widgets : {}. Time : {}", tickedWidgets, System.currentTimeMillis() - now);
         } catch (Exception e) {
             log.error("Error processing reading widgets. ", e);
         }
