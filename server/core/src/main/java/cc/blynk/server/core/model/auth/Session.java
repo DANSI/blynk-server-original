@@ -155,12 +155,7 @@ public class Session {
             return;
         }
 
-        if (deviceId == 0) {
-            //todo this is only for back compatibility. remove in future versions.
-            send(appChannels, targetsNum, cmd, msgId, "" + dashId);
-        } else {
-            send(appChannels, targetsNum, cmd, msgId, "" + dashId + DEVICE_SEPARATOR + deviceId);
-        }
+        send(appChannels, targetsNum, cmd, msgId, "" + dashId + DEVICE_SEPARATOR + deviceId);
     }
 
     public void sendToApps(short cmd, int msgId, int dashId, int deviceId, String body) {
