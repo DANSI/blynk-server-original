@@ -61,7 +61,7 @@ public class ReadingWidgetsWorker implements Runnable {
                                     if (widget instanceof FrequencyWidget) {
                                         FrequencyWidget frequencyWidget = (FrequencyWidget) widget;
                                         if (frequencyWidget.getDeviceId() == stateHolder.deviceId) {
-                                            if (frequencyWidget.isTicked(now)) {
+                                            if (frequencyWidget.isTicked(now) && channel.isWritable()) {
                                                 frequencyWidget.writeReadingCommand(channel);
                                             }
                                         }
