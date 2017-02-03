@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.Channel;
@@ -30,6 +31,8 @@ import static cc.blynk.utils.BlynkByteBufUtil.ok;
  */
 public class ActivateDashboardLogic {
 
+    public static final int PIN_MODE_MSG_ID = 1;
+
     private static final Logger log = LogManager.getLogger(ActivateDashboardLogic.class);
 
     private final SessionDao sessionDao;
@@ -51,9 +54,15 @@ public class ActivateDashboardLogic {
 
         Session session = sessionDao.userSession.get(state.userKey);
 
+        //todo simplify?
         if (session.isHardwareConnected(dashId)) {
             for (Device device : dash.devices) {
-                session.sendMessageToHardware(ctx, dashId, HARDWARE, 1, dash.buildPMMessage(device.id), device.id);
+                if (session.sendMessageToHardware(dashId, HARDWARE, PIN_MODE_MSG_ID, dash.buildPMMessage(device.id), device.id)) {
+                    log.debug("No device in session.");
+                    if (ctx.channel().isWritable()) {
+                        ctx.writeAndFlush(makeResponse(PIN_MODE_MSG_ID, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+                    }
+                }
             }
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

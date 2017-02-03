@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.auth;
 
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
@@ -8,7 +7,6 @@ import cc.blynk.utils.ArrayUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoop;
 import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashSet;
 import java.util.Set;
 
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StateHolderUtil.getHardState;
 import static cc.blynk.utils.StateHolderUtil.isSameDash;
@@ -100,14 +97,25 @@ public class Session {
         return targetChannels;
     }
 
-    //todo avoid allocations of varargs?
-    public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int... deviceIds) {
-        if (hardwareChannels.size() == 0) {
-            return true; // -> no active hardware
+    private Set<Channel> filter(int activeDashId, int deviceId) {
+        final Set<Channel> targetChannels = new HashSet<>();
+        for (Channel channel : hardwareChannels) {
+            if (isSameDashAndDeviceId(channel, activeDashId, deviceId)) {
+                targetChannels.add(channel);
+            }
         }
+        return targetChannels;
+    }
 
-        final Set<Channel> targetChannels = filter(activeDashId, deviceIds);
+    public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int deviceId) {
+        return hardwareChannels.size() == 0 || sendMessageToHardware(filter(activeDashId, deviceId), cmd, msgId, body);
+    }
 
+    public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int... deviceIds) {
+        return hardwareChannels.size() == 0 || sendMessageToHardware(filter(activeDashId, deviceIds), cmd, msgId, body);
+    }
+
+    private boolean sendMessageToHardware(Set<Channel> targetChannels, short cmd, int msgId, String body) {
         final int channelsNum = targetChannels.size();
         if (channelsNum == 0) {
             return true; // -> no active hardware
@@ -116,15 +124,6 @@ public class Session {
         send(targetChannels, channelsNum, cmd, msgId, body);
 
         return false; // -> there is active hardware
-    }
-
-    public void sendMessageToHardware(ChannelHandlerContext ctx, int activeDashId, short cmd, int msgId, String body, int... deviceIds) {
-        if (sendMessageToHardware(activeDashId, cmd, msgId, body, deviceIds)) {
-            log.debug("No device in session.");
-            if (ctx.channel().isWritable()) {
-                ctx.writeAndFlush(makeResponse(msgId, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
-            }
-        }
     }
 
     public boolean isHardwareConnected() {

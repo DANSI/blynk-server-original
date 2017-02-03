@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
@@ -82,7 +83,11 @@ public class HardwareAppShareLogic {
                         }
                     }
                 }
-                session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceId);
+
+                if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], deviceId)) {
+                    log.debug("No device in session.");
+                    ctx.writeAndFlush(makeResponse(message.id, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+                }
                 break;
 
 
@@ -95,7 +100,10 @@ public class HardwareAppShareLogic {
 
                 if (!(widget instanceof FrequencyWidget)) {
                     //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
-                    session.sendMessageToHardware(ctx, dashId, HARDWARE, message.id, split[1], deviceId);
+                    if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], deviceId)) {
+                        log.debug("No device in session.");
+                        ctx.writeAndFlush(makeResponse(message.id, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+                    }
                 }
                 break;
         }
