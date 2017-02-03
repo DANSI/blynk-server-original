@@ -55,15 +55,15 @@ public class ReadingWidgetsWorker implements Runnable {
                 for (DashBoard dashBoard : user.profile.dashBoards) {
                     if (dashBoard.isActive) {
                         for (Channel channel : session.hardwareChannels) {
-                            HardwareStateHolder stateHolder = StateHolderUtil.getHardState(channel);
+                            final HardwareStateHolder stateHolder = StateHolderUtil.getHardState(channel);
                             if (stateHolder != null && stateHolder.dashId == dashBoard.id) {
                                 for (Widget widget : dashBoard.widgets) {
                                     if (widget instanceof FrequencyWidget) {
-                                        FrequencyWidget frequencyWidget = (FrequencyWidget) widget;
-                                        if (frequencyWidget.getDeviceId() == stateHolder.deviceId) {
-                                            if (frequencyWidget.isTicked(now) && channel.isWritable()) {
-                                                frequencyWidget.writeReadingCommand(channel);
-                                            }
+                                        final FrequencyWidget frequencyWidget = (FrequencyWidget) widget;
+                                        if (frequencyWidget.getDeviceId() == stateHolder.deviceId &&
+                                                channel.isWritable() && frequencyWidget.isTicked(now)) {
+                                            tickedWidgets++;
+                                            frequencyWidget.writeReadingCommand(channel);
                                         }
                                     }
                                 }
