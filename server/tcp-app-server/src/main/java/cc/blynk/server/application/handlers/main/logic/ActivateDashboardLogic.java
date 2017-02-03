@@ -62,7 +62,7 @@ public class ActivateDashboardLogic {
             ctx.writeAndFlush(makeResponse(message.id, DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
         }
 
-        for (Channel appChannel : session.getAppChannels()) {
+        for (Channel appChannel : session.appChannels) {
             if (appChannel != ctx.channel() && getAppState(appChannel) != null) {
                 appChannel.write(makeUTF8StringMessage(message.command, message.id, message.body));
             }

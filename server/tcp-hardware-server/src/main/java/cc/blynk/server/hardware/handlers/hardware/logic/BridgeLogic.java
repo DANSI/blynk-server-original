@@ -74,10 +74,10 @@ public class BridgeLogic {
                 return;
             }
 
-            if (session.getHardwareChannels().size() > 1) {
+            if (session.hardwareChannels.size() > 1) {
                 boolean messageWasSent = false;
                 message.body = message.body.substring(message.body.indexOf(StringUtils.BODY_SEPARATOR_STRING) + 1);
-                for (Channel channel : session.getHardwareChannels()) {
+                for (Channel channel : session.hardwareChannels) {
                     if (channel != ctx.channel() && channel.isWritable()) {
                         HardwareStateHolder hardwareState = getHardState(channel);
                         if (hardwareState != null && token.equals(hardwareState.token)) {

@@ -87,16 +87,16 @@ public class Stat {
         for (Map.Entry<UserKey, Session> entry: sessionDao.userSession.entrySet()) {
             Session session = entry.getValue();
 
-            if (session.getHardwareChannels().size() > 0 && session.getAppChannels().size() > 0) {
+            if (session.isHardwareConnected() && session.isAppConnected()) {
                 connectedSessions++;
             }
-            if (session.getHardwareChannels().size() > 0) {
+            if (session.isHardwareConnected()) {
                 hardActive++;
-                totalOnlineHards += session.getHardwareChannels().size();
+                totalOnlineHards += session.hardwareChannels.size();
             }
-            if (session.getAppChannels().size() > 0) {
+            if (session.isAppConnected()) {
                 appActive++;
-                totalOnlineApps += session.getAppChannels().size();
+                totalOnlineApps += session.appChannels.size();
             }
             UserKey userKey = entry.getKey();
             User user = userDao.users.get(userKey);

@@ -60,25 +60,25 @@ public class SessionPerfTest {
 
         // create 1 hardware channel and a session
         session1 = new Session(null);
-        session1.getHardwareChannels().add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
+        session1.hardwareChannels.add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
 
         // create two hardware channels and a session
         session2 = new Session(null);
-        session2.getHardwareChannels().add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
-        session2.getHardwareChannels().add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
+        session2.hardwareChannels.add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
+        session2.hardwareChannels.add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
 
         // create 3 hardware channels and a session
         session3 = new Session(null);
-        session3.getHardwareChannels().add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
-        session3.getHardwareChannels().add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
-        session3.getHardwareChannels().add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
+        session3.hardwareChannels.add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
+        session3.hardwareChannels.add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
+        session3.hardwareChannels.add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
 
         // create 4 hardware channels and a session
         session4 = new Session(null);
-        session4.getHardwareChannels().add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
-        session4.getHardwareChannels().add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
-        session4.getHardwareChannels().add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
-        session4.getHardwareChannels().add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
+        session4.hardwareChannels.add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
+        session4.hardwareChannels.add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
+        session4.hardwareChannels.add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
+        session4.hardwareChannels.add(new EmbeddedChannel(newChannelHandler(hardwareStateHolder)));
     }
 
     @Benchmark

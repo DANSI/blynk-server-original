@@ -35,8 +35,8 @@ public class Session {
     private static final Logger log = LogManager.getLogger(Session.class);
 
     public final EventLoop initialEventLoop;
-    private final Set<Channel> appChannels = new ConcurrentSet<>();
-    private final Set<Channel> hardwareChannels = new ConcurrentSet<>();
+    public final Set<Channel> appChannels = new ConcurrentSet<>();
+    public final Set<Channel> hardwareChannels = new ConcurrentSet<>();
 
     private final ChannelFutureListener appRemover = future -> removeAppChannel(future.channel());
     private final ChannelFutureListener hardRemover = future -> removeHardChannel(future.channel());
@@ -220,14 +220,6 @@ public class Session {
 
     public int getHardRequestRate() {
         return getRequestRate(hardwareChannels);
-    }
-
-    public Set<Channel> getAppChannels() {
-        return appChannels;
-    }
-
-    public Set<Channel> getHardwareChannels() {
-        return hardwareChannels;
     }
 
     public void closeHardwareChannelByDeviceId(int dashId, int deviceId) {

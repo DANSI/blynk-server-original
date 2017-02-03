@@ -83,9 +83,9 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         Notification notification = dashBoard.getWidgetByType(Notification.class);
 
         if (notification == null || !notification.notifyWhenOffline) {
-            if (session.getAppChannels().size() > 0) {
+            if (session.isAppConnected()) {
                 log.trace("Sending device offline message.");
-                for (Channel appChannel : session.getAppChannels()) {
+                for (Channel appChannel : session.appChannels) {
                     if (appChannel.isWritable()) {
                         appChannel.writeAndFlush(
                                 new ResponseWithBodyMessage(

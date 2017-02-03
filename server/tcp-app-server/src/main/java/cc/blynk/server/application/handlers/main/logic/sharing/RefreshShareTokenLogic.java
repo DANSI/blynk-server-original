@@ -51,7 +51,7 @@ public class RefreshShareTokenLogic {
         String token = tokenManager.refreshSharedToken(user, dash);
 
         Session session = sessionDao.userSession.get(state.userKey);
-        for (Channel appChannel : session.getAppChannels()) {
+        for (Channel appChannel : session.appChannels) {
             AppShareStateHolder localState = getShareState(appChannel);
             if (localState != null && localState.dashId == dashId) {
                 ChannelFuture cf = appChannel.writeAndFlush(makeResponse(message.id, NOT_ALLOWED));

@@ -76,7 +76,7 @@ public class HardwareAppShareLogic {
 
                 final String sharedToken = state.token;
                 if (sharedToken != null) {
-                    for (Channel appChannel : session.getAppChannels()) {
+                    for (Channel appChannel : session.appChannels) {
                         if (appChannel != ctx.channel() && appChannel.isWritable() && Session.needSync(appChannel, sharedToken)) {
                             appChannel.writeAndFlush(makeUTF8StringMessage(APP_SYNC, message.id, message.body), appChannel.voidPromise());
                         }

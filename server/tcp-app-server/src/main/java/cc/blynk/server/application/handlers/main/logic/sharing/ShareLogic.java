@@ -46,7 +46,7 @@ public class ShareLogic {
         }
 
         Session session = sessionDao.userSession.get(state.userKey);
-        for (Channel appChannel : session.getAppChannels()) {
+        for (Channel appChannel : session.appChannels) {
             if (appChannel != ctx.channel() && getAppState(appChannel) != null) {
                 appChannel.writeAndFlush(message, appChannel.voidPromise());
             }
