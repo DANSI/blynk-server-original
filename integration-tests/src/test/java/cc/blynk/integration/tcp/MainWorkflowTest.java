@@ -44,16 +44,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-import static cc.blynk.server.core.model.widgets.FrequencyWidget.READING_MSG_ID;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_WENT_OFFLINE;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_INVALID_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
@@ -829,48 +825,6 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    public void testNoReadingWidgetOnPin() throws Exception {
-        clientPair.appClient.send("hardware 1 ar 111");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
-    }
-
-    @Test
-    public void testReadingCommandNotAcceptedAnymoreFromApp() throws Exception {
-        clientPair.appClient.send("hardware 1 ar 7");
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), any());
-    }
-
-    @Test
-    public void testServerSendReadingCommandWithReadingWorkerEnabled() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 1000, TimeUnit.MILLISECONDS);
-        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("ar 7"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("ar 30"))));
-    }
-
-    @Test
-    public void testServerSendReadingCommandCorrectly() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 500, TimeUnit.MILLISECONDS);
-
-        clientPair.appClient.send("createWidget 1\0{\"id\":155, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-
-        verify(clientPair.hardwareClient.responseMock, after(1000).times(2)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
-    }
-
-    @Test
-    public void testServerDontSendReadingCommandsForNonActiveDash() throws Exception {
-        clientPair.appClient.send("createWidget 1\0{\"id\":155, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-
-        clientPair.appClient.send("deactivate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
-
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 500, TimeUnit.MILLISECONDS);
-
-        verify(clientPair.hardwareClient.responseMock, after(1000).never()).channelRead(any(), any());
-    }
-
-    @Test
     public void testActivateWorkflow() throws Exception {
         clientPair.appClient.send("activate 2");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
@@ -1251,27 +1205,6 @@ public class MainWorkflowTest extends IntegrationBase {
         }
 
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(100)).channelRead(any(), any());
-    }
-
-    @Test
-    public void testSendReadCommandsForLCD() throws Exception {
-        clientPair.appClient.send("createWidget 1\0{\"type\":\"LCD\",\"id\":1923810267,\"x\":0,\"y\":6,\"color\":600084223,\"width\":8,\"height\":2,\"tabId\":0,\"" +
-                "pins\":[" +
-                "{\"pin\":100,\"pinType\":\"VIRTUAL\",\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":1023}," +
-                "{\"pin\":101,\"pinType\":\"VIRTUAL\",\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":1023}]," +
-                "\"advancedMode\":false,\"textLight\":false,\"textLightOn\":false,\"frequency\":900}");
-
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 1000, TimeUnit.MILLISECONDS);
-
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 101"))));
-
-        clientPair.hardwareClient.reset();
-
-        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 101"))));
     }
 
     @Test
