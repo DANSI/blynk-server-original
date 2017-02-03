@@ -1,12 +1,12 @@
 package cc.blynk.server.core.model.widgets.outputs;
 
 import cc.blynk.server.core.model.Pin;
-import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.structure.LimitedArrayDeque;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
@@ -93,7 +93,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     }
 
     @Override
-    public void sendReadingCommand(Session session, int dashId) {
+    public void writeReadingCommand(Channel channel) {
         if (pins == null) {
             return;
         }
@@ -101,8 +101,14 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
             if (pin.isNotValid()) {
                 continue;
             }
-            session.sendMessageToHardware(dashId, HARDWARE, READING_MSG_ID, Pin.makeReadingHardwareBody(pin.pinType.pintTypeChar, pin.pin), deviceId);
+            ByteBuf msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID, Pin.makeReadingHardwareBody(pin.pinType.pintTypeChar, pin.pin));
+            channel.write(msg, channel.voidPromise());
         }
+    }
+
+    @Override
+    public int getDeviceId() {
+        return deviceId;
     }
 
     @Override

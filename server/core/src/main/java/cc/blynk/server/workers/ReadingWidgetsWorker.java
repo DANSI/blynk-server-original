@@ -8,6 +8,9 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.utils.StateHolderUtil;
+import io.netty.channel.Channel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,17 +54,23 @@ public class ReadingWidgetsWorker implements Runnable {
                 final User user = userDao.users.get(userKey);
                 for (DashBoard dashBoard : user.profile.dashBoards) {
                     if (dashBoard.isActive) {
-                        //todo improve for better performance
-                        //for now this is just quick implementation
-                        for (Widget widget : dashBoard.widgets) {
-                            if (widget instanceof FrequencyWidget) {
-                                FrequencyWidget frequencyWidget = (FrequencyWidget) widget;
-                                if (frequencyWidget.isTicked(now)) {
-                                    tickedWidgets++;
-                                    frequencyWidget.sendReadingCommand(session, dashBoard.id);
+                        for (Channel channel : session.hardwareChannels) {
+                            HardwareStateHolder stateHolder = StateHolderUtil.getHardState(channel);
+                            if (stateHolder != null && stateHolder.dashId == dashBoard.id) {
+                                for (Widget widget : dashBoard.widgets) {
+                                    if (widget instanceof FrequencyWidget) {
+                                        FrequencyWidget frequencyWidget = (FrequencyWidget) widget;
+                                        if (frequencyWidget.getDeviceId() == stateHolder.deviceId) {
+                                            if (frequencyWidget.isTicked(now)) {
+                                                frequencyWidget.writeReadingCommand(channel);
+                                            }
+                                        }
+                                    }
                                 }
+                                channel.flush();
                             }
                         }
+
                     }
                 }
             }

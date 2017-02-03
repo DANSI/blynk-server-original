@@ -1,9 +1,11 @@
 package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.Pin;
-import cc.blynk.server.core.model.auth.Session;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.
@@ -26,11 +28,17 @@ public abstract class OnePinReadingWidget extends OnePinWidget implements Freque
     }
 
     @Override
-    public void sendReadingCommand(Session session, int dashId) {
+    public int getDeviceId() {
+        return deviceId;
+    }
+
+    @Override
+    public void writeReadingCommand(Channel channel) {
         if (isNotValid()) {
             return;
         }
-        session.sendMessageToHardware(dashId, HARDWARE, READING_MSG_ID, Pin.makeReadingHardwareBody(pinType.pintTypeChar, pin), deviceId);
+        ByteBuf msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID, Pin.makeReadingHardwareBody(pinType.pintTypeChar, pin));
+        channel.write(msg, channel.voidPromise());
     }
 
 }

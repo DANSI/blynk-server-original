@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.widgets;
 
-import cc.blynk.server.core.model.auth.Session;
+import io.netty.channel.Channel;
 
 /**
  * The Blynk Project.
@@ -11,7 +11,9 @@ public interface FrequencyWidget {
 
     int READING_MSG_ID = 7778;
 
-    void sendReadingCommand(Session session, int dashId);
+    void writeReadingCommand(Channel channel);
+
+    int getDeviceId();
 
     boolean isTicked(long now);
 
