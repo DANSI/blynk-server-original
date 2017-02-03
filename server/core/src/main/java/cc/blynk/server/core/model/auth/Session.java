@@ -20,6 +20,8 @@ import java.util.Set;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StateHolderUtil.getHardState;
+import static cc.blynk.utils.StateHolderUtil.isSameDash;
+import static cc.blynk.utils.StateHolderUtil.isSameDashAndDeviceId;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
@@ -131,8 +133,7 @@ public class Session {
 
     public boolean isHardwareConnected(int dashId, int deviceId) {
         for (Channel channel : hardwareChannels) {
-            HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null && hardwareState.dashId == dashId && hardwareState.deviceId == deviceId) {
+            if (isSameDashAndDeviceId(channel, dashId, deviceId)) {
                 return true;
             }
         }
@@ -141,8 +142,7 @@ public class Session {
 
     public boolean isHardwareConnected(int dashId) {
         for (Channel channel : hardwareChannels) {
-            HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null && hardwareState.dashId == dashId) {
+            if (isSameDash(channel, dashId)) {
                 return true;
             }
         }
@@ -192,22 +192,12 @@ public class Session {
             }
         }
 
-        int channelsNum = targetChannels.size();
-        if (channelsNum == 0)
+        final int channelsNum = targetChannels.size();
+        if (channelsNum == 0) {
             return;
-
-        ByteBuf msg = makeUTF8StringMessage(cmd, msgId, body);
-        if (channelsNum > 1) {
-            msg.retain(channelsNum - 1).markReaderIndex();
         }
 
-        for (Channel channel : targetChannels) {
-            log.trace("Sending {} to app {}", body, channel);
-            channel.writeAndFlush(msg, channel.voidPromise());
-            if (msg.refCnt() > 0) {
-                msg.resetReaderIndex();
-            }
-        }
+        send(targetChannels, channelsNum, cmd, msgId, body);
     }
 
     public boolean isAppConnected() {
@@ -224,8 +214,7 @@ public class Session {
 
     public void closeHardwareChannelByDeviceId(int dashId, int deviceId) {
         for (Channel channel : hardwareChannels) {
-            HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null && hardwareState.dashId == dashId && hardwareState.deviceId == deviceId) {
+            if (isSameDashAndDeviceId(channel, dashId, deviceId)) {
                 channel.close();
             }
         }
@@ -233,8 +222,7 @@ public class Session {
 
     public void closeHardwareChannelByDashId(int dashId) {
         for (Channel channel : hardwareChannels) {
-            HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null && hardwareState.dashId == dashId) {
+            if (isSameDash(channel, dashId)) {
                 channel.close();
             }
         }
