@@ -86,37 +86,32 @@ public class Session {
         }
     }
 
+    private Set<Channel> filter(int activeDashId, int[] deviceIds) {
+        final Set<Channel> targetChannels = new HashSet<>();
+        for (Channel channel : hardwareChannels) {
+            final HardwareStateHolder hardwareState = getHardState(channel);
+            if (hardwareState != null && hardwareState.dashId == activeDashId &&
+                    (deviceIds.length == 0 || ArrayUtil.contains(deviceIds, hardwareState.deviceId))) {
+                targetChannels.add(channel);
+            }
+        }
+        return targetChannels;
+    }
+
     //todo avoid allocations of varargs?
     public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int... deviceIds) {
         if (hardwareChannels.size() == 0) {
             return true; // -> no active hardware
         }
 
-        final Set<Channel> targetChannels = new HashSet<>();
-        for (Channel channel : hardwareChannels) {
-            HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null && hardwareState.dashId == activeDashId && channel.isWritable() &&
-                    (deviceIds.length == 0 || ArrayUtil.contains(deviceIds, hardwareState.deviceId))) {
-                targetChannels.add(channel);
-            }
-        }
+        final Set<Channel> targetChannels = filter(activeDashId, deviceIds);
 
-        int channelsNum = targetChannels.size();
-        if (channelsNum == 0)
+        final int channelsNum = targetChannels.size();
+        if (channelsNum == 0) {
             return true; // -> no active hardware
-
-        ByteBuf msg = makeUTF8StringMessage(cmd, msgId, body);
-        if (channelsNum > 1) {
-            msg.retain(channelsNum - 1).markReaderIndex();
         }
 
-        for (Channel channel : targetChannels) {
-            log.trace("Sending {} to hardware {}", body, channel);
-            channel.writeAndFlush(msg, channel.voidPromise());
-            if (msg.refCnt() > 0) {
-                msg.resetReaderIndex();
-            }
-        }
+        send(targetChannels, channelsNum, cmd, msgId, body);
 
         return false; // -> there is active hardware
     }
@@ -155,37 +150,37 @@ public class Session {
     }
 
     public void sendToApps(short cmd, int msgId, int dashId, int deviceId) {
-        if (appChannels.size() == 0) {
+        final int targetsNum = appChannels.size();
+        if (targetsNum == 0) {
             return;
         }
 
         if (deviceId == 0) {
             //todo this is only for back compatibility. remove in future versions.
-            sendToApps(cmd, msgId, "" + dashId);
+            send(appChannels, targetsNum, cmd, msgId, "" + dashId);
         } else {
-            sendToApps(cmd, msgId, "" + dashId + DEVICE_SEPARATOR + deviceId);
+            send(appChannels, targetsNum, cmd, msgId, "" + dashId + DEVICE_SEPARATOR + deviceId);
         }
     }
 
     public void sendToApps(short cmd, int msgId, int dashId, int deviceId, String body) {
-        if (appChannels.size() == 0) {
+        final int targetsNum = appChannels.size();
+        if (targetsNum == 0) {
             return;
         }
 
-        sendToApps(cmd, msgId, prependDashIdAndDeviceId(dashId, deviceId, body));
+        send(appChannels, targetsNum, cmd, msgId, prependDashIdAndDeviceId(dashId, deviceId, body));
     }
 
-    private void sendToApps(short cmd, int msgId, String body) {
-        final int channelsNum = appChannels.size();
-
+    private void send(Set<Channel> targets, int targetsNum, short cmd, int msgId, String body) {
         ByteBuf msg = makeUTF8StringMessage(cmd, msgId, body);
-        if (channelsNum > 1) {
-            msg.retain(channelsNum - 1).markReaderIndex();
+        if (targetsNum > 1) {
+            msg.retain(targetsNum - 1).markReaderIndex();
         }
 
-        for (Channel channel : appChannels) {
+        for (Channel channel : targets) {
             if (channel.isWritable()) {
-                log.trace("Sending {} to app {}", body, channel);
+                log.trace("Sending {} to channel {}", body, channel);
                 channel.writeAndFlush(msg, channel.voidPromise());
             }
             if (msg.refCnt() > 0) {
