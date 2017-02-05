@@ -15,11 +15,9 @@ import org.apache.logging.log4j.Logger;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 import static cc.blynk.utils.ReportingUtil.EMPTY_ARRAY;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
@@ -73,26 +71,12 @@ public class ReportingDao implements Closeable {
         }
 
         try {
-            return read(userDataFile, count);
+            return FileUtils.read(userDataFile, count);
         } catch (IOException ioe) {
             log.error(ioe);
         }
 
         return null;
-    }
-
-    //todo filter outdated records?
-    private static ByteBuffer read(Path userDataFile, int count) throws IOException {
-        try (SeekableByteChannel channel = Files.newByteChannel(userDataFile, StandardOpenOption.READ)) {
-            final int size = (int) Files.size(userDataFile);
-            final int dataSize = count * 16;
-            final int readDataSize = Math.min(dataSize, size);
-
-            ByteBuffer buf = ByteBuffer.allocate(readDataSize);
-            channel.position(Math.max(0, size - dataSize));
-            channel.read(buf);
-            return buf;
-        }
     }
 
     private static boolean checkNoData(byte[][] data) {

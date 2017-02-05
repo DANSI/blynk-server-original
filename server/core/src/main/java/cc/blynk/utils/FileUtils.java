@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
@@ -132,6 +133,29 @@ public class FileUtils {
             dos.writeDouble(value);
             dos.writeLong(ts);
             dos.flush();
+        }
+    }
+
+    private static final int SIZE_OF_REPORT_ENTRY = 16;
+
+    /**
+     * Read bunch of last records from file.
+     *
+     * @param userDataFile - file to read
+     * @param count = number of records to read
+     * @return - byte buffer with data
+     * @throws IOException
+     */
+    public static ByteBuffer read(Path userDataFile, int count) throws IOException {
+        try (SeekableByteChannel channel = Files.newByteChannel(userDataFile, StandardOpenOption.READ)) {
+            final int size = (int) Files.size(userDataFile);
+            final int dataSize = count * SIZE_OF_REPORT_ENTRY;
+            final int readDataSize = Math.min(dataSize, size);
+
+            ByteBuffer buf = ByteBuffer.allocate(readDataSize);
+            channel.position(Math.max(0, size - dataSize));
+            channel.read(buf);
+            return buf;
         }
     }
 }
