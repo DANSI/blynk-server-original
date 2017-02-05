@@ -41,7 +41,7 @@ public class BlynkInternalLogic {
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
-        if (messageParts[0].length() == 0) {
+        if (messageParts.length == 0 || messageParts[0].length() == 0) {
             ctx.writeAndFlush(makeResponse(message.id, Response.ILLEGAL_COMMAND), ctx.voidPromise());
             return;
         }
