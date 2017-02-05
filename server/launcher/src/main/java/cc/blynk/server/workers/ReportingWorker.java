@@ -5,15 +5,14 @@ import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,24 +42,6 @@ public class ReportingWorker implements Runnable {
         this.reportingDao = reportingDao;
         this.reportingPath = reportingPath;
         this.dbManager = dbManager;
-    }
-
-    /**
-     * Simply writes single reporting entry to disk (16 bytes).
-     * Reporting entry is value (double) and timestamp (long)
-     *
-     * @param reportingPath - path to user specific reporting file
-     * @param value - sensor data
-     * @param ts - time when entry was created
-     * @throws IOException
-     */
-    public static void write(Path reportingPath, double value, long ts) throws IOException {
-        try (DataOutputStream dos = new DataOutputStream(
-                Files.newOutputStream(reportingPath, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
-            dos.writeDouble(value);
-            dos.writeLong(ts);
-            dos.flush();
-        }
     }
 
     @Override
@@ -112,7 +93,7 @@ public class ReportingWorker implements Runnable {
                     String fileName = generateFilename(keyToRemove.dashId, keyToRemove.deviceId, keyToRemove.pinType, keyToRemove.pin, type);
                     Path filePath = Paths.get(userReportFolder.toString(), fileName);
 
-                    write(filePath, value.calcAverage(), keyToRemove.getTs(type));
+                    FileUtils.write(filePath, value.calcAverage(), keyToRemove.getTs(type));
 
                     final AggregationValue removedValue = map.remove(keyToRemove);
                     removedKeys.put(keyToRemove, removedValue);

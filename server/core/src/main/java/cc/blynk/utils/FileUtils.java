@@ -9,15 +9,18 @@ import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -108,5 +111,27 @@ public class FileUtils {
     //"%s_%s_%c%d.csv.gz"
     private static String format(String username, int dashId, PinType pinType, byte pin) {
         return username + "_" + dashId + "_" + pinType.pintTypeChar + pin + ".csv.gz";
+    }
+
+    /**
+     * Simply writes single reporting entry to disk (16 bytes).
+     * Reporting entry is value (double) and timestamp (long)
+     *
+     * @param reportingPath - path to user specific reporting file
+     * @param value - sensor data
+     * @param ts - time when entry was created
+     * @throws IOException
+     */
+    public static void write(Path reportingPath, double value, long ts) throws IOException {
+        write(reportingPath, value, ts, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    }
+
+    public static void write(Path reportingPath, double value, long ts, OpenOption... options) throws IOException {
+        try (DataOutputStream dos = new DataOutputStream(
+                Files.newOutputStream(reportingPath, options))) {
+            dos.writeDouble(value);
+            dos.writeLong(ts);
+            dos.flush();
+        }
     }
 }
