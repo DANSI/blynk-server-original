@@ -111,7 +111,7 @@ public class ServerProperties extends Properties {
 
     public int getIntProperty(String propertyName, int defaultValue) {
         String prop = getProperty(propertyName);
-        if (prop == null || "".equals(prop)) {
+        if (prop == null || prop.isEmpty()) {
             return defaultValue;
         }
         return ParseUtil.parseInt(getProperty(propertyName));
@@ -127,7 +127,7 @@ public class ServerProperties extends Properties {
 
     public long getLongProperty(String propertyName, long defaultValue) {
         String prop = getProperty(propertyName);
-        if (prop == null || "".equals(prop)) {
+        if (prop == null || prop.isEmpty()) {
             return defaultValue;
         }
         return ParseUtil.parseLong(prop);

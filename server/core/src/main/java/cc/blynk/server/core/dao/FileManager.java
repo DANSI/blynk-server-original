@@ -163,7 +163,7 @@ public class FileManager {
             final Integer dashId = dashBoard.id;
             if (user.dashTokens != null) {
                 String token = user.dashTokens.get(dashId);
-                if (token != null && !"".equals(token)) {
+                if (token != null && !token.isEmpty()) {
                     dashBoard.devices = new Device[]{
                             new Device(0, dashBoard.boardType, dashBoard.boardType, token, null)
                     };
