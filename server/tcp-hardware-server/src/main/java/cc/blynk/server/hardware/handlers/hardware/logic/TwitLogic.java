@@ -48,8 +48,8 @@ public class TwitLogic extends NotificationBase {
         Twitter twitterWidget = dash.getWidgetByType(Twitter.class);
 
         if (twitterWidget == null || !dash.isActive ||
-                twitterWidget.token == null || twitterWidget.token.equals("") ||
-                twitterWidget.secret == null || twitterWidget.secret.equals("")) {
+                twitterWidget.token == null || twitterWidget.token.isEmpty() ||
+                twitterWidget.secret == null || twitterWidget.secret.isEmpty()) {
             log.debug("User has no access token provided for twit widget.");
             ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_NOT_AUTHORIZED), ctx.voidPromise());
             return;

@@ -24,7 +24,7 @@ public class WebHook extends OnePinWidget {
     public transient volatile int failureCounter = 0;
 
     public boolean isValid(int WEBHOOK_FAILURE_LIMIT) {
-        return url != null && !url.equals("") && failureCounter < WEBHOOK_FAILURE_LIMIT;
+        return url != null && !url.isEmpty() && failureCounter < WEBHOOK_FAILURE_LIMIT;
     }
 
     //a bit ugly but as quick fix ok

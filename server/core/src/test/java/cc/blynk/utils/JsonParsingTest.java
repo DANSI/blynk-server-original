@@ -191,8 +191,8 @@ public class JsonParsingTest {
         for (Widget widget : dashBoard.widgets) {
             if (widget instanceof Timer) {
                 Timer timer = (Timer) widget;
-                if ((timer.startTime != -1 && timer.startValue != null && !timer.startValue.equals("")) ||
-                        (timer.stopTime != -1 && timer.stopValue != null && !timer.stopValue.equals(""))) {
+                if ((timer.startTime != -1 && timer.startValue != null && !timer.startValue.isEmpty()) ||
+                        (timer.stopTime != -1 && timer.stopValue != null && !timer.stopValue.isEmpty())) {
                     timerWidgets.add(timer);
                 }
             }

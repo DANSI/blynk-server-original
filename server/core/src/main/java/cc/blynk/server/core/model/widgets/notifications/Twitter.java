@@ -18,7 +18,7 @@ public class Twitter extends NoPinWidget {
     public String username;
 
     public static boolean isWrongBody(String body) {
-       return body == null || body.equals("") || body.length() > MAX_TWITTER_BODY_SIZE;
+       return body == null || body.isEmpty() || body.length() > MAX_TWITTER_BODY_SIZE;
     }
 
     @Override

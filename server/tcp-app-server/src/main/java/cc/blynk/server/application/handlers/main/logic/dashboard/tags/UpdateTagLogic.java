@@ -33,7 +33,7 @@ public class UpdateTagLogic {
         int dashId = ParseUtil.parseInt(split[0]) ;
         String tagString = split[1];
 
-        if (tagString == null || tagString.equals("")) {
+        if (tagString == null || tagString.isEmpty()) {
             throw new IllegalCommandException("Income tag message is empty.");
         }
 

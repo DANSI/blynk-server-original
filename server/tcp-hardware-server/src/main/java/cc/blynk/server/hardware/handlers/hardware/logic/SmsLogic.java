@@ -39,7 +39,7 @@ public class SmsLogic extends NotificationBase {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        if (message.body == null || message.body.equals("") || message.body.length() > MAX_SMS_BODY_SIZE) {
+        if (message.body == null || message.body.isEmpty() || message.body.length() > MAX_SMS_BODY_SIZE) {
             throw new NotificationBodyInvalidException();
         }
 
@@ -47,7 +47,7 @@ public class SmsLogic extends NotificationBase {
         SMS smsWidget = dash.getWidgetByType(SMS.class);
 
         if (smsWidget == null || !dash.isActive ||
-                smsWidget.to == null || smsWidget.to.equals("")) {
+                smsWidget.to == null || smsWidget.to.isEmpty()) {
             log.debug("User has no access phone number provided.");
             ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_NOT_AUTHORIZED), ctx.voidPromise());
             return;

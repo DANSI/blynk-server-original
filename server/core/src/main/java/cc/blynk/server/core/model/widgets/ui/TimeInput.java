@@ -54,7 +54,7 @@ public class TimeInput extends OnePinWidget {
                 if (values.length == 3) {
                     days = null;
                 } else {
-                    if (values[3].equals("")) {
+                    if (values[3].isEmpty()) {
                         days = null;
                     } else {
                         String[] daysString = values[3].split(",");

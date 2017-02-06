@@ -619,8 +619,8 @@ public class HttpAPILogic {
         }
 
         if (message == null ||
-                message.subj == null || message.subj.equals("") ||
-                message.to == null || message.to.equals("")) {
+                message.subj == null || message.subj.isEmpty() ||
+                message.to == null || message.to.isEmpty()) {
             log.debug("Email body empty. '{}'", message);
             return Response.badRequest("Email body is wrong. Missing or empty fields 'to', 'subj'.");
         }

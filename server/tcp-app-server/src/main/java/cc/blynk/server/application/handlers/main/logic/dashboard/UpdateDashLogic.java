@@ -39,7 +39,7 @@ public class UpdateDashLogic {
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String dashString = message.body;
 
-        if (dashString == null || dashString.equals("")) {
+        if (dashString == null || dashString.isEmpty()) {
             throw new IllegalCommandException("Income create dash message is empty.");
         }
 

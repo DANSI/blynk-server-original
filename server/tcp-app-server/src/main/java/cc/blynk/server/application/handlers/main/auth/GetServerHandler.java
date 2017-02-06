@@ -52,7 +52,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
         final String username = parts[0];
         final String appName = parts[1];
 
-        if (username == null || username.equals("") || appName == null || appName.equals("")) {
+        if (username == null || username.isEmpty() || appName == null || appName.isEmpty()) {
             ctx.writeAndFlush(makeResponse(msg.id, Response.ILLEGAL_COMMAND), ctx.voidPromise());
             return;
         }

@@ -49,7 +49,7 @@ public class UpdateWidgetLogic {
         int dashId = ParseUtil.parseInt(split[0]) ;
         String widgetString = split[1];
 
-        if (widgetString == null || widgetString.equals("")) {
+        if (widgetString == null || widgetString.isEmpty()) {
             throw new IllegalCommandException("Income widget message is empty.");
         }
 

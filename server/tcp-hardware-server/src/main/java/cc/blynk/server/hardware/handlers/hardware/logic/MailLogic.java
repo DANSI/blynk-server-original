@@ -51,7 +51,7 @@ public class MailLogic extends NotificationBase {
             throw new NotAllowedException("User has no mail widget or active dashboard.");
         }
 
-        if (message.body.equals("")) {
+        if (message.body.isEmpty()) {
             throw new IllegalCommandException("Invalid mail notification body.");
         }
 
@@ -72,7 +72,7 @@ public class MailLogic extends NotificationBase {
             subj = bodyParts[1];
             body = bodyParts[2];
         } else {
-            if (mail.to == null || mail.to.equals("")) {
+            if (mail.to == null || mail.to.isEmpty()) {
                 to = state.user.name;
             } else {
                 to = mail.to;

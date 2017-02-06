@@ -47,7 +47,7 @@ public class CreateDeviceLogic {
         int dashId = ParseUtil.parseInt(split[0]) ;
         String deviceString = split[1];
 
-        if (deviceString == null || deviceString.equals("")) {
+        if (deviceString == null || deviceString.isEmpty()) {
             throw new IllegalCommandException("Income device message is empty.");
         }
 

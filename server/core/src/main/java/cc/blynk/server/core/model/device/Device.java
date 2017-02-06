@@ -27,7 +27,7 @@ public class Device implements Target {
     public volatile String lastLoggedIP;
 
     public boolean isNotValid() {
-        return boardType == null || boardType.equals("") || boardType.length() > 50 || (name != null && name.length() > 50);
+        return boardType == null || boardType.isEmpty() || boardType.length() > 50 || (name != null && name.length() > 50);
     }
 
     public Device() {

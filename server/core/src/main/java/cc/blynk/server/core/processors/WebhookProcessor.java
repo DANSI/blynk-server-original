@@ -90,7 +90,7 @@ public class WebhookProcessor extends NotificationBase {
             for (Header header : webHook.headers) {
                 if (header.isValid()) {
                     builder.setHeader(header.name, header.value);
-                    if (webHook.body != null && !webHook.body.equals("")) {
+                    if (webHook.body != null && !webHook.body.isEmpty()) {
                         if (header.name.equals("Content-Type")) {
                             String newBody = format(webHook.body, triggerValue, true);
                             log.trace("Webhook formatted body : {}", newBody);

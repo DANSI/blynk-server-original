@@ -44,7 +44,7 @@ public class Timer extends OnePinWidget {
     }
 
     private static boolean isValidValue(String value) {
-        return value != null && !value.equals("");
+        return value != null && !value.isEmpty();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package cc.blynk.server;
+package cc.blynk.server.transport;
 
 import cc.blynk.utils.ServerProperties;
 import io.netty.channel.EventLoopGroup;

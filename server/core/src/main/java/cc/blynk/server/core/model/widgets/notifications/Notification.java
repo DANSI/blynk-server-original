@@ -30,7 +30,7 @@ public class Notification extends NoPinWidget {
     public Priority priority = Priority.normal;
 
     public static boolean isWrongBody(String body) {
-        return body == null || body.equals("") || body.length() > MAX_PUSH_BODY_SIZE;
+        return body == null || body.isEmpty() || body.length() > MAX_PUSH_BODY_SIZE;
     }
 
     public boolean hasNoToken() {

@@ -49,7 +49,7 @@ public class FileManager {
     private Path backupDataDir;
 
     public FileManager(String dataFolder) {
-        if (dataFolder == null || dataFolder.equals("") || dataFolder.equals("/path")) {
+        if (dataFolder == null || dataFolder.isEmpty() || dataFolder.equals("/path")) {
             System.out.println("WARNING : '" + dataFolder + "' does not exists. Please specify correct -dataFolder parameter.");
             dataFolder = Paths.get(System.getProperty("java.io.tmpdir"), "blynk").toString();
             System.out.println("Your data may be lost during server restart. Using temp folder : " + dataFolder);

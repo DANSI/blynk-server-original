@@ -19,7 +19,7 @@ public class Tag implements Target {
     public volatile int[] deviceIds;
 
     public boolean isNotValid() {
-        return name == null || name.equals("") || name.length() > 40 || id < START_TAG_ID || (deviceIds != null && deviceIds.length > 100);
+        return name == null || name.isEmpty() || name.length() > 40 || id < START_TAG_ID || (deviceIds != null && deviceIds.length > 100);
     }
 
     public Tag() {

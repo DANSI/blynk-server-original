@@ -1,6 +1,6 @@
 package cc.blynk.server.core;
 
-import cc.blynk.server.TransportTypeHolder;
+import cc.blynk.server.transport.TransportTypeHolder;
 import cc.blynk.utils.BlynkByteBufUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
