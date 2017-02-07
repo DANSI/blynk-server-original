@@ -12,6 +12,9 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.eventor.Rule;
 import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
+import cc.blynk.server.core.processors.EventorProcessor;
+import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.DateTimeUtils;
 import org.apache.logging.log4j.LogManager;
@@ -48,14 +51,16 @@ public class TimerWorker implements Runnable {
 
     private final UserDao userDao;
     private final SessionDao sessionDao;
+    private final GCMWrapper gcmWrapper;
     //todo refactor after migration
     private final ConcurrentMap<TimerKey, Object>[] timerExecutors;
     private final static int size = 8640;
 
     @SuppressWarnings("unchecked")
-    public TimerWorker(UserDao userDao, SessionDao sessionDao) {
+    public TimerWorker(UserDao userDao, SessionDao sessionDao, GCMWrapper gcmWrapper) {
         this.userDao = userDao;
         this.sessionDao = sessionDao;
+        this.gcmWrapper = gcmWrapper;
         //array cell for every second in a day,
         //yes, it costs a bit of memory, but still cheap :)
         this.timerExecutors = new ConcurrentMap[size];
@@ -199,6 +204,10 @@ public class TimerWorker implements Runnable {
                                 SetPinAction setPinAction = (SetPinAction) objValue;
                                 value = setPinAction.makeHardwareBody();
                                 dash.update(key.deviceId, setPinAction.pin.pin, setPinAction.pin.pinType, setPinAction.value, nowMillis);
+                            } else if (objValue instanceof NotifyAction) {
+                                NotifyAction notifyAction = (NotifyAction) objValue;
+                                EventorProcessor.push(gcmWrapper, dash, notifyAction.message);
+                                continue;
                             } else {
                                 //todo other type of actions not supported yet. maybe in future.
                                 continue;

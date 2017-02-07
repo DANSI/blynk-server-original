@@ -111,7 +111,7 @@ public class Holder implements Closeable {
 
         this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.dbManager = new DBManager(blockingIOProcessor);
-        this.timerWorker = new TimerWorker(userDao, sessionDao);
+        this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
     }
@@ -155,7 +155,7 @@ public class Holder implements Closeable {
         );
 
         this.dbManager = new DBManager(blockingIOProcessor);
-        this.timerWorker = new TimerWorker(userDao, sessionDao);
+        this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
     }

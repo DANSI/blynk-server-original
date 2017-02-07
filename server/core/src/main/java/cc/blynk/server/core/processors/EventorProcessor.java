@@ -90,7 +90,7 @@ public class EventorProcessor {
     private void execute(DashBoard dash, String triggerValue, NotificationAction notificationAction) {
         String body = PIN_PATTERN.matcher(notificationAction.message).replaceAll(triggerValue);
         if (notificationAction instanceof NotifyAction) {
-            push(dash, body);
+            push(gcmWrapper, dash, body);
         } else if (notificationAction instanceof TwitAction) {
             twit(dash, body);
         } else if (notificationAction instanceof MailAction) {
@@ -126,8 +126,7 @@ public class EventorProcessor {
         });
     }
 
-
-    private void push(DashBoard dash, String body) {
+    public static void push(GCMWrapper gcmWrapper, DashBoard dash, String body) {
         if (Notification.isWrongBody(body)) {
             log.debug("Wrong push body.");
             return;
