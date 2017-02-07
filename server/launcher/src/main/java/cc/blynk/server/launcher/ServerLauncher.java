@@ -87,8 +87,9 @@ public class ServerLauncher {
             JobLauncher.start(holder, servers);
 
             System.out.println();
-            System.out.println("Blynk Server successfully started.");
-            System.out.println("All server output is stored in folder '" + new File(System.getProperty("logs.folder")).getAbsolutePath() + "' file.");
+            System.out.println("Blynk Server " + JarUtil.getServerVersion() + " successfully started.");
+            String path = new File(System.getProperty("logs.folder")).getAbsolutePath().replace("/./", "/");
+            System.out.println("All server output is stored in folder '" + path + "' file.");
         }
     }
 

@@ -8,6 +8,7 @@ import java.nio.file.StandardCopyOption;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -90,4 +91,18 @@ public final class JarUtil {
                filename.endsWith(".png");
     }
 
+    /**
+     * Gets server version from jar file.
+     *
+     * @return server version
+     */
+    public static String getServerVersion() {
+        try (InputStream is = JarUtil.class.getResourceAsStream("/META-INF/maven/cc.blynk.server/launcher/pom.properties")) {
+            Properties properties = new Properties();
+            properties.load(is);
+            return properties.getProperty("version", "");
+        } catch (Exception e) {
+            return "";
+        }
+    }
 }
