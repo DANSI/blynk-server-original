@@ -66,7 +66,7 @@ public class HardwareSyncLogic {
     private void syncSpecificPins(ChannelHandlerContext ctx, String messageBody, int msgId, DashBoard dash, int deviceId) {
         String[] bodyParts = messageBody.split(StringUtils.BODY_SEPARATOR_STRING);
 
-        if (bodyParts.length < 2) {
+        if (bodyParts.length < 2 || bodyParts[0].isEmpty()) {
             ctx.writeAndFlush(makeResponse(msgId, Response.ILLEGAL_COMMAND), ctx.voidPromise());
             return;
         }
