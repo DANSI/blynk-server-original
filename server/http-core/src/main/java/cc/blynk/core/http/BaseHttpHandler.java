@@ -59,11 +59,12 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
             ctx.writeAndFlush(Response.notFound(), ctx.voidPromise());
             return;
         }
-
-        URIDecoder uriDecoder = new URIDecoder(req);
-
+        
+        URIDecoder uriDecoder;
         Object[] params;
+
         try {
+            uriDecoder = new URIDecoder(req);
             uriDecoder.pathData = handlerHolder.uriTemplate.extractParameters();
             params = handlerHolder.fetchParams(uriDecoder);
         } catch (StringIndexOutOfBoundsException stringE) {
