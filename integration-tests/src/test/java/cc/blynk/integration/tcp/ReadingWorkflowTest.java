@@ -80,10 +80,10 @@ public class ReadingWorkflowTest extends IntegrationBase {
 
     @Test
     public void testServerSendReadingCommandCorrectly() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 500, TimeUnit.MILLISECONDS);
-
         clientPair.appClient.send("createWidget 1\0{\"id\":155, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 500, TimeUnit.MILLISECONDS);
 
         verify(clientPair.hardwareClient.responseMock, after(1000).times(2)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
     }
