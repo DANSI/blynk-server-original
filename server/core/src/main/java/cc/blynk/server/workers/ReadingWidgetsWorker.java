@@ -28,6 +28,10 @@ public class ReadingWidgetsWorker implements Runnable {
     private final SessionDao sessionDao;
     private final UserDao userDao;
 
+    private int tickedWidgets = 0;
+    private int counter = 0;
+    private long totalTime = 0;
+
     public ReadingWidgetsWorker(SessionDao sessionDao, UserDao userDao) {
         this.sessionDao = sessionDao;
         this.userDao = userDao;
@@ -37,10 +41,18 @@ public class ReadingWidgetsWorker implements Runnable {
     public void run() {
         long now = System.currentTimeMillis();
         try {
-            int tickedWidgets = process(now);
-            log.debug("Ticket widgets : {}. Time : {}", tickedWidgets, System.currentTimeMillis() - now);
+            tickedWidgets += process(now);
+            totalTime += System.currentTimeMillis() - now;
         } catch (Exception e) {
             log.error("Error processing reading widgets. ", e);
+        }
+
+        counter++;
+        if (counter == 60) {
+            log.info("Ticked widgets for 1 minute : {}. Per second : {}, total time : {}", tickedWidgets, tickedWidgets / 60, totalTime);
+            tickedWidgets = 0;
+            counter = 0;
+            totalTime = 0;
         }
     }
 
