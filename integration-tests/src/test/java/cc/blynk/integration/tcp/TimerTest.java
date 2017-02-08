@@ -166,7 +166,7 @@ public class TimerTest extends IntegrationBase {
         timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = "dw 5 1";
+        timer.startValue = b("dw 5 1");
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -175,7 +175,7 @@ public class TimerTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(1500).times(1)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 1")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
     }
 
     @Test
@@ -189,7 +189,7 @@ public class TimerTest extends IntegrationBase {
         timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.stopValue = "dw 5 0";
+        timer.stopValue = b("dw 5 0");
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.stopTime = curTime + 1;
@@ -198,7 +198,7 @@ public class TimerTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(1500).times(1)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 0")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
     }
 
     @Test
@@ -212,8 +212,8 @@ public class TimerTest extends IntegrationBase {
         timer.pin = 5;
         timer.width = 2;
         timer.height = 1;
-        timer.startValue = "dw 5 1";
-        timer.stopValue = "dw 5 0";
+        timer.startValue = b("dw 5 1");
+        timer.stopValue = b("dw 5 0");
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -223,8 +223,8 @@ public class TimerTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 0")));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 1")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
     }
 
 
@@ -239,8 +239,8 @@ public class TimerTest extends IntegrationBase {
         timer.pin = 5;
         timer.width = 2;
         timer.height = 1;
-        timer.startValue = "dw 5 1";
-        timer.stopValue = "dw 5 0";
+        timer.startValue = b("dw 5 1");
+        timer.stopValue = b("dw 5 0");
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -264,7 +264,7 @@ public class TimerTest extends IntegrationBase {
         timer.y = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = "dw 5 1";
+        timer.startValue = b("dw 5 1");
         timer.width = 2;
         timer.height = 1;
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
@@ -275,14 +275,14 @@ public class TimerTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         timer.id = 113;
-        timer.startValue = "dw 5 2";
+        timer.startValue = b("dw 5 2");
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 1")));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 2")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 2"))));
     }
 
     @Test
@@ -296,8 +296,8 @@ public class TimerTest extends IntegrationBase {
         timer.pin = 5;
         timer.width = 2;
         timer.height = 1;
-        timer.startValue = "dw 5 0";
-        timer.stopValue = "dw 5 1";
+        timer.startValue = b("dw 5 0");
+        timer.stopValue = b("dw 5 1");
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -307,8 +307,8 @@ public class TimerTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 0")));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 1")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
     }
 
     @Test
@@ -322,8 +322,8 @@ public class TimerTest extends IntegrationBase {
         timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = "dw 5 1";
-        timer.stopValue = "dw 5 0";
+        timer.startValue = b("dw 5 1");
+        timer.stopValue = b("dw 5 0");
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -332,15 +332,15 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        timer.startValue = "dw 5 11";
-        timer.stopValue = "dw 5 10";
+        timer.startValue = b("dw 5 11");
+        timer.stopValue = b("dw 5 10");
 
         clientPair.appClient.send("updateWidget 1\0" + JsonParser.toJson(timer));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 11")));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 10")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 11"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 10"))));
     }
 
     @Test
@@ -354,8 +354,8 @@ public class TimerTest extends IntegrationBase {
         timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = "dw 5 1";
-        timer.stopValue = "dw 5 0";
+        timer.startValue = b("dw 5 1");
+        timer.stopValue = b("dw 5 0");
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -388,8 +388,8 @@ public class TimerTest extends IntegrationBase {
         timer.y = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = "dw 5 1";
-        timer.stopValue = "dw 5 0";
+        timer.startValue = b("dw 5 1");
+        timer.stopValue = b("dw 5 0");
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -417,9 +417,9 @@ public class TimerTest extends IntegrationBase {
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         hardClient2.reset();
 
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 1")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
         clientPair.hardwareClient.reset();
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 0")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
 
         verify(hardClient2.responseMock, never()).channelRead(any(), any());
         hardClient2.stop().awaitUninterruptibly();
@@ -438,8 +438,8 @@ public class TimerTest extends IntegrationBase {
         timer.y = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = "dw 5 1";
-        timer.stopValue = "dw 5 0";
+        timer.startValue = b("dw 5 1");
+        timer.stopValue = b("dw 5 0");
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -456,9 +456,9 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("activate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 1")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
         clientPair.hardwareClient.reset();
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, "dw 5 0")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
     }
 
 
