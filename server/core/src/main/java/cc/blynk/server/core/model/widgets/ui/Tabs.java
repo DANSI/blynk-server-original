@@ -11,6 +11,12 @@ public class Tabs extends NoPinWidget {
 
     public Tab[] tabs;
 
+    public boolean bubbleOn;
+
+    public volatile int color;
+
+    public int textColor;
+
     public Tabs() {
         this.tabId = -1;
     }
