@@ -85,7 +85,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 500, TimeUnit.MILLISECONDS);
 
-        verify(clientPair.hardwareClient.responseMock, after(1000).times(2)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
+        verify(clientPair.hardwareClient.responseMock, after(600).times(2)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
     }
 
     @Test
