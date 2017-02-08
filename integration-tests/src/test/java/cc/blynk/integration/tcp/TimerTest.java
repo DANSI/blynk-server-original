@@ -264,7 +264,7 @@ public class TimerTest extends IntegrationBase {
         timer.y = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = b("dw 5 1");
+        timer.startValue = b("1");
         timer.width = 2;
         timer.height = 1;
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
@@ -275,7 +275,7 @@ public class TimerTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         timer.id = 113;
-        timer.startValue = b("dw 5 2");
+        timer.startValue = b("2");
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
