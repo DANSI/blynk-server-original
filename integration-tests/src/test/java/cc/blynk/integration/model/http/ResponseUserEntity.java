@@ -7,7 +7,7 @@ package cc.blynk.integration.model.http;
  */
 public class ResponseUserEntity {
 
-    public String pass;
+    public final String pass;
 
     public ResponseUserEntity(String pass) {
         this.pass = pass;

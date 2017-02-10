@@ -17,15 +17,15 @@ import java.lang.reflect.Method;
  */
 public class HandlerHolder {
 
-    public UriTemplate uriTemplate;
+    public final UriTemplate uriTemplate;
 
     public HttpMethod httpMethod;
 
-    public Method method;
+    public final Method method;
 
-    public Object handler;
+    public final Object handler;
 
-    public Param[] params;
+    public final Param[] params;
 
     public HandlerHolder(UriTemplate uriTemplate, Method method, Object handler, int paramsCount) {
         this.uriTemplate = uriTemplate;

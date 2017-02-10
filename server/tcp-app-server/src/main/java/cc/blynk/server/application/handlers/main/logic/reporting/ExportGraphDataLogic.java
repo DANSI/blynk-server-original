@@ -123,10 +123,10 @@ public class ExportGraphDataLogic {
     }
 
     private class FileLink {
-        Path path;
-        String dashName;
-        PinType pinType;
-        byte pin;
+        final Path path;
+        final String dashName;
+        final PinType pinType;
+        final byte pin;
 
         public FileLink(Path path, String dashName, PinType pinType, byte pin) {
             this.path = path;

@@ -4,7 +4,10 @@ package cc.blynk.integration.model;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -13,7 +16,7 @@ import static org.mockito.Mockito.*;
  */
 public class MockHolder {
 
-    private SimpleClientHandler mock;
+    private final SimpleClientHandler mock;
 
     public MockHolder(SimpleClientHandler mock) {
         this.mock = mock;
@@ -29,14 +32,8 @@ public class MockHolder {
         return this;
     }
 
-    public MockHolder check(MessageBase responseMessage) throws Exception {
+    public void check(MessageBase responseMessage) throws Exception {
         verify(mock).channelRead(any(), eq(responseMessage));
-        return this;
-    }
-
-    public MockHolder check(int times, MessageBase responseMessage) throws Exception {
-        verify(mock, times(times)).channelRead(any(), eq(responseMessage));
-        return this;
     }
 
 }

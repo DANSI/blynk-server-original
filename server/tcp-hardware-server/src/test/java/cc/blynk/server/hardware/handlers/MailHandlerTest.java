@@ -39,7 +39,7 @@ public class MailHandlerTest {
     @Mock
     private MailWrapper mailWrapper;
 
-    private MailLogic mailHandler = new MailLogic(blockingIOProcessor, mailWrapper, 1);
+    private final MailLogic mailHandler = new MailLogic(blockingIOProcessor, mailWrapper, 1);
 
 	@Mock
 	private ChannelHandlerContext ctx;

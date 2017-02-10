@@ -43,11 +43,11 @@ public class FileUtils {
         }
     }
 
-    public static boolean deleteQuietly(Path path) {
+    public static void deleteQuietly(Path path) {
         try {
-            return Files.deleteIfExists(path);
+            Files.deleteIfExists(path);
         } catch (Exception ignored) {
-            return false;
+            //ignore
         }
     }
 

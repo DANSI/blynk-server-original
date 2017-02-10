@@ -78,9 +78,8 @@ public class TestHardClient extends BaseClient {
         };
     }
 
-    public TestHardClient send(String line) {
+    public void send(String line) {
         send(produceMessageBaseOnUserInput(line, ++msgId));
-        return this;
     }
 
     public void reset() {

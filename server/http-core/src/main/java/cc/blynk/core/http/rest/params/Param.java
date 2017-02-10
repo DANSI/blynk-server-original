@@ -9,9 +9,9 @@ import cc.blynk.core.http.rest.URIDecoder;
  */
 public abstract class Param {
 
-    protected String name;
+    protected final String name;
 
-    protected Class<?> type;
+    protected final Class<?> type;
 
     public Param(String name, Class<?> type) {
         this.name = name;

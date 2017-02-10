@@ -17,7 +17,7 @@ public class BodyParam extends Param {
 
     private static final Logger log = LogManager.getLogger(BodyParam.class);
 
-    private String expectedContentType;
+    private final String expectedContentType;
 
     public BodyParam(String name, Class<?> type, String expectedContentType) {
         super(name, type);

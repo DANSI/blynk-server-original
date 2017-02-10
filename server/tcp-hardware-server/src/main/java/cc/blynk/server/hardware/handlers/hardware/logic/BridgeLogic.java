@@ -33,7 +33,7 @@ import static cc.blynk.utils.StateHolderUtil.getHardState;
 public class BridgeLogic {
 
     private static final Logger log = LogManager.getLogger(BridgeLogic.class);
-    public final HardwareLogic hardwareLogic;
+    private final HardwareLogic hardwareLogic;
     private final SessionDao sessionDao;
     private final Map<String, String> sendToMap;
 

@@ -112,8 +112,7 @@ public final class WebSocketClient extends BaseClient {
         }
     }
 
-    public WebSocketClient send(String line) {
+    public void send(String line) {
         send(produceWebSocketFrame(produceMessageBaseOnUserInput(line, ++msgId)));
-        return this;
     }
 }

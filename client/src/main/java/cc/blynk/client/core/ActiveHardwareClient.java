@@ -76,8 +76,7 @@ public class ActiveHardwareClient extends BaseClient {
 
     }
 
-    public ActiveHardwareClient send(String line) {
+    public void send(String line) {
         send(produceMessageBaseOnUserInput(line, 1));
-        return this;
     }
 }

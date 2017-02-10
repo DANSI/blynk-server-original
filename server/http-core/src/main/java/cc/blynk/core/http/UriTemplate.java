@@ -34,7 +34,7 @@ public class UriTemplate {
 
     private Matcher matcher;
 
-    private List<String> parameterNames = new ArrayList<>();
+    private final List<String> parameterNames = new ArrayList<>();
 
     public UriTemplate(String pattern) {
         super();

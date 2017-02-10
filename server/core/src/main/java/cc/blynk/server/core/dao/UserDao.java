@@ -69,8 +69,8 @@ public class UserDao {
         return delete(new UserKey(name, appName));
     }
 
-    public User add(User user) {
-        return users.put(new UserKey(user), user);
+    public void add(User user) {
+        users.put(new UserKey(user), user);
     }
 
     public Map<String, Integer> getBoardsUsage() {

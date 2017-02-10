@@ -83,14 +83,12 @@ public class TestAppClient extends AppClient {
         };
     }
 
-    public TestAppClient send(String line) {
+    public void send(String line) {
         send(produceMessageBaseOnUserInput(line, ++msgId));
-        return this;
     }
 
-    public TestAppClient send(String line, int id) {
+    public void send(String line, int id) {
         send(produceMessageBaseOnUserInput(line, id));
-        return this;
     }
 
     public void reset() {

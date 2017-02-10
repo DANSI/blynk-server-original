@@ -7,11 +7,11 @@ package cc.blynk.server.admin.http.response;
  */
 public class RequestPerSecondResponse {
 
-    public String name;
+    public final String name;
 
-    public int appRate;
+    public final int appRate;
 
-    public int hardRate;
+    public final int hardRate;
 
     public RequestPerSecondResponse(String name, int appRate, int hardRate) {
         this.name = name;

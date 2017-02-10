@@ -9,9 +9,9 @@ import java.util.Map;
  */
 public class NameCountResponse {
 
-    public String name;
+    public final String name;
 
-    public int count;
+    public final int count;
 
     public NameCountResponse(Map.Entry<String, ?> entry) {
         this(entry.getKey(), ((Number) entry.getValue()).intValue());

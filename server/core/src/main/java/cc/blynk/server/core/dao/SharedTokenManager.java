@@ -52,12 +52,11 @@ class SharedTokenManager {
         return cache.get(token);
     }
 
-    String deleteProject(DashBoard dash) {
+    void deleteProject(DashBoard dash) {
         if (dash.sharedToken != null) {
             cache.remove(dash.sharedToken);
             log.info("Deleted {} shared token.", dash.sharedToken);
         }
-        return dash.sharedToken;
     }
 
 }

@@ -172,7 +172,7 @@ public class WebhookProcessor extends NotificationBase {
         return data;
     }
 
-    private BoundRequestBuilder buildRequestBody(BoundRequestBuilder builder, String header, String body) {
+    private void buildRequestBody(BoundRequestBuilder builder, String header, String body) {
         switch (header) {
             case "application/json" :
             case "text/plain" :
@@ -181,8 +181,6 @@ public class WebhookProcessor extends NotificationBase {
             default :
                 throw new IllegalArgumentException("Unsupported content-type for webhook.");
         }
-
-        return builder;
     }
 
     private BoundRequestBuilder buildRequestMethod(SupportedWebhookMethod method, String url) {

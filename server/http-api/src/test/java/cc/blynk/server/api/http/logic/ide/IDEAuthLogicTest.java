@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static cc.blynk.server.api.http.logic.ide.IDEAuthLogic.IDE_AUTHORIZE_ENDPOINT;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 /**
@@ -39,7 +39,7 @@ public class IDEAuthLogicTest {
 
     private IDEAuthLogic ideAuthLogic;
 
-    private User user = new User(TEST_USER1, PASS, "", "", false);
+    private final User user = new User(TEST_USER1, PASS, "", "", false);
 
     @Before
     public void setUp() throws Exception {
