@@ -16,8 +16,6 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -40,17 +38,7 @@ public class HttpAPIPerformanceTest extends BaseTest {
 
     @Test
     public void testKeepAlive() throws Exception {
-
-        ExecutorService executorService = Executors.newFixedThreadPool(100);
-
-        //executorService.submit(new Runnable() {
-        //    @Override
-       //     public void run() {
-                makeTest();
-       //     }
-       // });
-
-        //executorService.awaitTermination(1000, TimeUnit.SECONDS);
+        makeTest();
     }
 
     private void makeTest() {

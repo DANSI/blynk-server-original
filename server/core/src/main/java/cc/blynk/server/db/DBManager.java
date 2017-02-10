@@ -144,7 +144,7 @@ public class DBManager implements Closeable {
         return redeemDBDao.updateRedeem(username, token);
     }
 
-    public void insertRedeems(List<Redeem> redeemList) throws Exception {
+    public void insertRedeems(List<Redeem> redeemList) {
         if (isDBEnabled() && redeemList.size() > 0) {
             redeemDBDao.insertRedeems(redeemList);
         }

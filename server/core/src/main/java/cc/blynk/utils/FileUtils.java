@@ -86,7 +86,7 @@ public class FileUtils {
         }
     }
 
-    public static final int DEFAULT_FETCH_COUNT = 60 * 24 * 30 * 1;
+    public static final int DEFAULT_FETCH_COUNT = 60 * 24 * 30;
 
     public static Path createCSV(ReportingDao reportingDao, String username, int dashId, int deviceId, PinType pinType, byte pin) throws Exception {
         if (pinType == null || pin == Pin.NO_PIN) {

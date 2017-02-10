@@ -52,6 +52,7 @@ public class RedisClient implements Closeable {
 
     private void checkConnected() {
         try (Jedis jedis = userPool.getResource()) {
+            //that fine. just check connection. do nothing.
         }
     }
 
@@ -122,10 +123,12 @@ public class RedisClient implements Closeable {
             try {
                 userPool.destroy();
             } catch (Exception e) {
+                //ignore
             }
             try {
                 tokenPool.destroy();
             } catch (Exception e) {
+                //ignore
             }
         }
     }

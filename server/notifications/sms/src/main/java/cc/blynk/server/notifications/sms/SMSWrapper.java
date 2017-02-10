@@ -44,7 +44,7 @@ public class SMSWrapper {
         this.httpclient = httpclient;
     }
 
-    public void send(String to, String text) throws Exception {
+    public void send(String to, String text) {
         List<Param> params = new ArrayList<>();
         params.add(new Param("api_key", key));
         params.add(new Param("api_secret", secret));

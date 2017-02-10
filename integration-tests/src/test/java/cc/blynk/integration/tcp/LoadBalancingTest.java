@@ -138,7 +138,6 @@ public class LoadBalancingTest extends IntegrationBase {
         appClient1.start();
 
         String username = "test_new@gmail.com";
-        String pass = "a";
         String appName = "Blynk";
 
         holder.redisClient.assignServerToUser(username, "100.100.100.100");

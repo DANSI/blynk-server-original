@@ -23,7 +23,7 @@ public interface DefaultExceptionHandler {
 
     Logger log = LogManager.getLogger(DefaultExceptionHandler.class);
 
-    default void handleGeneralException(ChannelHandlerContext ctx, Throwable cause, int msgId) throws Exception {
+    default void handleGeneralException(ChannelHandlerContext ctx, Throwable cause, int msgId) {
         if (cause instanceof BaseServerException) {
             BaseServerException baseServerException = (BaseServerException) cause;
             log.debug(baseServerException.getMessage());
@@ -35,7 +35,7 @@ public interface DefaultExceptionHandler {
         }
     }
 
-    default void handleGeneralException(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    default void handleGeneralException(ChannelHandlerContext ctx, Throwable cause) {
         if (cause instanceof BaseServerException) {
             BaseServerException baseServerException = (BaseServerException) cause;
             //no need for stack trace for known exceptions

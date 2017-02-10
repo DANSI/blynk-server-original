@@ -305,12 +305,12 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test(expected = DateTimeException.class)
     public void testWrongAsiaTimeZone() {
-        ZoneId zoneId = ZoneId.of("Asia/Hanoi");
+        ZoneId.of("Asia/Hanoi");
     }
 
     @Test
     public void testCorrectAsiaTimeZone() {
-        ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");
+        ZoneId.of("Asia/Ho_Chi_Minh");
     }
 
     @Test

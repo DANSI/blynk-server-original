@@ -71,11 +71,8 @@ public class HardwareEchoHandler extends SimpleChannelInboundHandler<HardwareMes
         }
 
         if (!"".equals(value)) {
-            StringBuilder sb = new StringBuilder()
-                    .append(pinType.pintTypeChar).append('w')
-                    .append('\0').append(pin)
-                    .append('\0').append(value);
-            ctx.writeAndFlush(MessageFactory.produce(msgId, Command.HARDWARE, sb.toString()));
+            ctx.writeAndFlush(MessageFactory.produce(msgId, Command.HARDWARE,
+                    String.valueOf(pinType.pintTypeChar) + 'w' + '\0' + pin + '\0' + value));
         }
     }
 

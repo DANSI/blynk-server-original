@@ -9,7 +9,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * The Blynk Project.
@@ -31,7 +35,7 @@ public class TokenGenerator {
         dbManager.insertRedeems(redeems);
     }
 
-    private static Set<String> generate(int amount) throws IOException {
+    private static Set<String> generate(int amount) {
         Set<String> tokens = new HashSet<>();
 
         for (int i = 0; i < amount; i++ ) {

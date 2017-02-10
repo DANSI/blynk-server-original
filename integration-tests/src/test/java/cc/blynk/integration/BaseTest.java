@@ -120,6 +120,7 @@ public abstract class BaseTest {
         try {
             uri = resource.toURI();
         } catch (Exception e) {
+            //ignoring. that's fine.
         }
         String resourcesPath = Paths.get(uri).toAbsolutePath().toString();
         System.out.println("Resource path : " + resourcesPath);
@@ -127,7 +128,7 @@ public abstract class BaseTest {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<String> consumeJsonPinValues(String response) throws IOException {
+    public static List<String> consumeJsonPinValues(String response) {
         return JsonParser.readAny(response, List.class);
     }
 

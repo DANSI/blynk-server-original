@@ -33,14 +33,9 @@ public class PinStorageSerializationTest {
         user.profile.dashBoards[0].pinsStorage.put(pinStorageKey, "0");
         user.profile.dashBoards[0].pinsStorage.put(pinStorageKey2, "1");
 
-        String expectedString = "{\"name\":\"123\",\"appName\":\"Blynk\",\"lastModifiedTs\":0,\"lastLoggedAt\":0,\"profile\":{\"dashBoards\":[{\"id\":0,\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false," +
-                "\"pinsStorage\":{\"0-v0\":\"0\",\"0-d1\":\"1\"}" +
-                "}]},\"isFacebookUser\":false,\"energy\":2000,\"id\":\"123-Blynk\"}";
-
         String result = user.toString();
         assertTrue(result.contains("0-v0"));
         assertTrue(result.contains("0-d1"));
-        //assertEquals(expectedString, user.toString());
     }
 
     @Test

@@ -69,7 +69,7 @@ public class ByteUtils {
     }
 
     //for tests only
-    public static byte[] decompress(byte[] bytes) throws IOException {
+    public static byte[] decompress(byte[] bytes) {
         try (InputStream in = new InflaterInputStream(new ByteArrayInputStream(bytes))) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             byte[] buffer = new byte[4096];
@@ -79,7 +79,6 @@ public class ByteUtils {
             }
             return baos.toByteArray();
         } catch (IOException e) {
-
             throw new AssertionError(e);
         }
     }

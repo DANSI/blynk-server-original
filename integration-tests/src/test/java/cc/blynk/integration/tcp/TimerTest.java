@@ -81,7 +81,7 @@ public class TimerTest extends IntegrationBase {
         timerTime.days = new int[] {1,2,3,4,5,6,7};
 
         //adding 2 seconds just to be sure we no gonna miss timer event
-        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2;;
+        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2;
         timerTime.tzName = DateTimeUtils.UTC;
 
         Rule rule = new Rule();

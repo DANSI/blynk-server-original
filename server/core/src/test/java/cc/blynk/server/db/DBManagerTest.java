@@ -173,7 +173,7 @@ public class DBManagerTest {
 
     @Test
     public void testDeleteWorksAsExpected() throws Exception {
-        long minute = 0;
+        long minute;
         try (Connection connection = dbManager.getConnection();
              PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
 
@@ -241,8 +241,6 @@ public class DBManagerTest {
         }
         //dbManager.saveUsers(users);
         dbManager.userDBDao.save(users);
-
-        int i = 0;
 
         ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers();
         System.out.println("Records : " + dbUsers.size());

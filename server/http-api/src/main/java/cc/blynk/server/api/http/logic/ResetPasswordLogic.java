@@ -21,7 +21,6 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.net.URISyntaxException;
 import java.util.UUID;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
@@ -102,7 +101,7 @@ public class ResetPasswordLogic {
 
     @GET
     @Path("landing")
-    public Response generateResetPage(@QueryParam("token") String token) throws URISyntaxException {
+    public Response generateResetPage(@QueryParam("token") String token) {
         TokenUser user = tokensPool.getUser(token);
         if (user == null) {
             return Response.badRequest("Your token was not found or it is outdated. Please try again.");

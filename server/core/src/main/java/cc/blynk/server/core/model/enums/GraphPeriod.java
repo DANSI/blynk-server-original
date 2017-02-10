@@ -13,6 +13,6 @@ public enum GraphPeriod {
     WEEK,
     MONTH,
     THREE_MONTHS,
-    ALL;
+    ALL
 
 }

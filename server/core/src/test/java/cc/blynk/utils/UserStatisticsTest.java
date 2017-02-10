@@ -11,7 +11,12 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
@@ -97,7 +102,6 @@ public class UserStatisticsTest {
         System.out.println();
         System.out.println("Dashboard Space Usage :");
 
-        int dashes;
         List<Integer> all = new ArrayList<>();
         for (User user : users.values()) {
                 for (DashBoard dashBoard : user.profile.dashBoards) {

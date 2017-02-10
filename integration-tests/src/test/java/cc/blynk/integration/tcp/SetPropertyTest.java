@@ -199,7 +199,6 @@ public class SetPropertyTest extends IntegrationBase {
 
     @Test
     public void testSetColorForWidget() throws Exception {
-        int i = Integer.decode("#23C48E");
         clientPair.hardwareClient.send("setProperty 4 color #23C48E");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 4 color #23C48E"))));

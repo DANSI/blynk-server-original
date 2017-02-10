@@ -85,7 +85,7 @@ public class FacebookLoginTest extends IntegrationBase {
 
     @Test
     public void testFacebookLoginWorksForExistingUser() throws Exception {
-        ClientPair clientPair = initFacebookAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "shartax@gmail.com", facebookAuthToken);
+        initFacebookAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "shartax@gmail.com", facebookAuthToken);
     }
 
     private ClientPair initFacebookAppAndHardPair(String host, int appPort, int hardPort, String user, String facebookAuthToken) throws Exception {
