@@ -129,7 +129,10 @@ public class WebhookProcessor extends NotificationBase {
                     }
                 } else {
                     webHook.failureCounter++;
-                    log.error("Error sending webhook for {}. Code {}, Reason {}", username, response.getStatusCode(), response.getResponseBody());
+                    log.error("Error sending webhook for {}. Code {}.", username, response.getStatusCode());
+                    if (log.isDebugEnabled()) {
+                        log.debug("Reason {}", response.getResponseBody());
+                    }
                 }
 
                 return null;
@@ -138,7 +141,10 @@ public class WebhookProcessor extends NotificationBase {
             @Override
             public void onThrowable(Throwable t) {
                 webHook.failureCounter++;
-                log.error("Error sending webhook for {}. Reason {}", username, t.getMessage());
+                log.error("Error sending webhook for {}.", username);
+                if (log.isDebugEnabled()) {
+                    log.debug("Reason {}", t.getMessage());
+                }
             }
         });
         globalStats.mark(WEB_HOOKS);
