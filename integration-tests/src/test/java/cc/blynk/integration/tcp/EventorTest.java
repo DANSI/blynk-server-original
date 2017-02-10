@@ -481,4 +481,27 @@ public class EventorTest extends IntegrationBase {
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
     }
 
+    @Test
+    public void testPinModeForPWMPinForEventorAndSetPinAction() throws Exception {
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in"))));
+        reset(clientPair.hardwareClient.responseMock);
+
+        Eventor eventor = oneRuleEventor("if v1 > 37 then setpin d9 255");
+        //here is special case. right now eventor for digital pins supports only LOW/HIGH values
+        //that's why eventor doesn't work with PWM pins, as they handled as analog, where HIGH doesn't work.
+        SetPinAction setPinAction = (SetPinAction) eventor.rules[0].actions[0];
+        setPinAction.pin.pwmMode = true;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in 9 out"))));
+
+        clientPair.hardwareClient.send("hardware vw 1 38");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 38"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("aw 9 255"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 aw 9 255"))));
+    }
 }

@@ -438,8 +438,8 @@ public class TimerTest extends IntegrationBase {
         timer.y = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = b("dw 5 1");
-        timer.stopValue = b("dw 5 0");
+        timer.startValue = "1";
+        timer.stopValue = "0";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
