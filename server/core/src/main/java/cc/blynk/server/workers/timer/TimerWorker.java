@@ -116,7 +116,9 @@ public class TimerWorker implements Runnable {
     }
 
     public void add(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, TimerTime time, BaseAction action) {
-        timerExecutors[hash(time.time)].put(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time), action);
+        if (action.isValid()) {
+            timerExecutors[hash(time.time)].put(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time), action);
+        }
     }
 
     public void delete(UserKey userKey, Eventor eventor, int dashId) {
