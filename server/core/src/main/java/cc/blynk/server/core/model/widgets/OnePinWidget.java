@@ -35,7 +35,7 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
 
     public int max;
 
-    public String value;
+    public volatile String value;
 
     protected static String makeHardwareBody(PinType pinType, byte pin, String value) {
         return "" + pinType.pintTypeChar + 'w' + BODY_SEPARATOR + pin + BODY_SEPARATOR + value;

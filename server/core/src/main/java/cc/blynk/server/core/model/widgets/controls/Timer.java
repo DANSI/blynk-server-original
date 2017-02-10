@@ -24,13 +24,6 @@ public class Timer extends OnePinWidget {
 
     public String stopValue;
 
-    //this trick called field hiding.
-    //it used to avoid volatile in OnePinWidget
-    //so timer has it's own field "value"
-    //that could be changed via other thread - TimerWorker
-    //https://github.com/blynkkk/blynk-server/issues/208
-    public volatile String value;
-
     public boolean isValidStart() {
         return isValidTime(startTime) && isValidValue(startValue);
     }
