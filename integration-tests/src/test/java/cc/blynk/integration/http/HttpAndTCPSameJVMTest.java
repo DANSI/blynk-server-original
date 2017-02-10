@@ -26,9 +26,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -60,17 +59,17 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
-    private static BaseServer httpServer;
-    private static BaseServer hardwareServer;
-    private static BaseServer appServer;
+    private BaseServer httpServer;
+    private BaseServer hardwareServer;
+    private BaseServer appServer;
 
-    private static CloseableHttpClient httpclient;
-    private static String httpServerUrl;
+    private CloseableHttpClient httpclient;
+    private String httpServerUrl;
 
-    private static ClientPair clientPair;
+    private ClientPair clientPair;
 
-    @AfterClass
-    public static void shutdown() throws Exception {
+    @After
+    public void shutdown() throws Exception {
         httpclient.close();
         httpServer.close();
         hardwareServer.close();
@@ -78,18 +77,14 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.stop();
     }
 
-    @BeforeClass
-    public static void init() throws Exception {
-        httpServer = new HttpAPIServer(staticHolder).start();
-        hardwareServer = new HardwareServer(staticHolder).start();
-        appServer = new AppServer(staticHolder).start();
+    @Before
+    public void init() throws Exception {
+        httpServer = new HttpAPIServer(holder).start();
+        hardwareServer = new HardwareServer(holder).start();
+        appServer = new AppServer(holder).start();
         httpServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = HttpClients.createDefault();
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
-    }
-
-    @Before
-    public void resetBefore() {
         clientPair.hardwareClient.reset();
         clientPair.appClient.reset();
     }
@@ -208,7 +203,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void testEventorTimerWidgeWorkerWorksAsExpectedWithHttp() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(staticHolder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         TimerTime timerTime = new TimerTime();
 
@@ -259,7 +254,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void testTimerWidgeWorkerWorksAsExpectedWithHttp() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(staticHolder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -292,7 +287,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
             assertEquals(200, response.getStatusLine().getStatusCode());
             List<String> values = consumeJsonPinValues(response);
             assertEquals(1, values.size());
-            assertEquals("1", values.get(0));
+            assertEquals("0", values.get(0));
         }
     }
 
