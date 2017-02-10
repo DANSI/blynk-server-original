@@ -6,11 +6,18 @@ import cc.blynk.integration.tcp.EventorTest;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
+import cc.blynk.server.core.model.widgets.others.eventor.Rule;
+import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.utils.DateTimeUtils;
 import cc.blynk.utils.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -26,11 +33,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static cc.blynk.server.workers.timer.TimerWorker.TIMER_MSG_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
@@ -192,6 +204,96 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1 vw 100 37"))));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 100 37"))));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
+    }
+
+    @Test
+    public void testEventorTimerWidgeWorkerWorksAsExpectedWithHttp() throws Exception {
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(staticHolder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+
+        TimerTime timerTime = new TimerTime();
+
+        timerTime.days = new int[] {1,2,3,4,5,6,7};
+
+        //adding 2 seconds just to be sure we no gonna miss timer event
+        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2;
+        timerTime.tzName = DateTimeUtils.UTC;
+
+        Rule rule = new Rule();
+        rule.isActive = true;
+        rule.triggerTime = timerTime;
+        SetPinAction setPinAction = new SetPinAction();
+        setPinAction.pin = new Pin();
+        setPinAction.pin.pin = 4;
+        setPinAction.pin.pinType = PinType.VIRTUAL;
+        setPinAction.value = "1";
+        rule.actions = new BaseAction[] {
+                setPinAction
+        };
+
+        Eventor eventor = new Eventor(new Rule[] {
+                rule
+        });
+        eventor.id = 1000;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 4 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 4 1"))));
+
+
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+
+        HttpGet requestGET = new HttpGet(httpServerUrl + token + "/pin/v4");
+
+        try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("1", values.get(0));
+        }
+    }
+
+    @Test
+    public void testTimerWidgeWorkerWorksAsExpectedWithHttp() throws Exception {
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(staticHolder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        Timer timer = new Timer();
+        timer.id = 112;
+        timer.x = 1;
+        timer.y = 1;
+        timer.pinType = PinType.VIRTUAL;
+        timer.pin = 4;
+        timer.width = 2;
+        timer.height = 1;
+        timer.startValue = "1";
+        timer.stopValue = "0";
+        LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
+        int curTime = localDateTime.toSecondOfDay();
+        timer.startTime = curTime + 1;
+        timer.stopTime = curTime + 1;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("vw 4 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("vw 4 0"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+
+        HttpGet requestGET = new HttpGet(httpServerUrl + token + "/pin/v4");
+
+        try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("1", values.get(0));
+        }
     }
 
     @Test
