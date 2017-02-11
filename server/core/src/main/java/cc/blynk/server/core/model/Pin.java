@@ -23,9 +23,9 @@ public class Pin {
 
     public String value;
 
-    public Integer min;
+    public int min;
 
-    public Integer max;
+    public int max = 255;
 
     public String label;
 
