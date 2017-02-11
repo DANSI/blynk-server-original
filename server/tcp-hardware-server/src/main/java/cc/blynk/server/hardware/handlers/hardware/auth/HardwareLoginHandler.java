@@ -8,9 +8,7 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
-import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
@@ -26,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
@@ -46,6 +45,8 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
     private static final Logger log = LogManager.getLogger(DefaultExceptionHandler.class);
 
+    private static final int HARDWARE_PIN_MODE_MSG_ID = 1;
+
     private final Holder holder;
     private final RedisClient redisClient;
     private final BlockingIOProcessor blockingIOProcessor;
@@ -64,9 +65,9 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         session.addHardChannel(channel);
         channel.write(ok(msgId));
 
-        StringMessage pinModeMessage = new HardwareMessage(1, dash.buildPMMessage(deviceId));
-        if (dash.isActive && pinModeMessage.length > 2) {
-            channel.write(pinModeMessage);
+        final String body = dash.buildPMMessage(deviceId);
+        if (dash.isActive && body.length() > 2) {
+            channel.write(makeASCIIStringMessage(HARDWARE, HARDWARE_PIN_MODE_MSG_ID, body));
         }
 
         channel.flush();
