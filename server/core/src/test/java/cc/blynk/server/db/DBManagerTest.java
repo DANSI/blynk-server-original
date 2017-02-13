@@ -29,7 +29,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -224,7 +223,7 @@ public class DBManagerTest {
     @Test
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertForDifferentApps() throws Exception {
-        List<User> users = new ArrayList<>();
+        ArrayList<User> users = new ArrayList<>();
         users.add(new User("test1@gmail.com", "pass", "testapp2", "local", false));
         users.add(new User("test1@gmail.com", "pass", "testapp1", "local", false));
         dbManager.userDBDao.save(users);
@@ -235,7 +234,7 @@ public class DBManagerTest {
     @Test
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertAndSelect() throws Exception {
-        List<User> users = new ArrayList<>();
+        ArrayList<User> users = new ArrayList<>();
         for (int i = 0; i < 10000; i++) {
             users.add(new User("test" + i + "@gmail.com", "pass", AppName.BLYNK, "local", false));
         }
@@ -249,7 +248,7 @@ public class DBManagerTest {
     @Test
     @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertUser() throws Exception {
-        List<User> users = new ArrayList<>();
+        ArrayList<User> users = new ArrayList<>();
         User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false);
         user.lastModifiedTs = 0;
         users.add(user);
