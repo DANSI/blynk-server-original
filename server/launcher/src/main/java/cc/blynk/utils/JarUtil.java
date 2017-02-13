@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.CodeSource;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -29,7 +28,7 @@ public final class JarUtil {
      * @throws Exception
      */
     public static boolean unpackStaticFiles(String staticFolder) throws Exception {
-        List<String> staticResources = find(staticFolder);
+        ArrayList<String> staticResources = find(staticFolder);
 
         if (staticResources.size() == 0) {
             return false;
@@ -56,9 +55,9 @@ public final class JarUtil {
      * @return - absolute path to resources within staticResourcesFolder
      * @throws Exception
      */
-    public static List<String> find(String staticResourcesFolder) throws Exception {
+    private static ArrayList<String> find(String staticResourcesFolder) throws Exception {
         CodeSource src = JarUtil.class.getProtectionDomain().getCodeSource();
-        List<String> staticResources = new ArrayList<>();
+        ArrayList<String> staticResources = new ArrayList<>();
 
         if (src != null) {
             URL jar = src.getLocation();

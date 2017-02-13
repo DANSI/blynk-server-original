@@ -22,6 +22,7 @@ import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -103,7 +104,7 @@ public class DBManager implements Closeable {
         return config;
     }
 
-    public void saveUsers(List<User> users) {
+    public void saveUsers(ArrayList<User> users) {
         if (isDBEnabled() && users.size() > 0) {
             blockingIOProcessor.execute(() -> userDBDao.save(users));
         }

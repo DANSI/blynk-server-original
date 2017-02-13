@@ -11,7 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -59,7 +59,7 @@ public class UserDBDao {
         return users;
     }
 
-    public void save(List<User> users) {
+    public void save(ArrayList<User> users) {
         long start = System.currentTimeMillis();
         log.info("Storing users...");
 

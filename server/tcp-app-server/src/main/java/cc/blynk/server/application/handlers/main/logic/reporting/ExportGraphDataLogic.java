@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_ERROR;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
@@ -84,7 +83,7 @@ public class ExportGraphDataLogic {
         blockingIOProcessor.execute(() -> {
             try {
                 String dashName = dashBoard.name == null ? "" : dashBoard.name;
-                List<FileLink> pinsCSVFilePath = new ArrayList<>();
+                ArrayList<FileLink> pinsCSVFilePath = new ArrayList<>();
                 for (Pin pin : historyGraph.pins) {
                     if (pin != null) {
                         try {
@@ -112,7 +111,7 @@ public class ExportGraphDataLogic {
         });
     }
 
-    private String makeBody(List<FileLink> fileUrls) {
+    private String makeBody(ArrayList<FileLink> fileUrls) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html><body>");
         for (FileLink link : fileUrls) {

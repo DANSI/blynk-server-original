@@ -12,7 +12,6 @@ import org.asynchttpclient.Param;
 import org.asynchttpclient.Response;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -45,7 +44,7 @@ public class SMSWrapper {
     }
 
     public void send(String to, String text) {
-        List<Param> params = new ArrayList<>();
+        ArrayList<Param> params = new ArrayList<>();
         params.add(new Param("api_key", key));
         params.add(new Param("api_secret", secret));
         params.add(new Param("from", "Blynk"));

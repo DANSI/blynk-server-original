@@ -17,7 +17,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.server.core.dao.ReportingDao.generateFilename;
@@ -74,7 +73,7 @@ public class ReportingWorker implements Runnable {
     private Map<AggregationKey, AggregationValue>  process(Map<AggregationKey, AggregationValue> map, GraphType type) {
         long nowTruncatedToPeriod = System.currentTimeMillis() / type.period;
 
-        List<AggregationKey> keys = new ArrayList<>(map.keySet());
+        ArrayList<AggregationKey> keys = new ArrayList<>(map.keySet());
         Collections.sort(keys, AggregationKey.AGGREGATION_KEY_COMPARATOR);
 
         Map<AggregationKey, AggregationValue> removedKeys = new HashMap<>();

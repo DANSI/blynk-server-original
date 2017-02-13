@@ -18,7 +18,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
@@ -75,7 +74,7 @@ public class DeleteWidgetLogic {
      * Removes all widgets with tabId greater than lastTabIndex
      */
     public static void deleteTabs(TimerWorker timerWorker, User user, UserKey userKey, DashBoard dash, int lastTabIndex) {
-        List<Widget> zeroTabWidgets = new ArrayList<>();
+        ArrayList<Widget> zeroTabWidgets = new ArrayList<>();
         int removedWidgetPrice = 0;
         for (Widget widgetToDelete : dash.widgets) {
             if (widgetToDelete.tabId > lastTabIndex) {

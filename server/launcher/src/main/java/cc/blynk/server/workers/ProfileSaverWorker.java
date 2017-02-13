@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.Closeable;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Background thread that once a minute stores all user DB to disk in case profile was changed since last saving.
@@ -60,7 +59,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
 
             final long now = System.currentTimeMillis();
 
-            List<User> users = saveModified();
+            ArrayList<User> users = saveModified();
 
             dbManager.saveUsers(users);
 
@@ -92,8 +91,8 @@ public class ProfileSaverWorker implements Runnable, Closeable {
         }
     }
 
-    private List<User> saveModified() {
-        List<User> users = new ArrayList<>();
+    private ArrayList<User> saveModified() {
+        ArrayList<User> users = new ArrayList<>();
 
         for (User user : userDao.getUsers().values()) {
             if (isUpdated(lastStart, user)) {
