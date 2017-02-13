@@ -30,7 +30,8 @@ public class Terminal extends OnePinWidget {
     @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
         if (isSame(deviceId, pin, type)) {
-            this.value = value;
+            //todo remove this line after migration.
+            this.value = null;
             this.lastCommands.add(value);
             return true;
         }
@@ -48,6 +49,16 @@ public class Terminal extends OnePinWidget {
                 appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
             }
         }
+    }
+
+    @Override
+    public String makeHardwareBody() {
+        if (isNotValid() || lastCommands.size() == 0) {
+            return null;
+        }
+        return isPWMSupported() ?
+                makeHardwareBody(PinType.ANALOG, pin, lastCommands.getLast()) :
+                makeHardwareBody(pinType, pin, lastCommands.getLast());
     }
 
     @Override
