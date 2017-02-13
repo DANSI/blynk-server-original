@@ -15,7 +15,7 @@ public class SetPinAction extends BaseAction {
 
     public String value;
 
-    public SetPinActionType type;
+    public SetPinActionType setPinType;
 
     public SetPinAction() {
     }
