@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
+import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -42,6 +43,7 @@ public class HardwareAppLogic {
 
     private final SessionDao sessionDao;
     private final WebhookProcessor webhookProcessor;
+    private final EventorProcessor eventorProcessor;
 
     public HardwareAppLogic(Holder holder, String username) {
         this.sessionDao = holder.sessionDao;
@@ -51,6 +53,7 @@ public class HardwareAppLogic {
                 holder.limits.WEBHOOK_FAILURE_LIMIT,
                 holder.stats,
                 username);
+        this.eventorProcessor = holder.eventorProcessor;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
@@ -124,11 +127,7 @@ public class HardwareAppLogic {
                     ctx.writeAndFlush(makeResponse(message.id, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
                 }
 
-                try {
-                    webhookProcessor.process(session, dash, targetId, pin, pinType, value);
-                } catch (Exception e) {
-                    log.warn("Error webhook processing. ", e.getMessage());
-                }
+                process(dash, targetId, session, pin, pinType, value);
 
                 break;
 
@@ -149,6 +148,15 @@ public class HardwareAppLogic {
                     }
                 }
                 break;
+        }
+    }
+
+    private void process(DashBoard dash, int deviceId, Session session, byte pin, PinType pinType, String value) {
+        try {
+            eventorProcessor.process(session, dash, deviceId, pin, pinType, value);
+            webhookProcessor.process(session, dash, deviceId, pin, pinType, value);
+        } catch (Exception e) {
+            log.error("Error processing eventor/webhook.", e);
         }
     }
 
