@@ -68,7 +68,7 @@ public class ReadingWidgetsWorker implements Runnable {
                     if (dashBoard.isActive) {
                         for (Channel channel : session.hardwareChannels) {
                             final HardwareStateHolder stateHolder = StateHolderUtil.getHardState(channel);
-                            if (stateHolder != null && stateHolder.dashId == dashBoard.id) {
+                            if (stateHolder.dashId == dashBoard.id) {
                                 for (Widget widget : dashBoard.widgets) {
                                     if (widget instanceof FrequencyWidget) {
                                         final FrequencyWidget frequencyWidget = (FrequencyWidget) widget;

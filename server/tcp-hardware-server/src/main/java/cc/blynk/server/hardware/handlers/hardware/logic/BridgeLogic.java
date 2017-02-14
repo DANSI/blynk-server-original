@@ -80,7 +80,7 @@ public class BridgeLogic {
                 for (Channel channel : session.hardwareChannels) {
                     if (channel != ctx.channel() && channel.isWritable()) {
                         HardwareStateHolder hardwareState = getHardState(channel);
-                        if (hardwareState != null && token.equals(hardwareState.token)) {
+                        if (token.equals(hardwareState.token)) {
                             messageWasSent = true;
                             hardwareLogic.messageReceived(ctx, hardwareState, message);
                             channel.writeAndFlush(message, channel.voidPromise());

@@ -89,7 +89,7 @@ public class Session {
         final Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
             final HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null && hardwareState.dashId == activeDashId &&
+            if (hardwareState.dashId == activeDashId &&
                     (deviceIds.length == 0 || ArrayUtil.contains(deviceIds, hardwareState.deviceId))) {
                 targetChannels.add(channel);
             }
