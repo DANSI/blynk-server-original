@@ -15,6 +15,8 @@ public class Step extends OnePinWidget {
 
     public boolean isLoopOn;
 
+    public boolean isSendStep;
+
     @Override
     public String getModeType() {
         return "out";
