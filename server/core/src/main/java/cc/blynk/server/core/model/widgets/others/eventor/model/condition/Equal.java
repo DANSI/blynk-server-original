@@ -18,7 +18,7 @@ public class Equal extends BaseCondition {
 
     @Override
     public boolean isValid(double in) {
-        return in == value;
+        return Double.compare(in, value) == 0;
     }
 
 }
