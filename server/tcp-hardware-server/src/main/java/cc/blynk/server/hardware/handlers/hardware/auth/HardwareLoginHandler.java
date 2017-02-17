@@ -11,7 +11,7 @@ import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
-import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
 import cc.blynk.server.redis.RedisClient;
 import cc.blynk.utils.IPUtils;
@@ -108,7 +108,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         }
 
         ctx.pipeline().remove(this);
-        ctx.pipeline().remove(UserNotLoggedHandler.class);
+        ctx.pipeline().remove(HardwareNotLoggedHandler.class);
         HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(dashId, deviceId, user, token);
         ctx.pipeline().addLast("HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
 

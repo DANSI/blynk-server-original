@@ -5,7 +5,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
-import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import io.netty.channel.ChannelInitializer;
@@ -28,7 +28,6 @@ public class HardwareServer extends BaseServer {
         final int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder, port);
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);
-        final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
         final AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
@@ -43,7 +42,7 @@ public class HardwareServer extends BaseServer {
                 pipeline.addLast("H_MessageDecoder", new MessageDecoder(holder.stats));
                 pipeline.addLast("H_MessageEncoder", new MessageEncoder(holder.stats));
                 pipeline.addLast("H_Login", hardwareLoginHandler);
-                pipeline.addLast("H_NotLogged", userNotLoggedHandler);
+                pipeline.addLast("H_NotLogged", new HardwareNotLoggedHandler());
                 pipeline.addLast("H_AlreadyLogged", alreadyLoggedHandler);
             }
         };

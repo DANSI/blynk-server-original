@@ -2,7 +2,7 @@ package cc.blynk.server.hardware;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.mqtt.auth.MqttHardwareLoginHandler;
 import io.netty.channel.ChannelInitializer;
@@ -27,7 +27,6 @@ public class MQTTHardwareServer extends BaseServer {
         final int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
         final MqttHardwareLoginHandler mqttHardwareLoginHandler = new MqttHardwareLoginHandler(holder);
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);
-        final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -41,7 +40,7 @@ public class MQTTHardwareServer extends BaseServer {
                 pipeline.addLast(new MqttDecoder());
                 pipeline.addLast(MqttEncoder.INSTANCE);
                 pipeline.addLast(mqttHardwareLoginHandler);
-                pipeline.addLast(userNotLoggedHandler);
+                pipeline.addLast(new HardwareNotLoggedHandler());
             }
         };
 

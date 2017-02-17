@@ -4,7 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
-import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.websocket.handlers.WebSocketHandler;
@@ -36,7 +36,6 @@ public class WebSocketSSLServer extends BaseServer {
         final int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder, port);
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);
-        final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
         final WebSocketWrapperEncoder webSocketWrapperEncoder = new WebSocketWrapperEncoder();
 
         final SslContext sslCtx = SslUtil.initSslContext(
@@ -65,7 +64,7 @@ public class WebSocketSSLServer extends BaseServer {
                 pipeline.addLast("WSSSocketWrapper", webSocketWrapperEncoder);
                 pipeline.addLast("WSSMessageEncoder", new MessageEncoder(holder.stats));
                 pipeline.addLast("WSSLogin", hardwareLoginHandler);
-                pipeline.addLast("WSSNotLogged", userNotLoggedHandler);
+                pipeline.addLast("WSSNotLogged", new HardwareNotLoggedHandler());
             }
         };
     }

@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
-import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.MqttHardwareHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -91,7 +91,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
         }
 
         ctx.pipeline().remove(this);
-        ctx.pipeline().remove(UserNotLoggedHandler.class);
+        ctx.pipeline().remove(HardwareNotLoggedHandler.class);
         HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(dashId, deviceId, user, token);
         ctx.pipeline().addLast("HHArdwareMqttHandler", new MqttHardwareHandler(holder, hardwareStateHolder));
 
