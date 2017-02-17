@@ -128,7 +128,7 @@ public class HttpAPILogic {
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
         if (tokenValue == null) {
-            log.error("Requested token {} not found.", token);
+            log.warn("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
@@ -148,7 +148,7 @@ public class HttpAPILogic {
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
         if (tokenValue == null) {
-            log.error("Requested token {} not found.", token);
+            log.warn("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 

@@ -37,7 +37,7 @@ public class HttpHandler extends BaseHttpHandler {
         //reregister logic
         TokenValue tokenValue = tokenManager.getUserByToken(tokenPathParam);
         if (tokenValue == null) {
-            log.error("Requested token {} not found.", tokenPathParam);
+            log.warn("Requested token {} not found.", tokenPathParam);
             ctx.writeAndFlush(Response.badRequest("Invalid token."), ctx.voidPromise());
             return;
         }
