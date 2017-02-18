@@ -6,11 +6,8 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.protocol.enums.Command;
-import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.notifications.push.GCMWrapper;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -20,7 +17,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.TimeUnit;
 
-import static cc.blynk.server.core.protocol.enums.Response.DEVICE_WENT_OFFLINE;
 import static cc.blynk.utils.StateHolderUtil.getHardState;
 
 /**
@@ -88,24 +84,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         if (notification != null && notification.notifyWhenOffline) {
             sendPushNotification(ctx, dashBoard, notification, state.dashId, device);
         } else {
-            sendToastToApp(session, state.dashId);
-        }
-    }
-
-    //todo move to session?
-    private static void sendToastToApp(Session session, int dashId) {
-        if (session.isAppConnected()) {
-            log.trace("Sending device offline message.");
-            for (Channel appChannel : session.appChannels) {
-                if (appChannel.isWritable()) {
-                    appChannel.writeAndFlush(
-                            new ResponseWithBodyMessage(
-                                    0, Command.RESPONSE, DEVICE_WENT_OFFLINE, dashId
-                            ),
-                            appChannel.voidPromise()
-                    );
-                }
-            }
+            session.sendOfflineMessageToApps(state.dashId);
         }
     }
 

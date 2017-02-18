@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.auth;
 
+import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
@@ -15,6 +16,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashSet;
 import java.util.Set;
 
+import static cc.blynk.server.core.protocol.enums.Command.RESPONSE;
+import static cc.blynk.server.core.protocol.enums.Response.DEVICE_WENT_OFFLINE;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StateHolderUtil.getHardState;
 import static cc.blynk.utils.StateHolderUtil.isSameDash;
@@ -146,6 +149,18 @@ public class Session {
             }
         }
         return false;
+    }
+
+    public void sendOfflineMessageToApps(int dashId) {
+        if (isAppConnected()) {
+            log.trace("Sending device offline message.");
+            ResponseWithBodyMessage response = new ResponseWithBodyMessage(0, RESPONSE, DEVICE_WENT_OFFLINE, dashId);
+            for (Channel appChannel : appChannels) {
+                if (appChannel.isWritable()) {
+                    appChannel.writeAndFlush(response, appChannel.voidPromise());
+                }
+            }
+        }
     }
 
     public void sendToApps(short cmd, int msgId, int dashId, int deviceId) {
