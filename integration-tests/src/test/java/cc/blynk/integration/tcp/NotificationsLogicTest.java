@@ -3,25 +3,34 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
+import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
+import cc.blynk.server.notifications.push.enums.Priority;
+import io.netty.channel.ChannelFuture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Map;
 
+import static cc.blynk.server.core.protocol.enums.Response.DEVICE_WENT_OFFLINE;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.timeout;
@@ -34,7 +43,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AddPushLogicTest extends IntegrationBase {
+public class NotificationsLogicTest extends IntegrationBase {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;
@@ -147,5 +156,92 @@ public class AddPushLogicTest extends IntegrationBase {
         assertEquals("uid2", entry.getKey());
         assertEquals("token2", entry.getValue());
     }
+
+    @Test
+    public void testHardwareDeviceWentOffline() throws Exception {
+        Profile profile = parseProfile(readTestUserProfile());
+        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        notification.notifyWhenOffline = false;
+
+        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
+        channelFuture.await();
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseWithBodyMessage(0, Command.RESPONSE, DEVICE_WENT_OFFLINE, 1)));
+    }
+
+    @Test
+    public void testHardwareDeviceWentOfflineAndPushWorks() throws Exception {
+        Profile profile = parseProfile(readTestUserProfile());
+        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        notification.notifyWhenOffline = true;
+
+        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
+        channelFuture.await();
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        AndroidGCMMessage message = objectArgumentCaptor.getValue();
+
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your UNO went offline. \"My Dashboard\" project is disconnected.", 1).toJson();
+        assertEquals(expectedJson, message.toJson());
+    }
+
+    @Test
+    public void testHardwareDeviceWentOfflineAndPushDelayedWorks() throws Exception {
+        Profile profile = parseProfile(readTestUserProfile());
+        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        notification.notifyWhenOffline = true;
+        notification.notifyWhenOfflineIgnorePeriod = 1000;
+
+        long now = System.currentTimeMillis();
+
+        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
+        channelFuture.await();
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+
+        verify(gcmWrapper, timeout(1100).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        AndroidGCMMessage message = objectArgumentCaptor.getValue();
+        assertTrue(System.currentTimeMillis() - now > notification.notifyWhenOfflineIgnorePeriod );
+
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your UNO went offline. \"My Dashboard\" project is disconnected.", 1).toJson();
+        assertEquals(expectedJson, message.toJson());
+    }
+
+    @Test
+    public void testHardwareDeviceWentOfflineAndPushDelayedNotTriggeredDueToReconnect() throws Exception {
+        Profile profile = parseProfile(readTestUserProfile());
+        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        notification.notifyWhenOffline = true;
+        notification.notifyWhenOfflineIgnorePeriod = 1000;
+
+        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
+        channelFuture.await();
+
+
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody(2);
+
+        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(gcmWrapper, after(1500).never()).send(objectArgumentCaptor.capture(), any(), any());
+    }
+
 
 }

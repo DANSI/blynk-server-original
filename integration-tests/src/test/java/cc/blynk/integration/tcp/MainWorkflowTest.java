@@ -12,13 +12,10 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
-import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
@@ -48,7 +45,6 @@ import java.util.List;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
-import static cc.blynk.server.core.protocol.enums.Response.DEVICE_WENT_OFFLINE;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_INVALID_BODY;
@@ -243,21 +239,6 @@ public class MainWorkflowTest extends IntegrationBase {
 
         appClient.send("createWidget 2\0{\"id\":7, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(10, OK)));
-    }
-
-    @Test
-    public void testHardwareDeviceWentOffline() throws Exception {
-        Profile profile = parseProfile(readTestUserProfile());
-        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
-        notification.notifyWhenOffline = false;
-
-        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-
-        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
-        channelFuture.await();
-
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseWithBodyMessage(0, Command.RESPONSE, DEVICE_WENT_OFFLINE, 1)));
     }
 
     @Test
