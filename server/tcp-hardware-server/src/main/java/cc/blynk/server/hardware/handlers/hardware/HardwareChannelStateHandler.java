@@ -121,16 +121,34 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         } else {
             //delayed notification
             //https://github.com/blynkkk/blynk-server/issues/493
-            ctx.executor().schedule(() -> {
-                final long now = System.currentTimeMillis();
-                if (device.status == Status.OFFLINE &&
-                    now - device.disconnectTime > notification.notifyWhenOfflineIgnorePeriod) {
-                    notification.push(gcmWrapper,
-                            message,
-                            dashId);
-                }
-            }, notification.notifyWhenOfflineIgnorePeriod, TimeUnit.MILLISECONDS);
+            ctx.executor().schedule(new DelayedPush(device, notification, message, dashId),
+                    notification.notifyWhenOfflineIgnorePeriod, TimeUnit.MILLISECONDS);
+        }
+    }
 
+    private final class DelayedPush implements Runnable {
+
+        private final Device device;
+        private final Notification notification;
+        private final String message;
+        private final int dashId;
+
+        public DelayedPush(Device device, Notification notification, String message, int dashId) {
+            this.device = device;
+            this.notification = notification;
+            this.message = message;
+            this.dashId = dashId;
+        }
+
+        @Override
+        public void run() {
+            final long now = System.currentTimeMillis();
+            if (device.status == Status.OFFLINE &&
+                    now - device.disconnectTime > notification.notifyWhenOfflineIgnorePeriod) {
+                notification.push(gcmWrapper,
+                        message,
+                        dashId);
+            }
         }
     }
 
