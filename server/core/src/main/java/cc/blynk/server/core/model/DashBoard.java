@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
@@ -178,20 +179,16 @@ public class DashBoard {
      * @param targetId - deviceId or tagId or device selector widget id
      */
     public Target getTarget(int targetId) {
-        Device device = getDeviceById(targetId);
-        if (device != null) {
-            return device;
-        }
-
-        Tag tag = getTagById(targetId);
-        if (tag != null) {
-            return tag;
-        }
-
-        //means widget assigned to device selector widget.
-        Widget widget = getWidgetById(targetId);
-        if (widget instanceof Target) {
-            return (Target) widget;
+        if (targetId < Tag.START_TAG_ID) {
+            return getDeviceById(targetId);
+        } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+            return getTagById(targetId);
+        } else {
+            //means widget assigned to device selector widget.
+            Widget widget = getWidgetById(targetId);
+            if (widget instanceof Target) {
+                return (Target) widget;
+            }
         }
 
         return null;

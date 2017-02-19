@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.structure.LimitedArrayDeque;
 import io.netty.buffer.ByteBuf;
@@ -64,6 +65,13 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
         if (pins == null) {
             return;
         }
+
+        //do not send SYNC message for widgets assigned to device selector
+        //as it will be duplicated later.
+        if (this.deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+            return;
+        }
+
         if (targetId == ANY_TARGET || this.deviceId == targetId) {
             if (advancedMode) {
                 for (String command : lastCommands) {
