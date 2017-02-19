@@ -155,6 +155,45 @@ public class ReadingWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testSendReadForDeviceSelector() throws Exception {
+        Device device2 = new Device(2, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device2.toString());
+        String createdDevice = clientPair.appClient.getBody();
+
+        device2 = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device2);
+        assertNotNull(device2.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device2.toString())));
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.send("login " + device2.token);
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"width\":1, \"value\":2, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":155, \"deviceId\":200000, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 500, TimeUnit.MILLISECONDS);
+
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
+        verify(clientPair.hardwareClient.responseMock, after(100).never()).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
+
+        clientPair.hardwareClient.reset();
+        hardClient2.reset();
+
+        clientPair.appClient.send("hardware 1 vu 200000 0");
+
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
+        verify(hardClient2.responseMock, after(100).never()).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
+    }
+
+    @Test
     public void testSendReadForMultipleDevices2() throws Exception {
         Device device2 = new Device(2, "My Device", "ESP8266");
 

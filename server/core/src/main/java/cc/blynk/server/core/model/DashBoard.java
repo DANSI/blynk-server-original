@@ -177,7 +177,7 @@ public class DashBoard {
      *
      * @param targetId - deviceId or tagId or device selector widget id
      */
-    public Target getDeviceIdsByTarget(int targetId) {
+    public Target getTarget(int targetId) {
         Device device = getDeviceById(targetId);
         if (device != null) {
             return device;
@@ -190,7 +190,7 @@ public class DashBoard {
 
         //means widget assigned to device selector widget.
         Widget widget = getWidgetById(targetId);
-        if (widget != null && widget instanceof Target) {
+        if (widget instanceof Target) {
             return (Target) widget;
         }
 

@@ -14,6 +14,7 @@ import java.lang.reflect.Array;
  */
 public class ArrayUtil {
 
+    public static final int[] EMPTY_INTS = {};
     public static final DashBoard[] EMPTY_DASHBOARDS = {};
     public static final Tag[] EMPTY_TAGS = {};
     public static final Device[] EMPTY_DEVICES = {};

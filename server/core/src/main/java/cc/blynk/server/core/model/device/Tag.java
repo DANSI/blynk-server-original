@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.device;
 
 import cc.blynk.server.core.model.widgets.Target;
+import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
 
 /**
@@ -16,10 +17,10 @@ public class Tag implements Target {
 
     public volatile String name;
 
-    public volatile int[] deviceIds;
+    public volatile int[] deviceIds = ArrayUtil.EMPTY_INTS;
 
     public boolean isNotValid() {
-        return name == null || name.isEmpty() || name.length() > 40 || id < START_TAG_ID || (deviceIds != null && deviceIds.length > 100);
+        return name == null || name.isEmpty() || name.length() > 40 || id < START_TAG_ID || deviceIds.length > 100;
     }
 
     public Tag() {

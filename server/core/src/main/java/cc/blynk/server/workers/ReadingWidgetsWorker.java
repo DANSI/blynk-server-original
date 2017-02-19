@@ -7,8 +7,10 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
+import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.StateHolderUtil;
 import io.netty.channel.Channel;
 import org.apache.logging.log4j.LogManager;
@@ -72,8 +74,9 @@ public class ReadingWidgetsWorker implements Runnable {
                                 for (Widget widget : dashBoard.widgets) {
                                     if (widget instanceof FrequencyWidget) {
                                         final FrequencyWidget frequencyWidget = (FrequencyWidget) widget;
-                                        if (frequencyWidget.getDeviceId() == stateHolder.deviceId &&
-                                                channel.isWritable() && frequencyWidget.isTicked(now)) {
+                                        if (channel.isWritable() &&
+                                                sameDeviceId(dashBoard, frequencyWidget.getDeviceId(), stateHolder.deviceId) &&
+                                                frequencyWidget.isTicked(now)) {
                                             tickedWidgets++;
                                             frequencyWidget.writeReadingCommand(channel);
                                         }
@@ -88,6 +91,11 @@ public class ReadingWidgetsWorker implements Runnable {
             }
         }
         return tickedWidgets;
+    }
+
+    private boolean sameDeviceId(DashBoard dash, int targetId, int channelDeviceId) {
+        final Target target = dash.getTarget(targetId);
+        return target != null && ArrayUtil.contains(target.getDeviceIds(), channelDeviceId);
     }
 
 }

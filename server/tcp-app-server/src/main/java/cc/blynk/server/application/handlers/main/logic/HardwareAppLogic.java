@@ -79,7 +79,7 @@ public class HardwareAppLogic {
         }
 
         //sending message only if widget assigned to device or tag has assigned devices
-        Target target = dash.getDeviceIdsByTarget(targetId);
+        Target target = dash.getTarget(targetId);
         if (target == null) {
             log.debug("No assigned target id for received command.");
             return;
@@ -87,7 +87,7 @@ public class HardwareAppLogic {
 
         final int[] deviceIds = target.getDeviceIds();
 
-        if (deviceIds == null) {
+        if (deviceIds.length == 0) {
             log.debug("No devices assigned to target.");
             return;
         }
