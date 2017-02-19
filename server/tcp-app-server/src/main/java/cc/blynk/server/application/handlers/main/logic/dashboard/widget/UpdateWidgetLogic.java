@@ -5,10 +5,9 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
+import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
-import cc.blynk.server.core.protocol.enums.Response;
-import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -77,16 +76,19 @@ public class UpdateWidgetLogic {
 
         Widget prevWidget = dash.widgets[existingWidgetIndex];
 
-        //strange issue https://github.com/blynkkk/blynk-server/issues/227
-        //just log error for now
-        try {
-            dash.widgets[existingWidgetIndex] = newWidget;
-            dash.cleanPinStorage(newWidget);
-            dash.updatedAt = System.currentTimeMillis();
-            user.lastModifiedTs = dash.updatedAt;
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new BaseServerException("Error updating widget. " + widgetString, Response.SERVER_ERROR);
+        if (prevWidget instanceof Notification && newWidget instanceof Notification) {
+            Notification prevNotif = (Notification) prevWidget;
+            Notification newNotif = (Notification) newWidget;
+            newNotif.iOSTokens.putAll(prevNotif.iOSTokens);
+            newNotif.androidTokens.putAll(prevNotif.androidTokens);
         }
+
+        //non atomic update. changes could not be visible in saving thread.
+        //ignoring for now
+        dash.widgets[existingWidgetIndex] = newWidget;
+        dash.cleanPinStorage(newWidget);
+        dash.updatedAt = System.currentTimeMillis();
+        user.lastModifiedTs = dash.updatedAt;
 
         if (prevWidget instanceof Timer) {
             timerWorker.delete(state.userKey, (Timer) prevWidget, dashId);
