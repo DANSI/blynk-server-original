@@ -62,10 +62,10 @@ public interface DefaultExceptionHandler {
             }
             ctx.close();
         } else if (cause instanceof NotSslRecordException) {
-            log.error("Not secure connection attempt detected. {}. IP {}", cause.getMessage(), ctx.channel().remoteAddress());
+            log.warn("Not secure connection attempt detected. {}. IP {}", cause.getMessage(), ctx.channel().remoteAddress());
             ctx.close();
         } else if (cause instanceof SSLException) {
-            log.error("SSL exception. {}.", cause.getMessage());
+            log.warn("SSL exception. {}.", cause.getMessage());
             ctx.close();
         } else if (cause instanceof IOException) {
             log.debug("Blynk server IOException.", cause);
