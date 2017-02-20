@@ -148,16 +148,14 @@ public class EventorProcessor {
     }
 
     private void execute(Session session, DashBoard dash, int deviceId, SetPinAction action) {
-        execute(session, dash.isActive, dash.id, deviceId, action);
-        dash.update(deviceId, action.pin.pin, action.pin.pinType, action.value);
-    }
-
-    private void execute(Session session, boolean isActive, int dashId, int deviceId, SetPinAction action) {
         final String body = action.makeHardwareBody();
-        session.sendMessageToHardware(dashId, HARDWARE, 888, body, deviceId);
-        if (isActive) {
-            session.sendToApps(HARDWARE, 888, dashId, deviceId, body);
+        session.sendMessageToHardware(dash.id, HARDWARE, 888, body, deviceId);
+        if (dash.isActive) {
+            session.sendToApps(HARDWARE, 888, dash.id, deviceId, body);
         }
+
+        dash.update(deviceId, action.pin.pin, action.pin.pinType, action.value);
+
         globalStats.mark(EVENTOR);
     }
 }
