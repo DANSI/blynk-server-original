@@ -5,6 +5,7 @@ If you need more information, please follow these links:
 * [Blynk site](http://www.blynk.cc)
 * [Blynk docs](http://docs.blynk.cc)
 * [Blynk community](http://community.blynk.cc)
+* [Blynk Examples generator](http://examples.blynk.cc)
 * [Facebook](http://www.fb.com/blynkapp)
 * [Twitter](http://twitter.com/blynk_app)
 * [App Store](https://itunes.apple.com/us/app/blynk-control-arduino-raspberry/id808760481?ls=1&mt=8)
