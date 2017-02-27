@@ -1,4 +1,4 @@
-package cc.blynk.server.websocket.handlers;
+package cc.blynk.server.api.websockets.handlers;
 
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.stats.GlobalStats;

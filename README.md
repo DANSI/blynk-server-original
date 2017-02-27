@@ -248,24 +248,14 @@ Possible server options:
         server.ssl.cert=./server_embedded.crt
         server.ssl.key=./server_embedded.pem
         server.ssl.key.pass=pupkin123
+                
         
-
-+ Web socket ssl/tls port
-        
-        ssl.websocket.port=8081
-      
-        
-+ Web sockets plain tcp/ip port
-        
-        tcp.websocket.port=8082
-        
-        
-+ Https port
++ Https and web sockets port
         
         https.port=9443
         
         
-+ Http port
++ Http and web sockets port
         
         http.port=8080
         

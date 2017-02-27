@@ -24,8 +24,6 @@
         <module>tcp-app-server</module>
         <module>tcp-hardware-server</module>
 
-        <module>web-socket</module>
-
         <module>launcher</module>
         <module>redis-client</module>
         <module>tools</module>
