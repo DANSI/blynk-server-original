@@ -55,12 +55,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>cc.blynk.server.websocket</groupId>
-            <artifactId>web-socket</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.asynchttpclient</groupId>
             <artifactId>async-http-client</artifactId>
             <version>${async-http-client.version}</version>
