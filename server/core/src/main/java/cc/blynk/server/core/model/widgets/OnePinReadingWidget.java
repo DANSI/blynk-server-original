@@ -20,7 +20,7 @@ public abstract class OnePinReadingWidget extends OnePinWidget implements Freque
 
     @Override
     public boolean isTicked(long now) {
-        if (frequency > 0 && now > lastRequestTS + frequency) {
+        if (frequency > 0 && now >= lastRequestTS + frequency) {
             this.lastRequestTS = now;
             return true;
         }
