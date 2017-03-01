@@ -117,7 +117,7 @@ public class Holder implements Closeable {
     }
 
     //for tests only
-    public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper, MailWrapper mailWrapper, GCMWrapper gcmWrapper, SMSWrapper smsWrapper) {
+    public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper, MailWrapper mailWrapper, GCMWrapper gcmWrapper, SMSWrapper smsWrapper, String dbFileName) {
         this.props = serverProperties;
 
         this.region = "local";
@@ -154,7 +154,7 @@ public class Holder implements Closeable {
                 .build()
         );
 
-        this.dbManager = new DBManager(blockingIOProcessor);
+        this.dbManager = new DBManager(dbFileName, blockingIOProcessor);
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);

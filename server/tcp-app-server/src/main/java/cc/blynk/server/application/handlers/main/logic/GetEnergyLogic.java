@@ -5,7 +5,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
-import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
 
 /**
  * The Blynk Project.
@@ -15,7 +15,7 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 public class GetEnergyLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        ctx.writeAndFlush(makeUTF8StringMessage(GET_ENERGY, message.id, "" + user.energy), ctx.voidPromise());
+        ctx.writeAndFlush(makeASCIIStringMessage(GET_ENERGY, message.id, "" + user.energy), ctx.voidPromise());
     }
 
 }

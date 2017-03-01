@@ -28,8 +28,8 @@ public class FlashedTokensDBDao {
         this.ds = ds;
     }
 
-    public FlashedToken selectFlashedToken(String token, String appName) throws Exception {
-        log.info("Select flashed token for {}", token);
+    public FlashedToken selectFlashedToken(String token, String appName) {
+        log.info("Select flashed {}, app {}", token, appName);
 
         ResultSet rs = null;
         try (Connection connection = ds.getConnection();
@@ -46,16 +46,22 @@ public class FlashedTokensDBDao {
                         rs.getBoolean("is_activated"), rs.getDate("ts")
                 );
             }
+        } catch (Exception e) {
+            log.error("Error getting flashed token.", e);
         } finally {
             if (rs != null) {
-                rs.close();
+                 try {
+                     rs.close();
+                 } catch (Exception e) {
+                     //ignore
+                 }
             }
         }
 
         return null;
     }
 
-    public boolean activateFlashedToken(String token, String appName) throws Exception {
+    public boolean activateFlashedToken(String token, String appName) {
         try (Connection connection = ds.getConnection();
              PreparedStatement statement = connection.prepareStatement(activateToken)) {
 
@@ -64,6 +70,8 @@ public class FlashedTokensDBDao {
             int updatedRows = statement.executeUpdate();
             connection.commit();
             return updatedRows == 1;
+        } catch (Exception e) {
+            return false;
         }
     }
 

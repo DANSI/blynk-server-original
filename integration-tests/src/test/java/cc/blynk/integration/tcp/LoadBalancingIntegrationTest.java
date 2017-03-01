@@ -8,6 +8,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.ServerProperties;
 import org.junit.After;
@@ -56,7 +57,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         }
 
         ServerProperties properties2 = new ServerProperties("server2.properties");
-        Holder holder2 = new Holder(properties2, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper);
+        Holder holder2 = new Holder(properties2, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, DBManager.DB_PROPERTIES_FILENAME);
         hardwareServer2 = new HardwareServer(holder2).start();
         appServer2 = new AppServer(holder2).start();
         plainHardPort2 = properties2.getIntProperty("hardware.default.port");

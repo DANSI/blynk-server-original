@@ -21,6 +21,7 @@ import org.mockito.ArgumentCaptor;
 import java.io.InputStream;
 import java.util.List;
 
+import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -78,7 +79,11 @@ public abstract class IntegrationBase extends BaseTest {
     }
 
     public static ResponseMessage ok(int msgId) {
-        return new ResponseMessage(msgId, 200);
+        return new ResponseMessage(msgId, OK);
+    }
+
+    public static ResponseMessage notAllowed(int msgId) {
+        return new ResponseMessage(msgId, NOT_ALLOWED);
     }
 
     public static ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
