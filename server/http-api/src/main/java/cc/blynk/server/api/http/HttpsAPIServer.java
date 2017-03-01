@@ -2,6 +2,7 @@ package cc.blynk.server.api.http;
 
 import cc.blynk.core.http.rest.HandlerRegistry;
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.utils.SslUtil;

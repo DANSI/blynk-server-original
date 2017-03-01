@@ -1,21 +1,19 @@
-package cc.blynk.server.api.http;
+package cc.blynk.server.api.http.handlers;
 
 import cc.blynk.core.http.handlers.StaticFile;
 import cc.blynk.core.http.handlers.StaticFileEdsWith;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UrlMapperHandler;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.handlers.HttpHandler;
+import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
+import cc.blynk.server.api.websockets.handlers.WebSocketsGenericLoginHandler;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
-import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
-import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.utils.FileUtils;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,7 +22,6 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
-import io.netty.handler.timeout.ReadTimeoutHandler;
 
 /**
  * Utility handler used to define what protocol should be handled
@@ -38,19 +35,16 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdapter {
 
     private final GlobalStats stats;
-    private final int hardTimeoutSecs;
-    private final HardwareLoginHandler hardwareLoginHandler;
-    private final HardwareChannelStateHandler hardwareChannelStateHandler;
+
     private final TokenManager tokenManager;
     private final SessionDao sessionDao;
+    private final WebSocketsGenericLoginHandler genericLoginHandler;
 
     public HttpAndWebSocketUnificatorHandler(Holder holder, int port) {
         this.stats = holder.stats;
-        this.hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
-        this.hardwareLoginHandler = new HardwareLoginHandler(holder, port);
-        this.hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);
         this.tokenManager = holder.tokenManager;
         this.sessionDao = holder.sessionDao;
+        this.genericLoginHandler = new WebSocketsGenericLoginHandler(holder, port);
 
         //HandlerRegistry.register(new HttpBusinessAPILogic(holder));
         //final String businessRootPath = holder.props.getProperty("business.rootPath", "/business");
@@ -89,21 +83,13 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private void initWebSocketPipeline(ChannelHandlerContext ctx, String websocketPath) {
         ChannelPipeline pipeline = ctx.pipeline();
 
-        if (hardTimeoutSecs > 0) {
-            pipeline.addFirst("WSReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
-        }
-
         //websockets specific handlers
         pipeline.addLast("WSWebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(websocketPath, true));
         pipeline.addLast("WSWebSocket", new WebSocketHandler(stats));
-
-        //hardware handlers
-        pipeline.addLast("WSChannelState", hardwareChannelStateHandler);
         pipeline.addLast("WSMessageDecoder", new MessageDecoder(stats));
         pipeline.addLast("WSSocketWrapper", new WebSocketWrapperEncoder());
         pipeline.addLast("WSMessageEncoder", new MessageEncoder(stats));
-        pipeline.addLast("WSLogin", hardwareLoginHandler);
-        pipeline.addLast("WSNotLogged", new HardwareNotLoggedHandler());
+        pipeline.addLast("WSWebSocketGenericLoginHandler", genericLoginHandler);
         pipeline.remove(this);
     }
 }

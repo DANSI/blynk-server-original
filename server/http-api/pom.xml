@@ -30,6 +30,12 @@
         </dependency>
 
         <dependency>
+            <groupId>cc.blynk.server.application</groupId>
+            <artifactId>tcp-app-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
             <version>${commons-validator.version}</version>
