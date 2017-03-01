@@ -20,6 +20,16 @@ CREATE TABLE redeem (
   ts timestamp
 );
 
+CREATE TABLE flashed_tokens (
+  token character(32),
+  app_name text,
+  username text,
+  device_id int4 NOT NULL,
+  is_activated boolean DEFAULT FALSE,
+  ts timestamp,
+  PRIMARY KEY(token, app_name)
+);
+
 CREATE TABLE purchase (
   username text,
   reward integer NOT NULL,

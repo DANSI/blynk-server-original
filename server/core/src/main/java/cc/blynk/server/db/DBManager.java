@@ -6,10 +6,12 @@ import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.stats.model.Stat;
+import cc.blynk.server.db.dao.FlashedTokensDBDao;
 import cc.blynk.server.db.dao.PurchaseDBDao;
 import cc.blynk.server.db.dao.RedeemDBDao;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.dao.UserDBDao;
+import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.db.model.Purchase;
 import cc.blynk.server.db.model.Redeem;
 import cc.blynk.utils.ServerProperties;
@@ -43,6 +45,7 @@ public class DBManager implements Closeable {
     protected ReportingDBDao reportingDBDao;
     protected RedeemDBDao redeemDBDao;
     protected PurchaseDBDao purchaseDBDao;
+    protected FlashedTokensDBDao flashedTokensDBDao;
 
     public DBManager(BlockingIOProcessor blockingIOProcessor) {
         this(DB_PROPERTIES_FILENAME, blockingIOProcessor);
@@ -85,6 +88,7 @@ public class DBManager implements Closeable {
         this.userDBDao = new UserDBDao(hikariDataSource);
         this.redeemDBDao = new RedeemDBDao(hikariDataSource);
         this.purchaseDBDao = new PurchaseDBDao(hikariDataSource);
+        this.flashedTokensDBDao = new FlashedTokensDBDao(hikariDataSource);
         this.cleanOldReporting = serverProperties.getBoolProperty("clean.reporting");
 
         log.info("Connected to database successfully.");
@@ -150,6 +154,24 @@ public class DBManager implements Closeable {
             redeemDBDao.insertRedeems(redeemList);
         }
     }
+
+    public FlashedToken selectFlashedToken(String token, String appName) throws Exception {
+        if (isDBEnabled()) {
+            return flashedTokensDBDao.selectFlashedToken(token, appName);
+        }
+        return null;
+    }
+
+    public boolean activateFlashedToken(String token, String appName) throws Exception {
+        return flashedTokensDBDao.activateFlashedToken(token, appName);
+    }
+
+    public void insertFlashedTokens(List<FlashedToken> flashedTokenList) {
+        if (isDBEnabled() && flashedTokenList.size() > 0) {
+            flashedTokensDBDao.insertFlashedTokens(flashedTokenList);
+        }
+    }
+
 
     public void insertPurchase(Purchase purchase) {
         if (isDBEnabled()) {
