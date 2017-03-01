@@ -34,6 +34,7 @@ import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATE
 import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_REGISTERED;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 
 /**
@@ -70,7 +71,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
         //warn: split may be optimized
-        String[] messageParts = message.body.split("\0");
+        String[] messageParts = message.body.split(BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 2) {
             log.error("Wrong income message format.");
