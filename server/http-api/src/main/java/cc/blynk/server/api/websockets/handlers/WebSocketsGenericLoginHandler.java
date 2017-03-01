@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.AppChannelStateHandler;
 import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
 import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
+import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
@@ -15,6 +16,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The Blynk Project.
@@ -22,7 +25,9 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
  * Created on 01.03.17.
  */
 @ChannelHandler.Sharable
-public class WebSocketsGenericLoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
+public class WebSocketsGenericLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
+
+    private static final Logger log = LogManager.getLogger(WebSocketsGenericLoginHandler.class);
 
     private final int hardTimeoutSecs;
     private final HardwareLoginHandler hardwareLoginHandler;
@@ -78,6 +83,11 @@ public class WebSocketsGenericLoginHandler extends SimpleChannelInboundHandler<L
         pipeline.addLast("WSLogin", hardwareLoginHandler);
         pipeline.addLast("WSNotLogged", new HardwareNotLoggedHandler());
         pipeline.remove(this);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        handleGeneralException(ctx, cause);
     }
 
 }

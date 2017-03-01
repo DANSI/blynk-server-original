@@ -11,6 +11,7 @@ import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
 import cc.blynk.server.api.websockets.handlers.WebSocketsGenericLoginHandler;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -22,6 +23,8 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Utility handler used to define what protocol should be handled
@@ -32,7 +35,9 @@ import io.netty.handler.stream.ChunkedWriteHandler;
  * Created on 27.02.17.
  */
 @ChannelHandler.Sharable
-public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdapter {
+public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
+
+    private static final Logger log = LogManager.getLogger(HttpAndWebSocketUnificatorHandler.class);
 
     private final GlobalStats stats;
 
@@ -91,5 +96,10 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast("WSMessageEncoder", new MessageEncoder(stats));
         pipeline.addLast("WSWebSocketGenericLoginHandler", genericLoginHandler);
         pipeline.remove(this);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        handleGeneralException(ctx, cause);
     }
 }
