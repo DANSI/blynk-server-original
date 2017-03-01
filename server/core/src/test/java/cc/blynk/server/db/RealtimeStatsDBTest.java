@@ -13,6 +13,8 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -26,6 +28,7 @@ public class RealtimeStatsDBTest {
 
     private static DBManager dbManager;
     private static BlockingIOProcessor blockingIOProcessor;
+    private static final Calendar UTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 
     @BeforeClass
     public static void init() throws Exception {
@@ -130,7 +133,7 @@ public class RealtimeStatsDBTest {
 
             while (rs.next()) {
                 assertEquals(region, rs.getString("region"));
-                assertEquals((now / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE, rs.getLong("ts"));
+                assertEquals((now / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE, rs.getTimestamp("ts", UTC).getTime());
 
                 assertEquals(1, rs.getInt("minute_rate"));
                 assertEquals(2, rs.getInt("registrations"));
@@ -153,7 +156,7 @@ public class RealtimeStatsDBTest {
             i = 0;
             while (rs.next()) {
                 assertEquals(region, rs.getString("region"));
-                assertEquals((now / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE, rs.getLong("ts"));
+                assertEquals((now / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE, rs.getTimestamp("ts", UTC).getTime());
 
                 assertEquals(i++, rs.getInt("is_hardware_connected"));
                 assertEquals(i++, rs.getInt("is_app_connected"));
@@ -176,7 +179,7 @@ public class RealtimeStatsDBTest {
             i = 0;
             while (rs.next()) {
                 assertEquals(region, rs.getString("region"));
-                assertEquals((now / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE, rs.getLong("ts"));
+                assertEquals((now / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE, rs.getTimestamp("ts", UTC).getTime());
 
                 assertEquals(i++, rs.getInt("response"));
                 assertEquals(i++, rs.getInt("register"));

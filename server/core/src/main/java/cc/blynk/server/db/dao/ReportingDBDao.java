@@ -15,11 +15,14 @@ import org.apache.logging.log4j.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * The Blynk Project.
@@ -47,6 +50,8 @@ public class ReportingDBDao {
     public static final String insertStatHttpCommandMinute = "INSERT INTO reporting_http_command_stat_minute (region, ts, is_hardware_connected, is_app_connected, get_pin_data, update_pin, email, push, get_project, qr, get_history_pin_data, total) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
     private static final Logger log = LogManager.getLogger(ReportingDBDao.class);
+    private static final Calendar UTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+
     private final HikariDataSource ds;
 
     public ReportingDBDao(HikariDataSource ds) {
@@ -54,7 +59,7 @@ public class ReportingDBDao {
     }
 
     public static void prepareReportingSelect(PreparedStatement ps, long ts, int limit) throws SQLException {
-        ps.setLong(1, ts);
+        ps.setTimestamp(1, new Timestamp(ts), UTC);
         ps.setInt(2, limit);
     }
 
@@ -79,7 +84,7 @@ public class ReportingDBDao {
         ps.setInt(3, deviceId);
         ps.setByte(4, pin);
         ps.setString(5, PinType.getPinTypeString(pinType));
-        ps.setLong(6, ts);
+        ps.setTimestamp(6, new Timestamp(ts), UTC);
         ps.setDouble(7, value);
     }
 
@@ -114,7 +119,7 @@ public class ReportingDBDao {
                 ps.setInt(3, key.deviceId);
                 ps.setByte(4, key.pin);
                 ps.setString(5, PinType.getPinTypeString(key.pinType));
-                ps.setLong(6, key.ts);
+                ps.setTimestamp(6, new Timestamp(key.ts), UTC);
 
                 if (value instanceof String) {
                     ps.setString(7, (String) value);
@@ -140,6 +145,7 @@ public class ReportingDBDao {
 
     public void insertStat(String region, Stat stat) {
         final long ts = (stat.ts / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
+        final Timestamp timestamp = new Timestamp(ts);
 
         try (Connection connection = ds.getConnection();
              PreparedStatement appStatPS = connection.prepareStatement(insertStatMinute);
@@ -147,7 +153,7 @@ public class ReportingDBDao {
              PreparedStatement httpStatPS = connection.prepareStatement(insertStatHttpCommandMinute)) {
 
             appStatPS.setString(1, region);
-            appStatPS.setLong(2, ts);
+            appStatPS.setTimestamp(2, timestamp, UTC);
             appStatPS.setInt(3, stat.active);
             appStatPS.setInt(4, stat.activeWeek);
             appStatPS.setInt(5, stat.activeMonth);
@@ -162,7 +168,7 @@ public class ReportingDBDao {
 
             final HttpStat hs = stat.http;
             httpStatPS.setString(1, region);
-            httpStatPS.setLong(2, ts);
+            httpStatPS.setTimestamp(2, timestamp, UTC);
             httpStatPS.setInt(3, hs.isHardwareConnected);
             httpStatPS.setInt(4, hs.isAppConnected);
             httpStatPS.setInt(5, hs.getPinData);
@@ -178,7 +184,7 @@ public class ReportingDBDao {
 
             final CommandStat cs = stat.commands;
             commandStatPS.setString(1, region);
-            commandStatPS.setLong(2, ts);
+            commandStatPS.setTimestamp(2, timestamp, UTC);
             commandStatPS.setInt(3, cs.response);
             commandStatPS.setInt(4, cs.register);
             commandStatPS.setInt(5, cs.login);

@@ -11,6 +11,8 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -25,6 +27,7 @@ public class RawDataDBTest {
 
     private static DBManager dbManager;
     private static BlockingIOProcessor blockingIOProcessor;
+    private static final Calendar UTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 
     @BeforeClass
     public static void init() throws Exception {
@@ -63,7 +66,7 @@ public class RawDataDBTest {
                 assertEquals(2, rs.getInt("device_id"));
                 assertEquals(3, rs.getByte("pin"));
                 assertEquals("v", rs.getString("pinType"));
-                assertEquals(1111111111, rs.getLong("ts"));
+                assertEquals(1111111111, rs.getTimestamp("ts", UTC).getTime());
                 assertEquals("Lamp is ON", rs.getString("stringValue"));
                 assertNull(rs.getString("doubleValue"));
 
@@ -92,7 +95,7 @@ public class RawDataDBTest {
                 assertEquals(2, rs.getInt("device_id"));
                 assertEquals(3, rs.getByte("pin"));
                 assertEquals("v", rs.getString("pinType"));
-                assertEquals(1111111111, rs.getLong("ts"));
+                assertEquals(1111111111, rs.getTimestamp("ts", UTC).getTime());
                 assertNull(rs.getString("stringValue"));
                 assertEquals(1.33D, rs.getDouble("doubleValue"), 0.0000001);
 

@@ -45,7 +45,7 @@ CREATE TABLE reporting_raw_data (
   device_id int4,
   pin int2,
   pinType char,
-  ts int8,
+  ts timestamp,
 
   stringValue text,
   doubleValue float8,
@@ -59,7 +59,7 @@ CREATE TABLE reporting_average_minute (
   device_id int4,
   pin int2,
   pinType char,
-  ts int8,
+  ts timestamp,
   value float8,
   PRIMARY KEY (username, project_id, device_id, pin, pinType, ts)
 );
@@ -70,7 +70,7 @@ CREATE TABLE reporting_average_hourly (
   device_id int4,
   pin int2,
   pinType char,
-  ts int8,
+  ts timestamp,
   value float8,
   PRIMARY KEY (username, project_id, device_id, pin, pinType, ts)
 );
@@ -81,14 +81,14 @@ CREATE TABLE reporting_average_daily (
   device_id int4,
   pin int2,
   pinType char,
-  ts int8,
+  ts timestamp,
   value float8,
   PRIMARY KEY (username, project_id, device_id, pin, pinType, ts)
 );
 
 CREATE TABLE reporting_app_stat_minute (
   region text,
-  ts int8,
+  ts timestamp,
   active int4,
   active_week int4,
   active_month int4,
@@ -104,7 +104,7 @@ CREATE TABLE reporting_app_stat_minute (
 
 CREATE TABLE reporting_app_command_stat_minute (
   region text,
-  ts int8,
+  ts timestamp,
   response int4,
   register int4,
   login int4,
@@ -161,7 +161,7 @@ CREATE TABLE reporting_app_command_stat_minute (
 
 CREATE TABLE reporting_http_command_stat_minute (
   region text,
-  ts int8,
+  ts timestamp,
   is_hardware_connected int4,
   is_app_connected int4,
   get_pin_data int4,

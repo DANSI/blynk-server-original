@@ -29,7 +29,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -50,6 +52,7 @@ public class DBManagerTest {
 
     private static DBManager dbManager;
     private static BlockingIOProcessor blockingIOProcessor;
+    private static final Calendar UTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 
     @BeforeClass
     public static void init() throws Exception {
@@ -118,7 +121,7 @@ public class DBManagerTest {
                 assertEquals(2, rs.getInt("device_id"));
                 assertEquals(0, rs.getByte("pin"));
                 assertEquals("v", rs.getString("pinType"));
-                assertEquals(startMinute, rs.getLong("ts"));
+                assertEquals(startMinute, rs.getTimestamp("ts", UTC).getTime());
                 assertEquals((double) i, rs.getDouble("value"), 0.0001);
                 startMinute += AverageAggregatorProcessor.MINUTE;
                 i++;
