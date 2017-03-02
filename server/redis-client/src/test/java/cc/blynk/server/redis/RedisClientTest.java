@@ -22,7 +22,7 @@ public class RedisClientTest {
     @Test
     @Ignore
     public void testGetTestString() {
-        RedisClient redisClient = new RedisClient("localhost", "123", 6378, false);
+        RedisClient redisClient = new RedisClient("localhost", "pass123", 6378, false);
         String result = redisClient.getServerByToken("test");
         assertEquals("It's working!", result);
     }

@@ -112,7 +112,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         Profile profile = parseProfile(readTestUserProfile());
 
-        makeCommands("login dmitriy@mail.ua 1", "addEnergy 5000" + "\0" + "123", "createDash " + profile.dashBoards[0]).check(3, OK);
+        makeCommands("login dmitriy@mail.ua 1", "addEnergy 5000" + "\0" + "1235555", "createDash " + profile.dashBoards[0]).check(3, OK);
 
         //todo fix?
         makeCommands("login dmitriy@mail.ua 1", "getToken 1", "refreshToken 1")
@@ -170,7 +170,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 1", "addEnergy 5000" + "\0" + "123", "createDash " + profile.dashBoards[0], "activate 2").check(3, OK).check(new ResponseMessage(1, ILLEGAL_COMMAND));
+        makeCommands("login dmitriy@mail.ua 1", "addEnergy 5000" + "\0" + "123444", "createDash " + profile.dashBoards[0], "activate 2").check(3, OK).check(new ResponseMessage(1, ILLEGAL_COMMAND));
     }
 
     @Test
@@ -179,7 +179,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 1", "addEnergy 5000" + "\0" + "123", "createDash " + profile.dashBoards[0], "activate xxx").check(3, OK).check(new ResponseMessage(1, ILLEGAL_COMMAND));
+        makeCommands("login dmitriy@mail.ua 1", "addEnergy 5000" + "\0" + "123333", "createDash " + profile.dashBoards[0], "activate xxx").check(3, OK).check(new ResponseMessage(1, ILLEGAL_COMMAND));
     }
 
     @Test

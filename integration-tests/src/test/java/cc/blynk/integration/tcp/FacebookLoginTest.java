@@ -120,7 +120,7 @@ public class FacebookLoginTest extends IntegrationBase {
 
         appClient.send("login " + user + "\0" + facebookAuthToken + "\0" + "Android" + "\0" + "1.10.4" + "\0" + "facebook");
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-        appClient.send("addEnergy " + 10000 + "\0" + "123");
+        appClient.send("addEnergy " + 10000 + "\0" + "123456");
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         saveProfile(appClient, profile.dashBoards);

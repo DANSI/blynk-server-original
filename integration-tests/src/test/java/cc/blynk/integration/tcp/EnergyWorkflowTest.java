@@ -71,7 +71,7 @@ public class EnergyWorkflowTest extends IntegrationBase {
 
     @Test
     public void testAddEnergy() throws Exception {
-        clientPair.appClient.send("addEnergy 1000" + "\0" + "123");
+        clientPair.appClient.send("addEnergy 1000" + "\0" + "random123");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         clientPair.appClient.send("getEnergy");
