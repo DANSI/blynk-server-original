@@ -92,6 +92,8 @@
             <appender-ref ref="postgresDBLog"/>
         </Logger>
 
+        <Logger name="org.asynchttpclient.netty.channel" level="OFF" additivity="false" />
+
         <Root>
             <AppenderRef ref="userLog"/>
         </Root>
