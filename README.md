@@ -21,7 +21,7 @@ If you need more information, please follow these links:
 ![Dashboard2](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/dash2.png)
 
 # Blynk server
-Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Java server, responsible for forwarding messages between Blynk mobile application and various microcontroller boards (i.e. Arduino, Raspberry Pi. etc).
+Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Java server, responsible for forwarding messages between Blynk mobile application and various microcontroller boards and SBCs (i.e. Arduino, Raspberry Pi. etc).
 **Download latest server build [here](https://github.com/blynkkk/blynk-server/releases).**
 
 [![GitHub version](https://img.shields.io/github/release/blynkkk/blynk-server.svg)](https://github.com/blynkkk/blynk-server/releases/latest)
@@ -33,9 +33,9 @@ Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Jav
 ## Requirements
 Java 8 required. (OpenJDK, Oracle). 
 
-Ubuntu installation instructions [here](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu).
+Ubuntu installation instructions can be found [here](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu).
 
-For Windows just download from [here](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) and install. 
+For Windows download Java [here](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) and install. 
 
 ## Quick local server setup
 
@@ -50,9 +50,9 @@ For Windows just download from [here](http://www.oracle.com/technetwork/java/jav
         
 That's it! 
 
-**NOTE : ```/path``` should be real existing path to folder where you want to store all your data.**
+**NOTE: ```/path``` should be real existing path to folder where you want to store all your data.**
 
-+ As output you will see something like that :
++ As an output you should see something like that:
 
         Blynk Server successfully started.
         All server output is stored in current folder in 'logs/blynk.log' file.
@@ -60,7 +60,7 @@ That's it!
 ## Quick local server setup on Raspberry PI
 
 + Login to Raspberry Pi via ssh;
-+ Install java 8 : 
++ Install java 8: 
         
         sudo apt-get install oracle-java8-jdk
         
@@ -69,7 +69,7 @@ That's it!
         java -version
         Output: java version "1.8.0_40"
         
-+ Download Blynk server jar file (or manually copy it to raspberry via ssh and scp command) : 
++ Download Blynk server jar file (or manually copy it to Raspberry Pi via ssh and scp command): 
    
         wget "https://github.com/blynkkk/blynk-server/releases/download/v0.22.3/server-0.22.3.jar"
 
@@ -79,18 +79,18 @@ That's it!
         
 That's it! 
 
-+ As output you will see something like that :
++ As output you will see something like that:
 
         Blynk Server successfully started.
         All server output is stored in current folder in 'logs/blynk.log' file.
        
 ## Enabling server auto restart on unix-like systems
         
-+ To enable server auto restart find /etc/init.d/rc.local file and add :
++ To enable server auto restart find /etc/init.d/rc.local file and add:
 
         java -jar /home/pi/server-0.22.3.jar -dataFolder /home/pi/Blynk &
         
-+ Or in case above approach doesn't work for you, execute 
++ Or if the approach above doesn't work, execute 
        
         crontab -e
 
@@ -102,31 +102,32 @@ save and exit.
 
 ## Enabling server auto restart on Windows
 
-+ Create bat file :
++ Create bat file:
 
         start-blynk.bat
 
-+ Put in it one line : 
++ Put in it one line: 
 
         java -jar server-0.22.3.jar -dataFolder /home/pi/Blynk
         
 + Put bat file to windows startup folder
 
-You can also use [this](https://github.com/blynkkk/blynk-server/tree/master/scripts/win) ready script to run server.
+You can also use [this](https://github.com/blynkkk/blynk-server/tree/master/scripts/win) script to run server.
 
 ## Update instruction for unix-like systems
 
-Server update should always go before app update. In order to update your server with new version you need to kill old process and start new one.
+**IMPORTANT**
+Server should be always updated befor you update Blynk App. To update your server to a newer version you would need to kill old process and start a new one.
 
 + Find process id of Blynk server
 
         ps -aux | grep java
         
-+ You will see something like that
++ You should see something like that
  
         username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.22.3.jar   
         
-+ Kill old process
++ Kill the old process
 
         kill 10539
         
@@ -134,8 +135,10 @@ Server update should always go before app update. In order to update your server
  
 + Start new server [as usual](https://github.com/blynkkk/blynk-server#quick-local-server-setup)
 
-After this steps you are ready to update app. Server version downgrade is not supported. Please **do not** revert your server 
-to lower versions. Tou may loss data in that case.
+After this steps you can update Blynk app. Server version downgrade is not supported. 
+
+**WARNING!**
+Please **do not** revert your server to lower versions. You may loose all of your data.
 
 ## Update instruction for Windows
 
@@ -207,12 +210,11 @@ to lower versions. Tou may loss data in that case.
         ./blynk-ser.sh -s you_host_or_IP
         
         
-WARNING : Blynk is growing very quickly. And both apps and server constantly updated. In order to avoid problems during 
-updates either turn off auto-update for Blynk app either update both local server and blynk app at same time to avoid possible
-migration issues.
+**IMPORTANT** 
+Blynk is being constantly developed. Mobile apps and server are updated often. To avoid problems during updates either turn off auto-update for Blynk app, or update both local server and blynk app at same time to avoid possible migration issues.
 
-WARNING : Blynk local server is not Blynk cloud server. They are not related at all. So you have to create new account when using 
-Blynk local server.
+**IMPORTANT** 
+Blynk local server is different from  Blynk Cloud server. They are not related at all. You have to create new account when using Blynk local server.
 
 ## Advanced local server setup
 For more flexibility you can extend server with more options by creating ```server.properties``` file in same folder as ```server.jar```. 
@@ -220,11 +222,11 @@ Example could be found [here](https://github.com/blynkkk/blynk-server/blob/maste
 You could also specify any path to ```server.properties``` file via command line argument ```-serverConfig```. You can 
 do the same with ```mail.properties``` via ```-mailConfig``` and ```sms.properties``` via ```-smsConfig```.
  
-For example :
+For example:
 
     java -jar server-0.22.3.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
 
-Possible server options:
+Available server options:
 
 + Application mutual ssl/tls port
 
@@ -241,7 +243,7 @@ Possible server options:
         hardware.ssl.port=8441
         
         
-+ For simplicity Blynk already provides server jar with build-in SSL certificates, so you have working server out of the box via SSL/TLS sockets. But as certificate and it's private key are in public this is totally not secure. So in order to fix that you need to provide your own certificates. And change below properties with path to your cert. and private key and it's password. See how to generate self-signed certificates [here](https://github.com/blynkkk/blynk-server#generate-ssl-certificates)
++ For simplicity Blynk already provides server jar with built in SSL certificates, so you have working server out of the box via SSL/TLS sockets. But as certificate and it's private key are in public this is totally not secure. So in order to fix that you need to provide your own certificates. And change below properties with path to your cert. and private key and it's password. See how to generate self-signed certificates [here](https://github.com/blynkkk/blynk-server#generate-ssl-certificates)
 
         #points to cert and key that placed in same folder as running jar.
         
@@ -356,7 +358,7 @@ Possible server options:
         
 ## Administration UI
 
-Blynk server also has administration panel where you could monitor your server. It could be accessible with URL.
+Blynk server provides administration panel where you can monitor your server. It is accessible at this URL:
 
         https://your_ip:7443/admin
         
@@ -368,16 +370,17 @@ You can change it with next options :
         allowed.administrator.ips
         administration.https.port
         
-WARNING : default ```allowed.administrator.ips``` setting allows access only from ```localhost```. In other words 
-administration will not be available from any other machine except those one you are running server on.
+**WARNING**
+Default ```allowed.administrator.ips``` setting allows access only from ```localhost```. In other words, 
+administration is not available from any other computer except from the one you are running the server on.
         
 ## HTTP/S RESTful
 Blynk HTTP/S RESTful API allows to easily read and write values to/from Pins in Blynk apps and Hardware. 
 Http API description could be found [here](http://docs.blynkapi.apiary.io).
         
 ### Enabling mail on Local server
-In order to enable mail notifications on Local server you need to provide own mail credentials. To do that you need to create file ```mail.properties``` within same folder where server.jar is.
-Mail properties :
+To enable mail notifications on Local server you need to provide your own mail credentials. Create file ```mail.properties``` within same folder where server.jar is.
+Mail properties:
 
         mail.smtp.auth=true
         mail.smtp.starttls.enable=true
@@ -386,31 +389,31 @@ Mail properties :
         mail.smtp.username=YOUR_EMAIL_HERE
         mail.smtp.password=YOUR_EMAIL_PASS_HERE
         
-See example [here](https://github.com/blynkkk/blynk-server/blob/master/server/notifications/email/src/main/resources/mail.properties).
+Find example [here](https://github.com/blynkkk/blynk-server/blob/master/server/notifications/email/src/main/resources/mail.properties).
 
 NOTE : you'll need to setup Gmail to allow less secured applications. Go [here](https://www.google.com/settings/security/lesssecureapps) and then click "Allow less secure apps".
 
 
 ### Enabling sms on local server
-In order to enable sms notifications on Local Server you need to provide credentials for sms gateway (for now Blynk server
-supports only 1 provider - [Nexmo] (https://www.nexmo.com/)). So to do that you need to create file ```sms.properties``` 
+To enable SMS notifications on Local Server you need to provide credentials for SMS gateway (currently Blynk server
+supports only 1 provider - [Nexmo] (https://www.nexmo.com/)). You need to create file ```sms.properties``` 
 within same folder where server.jar is.
 
         nexmo.api.key=
         nexmo.api.secret=
         
-And fill above properties with credentials you'll get from Nexmo. (Account -> Settings -> API settings).
-You also can send sms via email in case your cell provider supports that. See [discussion](http://community.blynk.cc/t/sms-notification-for-important-alert/2542) for more details.
+And fill in the above properties with the credentials you'll get from Nexmo. (Account -> Settings -> API settings).
+You can also send SMS over email if your cell provider supports that. See [discussion](http://community.blynk.cc/t/sms-notification-for-important-alert/2542) for more details.
  
 
 ## Enabling raw data storage
-By default raw data storage is disabled (as it consumes disk a lot). 
-You can enable it so any ```Blynk.virtualWrite``` command will stored to DB.
-In order to do that you need to install PostgreSQL Database:
+By default raw data storage is disabled (as it consumes disk space a lot). 
+When you enable it, every ```Blynk.virtualWrite``` command will be saved to DB.
+You will need to install PostgreSQL Database to enable this functionality:
 
 #### 1. Enabling raw data on server
 
-As first step now you need to enable raw data in ```server.properties``` : 
+Enable raw data in ```server.properties``` : 
 
         enable.raw.db.data.store=true
 
@@ -432,7 +435,7 @@ As first step now you need to enable raw data in ```server.properties``` :
 
         readlink -f create_schema.sql
         
-Result :  
+Result:  
 
         /root/create_schema.sql
         
@@ -449,7 +452,7 @@ Copy it to clipboard from your console.
         
 ```/root/create_schema.sql``` - is path from step 5.
         
-You should see next output :
+You should see next output:
 
         postgres=# \i /root/create_schema.sql
         CREATE DATABASE
@@ -480,15 +483,16 @@ Now start your server and you should see next text in ```postgres.log``` file :
         2017-03-02 16:17:18.367 - Connecting to DB...
         2017-03-02 16:17:18.455 - Connected to database successfully.
         
-WARNING : raw data is expensive. It may consume your disk very quickly! Be ready for that.
+WARNING:
+Raw data may consume your disk space very quickly!
 
-### Csv data format
+### CSV data format
 
-Data format is
+Data format is:
 
         value,timestamp
         
-For instance
+For example:
 
         10,1438022081332
         
@@ -499,7 +503,7 @@ To display the date/time in excel you may use formula:
 
 ### Generate Let's Encrypt SSL/TLS Certificates
 
-+ First install [certbot] (https://github.com/certbot/certbot) on your server (machine where you gonna run Blynk Server)
++ First install [certbot] (https://github.com/certbot/certbot) on your server (machine where you going to run Blynk Server)
 
         wget https://dl.eff.org/certbot-auto
         chmod a+x certbot-auto
@@ -540,10 +544,11 @@ For example
 
         openssl pkcs8 -topk8 -inform PEM -outform PEM -in server.key -out server.pem
         
-WARNING : you should have password for certificate. Certificates without pass are not accepted. 
-In case you connect hardware via [USB script](https://github.com/blynkkk/blynk-library/tree/master/scripts) you have to provide an option '-s' pointing to "common name" (hostname) you did specified during certificate generation.
+WARNING: 
+You should have password for certificate. Certificates without passwords are not accepted. 
+If you connect hardware with [USB script](https://github.com/blynkkk/blynk-library/tree/master/scripts) you have to provide an option '-s' pointing to "common name" (hostname) you did specified during certificate generation.
         
-As output you'll retrieve server.crt and server.pem files that you need to provide for server.ssl properties.
+As an output you'll retrieve server.crt and server.pem files that you need to provide for server.ssl properties.
 
 ### Install java for Ubuntu
 
