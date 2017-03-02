@@ -25,6 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.asynchttpclient.AsyncCompletionHandler;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.Response;
+import org.asynchttpclient.netty.handler.WebSocketHandler;
 
 import java.util.NoSuchElementException;
 
@@ -61,11 +62,16 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     }
 
     private static void cleanPipeline(ChannelPipeline pipeline) {
+        //common handlers for websockets and app pipeline
         pipeline.remove(AppLoginHandler.class);
         pipeline.remove(UserNotLoggedHandler.class);
-        pipeline.remove(RegisterHandler.class);
-        pipeline.remove(AppShareLoginHandler.class);
         pipeline.remove(GetServerHandler.class);
+
+        //app pipeline sepcific handlers
+        if (pipeline.get(WebSocketHandler.class) != null) {
+            pipeline.remove(RegisterHandler.class);
+            pipeline.remove(AppShareLoginHandler.class);
+        }
     }
 
     @Override
