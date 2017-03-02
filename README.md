@@ -403,53 +403,49 @@ And fill above properties with credentials you'll get from Nexmo. (Account -> Se
 You also can send sms via email in case your cell provider supports that. See [discussion](http://community.blynk.cc/t/sms-notification-for-important-alert/2542) for more details.
  
 
-### Enabling raw data storage
-By default raw data storage is disabled. You can enable it so any ```Blynk.virtualWrite``` command will stored to DB.
-
+## Enabling raw data storage
+By default raw data storage is disabled (as it consumes disk a lot). 
+You can enable it so any ```Blynk.virtualWrite``` command will stored to DB.
 In order to do that you need to install PostgreSQL Database:
 
-#### Enabling raw data on server
+#### 1. Enabling raw data on server
 
 As first step now you need to enable raw data in ```sever.properties``` : 
 
         enable.raw.db.data.store=true
 
-#### Add PostgreSQL Apt Repository
+#### 2. Add PostgreSQL Apt Repository
 
         sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
         wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
 
-#### Install PostgreSQL
+#### 3. Install PostgreSQL
 
         sudo apt-get update
         sudo apt-get install postgresql postgresql-contrib
 
-#### Download Blynk DB script
+#### 4. Download Blynk DB script
 
         wget https://raw.githubusercontent.com/blynkkk/blynk-server/master/server/core/src/main/resources/create_schema.sql
 
-#### Get full path to create_schema.sql
+#### 5. Get full path of downloaded file 
 
         readlink -f create_schema.sql
         
-Result im my case (copy to clipboard) : 
+Result im my case (copy it to clipboard) : 
 
         /root/create_schema.sql
-        
-We call it ```YOUR_PATH```.
 
-#### Connect to PostgreSQL
+#### 6. Connect to PostgreSQL
 
         sudo su - postgres
         psql
 
-#### Check connection info
+#### 7. Create Blynk DB, test user and tables
+
+        \i /root/create_schema.sql
         
-        \conninfo
-
-#### Create Blynk DB, test user and tables
-
-        \i YOUR_PATH
+```/root/create_schema.sql``` - is path from step 5.
         
 You should see next output :
 
