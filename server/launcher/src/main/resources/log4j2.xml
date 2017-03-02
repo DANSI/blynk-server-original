@@ -88,8 +88,7 @@
         <Logger name="cc.blynk.server.db" level="debug" additivity="false">
             <appender-ref ref="postgresDBLog"/>
         </Logger>
-        <Logger name="com.zaxxer.hikari" level="debug" additivity="false">
-            <appender-ref ref="postgresDBLog"/>
+        <Logger name="com.zaxxer.hikari" level="OFF" additivity="false">
         </Logger>
 
         <Logger name="org.asynchttpclient.netty.channel" level="OFF" additivity="false" />

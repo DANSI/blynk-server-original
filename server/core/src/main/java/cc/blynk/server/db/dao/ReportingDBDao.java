@@ -277,8 +277,8 @@ public class ReportingDBDao {
              PreparedStatement psMinute = connection.prepareStatement(deleteMinute);
              PreparedStatement psHour = connection.prepareStatement(deleteHour)) {
 
-            psMinute.setLong(1, now.minus(360 + 1, ChronoUnit.MINUTES).toEpochMilli());
-            psHour.setLong(1, now.minus(168 + 1, ChronoUnit.HOURS).toEpochMilli());
+            psMinute.setTimestamp(1, new Timestamp(now.minus(360 + 1, ChronoUnit.MINUTES).toEpochMilli()), UTC);
+            psHour.setTimestamp(1, new Timestamp(now.minus(168 + 1, ChronoUnit.HOURS).toEpochMilli()), UTC);
 
             minuteRecordsRemoved = psMinute.executeUpdate();
             hourRecordsRemoved = psHour.executeUpdate();

@@ -77,7 +77,7 @@ public class DBManager implements Closeable {
         try {
             hikariDataSource = new HikariDataSource(config);
         } catch (Exception e) {
-            log.error("Not able connect to DB. Skipping.", e);
+            log.error("Not able connect to DB. Skipping. Reason : {}", e.getMessage());
             this.ds = null;
             this.cleanOldReporting = false;
             return;

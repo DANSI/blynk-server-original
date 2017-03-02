@@ -401,21 +401,90 @@ within same folder where server.jar is.
         
 And fill above properties with credentials you'll get from Nexmo. (Account -> Settings -> API settings).
 You also can send sms via email in case your cell provider supports that. See [discussion](http://community.blynk.cc/t/sms-notification-for-important-alert/2542) for more details.
-        
-
-### Raw data storage
-By default raw data storage is enabled. So any write (Blynk.virtualWrite) command will stored on disk. 
-The default path is "data" folder within [data.folder] (https://github.com/blynkkk/blynk-server#advanced-local-server-setup) property of server properties.
-
-File name format is 
-        
-        dashBoardId_pin.csv
-
-For instance
  
-        data/1_v5.csv
+
+### Enabling raw data storage
+By default raw data storage is disabled. You can enable it so any ```Blynk.virtualWrite``` command will stored to DB.
+
+In order to do that you need to install PostgreSQL Database:
+
+#### Enabling raw data on server
+
+As first step now you need to enable raw data in ```sever.properties``` : 
+
+        enable.raw.db.data.store=true
+
+#### Add PostgreSQL Apt Repository
+
+        sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+        wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+
+#### Install PostgreSQL
+
+        sudo apt-get update
+        sudo apt-get install postgresql postgresql-contrib
+
+#### Download Blynk DB script
+
+        wget https://raw.githubusercontent.com/blynkkk/blynk-server/master/server/core/src/main/resources/create_schema.sql
+
+#### Get full path to create_schema.sql
+
+        readlink -f create_schema.sql
         
-Which means in 1_v5.csv file stored raw data for virtual pin 5 of dashboard with id 1.
+Result im my case (copy to clipboard) : 
+
+        /root/create_schema.sql
+        
+We call it ```YOUR_PATH```.
+
+#### Connect to PostgreSQL
+
+        sudo su - postgres
+        psql
+
+#### Check connection info
+        
+        \conninfo
+
+#### Create Blynk DB, test user and tables
+
+        \i YOUR_PATH
+        
+You should see next output :
+
+        postgres=# \i /root/create_schema.sql
+        CREATE DATABASE
+        You are now connected to database "blynk" as user "postgres".
+        CREATE TABLE
+        CREATE TABLE
+        CREATE TABLE
+        CREATE TABLE
+        CREATE TABLE
+        CREATE TABLE
+        CREATE TABLE
+        CREATE TABLE
+        CREATE TABLE
+        CREATE TABLE
+        CREATE TABLE
+        CREATE ROLE
+        GRANT
+        GRANT
+
+#### Quit
+
+        \q
+        
+#### Check logs
+
+Now start your server and you should see next text in ```postgres.log``` file : 
+
+        2017-03-02 16:17:18.367 - DB url : jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+        2017-03-02 16:17:18.367 - DB user : test
+        2017-03-02 16:17:18.367 - Connecting to DB...
+        2017-03-02 16:17:18.455 - Connected to database successfully.
+
+### Csv data format
 
 Data format is
 
@@ -429,10 +498,6 @@ Where 10 - value of pin, and 1438022081332 - the difference, measured in millise
 To display the date/time in excel you may use formula:
 
         =((COLUMN/(60*60*24)/1000+25569))
-
-Raw data files are rotated every day and gzipped.
-
-WARNING : this will changed in near future. 
 
 ### Generate Let's Encrypt SSL/TLS Certificates
 
