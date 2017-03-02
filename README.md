@@ -410,11 +410,11 @@ In order to do that you need to install PostgreSQL Database:
 
 #### 1. Enabling raw data on server
 
-As first step now you need to enable raw data in ```sever.properties``` : 
+As first step now you need to enable raw data in ```server.properties``` : 
 
         enable.raw.db.data.store=true
 
-#### 2. Add PostgreSQL Apt Repository
+#### 2. Add PostgreSQL Apt Repository (minimum version 9.5 is required)
 
         sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
         wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
@@ -432,9 +432,11 @@ As first step now you need to enable raw data in ```sever.properties``` :
 
         readlink -f create_schema.sql
         
-Result im my case (copy it to clipboard) : 
+Result :  
 
         /root/create_schema.sql
+        
+Copy it to clipboard from your console.
 
 #### 6. Connect to PostgreSQL
 
@@ -470,17 +472,15 @@ You should see next output :
 #### Quit
 
         \q
-        
-WARNING : raw data is expensive. It may consume your disk very quickly! Be ready for that.
-        
-#### Check logs
-
+               
 Now start your server and you should see next text in ```postgres.log``` file : 
 
         2017-03-02 16:17:18.367 - DB url : jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
         2017-03-02 16:17:18.367 - DB user : test
         2017-03-02 16:17:18.367 - Connecting to DB...
         2017-03-02 16:17:18.455 - Connected to database successfully.
+        
+WARNING : raw data is expensive. It may consume your disk very quickly! Be ready for that.
 
 ### Csv data format
 
