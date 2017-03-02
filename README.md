@@ -475,6 +475,8 @@ You should see next output :
 
         \q
         
+WARNING : raw data is expensive. It may consume your disk very quickly! Be ready for that.
+        
 #### Check logs
 
 Now start your server and you should see next text in ```postgres.log``` file : 
