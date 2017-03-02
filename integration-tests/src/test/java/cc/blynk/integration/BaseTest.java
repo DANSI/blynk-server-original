@@ -2,7 +2,6 @@ package cc.blynk.integration;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
@@ -85,7 +84,7 @@ public abstract class BaseTest {
         httpPort = properties.getIntProperty("http.port");
         httpsPort = properties.getIntProperty("https.port");
 
-        staticHolder = new Holder(properties, mock(TwitterWrapper.class), mock(MailWrapper.class), mock(GCMWrapper.class), mock(SMSWrapper.class), DBManager.DB_PROPERTIES_FILENAME);
+        staticHolder = new Holder(properties, mock(TwitterWrapper.class), mock(MailWrapper.class), mock(GCMWrapper.class), mock(SMSWrapper.class), "no-db.properties");
     }
 
     @Before
@@ -94,7 +93,7 @@ public abstract class BaseTest {
             properties.setProperty("data.folder", getDataFolder());
         }
 
-        this.holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, DBManager.DB_PROPERTIES_FILENAME);
+        this.holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "no-db.properties");
     }
 
     @After
