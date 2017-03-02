@@ -589,7 +589,39 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    //todo fix this test
+    public void testSendEmailForSingleDevice() throws Exception {
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+        appClient.send("login dima@mail.ua 1");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody();
+
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        assertEquals(1, devices.length);
+
+        appClient.send("email 1");
+
+        String expectedBody = String.format("Auth Token : %s\n" +
+                "\n" +
+                "Happy Blynking!\n" +
+                "-\n" +
+                "Getting Started Guide -> http://www.blynk.cc/getting-started\n" +
+                "Documentation -> http://docs.blynk.cc/\n" +
+                "Sketch generator -> http://examples.blynk.cc/\n" +
+                "\n" +
+                "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.4/Blynk_Release_v0.4.4.zip\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.22.3/server-0.22.3.jar\n" +
+                "-\n" +
+                "http://www.blynk.cc\n" +
+                "twitter.com/blynk_app\n" +
+                "www.facebook.com/blynkapp\n", devices[0].token);
+
+        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device UNO"), eq(expectedBody));
+    }
+
+    @Test
     public void testSendEmailForMultiDevices() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
@@ -619,6 +651,8 @@ public class MainWorkflowTest extends IntegrationBase {
                 "-\n" +
                 "Getting Started Guide -> http://www.blynk.cc/getting-started\n" +
                 "Documentation -> http://docs.blynk.cc/\n" +
+                "Sketch generator -> http://examples.blynk.cc/\n" +
+                "\n" +
                 "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.4/Blynk_Release_v0.4.4.zip\n" +
                 "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.22.3/server-0.22.3.jar\n" +
                 "-\n" +

@@ -71,6 +71,8 @@ public class MailWrapperTest {
                 "-\n" +
                 "Getting Started Guide -> http://www.blynk.cc/getting-started\n" +
                 "Documentation -> http://docs.blynk.cc/\n" +
+                "Sketch generator -> http://examples.blynk.cc/\n" +
+                "\n" +
                 "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.3.9/Blynk_v0.3.9.zip\n" +
                 "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.18.1/server-0.18.1.jar\n" +
                 "-\n" +

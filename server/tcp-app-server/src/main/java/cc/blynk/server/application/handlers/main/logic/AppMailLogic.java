@@ -70,7 +70,7 @@ public class AppMailLogic {
         String dashName = dash.name == null ? "New Project" : dash.name;
         String deviceName = device.name == null ? "New Device" : device.name;
         String subj = "Auth Token for " + dashName + " project and device " + deviceName;
-        String body = "Auth Token : " + device.token;
+        String body = "Auth Token : " + device.token + "\n";
 
         log.trace("Sending single token mail for user {}, with token : '{}'.", to, device.token);
         mail(ctx.channel(), to, to, subj, body + BODY, msgId);
@@ -82,8 +82,9 @@ public class AppMailLogic {
 
         StringBuilder body = new StringBuilder();
         for (Device device : dash.devices) {
+            String deviceName = device.name == null ? "New Device" : device.name;
             body.append("Auth Token for device '")
-                .append(device.name == null ? "New Device" : device.name)
+                .append(deviceName)
                 .append("' : ")
                 .append(device.token)
                 .append("\n");
