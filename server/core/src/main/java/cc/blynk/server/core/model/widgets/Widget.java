@@ -112,6 +112,8 @@ public abstract class Widget {
 
     public volatile String label;
 
+    public volatile boolean isEnabled = true;
+
     protected static void append(StringBuilder sb, byte pin, PinType pinType, String pinMode) {
         if (pin == Pin.NO_PIN || pinMode == null || pinType == PinType.VIRTUAL) {
             return;
@@ -145,6 +147,9 @@ public abstract class Widget {
                 break;
             case "color" :
                 this.color = ByteUtils.parseColor(propertyValue);
+                break;
+            case "isEnabled" :
+                this.isEnabled = Boolean.parseBoolean(propertyValue);
                 break;
             default:
                 throw new RuntimeException("Error setting widget property.");
