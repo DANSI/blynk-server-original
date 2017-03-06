@@ -92,6 +92,8 @@ public class CreateDashLogic {
             for (Device device : newDash.devices) {
                 //this case only possible for clone,
                 device.token = null;
+                device.disconnectTime = 0;
+                device.lastLoggedIP = null;
                 if (generateTokensForDevices) {
                     String token = TokenGeneratorUtil.generateNewToken();
                     tokenManager.assignToken(user, newDash.id, device.id, token);
