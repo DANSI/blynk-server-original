@@ -17,10 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * User: ddumanskiy
@@ -216,6 +213,6 @@ public class JsonParsingTest {
 
         String result = JsonParser.mapper.writeValueAsString(button);
 
-        assertEquals("{\"type\":\"BUTTON\",\"id\":1,\"x\":2,\"y\":2,\"color\":0,\"width\":2,\"height\":2,\"tabId\":0,\"label\":\"MyButton\",\"deviceId\":0,\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false}", result);
+        assertEquals("{\"type\":\"BUTTON\",\"id\":1,\"x\":2,\"y\":2,\"color\":0,\"width\":2,\"height\":2,\"tabId\":0,\"label\":\"MyButton\",\"isEnabled\":true,\"deviceId\":0,\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false}", result);
     }
 }
