@@ -34,7 +34,7 @@ public class TestHideSecureInfoForCloning {
         notification.androidTokens.put("uid2", "token2");
         dashBoard.widgets[1] = notification;
 
-        assertEquals("{\"id\":0,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"widgets\":[{\"type\":\"TWITTER\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0},{\"type\":\"NOTIFICATION\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"notifyWhenOffline\":false,\"notifyWhenOfflineIgnorePeriod\":0,\"priority\":\"normal\"}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}", HttpAPILogic.dashboardCloneWriter.writeValueAsString(dashBoard));
+        assertEquals("{\"id\":0,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"widgets\":[{\"type\":\"TWITTER\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"isEnabled\":true},{\"type\":\"NOTIFICATION\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"isEnabled\":true,\"notifyWhenOffline\":false,\"notifyWhenOfflineIgnorePeriod\":0,\"priority\":\"normal\"}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}", HttpAPILogic.dashboardCloneWriter.writeValueAsString(dashBoard));
     }
 
 }
