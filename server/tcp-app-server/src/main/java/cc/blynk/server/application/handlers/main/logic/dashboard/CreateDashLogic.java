@@ -15,6 +15,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -45,7 +46,14 @@ public class CreateDashLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        String dashString = message.body;
+        boolean generateTokensForDevices = true;
+        final String dashString;
+        if (message.body.startsWith("no_token")) {
+            generateTokensForDevices = false;
+            dashString = StringUtils.split2(message.body)[1];
+        } else {
+            dashString = message.body;
+        }
 
         if (dashString == null || dashString.isEmpty()) {
             throw new IllegalCommandException("Income create dash message is empty.");
@@ -84,8 +92,10 @@ public class CreateDashLogic {
             for (Device device : newDash.devices) {
                 //this case only possible for clone,
                 device.token = null;
-                String token = TokenGeneratorUtil.generateNewToken();
-                tokenManager.assignToken(user, newDash.id, device.id, token);
+                if (generateTokensForDevices) {
+                    String token = TokenGeneratorUtil.generateNewToken();
+                    tokenManager.assignToken(user, newDash.id, device.id, token);
+                }
             }
         }
 
