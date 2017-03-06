@@ -3,8 +3,11 @@ package cc.blynk.server.application.handlers.main.logic.dashboard;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.widgets.MultiPinWidget;
+import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
@@ -109,6 +112,16 @@ public class CreateDashLogic {
             }
             if (widget instanceof Eventor) {
                 timerWorker.add(state.userKey, (Eventor) widget, newDash.id);
+            }
+            if (widget instanceof OnePinWidget) {
+                ((OnePinWidget) widget).value = null;
+            }
+            if (widget instanceof MultiPinWidget) {
+                for (Pin pin : ((MultiPinWidget) widget).pins) {
+                    if (pin != null) {
+                        pin.value = null;
+                    }
+                }
             }
         }
 
