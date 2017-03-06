@@ -113,13 +113,15 @@ public class CreateDashLogic {
             if (widget instanceof Eventor) {
                 timerWorker.add(state.userKey, (Eventor) widget, newDash.id);
             }
-            if (widget instanceof OnePinWidget) {
-                ((OnePinWidget) widget).value = null;
-            }
-            if (widget instanceof MultiPinWidget) {
-                for (Pin pin : ((MultiPinWidget) widget).pins) {
-                    if (pin != null) {
-                        pin.value = null;
+            if (!generateTokensForDevices) {
+                if (widget instanceof OnePinWidget) {
+                    ((OnePinWidget) widget).value = null;
+                }
+                if (widget instanceof MultiPinWidget) {
+                    for (Pin pin : ((MultiPinWidget) widget).pins) {
+                        if (pin != null) {
+                            pin.value = null;
+                        }
                     }
                 }
             }
