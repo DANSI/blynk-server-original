@@ -17,15 +17,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.WaitAction
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.MailAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.TwitAction;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.BaseCondition;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.Between;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.Equal;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.GreaterThan;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.GreaterThanOrEqual;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.LessThan;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.LessThanOrEqual;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.NotBetween;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.NotEqual;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.*;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
@@ -44,11 +36,7 @@ import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -537,5 +525,20 @@ public class EventorTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 0 0"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 1 1"))));
     }
+
+    @Test
+    public void testEventorHasWrongDeviceId() throws Exception {
+        Eventor eventor = oneRuleEventor("if v1 != 37 then setpin v2 123");
+        eventor.deviceId = 1;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("hardware vw 1 36");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 36"))));
+        verify(clientPair.hardwareClient.responseMock, after(300).never()).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
+        verify(clientPair.appClient.responseMock, after(300).never()).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+    }
+
 
 }

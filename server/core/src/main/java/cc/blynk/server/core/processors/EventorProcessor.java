@@ -50,7 +50,7 @@ public class EventorProcessor {
 
     public void process(Session session, DashBoard dash, int deviceId, byte pin, PinType type, String triggerValue) {
         Eventor eventor = dash.getWidgetByType(Eventor.class);
-        if (eventor == null || eventor.rules == null) {
+        if (eventor == null || eventor.rules == null || eventor.deviceId != deviceId) {
             return;
         }
 
