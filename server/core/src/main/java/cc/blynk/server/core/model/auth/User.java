@@ -86,17 +86,20 @@ public class User {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof User)) return false;
 
         User user = (User) o;
 
-		return !(name != null ? !name.equals(user.name) : user.name != null);
+        if (name != null ? !name.equals(user.name) : user.name != null) return false;
+        return !(appName != null ? !appName.equals(user.appName) : user.appName != null);
 
-	}
+    }
 
     @Override
     public int hashCode() {
-        return name != null ? name.hashCode() : 0;
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (appName != null ? appName.hashCode() : 0);
+        return result;
     }
 
     @Override
