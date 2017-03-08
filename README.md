@@ -417,21 +417,24 @@ Enable raw data in ```server.properties``` :
 
         enable.raw.db.data.store=true
 
-#### 2. Add PostgreSQL Apt Repository (minimum version 9.5 is required)
+#### 2. Option A. Install PostgreSQL
 
         sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
         wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
-
-#### 3. Install PostgreSQL
-
+        
         sudo apt-get update
         sudo apt-get install postgresql postgresql-contrib
+        
+#### 2. Option B. Install PostgreSQL 
 
-#### 4. Download Blynk DB script
+        sudo apt-get update
+        apt-get --no-install-recommends install postgresql-9.6 postgresql-contrib-9.6
+
+#### 3. Download Blynk DB script
 
         wget https://raw.githubusercontent.com/blynkkk/blynk-server/master/server/core/src/main/resources/create_schema.sql
 
-#### 5. Get full path of downloaded file 
+#### 4. Get full path of downloaded file 
 
         readlink -f create_schema.sql
         
@@ -441,16 +444,16 @@ Result:
         
 Copy it to clipboard from your console.
 
-#### 6. Connect to PostgreSQL
+#### 5. Connect to PostgreSQL
 
         sudo su - postgres
         psql
 
-#### 7. Create Blynk DB, test user and tables
+#### 6. Create Blynk DB, test user and tables
 
         \i /root/create_schema.sql
         
-```/root/create_schema.sql``` - is path from step 5.
+```/root/create_schema.sql``` - is path from step 4.
         
 You should see next output:
 
