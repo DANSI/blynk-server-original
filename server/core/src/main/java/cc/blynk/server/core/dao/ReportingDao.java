@@ -36,7 +36,7 @@ public class ReportingDao implements Closeable {
     public final RawDataProcessor rawDataProcessor;
     public final CSVGenerator csvGenerator;
 
-    private final String dataFolder;
+    public final String dataFolder;
 
     private final boolean ENABLE_RAW_DB_DATA_STORE;
 

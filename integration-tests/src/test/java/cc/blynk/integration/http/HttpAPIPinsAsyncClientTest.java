@@ -4,6 +4,7 @@ import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.SmsProperties;
@@ -17,11 +18,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * The Blynk Project.
@@ -182,6 +187,20 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         response = f.get();
         assertEquals(400, response.getStatusCode());
         assertEquals("Wrong pin format.", response.getResponseBody());
+    }
+
+    @Test
+    public void testGetCSVDataRedirect() throws Exception {
+        Path reportingPath = Paths.get(localHolder.reportingDao.dataFolder, "dmitriy@blynk.cc");
+        Files.createDirectories(reportingPath);
+        FileUtils.write(Paths.get(reportingPath.toString(), "history_125564119_v10_minute.bin"), 1, 2);
+
+        Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/data/v10").execute();
+        Response response = f.get();
+        assertEquals(301, response.getStatusCode());
+        String redirectLocation = response.getHeader("location");
+        assertNotNull(redirectLocation);
+        assertEquals("/dmitriy@blynk.cc_125564119_v10.csv.gz", redirectLocation);
     }
 
 }

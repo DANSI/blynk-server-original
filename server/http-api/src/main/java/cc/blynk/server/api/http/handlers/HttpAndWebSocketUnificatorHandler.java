@@ -9,13 +9,13 @@ import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
 import cc.blynk.server.api.websockets.handlers.WebSocketsGenericLoginHandler;
+import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.utils.FileUtils;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -75,7 +75,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast("HttpChunkedWrite", new ChunkedWriteHandler());
         pipeline.addLast("HttpUrlMapper", new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
         pipeline.addLast("HttpStaticFile", new StaticFileHandler(true,
-                new StaticFile("/static"), new StaticFileEdsWith(FileUtils.CSV_DIR, ".csv.gz")));
+                new StaticFile("/static"), new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")));
         pipeline.addLast("HttpHandler", new HttpHandler(tokenManager, sessionDao, stats));
 
 
