@@ -30,7 +30,6 @@ import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.ByteUtils;
-import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -274,7 +273,7 @@ public class HttpAPILogic {
 
         //todo may be optimized
         try {
-            java.nio.file.Path path = FileUtils.createCSV(reportingDao, user, dashId, deviceId, pinType, pin);
+            java.nio.file.Path path = reportingDao.csvGenerator.createCSV(user, dashId, deviceId, pinType, pin);
             return redirect("/" + path.getFileName().toString());
         } catch (IllegalCommandBodyException e1) {
             log.debug(e1.getMessage());

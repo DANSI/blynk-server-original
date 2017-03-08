@@ -34,6 +34,7 @@ public class ReportingDao implements Closeable {
 
     public final AverageAggregatorProcessor averageAggregator;
     public final RawDataProcessor rawDataProcessor;
+    public final CSVGenerator csvGenerator;
 
     private final String dataFolder;
 
@@ -45,6 +46,7 @@ public class ReportingDao implements Closeable {
         this.dataFolder = reportingFolder;
         this.ENABLE_RAW_DB_DATA_STORE = serverProperties.getBoolProperty("enable.raw.db.data.store");
         this.rawDataProcessor = new RawDataProcessor(ENABLE_RAW_DB_DATA_STORE);
+        this.csvGenerator = new CSVGenerator(this);
     }
 
     public ReportingDao(String reportingFolder , ServerProperties serverProperties) {
@@ -52,6 +54,7 @@ public class ReportingDao implements Closeable {
         this.dataFolder = reportingFolder;
         this.ENABLE_RAW_DB_DATA_STORE = serverProperties.getBoolProperty("enable.raw.db.data.store");
         this.rawDataProcessor = new RawDataProcessor(ENABLE_RAW_DB_DATA_STORE);
+        this.csvGenerator = new CSVGenerator(this);
     }
 
     public static String generateFilename(int dashId, int deviceId, char pinType, byte pin, GraphType type) {

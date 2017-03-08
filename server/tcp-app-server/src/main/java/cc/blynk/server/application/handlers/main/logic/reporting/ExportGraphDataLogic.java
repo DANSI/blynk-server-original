@@ -11,7 +11,6 @@ import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -87,7 +86,7 @@ public class ExportGraphDataLogic {
                 for (Pin pin : historyGraph.pins) {
                     if (pin != null) {
                         try {
-                            Path path = FileUtils.createCSV(reportingDao, user, dashId, deviceId, pin.pinType, pin.pin);
+                            Path path = reportingDao.csvGenerator.createCSV(user, dashId, deviceId, pin.pinType, pin.pin);
                             pinsCSVFilePath.add(new FileLink(path.getFileName(), dashName, pin.pinType, pin.pin));
                         } catch (Exception e) {
                             //ignore eny exception.
