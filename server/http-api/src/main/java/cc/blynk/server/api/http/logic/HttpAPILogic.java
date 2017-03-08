@@ -2,13 +2,7 @@ package cc.blynk.server.api.http.logic;
 
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.Consumes;
-import cc.blynk.core.http.annotation.GET;
-import cc.blynk.core.http.annotation.POST;
-import cc.blynk.core.http.annotation.PUT;
-import cc.blynk.core.http.annotation.Path;
-import cc.blynk.core.http.annotation.PathParam;
-import cc.blynk.core.http.annotation.QueryParam;
+import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.logic.serialization.NotificationCloneHideFields;
 import cc.blynk.server.api.http.logic.serialization.TwitterCloneHideFields;
@@ -16,11 +10,7 @@ import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PinData;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingDao;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.dao.TokenValue;
-import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.dao.*;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.PinStorageKey;
@@ -53,17 +43,7 @@ import java.util.Base64;
 
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.redirect;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_EMAIL;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_HISTORY_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PIN_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PROJECT;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_IS_APP_CONNECTED;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_IS_HARDWARE_CONNECTED;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_NOTIFY;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_QR;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
+import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
@@ -294,7 +274,7 @@ public class HttpAPILogic {
 
         //todo may be optimized
         try {
-            java.nio.file.Path path = FileUtils.createCSV(reportingDao, user.name, dashId, deviceId, pinType, pin);
+            java.nio.file.Path path = FileUtils.createCSV(reportingDao, user, dashId, deviceId, pinType, pin);
             return redirect("/" + path.getFileName().toString());
         } catch (IllegalCommandBodyException e1) {
             log.debug(e1.getMessage());
@@ -457,7 +437,7 @@ public class HttpAPILogic {
 
         String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING, pinValues);
 
-        reportingDao.process(user.name, dashId, deviceId, pin, pinType, pinValue, System.currentTimeMillis());
+        reportingDao.process(user, dashId, deviceId, pin, pinType, pinValue, System.currentTimeMillis());
 
         dash.update(deviceId, pin, pinType, pinValue);
 
@@ -519,7 +499,7 @@ public class HttpAPILogic {
         }
 
         for (PinData pinData : pinsData) {
-            reportingDao.process(user.name, dashId, deviceId, pin, pinType, pinData.value, pinData.timestamp);
+            reportingDao.process(user, dashId, deviceId, pin, pinType, pinData.value, pinData.timestamp);
         }
 
         dash.update(deviceId, pin, pinType, pinsData[0].value);

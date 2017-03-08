@@ -1,12 +1,10 @@
 package cc.blynk.utils;
 
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -56,14 +54,4 @@ public class ReportingUtil {
         }
     }
 
-    public static void createReportingFolder(String reportingFolder, String username) {
-        Path reportingPath = Paths.get(reportingFolder, username);
-        if (Files.notExists(reportingPath)) {
-            try {
-                Files.createDirectories(reportingPath);
-            } catch (IOException ioe) {
-                DefaultExceptionHandler.log.error("Error creating report folder. {}", reportingPath);
-            }
-        }
-    }
 }

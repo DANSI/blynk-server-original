@@ -1,5 +1,6 @@
 package cc.blynk.server.core.reporting.average;
 
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.FileUtils;
 
 import java.io.Closeable;
@@ -60,10 +61,10 @@ public class AverageAggregatorProcessor implements Closeable {
         aggregationValue.update(value);
     }
 
-    public void collect(String username, int dashId, int deviceId, char pinType, byte pin, long ts, double val) {
-        aggregate(minute, new AggregationKey(username, dashId, deviceId, pinType, pin, ts / MINUTE), val);
-        aggregate(hourly, new AggregationKey(username, dashId, deviceId, pinType, pin, ts / HOUR), val);
-        aggregate(daily, new AggregationKey(username, dashId, deviceId, pinType, pin, ts / DAY), val);
+    public void collect(User user, int dashId, int deviceId, char pinType, byte pin, long ts, double val) {
+        aggregate(minute, new AggregationKey(user.name, user.appName, dashId, deviceId, pinType, pin, ts / MINUTE), val);
+        aggregate(hourly, new AggregationKey(user.name, user.appName, dashId, deviceId, pinType, pin, ts / HOUR), val);
+        aggregate(daily, new AggregationKey(user.name, user.appName, dashId, deviceId, pinType, pin, ts / DAY), val);
     }
 
     public ConcurrentHashMap<AggregationKey, AggregationValue> getMinute() {

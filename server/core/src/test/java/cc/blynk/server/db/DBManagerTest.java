@@ -12,11 +12,7 @@ import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.model.Purchase;
 import cc.blynk.server.db.model.Redeem;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 
@@ -28,20 +24,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.zip.GZIPOutputStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * The Blynk Project.
@@ -203,12 +191,15 @@ public class DBManagerTest {
 
     @Test
     public void testManyConnections() throws Exception {
+        User user = new User();
+        user.name = "test@test.com";
+        user.appName = AppName.BLYNK;
         Map<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
         AggregationValue value = new AggregationValue();
         value.update(1);
         long ts = System.currentTimeMillis();
         for (int i = 0; i < 60; i++) {
-            map.put(new AggregationKey("test@test.com", i, 0, PinType.ANALOG.pintTypeChar, (byte) i, ts), value);
+            map.put(new AggregationKey(user.name, user.appName, i, 0, PinType.ANALOG.pintTypeChar, (byte) i, ts), value);
             dbManager.insertReporting(map, GraphType.MINUTE);
             dbManager.insertReporting(map, GraphType.HOURLY);
             dbManager.insertReporting(map, GraphType.DAILY);

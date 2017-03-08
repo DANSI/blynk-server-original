@@ -86,7 +86,7 @@ public class HardwareLogic {
             final String value = splitBody[2];
             final long now = System.currentTimeMillis();
 
-            reportingDao.process(state.user.name, dashId, deviceId, pin, pinType, value, now);
+            reportingDao.process(state.user, dashId, deviceId, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);
 
             process(dash, deviceId, session, pin, pinType, value);

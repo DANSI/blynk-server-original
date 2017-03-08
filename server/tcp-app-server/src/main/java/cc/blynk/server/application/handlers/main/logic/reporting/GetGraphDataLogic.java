@@ -19,9 +19,7 @@ import java.util.Arrays;
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA_RESPONSE;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
-import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 import static cc.blynk.utils.ByteUtils.compress;
 import static cc.blynk.utils.StringUtils.split2Device;
 
@@ -61,7 +59,7 @@ public class GetGraphDataLogic {
 
         //special case for delete command
         if (messageParts.length == 4) {
-            deleteGraphData(messageParts, user.name, dashId, deviceId);
+            deleteGraphData(messageParts, user, dashId, deviceId);
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
             user.profile.validateDashId(dashId);
@@ -78,13 +76,13 @@ public class GetGraphDataLogic {
             requestedPins[i] = new GraphPinRequestData(dashId, deviceId, messageParts, i, valuesPerPin);
         }
 
-        readGraphData(channel, user.name, requestedPins, msgId);
+        readGraphData(channel, user, requestedPins, msgId);
     }
 
-    private void readGraphData(Channel channel, String username, GraphPinRequest[] requestedPins, int msgId) {
+    private void readGraphData(Channel channel, User user, GraphPinRequest[] requestedPins, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
-                byte[][] data = reportingDao.getAllFromDisk(username, requestedPins);
+                byte[][] data = reportingDao.getAllFromDisk(user, requestedPins);
                 byte[] compressed = compress(requestedPins[0].dashId, data);
 
                 if (channel.isWritable()) {
@@ -93,13 +91,13 @@ public class GetGraphDataLogic {
             } catch (NoDataException noDataException) {
                 channel.writeAndFlush(makeResponse(msgId, NO_DATA), channel.voidPromise());
             } catch (Exception e) {
-                log.error("Error reading reporting data. For user {}", username);
+                log.error("Error reading reporting data. For user {}", user.name);
                 channel.writeAndFlush(makeResponse(msgId, SERVER_ERROR), channel.voidPromise());
             }
         });
     }
 
-    private void deleteGraphData(String[] messageParts, String username, int dashId, int deviceId) {
+    private void deleteGraphData(String[] messageParts, User user, int dashId, int deviceId) {
         try {
             PinType pinType = PinType.getPinType(messageParts[1].charAt(0));
             byte pin = Byte.parseByte(messageParts[2]);
@@ -107,7 +105,7 @@ public class GetGraphDataLogic {
             if (!"del".equals(cmd)) {
                 throw new IllegalCommandBodyException("Wrong body format. Expecting 'del'.");
             }
-            reportingDao.delete(username, dashId, deviceId, pinType, pin);
+            reportingDao.delete(user, dashId, deviceId, pinType, pin);
         } catch (NumberFormatException e) {
             throw new IllegalCommandException("HardwareLogic command body incorrect.");
         }

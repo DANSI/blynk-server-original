@@ -1,6 +1,8 @@
 package cc.blynk.server.db;
 
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.utils.NumberUtil;
 import org.junit.AfterClass;
@@ -14,9 +16,7 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * The Blynk Project.
@@ -28,12 +28,16 @@ public class RawDataDBTest {
     private static DBManager dbManager;
     private static BlockingIOProcessor blockingIOProcessor;
     private static final Calendar UTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+    private static User user;
 
     @BeforeClass
     public static void init() throws Exception {
         blockingIOProcessor = new BlockingIOProcessor(2, 10000, null);
         dbManager = new DBManager("db-test.properties", blockingIOProcessor);
         assertNotNull(dbManager.getConnection());
+        user = new User();
+        user.name = "test@test.com";
+        user.appName = AppName.BLYNK;
     }
 
     @AfterClass
@@ -50,7 +54,7 @@ public class RawDataDBTest {
     @Test
     public void testInsertStringAsRawData() throws Exception {
         RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
-        rawDataProcessor.collect("test@test.com", 1, 2, 'v', (byte) 3, 1111111111, "Lamp is ON", NumberUtil.NO_RESULT);
+        rawDataProcessor.collect(user, 1, 2, 'v', (byte) 3, 1111111111, "Lamp is ON", NumberUtil.NO_RESULT);
 
         //invoking directly dao to avoid separate thread execution
         dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
@@ -79,7 +83,7 @@ public class RawDataDBTest {
     @Test
     public void testInsertDoubleAsRawData() throws Exception {
         RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
-        rawDataProcessor.collect("test@test.com", 1, 2, 'v', (byte) 3, 1111111111, "Lamp is ON", 1.33D);
+        rawDataProcessor.collect(user, 1, 2, 'v', (byte) 3, 1111111111, "Lamp is ON", 1.33D);
 
         //invoking directly dao to avoid separate thread execution
         dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);

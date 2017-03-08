@@ -1,7 +1,9 @@
 package cc.blynk.utils;
 
 import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
@@ -9,19 +11,10 @@ import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
-import java.nio.file.Files;
-import java.nio.file.OpenOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -88,19 +81,19 @@ public class FileUtils {
 
     public static final int DEFAULT_FETCH_COUNT = 60 * 24 * 30;
 
-    public static Path createCSV(ReportingDao reportingDao, String username, int dashId, int deviceId, PinType pinType, byte pin) throws Exception {
+    public static Path createCSV(ReportingDao reportingDao, User user, int dashId, int deviceId, PinType pinType, byte pin) throws Exception {
         if (pinType == null || pin == Pin.NO_PIN) {
             throw new IllegalCommandBodyException("Wrong pin format.");
         }
 
         //data for 1 month
-        ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(username, dashId, deviceId, pinType, pin, DEFAULT_FETCH_COUNT, GraphType.MINUTE);
+        ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(user, dashId, deviceId, pinType, pin, DEFAULT_FETCH_COUNT, GraphType.MINUTE);
         if (onePinData == null) {
             throw new NoDataException();
         }
 
         onePinData.flip();
-        Path path = generateExportCSVPath(username, dashId, pinType, pin);
+        Path path = generateExportCSVPath(user.name, dashId, pinType, pin);
         makeGzippedCSVFile(onePinData, path);
         return path;
     }
@@ -124,12 +117,8 @@ public class FileUtils {
      * @throws IOException
      */
     public static void write(Path reportingPath, double value, long ts) throws IOException {
-        write(reportingPath, value, ts, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-    }
-
-    public static void write(Path reportingPath, double value, long ts, OpenOption... options) throws IOException {
         try (DataOutputStream dos = new DataOutputStream(
-                Files.newOutputStream(reportingPath, options))) {
+                Files.newOutputStream(reportingPath, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
             dos.writeDouble(value);
             dos.writeLong(ts);
             dos.flush();
@@ -157,5 +146,16 @@ public class FileUtils {
             channel.read(buf);
             return buf;
         }
+    }
+
+    public static String getUserReportingDir(User user) {
+        return getUserReportingDir(user.name, user.appName);
+    }
+
+    public static String getUserReportingDir(String username, String appName) {
+        if (appName.equals(AppName.BLYNK)) {
+            return username;
+        }
+        return username + "_" + appName;
     }
 }

@@ -1,6 +1,8 @@
 package cc.blynk.server.core.reporting.average;
 
 import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.utils.ServerProperties;
 import org.junit.Test;
@@ -36,7 +38,10 @@ public class AverageAggregatorTest {
     @Test
     public void testAverageWorksOkForOnePin() {
         AverageAggregatorProcessor averageAggregator = new AverageAggregatorProcessor("");
-        String username = "test";
+        User user = new User();
+        user.name = "test@test.com";
+        user.appName = AppName.BLYNK;
+
         char pinType = PinType.VIRTUAL.pintTypeChar;
         int dashId = 1;
         byte pin = 1;
@@ -48,21 +53,23 @@ public class AverageAggregatorTest {
         double expectedAverage = 0;
         for (int i = 0; i < COUNT; i++) {
             expectedAverage += i;
-            averageAggregator.collect(username, dashId, 0, pinType, pin, ts, i);
+            averageAggregator.collect(user, dashId, 0, pinType, pin, ts, i);
         }
         expectedAverage /= COUNT;
 
         assertEquals(1, averageAggregator.getHourly().size());
         assertEquals(1, averageAggregator.getDaily().size());
 
-        assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(username, dashId, 0, pinType, pin, ts / HOUR)).calcAverage(), 0);
-        assertEquals(expectedAverage, averageAggregator.getDaily().get(new AggregationKey(username, dashId, 0, pinType, pin, ts / DAY)).calcAverage(), 0);
+        assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(user.name, user.appName, dashId, 0, pinType, pin, ts / HOUR)).calcAverage(), 0);
+        assertEquals(expectedAverage, averageAggregator.getDaily().get(new AggregationKey(user.name, user.appName, dashId, 0, pinType, pin, ts / DAY)).calcAverage(), 0);
     }
 
     @Test
     public void testAverageWorksForOneDay() {
         AverageAggregatorProcessor averageAggregator = new AverageAggregatorProcessor("");
-        String username = "test";
+        User user = new User();
+        user.name = "test@test.com";
+        user.appName = AppName.BLYNK;
         char pinType = PinType.VIRTUAL.pintTypeChar;
         int dashId = 1;
         byte pin = 1;
@@ -77,20 +84,20 @@ public class AverageAggregatorTest {
             double expectedAverage = 0;
             for (int i = 0; i < COUNT; i++) {
                 expectedAverage += i;
-                averageAggregator.collect(username, dashId, 0, pinType, pin, ts, i);
+                averageAggregator.collect(user, dashId, 0, pinType, pin, ts, i);
             }
             expectedDailyAverage += expectedAverage;
             expectedAverage /= COUNT;
 
             assertEquals(hour + 1, averageAggregator.getHourly().size());
 
-            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(username, dashId, 0, pinType, pin, ts / HOUR)).calcAverage(), 0);
+            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(user.name, user.appName, dashId, 0, pinType, pin, ts / HOUR)).calcAverage(), 0);
         }
         expectedDailyAverage /= COUNT * 24;
 
         assertEquals(24, averageAggregator.getHourly().size());
         assertEquals(1, averageAggregator.getDaily().size());
-        assertEquals(expectedDailyAverage, averageAggregator.getDaily().get(new AggregationKey(username, dashId, 0, pinType, pin, getMillis(2015, 8, 1, 0, 0) / DAY)).calcAverage(), 0);
+        assertEquals(expectedDailyAverage, averageAggregator.getDaily().get(new AggregationKey(user.name, user.appName, dashId, 0, pinType, pin, getMillis(2015, 8, 1, 0, 0) / DAY)).calcAverage(), 0);
     }
 
     @Test
@@ -102,7 +109,9 @@ public class AverageAggregatorTest {
 
         AverageAggregatorProcessor averageAggregator = new AverageAggregatorProcessor(reportingFolder);
 
-        String username = "test";
+        User user = new User();
+        user.name = "test@test.com";
+        user.appName = AppName.BLYNK;
         char pinType = PinType.VIRTUAL.pintTypeChar;
         int dashId = 1;
         byte pin = 1;
@@ -117,20 +126,20 @@ public class AverageAggregatorTest {
             double expectedAverage = 0;
             for (int i = 0; i < COUNT; i++) {
                 expectedAverage += i;
-                averageAggregator.collect(username, dashId, 0, pinType, pin, ts, i);
+                averageAggregator.collect(user, dashId, 0, pinType, pin, ts, i);
             }
             expectedDailyAverage += expectedAverage;
             expectedAverage /= COUNT;
 
             assertEquals(hour + 1, averageAggregator.getHourly().size());
 
-            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(username, dashId, 0, pinType, pin, ts / HOUR)).calcAverage(), 0);
+            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(user.name, user.appName, dashId, 0, pinType, pin, ts / HOUR)).calcAverage(), 0);
         }
         expectedDailyAverage /= COUNT * 24;
 
         assertEquals(24, averageAggregator.getHourly().size());
         assertEquals(1, averageAggregator.getDaily().size());
-        assertEquals(expectedDailyAverage, averageAggregator.getDaily().get(new AggregationKey(username, dashId, 0, pinType, pin, getMillis(2015, 8, 1, 0, 0) / DAY)).calcAverage(), 0);
+        assertEquals(expectedDailyAverage, averageAggregator.getDaily().get(new AggregationKey(user.name, user.appName, dashId, 0, pinType, pin, getMillis(2015, 8, 1, 0, 0) / DAY)).calcAverage(), 0);
 
 
         averageAggregator.close();
@@ -142,14 +151,14 @@ public class AverageAggregatorTest {
 
         assertEquals(24, averageAggregator.getHourly().size());
         assertEquals(1, averageAggregator.getDaily().size());
-        assertEquals(expectedDailyAverage, averageAggregator.getDaily().get(new AggregationKey(username, dashId, 0, pinType, pin, getMillis(2015, 8, 1, 0, 0) / DAY)).calcAverage(), 0);
+        assertEquals(expectedDailyAverage, averageAggregator.getDaily().get(new AggregationKey(user.name, user.appName, dashId, 0, pinType, pin, getMillis(2015, 8, 1, 0, 0) / DAY)).calcAverage(), 0);
 
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.HOURLY_TEMP_FILENAME)));
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.DAILY_TEMP_FILENAME)));
 
         ReportingDao reportingDao = new ReportingDao(reportingFolder, new ServerProperties(Collections.emptyMap()));
 
-        reportingDao.delete(username, dashId, 0, PinType.VIRTUAL, pin);
+        reportingDao.delete(user, dashId, 0, PinType.VIRTUAL, pin);
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.HOURLY_TEMP_FILENAME)));
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.DAILY_TEMP_FILENAME)));
     }

@@ -15,14 +15,16 @@ public final class AggregationKey implements Serializable {
     public static final Comparator<AggregationKey> AGGREGATION_KEY_COMPARATOR = (o1, o2) -> (int) (o1.ts - o2.ts);
 
     public final String username;
+    public final String appName;
     public final int dashId;
     public final int deviceId;
     public final char pinType;
     public final byte pin;
     public final long ts;
 
-    public AggregationKey(String username, int dashId, int deviceId, char pinType, byte pin, long ts) {
+    public AggregationKey(String username, String appName, int dashId, int deviceId, char pinType, byte pin, long ts) {
         this.username = username;
+        this.appName = appName;
         this.dashId = dashId;
         this.deviceId = deviceId;
         this.pinType = pinType;
@@ -41,7 +43,7 @@ public final class AggregationKey implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof AggregationKey)) return false;
 
         AggregationKey that = (AggregationKey) o;
 
@@ -50,13 +52,15 @@ public final class AggregationKey implements Serializable {
         if (pinType != that.pinType) return false;
         if (pin != that.pin) return false;
         if (ts != that.ts) return false;
-        return !(username != null ? !username.equals(that.username) : that.username != null);
+        if (username != null ? !username.equals(that.username) : that.username != null) return false;
+        return !(appName != null ? !appName.equals(that.appName) : that.appName != null);
 
     }
 
     @Override
     public int hashCode() {
         int result = username != null ? username.hashCode() : 0;
+        result = 31 * result + (appName != null ? appName.hashCode() : 0);
         result = 31 * result + dashId;
         result = 31 * result + deviceId;
         result = 31 * result + (int) pinType;
