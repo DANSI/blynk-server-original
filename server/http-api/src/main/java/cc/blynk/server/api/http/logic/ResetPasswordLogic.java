@@ -2,14 +2,10 @@ package cc.blynk.server.api.http.logic;
 
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.Consumes;
-import cc.blynk.core.http.annotation.FormParam;
-import cc.blynk.core.http.annotation.GET;
-import cc.blynk.core.http.annotation.POST;
-import cc.blynk.core.http.annotation.Path;
-import cc.blynk.core.http.annotation.QueryParam;
+import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.api.http.pojo.TokenUser;
 import cc.blynk.server.api.http.pojo.TokensPool;
+import cc.blynk.server.application.handlers.main.auth.BlynkEmailValidator;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
@@ -17,7 +13,6 @@ import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.ServerProperties;
-import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -66,15 +61,12 @@ public class ResetPasswordLogic {
     @Path("resetPassword")
     public Response sendResetPasswordEmail(@FormParam("email") String email,
                                            @FormParam("appName") String appName) {
-        if (email == null || email.isEmpty()) {
-            return Response.badRequest("Email field is empty. Please input your email.");
-        }
 
-        if (!EmailValidator.getInstance().isValid(email)) {
+        if (BlynkEmailValidator.isNotValidEmail(email)) {
             return Response.badRequest(email + " email has not valid format.");
         }
 
-        email = email.toLowerCase();
+        email = email.trim().toLowerCase();
         appName = (appName == null ? AppName.BLYNK : appName);
 
         User user = userDao.getByName(email, appName);

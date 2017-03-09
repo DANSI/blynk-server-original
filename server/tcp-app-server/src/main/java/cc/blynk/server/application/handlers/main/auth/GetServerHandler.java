@@ -10,7 +10,6 @@ import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.apache.commons.validator.routines.EmailValidator;
 
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
@@ -52,12 +51,12 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
         final String username = parts[0];
         final String appName = parts[1];
 
-        if (username == null || username.isEmpty() || appName == null || appName.isEmpty()) {
+        if (appName == null || appName.isEmpty() || appName.length() > 100) {
             ctx.writeAndFlush(makeResponse(msg.id, Response.ILLEGAL_COMMAND), ctx.voidPromise());
             return;
         }
 
-        if (username.length() > 255 || appName.length() > 100 || !EmailValidator.getInstance().isValid(username)) {
+        if (BlynkEmailValidator.isNotValidEmail(username)) {
             ctx.writeAndFlush(makeResponse(msg.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
             return;
         }
