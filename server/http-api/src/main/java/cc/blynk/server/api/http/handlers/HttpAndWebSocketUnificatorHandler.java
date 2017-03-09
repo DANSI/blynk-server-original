@@ -1,5 +1,6 @@
 package cc.blynk.server.api.http.handlers;
 
+import cc.blynk.core.http.Response;
 import cc.blynk.core.http.handlers.StaticFile;
 import cc.blynk.core.http.handlers.StaticFileEdsWith;
 import cc.blynk.core.http.handlers.StaticFileHandler;
@@ -39,6 +40,8 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
     private static final Logger log = LogManager.getLogger(HttpAndWebSocketUnificatorHandler.class);
 
+    private final static String BLYNK_LANDING = "http://www.blynk.cc";
+
     private final GlobalStats stats;
 
     private final TokenManager tokenManager;
@@ -61,7 +64,11 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         final FullHttpRequest req = (FullHttpRequest) msg;
-        if (req.uri().startsWith(HttpAPIServer.WEBSOCKET_PATH)) {
+        String uri = req.uri();
+
+        if (uri.equals("/")) {
+            ctx.writeAndFlush(Response.redirect(BLYNK_LANDING));
+        } else if (req.uri().startsWith(HttpAPIServer.WEBSOCKET_PATH)) {
             initWebSocketPipeline(ctx, HttpAPIServer.WEBSOCKET_PATH);
         } else {
             initHttpPipeline(ctx);
