@@ -355,7 +355,7 @@ Available server options:
 
 Blynk server provides administration panel where you can monitor your server. It is accessible at this URL:
 
-        https://your_ip:7443/admin
+        https://your_ip:9443/admin
         
 ![Administration UI](https://github.com/blynkkk/blynk-server/blob/master/docs/admin_panel.png)
         
