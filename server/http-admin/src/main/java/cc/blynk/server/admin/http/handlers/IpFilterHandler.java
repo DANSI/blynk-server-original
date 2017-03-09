@@ -44,7 +44,7 @@ public class IpFilterHandler extends AbstractRemoteAddressFilter<InetSocketAddre
     }
 
     @Override
-    protected boolean accept(ChannelHandlerContext ctx, InetSocketAddress remoteAddress) throws Exception {
+    public boolean accept(ChannelHandlerContext ctx, InetSocketAddress remoteAddress) {
         if (allowedIPs.size() == 0 && rules.size() == 0) {
             return false;
         }

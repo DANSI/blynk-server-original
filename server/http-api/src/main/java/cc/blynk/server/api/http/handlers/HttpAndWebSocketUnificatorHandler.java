@@ -28,6 +28,8 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.net.InetSocketAddress;
+
 /**
  * Utility handler used to define what protocol should be handled
  * on same port : http or websockets.
@@ -50,7 +52,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final WebSocketsGenericLoginHandler genericLoginHandler;
     private final String adminRootPath;
     private final boolean isUnpacked;
-    private final String[] allowedIPs;
+    private final IpFilterHandler ipFilterHandler;
 
     public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String adminRootPath, boolean isUnpacked) {
         this.stats = holder.stats;
@@ -59,7 +61,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.genericLoginHandler = new WebSocketsGenericLoginHandler(holder, port);
         this.adminRootPath = adminRootPath;
         this.isUnpacked = isUnpacked;
-        this.allowedIPs = holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips");
+        this.ipFilterHandler = new IpFilterHandler(holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips"));
 
         //HandlerRegistry.register(new HttpBusinessAPILogic(holder));
         //final String businessRootPath = holder.props.getProperty("business.rootPath", "/business");
@@ -79,6 +81,11 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         if (uri.equals("/")) {
             ctx.writeAndFlush(Response.redirect(BLYNK_LANDING));
         } else if (uri.equals(adminRootPath)) {
+            InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+            if (!ipFilterHandler.accept(ctx, remoteAddress)) {
+                ctx.close();
+                return;
+            }
             initAdminPipeline(ctx);
         } else if (req.uri().startsWith(HttpAPIServer.WEBSOCKET_PATH)) {
             initWebSocketPipeline(ctx, HttpAPIServer.WEBSOCKET_PATH);
@@ -91,7 +98,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
     private void initAdminPipeline(ChannelHandlerContext ctx) {
         ChannelPipeline pipeline = ctx.pipeline();
-        pipeline.addFirst(new IpFilterHandler(allowedIPs));
         pipeline.addLast(new ChunkedWriteHandler());
         pipeline.addLast(new UrlMapperHandler(adminRootPath, "/static/admin/admin.html"));
         pipeline.addLast(new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
