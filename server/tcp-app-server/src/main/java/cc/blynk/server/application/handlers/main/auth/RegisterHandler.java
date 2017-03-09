@@ -13,9 +13,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static cc.blynk.server.core.protocol.enums.Response.USER_ALREADY_REGISTERED;
+import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
@@ -65,7 +63,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         String appName = messageParts.length == 3 ? messageParts[2] : AppName.BLYNK;
         log.info("Trying register user : {}, app : {}", userName, appName);
 
-        if (userName.length() > 255 || !EmailValidator.getInstance().isValid(userName)) {
+        if (userName.length() > 255 || !EmailValidator.getInstance().isValid(userName) || userName.contains("?")) {
             log.error("Register Handler. Wrong email: {}", userName);
             ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
             return;

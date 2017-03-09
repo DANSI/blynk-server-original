@@ -141,6 +141,16 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void doNotAllowUsersWithQuestionMark() throws Exception {
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+
+        appClient.start();
+
+        appClient.send("register te?st@test.com 1");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
+    }
+
+    @Test
     public void createDashWithDevices() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
 

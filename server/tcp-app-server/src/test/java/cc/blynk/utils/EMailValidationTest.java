@@ -6,7 +6,8 @@ import org.junit.Test;
 
 import java.io.File;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * User: ddumanskiy
@@ -34,6 +35,7 @@ public class EMailValidationTest {
                 "mmmm+100@gmail.com",
                 "bla@bla.com.ua",
                 "bla@bla.cc",
+                "ji?pui@gmail.com",
                 "mmmm-100@yahoo-test.com"
         };
 
