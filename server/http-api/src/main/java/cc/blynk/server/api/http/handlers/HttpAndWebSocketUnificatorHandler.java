@@ -6,6 +6,7 @@ import cc.blynk.core.http.handlers.StaticFileEdsWith;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UrlMapperHandler;
 import cc.blynk.server.Holder;
+import cc.blynk.server.admin.http.handlers.IpFilterHandler;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
@@ -47,18 +48,27 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final TokenManager tokenManager;
     private final SessionDao sessionDao;
     private final WebSocketsGenericLoginHandler genericLoginHandler;
+    private final String adminRootPath;
+    private final boolean isUnpacked;
+    private final String[] allowedIPs;
 
-    public HttpAndWebSocketUnificatorHandler(Holder holder, int port) {
+    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String adminRootPath, boolean isUnpacked) {
         this.stats = holder.stats;
         this.tokenManager = holder.tokenManager;
         this.sessionDao = holder.sessionDao;
         this.genericLoginHandler = new WebSocketsGenericLoginHandler(holder, port);
+        this.adminRootPath = adminRootPath;
+        this.isUnpacked = isUnpacked;
+        this.allowedIPs = holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips");
 
         //HandlerRegistry.register(new HttpBusinessAPILogic(holder));
         //final String businessRootPath = holder.props.getProperty("business.rootPath", "/business");
         //final SessionHolder sessionHolder = new SessionHolder();
         //HandlerRegistry.register(businessRootPath, new BusinessAuthLogic(holder.userDao, holder.sessionDao, holder.fileManager, sessionHolder));
+    }
 
+    public HttpAndWebSocketUnificatorHandler(Holder holder, int port) {
+        this(holder, port, null, false);
     }
 
     @Override
@@ -68,6 +78,8 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
         if (uri.equals("/")) {
             ctx.writeAndFlush(Response.redirect(BLYNK_LANDING));
+        } else if (uri.equals(adminRootPath)) {
+            initAdminPipeline(ctx);
         } else if (req.uri().startsWith(HttpAPIServer.WEBSOCKET_PATH)) {
             initWebSocketPipeline(ctx, HttpAPIServer.WEBSOCKET_PATH);
         } else {
@@ -77,11 +89,22 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         ctx.fireChannelRead(msg);
     }
 
+    private void initAdminPipeline(ChannelHandlerContext ctx) {
+        ChannelPipeline pipeline = ctx.pipeline();
+        pipeline.addFirst(new IpFilterHandler(allowedIPs));
+        pipeline.addLast(new ChunkedWriteHandler());
+        pipeline.addLast(new UrlMapperHandler(adminRootPath, "/static/admin/admin.html"));
+        pipeline.addLast(new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
+        pipeline.addLast(new StaticFileHandler(isUnpacked, new StaticFile("/static", false)));
+        pipeline.addLast(new HttpHandler(tokenManager, sessionDao, stats));
+        pipeline.remove(this);
+    }
+
     private void initHttpPipeline(ChannelHandlerContext ctx) {
         ChannelPipeline pipeline = ctx.pipeline();
         pipeline.addLast("HttpChunkedWrite", new ChunkedWriteHandler());
         pipeline.addLast("HttpUrlMapper", new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
-        pipeline.addLast("HttpStaticFile", new StaticFileHandler(true,
+        pipeline.addLast("HttpStaticFile", new StaticFileHandler(isUnpacked,
                 new StaticFile("/static"), new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")));
         pipeline.addLast("HttpHandler", new HttpHandler(tokenManager, sessionDao, stats));
 

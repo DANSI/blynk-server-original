@@ -37,7 +37,7 @@ public class WebSslSocketTest extends BaseTest {
     @Before
     public void init() throws Exception {
         if (webSocketServer == null) {
-            webSocketServer = new HttpsAPIServer(holder).start();
+            webSocketServer = new HttpsAPIServer(holder, false).start();
         }
     }
 

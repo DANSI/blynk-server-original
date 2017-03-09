@@ -2,8 +2,8 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.http.ResponseUserEntity;
-import cc.blynk.server.admin.http.HttpsAdminServer;
 import cc.blynk.server.api.http.HttpAPIServer;
+import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.JsonParser;
@@ -21,11 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.*;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -47,9 +43,6 @@ public class HttpsAdminServerTest extends BaseTest {
     private String httpsAdminServerUrl;
     private String httpServerUrl;
 
-    //administration ports
-    public static int administrationPort;
-
     @After
     public void shutdown() {
         httpAdminServer.close();
@@ -58,10 +51,9 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        administrationPort = properties.getIntProperty("administration.https.port");
-        this.httpAdminServer = new HttpsAdminServer(holder, true).start();
+        this.httpAdminServer = new HttpsAPIServer(holder, false).start();
 
-        httpsAdminServerUrl = String.format("https://localhost:%s/admin", administrationPort);
+        httpsAdminServerUrl = String.format("https://localhost:%s/admin", httpsPort);
         httpServerUrl = String.format("http://localhost:%s/", httpPort);
 
         SSLContext sslcontext = initUnsecuredSSLContext();
@@ -128,6 +120,33 @@ public class HttpsAdminServerTest extends BaseTest {
             assertEquals(testUser, user.name);
             assertNotNull(user.profile.dashBoards);
             assertEquals(5, user.profile.dashBoards.length);
+        }
+    }
+
+    @Test
+    public void testGetAdminPage() throws Exception {
+        HttpGet request = new HttpGet(httpsAdminServerUrl);
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testGetFavIconHttps() throws Exception {
+        HttpGet request = new HttpGet(httpsAdminServerUrl.replace("/admin", "") + "/favicon.ico");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testGetFavIconHttp() throws Exception {
+        HttpGet request = new HttpGet(httpServerUrl + "favicon.ico");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
         }
     }
 

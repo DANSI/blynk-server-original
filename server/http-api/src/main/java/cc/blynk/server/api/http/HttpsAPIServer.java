@@ -2,6 +2,10 @@ package cc.blynk.server.api.http;
 
 import cc.blynk.core.http.rest.HandlerRegistry;
 import cc.blynk.server.Holder;
+import cc.blynk.server.admin.http.logic.admin.ConfigsLogic;
+import cc.blynk.server.admin.http.logic.admin.HardwareStatsLogic;
+import cc.blynk.server.admin.http.logic.admin.StatsLogic;
+import cc.blynk.server.admin.http.logic.admin.UsersLogic;
 import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.core.BaseServer;
@@ -22,10 +26,17 @@ public class HttpsAPIServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public HttpsAPIServer(Holder holder) {
+    public HttpsAPIServer(Holder holder, boolean isUnpacked) {
         super(holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 
+        String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
+
         HandlerRegistry.register(new HttpAPILogic(holder));
+
+        HandlerRegistry.register(adminRootPath, new UsersLogic(holder));
+        HandlerRegistry.register(adminRootPath, new StatsLogic(holder));
+        HandlerRegistry.register(adminRootPath, new ConfigsLogic(holder.props, holder.blockingIOProcessor));
+        HandlerRegistry.register(adminRootPath, new HardwareStatsLogic(holder.userDao));
 
         final SslContext sslCtx = SslUtil.initSslContext(
                 holder.props.getProperty("https.cert", holder.props.getProperty("server.ssl.cert")),
@@ -33,7 +44,7 @@ public class HttpsAPIServer extends BaseServer {
                 holder.props.getProperty("https.key.pass", holder.props.getProperty("server.ssl.key.pass")),
                 SslUtil.fetchSslProvider(holder.props));
 
-        final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler = new HttpAndWebSocketUnificatorHandler(holder, port);
+        final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler = new HttpAndWebSocketUnificatorHandler(holder, port, adminRootPath, isUnpacked);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -54,12 +65,12 @@ public class HttpsAPIServer extends BaseServer {
 
     @Override
     protected String getServerName() {
-        return "HTTPS API and WebSockets";
+        return "HTTPS API, WebSockets and Admin page";
     }
 
     @Override
     public void close() {
-        System.out.println("Shutting down HTTPS API and WebSockets server...");
+        System.out.println("Shutting down HTTPS API, WebSockets and Admin server...");
         super.close();
     }
 

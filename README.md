@@ -252,7 +252,7 @@ Available server options:
         server.ssl.key.pass=pupkin123
                 
         
-+ Https and web sockets port
++ Https, web sockets, admin port
         
         https.port=9443
         
@@ -332,12 +332,7 @@ Available server options:
         enable.raw.data.store=true
         
         
-+ Administration UI https port
-        
-        administration.https.port=7443
-        
-        
-+ Url for opening admin page. Must start from "/". For "/admin" url path will look like that "https://127.0.0.1:7443/admin". 
++ Url for opening admin page. Must start from "/". For "/admin" url path will look like that "https://127.0.0.1:9443/admin". 
 
         admin.rootPath=/admin
         
@@ -368,7 +363,6 @@ You can change it with next options :
         
         admin.rootPath
         allowed.administrator.ips
-        administration.https.port
         
 **WARNING**
 Default ```allowed.administrator.ips``` setting allows access only from ```localhost```. In other words, 
@@ -417,7 +411,7 @@ Enable raw data in ```server.properties``` :
 
         enable.raw.db.data.store=true
 
-#### 2. Option A. Install PostgreSQL
+#### 2. Install PostgreSQL. Option A
 
         sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
         wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
@@ -425,7 +419,7 @@ Enable raw data in ```server.properties``` :
         sudo apt-get update
         sudo apt-get install postgresql postgresql-contrib
         
-#### 2. Option B. Install PostgreSQL 
+#### 2. Install PostgreSQL.  Option B 
 
         sudo apt-get update
         apt-get --no-install-recommends install postgresql-9.6 postgresql-contrib-9.6

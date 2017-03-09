@@ -1,7 +1,6 @@
 package cc.blynk.server.launcher;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.admin.http.HttpsAdminServer;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.application.AppServer;
@@ -73,8 +72,7 @@ public class ServerLauncher {
                 new HardwareSSLServer(holder),
                 new AppServer(holder),
                 new HttpAPIServer(holder),
-                new HttpsAPIServer(holder),
-                new HttpsAdminServer(holder, isUnpacked),
+                new HttpsAPIServer(holder, isUnpacked),
                 new MQTTHardwareServer(holder)
         };
 
