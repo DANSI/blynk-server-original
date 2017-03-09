@@ -629,8 +629,8 @@ public class MainWorkflowTest extends IntegrationBase {
                 "Documentation -> http://docs.blynk.cc/\n" +
                 "Sketch generator -> http://examples.blynk.cc/\n" +
                 "\n" +
-                "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.4/Blynk_Release_v0.4.4.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.23.0/server-0.23.0.jar\n" +
+                "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.6/Blynk_Release_v0.4.6.zip\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.23.1/server-0.23.1.jar\n" +
                 "-\n" +
                 "http://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
