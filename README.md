@@ -38,6 +38,7 @@ If you need more information, please follow these links:
 - [Generate Let's Encrypt SSL/TLS Certificates](https://github.com/blynkkk/blynk-server#generate-lets-encrypt-ssltls-certificates)
 - [Generate own SSL certificates](https://github.com/blynkkk/blynk-server#generate-own-ssl-certificates)
 - [Install java for Ubuntu](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu)
+- [Blynk Protocol](https://github.com/blynkkk/blynk-server#blynk-protocol)
 
 # GETTING STARTED
 
@@ -596,6 +597,30 @@ If you want to run Blynk server behind WiFi-router and want it to be accessible 
 Blynk has a bunch of integration tests that require DB, so you have to skip tests during build.
 
         mvn clean install -Dmaven.test.skip=true
+        
+### Blynk protocol
+
+Blynk transfers binary messages with the following structure:
+
+| Command       | Message Id    | Length/Status   | Body     |
+|:-------------:|:-------------:|:---------------:|:--------:|
+| 1 byte        | 2 bytes       | 2 bytes         | Variable |
+
+Message Id and Length are [big endian](http://en.wikipedia.org/wiki/Endianness#Big-endian).
+Body has a command-specific format.
+
+Command and Status definitions: [BlynkProtocolDefs.h](https://github.com/blynkkk/blynk-library/blob/master/Blynk/BlynkProtocolDefs.h)
+
+Typical Blynk library knows how to send(S)/process(P):
+
+    S   BLYNK_CMD_LOGIN + auth token
+    SP  BLYNK_CMD_PING
+    SP  BLYNK_CMD_RESPONSE
+    SP  BLYNK_CMD_BRIDGE
+    SP  BLYNK_CMD_HARDWARE
+    S   BLYNK_CMD_TWEET
+    S   BLYNK_CMD_EMAIL
+    S   BLYNK_CMD_PUSH_NOTIFICATION
 
 ## Licensing
 [GNU GPL license](https://github.com/blynkkk/blynk-server/blob/master/license.txt)
