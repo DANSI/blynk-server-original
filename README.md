@@ -15,8 +15,6 @@ If you need more information, please follow these links:
 
 ![Dashboard settings](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/dash_settings.png)
 ![Widgets Box](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/widgets_box.png)
-![Button edit](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/button_edit.png)
-![terminal edit](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/terminal_edit.png)
 ![Dashboard](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/dash.png)
 ![Dashboard2](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/dash2.png)
 
