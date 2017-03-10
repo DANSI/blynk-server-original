@@ -38,6 +38,7 @@ If you need more information, please follow these links:
 - [Generate Let's Encrypt SSL/TLS Certificates](https://github.com/blynkkk/blynk-server#generate-lets-encrypt-ssltls-certificates)
 - [Generate own SSL certificates](https://github.com/blynkkk/blynk-server#generate-own-ssl-certificates)
 - [Install java for Ubuntu](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu)
+- [How Blynk Works?](https://github.com/blynkkk/blynk-server#how-blynk-works)
 - [Blynk Protocol](https://github.com/blynkkk/blynk-server#blynk-protocol)
 
 # GETTING STARTED
@@ -598,6 +599,12 @@ Blynk has a bunch of integration tests that require DB, so you have to skip test
 
         mvn clean install -Dmaven.test.skip=true
         
+### How Blynk Works?
+When hardware connects to Blynk cloud it opens either keep-alive ssl/tls connection on port 8441 or keep-alive plain 
+tcp/ip connection on port 8442. Blynk app opens mutual ssl/tls connection to Blynk Cloud on port 8443. Blynk Cloud is 
+responsible for forwarding messages between hardware and app. In both (app and hardware) connections Blynk uses  
+own binary protocol described below.
+
 ### Blynk protocol
 
 Blynk transfers binary messages with the following structure:
