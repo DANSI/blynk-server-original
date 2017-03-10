@@ -22,6 +22,7 @@ If you need more information, please follow these links:
 
 # Content 
 
+- [Download](https://github.com/blynkkk/blynk-server#blynk-server)
 - [Requirements](https://github.com/blynkkk/blynk-server#requirements)
 - [Quick Local Server setup](https://github.com/blynkkk/blynk-server#quick-local-server-setup)
 - [Quick local server setup on Raspberry PI](https://github.com/blynkkk/blynk-server#quick-local-server-setup-on-raspberry-pi)
