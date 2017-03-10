@@ -20,15 +20,37 @@ If you need more information, please follow these links:
 ![Dashboard](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/dash.png)
 ![Dashboard2](https://github.com/blynkkk/blynk-server/blob/master/docs/overview/dash2.png)
 
-# Blynk server
-Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Java server, responsible for forwarding messages between Blynk mobile application and various microcontroller boards and SBCs (i.e. Arduino, Raspberry Pi. etc).
+# Content 
+
+[Requirements](https://github.com/blynkkk/blynk-server#requirements)
+[Quick Local Server setup](https://github.com/blynkkk/blynk-server#quick-local-server-setup)
+[Quick local server setup on Raspberry PI](https://github.com/blynkkk/blynk-server#quick-local-server-setup-on-raspberry-pi)
+[Enabling server auto restart on unix-like systems](https://github.com/blynkkk/blynk-server#enabling-server-auto-restart-on-unix-like-systems)
+[Enabling server auto restart on Windows](https://github.com/blynkkk/blynk-server#enabling-server-auto-restart-on-windows)
+[Update instruction for unix-like systems](https://github.com/blynkkk/blynk-server#update-instruction-for-unix-like-systems)
+[Update instruction for Windows](https://github.com/blynkkk/blynk-server#update-instruction-for-windows)
+[App and sketch changes for Local Server](https://github.com/blynkkk/blynk-server#app-and-sketch-changes)
+[Advanced local server setup](https://github.com/blynkkk/blynk-server#advanced-local-server-setup)
+[Administration UI](https://github.com/blynkkk/blynk-server#administration-ui)
+[HTTP/S RESTful API](https://github.com/blynkkk/blynk-server#https-restful)
+[Enabling mail on Local server](https://github.com/blynkkk/blynk-server#enabling-mail-on-local-server)
+[Enabling sms on local server](https://github.com/blynkkk/blynk-server#enabling-sms-on-local-server)
+[Enabling raw data storage](https://github.com/blynkkk/blynk-server#enabling-raw-data-storage)
+[Generate Let's Encrypt SSL/TLS Certificates](https://github.com/blynkkk/blynk-server#generate-lets-encrypt-ssltls-certificates)
+[Generate own SSL certificates](https://github.com/blynkkk/blynk-server#generate-own-ssl-certificates)
+[Install java for Ubuntu](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu)
+
+# GETTING STARTED
+
+## Blynk server
+Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Java server, responsible for forwarding 
+messages between Blynk mobile application and various microcontroller boards and SBCs (i.e. Arduino, Raspberry Pi. etc).
+
 **Download latest server build [here](https://github.com/blynkkk/blynk-server/releases).**
 
 [![GitHub version](https://img.shields.io/github/release/blynkkk/blynk-server.svg)](https://github.com/blynkkk/blynk-server/releases/latest)
 [![GitHub download](https://img.shields.io/github/downloads/blynkkk/blynk-server/total.svg)](https://github.com/blynkkk/blynk-server/releases/latest)
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
-
-# GETTING STARTED
 
 ## Requirements
 Java 8 required. (OpenJDK, Oracle). 
