@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -92,9 +93,8 @@ public class DBManagerTest {
 
             ps.executeBatch();
             connection.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
         System.out.println("Finished : " + (System.currentTimeMillis() - start)  + " millis. Executed : " + a);
 
 
@@ -141,9 +141,8 @@ public class DBManagerTest {
 
             ps.executeBatch();
             connection.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
         System.out.println("Finished : " + (System.currentTimeMillis() - start)  + " millis. Executed : " + a);
 
 
@@ -177,10 +176,7 @@ public class DBManagerTest {
 
             ps.executeBatch();
             connection.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-
         //todo finish.
         //todo this breaks testInsert1000RecordsAndSelect() test
         //Instant now = Instant.ofEpochMilli(minute);
@@ -322,7 +318,7 @@ public class DBManagerTest {
     }
 
     @Test
-    public void testSelect() {
+    public void testSelect() throws Exception {
         long ts = 1455924480000L;
         try (Connection connection = dbManager.getConnection();
              PreparedStatement ps = connection.prepareStatement(ReportingDBDao.selectMinute)) {
@@ -336,11 +332,12 @@ public class DBManagerTest {
             }
 
             rs.close();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-
     }
 
+    @Test
+    public void cleanOutdatedRecords() throws Exception{
+        dbManager.reportingDBDao.cleanOldReportingRecords(Instant.now());
+    }
 
 }
