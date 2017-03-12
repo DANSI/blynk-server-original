@@ -54,9 +54,8 @@ public class AuthCookieHandler extends ChannelInboundHandlerAdapter {
                     }
                 }
             }
+            super.channelRead(ctx, msg);
         }
-
-        super.channelRead(ctx, msg);
     }
 
     private User getUserFromCookie(FullHttpRequest request) {

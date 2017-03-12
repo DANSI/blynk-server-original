@@ -1,8 +1,8 @@
 package cc.blynk.server.api.http.logic;
 
-import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
+import cc.blynk.core.http.TokenBaseHttpHandler;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.logic.serialization.NotificationCloneHideFields;
@@ -54,7 +54,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  */
 @Path("/")
 @ChannelHandler.Sharable
-public class HttpAPILogic extends BaseHttpHandler {
+public class HttpAPILogic extends TokenBaseHttpHandler {
 
     protected static final ObjectWriter dashboardCloneWriter = JsonParser.init()
             .addMixIn(Twitter.class, TwitterCloneHideFields.class)

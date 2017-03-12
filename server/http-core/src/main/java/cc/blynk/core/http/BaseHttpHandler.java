@@ -6,18 +6,13 @@ import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.dao.TokenValue;
-import cc.blynk.server.core.dao.UserKey;
-import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.utils.AnnotationsUtil;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.ReferenceCountUtil;
 import org.apache.logging.log4j.LogManager;
@@ -85,29 +80,8 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
         finishHttp(ctx, uriDecoder, handlerHolder.handler, params);
     }
 
-    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, Handler handler, Object[] params) {
-        String tokenPathParam = uriDecoder.pathData.get("token");
-        if (tokenPathParam == null) {
-            ctx.writeAndFlush(handler.invoke(params), ctx.voidPromise());
-            return;
-        }
 
-        //reregister logic
-        TokenValue tokenValue = tokenManager.getUserByToken(tokenPathParam);
-        if (tokenValue == null) {
-            log.warn("Requested token {} not found.", tokenPathParam);
-            ctx.writeAndFlush(Response.badRequest("Invalid token."), ctx.voidPromise());
-            return;
-        }
-
-        Session session = sessionDao.getOrCreateSessionByUser(new UserKey(tokenValue.user), ctx.channel().eventLoop());
-        if (session.initialEventLoop != ctx.channel().eventLoop()) {
-            log.debug("Re registering http channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), handler.invoke(params)));
-        } else {
-            completeLogin(ctx.channel(), handler.invoke(params));
-        }
-    }
+    public abstract void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, Handler handler, Object[] params);
 
     private HandlerHolder lookupHandler(HttpRequest req) {
         for (Handler handler : handlers) {
@@ -119,11 +93,6 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
             }
         }
         return null;
-    }
-
-    private void completeLogin(Channel channel, FullHttpResponse response) {
-        channel.writeAndFlush(response);
-        log.debug("Re registering http channel finished.");
     }
 
     @Override

@@ -1,6 +1,7 @@
 package cc.blynk.server.api.http.logic.business;
 
-import cc.blynk.core.http.BaseHttpHandler;
+import cc.blynk.core.http.AdminBaseHttpHandler;
+import cc.blynk.core.http.ForwardResponse;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.Consumes;
@@ -26,7 +27,7 @@ import static io.netty.handler.codec.http.HttpHeaderNames.SET_COOKIE;
  */
 @Path("/admin")
 @ChannelHandler.Sharable
-public class AdminAuthHandler extends BaseHttpHandler {
+public class AdminAuthHandler extends AdminBaseHttpHandler {
 
     private final UserDao userDao;
     private final SessionHolder sessionHolder;
@@ -57,7 +58,7 @@ public class AdminAuthHandler extends BaseHttpHandler {
             return redirect("/admin");
         }
 
-        Response response = redirect("/static/admin/admin.html");
+        Response response = new ForwardResponse("/static/admin/admin.html");
 
         //todo check session has user already.
 

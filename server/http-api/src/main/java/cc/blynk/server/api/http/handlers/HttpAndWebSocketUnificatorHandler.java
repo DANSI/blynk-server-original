@@ -4,10 +4,10 @@ import cc.blynk.core.http.Response;
 import cc.blynk.core.http.handlers.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.handlers.IpFilterHandler;
-import cc.blynk.server.admin.http.logic.admin.ConfigsLogic;
-import cc.blynk.server.admin.http.logic.admin.HardwareStatsLogic;
-import cc.blynk.server.admin.http.logic.admin.StatsLogic;
-import cc.blynk.server.admin.http.logic.admin.UsersLogic;
+import cc.blynk.server.admin.http.logic.ConfigsLogic;
+import cc.blynk.server.admin.http.logic.HardwareStatsLogic;
+import cc.blynk.server.admin.http.logic.StatsLogic;
+import cc.blynk.server.admin.http.logic.UsersLogic;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
@@ -118,13 +118,14 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         ChannelPipeline pipeline = ctx.pipeline();
         pipeline.addLast(new ChunkedWriteHandler());
         pipeline.addLast(new AuthCookieHandler(adminRootPath, sessionHolder));
+        pipeline.addLast(adminAuthHandler);
         pipeline.addLast(new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
         pipeline.addLast(new StaticFileHandler(isUnpacked, new StaticFile("/static", false)));
+
         pipeline.addLast(usersLogic);
         pipeline.addLast(statsLogic);
         pipeline.addLast(configsLogic);
         pipeline.addLast(hardwareStatsLogic);
-        pipeline.addLast(adminAuthHandler);
 
         pipeline.addLast(noMatchHandler);
         pipeline.remove(this);

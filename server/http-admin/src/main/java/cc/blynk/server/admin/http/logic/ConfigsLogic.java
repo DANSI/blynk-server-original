@@ -1,6 +1,6 @@
-package cc.blynk.server.admin.http.logic.admin;
+package cc.blynk.server.admin.http.logic;
 
-import cc.blynk.core.http.BaseHttpHandler;
+import cc.blynk.core.http.AdminBaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
@@ -9,6 +9,7 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandler;
 
@@ -28,7 +29,7 @@ import static cc.blynk.utils.AdminHttpUtil.sort;
  */
 @Path("/admin/config")
 @ChannelHandler.Sharable
-public class ConfigsLogic extends BaseHttpHandler {
+public class ConfigsLogic extends AdminBaseHttpHandler {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final ServerProperties serverProperties;
@@ -106,4 +107,52 @@ public class ConfigsLogic extends BaseHttpHandler {
         return properties;
     }
 
+    /**
+     * The Blynk Project.
+     * Created by Dmitriy Dumanskiy.
+     * Created on 04.04.16.
+     */
+    private static class Config {
+
+        String name;
+        String body;
+
+        public Config() {
+        }
+
+        public Config(String name) {
+            this.name = name;
+        }
+
+        public Config(String name, String body) {
+            this.name = name;
+            this.body = body;
+        }
+
+        public Config(String name, ServerProperties serverProperties) {
+            this.name = name;
+            //return only editable options
+            this.body = makeProperties(serverProperties,
+                    "allowed.administrator.ips",
+                    "user.dashboard.max.limit",
+                    "user.profile.max.size");
+        }
+
+        private static String makeProperties(ServerProperties properties, String... propertyNames) {
+            StringBuilder sb = new StringBuilder();
+            for (String name : propertyNames) {
+                sb.append(name).append(" = ").append(properties.getProperty(name)).append("\n");
+            }
+            return sb.toString();
+        }
+
+        @Override
+        public String toString() {
+            try {
+                return JsonParser.mapper.writeValueAsString(this);
+            } catch (Exception e) {
+                return "{}";
+            }
+        }
+    }
 }

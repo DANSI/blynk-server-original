@@ -15,17 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.utils.ListUtils.subList;
-import static io.netty.handler.codec.http.HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN;
-import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
-import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
-import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpHeaderNames.LOCATION;
-import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
-import static io.netty.handler.codec.http.HttpResponseStatus.FORBIDDEN;
-import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
-import static io.netty.handler.codec.http.HttpResponseStatus.MOVED_PERMANENTLY;
-import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
+import static io.netty.handler.codec.http.HttpHeaderNames.*;
+import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
@@ -75,6 +66,13 @@ public class Response extends DefaultFullHttpResponse {
 
     public static Response badRequest() {
         return new Response(HTTP_1_1, BAD_REQUEST);
+    }
+
+    public static Response forward(String url) {
+        Response response = new Response(HTTP_1_1, MOVED_PERMANENTLY);
+        response.headers().set(LOCATION, url);
+        response.headers().set(CONTENT_LENGTH, response.content().readableBytes());
+        return response;
     }
 
     public static Response redirect(String url) {

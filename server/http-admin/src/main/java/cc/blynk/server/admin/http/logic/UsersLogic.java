@@ -1,6 +1,6 @@
-package cc.blynk.server.admin.http.logic.admin;
+package cc.blynk.server.admin.http.logic;
 
-import cc.blynk.core.http.BaseHttpHandler;
+import cc.blynk.core.http.AdminBaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
@@ -31,7 +31,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 @Path("/admin/users")
 @ChannelHandler.Sharable
-public class UsersLogic extends BaseHttpHandler {
+public class UsersLogic extends AdminBaseHttpHandler {
 
     private final UserDao userDao;
     private final SessionDao sessionDao;
@@ -47,7 +47,7 @@ public class UsersLogic extends BaseHttpHandler {
     }
 
     //for tests only
-    protected UsersLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager, TokenManager tokenManager) {
+    public UsersLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager, TokenManager tokenManager) {
         super(tokenManager, sessionDao, null);
         this.userDao = userDao;
         this.fileManager = fileManager;
