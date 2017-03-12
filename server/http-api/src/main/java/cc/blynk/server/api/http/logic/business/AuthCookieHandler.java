@@ -1,6 +1,5 @@
 package cc.blynk.server.api.http.logic.business;
 
-import cc.blynk.core.http.Response;
 import cc.blynk.server.core.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -31,25 +30,27 @@ public class AuthCookieHandler extends ChannelInboundHandlerAdapter {
         this.sessionHolder = sessionHolder;
     }
 
+    private boolean accept(FullHttpRequest req) {
+        return req.uri().startsWith(authPath);
+    }
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof FullHttpRequest) {
             FullHttpRequest request = (FullHttpRequest) msg;
-            if (request.uri().startsWith(authPath)) {
-                User user = getUser(request);
+            if (accept(request)) {
+                User user = getUserFromCookie(request);
 
-                //access to API that requires cookies and no auth cookie
-                if (user != null) {
-                    if (request.uri().equals("/business/logout")) {
+                // no cookie yet
+                if (user == null) {
+                    if (!request.uri().endsWith("/login")) {
+                        request.setUri("/static/admin/login.html");
+                    }
+                } else {
+                    if (request.uri().equals("/admin/logout")) {
                         ctx.channel().attr(userAttributeKey).set(null);
                     } else {
                         ctx.channel().attr(userAttributeKey).set(user);
-                    }
-                } else {
-                    if (request.uri().endsWith("/login") || request.uri().startsWith("/static/business")) {
-                    } else {
-                        ctx.writeAndFlush(Response.redirect("/static/business/login.html"), ctx.voidPromise());
-                        return;
                     }
                 }
             }
@@ -58,7 +59,7 @@ public class AuthCookieHandler extends ChannelInboundHandlerAdapter {
         super.channelRead(ctx, msg);
     }
 
-    private User getUser(FullHttpRequest request) {
+    private User getUserFromCookie(FullHttpRequest request) {
         String cookieString = request.headers().get(HttpHeaderNames.COOKIE);
 
         if (cookieString != null) {

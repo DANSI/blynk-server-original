@@ -6,6 +6,7 @@ import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.FormParam;
 import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.Path;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
@@ -24,17 +25,17 @@ import static io.netty.handler.codec.http.HttpHeaderNames.SET_COOKIE;
  * Created on 09.12.15.
  */
 @Path("")
-public class BusinessAuthLogic {
+public class AdminAuthHandler {
 
     private final UserDao userDao;
     private final SessionHolder sessionHolder;
     private final SessionDao sessionDao;
     private final FileManager fileManager;
 
-    public BusinessAuthLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager, SessionHolder sessionHolder) {
-        this.userDao = userDao;
-        this.fileManager = fileManager;
-        this.sessionDao = sessionDao;
+    public AdminAuthHandler(Holder holder, SessionHolder sessionHolder) {
+        this.userDao = holder.userDao;
+        this.fileManager = holder.fileManager;
+        this.sessionDao = holder.sessionDao;
         this.sessionHolder = sessionHolder;
     }
 
@@ -45,20 +46,22 @@ public class BusinessAuthLogic {
                           @FormParam("password") String password) {
 
         if (email == null || password == null) {
-            return redirect("/business");
+            return redirect("/admin");
         }
 
         User user = userDao.getByName(email, AppName.BLYNK);
 
         if (user == null) {
-            return redirect("/business");
+            return redirect("/admin");
         }
 
         if (!password.equals(user.pass)) {
-            return redirect("/business");
+            return redirect("/admin");
         }
 
-        Response response = redirect("/business");
+        Response response = redirect("/static/admin/admin.html");
+
+        //todo check session has user already.
 
         Cookie cookie = makeDefaultSessionCookie(sessionHolder.generateNewSession(user), 86400);
         response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
@@ -69,7 +72,7 @@ public class BusinessAuthLogic {
     @POST
     @Path("/logout")
     public Response logout() {
-        Response response = redirect("/business");
+        Response response = redirect("/admin");
         Cookie cookie = makeDefaultSessionCookie("", 0);
         response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
         return response;

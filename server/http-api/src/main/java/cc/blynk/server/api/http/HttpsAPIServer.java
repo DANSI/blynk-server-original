@@ -8,6 +8,8 @@ import cc.blynk.server.admin.http.logic.admin.StatsLogic;
 import cc.blynk.server.admin.http.logic.admin.UsersLogic;
 import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
+import cc.blynk.server.api.http.logic.business.AdminAuthHandler;
+import cc.blynk.server.api.http.logic.business.SessionHolder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
@@ -31,12 +33,16 @@ public class HttpsAPIServer extends BaseServer {
 
         String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
 
+        final SessionHolder sessionHolder = new SessionHolder();
+
         HandlerRegistry.register(new HttpAPILogic(holder));
 
         HandlerRegistry.register(adminRootPath, new UsersLogic(holder));
         HandlerRegistry.register(adminRootPath, new StatsLogic(holder));
         HandlerRegistry.register(adminRootPath, new ConfigsLogic(holder.props, holder.blockingIOProcessor));
         HandlerRegistry.register(adminRootPath, new HardwareStatsLogic(holder.userDao));
+        HandlerRegistry.register(adminRootPath, new AdminAuthHandler(holder, sessionHolder));
+
 
         final SslContext sslCtx = SslUtil.initSslContext(
                 holder.props.getProperty("https.cert", holder.props.getProperty("server.ssl.cert")),
@@ -44,7 +50,8 @@ public class HttpsAPIServer extends BaseServer {
                 holder.props.getProperty("https.key.pass", holder.props.getProperty("server.ssl.key.pass")),
                 SslUtil.fetchSslProvider(holder.props));
 
-        final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler = new HttpAndWebSocketUnificatorHandler(holder, port, adminRootPath, isUnpacked);
+        final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
+                new HttpAndWebSocketUnificatorHandler(holder, sessionHolder, port, adminRootPath, isUnpacked);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override

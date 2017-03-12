@@ -5,11 +5,15 @@ import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.hardware.HardwareSSLServer;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.hardware.MQTTHardwareServer;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
+import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.ServerProperties;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
@@ -84,6 +88,25 @@ public class ServerLauncher {
             System.out.println("Blynk Server " + JarUtil.getServerVersion() + " successfully started.");
             String path = new File(System.getProperty("logs.folder")).getAbsolutePath().replace("/./", "/");
             System.out.println("All server output is stored in folder '" + path + "' file.");
+
+            generateRandomSuperUser(holder.userDao);
+        }
+    }
+
+    private static void generateRandomSuperUser(UserDao userDao) {
+        String adminName = "a@blynk.cc";
+
+        User user = userDao.getByName(adminName, AppName.BLYNK);
+
+        if (user == null) {
+            //String pass = RandomStringUtils.generateRandomPass(16);
+            String pass = "a";
+
+            System.out.println("Admin login name is " + adminName);
+            System.out.println("Admin password is " + pass);
+
+            String hash = SHA256Util.makeHash(pass, adminName);
+            userDao.add(adminName, hash, AppName.BLYNK);
         }
     }
 
