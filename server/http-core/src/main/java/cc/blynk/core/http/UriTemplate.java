@@ -37,41 +37,30 @@ public class UriTemplate {
     private final List<String> parameterNames = new ArrayList<>();
 
     public UriTemplate(String pattern) {
-        super();
-        setUrlPattern(pattern);
-        compile();
-    }
-
-    private String getUrlPattern() {
-        return urlPattern;
-    }
-
-    private void setUrlPattern(String pattern)
-    {
         this.urlPattern = pattern;
     }
 
-    public boolean matches(String url) {
-        this.matcher = compiledUrl.matcher(url);
-        return matcher.matches();
+    public Matcher matcher(String url) {
+        return compiledUrl.matcher(url);
     }
 
-    public void compile() {
+    public UriTemplate compile() {
         acquireParameterNames();
-        String parsedPattern = getUrlPattern().replaceFirst(URL_FORMAT_REGEX, URL_FORMAT_MATCH_REGEX);
+        String parsedPattern = urlPattern.replaceFirst(URL_FORMAT_REGEX, URL_FORMAT_MATCH_REGEX);
         parsedPattern = parsedPattern.replaceAll(URL_PARAM_REGEX, URL_PARAM_MATCH_REGEX);
         this.compiledUrl = Pattern.compile(parsedPattern + URL_QUERY_STRING_REGEX);
+        return this;
     }
 
     private void acquireParameterNames() {
-        Matcher m = URL_PARAM_PATTERN.matcher(getUrlPattern());
+        Matcher m = URL_PARAM_PATTERN.matcher(urlPattern);
 
         while (m.find()) {
             parameterNames.add(m.group(1));
         }
     }
 
-    public Map<String, String> extractParameters() {
+    public Map<String, String> extractParameters(Matcher matcher) {
         Map<String, String> values = new HashMap<>();
 
         for (int i = 0; i < matcher.groupCount(); i++) {

@@ -1,15 +1,11 @@
 package cc.blynk.core.http.annotation;
 
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * This annotation is used to inject information into a class
- * field, bean property or method parameter.
+ * field, bean property or classMethod parameter.
  *
  * @author Paul Sandoz
  * @author Marc Hadley

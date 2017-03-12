@@ -1,14 +1,10 @@
 package cc.blynk.core.http.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Binds the value(s) of a form parameter contained within a request entity body
- * to a resource method parameter. Values are URL decoded unless this is
+ * to a resource classMethod parameter. Values are URL decoded unless this is
  * disabled using the  annotation. A default value can be
  * specified using the  annotation.
  * If the request entity body is absent or is an unsupported media type, the
@@ -18,7 +14,7 @@ import java.lang.annotation.Target;
  * <ol>
  * <li>Be a primitive type</li>
  * <li>Have a constructor that accepts a single {@code String} argument</li>
- * <li>Have a static method named {@code valueOf} or {@code fromString}
+ * <li>Have a static classMethod named {@code valueOf} or {@code fromString}
  * that accepts a single</li>
  * <li>Have a registered implementation of {@link javax.ws.rs.ext.ParamConverterProvider}
  * JAX-RS extension SPI that returns a {@link javax.ws.rs.ext.ParamConverter}
@@ -34,7 +30,7 @@ import java.lang.annotation.Target;
  * of the parameter is used.</p>
  *
  * <p>Note that, whilst the annotation target permits use on fields and methods,
- * this annotation is only required to be supported on resource method
+ * this annotation is only required to be supported on resource classMethod
  * parameters.</p>
  *
  * @author Paul Sandoz
@@ -48,7 +44,7 @@ public @interface FormParam {
 
     /**
      * Defines the name of the form parameter whose value will be used
-     * to initialize the value of the annotated method argument. The name is
+     * to initialize the value of the annotated classMethod argument. The name is
      * specified in decoded form, any percent encoded literals within the value
      * will not be decoded and will instead be treated as literal text. E.g. if
      * the parameter name is "a b" then the value of the annotation is "a b",

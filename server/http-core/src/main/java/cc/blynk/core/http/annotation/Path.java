@@ -1,18 +1,14 @@
 package cc.blynk.core.http.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
- * Identifies the URI path that a resource class or class method will serve
+ * Identifies the URI path that a resource class or class classMethod will serve
  * requests for.
  *
  * <p>Paths are relative. For an annotated class the base URI is the
  * application path. For an annotated
- * method the base URI is the
+ * classMethod the base URI is the
  * effective URI of the containing class. For the purposes of absolutizing a
  * path against the base URI , a leading '/' in a path is
  * ignored and base URIs are treated as if they ended in '/'. E.g.:</p>
@@ -30,10 +26,10 @@ import java.lang.annotation.Target;
  * {@code catalogue} and the application is deployed at
  * {@code http://example.com/}, then {@code GET} requests for
  * {@code http://example.com/catalogue/widgets} will be handled by the
- * {@code getList} method while requests for
+ * {@code getList} classMethod while requests for
  * <code>http://example.com/catalogue/widgets/<i>nnn</i></code> (where
  * <code><i>nnn</i></code> is some value) will be handled by the
- * {@code getWidget} method. The same would apply if the value of either
+ * {@code getWidget} classMethod. The same would apply if the value of either
  * {@code @Path} annotation started with '/'.</p>
  *
  * <p>Classes and methods may also be annotated with {@link javax.ws.rs.Consumes} and
@@ -50,7 +46,7 @@ import java.lang.annotation.Target;
 public @interface Path {
 
     /**
-     * Defines a URI template for the resource class or method, must not
+     * Defines a URI template for the resource class or classMethod, must not
      * include matrix parameters.
      *
      * <p>Embedded template parameters are allowed and are of the form:</p>

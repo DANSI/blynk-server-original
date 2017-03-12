@@ -1,13 +1,9 @@
 package cc.blynk.core.http.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
- * Binds the value(s) of a HTTP query parameter to a resource method parameter,
+ * Binds the value(s) of a HTTP query parameter to a resource classMethod parameter,
  * resource class field, or resource class bean property.
  * Values are URL decoded unless this is disabled using the
  * annotation. A default value can be specified using the
@@ -18,7 +14,7 @@ import java.lang.annotation.Target;
  * <ol>
  * <li>Be a primitive type</li>
  * <li>Have a constructor that accepts a single {@code String} argument</li>
- * <li>Have a static method named {@code valueOf} or {@code fromString}
+ * <li>Have a static classMethod named {@code valueOf} or {@code fromString}
  * that accepts a single
  * {@code String} argument (see, for example, {@link Integer#valueOf(String)})</li>
  * <li>Have a registered implementation of {@link javax.ws.rs.ext.ParamConverterProvider}
@@ -36,7 +32,7 @@ import java.lang.annotation.Target;
  * <p>Because injection occurs at object creation time, use of this annotation
  * on resource class fields and bean properties is only supported for the
  * default per-request resource class lifecycle. Resource classes using
- * other lifecycles should only use this annotation on resource method
+ * other lifecycles should only use this annotation on resource classMethod
  * parameters.</p>
  *
  * @author Paul Sandoz
@@ -51,7 +47,7 @@ public @interface QueryParam {
 
     /**
      * Defines the name of the HTTP query parameter whose value will be used
-     * to initialize the value of the annotated method argument, class field or
+     * to initialize the value of the annotated classMethod argument, class field or
      * bean property. The name is specified in decoded form, any percent encoded
      * literals within the value will not be decoded and will instead be
      * treated as literal text. E.g. if the parameter name is "a b" then the

@@ -1,13 +1,11 @@
 package cc.blynk.server.api.http.handlers;
 
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.handlers.StaticFile;
-import cc.blynk.core.http.handlers.StaticFileEdsWith;
-import cc.blynk.core.http.handlers.StaticFileHandler;
-import cc.blynk.core.http.handlers.UrlMapperHandler;
+import cc.blynk.core.http.handlers.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.handlers.IpFilterHandler;
 import cc.blynk.server.api.http.HttpAPIServer;
+import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.business.AuthCookieHandler;
 import cc.blynk.server.api.http.logic.business.SessionHolder;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
@@ -57,6 +55,11 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final IpFilterHandler ipFilterHandler;
     private final SessionHolder sessionHolder;
 
+    //private final ResetPasswordLogic resetPasswordLogic;
+    private final HttpAPILogic httpAPILogic;
+    //private final IDEAuthLogic ideAuthLogic;
+    private final NoMatchHandler noMatchHandler;
+
     public HttpAndWebSocketUnificatorHandler(Holder holder, SessionHolder sessionHolder, int port, String adminRootPath, boolean isUnpacked) {
         this.stats = holder.stats;
         this.tokenManager = holder.tokenManager;
@@ -66,6 +69,12 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.isUnpacked = isUnpacked;
         this.ipFilterHandler = new IpFilterHandler(holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips"));
         this.sessionHolder = sessionHolder;
+
+        //http API handlers
+        //this.resetPasswordLogic = new ResetPasswordLogic(holder.props, holder.userDao, holder.mailWrapper);
+        this.httpAPILogic = new HttpAPILogic(holder);
+        //this.ideAuthLogic = new IDEAuthLogic(holder.userDao, holder.redisClient);
+        this.noMatchHandler = new NoMatchHandler();
     }
 
     public HttpAndWebSocketUnificatorHandler(Holder holder, SessionHolder sessionHolder, int port) {
@@ -102,7 +111,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         //pipeline.addLast(new UrlMapperHandler(adminRootPath, "/static/admin/login.html"));
         pipeline.addLast(new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
         pipeline.addLast(new StaticFileHandler(isUnpacked, new StaticFile("/static", false)));
-        pipeline.addLast(new HttpHandler(tokenManager, sessionDao, stats));
+        //pipeline.addLast(new HttpHandler(tokenManager, sessionDao, stats));
         pipeline.remove(this);
     }
 
@@ -112,7 +121,13 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast("HttpUrlMapper", new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
         pipeline.addLast("HttpStaticFile", new StaticFileHandler(isUnpacked,
                 new StaticFile("/static"), new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")));
-        pipeline.addLast("HttpHandler", new HttpHandler(tokenManager, sessionDao, stats));
+
+        //pipeline.addLast("HttpHandler", new HttpHandler(tokenManager, sessionDao, stats));
+        //pipeline.addLast(resetPasswordLogic);
+        pipeline.addLast(httpAPILogic);
+        pipeline.addLast(noMatchHandler);
+        //pipeline.addLast(ideAuthLogic);
+
         pipeline.remove(this);
     }
 

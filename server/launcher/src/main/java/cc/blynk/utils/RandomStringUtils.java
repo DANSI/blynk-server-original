@@ -24,8 +24,8 @@ public class RandomStringUtils {
     }
 
     /**
-     * <p>Random object used by random method. This has to be not local
-     * to the random method so as to not return the same value in the
+     * <p>Random object used by random classMethod. This has to be not local
+     * to the random classMethod so as to not return the same value in the
      * same millisecond.</p>
      */
     private static final Random RANDOM = new Random();
@@ -56,7 +56,7 @@ public class RandomStringUtils {
      * <p>If set is not {@code null}, characters between start and
      * end are chosen.</p>
      *
-     * <p>This method accepts a user-supplied {@link Random}
+     * <p>This classMethod accepts a user-supplied {@link Random}
      * instance to use as a source of randomness. By seeding a single
      * {@link Random} instance with a fixed seed and using it for each call,
      * the same random sequence of strings can be generated repeatedly

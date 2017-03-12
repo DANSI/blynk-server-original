@@ -1,6 +1,5 @@
 package cc.blynk.server.api.http;
 
-import cc.blynk.core.http.rest.HandlerRegistry;
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.logic.admin.ConfigsLogic;
 import cc.blynk.server.admin.http.logic.admin.HardwareStatsLogic;
@@ -11,6 +10,7 @@ import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.business.AdminAuthHandler;
 import cc.blynk.server.api.http.logic.business.SessionHolder;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.utils.AnnotationsUtil;
 import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -35,13 +35,13 @@ public class HttpsAPIServer extends BaseServer {
 
         final SessionHolder sessionHolder = new SessionHolder();
 
-        HandlerRegistry.register(new HttpAPILogic(holder));
+        AnnotationsUtil.register(new HttpAPILogic(holder));
 
-        HandlerRegistry.register(adminRootPath, new UsersLogic(holder));
-        HandlerRegistry.register(adminRootPath, new StatsLogic(holder));
-        HandlerRegistry.register(adminRootPath, new ConfigsLogic(holder.props, holder.blockingIOProcessor));
-        HandlerRegistry.register(adminRootPath, new HardwareStatsLogic(holder.userDao));
-        HandlerRegistry.register(adminRootPath, new AdminAuthHandler(holder, sessionHolder));
+        AnnotationsUtil.register(adminRootPath, new UsersLogic(holder));
+        AnnotationsUtil.register(adminRootPath, new StatsLogic(holder));
+        AnnotationsUtil.register(adminRootPath, new ConfigsLogic(holder.props, holder.blockingIOProcessor));
+        AnnotationsUtil.register(adminRootPath, new HardwareStatsLogic(holder.userDao));
+        AnnotationsUtil.register(adminRootPath, new AdminAuthHandler(holder, sessionHolder));
 
 
         final SslContext sslCtx = SslUtil.initSslContext(

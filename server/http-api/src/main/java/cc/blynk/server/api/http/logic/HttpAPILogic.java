@@ -1,5 +1,6 @@
 package cc.blynk.server.api.http.logic;
 
+import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
@@ -33,6 +34,7 @@ import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import io.netty.channel.ChannelHandler;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
@@ -51,17 +53,16 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  * Created on 25.12.15.
  */
 @Path("/")
-public class HttpAPILogic {
+@ChannelHandler.Sharable
+public class HttpAPILogic extends BaseHttpHandler {
 
     protected static final ObjectWriter dashboardCloneWriter = JsonParser.init()
             .addMixIn(Twitter.class, TwitterCloneHideFields.class)
             .addMixIn(Notification.class, NotificationCloneHideFields.class)
             .writerFor(DashBoard.class);
+
     private static final Logger log = LogManager.getLogger(HttpAPILogic.class);
-    private final TokenManager tokenManager;
     private final BlockingIOProcessor blockingIOProcessor;
-    private final SessionDao sessionDao;
-    private final GlobalStats globalStats;
     private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
     private final ReportingDao reportingDao;
@@ -76,10 +77,8 @@ public class HttpAPILogic {
     private HttpAPILogic(TokenManager tokenManager, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor,
                          MailWrapper mailWrapper, GCMWrapper gcmWrapper, ReportingDao reportingDao,
                          GlobalStats globalStats, EventorProcessor eventorProcessor) {
-        this.tokenManager = tokenManager;
+        super(tokenManager, sessionDao, globalStats);
         this.blockingIOProcessor = blockingIOProcessor;
-        this.sessionDao = sessionDao;
-        this.globalStats = globalStats;
         this.mailWrapper = mailWrapper;
         this.gcmWrapper = gcmWrapper;
         this.reportingDao = reportingDao;

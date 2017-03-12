@@ -1,11 +1,7 @@
 package cc.blynk.server.api.http;
 
-import cc.blynk.core.http.rest.HandlerRegistry;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
-import cc.blynk.server.api.http.logic.HttpAPILogic;
-import cc.blynk.server.api.http.logic.ResetPasswordLogic;
-import cc.blynk.server.api.http.logic.ide.IDEAuthLogic;
 import cc.blynk.server.core.BaseServer;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -25,10 +21,6 @@ public class HttpAPIServer extends BaseServer {
 
     public HttpAPIServer(Holder holder) {
         super(holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
-
-        HandlerRegistry.register(new ResetPasswordLogic(holder.props, holder.userDao, holder.mailWrapper));
-        HandlerRegistry.register(new HttpAPILogic(holder));
-        HandlerRegistry.register(new IDEAuthLogic(holder.userDao, holder.redisClient));
 
         HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler = new HttpAndWebSocketUnificatorHandler(holder, null, port);
 

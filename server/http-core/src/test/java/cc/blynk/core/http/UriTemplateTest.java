@@ -2,7 +2,8 @@ package cc.blynk.core.http;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.
@@ -13,14 +14,14 @@ public class UriTemplateTest {
 
     @Test
     public void testCorrectMatch() {
-        UriTemplate template1 = new UriTemplate("http://example.com/admin/users/{name}");
-        UriTemplate template2 = new UriTemplate("http://example.com/admin/users/changePass/{name}");
+        UriTemplate template1 = new UriTemplate("http://example.com/admin/users/{name}").compile();
+        UriTemplate template2 = new UriTemplate("http://example.com/admin/users/changePass/{name}").compile();
 
-        assertFalse(template1.matches("http://example.com/admin/users/changePass/dmitriy@blynk.cc"));
-        assertTrue(template1.matches("http://example.com/admin/users/dmitriy@blynk.cc"));
+        assertFalse(template1.matcher("http://example.com/admin/users/changePass/dmitriy@blynk.cc").matches());
+        assertTrue(template1.matcher("http://example.com/admin/users/dmitriy@blynk.cc").matches());
 
-        assertTrue(template2.matches("http://example.com/admin/users/changePass/dmitriy@blynk.cc"));
-        assertFalse(template2.matches("http://example.com/admin/users/dmitriy@blynk.cc"));
+        assertTrue(template2.matcher("http://example.com/admin/users/changePass/dmitriy@blynk.cc").matches());
+        assertFalse(template2.matcher("http://example.com/admin/users/dmitriy@blynk.cc").matches());
     }
 
 }
