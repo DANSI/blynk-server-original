@@ -1,5 +1,6 @@
 package cc.blynk.server.admin.http.logic.admin;
 
+import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.GET;
 import cc.blynk.core.http.annotation.Path;
@@ -17,8 +18,8 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.model.Stat;
-import cc.blynk.utils.HttpLogicUtil;
 import cc.blynk.utils.JsonParser;
+import io.netty.channel.ChannelHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,14 +27,16 @@ import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.core.http.Response.ok;
+import static cc.blynk.utils.AdminHttpUtil.*;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-@Path("/stats")
-public class StatsLogic extends HttpLogicUtil {
+@Path("/admin/stats")
+@ChannelHandler.Sharable
+public class StatsLogic extends BaseHttpHandler {
 
     private final GlobalStats stats;
     private final SessionDao sessionDao;
@@ -41,6 +44,7 @@ public class StatsLogic extends HttpLogicUtil {
     private final FileManager fileManager;
 
     public StatsLogic(Holder holder) {
+        super(holder);
         this.userDao = holder.userDao;
         this.sessionDao = holder.sessionDao;
         this.stats = holder.stats;

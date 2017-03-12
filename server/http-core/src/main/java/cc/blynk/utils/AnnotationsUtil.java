@@ -21,10 +21,6 @@ import java.util.List;
  */
 public class AnnotationsUtil {
 
-    public static Handler[] register(String rootPath, Object o) {
-        return registerHandler(rootPath, o);
-    }
-
     public static Handler[] register(Object o) {
         return registerHandler("", o);
     }

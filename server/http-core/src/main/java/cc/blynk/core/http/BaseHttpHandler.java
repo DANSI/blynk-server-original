@@ -3,6 +3,7 @@ package cc.blynk.core.http;
 import cc.blynk.core.http.rest.Handler;
 import cc.blynk.core.http.rest.HandlerHolder;
 import cc.blynk.core.http.rest.URIDecoder;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.TokenValue;
@@ -37,6 +38,10 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
     protected final SessionDao sessionDao;
     protected final GlobalStats globalStats;
     protected final Handler[] handlers;
+
+    public BaseHttpHandler(Holder holder) {
+        this(holder.tokenManager, holder.sessionDao, holder.stats);
+    }
 
     public BaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats) {
         this.tokenManager = tokenManager;

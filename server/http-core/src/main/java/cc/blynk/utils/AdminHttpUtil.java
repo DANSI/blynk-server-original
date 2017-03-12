@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-public class HttpLogicUtil {
+public class AdminHttpUtil {
 
-    public static final Logger log = LogManager.getLogger(HttpLogicUtil.class);
+    private static final Logger log = LogManager.getLogger(AdminHttpUtil.class);
 
     @SuppressWarnings("unchecked")
     public static List<?> sort(List<?> list, String field, String order, boolean nameAsInt) {

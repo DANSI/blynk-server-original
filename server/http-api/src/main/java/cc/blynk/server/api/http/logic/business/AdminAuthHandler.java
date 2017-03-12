@@ -1,5 +1,6 @@
 package cc.blynk.server.api.http.logic.business;
 
+import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.Consumes;
@@ -7,11 +8,10 @@ import cc.blynk.core.http.annotation.FormParam;
 import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.Path;
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.FileManager;
-import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
+import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.DefaultCookie;
 import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
@@ -24,18 +24,16 @@ import static io.netty.handler.codec.http.HttpHeaderNames.SET_COOKIE;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-@Path("")
-public class AdminAuthHandler {
+@Path("/admin")
+@ChannelHandler.Sharable
+public class AdminAuthHandler extends BaseHttpHandler {
 
     private final UserDao userDao;
     private final SessionHolder sessionHolder;
-    private final SessionDao sessionDao;
-    private final FileManager fileManager;
 
     public AdminAuthHandler(Holder holder, SessionHolder sessionHolder) {
+        super(holder);
         this.userDao = holder.userDao;
-        this.fileManager = holder.fileManager;
-        this.sessionDao = holder.sessionDao;
         this.sessionHolder = sessionHolder;
     }
 

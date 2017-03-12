@@ -36,7 +36,7 @@ public class IDEAuthLogic extends BaseHttpHandler {
     }
 
     public IDEAuthLogic(Holder holder) {
-        super(holder.tokenManager, holder.sessionDao, holder.stats);
+        super(holder);
         this.userDao = holder.userDao;
         this.redisClient = holder.redisClient;
     }

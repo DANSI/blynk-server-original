@@ -4,9 +4,14 @@ import cc.blynk.core.http.Response;
 import cc.blynk.core.http.handlers.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.handlers.IpFilterHandler;
+import cc.blynk.server.admin.http.logic.admin.ConfigsLogic;
+import cc.blynk.server.admin.http.logic.admin.HardwareStatsLogic;
+import cc.blynk.server.admin.http.logic.admin.StatsLogic;
+import cc.blynk.server.admin.http.logic.admin.UsersLogic;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
+import cc.blynk.server.api.http.logic.business.AdminAuthHandler;
 import cc.blynk.server.api.http.logic.business.AuthCookieHandler;
 import cc.blynk.server.api.http.logic.business.SessionHolder;
 import cc.blynk.server.api.http.logic.ide.IDEAuthLogic;
@@ -54,6 +59,12 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final IDEAuthLogic ideAuthLogic;
     private final NoMatchHandler noMatchHandler;
 
+    private final UsersLogic usersLogic;
+    private final StatsLogic statsLogic;
+    private final ConfigsLogic configsLogic;
+    private final HardwareStatsLogic hardwareStatsLogic;
+    private final AdminAuthHandler adminAuthHandler;
+
     public HttpAndWebSocketUnificatorHandler(Holder holder, SessionHolder sessionHolder, int port, String adminRootPath, boolean isUnpacked) {
         this.stats = holder.stats;
         this.genericLoginHandler = new WebSocketsGenericLoginHandler(holder, port);
@@ -67,6 +78,13 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.httpAPILogic = new HttpAPILogic(holder);
         this.ideAuthLogic = new IDEAuthLogic(holder);
         this.noMatchHandler = new NoMatchHandler();
+
+        //admin API handlers
+        this.usersLogic = new UsersLogic(holder);
+        this.statsLogic = new StatsLogic(holder);
+        this.configsLogic = new ConfigsLogic(holder);
+        this.hardwareStatsLogic = new HardwareStatsLogic(holder);
+        this.adminAuthHandler = new AdminAuthHandler(holder, sessionHolder);
     }
 
     public HttpAndWebSocketUnificatorHandler(Holder holder, SessionHolder sessionHolder, int port) {
@@ -102,6 +120,13 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(new AuthCookieHandler(adminRootPath, sessionHolder));
         pipeline.addLast(new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
         pipeline.addLast(new StaticFileHandler(isUnpacked, new StaticFile("/static", false)));
+        pipeline.addLast(usersLogic);
+        pipeline.addLast(statsLogic);
+        pipeline.addLast(configsLogic);
+        pipeline.addLast(hardwareStatsLogic);
+        pipeline.addLast(adminAuthHandler);
+
+        pipeline.addLast(noMatchHandler);
         pipeline.remove(this);
     }
 
@@ -115,8 +140,8 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(resetPasswordLogic);
         pipeline.addLast(httpAPILogic);
         pipeline.addLast(ideAuthLogic);
-        pipeline.addLast(noMatchHandler);
 
+        pipeline.addLast(noMatchHandler);
         pipeline.remove(this);
     }
 

@@ -95,9 +95,20 @@ public class HttpsAdminServerTest extends BaseTest {
     }
 
     @Test
-    public void testChangePassNoUser() throws Exception {
+    public void testGetnOnExistingUser() throws Exception {
         String testUser = "dima@dima.ua";
         HttpPut request = new HttpPut(httpsAdminServerUrl + "/users/" + "xxx/" + testUser);
+        request.setEntity(new StringEntity(new ResponseUserEntity("123").toString(), ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(404, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testGetWrongUrl() throws Exception {
+        String testUser = "dima@dima.ua";
+        HttpPut request = new HttpPut(httpsAdminServerUrl + "/urs213213/" + "xxx/" + testUser);
         request.setEntity(new StringEntity(new ResponseUserEntity("123").toString(), ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {

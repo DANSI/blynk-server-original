@@ -1,26 +1,32 @@
 package cc.blynk.server.admin.http.logic.admin;
 
+import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.GET;
 import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.QueryParam;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.utils.HttpLogicUtil;
+import io.netty.channel.ChannelHandler;
 
 import static cc.blynk.core.http.Response.ok;
+import static cc.blynk.utils.AdminHttpUtil.convertMapToPair;
+import static cc.blynk.utils.AdminHttpUtil.sort;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-@Path("/hardwareInfo")
-public class HardwareStatsLogic extends HttpLogicUtil {
+@Path("/admin/hardwareInfo")
+@ChannelHandler.Sharable
+public class HardwareStatsLogic extends BaseHttpHandler {
 
     private final UserDao userDao;
 
-    public HardwareStatsLogic(UserDao userDao) {
-        this.userDao = userDao;
+    public HardwareStatsLogic(Holder holder) {
+        super(holder);
+        this.userDao = holder.userDao;
     }
 
     @GET

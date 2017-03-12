@@ -1,46 +1,37 @@
 package cc.blynk.server.admin.http.logic.admin;
 
+import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.Consumes;
-import cc.blynk.core.http.annotation.DELETE;
-import cc.blynk.core.http.annotation.GET;
-import cc.blynk.core.http.annotation.PUT;
-import cc.blynk.core.http.annotation.Path;
-import cc.blynk.core.http.annotation.PathParam;
-import cc.blynk.core.http.annotation.QueryParam;
+import cc.blynk.core.http.annotation.*;
 import cc.blynk.core.http.model.Filter;
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.FileManager;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.dao.TokenValue;
-import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.dao.*;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.utils.HttpLogicUtil;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
+import io.netty.channel.ChannelHandler;
 
 import java.util.List;
 
-import static cc.blynk.core.http.Response.appendTotalCountHeader;
-import static cc.blynk.core.http.Response.badRequest;
-import static cc.blynk.core.http.Response.ok;
+import static cc.blynk.core.http.Response.*;
+import static cc.blynk.utils.AdminHttpUtil.sort;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 03.12.15.
  */
-@Path("/users")
-public class UsersLogic extends HttpLogicUtil {
+@Path("/admin/users")
+@ChannelHandler.Sharable
+public class UsersLogic extends BaseHttpHandler {
 
     private final UserDao userDao;
     private final SessionDao sessionDao;
@@ -48,6 +39,7 @@ public class UsersLogic extends HttpLogicUtil {
     private final TokenManager tokenManager;
 
     public UsersLogic(Holder holder) {
+        super(holder);
         this.userDao = holder.userDao;
         this.fileManager = holder.fileManager;
         this.sessionDao = holder.sessionDao;
@@ -56,6 +48,7 @@ public class UsersLogic extends HttpLogicUtil {
 
     //for tests only
     protected UsersLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager, TokenManager tokenManager) {
+        super(tokenManager, sessionDao, null);
         this.userDao = userDao;
         this.fileManager = fileManager;
         this.sessionDao = sessionDao;
