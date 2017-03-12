@@ -70,10 +70,6 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
             uriDecoder = new URIDecoder(req);
             uriDecoder.pathData = handlerHolder.extractParameters();
             params = handlerHolder.handler.fetchParams(uriDecoder);
-        } catch (StringIndexOutOfBoundsException stringE) {
-            log.error("{} : '{}'. Error : ", req.method().name(), req.uri(), stringE.getMessage());
-            ctx.writeAndFlush(Response.serverError(stringE.getMessage()), ctx.voidPromise());
-            return;
         } catch (Exception e) {
             ctx.writeAndFlush(Response.serverError(e.getMessage()), ctx.voidPromise());
             return;
@@ -84,10 +80,10 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
         finishHttp(ctx, uriDecoder, handlerHolder.handler, params);
     }
 
-    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, Handler handlerHolder, Object[] params) {
+    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, Handler handler, Object[] params) {
         String tokenPathParam = uriDecoder.pathData.get("token");
         if (tokenPathParam == null) {
-            ctx.writeAndFlush(AnnotationsUtil.invoke(handlerHolder, params), ctx.voidPromise());
+            ctx.writeAndFlush(handler.invoke(params), ctx.voidPromise());
             return;
         }
 
@@ -102,9 +98,9 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
         Session session = sessionDao.getOrCreateSessionByUser(new UserKey(tokenValue.user), ctx.channel().eventLoop());
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering http channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), AnnotationsUtil.invoke(handlerHolder, params)));
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), handler.invoke(params)));
         } else {
-            completeLogin(ctx.channel(), AnnotationsUtil.invoke(handlerHolder, params));
+            completeLogin(ctx.channel(), handler.invoke(params));
         }
     }
 
@@ -118,15 +114,6 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
             }
         }
         return null;
-    }
-
-    private static String path(String uri) {
-        int pathEndPos = uri.indexOf('?');
-        if (pathEndPos < 0) {
-            return uri;
-        } else {
-            return uri.substring(0, pathEndPos);
-        }
     }
 
     private void completeLogin(Channel channel, FullHttpResponse response) {

@@ -1,12 +1,16 @@
 package cc.blynk.core.http.rest;
 
+import cc.blynk.core.http.Response;
 import cc.blynk.core.http.UriTemplate;
 import cc.blynk.core.http.annotation.DELETE;
 import cc.blynk.core.http.annotation.GET;
 import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.PUT;
 import cc.blynk.core.http.rest.params.Param;
+import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Method;
 
@@ -16,6 +20,8 @@ import java.lang.reflect.Method;
  * Created on 09.12.15.
  */
 public class Handler {
+
+    private static final Logger log = LogManager.getLogger(Handler.class);
 
     public final UriTemplate uriTemplate;
 
@@ -56,6 +62,18 @@ public class Handler {
 
         return res;
     }
+
+    public FullHttpResponse invoke(Object[] params) {
+        try {
+            return (FullHttpResponse) classMethod.invoke(handler, params);
+        } catch (Exception e) {
+            log.error("Error invoking handler. Reason : {}.", e.getMessage());
+            log.debug(e);
+            return Response.serverError(e.getMessage());
+        }
+    }
+
+
 
     @Override
     public boolean equals(Object o) {

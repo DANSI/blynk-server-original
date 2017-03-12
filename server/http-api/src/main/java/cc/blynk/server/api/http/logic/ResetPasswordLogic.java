@@ -1,8 +1,10 @@
 package cc.blynk.server.api.http.logic;
 
+import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
+import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.pojo.TokenUser;
 import cc.blynk.server.api.http.pojo.TokensPool;
 import cc.blynk.server.application.handlers.main.auth.BlynkEmailValidator;
@@ -12,7 +14,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.IPUtils;
-import cc.blynk.utils.ServerProperties;
+import io.netty.channel.ChannelHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,7 +29,8 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * Date : 12/05/2015.
  */
 @Path("/")
-public class ResetPasswordLogic {
+@ChannelHandler.Sharable
+public class ResetPasswordLogic extends BaseHttpHandler {
 
     private static final Logger log = LogManager.getLogger(ResetPasswordLogic.class);
 
@@ -40,14 +43,15 @@ public class ResetPasswordLogic {
 
     public static final String RESET_PASS_STATIC_PATH = "static/reset/";
 
-    public ResetPasswordLogic(ServerProperties props, UserDao userDao, MailWrapper mailWrapper) {
-        this.userDao = userDao;
+    public ResetPasswordLogic(Holder holder) {
+        super(holder.tokenManager, holder.sessionDao, holder.stats);
+        this.userDao = holder.userDao;
         this.tokensPool = new TokensPool();
         this.emailBody = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "reset-email.html");
-        this.mailWrapper = mailWrapper;
+        this.mailWrapper = holder.mailWrapper;
 
-        String netInterface = props.getProperty("net.interface", "eth");
-        String host = props.getProperty("reset-pass.http.host", IPUtils.resolveHostIP(netInterface));
+        String netInterface = holder.props.getProperty("net.interface", "eth");
+        String host = holder.props.getProperty("reset-pass.http.host", IPUtils.resolveHostIP(netInterface));
         this.resetPassUrl = "http://" + host + "/landing?token=";
         this.pageContent = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "enterNewPassword.html");
     }

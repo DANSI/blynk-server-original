@@ -1,34 +1,44 @@
 package cc.blynk.server.api.http.logic.ide;
 
+import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.Path;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.redis.RedisClient;
+import io.netty.channel.ChannelHandler;
 
 import java.util.Map;
 
-import static cc.blynk.core.http.Response.badRequest;
-import static cc.blynk.core.http.Response.ok;
-import static cc.blynk.core.http.Response.redirect;
+import static cc.blynk.core.http.Response.*;
 
 /**
  * @author gig.
  */
 @Path("/ide")
-public class IDEAuthLogic {
+@ChannelHandler.Sharable
+public class IDEAuthLogic extends BaseHttpHandler {
 
     private final UserDao userDao;
     private final RedisClient redisClient;
     protected static final String IDE_AUTHORIZE_ENDPOINT = "/ide/authorize";
 
-    public IDEAuthLogic(UserDao userDao, RedisClient redisClient) {
+    //for tests only
+    protected IDEAuthLogic(UserDao userDao, RedisClient redisClient) {
+        super(null, null, null);
         this.userDao = userDao;
         this.redisClient = redisClient;
+    }
+
+    public IDEAuthLogic(Holder holder) {
+        super(holder.tokenManager, holder.sessionDao, holder.stats);
+        this.userDao = holder.userDao;
+        this.redisClient = holder.redisClient;
     }
 
     @POST

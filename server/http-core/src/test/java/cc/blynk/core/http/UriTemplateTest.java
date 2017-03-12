@@ -14,8 +14,8 @@ public class UriTemplateTest {
 
     @Test
     public void testCorrectMatch() {
-        UriTemplate template1 = new UriTemplate("http://example.com/admin/users/{name}").compile();
-        UriTemplate template2 = new UriTemplate("http://example.com/admin/users/changePass/{name}").compile();
+        UriTemplate template1 = new UriTemplate("http://example.com/admin/users/{name}");
+        UriTemplate template2 = new UriTemplate("http://example.com/admin/users/changePass/{name}");
 
         assertFalse(template1.matcher("http://example.com/admin/users/changePass/dmitriy@blynk.cc").matches());
         assertTrue(template1.matcher("http://example.com/admin/users/dmitriy@blynk.cc").matches());
