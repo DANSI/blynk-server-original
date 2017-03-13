@@ -53,34 +53,32 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
         if (msg instanceof HttpRequest) {
             HttpRequest req = (HttpRequest) msg;
 
-            HandlerHolder handlerHolder = lookupHandler(req);
+            process(ctx, req);
+        }
+    }
 
-            if (handlerHolder != null) {
-                log.debug("{} : {}", req.method().name(), req.uri());
-                globalStats.mark(Command.HTTP_TOTAL);
-                processHttp(ctx, req, handlerHolder);
-            } else {
-                ctx.fireChannelRead(msg);
+    public void process(ChannelHandlerContext ctx, HttpRequest req) {
+        HandlerHolder handlerHolder = lookupHandler(req);
+
+        if (handlerHolder != null) {
+            log.debug("{} : {}", req.method().name(), req.uri());
+            globalStats.mark(Command.HTTP_TOTAL);
+
+            try {
+                URIDecoder uriDecoder = new URIDecoder(req);
+                uriDecoder.pathData = handlerHolder.extractParameters();
+                Object[] params = handlerHolder.handler.fetchParams(uriDecoder);
+                finishHttp(ctx, uriDecoder, handlerHolder.handler, params);
+            } catch (Exception e) {
+                ctx.writeAndFlush(Response.serverError(e.getMessage()), ctx.voidPromise());
+            } finally {
+                ReferenceCountUtil.release(req);
             }
+
+        } else {
+            ctx.fireChannelRead(req);
         }
     }
-
-    public void processHttp(ChannelHandlerContext ctx, HttpRequest req, HandlerHolder handlerHolder) {
-        URIDecoder uriDecoder;
-        Object[] params;
-
-        try {
-            uriDecoder = new URIDecoder(req);
-            uriDecoder.pathData = handlerHolder.extractParameters();
-            params = handlerHolder.handler.fetchParams(uriDecoder);
-            finishHttp(ctx, uriDecoder, handlerHolder.handler, params);
-        } catch (Exception e) {
-            ctx.writeAndFlush(Response.serverError(e.getMessage()), ctx.voidPromise());
-        } finally {
-            ReferenceCountUtil.release(req);
-        }
-    }
-
 
     public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, Handler handler, Object[] params) {
         FullHttpResponse response = handler.invoke(params);

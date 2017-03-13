@@ -1,6 +1,6 @@
 package cc.blynk.server.admin.http.logic;
 
-import cc.blynk.core.http.BaseHttpHandler;
+import cc.blynk.core.http.CookiesBaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
@@ -31,7 +31,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 @Path("/users")
 @ChannelHandler.Sharable
-public class UsersLogic extends BaseHttpHandler {
+public class UsersLogic extends CookiesBaseHttpHandler {
 
     private final UserDao userDao;
     private final FileManager fileManager;
