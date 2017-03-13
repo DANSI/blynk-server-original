@@ -3,6 +3,7 @@ package cc.blynk.core.http;
 import cc.blynk.core.http.rest.Handler;
 import cc.blynk.core.http.rest.HandlerHolder;
 import cc.blynk.core.http.rest.URIDecoder;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.protocol.enums.Command;
@@ -12,6 +13,7 @@ import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.utils.AnnotationsUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.ReferenceCountUtil;
 import org.apache.logging.log4j.LogManager;
@@ -33,6 +35,10 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
     protected final GlobalStats globalStats;
     protected final Handler[] handlers;
     protected final String rootPath;
+
+    public BaseHttpHandler(Holder holder, String rootPath) {
+        this(holder.tokenManager, holder.sessionDao, holder.stats, rootPath);
+    }
 
     public BaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats, String rootPath) {
         this.tokenManager = tokenManager;
@@ -76,7 +82,10 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
     }
 
 
-    public abstract void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, Handler handler, Object[] params);
+    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, Handler handler, Object[] params) {
+        FullHttpResponse response = handler.invoke(params);
+        ctx.writeAndFlush(response);
+    }
 
     private HandlerHolder lookupHandler(HttpRequest req) {
         for (Handler handler : handlers) {

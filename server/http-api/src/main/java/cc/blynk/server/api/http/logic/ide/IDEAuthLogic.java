@@ -1,6 +1,6 @@
 package cc.blynk.server.api.http.logic.ide;
 
-import cc.blynk.core.http.AdminBaseHttpHandler;
+import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.Consumes;
@@ -22,7 +22,7 @@ import static cc.blynk.core.http.Response.*;
  */
 @Path("/ide")
 @ChannelHandler.Sharable
-public class IDEAuthLogic extends AdminBaseHttpHandler {
+public class IDEAuthLogic extends BaseHttpHandler {
 
     private final UserDao userDao;
     private final RedisClient redisClient;

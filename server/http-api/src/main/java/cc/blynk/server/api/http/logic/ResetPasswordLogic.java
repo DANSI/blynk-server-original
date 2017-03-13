@@ -1,6 +1,6 @@
 package cc.blynk.server.api.http.logic;
 
-import cc.blynk.core.http.AdminBaseHttpHandler;
+import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
@@ -30,7 +30,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 @Path("/")
 @ChannelHandler.Sharable
-public class ResetPasswordLogic extends AdminBaseHttpHandler {
+public class ResetPasswordLogic extends BaseHttpHandler {
 
     private static final Logger log = LogManager.getLogger(ResetPasswordLogic.class);
 

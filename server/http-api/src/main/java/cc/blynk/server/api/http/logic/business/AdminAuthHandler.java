@@ -1,6 +1,6 @@
 package cc.blynk.server.api.http.logic.business;
 
-import cc.blynk.core.http.AdminBaseHttpHandler;
+import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.Consumes;
@@ -26,7 +26,7 @@ import static io.netty.handler.codec.http.HttpHeaderNames.SET_COOKIE;
  */
 @Path("")
 @ChannelHandler.Sharable
-public class AdminAuthHandler extends AdminBaseHttpHandler {
+public class AdminAuthHandler extends BaseHttpHandler {
 
     //1 month
     private static final int COOKIE_EXPIRE_TIME = 30 * 60 * 60 * 24;

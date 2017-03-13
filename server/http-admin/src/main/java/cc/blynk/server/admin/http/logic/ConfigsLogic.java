@@ -1,6 +1,6 @@
 package cc.blynk.server.admin.http.logic;
 
-import cc.blynk.core.http.AdminBaseHttpHandler;
+import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
@@ -29,7 +29,7 @@ import static cc.blynk.utils.AdminHttpUtil.sort;
  */
 @Path("/config")
 @ChannelHandler.Sharable
-public class ConfigsLogic extends AdminBaseHttpHandler {
+public class ConfigsLogic extends BaseHttpHandler {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final ServerProperties serverProperties;

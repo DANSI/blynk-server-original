@@ -1,6 +1,6 @@
 package cc.blynk.server.admin.http.logic;
 
-import cc.blynk.core.http.AdminBaseHttpHandler;
+import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.GET;
 import cc.blynk.core.http.annotation.Path;
@@ -34,7 +34,7 @@ import static cc.blynk.utils.AdminHttpUtil.*;
  */
 @Path("/stats")
 @ChannelHandler.Sharable
-public class StatsLogic extends AdminBaseHttpHandler {
+public class StatsLogic extends BaseHttpHandler {
 
     private final UserDao userDao;
     private final FileManager fileManager;
