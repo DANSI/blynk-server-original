@@ -51,6 +51,7 @@ public class HttpsAdminServerTest extends BaseTest {
     private CloseableHttpClient httpclient;
     private String httpsAdminServerUrl;
     private String httpServerUrl;
+    private User admin;
 
     @After
     public void shutdown() {
@@ -75,6 +76,11 @@ public class HttpsAdminServerTest extends BaseTest {
                 .build();
 
         httpServer = new HttpAPIServer(holder).start();
+
+        String name = "admin@blynk.cc";
+        String pass = "admin";
+        admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, true);
+        holder.userDao.add(admin);
     }
 
     @Override
@@ -130,12 +136,6 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Test
     public void adminLoginFlowSupport()  throws Exception {
-        String name = "admin@blynk.cc";
-        String pass = "admin";
-
-        User admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, true);
-        holder.userDao.add(admin);
-
         HttpGet loadLoginPageRequest = new HttpGet(httpsAdminServerUrl);
         try (CloseableHttpResponse response = httpclient.execute(loadLoginPageRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -144,21 +144,7 @@ public class HttpsAdminServerTest extends BaseTest {
             assertTrue(loginPage.contains("Use your Admin account to log in"));
         }
 
-        HttpPost loginRequest = new HttpPost(httpsAdminServerUrl + "/login");
-        List <NameValuePair> nvps = new ArrayList<>();
-        nvps.add(new BasicNameValuePair("email", admin.name));
-        nvps.add(new BasicNameValuePair("password", admin.pass));
-        loginRequest.setEntity(new UrlEncodedFormEntity(nvps));
-
-        try (CloseableHttpResponse response = httpclient.execute(loginRequest)) {
-            assertEquals(301, response.getStatusLine().getStatusCode());
-            Header header = response.getFirstHeader("Location");
-            assertNotNull(header);
-            assertEquals("/admin", header.getValue());
-            Header cookieHeader = response.getFirstHeader("set-cookie");
-            assertNotNull(cookieHeader);
-            assertTrue(cookieHeader.getValue().startsWith("session="));
-        }
+        login(admin.name, admin.pass);
 
         HttpGet loadAdminPage = new HttpGet(httpsAdminServerUrl);
         try (CloseableHttpResponse response = httpclient.execute(loadAdminPage)) {
@@ -196,6 +182,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Test
     public void testGetUserFromAdminPage() throws Exception {
+        login(admin.name, admin.pass);
         String testUser = "dmitriy@blynk.cc";
         String appName = "Blynk";
         HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/" + testUser + "-" + appName);
@@ -212,18 +199,11 @@ public class HttpsAdminServerTest extends BaseTest {
         }
     }
 
-    @Test
-    public void testChangeUsernameChangesPassToo() throws Exception {
-        String name = "admin@blynk.cc";
-        String pass = "admin";
-
-        User admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, true);
-        holder.userDao.add(admin);
-
+    private void login(String name, String pass) throws Exception {
         HttpPost loginRequest = new HttpPost(httpsAdminServerUrl + "/login");
         List <NameValuePair> nvps = new ArrayList<>();
-        nvps.add(new BasicNameValuePair("email", admin.name));
-        nvps.add(new BasicNameValuePair("password", admin.pass));
+        nvps.add(new BasicNameValuePair("email", name));
+        nvps.add(new BasicNameValuePair("password", pass));
         loginRequest.setEntity(new UrlEncodedFormEntity(nvps));
 
         try (CloseableHttpResponse response = httpclient.execute(loginRequest)) {
@@ -235,6 +215,11 @@ public class HttpsAdminServerTest extends BaseTest {
             assertNotNull(cookieHeader);
             assertTrue(cookieHeader.getValue().startsWith("session="));
         }
+    }
+
+    @Test
+    public void testChangeUsernameChangesPassToo() throws Exception {
+        login(admin.name, admin.pass);
 
         User user;
         HttpGet getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/admin@blynk.cc-Blynk");
@@ -243,7 +228,7 @@ public class HttpsAdminServerTest extends BaseTest {
             String userProfile = consumeText(response);
             assertNotNull(userProfile);
             user = JsonParser.parseUserFromString(userProfile);
-            assertEquals(name, user.name);
+            assertEquals(admin.name, user.name);
         }
 
         user.name = "123@blynk.cc";
@@ -307,6 +292,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Test
     public void testAssignNewTokenForNonExistingToken() throws Exception {
+        login(admin.name, admin.pass);
         HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/token/assign?old=123&new=123");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -316,6 +302,8 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Test
     public void testAssignNewToken() throws Exception {
+        login(admin.name, admin.pass);
+
         HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/token/assign?old=4ae3851817194e2596cf1b7103603ef8&new=123");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -347,6 +335,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Test
     public void testForceAssignNewToken() throws Exception {
+        login(admin.name, admin.pass);
         HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/token/force?username=dmitriy@blynk.cc&app=Blynk&dashId=79780619&deviceId=0&new=123");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
