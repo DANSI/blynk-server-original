@@ -30,6 +30,8 @@ public class AdminAuthHandler extends AdminBaseHttpHandler {
 
     private final UserDao userDao;
     private final SessionHolder sessionHolder;
+    //1 month
+    private static final int COOKIE_EXPIRE_TIME = 30 * 60 * 60 * 24;
 
     public AdminAuthHandler(Holder holder, SessionHolder sessionHolder) {
         super(holder);
@@ -59,7 +61,7 @@ public class AdminAuthHandler extends AdminBaseHttpHandler {
 
         Response response = redirect("/admin");
 
-        Cookie cookie = makeDefaultSessionCookie(sessionHolder.generateNewSession(user), 86400);
+        Cookie cookie = makeDefaultSessionCookie(sessionHolder.generateNewSession(user), COOKIE_EXPIRE_TIME);
         response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
 
         return response;
