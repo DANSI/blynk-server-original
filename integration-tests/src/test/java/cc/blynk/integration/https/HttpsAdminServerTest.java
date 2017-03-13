@@ -213,6 +213,72 @@ public class HttpsAdminServerTest extends BaseTest {
     }
 
     @Test
+    public void testChangeUsernameChangesPassToo() throws Exception {
+        String name = "admin@blynk.cc";
+        String pass = "admin";
+
+        User admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, true);
+        holder.userDao.add(admin);
+
+        HttpPost loginRequest = new HttpPost(httpsAdminServerUrl + "/login");
+        List <NameValuePair> nvps = new ArrayList<>();
+        nvps.add(new BasicNameValuePair("email", admin.name));
+        nvps.add(new BasicNameValuePair("password", admin.pass));
+        loginRequest.setEntity(new UrlEncodedFormEntity(nvps));
+
+        try (CloseableHttpResponse response = httpclient.execute(loginRequest)) {
+            assertEquals(301, response.getStatusLine().getStatusCode());
+            Header header = response.getFirstHeader("Location");
+            assertNotNull(header);
+            assertEquals("/admin", header.getValue());
+            Header cookieHeader = response.getFirstHeader("set-cookie");
+            assertNotNull(cookieHeader);
+            assertTrue(cookieHeader.getValue().startsWith("session="));
+        }
+
+        User user;
+        HttpGet getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/admin@blynk.cc-Blynk");
+        try (CloseableHttpResponse response = httpclient.execute(getUserRequest)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String userProfile = consumeText(response);
+            assertNotNull(userProfile);
+            user = JsonParser.parseUserFromString(userProfile);
+            assertEquals(name, user.name);
+        }
+
+        user.name = "123@blynk.cc";
+
+        //we are no allowed to change username without cahnged password
+        HttpPut changeUserNameRequestWrong = new HttpPut(httpsAdminServerUrl + "/users/admin@blynk.cc-Blynk");
+        changeUserNameRequestWrong.setEntity(new StringEntity(user.toString(), ContentType.APPLICATION_JSON));
+        try (CloseableHttpResponse response = httpclient.execute(changeUserNameRequestWrong)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+        }
+
+        user.pass = "123";
+        HttpPut changeUserNameRequestCorrect = new HttpPut(httpsAdminServerUrl + "/users/admin@blynk.cc-Blynk");
+        changeUserNameRequestCorrect.setEntity(new StringEntity(user.toString(), ContentType.APPLICATION_JSON));
+        try (CloseableHttpResponse response = httpclient.execute(changeUserNameRequestCorrect)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet getNonExistingUserRequest = new HttpGet(httpsAdminServerUrl + "/users/admin@blynk.cc-Blynk");
+        try (CloseableHttpResponse response = httpclient.execute(getNonExistingUserRequest)) {
+            assertEquals(404, response.getStatusLine().getStatusCode());
+        }
+
+        HttpGet getUserRequest2 = new HttpGet(httpsAdminServerUrl + "/users/123@blynk.cc-Blynk");
+        try (CloseableHttpResponse response = httpclient.execute(getUserRequest2)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String userProfile = consumeText(response);
+            assertNotNull(userProfile);
+            user = JsonParser.parseUserFromString(userProfile);
+            assertEquals("123@blynk.cc", user.name);
+            assertEquals(SHA256Util.makeHash("123", user.name), user.pass);
+        }
+    }
+
+    @Test
     public void testGetAdminPage() throws Exception {
         HttpGet request = new HttpGet(httpsAdminServerUrl);
 

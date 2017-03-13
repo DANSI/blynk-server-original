@@ -73,7 +73,11 @@ public class UsersLogic extends CookiesBaseHttpHandler {
         String[] parts =  slitByLast(id);
         String name = parts[0];
         String appName = parts[1];
-        return ok(userDao.getByName(name, appName));
+        User user = userDao.getByName(name, appName);
+        if (user == null) {
+            return notFound();
+        }
+        return ok(user);
     }
 
     @GET
@@ -93,7 +97,7 @@ public class UsersLogic extends CookiesBaseHttpHandler {
 
         tokenManager.assignToken(tokenValue.user, tokenValue.dashId, tokenValue.deviceId, newToken);
         return ok();
-    }
+    }#521
 
     @GET
     @Path("/token/force")
@@ -127,13 +131,13 @@ public class UsersLogic extends CookiesBaseHttpHandler {
 
         User oldUser = userDao.getByName(name, appName);
 
-        //if pass was changed, call hash function.
-        if (!updatedUser.pass.equals(oldUser.pass)) {
-            log.debug("Updating pass for {}.", updatedUser.name);
-            updatedUser.pass = SHA256Util.makeHash(updatedUser.pass, updatedUser.name);
+        //name was changed, but not password - do not allow this.
+        //as name is used as salt for pass generation
+        if (!updatedUser.name.equals(oldUser.name) && updatedUser.pass.equals(oldUser.pass)) {
+            return badRequest("You need also change password when changing username.");
         }
 
-        //user name was changed
+            //user name was changed
         if (!updatedUser.name.equals(oldUser.name)) {
             deleteUserByName(id);
             for (DashBoard dashBoard : oldUser.profile.dashBoards) {
@@ -141,6 +145,12 @@ public class UsersLogic extends CookiesBaseHttpHandler {
                     tokenManager.assignToken(updatedUser, dashBoard.id, device.id, device.token);
                 }
             }
+        }
+
+        //if pass was changed, call hash function.
+        if (!updatedUser.pass.equals(oldUser.pass)) {
+            log.debug("Updating pass for {}.", updatedUser.name);
+            updatedUser.pass = SHA256Util.makeHash(updatedUser.pass, updatedUser.name);
         }
 
         userDao.add(updatedUser);
