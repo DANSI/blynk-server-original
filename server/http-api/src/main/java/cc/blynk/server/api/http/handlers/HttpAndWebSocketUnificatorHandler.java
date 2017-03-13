@@ -90,8 +90,8 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.authCookieHandler = new AuthCookieHandler(sessionHolder);
     }
 
-    public HttpAndWebSocketUnificatorHandler(Holder holder, SessionHolder sessionHolder, int port) {
-        this(holder, sessionHolder, port, null, false);
+    public HttpAndWebSocketUnificatorHandler(Holder holder, SessionHolder sessionHolder, int port, String adminRootPath) {
+        this(holder, sessionHolder, port, adminRootPath, false);
     }
 
     @Override

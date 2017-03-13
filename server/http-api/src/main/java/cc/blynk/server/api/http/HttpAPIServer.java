@@ -22,7 +22,9 @@ public class HttpAPIServer extends BaseServer {
     public HttpAPIServer(Holder holder) {
         super(holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
 
-        HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler = new HttpAndWebSocketUnificatorHandler(holder, null, port);
+        String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
+
+        HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler = new HttpAndWebSocketUnificatorHandler(holder, null, port, adminRootPath);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
