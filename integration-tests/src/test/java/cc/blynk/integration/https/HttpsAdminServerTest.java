@@ -5,16 +5,25 @@ import cc.blynk.integration.model.http.ResponseUserEntity;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.SHA256Util;
+import org.apache.http.Header;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,10 +33,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import javax.net.ssl.*;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * The Blynk Project.
@@ -60,7 +69,10 @@ public class HttpsAdminServerTest extends BaseTest {
 
         // Allow TLSv1 protocol only
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new MyHostVerifier());
-        this.httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
+        this.httpclient = HttpClients.custom()
+                .setSSLSocketFactory(sslsf)
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                .build();
 
         httpServer = new HttpAPIServer(holder).start();
     }
@@ -113,6 +125,44 @@ public class HttpsAdminServerTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(404, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void adminLoginFlowSupport()  throws Exception {
+        String name = "admin@blynk.cc";
+        String pass = "admin";
+
+        User admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false);
+        holder.userDao.add(admin);
+
+        HttpGet loadLoginPageRequest = new HttpGet(httpsAdminServerUrl);
+        try (CloseableHttpResponse response = httpclient.execute(loadLoginPageRequest)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String loginPage = consumeText(response);
+            //todo add full page match?
+            assertTrue(loginPage.contains("Use your Admin account to log in"));
+        }
+
+        HttpPost loginRequest = new HttpPost(httpsAdminServerUrl + "/login");
+        List <NameValuePair> nvps = new ArrayList<>();
+        nvps.add(new BasicNameValuePair("email", admin.name));
+        nvps.add(new BasicNameValuePair("password", admin.pass));
+        loginRequest.setEntity(new UrlEncodedFormEntity(nvps));
+
+        try (CloseableHttpResponse response = httpclient.execute(loginRequest)) {
+            assertEquals(301, response.getStatusLine().getStatusCode());
+            Header header = response.getFirstHeader("Location");
+            assertNotNull(header);
+            assertEquals("/admin", header.getValue());
+        }
+
+        HttpGet loadAdminPage = new HttpGet(httpsAdminServerUrl);
+        try (CloseableHttpResponse response = httpclient.execute(loadAdminPage)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String adminPage = consumeText(response);
+            //todo add full page match?
+            assertTrue(adminPage.contains("login"));
         }
     }
 

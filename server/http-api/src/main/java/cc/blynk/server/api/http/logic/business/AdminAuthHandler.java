@@ -1,7 +1,6 @@
 package cc.blynk.server.api.http.logic.business;
 
 import cc.blynk.core.http.AdminBaseHttpHandler;
-import cc.blynk.core.http.ForwardResponse;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.Consumes;
@@ -58,9 +57,7 @@ public class AdminAuthHandler extends AdminBaseHttpHandler {
             return redirect("/admin");
         }
 
-        Response response = new ForwardResponse("/static/admin/admin.html");
-
-        //todo check session has user already.
+        Response response = redirect("/admin");
 
         Cookie cookie = makeDefaultSessionCookie(sessionHolder.generateNewSession(user), 86400);
         response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));

@@ -3,7 +3,6 @@ package cc.blynk.core.http;
 import cc.blynk.core.http.rest.Handler;
 import cc.blynk.core.http.rest.HandlerHolder;
 import cc.blynk.core.http.rest.URIDecoder;
-import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.protocol.enums.Command;
@@ -33,10 +32,6 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
     protected final SessionDao sessionDao;
     protected final GlobalStats globalStats;
     protected final Handler[] handlers;
-
-    public BaseHttpHandler(Holder holder) {
-        this(holder.tokenManager, holder.sessionDao, holder.stats);
-    }
 
     public BaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats) {
         this.tokenManager = tokenManager;
@@ -70,14 +65,12 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
             uriDecoder = new URIDecoder(req);
             uriDecoder.pathData = handlerHolder.extractParameters();
             params = handlerHolder.handler.fetchParams(uriDecoder);
+            finishHttp(ctx, uriDecoder, handlerHolder.handler, params);
         } catch (Exception e) {
             ctx.writeAndFlush(Response.serverError(e.getMessage()), ctx.voidPromise());
-            return;
         } finally {
             ReferenceCountUtil.release(req);
         }
-
-        finishHttp(ctx, uriDecoder, handlerHolder.handler, params);
     }
 
 

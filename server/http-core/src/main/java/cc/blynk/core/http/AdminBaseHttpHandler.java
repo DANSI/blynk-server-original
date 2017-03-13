@@ -27,15 +27,7 @@ public abstract class AdminBaseHttpHandler extends BaseHttpHandler {
     @Override
     public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, Handler handler, Object[] params) {
         FullHttpResponse response = handler.invoke(params);
-
-        //API handlers may return forward request. means we need to proceed pipeline furhter.
-        if (response instanceof ForwardResponse) {
-            String forwardUrl = ((ForwardResponse) response).url;
-            uriDecoder.httpRequest.setUri(forwardUrl);
-            ctx.fireChannelRead(uriDecoder.httpRequest);
-        } else {
-            ctx.writeAndFlush(response);
-        }
+        ctx.writeAndFlush(response);
     }
 
 }

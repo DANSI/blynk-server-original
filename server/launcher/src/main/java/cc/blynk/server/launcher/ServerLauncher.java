@@ -94,13 +94,13 @@ public class ServerLauncher {
     }
 
     private static void generateRandomSuperUser(UserDao userDao) {
-        String adminName = "a@blynk.cc";
+        String adminName = "admin@blynk.cc";
 
         User user = userDao.getByName(adminName, AppName.BLYNK);
 
         if (user == null) {
             //String pass = RandomStringUtils.generateRandomPass(16);
-            String pass = "a";
+            String pass = "admin";
 
             System.out.println("Admin login name is " + adminName);
             System.out.println("Admin password is " + pass);

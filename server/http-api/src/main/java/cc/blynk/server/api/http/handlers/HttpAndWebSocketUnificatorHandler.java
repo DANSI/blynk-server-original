@@ -1,6 +1,5 @@
 package cc.blynk.server.api.http.handlers;
 
-import cc.blynk.core.http.Response;
 import cc.blynk.core.http.handlers.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.handlers.IpFilterHandler;
@@ -33,6 +32,8 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 
 import java.net.InetSocketAddress;
 
+import static cc.blynk.core.http.Response.redirect;
+
 /**
  * Utility handler used to define what protocol should be handled
  * on same port : http or websockets.
@@ -46,13 +47,14 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
     private final static String BLYNK_LANDING = "http://www.blynk.cc";
 
+    private final String region;
     private final GlobalStats stats;
 
     private final WebSocketsGenericLoginHandler genericLoginHandler;
     private final String adminRootPath;
     private final boolean isUnpacked;
     private final IpFilterHandler ipFilterHandler;
-    private final SessionHolder sessionHolder;
+    private final AuthCookieHandler authCookieHandler;
 
     private final ResetPasswordLogic resetPasswordLogic;
     private final HttpAPILogic httpAPILogic;
@@ -66,12 +68,12 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final AdminAuthHandler adminAuthHandler;
 
     public HttpAndWebSocketUnificatorHandler(Holder holder, SessionHolder sessionHolder, int port, String adminRootPath, boolean isUnpacked) {
+        this.region = holder.region;
         this.stats = holder.stats;
         this.genericLoginHandler = new WebSocketsGenericLoginHandler(holder, port);
         this.adminRootPath = adminRootPath;
         this.isUnpacked = isUnpacked;
         this.ipFilterHandler = new IpFilterHandler(holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips"));
-        this.sessionHolder = sessionHolder;
 
         //http API handlers
         this.resetPasswordLogic = new ResetPasswordLogic(holder);
@@ -85,6 +87,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.configsLogic = new ConfigsLogic(holder);
         this.hardwareStatsLogic = new HardwareStatsLogic(holder);
         this.adminAuthHandler = new AdminAuthHandler(holder, sessionHolder);
+        this.authCookieHandler = new AuthCookieHandler(sessionHolder);
     }
 
     public HttpAndWebSocketUnificatorHandler(Holder holder, SessionHolder sessionHolder, int port) {
@@ -97,14 +100,14 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         String uri = req.uri();
 
         if (uri.equals("/")) {
-            ctx.writeAndFlush(Response.redirect(BLYNK_LANDING));
-        } else if (uri.equals(adminRootPath)) {
-            InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-            if (!ipFilterHandler.accept(ctx, remoteAddress)) {
-                ctx.close();
-                return;
+            //for local server do redirect to admin page
+            if (region.equals("local")) {
+                ctx.writeAndFlush(redirect(adminRootPath));
+            } else {
+                ctx.writeAndFlush(redirect(BLYNK_LANDING));
             }
-            initAdminPipeline(ctx);
+        } else if (uri.startsWith(adminRootPath) || uri.startsWith("/static/admin")) {
+            initAdminPipeline(ctx, msg);
         } else if (req.uri().startsWith(HttpAPIServer.WEBSOCKET_PATH)) {
             initWebSocketPipeline(ctx, HttpAPIServer.WEBSOCKET_PATH);
         } else {
@@ -114,19 +117,31 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         ctx.fireChannelRead(msg);
     }
 
-    private void initAdminPipeline(ChannelHandlerContext ctx) {
+    private boolean isIpNotAllowed(ChannelHandlerContext ctx) {
+        InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+        return !ipFilterHandler.accept(ctx, remoteAddress);
+    }
+
+    private void initAdminPipeline(ChannelHandlerContext ctx, Object msg) {
+        if (isIpNotAllowed(ctx)) {
+            ctx.close();
+            return;
+        }
+
         ChannelPipeline pipeline = ctx.pipeline();
         pipeline.addLast(new ChunkedWriteHandler());
-        pipeline.addLast(new AuthCookieHandler(adminRootPath, sessionHolder));
+
         pipeline.addLast(adminAuthHandler);
-        pipeline.addLast(new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
+        pipeline.addLast(new CookieBasedUrlReWriterHandler(adminRootPath, "/static/admin/admin.html", "/static/admin/login.html"));
+        pipeline.addLast(authCookieHandler);
+
+        pipeline.addLast(new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"));
         pipeline.addLast(new StaticFileHandler(isUnpacked, new StaticFile("/static", false)));
 
         pipeline.addLast(usersLogic);
         pipeline.addLast(statsLogic);
         pipeline.addLast(configsLogic);
         pipeline.addLast(hardwareStatsLogic);
-
         pipeline.addLast(noMatchHandler);
         pipeline.remove(this);
     }
@@ -134,9 +149,9 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private void initHttpPipeline(ChannelHandlerContext ctx) {
         ChannelPipeline pipeline = ctx.pipeline();
         pipeline.addLast("HttpChunkedWrite", new ChunkedWriteHandler());
-        pipeline.addLast("HttpUrlMapper", new UrlMapperHandler("/favicon.ico", "/static/favicon.ico"));
-        pipeline.addLast("HttpStaticFile", new StaticFileHandler(isUnpacked,
-                new StaticFile("/static"), new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")));
+        pipeline.addLast("HttpUrlMapper", new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"));
+        pipeline.addLast("HttpStaticFile", new StaticFileHandler(isUnpacked, new StaticFile("/static"),
+                                           new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")));
 
         pipeline.addLast(resetPasswordLogic);
         pipeline.addLast(httpAPILogic);
