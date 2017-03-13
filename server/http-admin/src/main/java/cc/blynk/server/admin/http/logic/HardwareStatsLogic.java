@@ -18,14 +18,14 @@ import static cc.blynk.utils.AdminHttpUtil.sort;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-@Path("/admin/hardwareInfo")
+@Path("/hardwareInfo")
 @ChannelHandler.Sharable
 public class HardwareStatsLogic extends AdminBaseHttpHandler {
 
     private final UserDao userDao;
 
-    public HardwareStatsLogic(Holder holder) {
-        super(holder);
+    public HardwareStatsLogic(Holder holder, String rootPath) {
+        super(holder, rootPath);
         this.userDao = holder.userDao;
     }
 

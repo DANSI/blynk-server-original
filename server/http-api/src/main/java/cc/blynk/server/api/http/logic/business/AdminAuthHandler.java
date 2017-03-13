@@ -24,17 +24,18 @@ import static io.netty.handler.codec.http.HttpHeaderNames.SET_COOKIE;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-@Path("/admin")
+@Path("")
 @ChannelHandler.Sharable
 public class AdminAuthHandler extends AdminBaseHttpHandler {
 
-    private final UserDao userDao;
-    private final SessionHolder sessionHolder;
     //1 month
     private static final int COOKIE_EXPIRE_TIME = 30 * 60 * 60 * 24;
 
-    public AdminAuthHandler(Holder holder, SessionHolder sessionHolder) {
-        super(holder);
+    private final UserDao userDao;
+    private final SessionHolder sessionHolder;
+
+    public AdminAuthHandler(Holder holder, SessionHolder sessionHolder, String adminRootPath) {
+        super(holder, adminRootPath);
         this.userDao = holder.userDao;
         this.sessionHolder = sessionHolder;
     }
@@ -46,20 +47,20 @@ public class AdminAuthHandler extends AdminBaseHttpHandler {
                           @FormParam("password") String password) {
 
         if (email == null || password == null) {
-            return redirect("/admin");
+            return redirect(rootPath);
         }
 
         User user = userDao.getByName(email, AppName.BLYNK);
 
         if (user == null || !user.isSuperAdmin) {
-            return redirect("/admin");
+            return redirect(rootPath);
         }
 
         if (!password.equals(user.pass)) {
-            return redirect("/admin");
+            return redirect(rootPath);
         }
 
-        Response response = redirect("/admin");
+        Response response = redirect(rootPath);
 
         Cookie cookie = makeDefaultSessionCookie(sessionHolder.generateNewSession(user), COOKIE_EXPIRE_TIME);
         response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
@@ -70,7 +71,7 @@ public class AdminAuthHandler extends AdminBaseHttpHandler {
     @POST
     @Path("/logout")
     public Response logout() {
-        Response response = redirect("/admin");
+        Response response = redirect(rootPath);
         Cookie cookie = makeDefaultSessionCookie("", 0);
         response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
         return response;

@@ -16,12 +16,12 @@ import io.netty.handler.codec.http.FullHttpResponse;
  */
 public abstract class AdminBaseHttpHandler extends BaseHttpHandler {
 
-    public AdminBaseHttpHandler(Holder holder) {
-        super(holder.tokenManager, holder.sessionDao, holder.stats);
+    public AdminBaseHttpHandler(Holder holder, String rootPath) {
+        super(holder.tokenManager, holder.sessionDao, holder.stats, rootPath);
     }
 
-    public AdminBaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats) {
-        super(tokenManager, sessionDao, globalStats);
+    public AdminBaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats, String rootPath) {
+        super(tokenManager, sessionDao, globalStats, rootPath);
     }
 
     @Override

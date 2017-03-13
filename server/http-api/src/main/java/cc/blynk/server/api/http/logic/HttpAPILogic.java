@@ -77,7 +77,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     private HttpAPILogic(TokenManager tokenManager, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor,
                          MailWrapper mailWrapper, GCMWrapper gcmWrapper, ReportingDao reportingDao,
                          GlobalStats globalStats, EventorProcessor eventorProcessor) {
-        super(tokenManager, sessionDao, globalStats);
+        super(tokenManager, sessionDao, globalStats, "");
         this.blockingIOProcessor = blockingIOProcessor;
         this.mailWrapper = mailWrapper;
         this.gcmWrapper = gcmWrapper;

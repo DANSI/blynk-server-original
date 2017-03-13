@@ -82,11 +82,11 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.noMatchHandler = new NoMatchHandler();
 
         //admin API handlers
-        this.usersLogic = new UsersLogic(holder);
-        this.statsLogic = new StatsLogic(holder);
-        this.configsLogic = new ConfigsLogic(holder);
-        this.hardwareStatsLogic = new HardwareStatsLogic(holder);
-        this.adminAuthHandler = new AdminAuthHandler(holder, sessionHolder);
+        this.usersLogic = new UsersLogic(holder, adminRootPath);
+        this.statsLogic = new StatsLogic(holder, adminRootPath);
+        this.configsLogic = new ConfigsLogic(holder, adminRootPath);
+        this.hardwareStatsLogic = new HardwareStatsLogic(holder, adminRootPath);
+        this.adminAuthHandler = new AdminAuthHandler(holder, sessionHolder, adminRootPath);
         this.authCookieHandler = new AuthCookieHandler(sessionHolder);
     }
 

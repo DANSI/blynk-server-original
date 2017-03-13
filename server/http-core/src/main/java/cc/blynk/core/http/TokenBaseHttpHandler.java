@@ -19,8 +19,8 @@ import io.netty.handler.codec.http.FullHttpResponse;
  */
 public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
 
-    public TokenBaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats) {
-        super(tokenManager, sessionDao, globalStats);
+    public TokenBaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats, String rootPath) {
+        super(tokenManager, sessionDao, globalStats, rootPath);
     }
 
     @Override

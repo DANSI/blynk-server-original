@@ -9,14 +9,12 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.response.IpNameResponse;
 import cc.blynk.server.admin.http.response.RequestPerSecondResponse;
 import cc.blynk.server.core.dao.FileManager;
-import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.utils.JsonParser;
 import io.netty.channel.ChannelHandler;
@@ -34,27 +32,23 @@ import static cc.blynk.utils.AdminHttpUtil.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-@Path("/admin/stats")
+@Path("/stats")
 @ChannelHandler.Sharable
 public class StatsLogic extends AdminBaseHttpHandler {
 
-    private final GlobalStats stats;
-    private final SessionDao sessionDao;
     private final UserDao userDao;
     private final FileManager fileManager;
 
-    public StatsLogic(Holder holder) {
-        super(holder);
+    public StatsLogic(Holder holder, String rootPath) {
+        super(holder, rootPath);
         this.userDao = holder.userDao;
-        this.sessionDao = holder.sessionDao;
-        this.stats = holder.stats;
         this.fileManager = holder.fileManager;
     }
 
     @GET
     @Path("/realtime")
     public Response getReatime() {
-       return ok(Collections.singletonList(new Stat(sessionDao, userDao, stats, false)));
+       return ok(Collections.singletonList(new Stat(sessionDao, userDao, globalStats, false)));
     }
 
     @GET
@@ -79,7 +73,7 @@ public class StatsLogic extends AdminBaseHttpHandler {
     @Path("/messages")
     public Response getMessages(@QueryParam("_sortField") String sortField,
                                     @QueryParam("_sortDir") String sortOrder) {
-        return ok(sort(convertObjectToMap(new Stat(sessionDao, userDao, stats, false).commands), sortField, sortOrder));
+        return ok(sort(convertObjectToMap(new Stat(sessionDao, userDao, globalStats, false).commands), sortField, sortOrder));
     }
 
     @GET

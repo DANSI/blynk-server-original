@@ -27,15 +27,15 @@ import static cc.blynk.utils.AdminHttpUtil.sort;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-@Path("/admin/config")
+@Path("/config")
 @ChannelHandler.Sharable
 public class ConfigsLogic extends AdminBaseHttpHandler {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final ServerProperties serverProperties;
 
-    public ConfigsLogic(Holder holder) {
-        super(holder);
+    public ConfigsLogic(Holder holder, String rootPath) {
+        super(holder, rootPath);
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.serverProperties = holder.props;
     }

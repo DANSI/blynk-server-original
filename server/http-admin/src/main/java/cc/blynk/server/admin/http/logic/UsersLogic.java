@@ -29,30 +29,24 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * Created by Dmitriy Dumanskiy.
  * Created on 03.12.15.
  */
-@Path("/admin/users")
+@Path("/users")
 @ChannelHandler.Sharable
 public class UsersLogic extends AdminBaseHttpHandler {
 
     private final UserDao userDao;
-    private final SessionDao sessionDao;
     private final FileManager fileManager;
-    private final TokenManager tokenManager;
 
-    public UsersLogic(Holder holder) {
-        super(holder);
+    public UsersLogic(Holder holder, String rootPath) {
+        super(holder, rootPath);
         this.userDao = holder.userDao;
         this.fileManager = holder.fileManager;
-        this.sessionDao = holder.sessionDao;
-        this.tokenManager = holder.tokenManager;
     }
 
     //for tests only
-    public UsersLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager, TokenManager tokenManager) {
-        super(tokenManager, sessionDao, null);
+    public UsersLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager, TokenManager tokenManager, String rootPath) {
+        super(tokenManager, sessionDao, null, rootPath);
         this.userDao = userDao;
         this.fileManager = fileManager;
-        this.sessionDao = sessionDao;
-        this.tokenManager = tokenManager;
     }
 
     @GET

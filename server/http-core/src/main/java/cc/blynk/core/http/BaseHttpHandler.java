@@ -32,12 +32,14 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
     protected final SessionDao sessionDao;
     protected final GlobalStats globalStats;
     protected final Handler[] handlers;
+    protected final String rootPath;
 
-    public BaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats) {
+    public BaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats, String rootPath) {
         this.tokenManager = tokenManager;
         this.sessionDao = sessionDao;
         this.globalStats = globalStats;
-        this.handlers = AnnotationsUtil.register(this);
+        this.rootPath = rootPath;
+        this.handlers = AnnotationsUtil.register(rootPath, this);
     }
 
     @Override

@@ -35,7 +35,7 @@
 
 <div class="container login-container">
     <div class="login-content">
-        <form class="form-signin" action="/admin/login" method="post">
+        <form class="form-signin" method="post" onsubmit="get_action(this);">
             <h4 class="form-signin-heading">Log In</h4>
             <label>
                 Use your Admin account to log in
@@ -53,6 +53,12 @@
     </div>
 
 </div>
+
+<script>
+    function get_action(form) {
+        form.action = window.location.pathname + "/login";
+    }
+</script>
 
 <script src="/static/admin/scripts/login.js"></script>
 

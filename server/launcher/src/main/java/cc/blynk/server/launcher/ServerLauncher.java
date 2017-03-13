@@ -101,7 +101,7 @@ public class ServerLauncher {
             System.out.println("Admin password is " + pass);
 
             String hash = SHA256Util.makeHash(pass, adminName);
-            userDao.add(adminName, hash, AppName.BLYNK);
+            userDao.add(adminName, hash, AppName.BLYNK, true);
         }
     }
 

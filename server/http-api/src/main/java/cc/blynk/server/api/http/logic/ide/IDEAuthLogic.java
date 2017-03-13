@@ -30,13 +30,13 @@ public class IDEAuthLogic extends AdminBaseHttpHandler {
 
     //for tests only
     protected IDEAuthLogic(UserDao userDao, RedisClient redisClient) {
-        super(null, null, null);
+        super(null, null, null, "");
         this.userDao = userDao;
         this.redisClient = redisClient;
     }
 
     public IDEAuthLogic(Holder holder) {
-        super(holder);
+        super(holder, "");
         this.userDao = holder.userDao;
         this.redisClient = holder.redisClient;
     }
