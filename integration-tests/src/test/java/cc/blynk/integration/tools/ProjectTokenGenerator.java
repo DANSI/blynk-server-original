@@ -29,7 +29,7 @@ public class ProjectTokenGenerator {
         String username = "dmitriy@blynk.cc";
         String pass = "b";
         String appName = AppName.BLYNK;
-        User user = new User(username, SHA256Util.makeHash(pass, username), appName, "local", false);
+        User user = new User(username, SHA256Util.makeHash(pass, username), appName, "local", false, false);
         user.purchaseEnergy(98000);
 
         int count = 300;

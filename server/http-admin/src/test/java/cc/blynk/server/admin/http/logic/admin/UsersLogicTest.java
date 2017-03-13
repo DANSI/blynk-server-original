@@ -49,7 +49,7 @@ public class UsersLogicTest {
 
     @Before
     public void setUp() throws Exception {
-        user = new User(TEST_USER, "123", AppName.BLYNK, "local", false);
+        user = new User(TEST_USER, "123", AppName.BLYNK, "local", false, false);
         when(userDao.delete(any())).thenReturn(user);
         sessionDao.getOrCreateSessionByUser(new UserKey(user), mock(EventLoop.class));
         FileManager fileManager = new FileManager(null);

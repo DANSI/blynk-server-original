@@ -40,6 +40,15 @@ public class UserDao {
         return users.get(new UserKey(name, appName)) != null;
     }
 
+    public boolean isSuperAdminExists() {
+        for (User user : users.values()) {
+            if (user.isSuperAdmin) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public User getByName(String name, String appName) {
         return users.get(new UserKey(name, appName));
     }
@@ -242,14 +251,20 @@ public class UserDao {
 
     public User addFacebookUser(String userName, String appName) {
         log.debug("Adding new facebook user {}. App : {}", userName, appName);
-        User newUser = new User(userName, null, appName, region, true);
+        User newUser = new User(userName, null, appName, region, true, false);
         users.put(new UserKey(userName, appName), newUser);
         return newUser;
     }
 
     public void add(String userName, String pass, String appName) {
         log.debug("Adding new user {}. App : {}", userName, appName);
-        User newUser = new User(userName, pass, appName, region, false);
+        User newUser = new User(userName, pass, appName, region, false, false);
+        users.put(new UserKey(userName, appName), newUser);
+    }
+
+    public void add(String userName, String pass, String appName, boolean isSuperAdmin) {
+        log.debug("Adding new user {}. App : {}", userName, appName);
+        User newUser = new User(userName, pass, appName, region, false, isSuperAdmin);
         users.put(new UserKey(userName, appName), newUser);
     }
 

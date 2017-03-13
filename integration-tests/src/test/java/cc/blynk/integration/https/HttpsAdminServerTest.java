@@ -133,7 +133,7 @@ public class HttpsAdminServerTest extends BaseTest {
         String name = "admin@blynk.cc";
         String pass = "admin";
 
-        User admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false);
+        User admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, true);
         holder.userDao.add(admin);
 
         HttpGet loadLoginPageRequest = new HttpGet(httpsAdminServerUrl);
@@ -155,6 +155,9 @@ public class HttpsAdminServerTest extends BaseTest {
             Header header = response.getFirstHeader("Location");
             assertNotNull(header);
             assertEquals("/admin", header.getValue());
+            Header cookieHeader = response.getFirstHeader("set-cookie");
+            assertNotNull(cookieHeader);
+            assertTrue(cookieHeader.getValue().startsWith("session="));
         }
 
         HttpGet loadAdminPage = new HttpGet(httpsAdminServerUrl);
@@ -162,7 +165,32 @@ public class HttpsAdminServerTest extends BaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String adminPage = consumeText(response);
             //todo add full page match?
-            assertTrue(adminPage.contains("login"));
+            assertTrue(adminPage.contains("Blynk Administration"));
+            assertTrue(adminPage.contains("admin.js"));
+        }
+    }
+
+    @Test
+    public void adminLoginOnlyForSuperUser()  throws Exception {
+        String name = "admin@blynk.cc";
+        String pass = "admin";
+
+        User admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, false);
+        holder.userDao.add(admin);
+
+        HttpPost loginRequest = new HttpPost(httpsAdminServerUrl + "/login");
+        List <NameValuePair> nvps = new ArrayList<>();
+        nvps.add(new BasicNameValuePair("email", admin.name));
+        nvps.add(new BasicNameValuePair("password", admin.pass));
+        loginRequest.setEntity(new UrlEncodedFormEntity(nvps));
+
+        try (CloseableHttpResponse response = httpclient.execute(loginRequest)) {
+            assertEquals(301, response.getStatusLine().getStatusCode());
+            Header header = response.getFirstHeader("Location");
+            assertNotNull(header);
+            assertEquals("/admin", header.getValue());
+            Header cookieHeader = response.getFirstHeader("set-cookie");
+            assertNull(cookieHeader);
         }
     }
 

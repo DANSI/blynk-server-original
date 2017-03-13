@@ -36,6 +36,7 @@ public class User {
     public Profile profile;
 
     public boolean isFacebookUser;
+    public boolean isSuperAdmin;
 
     public volatile int energy;
 
@@ -50,13 +51,14 @@ public class User {
         this.appName = AppName.BLYNK;
     }
 
-    public User(String name, String pass, String appName, String region, boolean isFacebookUser) {
+    public User(String name, String pass, String appName, String region, boolean isFacebookUser, boolean isSuperAdmin) {
         this();
         this.name = name;
         this.pass = pass;
         this.appName = appName;
         this.region = region;
         this.isFacebookUser = isFacebookUser;
+        this.isSuperAdmin = isSuperAdmin;
     }
 
     @JsonProperty("id")

@@ -7,7 +7,6 @@ import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.AppName;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.hardware.HardwareSSLServer;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.hardware.MQTTHardwareServer;
@@ -89,19 +88,15 @@ public class ServerLauncher {
             String path = new File(System.getProperty("logs.folder")).getAbsolutePath().replace("/./", "/");
             System.out.println("All server output is stored in folder '" + path + "' file.");
 
-            generateRandomSuperUser(holder.userDao);
+            createSuperUser(holder.userDao);
         }
     }
 
-    private static void generateRandomSuperUser(UserDao userDao) {
+    private static void createSuperUser(UserDao userDao) {
         String adminName = "admin@blynk.cc";
+        String pass = "admin";
 
-        User user = userDao.getByName(adminName, AppName.BLYNK);
-
-        if (user == null) {
-            //String pass = RandomStringUtils.generateRandomPass(16);
-            String pass = "admin";
-
+        if (!userDao.isSuperAdminExists()) {
             System.out.println("Admin login name is " + adminName);
             System.out.println("Admin password is " + pass);
 

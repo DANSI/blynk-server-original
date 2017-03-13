@@ -39,7 +39,7 @@ public class IDEAuthLogicTest {
 
     private IDEAuthLogic ideAuthLogic;
 
-    private final User user = new User(TEST_USER1, PASS, "", "", false);
+    private final User user = new User(TEST_USER1, PASS, "", "", false, false);
 
     @Before
     public void setUp() throws Exception {
