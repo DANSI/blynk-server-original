@@ -5,7 +5,6 @@ import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.hardware.HardwareSSLServer;
 import cc.blynk.server.hardware.HardwareServer;
@@ -88,20 +87,20 @@ public class ServerLauncher {
             String path = new File(System.getProperty("logs.folder")).getAbsolutePath().replace("/./", "/");
             System.out.println("All server output is stored in folder '" + path + "' file.");
 
-            createSuperUser(holder.userDao);
+            createSuperUser(holder);
         }
     }
 
-    private static void createSuperUser(UserDao userDao) {
-        String adminName = "admin@blynk.cc";
-        String pass = "admin";
+    private static void createSuperUser(Holder holder) {
+        String adminName = holder.props.getProperty("admin.email", "admin@blynk.cc");
+        String pass = holder.props.getProperty("admin.pass", "admin");
 
-        if (!userDao.isSuperAdminExists()) {
-            System.out.println("Admin login name is " + adminName);
-            System.out.println("Admin password is " + pass);
+        if (!holder.userDao.isSuperAdminExists()) {
+            System.out.println("Your Admin login name is " + adminName);
+            System.out.println("Your Admin password is " + pass);
 
             String hash = SHA256Util.makeHash(pass, adminName);
-            userDao.add(adminName, hash, AppName.BLYNK, true);
+            holder.userDao.add(adminName, hash, AppName.BLYNK, true);
         }
     }
 
