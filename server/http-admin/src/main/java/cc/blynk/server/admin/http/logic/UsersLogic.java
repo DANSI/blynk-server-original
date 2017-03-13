@@ -97,7 +97,7 @@ public class UsersLogic extends CookiesBaseHttpHandler {
 
         tokenManager.assignToken(tokenValue.user, tokenValue.dashId, tokenValue.deviceId, newToken);
         return ok();
-    }#521
+    }
 
     @GET
     @Path("/token/force")
