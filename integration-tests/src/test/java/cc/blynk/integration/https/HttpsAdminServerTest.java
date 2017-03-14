@@ -181,6 +181,29 @@ public class HttpsAdminServerTest extends BaseTest {
     }
 
     @Test
+    public void testGetUserFromAdminPageNoAccess() throws Exception {
+        String testUser = "dmitriy@blynk.cc";
+        String appName = "Blynk";
+        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/" + testUser + "-" + appName);
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(404, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testGetUserFromAdminPageNoAccessWithFakeCookie() throws Exception {
+        String testUser = "dmitriy@blynk.cc";
+        String appName = "Blynk";
+        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/" + testUser + "-" + appName);
+        request.setHeader("set-cookie", "session=123");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(404, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
     public void testGetUserFromAdminPage() throws Exception {
         login(admin.name, admin.pass);
         String testUser = "dmitriy@blynk.cc";

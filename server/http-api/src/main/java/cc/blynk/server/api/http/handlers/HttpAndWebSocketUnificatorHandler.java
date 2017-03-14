@@ -12,7 +12,6 @@ import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
 import cc.blynk.server.api.http.logic.business.AdminAuthHandler;
 import cc.blynk.server.api.http.logic.business.AuthCookieHandler;
-import cc.blynk.server.api.http.logic.business.SessionHolder;
 import cc.blynk.server.api.http.logic.ide.IDEAuthLogic;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
@@ -66,8 +65,9 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final ConfigsLogic configsLogic;
     private final HardwareStatsLogic hardwareStatsLogic;
     private final AdminAuthHandler adminAuthHandler;
+    private final  CookieBasedUrlReWriterHandler cookieBasedUrlReWriterHandler;
 
-    public HttpAndWebSocketUnificatorHandler(Holder holder, SessionHolder sessionHolder, int port, String adminRootPath, boolean isUnpacked) {
+    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String adminRootPath, boolean isUnpacked) {
         this.region = holder.region;
         this.stats = holder.stats;
         this.genericLoginHandler = new WebSocketsGenericLoginHandler(holder, port);
@@ -86,12 +86,13 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.statsLogic = new StatsLogic(holder, adminRootPath);
         this.configsLogic = new ConfigsLogic(holder, adminRootPath);
         this.hardwareStatsLogic = new HardwareStatsLogic(holder, adminRootPath);
-        this.adminAuthHandler = new AdminAuthHandler(holder, sessionHolder, adminRootPath);
-        this.authCookieHandler = new AuthCookieHandler(sessionHolder);
+        this.adminAuthHandler = new AdminAuthHandler(holder, adminRootPath);
+        this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
+        this.cookieBasedUrlReWriterHandler = new CookieBasedUrlReWriterHandler(adminRootPath, "/static/admin/admin.html", "/static/admin/login.html");
     }
 
-    public HttpAndWebSocketUnificatorHandler(Holder holder, SessionHolder sessionHolder, int port, String adminRootPath) {
-        this(holder, sessionHolder, port, adminRootPath, false);
+    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String adminRootPath) {
+        this(holder, port, adminRootPath, false);
     }
 
     @Override
@@ -132,8 +133,8 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(new ChunkedWriteHandler());
 
         pipeline.addLast(adminAuthHandler);
-        pipeline.addLast(new CookieBasedUrlReWriterHandler(adminRootPath, "/static/admin/admin.html", "/static/admin/login.html"));
         pipeline.addLast(authCookieHandler);
+        pipeline.addLast(cookieBasedUrlReWriterHandler);
 
         pipeline.addLast(new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"));
         pipeline.addLast(new StaticFileHandler(isUnpacked, new StaticFile("/static", false)));

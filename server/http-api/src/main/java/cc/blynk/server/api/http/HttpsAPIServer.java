@@ -2,7 +2,6 @@ package cc.blynk.server.api.http;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
-import cc.blynk.server.api.http.logic.business.SessionHolder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
@@ -26,8 +25,6 @@ public class HttpsAPIServer extends BaseServer {
 
         String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
 
-        final SessionHolder sessionHolder = new SessionHolder();
-
         final SslContext sslCtx = SslUtil.initSslContext(
                 holder.props.getProperty("https.cert", holder.props.getProperty("server.ssl.cert")),
                 holder.props.getProperty("https.key", holder.props.getProperty("server.ssl.key")),
@@ -35,7 +32,7 @@ public class HttpsAPIServer extends BaseServer {
                 SslUtil.fetchSslProvider(holder.props));
 
         final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
-                new HttpAndWebSocketUnificatorHandler(holder, sessionHolder, port, adminRootPath, isUnpacked);
+                new HttpAndWebSocketUnificatorHandler(holder, port, adminRootPath, isUnpacked);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
