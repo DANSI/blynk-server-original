@@ -263,7 +263,10 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
 
         if (Files.exists(path)) {
             return path;
+        }
 
+        if (uri.endsWith(".csv.gz")) {
+            return Paths.get("/tmp/blynk", uri);
         }
 
         //last hope

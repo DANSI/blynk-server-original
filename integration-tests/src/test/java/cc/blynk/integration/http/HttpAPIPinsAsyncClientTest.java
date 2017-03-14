@@ -201,6 +201,11 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         String redirectLocation = response.getHeader("location");
         assertNotNull(redirectLocation);
         assertEquals("/dmitriy@blynk.cc_125564119_v10.csv.gz", redirectLocation);
+
+        f = httpclient.prepareGet(httpsServerUrl + "dmitriy@blynk.cc_125564119_v10.csv.gz").execute();
+        response = f.get();
+        assertEquals(200, response.getStatusCode());
+        assertEquals("application/x-gzip", response.getHeader("content-type"));
     }
 
 }
