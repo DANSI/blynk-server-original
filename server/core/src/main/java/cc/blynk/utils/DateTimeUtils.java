@@ -1,6 +1,8 @@
 package cc.blynk.utils;
 
 import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * The Blynk Project.
@@ -9,6 +11,7 @@ import java.time.ZoneId;
  */
 public class DateTimeUtils {
 
-    public final static ZoneId UTC = ZoneId.of("UTC");
+    public static final ZoneId UTC = ZoneId.of("UTC");
+    public static final Calendar UTC_CALENDAR = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 
 }

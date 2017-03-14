@@ -8,21 +8,16 @@ import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.stats.model.CommandStat;
 import cc.blynk.server.core.stats.model.HttpStat;
 import cc.blynk.server.core.stats.model.Stat;
+import cc.blynk.utils.DateTimeUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
+import java.sql.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TimeZone;
 
 /**
  * The Blynk Project.
@@ -50,7 +45,6 @@ public class ReportingDBDao {
     public static final String insertStatHttpCommandMinute = "INSERT INTO reporting_http_command_stat_minute (region, ts, is_hardware_connected, is_app_connected, get_pin_data, update_pin, email, push, get_project, qr, get_history_pin_data, total) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
     private static final Logger log = LogManager.getLogger(ReportingDBDao.class);
-    private static final Calendar UTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 
     private final HikariDataSource ds;
 
@@ -59,7 +53,7 @@ public class ReportingDBDao {
     }
 
     public static void prepareReportingSelect(PreparedStatement ps, long ts, int limit) throws SQLException {
-        ps.setTimestamp(1, new Timestamp(ts), UTC);
+        ps.setTimestamp(1, new Timestamp(ts), DateTimeUtils.UTC_CALENDAR);
         ps.setInt(2, limit);
     }
 
@@ -84,7 +78,7 @@ public class ReportingDBDao {
         ps.setInt(3, deviceId);
         ps.setByte(4, pin);
         ps.setString(5, PinType.getPinTypeString(pinType));
-        ps.setTimestamp(6, new Timestamp(ts), UTC);
+        ps.setTimestamp(6, new Timestamp(ts), DateTimeUtils.UTC_CALENDAR);
         ps.setDouble(7, value);
     }
 
@@ -119,7 +113,7 @@ public class ReportingDBDao {
                 ps.setInt(3, key.deviceId);
                 ps.setByte(4, key.pin);
                 ps.setString(5, PinType.getPinTypeString(key.pinType));
-                ps.setTimestamp(6, new Timestamp(key.ts), UTC);
+                ps.setTimestamp(6, new Timestamp(key.ts), DateTimeUtils.UTC_CALENDAR);
 
                 if (value instanceof String) {
                     ps.setString(7, (String) value);
@@ -153,7 +147,7 @@ public class ReportingDBDao {
              PreparedStatement httpStatPS = connection.prepareStatement(insertStatHttpCommandMinute)) {
 
             appStatPS.setString(1, region);
-            appStatPS.setTimestamp(2, timestamp, UTC);
+            appStatPS.setTimestamp(2, timestamp, DateTimeUtils.UTC_CALENDAR);
             appStatPS.setInt(3, stat.active);
             appStatPS.setInt(4, stat.activeWeek);
             appStatPS.setInt(5, stat.activeMonth);
@@ -168,7 +162,7 @@ public class ReportingDBDao {
 
             final HttpStat hs = stat.http;
             httpStatPS.setString(1, region);
-            httpStatPS.setTimestamp(2, timestamp, UTC);
+            httpStatPS.setTimestamp(2, timestamp, DateTimeUtils.UTC_CALENDAR);
             httpStatPS.setInt(3, hs.isHardwareConnected);
             httpStatPS.setInt(4, hs.isAppConnected);
             httpStatPS.setInt(5, hs.getPinData);
@@ -184,7 +178,7 @@ public class ReportingDBDao {
 
             final CommandStat cs = stat.commands;
             commandStatPS.setString(1, region);
-            commandStatPS.setTimestamp(2, timestamp, UTC);
+            commandStatPS.setTimestamp(2, timestamp, DateTimeUtils.UTC_CALENDAR);
             commandStatPS.setInt(3, cs.response);
             commandStatPS.setInt(4, cs.register);
             commandStatPS.setInt(5, cs.login);
@@ -277,8 +271,8 @@ public class ReportingDBDao {
              PreparedStatement psMinute = connection.prepareStatement(deleteMinute);
              PreparedStatement psHour = connection.prepareStatement(deleteHour)) {
 
-            psMinute.setTimestamp(1, new Timestamp(now.minus(360 + 1, ChronoUnit.MINUTES).toEpochMilli()), UTC);
-            psHour.setTimestamp(1, new Timestamp(now.minus(168 + 1, ChronoUnit.HOURS).toEpochMilli()), UTC);
+            psMinute.setTimestamp(1, new Timestamp(now.minus(360 + 1, ChronoUnit.MINUTES).toEpochMilli()), DateTimeUtils.UTC_CALENDAR);
+            psHour.setTimestamp(1, new Timestamp(now.minus(168 + 1, ChronoUnit.HOURS).toEpochMilli()), DateTimeUtils.UTC_CALENDAR);
 
             minuteRecordsRemoved = psMinute.executeUpdate();
             hourRecordsRemoved = psHour.executeUpdate();

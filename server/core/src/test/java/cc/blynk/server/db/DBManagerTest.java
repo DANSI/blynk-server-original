@@ -3,6 +3,8 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
@@ -12,6 +14,7 @@ import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.model.Purchase;
 import cc.blynk.server.db.model.Redeem;
+import cc.blynk.utils.DateTimeUtils;
 import org.junit.*;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
@@ -209,9 +212,8 @@ public class DBManagerTest {
 
     }
 
-
     @Test
-    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
+    //@Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertForDifferentApps() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         users.add(new User("test1@gmail.com", "pass", "testapp2", "local", false, false));
@@ -222,7 +224,7 @@ public class DBManagerTest {
     }
 
     @Test
-    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
+    //@Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertAndSelect() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         for (int i = 0; i < 10000; i++) {
@@ -236,17 +238,23 @@ public class DBManagerTest {
     }
 
     @Test
-    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
+    //@Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false, false);
         user.lastModifiedTs = 0;
+        user.lastLoggedAt = 1;
+        user.lastLoggedIP = "127.0.0.1";
         users.add(user);
-        user = new User("test@gmail.com", "pass2", AppName.BLYNK, "local", false, false);
+        user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false, false);
         user.lastModifiedTs = 0;
+        user.lastLoggedAt = 1;
+        user.lastLoggedIP = "127.0.0.1";
         users.add(user);
-        user = new User("test2@gmail.com", "pass2", AppName.BLYNK, "local", false, false);
+        user = new User("test2@gmail.com", "pass", AppName.BLYNK, "local", false, false);
         user.lastModifiedTs = 0;
+        user.lastLoggedAt = 1;
+        user.lastLoggedIP = "127.0.0.1";
         users.add(user);
 
         dbManager.userDBDao.save(users);
@@ -256,13 +264,106 @@ public class DBManagerTest {
              ResultSet rs = statement.executeQuery("select * from users where username = 'test@gmail.com'")) {
             while (rs.next()) {
                 assertEquals("test@gmail.com", rs.getString("username"));
+                assertEquals(AppName.BLYNK, rs.getString("appName"));
                 assertEquals("local", rs.getString("region"));
-                assertEquals("{\"name\":\"test@gmail.com\",\"appName\":\"Blynk\",\"region\":\"local\",\"pass\":\"pass2\",\"lastModifiedTs\":0,\"lastLoggedAt\":0,\"profile\":{},\"isFacebookUser\":false,\"energy\":2000}", rs.getString("json"));
+                assertEquals("pass", rs.getString("pass"));
+                assertEquals(0, rs.getTimestamp("last_modified", DateTimeUtils.UTC_CALENDAR).getTime());
+                assertEquals(1, rs.getTimestamp("last_logged", DateTimeUtils.UTC_CALENDAR).getTime());
+                assertEquals("127.0.0.1", rs.getString("last_logged_ip"));
+                assertFalse(rs.getBoolean("is_facebook_user"));
+                assertFalse(rs.getBoolean("is_super_admin"));
+                assertEquals(2000, rs.getInt("energy"));
+
+                assertEquals("{}", rs.getString("json"));
             }
             connection.commit();
         }
     }
 
+    @Test
+    //@Ignore("Ignored cause travis postgres is old and doesn't support upserts")
+    public void testUpsertUserFieldUpdated() throws Exception {
+        ArrayList<User> users = new ArrayList<>();
+        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false, false);
+        user.lastModifiedTs = 0;
+        user.lastLoggedAt = 1;
+        user.lastLoggedIP = "127.0.0.1";
+        users.add(user);
+
+        dbManager.userDBDao.save(users);
+
+        users = new ArrayList<>();
+        user = new User("test@gmail.com", "pass2", AppName.BLYNK, "local2", true, true);
+        user.lastModifiedTs = 1;
+        user.lastLoggedAt = 2;
+        user.lastLoggedIP = "127.0.0.2";
+        user.energy = 1000;
+        user.profile = new Profile();
+        DashBoard dash = new DashBoard();
+        dash.id = 1;
+        dash.name = "123";
+        user.profile.dashBoards = new DashBoard[]{dash};
+
+        users.add(user);
+
+        dbManager.userDBDao.save(users);
+
+        try (Connection connection = dbManager.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery("select * from users where username = 'test@gmail.com'")) {
+            while (rs.next()) {
+                assertEquals("test@gmail.com", rs.getString("username"));
+                assertEquals(AppName.BLYNK, rs.getString("appName"));
+                assertEquals("local2", rs.getString("region"));
+                assertEquals("pass2", rs.getString("pass"));
+                assertEquals(1, rs.getTimestamp("last_modified", DateTimeUtils.UTC_CALENDAR).getTime());
+                assertEquals(2, rs.getTimestamp("last_logged", DateTimeUtils.UTC_CALENDAR).getTime());
+                assertEquals("127.0.0.2", rs.getString("last_logged_ip"));
+                assertTrue(rs.getBoolean("is_facebook_user"));
+                assertTrue(rs.getBoolean("is_super_admin"));
+                assertEquals(1000, rs.getInt("energy"));
+
+                assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", rs.getString("json"));
+            }
+            connection.commit();
+        }
+    }
+
+    @Test
+    public void testInsertAndGetUser() throws Exception {
+        ArrayList<User> users = new ArrayList<>();
+        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", true, true);
+        user.lastModifiedTs = 0;
+        user.lastLoggedAt = 1;
+        user.lastLoggedIP = "127.0.0.1";
+        user.profile = new Profile();
+        DashBoard dash = new DashBoard();
+        dash.id = 1;
+        dash.name = "123";
+        user.profile.dashBoards = new DashBoard[]{dash};
+        users.add(user);
+
+        dbManager.userDBDao.save(users);
+
+        ConcurrentMap<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers();
+
+        assertNotNull(dbUsers);
+        assertEquals(1, dbUsers.size());
+        User dbUser = dbUsers.get(new UserKey(user.name, user.appName));
+
+        assertEquals("test@gmail.com", dbUser.name);
+        assertEquals(AppName.BLYNK, dbUser.appName);
+        assertEquals("local", dbUser.region);
+        assertEquals("pass", dbUser.pass);
+        assertEquals(0, dbUser.lastModifiedTs);
+        assertEquals(1, dbUser.lastLoggedAt);
+        assertEquals("127.0.0.1", dbUser.lastLoggedIP);assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", dbUser.profile.toString());
+        assertTrue(dbUser.isFacebookUser);
+        assertTrue(dbUser.isSuperAdmin);
+        assertEquals(2000, dbUser.energy);
+
+        assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", dbUser.profile.toString());
+    }
     @Test
     public void testRedeem() throws Exception {
         assertNull(dbManager.selectRedeemByToken("123"));

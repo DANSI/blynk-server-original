@@ -40,6 +40,7 @@ public final class JsonParser {
     public static final ObjectMapper mapper = init();
 
     private static final ObjectReader userReader = mapper.readerFor(User.class);
+    private static final ObjectReader profileReader = mapper.readerFor(Profile.class);
     private static final ObjectReader dashboardReader = mapper.readerFor(DashBoard.class);
     private static final ObjectReader widgetReader = mapper.readerFor(Widget.class);
     private static final ObjectReader deviceReader = mapper.readerFor(Device.class);
@@ -127,6 +128,10 @@ public final class JsonParser {
 
     public static User parseUserFromString(String userString) throws IOException {
         return userReader.readValue(userString);
+    }
+
+    public static Profile parseProfileFromString(String profileString) throws IOException {
+        return profileReader.readValue(profileString);
     }
 
     public static FacebookTokenResponse parseFacebookTokenResponse(String response) throws IOException {

@@ -6,6 +6,13 @@ CREATE TABLE users (
   username text NOT NULL,
   appName text NOT NULL,
   region text,
+  pass text,
+  last_modified timestamp,
+  last_logged timestamp,
+  last_logged_ip text,
+  is_facebook_user bool,
+  is_super_admin bool DEFAULT FALSE,
+  energy int,
   json text,
   PRIMARY KEY(username, appName)
 );
