@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.ParseUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.concurrent.ConcurrentMap;
@@ -15,7 +16,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class User {
 
-    private static final int INITIAL_ENERGY_AMOUNT = 2000;
+    private static final int INITIAL_ENERGY_AMOUNT = ParseUtil.parseInt(System.getProperty("initial.energy", "2000"));
 
     //todo remove after migration
     public ConcurrentMap<Integer, String> dashTokens;

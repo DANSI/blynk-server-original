@@ -54,6 +54,7 @@ public class ServerLauncher {
         System.setProperty("data.folder", serverProperties.getProperty("data.folder"));
         //required to avoid dependencies within model to server.properties
         System.setProperty("terminal.strings.pool.size", serverProperties.getProperty("terminal.strings.pool.size", "25"));
+        System.setProperty("initial.energy", serverProperties.getProperty("initial.energy", "2000"));
 
         boolean isUnpacked = JarUtil.unpackStaticFiles("static");
 
