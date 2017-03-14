@@ -213,7 +213,7 @@ public class DBManagerTest {
     }
 
     @Test
-    //@Ignore("Ignored cause travis postgres is old and doesn't support upserts")
+    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertForDifferentApps() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         users.add(new User("test1@gmail.com", "pass", "testapp2", "local", false, false));
@@ -224,7 +224,7 @@ public class DBManagerTest {
     }
 
     @Test
-    //@Ignore("Ignored cause travis postgres is old and doesn't support upserts")
+    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertAndSelect() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         for (int i = 0; i < 10000; i++) {
@@ -238,7 +238,7 @@ public class DBManagerTest {
     }
 
     @Test
-    //@Ignore("Ignored cause travis postgres is old and doesn't support upserts")
+    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false, false);
@@ -281,7 +281,7 @@ public class DBManagerTest {
     }
 
     @Test
-    //@Ignore("Ignored cause travis postgres is old and doesn't support upserts")
+    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertUserFieldUpdated() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false, false);
@@ -330,6 +330,7 @@ public class DBManagerTest {
     }
 
     @Test
+    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testInsertAndGetUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", true, true);
