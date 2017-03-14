@@ -71,7 +71,7 @@ For Windows download Java [here](http://www.oracle.com/technetwork/java/javase/d
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-0.23.1.jar -dataFolder /path
+        java -jar server-0.23.2.jar -dataFolder /path
         
 That's it! 
 
@@ -96,11 +96,11 @@ That's it!
         
 + Download Blynk server jar file (or manually copy it to Raspberry Pi via ssh and scp command): 
    
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.23.1/server-0.23.1.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.23.2/server-0.23.2.jar"
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-0.23.1.jar -dataFolder /home/pi/Blynk        
+        java -jar server-0.23.2.jar -dataFolder /home/pi/Blynk        
         
 That's it! 
 
@@ -113,7 +113,7 @@ That's it!
         
 + To enable server auto restart find /etc/init.d/rc.local file and add:
 
-        java -jar /home/pi/server-0.23.1.jar -dataFolder /home/pi/Blynk &
+        java -jar /home/pi/server-0.23.2.jar -dataFolder /home/pi/Blynk &
         
 + Or if the approach above doesn't work, execute 
        
@@ -121,7 +121,7 @@ That's it!
 
 add the following line
 
-        @reboot java -jar /home/pi/server-0.23.1.jar -dataFolder /home/pi/Blynk &
+        @reboot java -jar /home/pi/server-0.23.2.jar -dataFolder /home/pi/Blynk &
         
 save and exit.
 
@@ -133,7 +133,7 @@ save and exit.
 
 + Put in it one line: 
 
-        java -jar server-0.23.1.jar -dataFolder /home/pi/Blynk
+        java -jar server-0.23.2.jar -dataFolder /home/pi/Blynk
         
 + Put bat file to windows startup folder
 
@@ -150,7 +150,7 @@ Server should be always updated befor you update Blynk App. To update your serve
         
 + You should see something like that
  
-        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.23.1.jar   
+        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.23.2.jar   
         
 + Kill the old process
 
@@ -249,7 +249,7 @@ do the same with ```mail.properties``` via ```-mailConfig``` and ```sms.properti
  
 For example:
 
-    java -jar server-0.23.1.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
+    java -jar server-0.23.2.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
 
 Available server options:
 
@@ -364,8 +364,12 @@ Available server options:
         
 + Comma separated list of administrator IPs. Allow access to admin UI only for those IPs. You may set it for 0.0.0.0/0 to allow access for all. You may use CIDR notation. For instance, 192.168.0.53/24.
         
-        allowed.administrator.ips=127.0.0.1
+        allowed.administrator.ips=0.0.0.0/0
         
++ Default admin name and password. Will be created on initial server start
+        
+        admin.email=admin@blynk.cc
+        admin.pass=admin
 
 + Host for reset password redirect. By default current server IP is taken from "eth" network interface. Could be replaced with more friendly hostname. It is recommended to override this property with your server IP to avoid possible problems of host resolving.
         
@@ -388,10 +392,15 @@ You can change it with next options :
         
         admin.rootPath
         allowed.administrator.ips
+        admin.email=admin@blynk.cc
+        admin.pass=admin
         
 **WARNING**
-Default ```allowed.administrator.ips``` setting allows access only from ```localhost```. In other words, 
-administration is not available from any other computer except from the one you are running the server on.
+Please change default admin password and name right after login to admin page. **THIS IS SECURITY MEASURE**.
+        
+**WARNING**
+Default ```allowed.administrator.ips``` setting allows access for everyone. In other words, 
+administration page available from any other computer. Please restrict access to it via IP filter.
         
 ## HTTP/S RESTful
 Blynk HTTP/S RESTful API allows to easily read and write values to/from Pins in Blynk apps and Hardware. 
