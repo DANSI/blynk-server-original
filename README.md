@@ -401,7 +401,7 @@ administration page available from any other computer. Please restrict access to
 
         chrome://flags/#allow-insecure-localhost
 
-- Uou should see highlighted text saying: "Allow invalid certificates for resources loaded from localhost". Click enable.
+- You should see highlighted text saying: "Allow invalid certificates for resources loaded from localhost". Click enable.
         
 ## HTTP/S RESTful
 Blynk HTTP/S RESTful API allows to easily read and write values to/from Pins in Blynk apps and Hardware. 
