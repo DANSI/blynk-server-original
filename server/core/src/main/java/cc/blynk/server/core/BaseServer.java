@@ -3,16 +3,13 @@ package cc.blynk.server.core;
 import cc.blynk.server.transport.TransportTypeHolder;
 import cc.blynk.utils.BlynkByteBufUtil;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.ServerChannel;
+import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.Closeable;
+import java.net.InetSocketAddress;
 
 /**
  * Base server abstraction. Class responsible for Netty EventLoops starting amd port listening.
@@ -25,12 +22,14 @@ public abstract class BaseServer implements Closeable {
 
     protected static final Logger log = LogManager.getLogger(BaseServer.class);
 
+    private final String listenAddress;
     protected final int port;
     private final TransportTypeHolder transportTypeHolder;
 
     private ChannelFuture cf;
 
-    protected BaseServer(int port, TransportTypeHolder transportTypeHolder) {
+    protected BaseServer(String listenAddress, int port, TransportTypeHolder transportTypeHolder) {
+        this.listenAddress = listenAddress;
         this.port = port;
         this.transportTypeHolder = transportTypeHolder;
     }
@@ -57,7 +56,8 @@ public abstract class BaseServer implements Closeable {
                     .option(ChannelOption.ALLOCATOR, BlynkByteBufUtil.ALLOCATOR)
                     .childHandler(getChannelInitializer());
 
-            this.cf = b.bind(port).sync();
+            InetSocketAddress listenTo = listenAddress == null ? new InetSocketAddress(port) : new InetSocketAddress(listenAddress, port);
+            this.cf = b.bind(listenTo).sync();
         } catch (Exception e) {
             log.error("Error initializing {}, port {}", getServerName(), port, e);
             throw e;

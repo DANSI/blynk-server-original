@@ -21,7 +21,7 @@ public class HttpsAPIServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HttpsAPIServer(Holder holder, boolean isUnpacked) {
-        super(holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
+        super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 
         String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
 

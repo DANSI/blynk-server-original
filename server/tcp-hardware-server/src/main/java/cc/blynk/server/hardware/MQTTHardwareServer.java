@@ -22,7 +22,7 @@ public class MQTTHardwareServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public MQTTHardwareServer(Holder holder) {
-        super(holder.props.getIntProperty("hardware.mqtt.port"), holder.transportTypeHolder);
+        super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("hardware.mqtt.port"), holder.transportTypeHolder);
 
         final int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
         final MqttHardwareLoginHandler mqttHardwareLoginHandler = new MqttHardwareLoginHandler(holder);

@@ -20,7 +20,7 @@ public class HttpAPIServer extends BaseServer {
     public static final String WEBSOCKET_PATH = "/websocket";
 
     public HttpAPIServer(Holder holder) {
-        super(holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
+        super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
 
         String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
 
