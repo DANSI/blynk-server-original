@@ -462,13 +462,13 @@ Enable raw data in ```server.properties``` :
 
         wget https://raw.githubusercontent.com/blynkkk/blynk-server/master/server/core/src/main/resources/create_schema.sql
 
-#### 4. Get full path of downloaded file 
+#### 4. Move create_schema.sql to temp folder (to avoid permission problems)
 
-        readlink -f create_schema.sql
+        mv create_schema.sql /tmp
         
 Result:  
 
-        /root/create_schema.sql
+        /tmp/create_schema.sql
         
 Copy it to clipboard from your console.
 
@@ -479,13 +479,13 @@ Copy it to clipboard from your console.
 
 #### 6. Create Blynk DB, test user and tables
 
-        \i /root/create_schema.sql
+        \i /tmp/create_schema.sql
         
 ```/root/create_schema.sql``` - is path from step 4.
         
 You should see next output:
 
-        postgres=# \i /root/create_schema.sql
+        postgres=# \i /tmp/create_schema.sql
         CREATE DATABASE
         You are now connected to database "blynk" as user "postgres".
         CREATE TABLE
