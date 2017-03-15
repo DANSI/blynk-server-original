@@ -387,20 +387,21 @@ Blynk server provides administration panel where you can monitor your server. It
         https://your_ip:9443/admin
         
 ![Administration UI](https://github.com/blynkkk/blynk-server/blob/master/docs/admin_panel.png)
-        
-You can change it with next options :
-        
-        admin.rootPath
-        allowed.administrator.ips
-        admin.email=admin@blynk.cc
-        admin.pass=admin
-        
+              
 **WARNING**
 Please change default admin password and name right after login to admin page. **THIS IS SECURITY MEASURE**.
         
 **WARNING**
 Default ```allowed.administrator.ips``` setting allows access for everyone. In other words, 
-administration page available from any other computer. Please restrict access to it via IP filter.
+administration page available from any other computer. Please restrict access to it via property ```allowed.administrator.ips```.
+
+### Turn off chrome https warning on localhost
+
+- Paste in chrome 
+
+        chrome://flags/#allow-insecure-localhost
+
+- Uou should see highlighted text saying: "Allow invalid certificates for resources loaded from localhost". Click enable.
         
 ## HTTP/S RESTful
 Blynk HTTP/S RESTful API allows to easily read and write values to/from Pins in Blynk apps and Hardware. 
