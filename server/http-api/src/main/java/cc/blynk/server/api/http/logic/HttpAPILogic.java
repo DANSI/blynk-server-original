@@ -132,10 +132,11 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         final User user = tokenValue.user;
         final int dashId = tokenValue.dashId;
+        final int deviceId = tokenValue.deviceId;
 
         final Session session = sessionDao.userSession.get(new UserKey(user));
 
-        return ok(session.isHardwareConnected(dashId));
+        return ok(session.isHardwareConnected(dashId, deviceId));
     }
 
     @GET

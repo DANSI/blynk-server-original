@@ -2,11 +2,13 @@ package cc.blynk.integration.http;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.tcp.EventorTest;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
@@ -16,6 +18,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.DateTimeUtils;
 import cc.blynk.utils.JsonParser;
@@ -42,15 +45,10 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static cc.blynk.server.workers.timer.TimerWorker.TIMER_MSG_ID;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -399,6 +397,83 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         }
 
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+    }
+
+    @Test
+    public void testIsHardwareConnecteedWithMultiDevices() throws Exception {
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+
+        HttpGet request = new HttpGet(httpServerUrl + token + "/isHardwareConnected");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String value = consumeText(response);
+            assertNotNull(value);
+            assertEquals("true", value);
+        }
+
+        request = new HttpGet(httpServerUrl + token + "/isAppConnected");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String value = consumeText(response);
+            assertNotNull(value);
+            assertEquals("true", value);
+        }
+
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody(2);
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(2, device.toString())));
+
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getDevices 1");
+        String deviceResponse = clientPair.appClient.getBody();
+
+        Device[] devices = JsonParser.mapper.readValue(deviceResponse, Device[].class);
+        assertNotNull(devices);
+        assertEquals(2, devices.length);
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.send("login " + devices[1].token);
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+
+        clientPair.stop();
+
+        request = new HttpGet(httpServerUrl + token + "/isHardwareConnected");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String value = consumeText(response);
+            assertNotNull(value);
+            assertEquals("false", value);
+        }
+
+        request = new HttpGet(httpServerUrl + token + "/isAppConnected");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String value = consumeText(response);
+            assertNotNull(value);
+            assertEquals("false", value);
+        }
+
+        request = new HttpGet(httpServerUrl + devices[1].token + "/isHardwareConnected");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String value = consumeText(response);
+            assertNotNull(value);
+            assertEquals("true", value);
+        }
     }
 
     @Test
