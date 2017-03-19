@@ -26,6 +26,9 @@ public class StateHolderUtil {
 
     public static boolean isSameDashAndDeviceId(Channel channel, int dashId, int deviceId) {
         final BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
+        if (handler == null) {
+            return false;
+        }
         final HardwareStateHolder hardwareStateHolder = (HardwareStateHolder) handler.state;
         return hardwareStateHolder.dashId == dashId && hardwareStateHolder.deviceId == deviceId;
     }
