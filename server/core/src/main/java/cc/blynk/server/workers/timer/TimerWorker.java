@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -53,7 +54,7 @@ public class TimerWorker implements Runnable {
     private final UserDao userDao;
     private final SessionDao sessionDao;
     private final GCMWrapper gcmWrapper;
-    private final ConcurrentMap<TimerKey, BaseAction>[] timerExecutors;
+    private final ConcurrentMap<TimerKey, BaseAction[]>[] timerExecutors;
     private final static int size = 8640;
 
     @SuppressWarnings("unchecked")
@@ -100,7 +101,7 @@ public class TimerWorker implements Runnable {
             for (Rule rule : eventor.rules) {
                 if (rule.isValidTimerRule()) {
                     add(userKey, dashId, eventor.deviceId, eventor.id,
-                            rule.triggerTime.id, rule.triggerTime, rule.actions[0]);
+                            rule.triggerTime.id, rule.triggerTime, rule.actions);
                 }
             }
         }
@@ -115,9 +116,21 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    public void add(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, TimerTime time, BaseAction action) {
+    private void add(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, TimerTime time, BaseAction[] actions) {
+        ArrayList<BaseAction> validActions = new ArrayList<>(actions.length);
+        for (BaseAction action : actions) {
+            if (action.isValid()) {
+                validActions.add(action);
+            }
+        }
+        if (!validActions.isEmpty()) {
+            timerExecutors[hash(time.time)].put(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time), validActions.toArray(new BaseAction[validActions.size()]));
+        }
+    }
+
+    private void add(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, TimerTime time, BaseAction action) {
         if (action.isValid()) {
-            timerExecutors[hash(time.time)].put(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time), action);
+            timerExecutors[hash(time.time)].put(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time), new BaseAction[]{action});
         }
     }
 
@@ -140,7 +153,7 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    public void delete(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, TimerTime time) {
+    private void delete(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, TimerTime time) {
         timerExecutors[hash(time.time)].remove(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time));
     }
 
@@ -153,7 +166,7 @@ public class TimerWorker implements Runnable {
         final ZonedDateTime currentDateTime = ZonedDateTime.now(DateTimeUtils.UTC);
         final int curSeconds = currentDateTime.toLocalTime().toSecondOfDay();
 
-        ConcurrentMap<TimerKey, BaseAction> tickedExecutors = timerExecutors[hash(curSeconds)];
+        ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors = timerExecutors[hash(curSeconds)];
 
         int readyForTickTimers = tickedExecutors.size();
         if (readyForTickTimers == 0) {
@@ -175,34 +188,20 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    private int send(ConcurrentMap<TimerKey, BaseAction> tickedExecutors, ZonedDateTime currentDateTime, int curSeconds, long nowMillis) {
+    private int send(ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors, ZonedDateTime currentDateTime, int curSeconds, long nowMillis) {
         int activeTimers = 0;
         actuallySendTimers = 0;
 
-        for (Map.Entry<TimerKey, BaseAction> entry : tickedExecutors.entrySet()) {
+        for (Map.Entry<TimerKey, BaseAction[]> entry : tickedExecutors.entrySet()) {
             final TimerKey key = entry.getKey();
-            final BaseAction objValue = entry.getValue();
+            final BaseAction[] actions = entry.getValue();
             if (key.time.time == curSeconds && isTime(key.time, currentDateTime)) {
                 User user = userDao.users.get(key.userKey);
                 if (user != null) {
                     DashBoard dash = user.profile.getDashById(key.dashId);
                     if (dash != null && dash.isActive) {
                         activeTimers++;
-                        String value;
-                        if (objValue instanceof SetPinAction) {
-                            SetPinAction setPinAction = (SetPinAction) objValue;
-                            value = setPinAction.makeHardwareBody();
-                            dash.update(key.deviceId, setPinAction.pin.pin, setPinAction.pin.pinType, setPinAction.value, nowMillis);
-                        } else if (objValue instanceof NotifyAction) {
-                            NotifyAction notifyAction = (NotifyAction) objValue;
-                            EventorProcessor.push(gcmWrapper, dash, notifyAction.message);
-                            continue;
-                        } else {
-                            //todo other type of actions not supported yet. maybe in future.
-                            continue;
-                        }
-
-                        triggerTimer(sessionDao, key.userKey, value, key.dashId, key.deviceId);
+                        process(dash, key, actions, nowMillis);
                     }
                 }
             }
@@ -211,7 +210,20 @@ public class TimerWorker implements Runnable {
         return activeTimers;
     }
 
-    //todo cover this use case with test
+    private void process(DashBoard dash, TimerKey key, BaseAction[] actions, long nowMillis) {
+        for (BaseAction action : actions) {
+            if (action instanceof SetPinAction) {
+                SetPinAction setPinAction = (SetPinAction) action;
+                dash.update(key.deviceId, setPinAction.pin.pin, setPinAction.pin.pinType, setPinAction.value, nowMillis);
+                triggerTimer(sessionDao, key.userKey, setPinAction.makeHardwareBody(), key.dashId, key.deviceId);
+            } else if (action instanceof NotifyAction) {
+                NotifyAction notifyAction = (NotifyAction) action;
+                EventorProcessor.push(gcmWrapper, dash, notifyAction.message);
+            }
+            //todo other type of actions not supported yet. maybe in future.
+        }
+    }
+
     private boolean isTime(TimerTime timerTime, ZonedDateTime currentDateTime) {
         LocalDateTime userDateTime = currentDateTime.withZoneSameInstant(timerTime.tzName).toLocalDateTime();
         final int dayOfWeek = userDateTime.getDayOfWeek().ordinal() + 1;

@@ -15,14 +15,18 @@ import cc.blynk.server.core.model.widgets.others.eventor.Rule;
 import cc.blynk.server.core.model.widgets.others.eventor.TimerTime;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
+import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.utils.DateTimeUtils;
 import cc.blynk.utils.JsonParser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDateTime;
@@ -36,13 +40,9 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static cc.blynk.server.workers.timer.TimerWorker.TIMER_MSG_ID;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -102,6 +102,94 @@ public class TimerTest extends IntegrationBase {
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+    }
+
+    @Test
+    public void testTimerEventWithMultiActions() throws Exception {
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+
+        TimerTime timerTime = new TimerTime();
+
+        timerTime.days = new int[] {1,2,3,4,5,6,7};
+
+        //adding 2 seconds just to be sure we no gonna miss timer event
+        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2;
+        timerTime.tzName = DateTimeUtils.UTC;
+
+        Rule rule = new Rule();
+        rule.isActive = true;
+        rule.triggerTime = timerTime;
+        SetPinAction setPinAction = new SetPinAction();
+        setPinAction.pin = new Pin();
+        setPinAction.pin.pin = 1;
+        setPinAction.pin.pinType = PinType.VIRTUAL;
+        setPinAction.value = "1";
+        SetPinAction setPinAction2 = new SetPinAction();
+        setPinAction2.pin = new Pin();
+        setPinAction2.pin.pin = 2;
+        setPinAction2.pin.pinType = PinType.VIRTUAL;
+        setPinAction2.value = "2";
+        rule.actions = new BaseAction[] {
+                setPinAction,
+                setPinAction2
+        };
+
+        Eventor eventor = new Eventor(new Rule[] {
+                rule
+        });
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 2 2"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 2 2"))));
+    }
+
+    @Test
+    public void testTimerEventWithMultiActions1() throws Exception {
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+
+        TimerTime timerTime = new TimerTime();
+
+        timerTime.days = new int[] {1,2,3,4,5,6,7};
+
+        //adding 2 seconds just to be sure we no gonna miss timer event
+        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2;
+        timerTime.tzName = DateTimeUtils.UTC;
+
+        Rule rule = new Rule();
+        rule.isActive = true;
+        rule.triggerTime = timerTime;
+        SetPinAction setPinAction = new SetPinAction();
+        setPinAction.pin = new Pin();
+        setPinAction.pin.pin = 1;
+        setPinAction.pin.pinType = PinType.VIRTUAL;
+        setPinAction.value = "1";
+        NotifyAction notifyAction = new NotifyAction();
+        notifyAction.message = "Hello";
+        rule.actions = new BaseAction[] {
+                setPinAction,
+                notifyAction
+        };
+
+        Eventor eventor = new Eventor(new Rule[] {
+                rule
+        });
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(gcmWrapper, timeout(2000).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        AndroidGCMMessage message = objectArgumentCaptor.getValue();
+
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Hello", 1).toJson();
+        assertEquals(expectedJson, message.toJson());
 
         verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
