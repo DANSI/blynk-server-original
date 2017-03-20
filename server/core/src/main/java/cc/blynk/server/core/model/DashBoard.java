@@ -3,6 +3,8 @@ package cc.blynk.server.core.model;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.Theme;
+import cc.blynk.server.core.model.publishing.Publishing;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Target;
@@ -19,9 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cc.blynk.utils.ArrayUtil.EMPTY_DEVICES;
-import static cc.blynk.utils.ArrayUtil.EMPTY_TAGS;
-import static cc.blynk.utils.ArrayUtil.EMPTY_WIDGETS;
+import static cc.blynk.utils.ArrayUtil.*;
 import static cc.blynk.utils.StringUtils.split3;
 
 /**
@@ -48,7 +48,7 @@ public class DashBoard {
     //todo should be removed after migration
     public String boardType;
 
-    public volatile String theme = "Blynk";
+    public volatile Theme theme = Theme.Blynk;
 
     public volatile boolean keepScreenOn;
 
@@ -65,9 +65,7 @@ public class DashBoard {
     @JsonDeserialize(keyUsing = PinStorageKeyDeserializer.class)
     public Map<PinStorageKey, String> pinsStorage = new HashMap<>();
 
-    public String getName() {
-        return name;
-    }
+    public volatile Publishing publishing;
 
     public void update(int deviceId, String body) {
         update(deviceId, split3(body));
@@ -255,6 +253,7 @@ public class DashBoard {
         this.boardType = updatedDashboard.boardType;
         this.keepScreenOn = updatedDashboard.keepScreenOn;
         this.theme = updatedDashboard.theme;
+        this.publishing = updatedDashboard.publishing;
 
         Notification newNotification = updatedDashboard.getWidgetByType(Notification.class);
         if (newNotification != null) {
