@@ -17,9 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 import static cc.blynk.utils.StringUtils.split2;
 
@@ -63,13 +61,13 @@ public class GetTokenLogic {
             FlashedToken dbFlashedToken = dbManager.selectFlashedToken(token, user.appName);
 
             if (dbFlashedToken == null) {
-                log.error("{} token not exists.", token);
+                log.error("{} token not exists for app {}.", token, user.appName);
                 ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
                 return;
             }
 
             if (dbFlashedToken.isActivated) {
-                log.error("{} token is already activated.", token);
+                log.error("{} token is already activated for app {}.", token, user.appName);
                 ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
                 return;
             }
