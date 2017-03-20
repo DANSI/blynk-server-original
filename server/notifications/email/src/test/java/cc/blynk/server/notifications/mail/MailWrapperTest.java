@@ -1,11 +1,17 @@
 package cc.blynk.server.notifications.mail;
 
+import net.glxn.qrgen.core.image.ImageType;
+import net.glxn.qrgen.javase.QRCode;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 /**
@@ -21,6 +27,34 @@ public class MailWrapperTest {
     .setKeepAlive(false)
     .build()
     );
+
+    @Test
+    public void sendMailWithAttachments() throws Exception {
+        Properties properties = new Properties();
+        try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
+            if (classPath != null) {
+                properties.load(classPath);
+            }
+        }
+
+        Path path = File.createTempFile("qr_for_Test", ".jpg").toPath();
+        generateQR("123", path);
+
+        Path path2 = File.createTempFile("qr_for_Test", ".jpg").toPath();
+        generateQR("124", path2);
+
+
+        String to = "doom369@gmail.com";
+        MailWrapper mailWrapper = new MailWrapper(properties);
+        mailWrapper.sendHtmlWithAttachment(to, "Hello", "Body!", new Path[] {path, path2});
+    }
+
+    private static void generateQR(String text, Path outputFile) throws Exception {
+        try (OutputStream out = Files.newOutputStream(outputFile)) {
+            QRCode.from(text).to(ImageType.JPG).writeTo(out);
+        }
+    }
+
 
     @Test
     @Ignore
@@ -39,7 +73,7 @@ public class MailWrapperTest {
 
     @Test
     @Ignore
-    public void sendMailWithAttachments() throws Exception {
+    public void sendMail2() throws Exception {
         Properties properties = new Properties();
         try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
             if (classPath != null) {

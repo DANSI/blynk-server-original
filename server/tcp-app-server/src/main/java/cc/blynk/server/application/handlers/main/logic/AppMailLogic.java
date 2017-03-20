@@ -5,6 +5,9 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.enums.ProvisionType;
+import cc.blynk.server.core.model.enums.Theme;
+import cc.blynk.server.core.model.publishing.Publishing;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -12,12 +15,20 @@ import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import net.glxn.qrgen.core.image.ImageType;
+import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_ERROR;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**
  * Sends email from application.
@@ -47,6 +58,7 @@ public class AppMailLogic {
         int dashId = ParseUtil.parseInt(split[0]);
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
+        //dashId Token
         if (split.length == 2) {
             int deviceId = ParseUtil.parseInt(split[1]);
             Device device = dash.getDeviceById(deviceId);
@@ -56,14 +68,40 @@ public class AppMailLogic {
             }
 
             makeSingleTokenEmail(ctx, dash, device, user.name, message.id);
+
+        //dashId theme provisionType
+        } if (split.length == 3) {
+            if (dash.devices.length == 0) {
+                throw new IllegalCommandBodyException("No devices in project.");
+            }
+            Theme theme = Theme.valueOf(split[1]);
+            ProvisionType provisionType = ProvisionType.valueOf(split[2]);
+            dash.publishing = new Publishing(theme, provisionType);
+            makePublishPreviewEmail(ctx, dash, user.name, message.id);
+
+        //dashId
         } else {
             if (dash.devices.length == 1) {
                 makeSingleTokenEmail(ctx, dash, dash.devices[0], user.name, message.id);
             } else {
                 sendMultiTokenEmail(ctx, dash, user.name, message.id);
             }
-
         }
+    }
+
+    private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash, String to, int msgId) {
+        String body;
+        if (dash.publishing.provisionType == ProvisionType.DYNAMIC) {
+            body = "Hello.\nYou selected Dynamic provisioning. In order to start it - please scan QR from attachment.\n";
+        } else {
+            if (dash.devices.length == 1) {
+               body = "Hello.\nYou selected Static provisioning. In order to start it - please scan QR from attachment.\n";
+            } else {
+                body = "Hello.\nYou selected Static provisioning. In order to start it - please scan QR from attachment for every device in your project.\n";
+            }
+        }
+
+        mail(ctx.channel(), to, "Instruction for Blynk App Preview.", body + BODY, dash, msgId);
     }
 
     private void makeSingleTokenEmail(ChannelHandlerContext ctx, DashBoard dash, Device device, String to, int msgId) {
@@ -94,6 +132,32 @@ public class AppMailLogic {
 
         log.trace("Sending multi tokens mail for user {}, with {} tokens.", to, dash.devices.length);
         mail(ctx.channel(), to, to, subj, body.toString(), msgId);
+    }
+
+    private void mail(Channel channel, String to, String subj, String body, DashBoard dash, int msgId) {
+        blockingIOProcessor.execute(() -> {
+            try {
+                Path[] paths = new Path[dash.devices.length];
+                for (int i = 0; i < dash.devices.length; i++) {
+                    final int deviceId = dash.devices[i].id;
+                    final String qrCode = to + BODY_SEPARATOR_STRING + dash.id + BODY_SEPARATOR_STRING + dash.devices[i].token;
+                    paths[i] = generateQR(qrCode, File.createTempFile("qr_" + deviceId + "_", ".jpg"));
+                }
+                mailWrapper.sendHtmlWithAttachment(to, subj, body, paths);
+                channel.writeAndFlush(ok(msgId), channel.voidPromise());
+            } catch (Exception e) {
+                log.error("Error sending email from application. For user {}. Reason : {}",  to, e.getMessage());
+                channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_ERROR), channel.voidPromise());
+            }
+        });
+    }
+
+    private static Path generateQR(String text, File outputFile) throws Exception {
+        Path outputPath = outputFile.toPath();
+        try (OutputStream out = Files.newOutputStream(outputPath)) {
+            QRCode.from(text).to(ImageType.JPG).writeTo(out);
+        }
+        return outputPath;
     }
 
     private void mail(Channel channel, String username, String to, String subj, String body, int msgId) {

@@ -14,4 +14,11 @@ public class Publishing {
 
     public ProvisionType provisionType;
 
+    public Publishing() {
+    }
+
+    public Publishing(Theme theme, ProvisionType provisionType) {
+        this.theme = theme;
+        this.provisionType = provisionType;
+    }
 }
