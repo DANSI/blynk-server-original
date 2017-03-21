@@ -49,7 +49,7 @@ public class AppMailLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] split = StringUtils.split2(message.body);
+        String[] split = StringUtils.split3(message.body);
 
         int dashId = ParseUtil.parseInt(split[0]);
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
