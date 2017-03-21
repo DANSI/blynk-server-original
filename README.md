@@ -438,7 +438,7 @@ You can also send SMS over email if your cell provider supports that. See [discu
 ## Enabling raw data storage
 By default raw data storage is disabled (as it consumes disk space a lot). 
 When you enable it, every ```Blynk.virtualWrite``` command will be saved to DB.
-You will need to install PostgreSQL Database to enable this functionality:
+You will need to install PostgreSQL Database (**minimum required version is 9.5**) to enable this functionality:
 
 #### 1. Enabling raw data on server
 
