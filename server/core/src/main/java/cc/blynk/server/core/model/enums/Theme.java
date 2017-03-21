@@ -8,6 +8,8 @@ package cc.blynk.server.core.model.enums;
 public enum Theme {
 
     Blynk,
-    BLYNK_LIGHT;
+    BlynkLight,
+    SparkFun,
+    AppExport;
 
 }
