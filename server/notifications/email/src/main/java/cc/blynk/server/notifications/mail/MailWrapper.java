@@ -1,6 +1,5 @@
 package cc.blynk.server.notifications.mail;
 
-import java.nio.file.Path;
 import java.util.Properties;
 
 /**
@@ -31,7 +30,7 @@ public class MailWrapper {
         client.sendHtml(to, subj, body);
     }
 
-    public void sendHtmlWithAttachment(String to, String subj, String body, Path[] attachments) throws Exception {
+    public void sendHtmlWithAttachment(String to, String subj, String body, QrHolder[] attachments) throws Exception {
         client.sendHtmlWithAttachment(to, subj, body, attachments);
     }
 

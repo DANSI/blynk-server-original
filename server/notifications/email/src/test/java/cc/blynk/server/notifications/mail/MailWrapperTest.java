@@ -7,7 +7,6 @@ import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -29,6 +28,7 @@ public class MailWrapperTest {
     );
 
     @Test
+    @Ignore
     public void sendMailWithAttachments() throws Exception {
         Properties properties = new Properties();
         try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
@@ -37,16 +37,12 @@ public class MailWrapperTest {
             }
         }
 
-        Path path = File.createTempFile("qr_for_Test", ".jpg").toPath();
-        generateQR("123", path);
-
-        Path path2 = File.createTempFile("qr_for_Test", ".jpg").toPath();
-        generateQR("124", path2);
-
+        QrHolder qrHolder = new QrHolder("123.jpg", QRCode.from("123").to(ImageType.JPG).stream().toByteArray());
+        QrHolder qrHolder2 = new QrHolder("124.jpg", QRCode.from("124").to(ImageType.JPG).stream().toByteArray());
 
         String to = "doom369@gmail.com";
         MailWrapper mailWrapper = new MailWrapper(properties);
-        mailWrapper.sendHtmlWithAttachment(to, "Hello", "Body!", new Path[] {path, path2});
+        mailWrapper.sendHtmlWithAttachment(to, "Hello", "Body!", new QrHolder[] {qrHolder, qrHolder2});
     }
 
     private static void generateQR(String text, Path outputFile) throws Exception {

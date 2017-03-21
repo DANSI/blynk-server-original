@@ -1,7 +1,5 @@
 package cc.blynk.server.notifications.mail;
 
-import java.nio.file.Path;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -13,6 +11,6 @@ public interface MailClient {
 
     void sendHtml(String to, String subj, String body) throws Exception;
 
-    void sendHtmlWithAttachment(String to, String subj, String body, Path[] attachments) throws Exception;
+    void sendHtmlWithAttachment(String to, String subj, String body, QrHolder[] attachments) throws Exception;
 
 }

@@ -5,10 +5,9 @@ import org.apache.logging.log4j.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
-import java.nio.file.Path;
+import javax.mail.util.ByteArrayDataSource;
 import java.util.Properties;
 
 /**
@@ -53,7 +52,7 @@ public class GMailClient implements MailClient {
     }
 
     @Override
-    public void sendHtmlWithAttachment(String to, String subj, String body, Path[] attachments) throws Exception {
+    public void sendHtmlWithAttachment(String to, String subj, String body, QrHolder[] attachments) throws Exception {
         MimeMessage message = new MimeMessage(session);
         message.setFrom(from);
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
@@ -67,11 +66,11 @@ public class GMailClient implements MailClient {
 
         multipart.addBodyPart(bodyMessagePart);
 
-        for (Path path : attachments) {
+        for (QrHolder qrHolder : attachments) {
             MimeBodyPart attachmentsPart = new MimeBodyPart();
-            DataSource source = new FileDataSource(path.toString());
+            DataSource source = new ByteArrayDataSource(qrHolder.data, "image/jpeg");
             attachmentsPart.setDataHandler(new DataHandler(source));
-            attachmentsPart.setFileName(path.getFileName().toString());
+            attachmentsPart.setFileName(qrHolder.name);
             multipart.addBodyPart(attachmentsPart);
         }
 

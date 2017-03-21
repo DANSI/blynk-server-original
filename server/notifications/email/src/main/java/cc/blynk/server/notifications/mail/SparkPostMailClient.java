@@ -4,14 +4,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.*;
-import java.nio.file.Path;
+import javax.mail.util.ByteArrayDataSource;
 import java.util.Properties;
 
 /**
@@ -74,7 +72,7 @@ public class SparkPostMailClient implements MailClient {
     }
 
     @Override
-    public void sendHtmlWithAttachment(String to, String subj, String body, Path[] attachments) throws Exception {
+    public void sendHtmlWithAttachment(String to, String subj, String body, QrHolder[] attachments) throws Exception {
         MimeMessage message = new MimeMessage(session);
         message.setFrom(from);
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
@@ -85,14 +83,12 @@ public class SparkPostMailClient implements MailClient {
         MimeBodyPart bodyMessagePart = new MimeBodyPart();
         bodyMessagePart.setText(body);
         bodyMessagePart.setContent(body, "text/html");
-
         multipart.addBodyPart(bodyMessagePart);
 
-        for (Path path : attachments) {
+        for (QrHolder qrHolder : attachments) {
             MimeBodyPart attachmentsPart = new MimeBodyPart();
-            DataSource source = new FileDataSource(path.toString());
-            attachmentsPart.setDataHandler(new DataHandler(source));
-            attachmentsPart.setFileName(path.getFileName().toString());
+            attachmentsPart.setDataHandler(new DataHandler(new ByteArrayDataSource(qrHolder.data, "image/jpeg")));
+            attachmentsPart.setFileName(qrHolder.name);
             multipart.addBodyPart(attachmentsPart);
         }
 
