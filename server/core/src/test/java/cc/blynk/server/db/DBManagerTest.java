@@ -75,6 +75,12 @@ public class DBManagerTest {
     }
 
     @Test
+    public void testDbVersion() throws Exception {
+        int dbVersion = dbManager.userDBDao.getDBVersion();
+        assertTrue(dbVersion >= 90500);
+    }
+
+    @Test
     public void testInsert1000RecordsAndSelect() throws Exception {
         int a = 0;
 

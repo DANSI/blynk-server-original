@@ -31,6 +31,24 @@ public class UserDBDao {
         this.ds = ds;
     }
 
+    public int getDBVersion() throws Exception {
+        ResultSet rs = null;
+        int dbVersion = 0;
+        try (Connection connection = ds.getConnection();
+             Statement statement = connection.createStatement()) {
+
+            rs = statement.executeQuery("SELECT current_setting('server_version_num')");
+            rs.next();
+            dbVersion = rs.getInt(1);
+            connection.commit();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+        }
+        return dbVersion;
+    }
+
     public ConcurrentMap<UserKey, User> getAllUsers() throws Exception {
         ResultSet rs = null;
         ConcurrentMap<UserKey, User> users = new ConcurrentHashMap<>();
