@@ -66,7 +66,7 @@ public class AppMailLogic {
             makeSingleTokenEmail(ctx, dash, device, user.name, message.id);
 
         //dashId theme provisionType
-        } if (split.length == 3) {
+        } else if (split.length == 3) {
             if (dash.devices.length == 0) {
                 throw new IllegalCommandBodyException("No devices in project.");
             }
