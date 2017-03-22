@@ -10,6 +10,7 @@ public enum Theme {
     Blynk,
     BlynkLight,
     SparkFun,
+    AppTheme,
     AppExport;
 
 }
