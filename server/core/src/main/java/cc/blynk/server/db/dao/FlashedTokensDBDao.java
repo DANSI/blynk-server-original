@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
 
 /**
  * The Blynk Project.
@@ -75,7 +74,7 @@ public class FlashedTokensDBDao {
         }
     }
 
-    public void insertFlashedTokens(List<FlashedToken> flashedTokenList) {
+    public void insertFlashedTokens(FlashedToken[] flashedTokenList) throws Exception {
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(insertToken)) {
 
@@ -86,8 +85,6 @@ public class FlashedTokensDBDao {
 
             ps.executeBatch();
             connection.commit();
-        } catch (Exception e) {
-            log.error("Error inserting flashed tokens in DB.", e);
         }
     }
 

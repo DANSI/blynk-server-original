@@ -2,18 +2,7 @@ package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.application.handlers.main.logic.ActivateDashboardLogic;
-import cc.blynk.server.application.handlers.main.logic.AddEnergyLogic;
-import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
-import cc.blynk.server.application.handlers.main.logic.AppMailLogic;
-import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
-import cc.blynk.server.application.handlers.main.logic.DeActivateDashboardLogic;
-import cc.blynk.server.application.handlers.main.logic.GetEnergyLogic;
-import cc.blynk.server.application.handlers.main.logic.GetTokenLogic;
-import cc.blynk.server.application.handlers.main.logic.HardwareAppLogic;
-import cc.blynk.server.application.handlers.main.logic.LoadProfileGzippedLogic;
-import cc.blynk.server.application.handlers.main.logic.RedeemLogic;
-import cc.blynk.server.application.handlers.main.logic.RefreshTokenLogic;
+import cc.blynk.server.application.handlers.main.logic.*;
 import cc.blynk.server.application.handlers.main.logic.dashboard.CreateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.DeleteDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.UpdateDashLogic;
@@ -74,6 +63,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final CreateDeviceLogic createDeviceLogic;
     private final UpdateDeviceLogic updateDeviceLogic;
     private final DeleteDeviceLogic deleteDeviceLogic;
+    private final LoadProfileGzippedLogic loadProfileGzippedLogic;
     private final GlobalStats stats;
 
     public AppHandler(Holder holder, AppStateHolder state) {
@@ -109,6 +99,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.redeemLogic = new RedeemLogic(holder.dbManager, holder.blockingIOProcessor);
         this.addEnergyLogic = new AddEnergyLogic(holder.dbManager, holder.blockingIOProcessor);
 
+        this.loadProfileGzippedLogic = new LoadProfileGzippedLogic(holder);
+
         this.state = state;
         this.stats = holder.stats;
     }
@@ -127,7 +119,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 deActivateDashboardLogic.messageReceived(ctx, state, msg);
                 break;
             case LOAD_PROFILE_GZIPPED :
-                LoadProfileGzippedLogic.messageReceived(ctx, state.user, msg);
+                loadProfileGzippedLogic.messageReceived(ctx, state, msg);
                 break;
             case SHARING :
                 shareLogic.messageReceived(ctx, state, msg);

@@ -10,10 +10,13 @@ import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.publishing.Publishing;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.mail.QrHolder;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
+import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import net.glxn.qrgen.core.image.ImageType;
@@ -41,11 +44,13 @@ public class AppMailLogic {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final MailWrapper mailWrapper;
+    private final DBManager dbManager;
 
     public AppMailLogic(Holder holder) {
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.BODY = blockingIOProcessor.tokenBody;
         this.mailWrapper =  holder.mailWrapper;
+        this.dbManager = holder.dbManager;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -73,7 +78,7 @@ public class AppMailLogic {
             Theme theme = Theme.valueOf(split[1]);
             ProvisionType provisionType = ProvisionType.valueOf(split[2]);
             dash.publishing = new Publishing(theme, provisionType);
-            makePublishPreviewEmail(ctx, dash, user.name, message.id);
+            makePublishPreviewEmail(ctx, dash, user.name, user.appName, message.id);
 
         //dashId
         } else {
@@ -85,7 +90,7 @@ public class AppMailLogic {
         }
     }
 
-    private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash, String to, int msgId) {
+    private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash, String to, String appName, int msgId) {
         String body;
         if (dash.publishing.provisionType == ProvisionType.DYNAMIC) {
             body = "Hello.\nYou selected Dynamic provisioning. In order to start it - please scan QR from attachment.\n";
@@ -97,7 +102,20 @@ public class AppMailLogic {
             }
         }
 
-        mail(ctx.channel(), to, "Instruction for Blynk App Preview.", body + BODY, dash, msgId);
+        mail(ctx.channel(), to, appName, "Instruction for Blynk App Preview.", body + BODY, dash, msgId);
+    }
+
+    private void mail(Channel channel, String to, String appName, String subj, String body, DashBoard dash, int msgId) {
+        blockingIOProcessor.execute(() -> {
+            try {
+                QrHolder[] qrHolders = makeQRs(to, appName, dash, dash.id);
+                mailWrapper.sendHtmlWithAttachment(to, subj, body, qrHolders);
+                channel.writeAndFlush(ok(msgId), channel.voidPromise());
+            } catch (Exception e) {
+                log.error("Error sending email from application. For user {}. Reason : {}",  to, e.getMessage());
+                channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_ERROR), channel.voidPromise());
+            }
+        });
     }
 
     private void makeSingleTokenEmail(ChannelHandlerContext ctx, DashBoard dash, Device device, String to, int msgId) {
@@ -130,27 +148,22 @@ public class AppMailLogic {
         mail(ctx.channel(), to, to, subj, body.toString(), msgId);
     }
 
-    private void mail(Channel channel, String to, String subj, String body, DashBoard dash, int msgId) {
-        blockingIOProcessor.execute(() -> {
-            try {
-                QrHolder[] qrHolders = makeQRs(to, dash.devices, dash.id);
-                mailWrapper.sendHtmlWithAttachment(to, subj, body, qrHolders);
-                channel.writeAndFlush(ok(msgId), channel.voidPromise());
-            } catch (Exception e) {
-                log.error("Error sending email from application. For user {}. Reason : {}",  to, e.getMessage());
-                channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_ERROR), channel.voidPromise());
-            }
-        });
-    }
+    private QrHolder[] makeQRs(String to, String appName, DashBoard dash, int dashId) throws Exception {
+        QrHolder[] qrHolders = new QrHolder[dash.devices.length];
+        FlashedToken[] flashedTokens = new FlashedToken[dash.devices.length];
 
-    private static QrHolder[] makeQRs(String to, Device[] devices, int dashId) {
-        QrHolder[] qrHolders = new QrHolder[devices.length];
         int i = 0;
-        for (Device device : devices) {
-            final String name = device.token + "_" + dashId + "_" + device.id + ".jpg";
-            final String qrCode = to + BODY_SEPARATOR_STRING + dashId + BODY_SEPARATOR_STRING + device.token;
-            qrHolders[i++] = new QrHolder(name, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray());
+        for (Device device : dash.devices) {
+            final String newToken = TokenGeneratorUtil.generateNewToken();
+            final String name = newToken + "_" + dashId + "_" + device.id + ".jpg";
+            final String qrCode = newToken + BODY_SEPARATOR_STRING + dashId + BODY_SEPARATOR_STRING + to;
+            qrHolders[i] = new QrHolder(name, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray());
+            flashedTokens[i] = new FlashedToken(newToken, appName, device.id);
+            i++;
         }
+
+        dbManager.insertFlashedTokens(flashedTokens);
+
         return qrHolders;
     }
 

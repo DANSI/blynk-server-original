@@ -20,17 +20,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -74,10 +69,10 @@ public class AssignTokenTest extends IntegrationBase {
 
     @Test
     public void testTokenActivate() throws Exception {
-        List<FlashedToken> list = new ArrayList<>();
+        FlashedToken[] list = new FlashedToken[1];
         String token = UUID.randomUUID().toString().replace("-", "");
         FlashedToken flashedToken = new FlashedToken(token, AppName.BLYNK, 0);
-        list.add(flashedToken);
+        list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
 
         clientPair.appClient.send("getToken 1\0" + flashedToken.token);
@@ -89,10 +84,10 @@ public class AssignTokenTest extends IntegrationBase {
 
     @Test
     public void testCorrectToken() throws Exception {
-        List<FlashedToken> list = new ArrayList<>();
+        FlashedToken[] list = new FlashedToken[1];
         String token = UUID.randomUUID().toString().replace("-", "");
         FlashedToken flashedToken = new FlashedToken(token, AppName.BLYNK, 0);
-        list.add(flashedToken);
+        list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
 
         clientPair.appClient.send("getToken 1\0" + flashedToken.token);

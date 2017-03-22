@@ -44,11 +44,8 @@ public class FlashedToken {
         FlashedToken that = (FlashedToken) o;
 
         if (deviceId != that.deviceId) return false;
-        if (isActivated != that.isActivated) return false;
         if (token != null ? !token.equals(that.token) : that.token != null) return false;
-        if (appName != null ? !appName.equals(that.appName) : that.appName != null) return false;
-        if (username != null ? !username.equals(that.username) : that.username != null) return false;
-        return !(ts != null ? !ts.equals(that.ts) : that.ts != null);
+        return !(appName != null ? !appName.equals(that.appName) : that.appName != null);
 
     }
 
@@ -56,10 +53,7 @@ public class FlashedToken {
     public int hashCode() {
         int result = token != null ? token.hashCode() : 0;
         result = 31 * result + (appName != null ? appName.hashCode() : 0);
-        result = 31 * result + (username != null ? username.hashCode() : 0);
         result = 31 * result + deviceId;
-        result = 31 * result + (isActivated ? 1 : 0);
-        result = 31 * result + (ts != null ? ts.hashCode() : 0);
         return result;
     }
 }

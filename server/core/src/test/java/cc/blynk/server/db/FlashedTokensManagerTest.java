@@ -10,8 +10,6 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -56,10 +54,10 @@ public class FlashedTokensManagerTest {
 
     @Test
     public void testInsertAndSelect() throws Exception {
-        List<FlashedToken> list = new ArrayList<>();
+        FlashedToken[] list = new FlashedToken[1];
         String token = UUID.randomUUID().toString().replace("-", "");
         FlashedToken flashedToken = new FlashedToken(token, "appname", 0);
-        list.add(flashedToken);
+        list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
 
 
@@ -70,10 +68,10 @@ public class FlashedTokensManagerTest {
 
     @Test
     public void testInsertToken() throws Exception {
-        List<FlashedToken> list = new ArrayList<>();
+        FlashedToken[] list = new FlashedToken[1];
         String token = UUID.randomUUID().toString().replace("-", "");
         FlashedToken flashedToken = new FlashedToken(token, "appname", 0);
-        list.add(flashedToken);
+        list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
 
         try (Connection connection = dbManager.getConnection();
@@ -94,10 +92,10 @@ public class FlashedTokensManagerTest {
 
     @Test
     public void testInsertAndActivate() throws Exception {
-        List<FlashedToken> list = new ArrayList<>();
+        FlashedToken[] list = new FlashedToken[1];
         String token = UUID.randomUUID().toString().replace("-", "");
         FlashedToken flashedToken = new FlashedToken(token, "appname", 0);
-        list.add(flashedToken);
+        list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
         dbManager.activateFlashedToken(flashedToken.token, flashedToken.appName);
 

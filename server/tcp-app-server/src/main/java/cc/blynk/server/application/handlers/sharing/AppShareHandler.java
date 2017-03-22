@@ -14,13 +14,7 @@ import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
-import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
-import static cc.blynk.server.core.protocol.enums.Command.PING;
+import static cc.blynk.server.core.protocol.enums.Command.*;
 
 /**
  * The Blynk Project.
@@ -33,12 +27,14 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     public final AppShareStateHolder state;
     private final HardwareAppShareLogic hardwareApp;
     private final GetGraphDataLogic graphData;
+    private final LoadProfileGzippedLogic loadProfileGzippedLogic;
     private final GlobalStats stats;
 
     public AppShareHandler(Holder holder, AppShareStateHolder state) {
         super(holder.limits, state);
         this.hardwareApp = new HardwareAppShareLogic(holder.sessionDao);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
+        this.loadProfileGzippedLogic = new LoadProfileGzippedLogic(holder);
         this.state = state;
         this.stats = holder.stats;
     }
@@ -51,7 +47,7 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 hardwareApp.messageReceived(ctx, state, msg);
                 break;
             case LOAD_PROFILE_GZIPPED :
-                LoadProfileGzippedLogic.messageReceived(ctx, state.user, msg);
+                loadProfileGzippedLogic.messageReceived(ctx, state, msg);
                 break;
             //todo add test for that case
             case ADD_PUSH_TOKEN :
