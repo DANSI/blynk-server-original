@@ -14,11 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * The Blynk Project.
@@ -33,7 +29,7 @@ public class FlashedTokensManagerTest {
     @BeforeClass
     public static void init() throws Exception {
         blockingIOProcessor = new BlockingIOProcessor(2, 10000, null);
-        dbManager = new DBManager("db-test.properties", blockingIOProcessor);
+        dbManager = new DBManager("db-test.properties", blockingIOProcessor, true);
         assertNotNull(dbManager.getConnection());
     }
 

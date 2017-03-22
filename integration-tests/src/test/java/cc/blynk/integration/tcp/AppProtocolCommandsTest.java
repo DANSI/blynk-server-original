@@ -27,15 +27,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
-import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
-import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
-import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_REGISTERED;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -57,7 +50,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     public void init() throws Exception {
         this.appServer = new AppServer(holder).start();
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, new DBManager(blockingIOProcessor));
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, new DBManager(blockingIOProcessor, holder.props.getBoolProperty("enable.db")));
         new Thread(profileSaverWorker).start();
     }
 

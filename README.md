@@ -444,6 +444,7 @@ You will need to install PostgreSQL Database (**minimum required version is 9.5*
 
 Enable raw data in ```server.properties``` : 
 
+        enable.db=true
         enable.raw.db.data.store=true
 
 #### 2. Install PostgreSQL. Option A

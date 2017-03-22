@@ -33,7 +33,7 @@ public class RealtimeStatsDBTest {
     @BeforeClass
     public static void init() throws Exception {
         blockingIOProcessor = new BlockingIOProcessor(2, 10000, null);
-        dbManager = new DBManager("db-test.properties", blockingIOProcessor);
+        dbManager = new DBManager("db-test.properties", blockingIOProcessor, true);
         assertNotNull(dbManager.getConnection());
     }
 

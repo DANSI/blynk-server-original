@@ -1,11 +1,7 @@
 package cc.blynk.server;
 
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.FileManager;
-import cc.blynk.server.core.dao.ReportingDao;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.*;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
@@ -110,7 +106,7 @@ public class Holder implements Closeable {
         this.smsWrapper = new SMSWrapper(smsProperties, asyncHttpClient);
 
         this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
-        this.dbManager = new DBManager(blockingIOProcessor);
+        this.dbManager = new DBManager(blockingIOProcessor, serverProperties.getBoolProperty("enable.db"));
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
@@ -154,7 +150,7 @@ public class Holder implements Closeable {
                 .build()
         );
 
-        this.dbManager = new DBManager(dbFileName, blockingIOProcessor);
+        this.dbManager = new DBManager(dbFileName, blockingIOProcessor, serverProperties.getBoolProperty("enable.db"));
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);

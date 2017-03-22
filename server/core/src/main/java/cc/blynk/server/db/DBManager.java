@@ -43,12 +43,19 @@ public class DBManager implements Closeable {
     protected PurchaseDBDao purchaseDBDao;
     protected FlashedTokensDBDao flashedTokensDBDao;
 
-    public DBManager(BlockingIOProcessor blockingIOProcessor) {
-        this(DB_PROPERTIES_FILENAME, blockingIOProcessor);
+    public DBManager(BlockingIOProcessor blockingIOProcessor, boolean isEnabled) {
+        this(DB_PROPERTIES_FILENAME, blockingIOProcessor, isEnabled);
     }
 
-    public DBManager(String propsFilename, BlockingIOProcessor blockingIOProcessor) {
+    public DBManager(String propsFilename, BlockingIOProcessor blockingIOProcessor, boolean isEnabled) {
         this.blockingIOProcessor = blockingIOProcessor;
+
+        if (!isEnabled) {
+            log.info("Separate DB storage disabled.");
+            this.ds = null;
+            this.cleanOldReporting = false;
+            return;
+        }
 
         ServerProperties serverProperties;
         try {

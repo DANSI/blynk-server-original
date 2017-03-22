@@ -42,7 +42,7 @@ public class ProfileSaverWorkerTest {
 
     @Test
     public void testCorrectProfilesAreSaved() throws IOException {
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor));
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor, true));
 
         User user1 = new User("1", "", AppName.BLYNK, "local", false, false);
         User user2 = new User("2", "", AppName.BLYNK, "local", false, false);
@@ -80,7 +80,7 @@ public class ProfileSaverWorkerTest {
 
         Thread.sleep(1);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor));
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor, true));
 
         when(userDao.getUsers()).thenReturn(userMap);
         profileSaverWorker.run();

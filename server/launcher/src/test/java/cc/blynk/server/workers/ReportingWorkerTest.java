@@ -86,7 +86,7 @@ public class ReportingWorkerTest {
         User user = new User();
         user.name = "test";
         user.appName = AppName.BLYNK;
-        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock, reportingFolder, new DBManager(blockingIOProcessor));
+        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock, reportingFolder, new DBManager(blockingIOProcessor, true));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -139,7 +139,7 @@ public class ReportingWorkerTest {
 
     @Test
     public void testStore2() throws IOException {
-        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock, reportingFolder, new DBManager(blockingIOProcessor));
+        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock, reportingFolder, new DBManager(blockingIOProcessor, true));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -200,7 +200,7 @@ public class ReportingWorkerTest {
 
     @Test
     public void testDeleteCommand() throws IOException {
-        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock, reportingFolder, new DBManager(blockingIOProcessor));
+        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock, reportingFolder, new DBManager(blockingIOProcessor, true));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
