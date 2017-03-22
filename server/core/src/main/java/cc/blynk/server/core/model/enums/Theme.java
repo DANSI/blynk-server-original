@@ -11,6 +11,7 @@ public enum Theme {
     BlynkLight,
     SparkFun,
     AppTheme,
+    CustomTheme,
     AppExport;
 
 }
