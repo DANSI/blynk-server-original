@@ -9,11 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * The Blynk Project.
@@ -31,7 +27,7 @@ public class TokenGenerator {
             redeems.add(new Redeem(token, "SparkFun", 15000));
         }
 
-        DBManager dbManager = new DBManager("db.properties", new BlockingIOProcessor(1, 100, null));
+        DBManager dbManager = new DBManager("db.properties", new BlockingIOProcessor(1, 100, null), true);
         dbManager.insertRedeems(redeems);
     }
 
