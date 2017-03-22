@@ -38,6 +38,7 @@ public abstract class IntegrationBase extends BaseTest {
 
     public static final String DEFAULT_TEST_USER = "dima@mail.ua";
     private static final ObjectReader profileReader = JsonParser.init().readerFor(Profile.class);
+    private static final ObjectReader dashReader = JsonParser.init().readerFor(DashBoard.class);
 
     public static Profile parseProfile(InputStream reader) throws Exception {
         return profileReader.readValue(reader);
@@ -46,6 +47,7 @@ public abstract class IntegrationBase extends BaseTest {
     public static Profile parseProfile(String reader) throws Exception {
         return profileReader.readValue(reader);
     }
+
 
     public static String readTestUserProfile(String fileName) throws Exception{
         if (fileName == null) {

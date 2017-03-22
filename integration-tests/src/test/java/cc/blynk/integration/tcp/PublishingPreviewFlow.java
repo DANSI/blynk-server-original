@@ -5,6 +5,7 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.db.model.FlashedToken;
@@ -75,14 +76,19 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("email 1 Blynk STATIC");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
-        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
+        QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
 
         verify(mailWrapper, timeout(500)).sendHtmlWithAttachment(eq(DEFAULT_TEST_USER), eq("Instruction for Blynk App Preview."), startsWith("Hello.\n" +
                 "You selected Static provisioning. In order to start it - please scan QR from attachment.\n"), eq(qrHolders));
+
+        clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].code);
+
+        DashBoard dashBoard = JsonParser.parseDashboard(clientPair.appClient.getBody(3));
+        assertNotNull(dashBoard);
     }
 
-    private QrHolder[] makeQRs(String to, Device[] devices, int dashId) throws Exception {
-        QrHolder[] qrHolders = new QrHolder[devices.length];
+    private QrHolderTest[] makeQRs(String to, Device[] devices, int dashId) throws Exception {
+        QrHolderTest[] qrHolders = new QrHolderTest[devices.length];
 
         List<FlashedToken> flashedTokens = getAllTokens();
 
@@ -91,7 +97,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
             final String newToken = flashedTokens.get(i).token;
             final String name = newToken + "_" + dashId + "_" + device.id + ".jpg";
             final String qrCode = newToken + BODY_SEPARATOR_STRING + dashId + BODY_SEPARATOR_STRING + to;
-            qrHolders[i] = new QrHolder(name, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray());
+            qrHolders[i] = new QrHolderTest(name, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray(), qrCode);
             i++;
         }
 
@@ -114,5 +120,15 @@ public class PublishingPreviewFlow extends IntegrationBase {
             connection.commit();
         }
         return list;
+    }
+
+    private static class QrHolderTest extends QrHolder {
+
+        String code;
+
+        public QrHolderTest(String name, byte[] data, String code) {
+            super(name, data);
+            this.code = code;
+        }
     }
 }
