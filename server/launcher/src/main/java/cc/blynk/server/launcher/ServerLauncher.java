@@ -46,7 +46,6 @@ public class ServerLauncher {
     //required for QR generation
     static {
         System.setProperty("java.awt.headless", "true");
-        System.out.println("Is headless : " + java.awt.GraphicsEnvironment.isHeadless());
     }
 
     public static void main(String[] args) throws Exception {
