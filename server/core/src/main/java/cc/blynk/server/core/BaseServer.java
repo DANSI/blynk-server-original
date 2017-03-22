@@ -56,7 +56,7 @@ public abstract class BaseServer implements Closeable {
                     .option(ChannelOption.ALLOCATOR, BlynkByteBufUtil.ALLOCATOR)
                     .childHandler(getChannelInitializer());
 
-            InetSocketAddress listenTo = listenAddress == null ? new InetSocketAddress(port) : new InetSocketAddress(listenAddress, port);
+            InetSocketAddress listenTo = (listenAddress == null || listenAddress.isEmpty()) ? new InetSocketAddress(port) : new InetSocketAddress(listenAddress, port);
             this.cf = b.bind(listenTo).sync();
         } catch (Exception e) {
             log.error("Error initializing {}, port {}", getServerName(), port, e);
