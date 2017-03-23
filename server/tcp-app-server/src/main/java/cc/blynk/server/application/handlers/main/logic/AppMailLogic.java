@@ -54,7 +54,7 @@ public class AppMailLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] split = StringUtils.split3(message.body);
+        String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         int dashId = ParseUtil.parseInt(split[0]);
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
@@ -70,14 +70,15 @@ public class AppMailLogic {
 
             makeSingleTokenEmail(ctx, dash, device, user.name, message.id);
 
-        //dashId theme provisionType
-        } else if (split.length == 3) {
+        //dashId theme provisionType color
+        } else if (split.length == 4) {
             if (dash.devices.length == 0) {
                 throw new IllegalCommandBodyException("No devices in project.");
             }
             Theme theme = Theme.valueOf(split[1]);
             ProvisionType provisionType = ProvisionType.valueOf(split[2]);
-            dash.publishing = new Publishing(theme, provisionType);
+            int color = Integer.parseInt(split[3]);
+            dash.publishing = new Publishing(theme, provisionType, color);
             makePublishPreviewEmail(ctx, dash, user.name, user.appName, message.id);
 
         //dashId

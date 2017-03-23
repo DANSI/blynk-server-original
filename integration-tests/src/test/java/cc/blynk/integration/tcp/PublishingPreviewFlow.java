@@ -73,7 +73,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
         assertEquals(1, devices.length);
 
-        clientPair.appClient.send("email 1 Blynk STATIC");
+        clientPair.appClient.send("email 1 Blynk STATIC 123123");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);

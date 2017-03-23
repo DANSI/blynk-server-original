@@ -14,11 +14,14 @@ public class Publishing {
 
     public ProvisionType provisionType;
 
+    public int color;
+
     public Publishing() {
     }
 
-    public Publishing(Theme theme, ProvisionType provisionType) {
+    public Publishing(Theme theme, ProvisionType provisionType, int color) {
         this.theme = theme;
         this.provisionType = provisionType;
+        this.color = color;
     }
 }
