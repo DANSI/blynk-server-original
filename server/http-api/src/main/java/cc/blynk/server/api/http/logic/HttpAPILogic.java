@@ -5,8 +5,6 @@ import cc.blynk.core.http.Response;
 import cc.blynk.core.http.TokenBaseHttpHandler;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.logic.serialization.NotificationCloneHideFields;
-import cc.blynk.server.api.http.logic.serialization.TwitterCloneHideFields;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PinData;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
@@ -23,7 +21,6 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
@@ -33,7 +30,6 @@ import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import io.netty.channel.ChannelHandler;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
@@ -55,11 +51,6 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 @Path("/")
 @ChannelHandler.Sharable
 public class HttpAPILogic extends TokenBaseHttpHandler {
-
-    protected static final ObjectWriter dashboardCloneWriter = JsonParser.init()
-            .addMixIn(Twitter.class, TwitterCloneHideFields.class)
-            .addMixIn(Notification.class, NotificationCloneHideFields.class)
-            .writerFor(DashBoard.class);
 
     private static final Logger log = LogManager.getLogger(HttpAPILogic.class);
     private final BlockingIOProcessor blockingIOProcessor;
@@ -233,7 +224,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         DashBoard dashBoard = user.profile.getDashById(dashId);
 
         try {
-            byte[] compressed = ByteUtils.compress(dashboardCloneWriter.writeValueAsString(dashBoard));
+            byte[] compressed = ByteUtils.compress(JsonParser.restrictiveDashWriter.writeValueAsString(dashBoard));
             String qrData = "bp1" + Base64.getEncoder().encodeToString(compressed);
             byte[] qrDataBinary = QRCode.from(qrData).to(ImageType.PNG).withSize(500, 500).stream().toByteArray();
             return ok(qrDataBinary, "image/png");

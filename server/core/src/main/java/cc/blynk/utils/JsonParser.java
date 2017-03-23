@@ -51,10 +51,11 @@ public final class JsonParser {
     private static final ObjectWriter profileWriter = mapper.writerFor(Profile.class);
     private static final ObjectWriter dashboardWriter = mapper.writerFor(DashBoard.class);
     private static final ObjectWriter deviceWriter = mapper.writerFor(Device.class);
-    //new init() here is necessary
-    private static final ObjectWriter sharedDashboardWriter = init()
+
+    public static final ObjectWriter restrictiveDashWriter = init()
+            .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
             .addMixIn(Notification.class, NotificationIgnoreMixIn.class)
-            .addMixIn(Twitter.class, TwitterIgnoreMixIn.class).writerFor(DashBoard.class);
+            .writerFor(DashBoard.class);
 
     private static final ObjectWriter statWriter = init().writerWithDefaultPrettyPrinter().forType(Stat.class);
 
@@ -80,7 +81,7 @@ public final class JsonParser {
     }
 
     public static String toJsonSharedDashboard(DashBoard dashBoard) {
-        return toJson(sharedDashboardWriter, dashBoard);
+        return toJson(restrictiveDashWriter, dashBoard);
     }
 
     public static String toJson(Device device) {
