@@ -16,12 +16,15 @@ public class Publishing {
 
     public int color;
 
+    public String name;
+
     public Publishing() {
     }
 
-    public Publishing(Theme theme, ProvisionType provisionType, int color) {
+    public Publishing(Theme theme, ProvisionType provisionType, int color, String name) {
         this.theme = theme;
         this.provisionType = provisionType;
         this.color = color;
+        this.name = name;
     }
 }

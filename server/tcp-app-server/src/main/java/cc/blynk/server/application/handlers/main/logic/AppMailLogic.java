@@ -71,14 +71,15 @@ public class AppMailLogic {
             makeSingleTokenEmail(ctx, dash, device, user.name, message.id);
 
         //dashId theme provisionType color
-        } else if (split.length == 4) {
+        } else if (split.length == 5) {
             if (dash.devices.length == 0) {
                 throw new IllegalCommandBodyException("No devices in project.");
             }
             Theme theme = Theme.valueOf(split[1]);
             ProvisionType provisionType = ProvisionType.valueOf(split[2]);
             int color = Integer.parseInt(split[3]);
-            dash.publishing = new Publishing(theme, provisionType, color);
+            String name = split[4];
+            dash.publishing = new Publishing(theme, provisionType, color, name);
             makePublishPreviewEmail(ctx, dash, user.name, user.appName, message.id);
 
         //dashId
