@@ -10,7 +10,6 @@ import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.ParseUtil;
-import cc.blynk.utils.StringUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -49,7 +48,7 @@ public class LoadProfileGzippedLogic {
             return;
         }
 
-        String[] parts = StringUtils.split3(message.body);
+        String[] parts = message.body.split(" |\0");
         if (parts.length == 1) {
             //load specific by id
             int dashId = ParseUtil.parseInt(message.body);

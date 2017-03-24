@@ -27,7 +27,6 @@ import org.apache.logging.log4j.Logger;
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_ERROR;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**
  * Sends email from application.
@@ -70,7 +69,7 @@ public class AppMailLogic {
 
             makeSingleTokenEmail(ctx, dash, device, user.name, message.id);
 
-        //dashId theme provisionType color
+        //dashId theme provisionType color appname
         } else if (split.length == 5) {
             if (dash.devices.length == 0) {
                 throw new IllegalCommandBodyException("No devices in project.");
@@ -158,7 +157,7 @@ public class AppMailLogic {
         for (Device device : dash.devices) {
             final String newToken = TokenGeneratorUtil.generateNewToken();
             final String name = newToken + "_" + dashId + "_" + device.id + ".jpg";
-            final String qrCode = newToken + BODY_SEPARATOR_STRING + dashId + BODY_SEPARATOR_STRING + publisherEmail;
+            final String qrCode = newToken + " " + dashId + " " + publisherEmail;
             qrHolders[i] = new QrHolder(name, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray());
             flashedTokens[i] = new FlashedToken(newToken, appName, device.id);
             i++;

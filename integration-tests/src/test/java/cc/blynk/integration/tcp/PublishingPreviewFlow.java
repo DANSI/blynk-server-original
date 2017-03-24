@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Response.OK;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -96,7 +95,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         for (Device device : devices) {
             final String newToken = flashedTokens.get(i).token;
             final String name = newToken + "_" + dashId + "_" + device.id + ".jpg";
-            final String qrCode = newToken + BODY_SEPARATOR_STRING + dashId + BODY_SEPARATOR_STRING + to;
+            final String qrCode = newToken + " " + dashId + " " + to;
             qrHolders[i] = new QrHolderTest(name, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray(), qrCode);
             i++;
         }
