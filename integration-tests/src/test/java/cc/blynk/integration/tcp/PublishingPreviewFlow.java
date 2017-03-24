@@ -7,6 +7,7 @@ import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.hardware.HardwareServer;
@@ -27,8 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Response.OK;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -84,6 +84,11 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         DashBoard dashBoard = JsonParser.parseDashboard(clientPair.appClient.getBody(3));
         assertNotNull(dashBoard);
+        assertNotNull(dashBoard.devices);
+        assertNull(dashBoard.devices[0].token);
+        assertNull(dashBoard.devices[0].lastLoggedIP);
+        assertEquals(0, dashBoard.devices[0].disconnectTime);
+        assertEquals(Status.OFFLINE, dashBoard.devices[0].status);
     }
 
     private QrHolderTest[] makeQRs(String to, Device[] devices, int dashId) throws Exception {

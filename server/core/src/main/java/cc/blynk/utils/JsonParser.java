@@ -82,7 +82,7 @@ public final class JsonParser {
         return toJson(dashboardWriter, dashBoard);
     }
 
-    public static String toJsonSharedDashboard(DashBoard dashBoard) {
+    public static String toJsonRestrictiveDashboard(DashBoard dashBoard) {
         return toJson(restrictiveDashWriter, dashBoard);
     }
 

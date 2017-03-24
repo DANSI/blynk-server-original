@@ -63,7 +63,7 @@ public class LoadProfileGzippedLogic {
                     FlashedToken flashedToken = dbManager.selectFlashedToken(token, state.userKey.appName);
                     if (flashedToken != null) {
                         User publishingUser = userDao.getByName(publishingEmail, state.userKey.appName);
-                        gzipAndWrite(ctx, publishingUser.profile.getDashByIdOrThrow(dashId).toString(), message.id);
+                        gzipAndWrite(ctx, publishingUser.profile.getDashByIdOrThrow(dashId).toStringRestrictive(), message.id);
                     }
                 } catch (Exception e) {
                     ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());

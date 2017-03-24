@@ -300,4 +300,8 @@ public class DashBoard {
     public String toString() {
         return JsonParser.toJson(this);
     }
+
+    public String toStringRestrictive() {
+        return JsonParser.toJsonRestrictiveDashboard(this);
+    }
 }
