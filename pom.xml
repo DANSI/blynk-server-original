@@ -151,7 +151,6 @@
         <async-http-client.version>2.1.0-alpha5</async-http-client.version>
         <twitter4j-core.version>4.0.2</twitter4j-core.version>
         <javax.mail.version>1.5.5</javax.mail.version>
-        <commons-validator.version>1.5.0</commons-validator.version>
         <postgresql.version>42.0.0</postgresql.version>
         <HikariCP.version>2.6.1</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>

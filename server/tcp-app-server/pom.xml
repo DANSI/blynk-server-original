@@ -24,13 +24,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- used for email validation -->
-        <dependency>
-            <groupId>commons-validator</groupId>
-            <artifactId>commons-validator</artifactId>
-            <version>${commons-validator.version}</version>
-        </dependency>
-
     </dependencies>
 
 </project>

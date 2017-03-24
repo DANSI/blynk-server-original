@@ -1,6 +1,6 @@
 package cc.blynk.server.application.handlers.main.auth;
 
-import org.apache.commons.validator.routines.EmailValidator;
+import cc.blynk.utils.validator.EmailValidator;
 
 /**
  * The Blynk Project.
