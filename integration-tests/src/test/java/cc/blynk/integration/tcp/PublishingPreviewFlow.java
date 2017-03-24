@@ -27,7 +27,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.enums.Response.OK;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -73,7 +73,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
 
@@ -89,6 +89,51 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertNull(dashBoard.devices[0].lastLoggedIP);
         assertEquals(0, dashBoard.devices[0].disconnectTime);
         assertEquals(Status.OFFLINE, dashBoard.devices[0].status);
+    }
+
+    @Test
+    public void testDeleteWorksForPreviewApp() throws Exception {
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody();
+
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        assertEquals(1, devices.length);
+
+        clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
+
+        verify(mailWrapper, timeout(500)).sendHtmlWithAttachment(eq(DEFAULT_TEST_USER), eq("Instruction for Blynk App Preview."), startsWith("Hello.\n" +
+                "You selected Static provisioning. In order to start it - please scan QR from attachment.\n"), eq(qrHolders));
+
+        clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].code);
+
+        DashBoard dashBoard = JsonParser.parseDashboard(clientPair.appClient.getBody(3));
+        assertNotNull(dashBoard);
+        assertNotNull(dashBoard.devices);
+        assertNull(dashBoard.devices[0].token);
+        assertNull(dashBoard.devices[0].lastLoggedIP);
+        assertEquals(0, dashBoard.devices[0].disconnectTime);
+        assertEquals(Status.OFFLINE, dashBoard.devices[0].status);
+
+        dashBoard.id = 2;
+        dashBoard.parentId = 1;
+        dashBoard.isPreview = true;
+
+        clientPair.appClient.send("createDash " + dashBoard.toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+
+        clientPair.appClient.send("deleteDash 1" + "\0" + "child");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+
+        clientPair.appClient.send("loadProfileGzipped 1");
+        dashBoard = JsonParser.parseDashboard(clientPair.appClient.getBody(6));
+        assertNotNull(dashBoard);
+        assertEquals(1, dashBoard.id);
+
+        clientPair.appClient.send("loadProfileGzipped 2");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(7, ILLEGAL_COMMAND)));
     }
 
     private QrHolderTest[] makeQRs(String to, Device[] devices, int dashId) throws Exception {

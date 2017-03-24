@@ -33,6 +33,10 @@ public class DashBoard {
 
     public int id;
 
+    public int parentId = -1;
+
+    public boolean isPreview;
+
     public volatile String name;
 
     public long createdAt;

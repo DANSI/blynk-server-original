@@ -14,6 +14,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.ParseUtil;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,9 +42,17 @@ public class DeleteDashLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        int dashId = ParseUtil.parseInt(message.body);
+        String[] parts = StringUtils.split2(message.body);
 
+        int dashId = ParseUtil.parseInt(parts[0]);
         final User user = state.user;
+
+        if (parts.length == 2) {
+            if (parts[1].equals("child")) {
+                dashId = user.profile.getChildDashId(dashId);
+            }
+        }
+
         int index = user.profile.getDashIndexOrThrow(dashId);
 
         log.debug("Deleting dashboard {}.", dashId);

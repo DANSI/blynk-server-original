@@ -38,6 +38,17 @@ public class Profile {
         throw new IllegalCommandException("Dashboard with passed id not found.");
     }
 
+    public int getChildDashId(int parentId) {
+        for (DashBoard dashBoard : dashBoards) {
+            if (dashBoard.publishing != null) {
+                if (dashBoard.parentId == parentId) {
+                    return dashBoard.id;
+                }
+            }
+        }
+        throw new IllegalCommandException("Dashboard with passed id not found.");
+    }
+
     public DashBoard getDashByIdOrThrow(int id) {
         for (DashBoard dashBoard : dashBoards) {
             if (dashBoard.id == id) {
