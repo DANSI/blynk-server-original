@@ -95,12 +95,12 @@ public class AppMailLogic {
     private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash, String to, String appName, int msgId) {
         String body;
         if (dash.publishing.provisionType == ProvisionType.DYNAMIC) {
-            body = "Hello.\r\nYou selected Dynamic provisioning. In order to start it - please scan QR from attachment.";
+            body = "Hello.\nYou selected Dynamic provisioning. In order to start it - please scan QR from attachment.";
         } else {
             if (dash.devices.length == 1) {
-               body = "Hello.\r\nYou selected Static provisioning. In order to start it - please scan QR from attachment.";
+               body = "Hello.\nYou selected Static provisioning. In order to start it - please scan QR from attachment.";
             } else {
-                body = "Hello.\r\nYou selected Static provisioning. In order to start it - please scan QR from attachment for every device in your project.";
+                body = "Hello.\nYou selected Static provisioning. In order to start it - please scan QR from attachment for every device in your project.";
             }
         }
 
