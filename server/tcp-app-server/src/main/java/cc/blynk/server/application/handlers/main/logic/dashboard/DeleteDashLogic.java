@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
@@ -45,14 +46,30 @@ public class DeleteDashLogic {
         String[] parts = StringUtils.split2(message.body);
 
         int dashId = ParseUtil.parseInt(parts[0]);
-        final User user = state.user;
 
         if (parts.length == 2) {
             if (parts[1].equals("child")) {
-                dashId = user.profile.getChildDashId(dashId);
+                dashId = state.user.profile.getChildDashId(dashId);
+                if (dashId == -1) {
+                    throw new IllegalCommandException("Child dashboard with passed id not found.");
+                }
+            }
+        } else {
+            //delete child project if present
+            int childId = state.user.profile.getChildDashId(dashId);
+            if (childId != -1) {
+                deleteDash(state, childId);
             }
         }
 
+        deleteDash(state, dashId);
+        state.user.lastModifiedTs = System.currentTimeMillis();
+
+        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+    }
+
+    private void deleteDash(AppStateHolder state, int dashId) {
+        final User user = state.user;
         int index = user.profile.getDashIndexOrThrow(dashId);
 
         log.debug("Deleting dashboard {}.", dashId);
@@ -73,9 +90,6 @@ public class DeleteDashLogic {
         tokenManager.deleteDash(dash);
         Session session = sessionDao.userSession.get(state.userKey);
         session.closeHardwareChannelByDashId(dashId);
-        user.lastModifiedTs = System.currentTimeMillis();
-
-        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
 }

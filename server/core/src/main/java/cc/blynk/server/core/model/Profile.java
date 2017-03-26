@@ -46,7 +46,7 @@ public class Profile {
                 }
             }
         }
-        throw new IllegalCommandException("Dashboard with passed id not found.");
+        return -1;
     }
 
     public DashBoard getDashByIdOrThrow(int id) {
