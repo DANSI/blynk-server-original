@@ -24,9 +24,7 @@ import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.StringUtils.split2;
-import static cc.blynk.utils.StringUtils.split2Device;
-import static cc.blynk.utils.StringUtils.split3;
+import static cc.blynk.utils.StringUtils.*;
 
 /**
  * Responsible for handling incoming hardware commands from applications and forwarding it to
@@ -106,6 +104,13 @@ public class HardwareAppLogic {
                 break;
             case 'w' :
                 splitBody = split3(split[1]);
+
+                if (splitBody.length < 3) {
+                    log.debug("Not valid write command.");
+                    ctx.writeAndFlush(makeResponse(message.id, Response.ILLEGAL_COMMAND_BODY), ctx.voidPromise());
+                    return;
+                }
+
                 final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
                 final byte pin = ParseUtil.parseByte(splitBody[1]);
                 final String value = splitBody[2];
