@@ -77,7 +77,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
 
-        verify(mailWrapper, timeout(500)).sendHtmlWithAttachment(eq(DEFAULT_TEST_USER), eq("Instruction for Blynk App Preview."), startsWith("Hello.\n" +
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("Instruction for Blynk App Preview."), startsWith("Hello.\n" +
                 "You selected Static provisioning. In order to start it - please scan QR from attachment.\n"), eq(qrHolders));
 
         clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].code);
@@ -104,7 +104,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
 
-        verify(mailWrapper, timeout(500)).sendHtmlWithAttachment(eq(DEFAULT_TEST_USER), eq("Instruction for Blynk App Preview."), startsWith("Hello.\n" +
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("Instruction for Blynk App Preview."), startsWith("Hello.\n" +
                 "You selected Static provisioning. In order to start it - please scan QR from attachment.\n"), eq(qrHolders));
 
         clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].code);

@@ -79,6 +79,7 @@ public class AppMailLogic {
             int color = Integer.parseInt(split[3]);
             String name = split[4];
             dash.publishing = new Publishing(theme, provisionType, color, name);
+            log.debug("Sending app preview email to {}, provision type {}", user.name, provisionType);
             makePublishPreviewEmail(ctx, dash, user.name, user.appName, message.id);
 
         //dashId
@@ -94,23 +95,23 @@ public class AppMailLogic {
     private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash, String to, String appName, int msgId) {
         String body;
         if (dash.publishing.provisionType == ProvisionType.DYNAMIC) {
-            body = "Hello.\nYou selected Dynamic provisioning. In order to start it - please scan QR from attachment.\n";
+            body = "Hello.\r\nYou selected Dynamic provisioning. In order to start it - please scan QR from attachment.";
         } else {
             if (dash.devices.length == 1) {
-               body = "Hello.\nYou selected Static provisioning. In order to start it - please scan QR from attachment.\n";
+               body = "Hello.\r\nYou selected Static provisioning. In order to start it - please scan QR from attachment.";
             } else {
-                body = "Hello.\nYou selected Static provisioning. In order to start it - please scan QR from attachment for every device in your project.\n";
+                body = "Hello.\r\nYou selected Static provisioning. In order to start it - please scan QR from attachment for every device in your project.";
             }
         }
 
-        mail(ctx.channel(), to, appName, "Instruction for Blynk App Preview.", body + BODY, dash, msgId);
+        mail(ctx.channel(), to, appName, "Instruction for Blynk App Preview.", body + "\r\n" + BODY, dash, msgId);
     }
 
     private void mail(Channel channel, String to, String appName, String subj, String body, DashBoard dash, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
                 QrHolder[] qrHolders = makeQRs(to, appName, dash, dash.id);
-                mailWrapper.sendHtmlWithAttachment(to, subj, body, qrHolders);
+                mailWrapper.sendWithAttachment(to, subj, body, qrHolders);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending email from application. For user {}. Reason : {}", to, e.getMessage());

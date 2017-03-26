@@ -30,7 +30,7 @@ public class MailWrapper {
         client.sendHtml(to, subj, body);
     }
 
-    public void sendHtmlWithAttachment(String to, String subj, String body, QrHolder[] attachments) throws Exception {
+    public void sendWithAttachment(String to, String subj, String body, QrHolder[] attachments) throws Exception {
         client.sendHtmlWithAttachment(to, subj, body, attachments);
     }
 

@@ -42,7 +42,7 @@ public class MailWrapperTest {
 
         String to = "doom369@gmail.com";
         MailWrapper mailWrapper = new MailWrapper(properties);
-        mailWrapper.sendHtmlWithAttachment(to, "Hello", "Body!", new QrHolder[] {qrHolder, qrHolder2});
+        mailWrapper.sendWithAttachment(to, "Hello", "Body!", new QrHolder[]{qrHolder, qrHolder2});
     }
 
     private static void generateQR(String text, Path outputFile) throws Exception {
