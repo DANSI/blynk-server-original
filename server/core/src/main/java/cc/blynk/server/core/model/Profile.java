@@ -40,10 +40,8 @@ public class Profile {
 
     public int getChildDashId(int parentId) {
         for (DashBoard dashBoard : dashBoards) {
-            if (dashBoard.publishing != null) {
-                if (dashBoard.parentId == parentId) {
-                    return dashBoard.id;
-                }
+            if (dashBoard.parentId == parentId) {
+                return dashBoard.id;
             }
         }
         return -1;
