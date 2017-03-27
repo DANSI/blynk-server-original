@@ -69,6 +69,13 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
     //----------------------------GET METHODS SECTION
 
     @Test
+    public void testNoMeaningfulRequest() throws Exception {
+        Future<Response> f = httpclient.prepareGet(httpsServerUrl).execute();
+        Response response = f.get();
+        assertEquals(301, response.getStatusCode());
+    }
+
+    @Test
     public void testGetWithFakeToken() throws Exception {
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + "dsadasddasdasdasdasdasdas/get/d8").execute();
         Response response = f.get();

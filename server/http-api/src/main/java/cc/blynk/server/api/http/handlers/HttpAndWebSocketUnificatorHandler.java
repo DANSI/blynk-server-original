@@ -107,6 +107,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
             } else {
                 ctx.writeAndFlush(redirect(BLYNK_LANDING));
             }
+            return;
         } else if (uri.startsWith(adminRootPath) || uri.startsWith("/static/admin")) {
             initAdminPipeline(ctx, msg);
         } else if (req.uri().startsWith(HttpAPIServer.WEBSOCKET_PATH)) {
