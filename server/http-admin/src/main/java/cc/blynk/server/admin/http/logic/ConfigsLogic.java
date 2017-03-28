@@ -63,7 +63,7 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
 
     @GET
     @Path("/{name}")
-    public Response getUserByName(@PathParam("name") String name) {
+    public Response getConfigByName(@PathParam("name") String name) {
         switch (name) {
             case "single_token_mail_body.txt":
                 return ok(new Config(name, blockingIOProcessor.tokenBody).toString());
