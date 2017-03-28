@@ -518,38 +518,3 @@ Returns project connected with provided token.
 + Response 400 (plain/text)
 
         Invalid token.
-
-
-## Query API [/{auth_token}/query?groupBy={groupBy}&aggregation={aggregation}&pin={pin}&value={value}]
-
-+ Parameters
-    + auth_token (required, string, `3c32334197b24968beef6e0165c76281`) ... authentification token.
-    + groupBy (optional, string, `name`) ... field to group by. You may use few groupBy fields.
-    + aggregation (optional, string, `count`) ... aggregation type. Used only with groupBy. For now only 1 aggreagation type supported - `count`.
-    + pin (optional, string, `V1`) ... pin to filter by.
-    + value (optional, string, `1`) ... value to filter by.
-
-### Query API [GET]
-
-+ Response 200 (application/json;charset=utf-8)
-
-        [
-        ]
-
-+ Response 200 (application/json;charset=utf-8)
-
-        [
-            {"name":"Parking1","count":2},{"name":"Parking3","count":1}
-        ]
-
-+ Response 400 (plain/text)
-
-        Invalid token.
-
-+ Response 400 (plain/text)
-
-        Wrong pin format.
-        
-+ Response 400 (plain/text)
-
-        Requested pin not exists in app.
