@@ -24,17 +24,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Map;
 
-import static cc.blynk.server.core.protocol.enums.Response.DEVICE_WENT_OFFLINE;
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -209,7 +201,7 @@ public class NotificationsLogicTest extends IntegrationBase {
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
 
-        verify(gcmWrapper, timeout(1100).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(gcmWrapper, timeout(1500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
         assertTrue(System.currentTimeMillis() - now > notification.notifyWhenOfflineIgnorePeriod );
 
