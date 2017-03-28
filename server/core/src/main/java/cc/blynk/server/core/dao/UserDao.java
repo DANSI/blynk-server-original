@@ -67,7 +67,7 @@ public class UserDao {
             return new ArrayList<>(users.values());
         }
 
-        return users.values().stream().filter(user -> user.name.contains(name) && (AppName.ALL.equals(appName) || user.appName.equals(appName))).collect(Collectors.toList());
+        return users.values().stream().filter(user -> user.email.contains(name) && (AppName.ALL.equals(appName) || user.appName.equals(appName))).collect(Collectors.toList());
     }
 
     public User delete(UserKey userKey) {
@@ -249,23 +249,23 @@ public class UserDao {
         return url.substring(doubleslash, end);
     }
 
-    public User addFacebookUser(String userName, String appName) {
-        log.debug("Adding new facebook user {}. App : {}", userName, appName);
-        User newUser = new User(userName, null, appName, region, true, false);
-        users.put(new UserKey(userName, appName), newUser);
+    public User addFacebookUser(String email, String appName) {
+        log.debug("Adding new facebook user {}. App : {}", email, appName);
+        User newUser = new User(email, null, appName, region, true, false);
+        users.put(new UserKey(email, appName), newUser);
         return newUser;
     }
 
-    public void add(String userName, String pass, String appName) {
-        log.debug("Adding new user {}. App : {}", userName, appName);
-        User newUser = new User(userName, pass, appName, region, false, false);
-        users.put(new UserKey(userName, appName), newUser);
+    public void add(String email, String pass, String appName) {
+        log.debug("Adding new user {}. App : {}", email, appName);
+        User newUser = new User(email, pass, appName, region, false, false);
+        users.put(new UserKey(email, appName), newUser);
     }
 
-    public void add(String userName, String pass, String appName, boolean isSuperAdmin) {
-        log.debug("Adding new user {}. App : {}", userName, appName);
-        User newUser = new User(userName, pass, appName, region, false, isSuperAdmin);
-        users.put(new UserKey(userName, appName), newUser);
+    public void add(String email, String pass, String appName, boolean isSuperAdmin) {
+        log.debug("Adding new user {}. App : {}", email, appName);
+        User newUser = new User(email, pass, appName, region, false, isSuperAdmin);
+        users.put(new UserKey(email, appName), newUser);
     }
 
 }

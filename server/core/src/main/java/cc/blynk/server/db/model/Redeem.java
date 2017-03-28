@@ -16,7 +16,7 @@ public class Redeem {
 
     public boolean isRedeemed;
 
-    public String username;
+    public String email;
 
     public int reward;
 
@@ -43,11 +43,11 @@ public class Redeem {
         this.reward = reward;
     }
 
-    public Redeem(String token, String company, boolean isRedeemed, String username, int reward, int version, Date ts) {
+    public Redeem(String token, String company, boolean isRedeemed, String email, int reward, int version, Date ts) {
         this.token = token;
         this.company = company;
         this.isRedeemed = isRedeemed;
-        this.username = username;
+        this.email = email;
         this.reward = reward;
         this.version = version;
         this.ts = ts;

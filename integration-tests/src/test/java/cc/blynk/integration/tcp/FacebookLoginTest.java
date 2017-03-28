@@ -60,16 +60,16 @@ public class FacebookLoginTest extends IntegrationBase {
     @Test
     public void testLoginWorksForNewUser() throws Exception {
         String host = "localhost";
-        String username = "shartax@gmail.com";
+        String email = "shartax@gmail.com";
 
-        ClientPair clientPair = initAppAndHardPair(host, tcpAppPort, tcpHardPort, username + " 1", null, properties, 10000);
+        ClientPair clientPair = initAppAndHardPair(host, tcpAppPort, tcpHardPort, email + " 1", null, properties, 10000);
 
         ChannelFuture channelFuture = clientPair.appClient.stop();
         channelFuture.await();
 
         TestAppClient appClient = new TestAppClient(host, tcpAppPort, properties);
         appClient.start();
-        appClient.send("login " + username + "\0" + facebookAuthToken + "\0" + "Android" + "\0" + "1.10.4" + "\0" + "facebook");
+        appClient.send("login " + email + "\0" + facebookAuthToken + "\0" + "Android" + "\0" + "1.10.4" + "\0" + "facebook");
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         String expected = readTestUserProfile();

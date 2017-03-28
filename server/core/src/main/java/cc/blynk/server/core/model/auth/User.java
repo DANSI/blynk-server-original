@@ -21,8 +21,10 @@ public class User {
     //todo remove after migration
     public ConcurrentMap<Integer, String> dashTokens;
 
+    public String name;
+
     //key fields
-	public String name;
+	public String email;
     public String appName;
     public String region;
 
@@ -52,9 +54,10 @@ public class User {
         this.appName = AppName.BLYNK;
     }
 
-    public User(String name, String pass, String appName, String region, boolean isFacebookUser, boolean isSuperAdmin) {
+    public User(String email, String pass, String appName, String region, boolean isFacebookUser, boolean isSuperAdmin) {
         this();
-        this.name = name;
+        this.email = email;
+        this.name = email;
         this.pass = pass;
         this.appName = appName;
         this.region = region;
@@ -64,7 +67,7 @@ public class User {
 
     @JsonProperty("id")
     private String id() {
-        return name + "-" + appName;
+        return email + "-" + appName;
     }
 
     public void subtractEnergy(int price) {
@@ -93,14 +96,14 @@ public class User {
 
         User user = (User) o;
 
-        if (name != null ? !name.equals(user.name) : user.name != null) return false;
+        if (email != null ? !email.equals(user.email) : user.email != null) return false;
         return !(appName != null ? !appName.equals(user.appName) : user.appName != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
+        int result = email != null ? email.hashCode() : 0;
         result = 31 * result + (appName != null ? appName.hashCode() : 0);
         return result;
     }

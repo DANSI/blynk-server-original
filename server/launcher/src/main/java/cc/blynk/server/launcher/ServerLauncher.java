@@ -98,15 +98,15 @@ public class ServerLauncher {
     }
 
     private static void createSuperUser(Holder holder) {
-        String adminName = holder.props.getProperty("admin.email", "admin@blynk.cc");
+        String email = holder.props.getProperty("admin.email", "admin@blynk.cc");
         String pass = holder.props.getProperty("admin.pass", "admin");
 
         if (!holder.userDao.isSuperAdminExists()) {
-            System.out.println("Your Admin login name is " + adminName);
+            System.out.println("Your Admin login email is " + email);
             System.out.println("Your Admin password is " + pass);
 
-            String hash = SHA256Util.makeHash(pass, adminName);
-            holder.userDao.add(adminName, hash, AppName.BLYNK, true);
+            String hash = SHA256Util.makeHash(pass, email);
+            holder.userDao.add(email, hash, AppName.BLYNK, true);
         }
     }
 

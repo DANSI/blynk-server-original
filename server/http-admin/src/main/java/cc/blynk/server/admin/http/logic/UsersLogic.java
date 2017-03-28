@@ -71,9 +71,9 @@ public class UsersLogic extends CookiesBaseHttpHandler {
     @Path("/{id}")
     public Response getUserByName(@PathParam("id") String id) {
         String[] parts =  slitByLast(id);
-        String name = parts[0];
+        String email = parts[0];
         String appName = parts[1];
-        User user = userDao.getByName(name, appName);
+        User user = userDao.getByName(email, appName);
         if (user == null) {
             return notFound();
         }
@@ -101,16 +101,16 @@ public class UsersLogic extends CookiesBaseHttpHandler {
 
     @GET
     @Path("/token/force")
-    public Response forceToken(@QueryParam("username") String username,
+    public Response forceToken(@QueryParam("email") String email,
                                     @QueryParam("app") String app,
                                     @QueryParam("dashId") int dashId,
                                     @QueryParam("deviceId") int deviceId,
                                     @QueryParam("new") String newToken) {
 
-        User user = userDao.getUsers().get(new UserKey(username, app));
+        User user = userDao.getUsers().get(new UserKey(email, app));
 
         if (user == null) {
-            return badRequest("No user with such name.");
+            return badRequest("No user with such email.");
         }
 
         tokenManager.assignToken(user, dashId, deviceId, newToken);
@@ -133,12 +133,12 @@ public class UsersLogic extends CookiesBaseHttpHandler {
 
         //name was changed, but not password - do not allow this.
         //as name is used as salt for pass generation
-        if (!updatedUser.name.equals(oldUser.name) && updatedUser.pass.equals(oldUser.pass)) {
-            return badRequest("You need also change password when changing username.");
+        if (!updatedUser.email.equals(oldUser.email) && updatedUser.pass.equals(oldUser.pass)) {
+            return badRequest("You need also change password when changing email.");
         }
 
             //user name was changed
-        if (!updatedUser.name.equals(oldUser.name)) {
+        if (!updatedUser.email.equals(oldUser.email)) {
             deleteUserByName(id);
             for (DashBoard dashBoard : oldUser.profile.dashBoards) {
                 for (Device device : dashBoard.devices) {
@@ -149,13 +149,13 @@ public class UsersLogic extends CookiesBaseHttpHandler {
 
         //if pass was changed, call hash function.
         if (!updatedUser.pass.equals(oldUser.pass)) {
-            log.debug("Updating pass for {}.", updatedUser.name);
-            updatedUser.pass = SHA256Util.makeHash(updatedUser.pass, updatedUser.name);
+            log.debug("Updating pass for {}.", updatedUser.email);
+            updatedUser.pass = SHA256Util.makeHash(updatedUser.pass, updatedUser.email);
         }
 
         userDao.add(updatedUser);
         updatedUser.lastModifiedTs = System.currentTimeMillis();
-        log.debug("Adding new user {}", updatedUser.name);
+        log.debug("Adding new user {}", updatedUser.email);
 
 
         return ok(updatedUser);
@@ -165,16 +165,16 @@ public class UsersLogic extends CookiesBaseHttpHandler {
     @Path("/{id}")
     public Response deleteUserByName(@PathParam("id") String id) {
         String[] parts =  slitByLast(id);
-        String name = parts[0];
+        String email = parts[0];
         String appName = parts[1];
 
-        UserKey userKey = new UserKey(name, appName);
+        UserKey userKey = new UserKey(email, appName);
         User user = userDao.delete(userKey);
         if (user == null) {
             return new Response(HTTP_1_1, NOT_FOUND);
         }
 
-        if (!fileManager.delete(name, appName)) {
+        if (!fileManager.delete(email, appName)) {
             return new Response(HTTP_1_1, NOT_FOUND);
         }
 
@@ -183,7 +183,7 @@ public class UsersLogic extends CookiesBaseHttpHandler {
             session.closeAll();
         }
 
-        log.info("User {} successfully removed.", name);
+        log.info("User {} successfully removed.", email);
 
         return ok();
     }

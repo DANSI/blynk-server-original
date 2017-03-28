@@ -10,7 +10,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
+import static cc.blynk.server.core.protocol.enums.Response.OK;
 
 /**
  * Handler responsible for handling redeem logic. Unlocks premium content for predefined tokens.
@@ -42,9 +43,9 @@ public class RedeemLogic {
         try {
             Redeem redeem = dbManager.selectRedeemByToken(redeemToken);
             if (redeem != null) {
-                if (redeem.isRedeemed && redeem.username.equals(user.name)) {
+                if (redeem.isRedeemed && redeem.email.equals(user.email)) {
                     return new ResponseMessage(message.id, OK);
-                } else if (!redeem.isRedeemed && dbManager.updateRedeem(user.name, redeemToken)) {
+                } else if (!redeem.isRedeemed && dbManager.updateRedeem(user.email, redeemToken)) {
                     unlockContent(user, redeem.reward);
                     return new ResponseMessage(message.id, OK);
                 }
@@ -58,7 +59,7 @@ public class RedeemLogic {
 
     private void unlockContent(User user, int reward) {
         user.purchaseEnergy(reward);
-        log.info("Unlocking content for {}. Reward {}.", user.name, reward);
+        log.info("Unlocking content for {}. Reward {}.", user.email, reward);
     }
 
 }

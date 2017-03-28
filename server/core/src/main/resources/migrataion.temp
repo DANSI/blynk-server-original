@@ -1,16 +1,9 @@
-drop table reporting_raw_data;
-drop table reporting_average_minute;
-drop table reporting_average_hourly;
-drop table reporting_average_daily;
-drop table reporting_app_stat_minute;
-drop table reporting_app_command_stat_minute;
-drop table reporting_http_command_stat_minute;
-
-alter table users
-add column pass text,
-add column last_modified timestamp,
-add column last_logged timestamp,
-add column last_logged_ip text,
-add column is_facebook_user bool,
-add column is_super_admin bool DEFAULT FALSE,
-add column energy int;
+alter table users add column name text;
+alter table users rename column username to email;
+alter table redeem rename column username to email;
+alter table flashed_tokens rename column username to email;
+alter table purchase rename column username to email;
+alter table reporting_raw_data rename column username to email;
+alter table reporting_average_minute rename column username to email;
+alter table reporting_average_hourly rename column username to email;
+alter table reporting_average_daily rename column username to email;

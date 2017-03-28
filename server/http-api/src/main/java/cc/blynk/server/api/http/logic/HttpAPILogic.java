@@ -196,7 +196,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         if (widget == null) {
             String value = dashBoard.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
             if (value == null) {
-                log.debug("Requested pin {} not found. User {}", pinString, user.name);
+                log.debug("Requested pin {} not found. User {}", pinString, user.email);
                 return Response.badRequest("Requested pin not exists in app.");
             }
             return ok(JsonParser.valueToJsonAsString(value.split(StringUtils.BODY_SEPARATOR_STRING)));
@@ -435,7 +435,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         Session session = sessionDao.userSession.get(new UserKey(user));
         if (session == null) {
-            log.debug("No session for user {}.", user.name);
+            log.debug("No session for user {}.", user.email);
             return Response.ok();
         }
 
@@ -499,7 +499,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         if (body != null) {
             Session session = sessionDao.userSession.get(new UserKey(user));
             if (session == null) {
-                log.error("No session for user {}.", user.name);
+                log.error("No session for user {}.", user.email);
                 return Response.ok();
             }
             session.sendMessageToHardware(dashId, HARDWARE, 111, body, deviceId);
@@ -553,7 +553,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             }
         }
 
-        log.trace("Sending push for user {}, with message : '{}'.", user.name, message.body);
+        log.trace("Sending push for user {}, with message : '{}'.", user.email, message.body);
         notification.push(gcmWrapper, message.body, 1);
 
         return Response.ok();
@@ -595,18 +595,18 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("Email body is wrong. Missing or empty fields 'to', 'subj'.");
         }
 
-        log.trace("Sending Mail for user {}, with message : '{}'.", tokenValue.user.name, message.subj);
-        mail(tokenValue.user.name, message.to, message.subj, message.title);
+        log.trace("Sending Mail for user {}, with message : '{}'.", tokenValue.user.email, message.subj);
+        mail(tokenValue.user.email, message.to, message.subj, message.title);
 
         return Response.ok();
     }
 
-    private void mail(String username, String to, String subj, String body) {
+    private void mail(String email, String to, String subj, String body) {
         blockingIOProcessor.execute(() -> {
             try {
                 mailWrapper.sendText(to, subj, body);
             } catch (Exception e) {
-                log.error("Error sending email from HTTP. From : '{}', to : '{}'. Reason : {}", username, to, e.getMessage());
+                log.error("Error sending email from HTTP. From : '{}', to : '{}'. Reason : {}", email, to, e.getMessage());
             }
         });
     }

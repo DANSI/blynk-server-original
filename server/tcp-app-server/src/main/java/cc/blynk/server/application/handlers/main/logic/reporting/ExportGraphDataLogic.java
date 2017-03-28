@@ -99,7 +99,7 @@ public class ExportGraphDataLogic {
                 } else {
 
                     String title = "History graph data for project " + dashName;
-                    mailWrapper.sendHtml(user.name, title, makeBody(pinsCSVFilePath));
+                    mailWrapper.sendHtml(user.email, title, makeBody(pinsCSVFilePath));
                     ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
                 }
 

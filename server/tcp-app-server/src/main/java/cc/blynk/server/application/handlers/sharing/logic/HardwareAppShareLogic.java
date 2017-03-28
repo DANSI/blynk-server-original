@@ -63,7 +63,7 @@ public class HardwareAppShareLogic {
         }
 
         if (!dashBoard.isShared) {
-            log.debug("Dashboard is not shared. User : {}, {}", state.user.name, ctx.channel().remoteAddress());
+            log.debug("Dashboard is not shared. User : {}, {}", state.user.email, ctx.channel().remoteAddress());
             ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
             return;
         }

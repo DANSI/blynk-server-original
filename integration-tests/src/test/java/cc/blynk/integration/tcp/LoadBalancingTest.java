@@ -18,17 +18,9 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import redis.clients.jedis.Jedis;
 
-import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
-import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -66,23 +58,23 @@ public class LoadBalancingTest extends IntegrationBase {
         TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient1.start();
 
-        String username = "test@gmmail.com";
+        String email = "test@gmmail.com";
         String pass = "a";
         String appName = "Blynk";
 
         appClient1.send("getServer");
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
 
-        appClient1.send("getServer " + username + "\0" + appName);
+        appClient1.send("getServer " + email + "\0" + appName);
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(2, "127.0.0.1")));
 
-        appClient1.send("register " + username + " " + pass + " " + appName);
+        appClient1.send("register " + email + " " + pass + " " + appName);
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(3, OK)));
-        appClient1.send("login " + username + " " + pass + " Android 1.10.4 " + appName);
+        appClient1.send("login " + email + " " + pass + " Android 1.10.4 " + appName);
         //we should wait until login finished. Only after that we can send commands
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(4, OK)));
 
-        appClient1.send("getServer " + username + "\0" + appName);
+        appClient1.send("getServer " + email + "\0" + appName);
         verify(appClient1.responseMock, timeout(1000).times(0)).channelRead(any(), eq(new GetServerMessage(5, "127.0.0.1")));
     }
 
@@ -118,18 +110,18 @@ public class LoadBalancingTest extends IntegrationBase {
         TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient1.start();
 
-        String username = "test_new@gmail.com";
+        String email = "test_new@gmail.com";
         String pass = "a";
         String appName = "Blynk";
 
-        appClient1.send("getServer " + username + "\0" + appName);
+        appClient1.send("getServer " + email + "\0" + appName);
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "127.0.0.1")));
 
         appClient1.reset();
 
-        String token = workflowForUser(appClient1, username, pass, appName);
+        String token = workflowForUser(appClient1, email, pass, appName);
         assertEquals( "127.0.0.1", holder.redisClient.getServerByToken(token));
-        assertEquals( "127.0.0.1", holder.redisClient.getServerByUser(username));
+        assertEquals( "127.0.0.1", holder.redisClient.getServerByUser(email));
     }
 
     @Test
@@ -137,12 +129,12 @@ public class LoadBalancingTest extends IntegrationBase {
         TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient1.start();
 
-        String username = "test_new@gmail.com";
+        String email = "test_new@gmail.com";
         String appName = "Blynk";
 
-        holder.redisClient.assignServerToUser(username, "100.100.100.100");
+        holder.redisClient.assignServerToUser(email, "100.100.100.100");
 
-        appClient1.send("getServer " + username + "\0" + appName);
+        appClient1.send("getServer " + email + "\0" + appName);
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "100.100.100.100")));
     }
 
@@ -151,30 +143,30 @@ public class LoadBalancingTest extends IntegrationBase {
         TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient1.start();
 
-        String username = "test_new@gmail.com";
+        String email = "test_new@gmail.com";
         String pass = "a";
         String appName = "Blynk";
 
-        appClient1.send("getServer " + username + "\0" + appName);
+        appClient1.send("getServer " + email + "\0" + appName);
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "127.0.0.1")));
 
         appClient1.reset();
 
-        String token = workflowForUser(appClient1, username, pass, appName);
+        String token = workflowForUser(appClient1, email, pass, appName);
         assertEquals( "127.0.0.1", holder.redisClient.getServerByToken(token));
-        assertEquals( "127.0.0.1", holder.redisClient.getServerByUser(username));
+        assertEquals( "127.0.0.1", holder.redisClient.getServerByUser(email));
 
         appClient1.reset();
         appClient1.send("deleteDash 1");
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         assertNull(holder.redisClient.getServerByToken(token));
-        assertEquals( "127.0.0.1", holder.redisClient.getServerByUser(username));
+        assertEquals( "127.0.0.1", holder.redisClient.getServerByUser(email));
     }
 
-    private String workflowForUser(TestAppClient appClient, String username, String pass, String appName) throws Exception{
-        appClient.send("register " + username + " " + pass + " " + appName);
+    private String workflowForUser(TestAppClient appClient, String email, String pass, String appName) throws Exception{
+        appClient.send("register " + email + " " + pass + " " + appName);
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-        appClient.send("login " + username + " " + pass + " Android 1.10.4 " + appName);
+        appClient.send("login " + email + " " + pass + " Android 1.10.4 " + appName);
         //we should wait until login finished. Only after that we can send commands
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 

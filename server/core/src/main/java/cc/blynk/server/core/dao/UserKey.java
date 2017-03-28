@@ -12,16 +12,16 @@ import cc.blynk.server.core.model.auth.User;
  */
 public final class UserKey {
 
-    public final String name;
+    public final String email;
 
     public final String appName;
 
     public UserKey(User user) {
-        this(user.name, user.appName);
+        this(user.email, user.appName);
     }
 
-    public UserKey(String name, String appName) {
-        this.name = name;
+    public UserKey(String email, String appName) {
+        this.email = email;
         if (appName == null) {
             this.appName = AppName.BLYNK;
         } else {
@@ -36,14 +36,14 @@ public final class UserKey {
 
         UserKey userKey = (UserKey) o;
 
-        if (name != null ? !name.equals(userKey.name) : userKey.name != null) return false;
+        if (email != null ? !email.equals(userKey.email) : userKey.email != null) return false;
         return !(appName != null ? !appName.equals(userKey.appName) : userKey.appName != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
+        int result = email != null ? email.hashCode() : 0;
         result = 31 * result + (appName != null ? appName.hashCode() : 0);
         return result;
     }
@@ -51,7 +51,7 @@ public final class UserKey {
     @Override
     public String toString() {
         return "UserKey{" +
-                "name='" + name + '\'' +
+                "email='" + email + '\'' +
                 ", appName='" + appName + '\'' +
                 '}';
     }

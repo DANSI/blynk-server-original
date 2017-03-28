@@ -62,9 +62,9 @@ public class AverageAggregatorProcessor implements Closeable {
     }
 
     public void collect(User user, int dashId, int deviceId, char pinType, byte pin, long ts, double val) {
-        aggregate(minute, new AggregationKey(user.name, user.appName, dashId, deviceId, pinType, pin, ts / MINUTE), val);
-        aggregate(hourly, new AggregationKey(user.name, user.appName, dashId, deviceId, pinType, pin, ts / HOUR), val);
-        aggregate(daily, new AggregationKey(user.name, user.appName, dashId, deviceId, pinType, pin, ts / DAY), val);
+        aggregate(minute, new AggregationKey(user.email, user.appName, dashId, deviceId, pinType, pin, ts / MINUTE), val);
+        aggregate(hourly, new AggregationKey(user.email, user.appName, dashId, deviceId, pinType, pin, ts / HOUR), val);
+        aggregate(daily, new AggregationKey(user.email, user.appName, dashId, deviceId, pinType, pin, ts / DAY), val);
     }
 
     public ConcurrentHashMap<AggregationKey, AggregationValue> getMinute() {

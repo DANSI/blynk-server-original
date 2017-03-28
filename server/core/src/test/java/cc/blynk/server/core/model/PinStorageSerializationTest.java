@@ -7,9 +7,7 @@ import org.junit.Test;
 
 import java.util.HashMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * The Blynk Project.
@@ -21,7 +19,7 @@ public class PinStorageSerializationTest {
     @Test
     public void testSerialize() {
         User user = new User();
-        user.name = "123";
+        user.email = "123";
         user.profile = new Profile();
         user.profile.dashBoards = new DashBoard[] {
                 new DashBoard()
@@ -40,7 +38,7 @@ public class PinStorageSerializationTest {
 
     @Test
     public void testDeserialize() throws Exception{
-        String expectedString = "{\"name\":\"123\",\"appName\":\"Blynk\",\"lastModifiedTs\":0,\"lastLoggedAt\":0,\"profile\":{\"dashBoards\":[{\"id\":0,\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false," +
+        String expectedString = "{\"email\":\"123\",\"appName\":\"Blynk\",\"lastModifiedTs\":0,\"lastLoggedAt\":0,\"profile\":{\"dashBoards\":[{\"id\":0,\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false," +
                 "\"pinsStorage\":{\"0-v0\":\"0\",\"0-d1\":\"1\"}" +
                 "}]},\"isFacebookUser\":false,\"energy\":2000,\"id\":\"123-Blynk\"}";
 

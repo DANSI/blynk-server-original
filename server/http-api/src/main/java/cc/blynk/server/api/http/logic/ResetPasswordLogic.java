@@ -122,14 +122,14 @@ public class ResetPasswordLogic extends BaseHttpHandler {
         User user = userDao.getByName(tokenUser.email, tokenUser.appName);
 
         if (user == null) {
-            log.warn("No user with name {}", tokenUser.email);
+            log.warn("No user with email {}", tokenUser.email);
             return new Response(HTTP_1_1, NOT_FOUND);
         }
 
         user.pass = password;
         user.lastModifiedTs = System.currentTimeMillis();
 
-        log.info("{} password was reset.", user.name);
+        log.info("{} password was reset.", user.email);
         tokensPool.removeToken(token);
         return Response.ok("Password was successfully reset.");
     }

@@ -57,32 +57,32 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        String userName = messageParts[0].trim().toLowerCase();
+        String email = messageParts[0].trim().toLowerCase();
         String pass = messageParts[1];
         String appName = messageParts.length == 3 ? messageParts[2] : AppName.BLYNK;
-        log.info("Trying register user : {}, app : {}", userName, appName);
+        log.info("Trying register user : {}, app : {}", email, appName);
 
-        if (BlynkEmailValidator.isNotValidEmail(userName)) {
-            log.error("Register Handler. Wrong email: {}", userName);
+        if (BlynkEmailValidator.isNotValidEmail(email)) {
+            log.error("Register Handler. Wrong email: {}", email);
             ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
             return;
         }
 
-        if (userDao.isUserExists(userName, appName)) {
-            log.warn("User with name {} already exists.", userName);
+        if (userDao.isUserExists(email, appName)) {
+            log.warn("User with email {} already exists.", email);
             ctx.writeAndFlush(makeResponse(message.id, USER_ALREADY_REGISTERED), ctx.voidPromise());
             return;
         }
 
-        if (allowedUsers != null && !allowedUsers.contains(userName)) {
-            log.warn("User with name {} not allowed to register.", userName);
+        if (allowedUsers != null && !allowedUsers.contains(email)) {
+            log.warn("User with email {} not allowed to register.", email);
             ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
             return;
         }
 
-        userDao.add(userName, pass, appName);
+        userDao.add(email, pass, appName);
 
-        log.info("Registered {}.", userName);
+        log.info("Registered {}.", email);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

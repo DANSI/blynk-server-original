@@ -81,13 +81,13 @@ public class FileUtils {
     }
 
     public static String getUserReportingDir(User user) {
-        return getUserReportingDir(user.name, user.appName);
+        return getUserReportingDir(user.email, user.appName);
     }
 
-    public static String getUserReportingDir(String username, String appName) {
+    public static String getUserReportingDir(String email, String appName) {
         if (appName.equals(AppName.BLYNK)) {
-            return username;
+            return email;
         }
-        return username + "_" + appName;
+        return email + "_" + appName;
     }
 }

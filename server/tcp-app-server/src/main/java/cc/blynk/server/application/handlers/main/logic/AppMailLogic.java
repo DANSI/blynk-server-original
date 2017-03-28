@@ -67,7 +67,7 @@ public class AppMailLogic {
                 throw new IllegalCommandBodyException("Wrong device id.");
             }
 
-            makeSingleTokenEmail(ctx, dash, device, user.name, message.id);
+            makeSingleTokenEmail(ctx, dash, device, user.email, message.id);
 
         //dashId theme provisionType color appname
         } else if (split.length == 5) {
@@ -79,15 +79,15 @@ public class AppMailLogic {
             int color = Integer.parseInt(split[3]);
             String name = split[4];
             dash.publishing = new Publishing(theme, provisionType, color, name);
-            log.debug("Sending app preview email to {}, provision type {}", user.name, provisionType);
-            makePublishPreviewEmail(ctx, dash, user.name, user.appName, message.id);
+            log.debug("Sending app preview email to {}, provision type {}", user.email, provisionType);
+            makePublishPreviewEmail(ctx, dash, user.email, user.appName, message.id);
 
         //dashId
         } else {
             if (dash.devices.length == 1) {
-                makeSingleTokenEmail(ctx, dash, dash.devices[0], user.name, message.id);
+                makeSingleTokenEmail(ctx, dash, dash.devices[0], user.email, message.id);
             } else {
-                sendMultiTokenEmail(ctx, dash, user.name, message.id);
+                sendMultiTokenEmail(ctx, dash, user.email, message.id);
             }
         }
     }
@@ -171,13 +171,13 @@ public class AppMailLogic {
         return qrHolders;
     }
 
-    private void mail(Channel channel, String username, String to, String subj, String body, int msgId) {
+    private void mail(Channel channel, String email, String to, String subj, String body, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
                 mailWrapper.sendText(to, subj, body);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
-                log.error("Error sending email from application. From user {}, to : {}. Reason : {}",  username, to, e.getMessage());
+                log.error("Error sending email from application. From user {}, to : {}. Reason : {}",  email, to, e.getMessage());
                 channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_ERROR), channel.voidPromise());
             }
         });

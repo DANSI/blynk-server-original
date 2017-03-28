@@ -14,13 +14,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.mqtt.MqttConnAckMessage;
-import io.netty.handler.codec.mqtt.MqttConnAckVariableHeader;
-import io.netty.handler.codec.mqtt.MqttConnectMessage;
-import io.netty.handler.codec.mqtt.MqttConnectReturnCode;
-import io.netty.handler.codec.mqtt.MqttFixedHeader;
-import io.netty.handler.codec.mqtt.MqttMessageType;
-import io.netty.handler.codec.mqtt.MqttQoS;
+import io.netty.handler.codec.mqtt.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,7 +51,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
 
         session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, deviceId);
 
-        log.info("{} mqtt hardware joined.", user.name);
+        log.info("{} mqtt hardware joined.", user.email);
     }
 
     private static MqttConnAckMessage createConnAckMessage(MqttConnectReturnCode code) {
@@ -73,7 +67,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
 
         final TokenValue tokenValue = holder.tokenManager.getUserByToken(token);
 
-        if (tokenValue == null || !tokenValue.user.name.equalsIgnoreCase(username)) {
+        if (tokenValue == null || !tokenValue.user.email.equalsIgnoreCase(username)) {
             log.debug("MqttHardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
             ctx.writeAndFlush(createConnAckMessage(CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD), ctx.voidPromise());
             return;
@@ -85,7 +79,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
 
         DashBoard dash = user.profile.getDashById(dashId);
         if (dash == null) {
-            log.warn("User : {} requested token {} for non-existing {} dash id.", user.name, token, dashId);
+            log.warn("User : {} requested token {} for non-existing {} dash id.", user.email, token, dashId);
             ctx.writeAndFlush(createConnAckMessage(CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD), ctx.voidPromise());
             return;
         }

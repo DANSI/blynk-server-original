@@ -26,11 +26,11 @@ import java.util.Map;
  */
 public class ReportingDBDao {
 
-    public static final String insertMinute = "INSERT INTO reporting_average_minute (username, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    public static final String insertHourly = "INSERT INTO reporting_average_hourly (username, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    public static final String insertDaily = "INSERT INTO reporting_average_daily (username, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public static final String insertMinute = "INSERT INTO reporting_average_minute (email, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public static final String insertHourly = "INSERT INTO reporting_average_hourly (email, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public static final String insertDaily = "INSERT INTO reporting_average_daily (email, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    public static final String insertRawData = "INSERT INTO reporting_raw_data (username, project_id, device_id, pin, pinType, ts, stringValue, doubleValue) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public static final String insertRawData = "INSERT INTO reporting_raw_data (email, project_id, device_id, pin, pinType, ts, stringValue, doubleValue) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     public static final String selectMinute = "SELECT ts, value FROM reporting_average_minute WHERE ts > ? ORDER BY ts DESC limit ?";
     public static final String selectHourly = "SELECT ts, value FROM reporting_average_hourly WHERE ts > ? ORDER BY ts DESC limit ?";
@@ -62,18 +62,18 @@ public class ReportingDBDao {
                                                GraphType type) throws SQLException {
         final AggregationKey key = entry.getKey();
         final AggregationValue value = entry.getValue();
-        prepareReportingInsert(ps, key.username, key.dashId, key.deviceId, key.pin, key.pinType, key.getTs(type), value.calcAverage());
+        prepareReportingInsert(ps, key.email, key.dashId, key.deviceId, key.pin, key.pinType, key.getTs(type), value.calcAverage());
     }
 
     public static void prepareReportingInsert(PreparedStatement ps,
-                                                 String username,
+                                                 String email,
                                                  int dashId,
                                                  int deviceId,
                                                  byte pin,
                                                  char pinType,
                                                  long ts,
                                                  double value) throws SQLException {
-        ps.setString(1, username);
+        ps.setString(1, email);
         ps.setInt(2, dashId);
         ps.setInt(3, deviceId);
         ps.setByte(4, pin);
@@ -108,7 +108,7 @@ public class ReportingDBDao {
                 final AggregationKey key = entry.getKey();
                 final Object value = entry.getValue();
 
-                ps.setString(1, key.username);
+                ps.setString(1, key.email);
                 ps.setInt(2, key.dashId);
                 ps.setInt(3, key.deviceId);
                 ps.setByte(4, key.pin);

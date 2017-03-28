@@ -31,7 +31,7 @@ public class RawDataProcessor {
 
     //todo 2 millis is minimum allowed interval for data pushing.
     public void collect(User user, int dashId, int deviceId, char pinType, byte pin, long ts, String stringValue, double doubleValue) {
-        final AggregationKey aggregationKey = new AggregationKey(user.name, user.appName, dashId, deviceId, pinType, pin, ts);
+        final AggregationKey aggregationKey = new AggregationKey(user.email, user.appName, dashId, deviceId, pinType, pin, ts);
         if (doubleValue == NumberUtil.NO_RESULT) {
             rawStorage.put(aggregationKey, stringValue);
         } else {

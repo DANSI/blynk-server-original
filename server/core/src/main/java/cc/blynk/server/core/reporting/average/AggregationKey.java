@@ -14,7 +14,7 @@ public final class AggregationKey implements Serializable {
 
     public static final Comparator<AggregationKey> AGGREGATION_KEY_COMPARATOR = (o1, o2) -> (int) (o1.ts - o2.ts);
 
-    public final String username;
+    public final String email;
     public final String appName;
     public final int dashId;
     public final int deviceId;
@@ -22,8 +22,8 @@ public final class AggregationKey implements Serializable {
     public final byte pin;
     public final long ts;
 
-    public AggregationKey(String username, String appName, int dashId, int deviceId, char pinType, byte pin, long ts) {
-        this.username = username;
+    public AggregationKey(String email, String appName, int dashId, int deviceId, char pinType, byte pin, long ts) {
+        this.email = email;
         this.appName = appName;
         this.dashId = dashId;
         this.deviceId = deviceId;
@@ -52,14 +52,14 @@ public final class AggregationKey implements Serializable {
         if (pinType != that.pinType) return false;
         if (pin != that.pin) return false;
         if (ts != that.ts) return false;
-        if (username != null ? !username.equals(that.username) : that.username != null) return false;
+        if (email != null ? !email.equals(that.email) : that.email != null) return false;
         return !(appName != null ? !appName.equals(that.appName) : that.appName != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = username != null ? username.hashCode() : 0;
+        int result = email != null ? email.hashCode() : 0;
         result = 31 * result + (appName != null ? appName.hashCode() : 0);
         result = 31 * result + dashId;
         result = 31 * result + deviceId;

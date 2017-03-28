@@ -34,7 +34,7 @@ public class DeActivateDashboardLogic {
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         final User user = state.user;
         if (message.length > 0) {
-            log.debug("DeActivating dash {} for user {}", message.body, user.name);
+            log.debug("DeActivating dash {} for user {}", message.body, user.email);
             int dashId = ParseUtil.parseInt(message.body);
             DashBoard dashBoard = user.profile.getDashByIdOrThrow(dashId);
             dashBoard.deactivate();

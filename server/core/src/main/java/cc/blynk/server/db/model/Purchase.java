@@ -9,7 +9,7 @@ import java.util.Date;
  */
 public class Purchase {
 
-    public String username;
+    public String email;
 
     public int reward;
 
@@ -19,8 +19,8 @@ public class Purchase {
 
     public Date date;
 
-    public Purchase(String username, int reward, String transactionId) {
-        this.username = username;
+    public Purchase(String email, int reward, String transactionId) {
+        this.email = email;
         this.reward = reward;
         this.transactionId = transactionId;
         this.price = calcPrice(reward);

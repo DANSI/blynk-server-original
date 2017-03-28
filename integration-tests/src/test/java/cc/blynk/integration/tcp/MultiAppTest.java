@@ -24,10 +24,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -111,10 +108,10 @@ public class MultiAppTest extends IntegrationBase {
 
     }
 
-    private String workflowForUser(TestAppClient appClient, String username, String pass, String appName) throws Exception{
-        appClient.send("register " + username + " " + pass + " " + appName);
+    private String workflowForUser(TestAppClient appClient, String email, String pass, String appName) throws Exception{
+        appClient.send("register " + email + " " + pass + " " + appName);
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-        appClient.send("login " + username + " " + pass + " Android 1.10.4 " + appName);
+        appClient.send("login " + email + " " + pass + " Android 1.10.4 " + appName);
         //we should wait until login finished. Only after that we can send commands
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 

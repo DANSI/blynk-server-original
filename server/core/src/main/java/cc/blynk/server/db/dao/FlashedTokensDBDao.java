@@ -41,7 +41,7 @@ public class FlashedTokensDBDao {
 
             if (rs.next()) {
                 return new FlashedToken(rs.getString("token"), rs.getString("app_name"),
-                        rs.getString("username"), rs.getInt("device_id"),
+                        rs.getString("email"), rs.getInt("device_id"),
                         rs.getBoolean("is_activated"), rs.getDate("ts")
                 );
             }

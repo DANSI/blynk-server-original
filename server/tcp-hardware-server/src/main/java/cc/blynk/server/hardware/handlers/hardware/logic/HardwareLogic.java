@@ -39,7 +39,7 @@ public class HardwareLogic {
     private final EventorProcessor eventorProcessor;
     private final WebhookProcessor webhookProcessor;
 
-    public HardwareLogic(Holder holder, String username) {
+    public HardwareLogic(Holder holder, String email) {
         this.sessionDao = holder.sessionDao;
         this.reportingDao = holder.reportingDao;
         this.eventorProcessor = holder.eventorProcessor;
@@ -48,7 +48,7 @@ public class HardwareLogic {
                 holder.limits.WEBHOOK_RESPONSE_SUZE_LIMIT_BYTES,
                 holder.limits.WEBHOOK_FAILURE_LIMIT,
                 holder.stats,
-                username);
+                email);
     }
 
     private static boolean isWriteOperation(String body) {

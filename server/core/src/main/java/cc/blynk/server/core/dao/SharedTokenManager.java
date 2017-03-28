@@ -45,7 +45,7 @@ class SharedTokenManager {
 
         cache.put(newToken, new SharedTokenValue(user, dash.id));
 
-        log.info("Generated shared token for user {} and dashId {} is {}.", user.name, dash.id, newToken);
+        log.info("Generated shared token for user {} and dashId {} is {}.", user.email, dash.id, newToken);
     }
 
     public SharedTokenValue getUserByToken(String token) {

@@ -144,7 +144,7 @@ public class HttpsAdminServerTest extends BaseTest {
             assertTrue(loginPage.contains("Use your Admin account to log in"));
         }
 
-        login(admin.name, admin.pass);
+        login(admin.email, admin.pass);
 
         HttpGet loadAdminPage = new HttpGet(httpsAdminServerUrl);
         try (CloseableHttpResponse response = httpclient.execute(loadAdminPage)) {
@@ -166,7 +166,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
         HttpPost loginRequest = new HttpPost(httpsAdminServerUrl + "/login");
         List <NameValuePair> nvps = new ArrayList<>();
-        nvps.add(new BasicNameValuePair("email", admin.name));
+        nvps.add(new BasicNameValuePair("email", admin.email));
         nvps.add(new BasicNameValuePair("password", admin.pass));
         loginRequest.setEntity(new UrlEncodedFormEntity(nvps));
 
@@ -205,7 +205,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Test
     public void testGetUserFromAdminPage() throws Exception {
-        login(admin.name, admin.pass);
+        login(admin.email, admin.pass);
         String testUser = "dmitriy@blynk.cc";
         String appName = "Blynk";
         HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/" + testUser + "-" + appName);
@@ -216,7 +216,7 @@ public class HttpsAdminServerTest extends BaseTest {
             assertNotNull(jsonProfile);
             User user = JsonParser.readAny(jsonProfile, User.class);
             assertNotNull(user);
-            assertEquals(testUser, user.name);
+            assertEquals(testUser, user.email);
             assertNotNull(user.profile.dashBoards);
             assertEquals(5, user.profile.dashBoards.length);
         }
@@ -242,7 +242,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Test
     public void testChangeUsernameChangesPassToo() throws Exception {
-        login(admin.name, admin.pass);
+        login(admin.email, admin.pass);
 
         User user;
         HttpGet getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/admin@blynk.cc-Blynk");
@@ -251,10 +251,10 @@ public class HttpsAdminServerTest extends BaseTest {
             String userProfile = consumeText(response);
             assertNotNull(userProfile);
             user = JsonParser.parseUserFromString(userProfile);
-            assertEquals(admin.name, user.name);
+            assertEquals(admin.email, user.email);
         }
 
-        user.name = "123@blynk.cc";
+        user.email = "123@blynk.cc";
 
         //we are no allowed to change username without cahnged password
         HttpPut changeUserNameRequestWrong = new HttpPut(httpsAdminServerUrl + "/users/admin@blynk.cc-Blynk");
@@ -281,8 +281,8 @@ public class HttpsAdminServerTest extends BaseTest {
             String userProfile = consumeText(response);
             assertNotNull(userProfile);
             user = JsonParser.parseUserFromString(userProfile);
-            assertEquals("123@blynk.cc", user.name);
-            assertEquals(SHA256Util.makeHash("123", user.name), user.pass);
+            assertEquals("123@blynk.cc", user.email);
+            assertEquals(SHA256Util.makeHash("123", user.email), user.pass);
         }
     }
 
@@ -324,7 +324,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Test
     public void testAssignNewTokenForNonExistingToken() throws Exception {
-        login(admin.name, admin.pass);
+        login(admin.email, admin.pass);
         HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/token/assign?old=123&new=123");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -334,7 +334,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Test
     public void testAssignNewToken() throws Exception {
-        login(admin.name, admin.pass);
+        login(admin.email, admin.pass);
 
         HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/token/assign?old=4ae3851817194e2596cf1b7103603ef8&new=123");
 
@@ -367,8 +367,8 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Test
     public void testForceAssignNewToken() throws Exception {
-        login(admin.name, admin.pass);
-        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/token/force?username=dmitriy@blynk.cc&app=Blynk&dashId=79780619&deviceId=0&new=123");
+        login(admin.email, admin.pass);
+        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/token/force?email=dmitriy@blynk.cc&app=Blynk&dashId=79780619&deviceId=0&new=123");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

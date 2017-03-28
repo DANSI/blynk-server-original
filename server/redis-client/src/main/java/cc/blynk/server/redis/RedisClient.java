@@ -88,12 +88,12 @@ public class RedisClient implements Closeable {
         }
     }
 
-    public void assignServerToUser(String username, String server) {
+    public void assignServerToUser(String email, String server) {
         if (isEnabled) {
             try (Jedis jedis = userPool.getResource()) {
-                jedis.set(username, server);
+                jedis.set(email, server);
             } catch (Exception e) {
-                log.error("Error setting server {} to user {}.", server, username, e);
+                log.error("Error setting server {} to user {}.", server, email, e);
             }
         }
     }

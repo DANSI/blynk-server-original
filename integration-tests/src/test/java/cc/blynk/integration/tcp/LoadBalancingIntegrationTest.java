@@ -21,10 +21,7 @@ import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -77,18 +74,18 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient1.start();
 
-        String username = "test_new@gmail.com";
+        String email = "test_new@gmail.com";
         String pass = "a";
         String appName = "Blynk";
 
-        appClient1.send("getServer " + username + "\0" + appName);
+        appClient1.send("getServer " + email + "\0" + appName);
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "127.0.0.1")));
 
         appClient1.reset();
 
-        String token = workflowForUser(appClient1, username, pass, appName);
+        String token = workflowForUser(appClient1, email, pass, appName);
         assertEquals("127.0.0.1", holder.redisClient.getServerByToken(token));
-        assertEquals("127.0.0.1", holder.redisClient.getServerByUser(username));
+        assertEquals("127.0.0.1", holder.redisClient.getServerByUser(email));
 
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort2, properties);
         appClient2.start();

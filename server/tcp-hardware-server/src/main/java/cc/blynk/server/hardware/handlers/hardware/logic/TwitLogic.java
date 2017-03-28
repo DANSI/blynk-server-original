@@ -57,32 +57,32 @@ public class TwitLogic extends NotificationBase {
 
         checkIfNotificationQuotaLimitIsNotReached();
 
-        log.trace("Sending Twit for user {}, with message : '{}'.", state.user.name, message.body);
-        twit(ctx.channel(), state.user.name, twitterWidget.token, twitterWidget.secret, message.body, message.id);
+        log.trace("Sending Twit for user {}, with message : '{}'.", state.user.email, message.body);
+        twit(ctx.channel(), state.user.email, twitterWidget.token, twitterWidget.secret, message.body, message.id);
     }
 
-    private void twit(Channel channel, String username, String token, String secret, String body, int msgId) {
+    private void twit(Channel channel, String email, String token, String secret, String body, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
                 twitterWrapper.send(token, secret, body);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
-                logError(e.getMessage(), username);
+                logError(e.getMessage(), email);
                 channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_ERROR), channel.voidPromise());
             }
         });
     }
 
-    private static void logError(String errorMessage, String username) {
+    private static void logError(String errorMessage, String email) {
         if (errorMessage != null) {
             if (errorMessage.contains("Status is a duplicate")) {
-                log.warn("Duplicate twit status for user {}.", username);
+                log.warn("Duplicate twit status for user {}.", email);
             } else if (errorMessage.contains("Authentication credentials")) {
-                log.warn("Tweet authentication failure for {}.", username);
+                log.warn("Tweet authentication failure for {}.", email);
             } else if (errorMessage.contains("The request is understood, but it has been refused.")) {
-                log.warn("User twit account is banned by twitter. {}.", username);
+                log.warn("User twit account is banned by twitter. {}.", email);
             } else {
-                log.error("Error sending twit for user {}. Reason : {}", username, errorMessage);
+                log.error("Error sending twit for user {}. Reason : {}", email, errorMessage);
             }
         }
     }

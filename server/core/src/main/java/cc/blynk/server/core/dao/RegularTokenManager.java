@@ -46,7 +46,7 @@ class RegularTokenManager {
 
         //todo should never happen. but due to back compatibility
         if (device == null) {
-            throw new IllegalCommandBodyException("Error refreshing token for user + " + user.name);
+            throw new IllegalCommandBodyException("Error refreshing token for user + " + user.email);
         }
 
         //assign new token
@@ -55,7 +55,7 @@ class RegularTokenManager {
 
         user.lastModifiedTs = System.currentTimeMillis();
 
-        log.debug("Generated token for user {}, dashId {}, deviceId {} is {}.", user.name, dashId, deviceId, newToken);
+        log.debug("Generated token for user {}, dashId {}, deviceId {} is {}.", user.email, dashId, deviceId, newToken);
 
         return oldToken;
     }

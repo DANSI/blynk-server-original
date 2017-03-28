@@ -23,13 +23,9 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
-import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 
 /**
  * Handler responsible for managing hardware and apps login messages.
@@ -80,7 +76,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             device.lastLoggedIP = IPUtils.getIp(channel);
         }
 
-        log.info("{} hardware joined.", user.name);
+        log.info("{} hardware joined.", user.email);
     }
 
     @Override
@@ -102,7 +98,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         DashBoard dash = user.profile.getDashById(dashId);
         if (dash == null) {
-            log.warn("User : {} requested token {} for non-existing {} dash id.", user.name, token, dashId);
+            log.warn("User : {} requested token {} for non-existing {} dash id.", user.email, token, dashId);
             ctx.writeAndFlush(makeResponse(message.id, INVALID_TOKEN), ctx.voidPromise());
             return;
         }

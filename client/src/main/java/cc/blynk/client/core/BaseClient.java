@@ -6,11 +6,7 @@ import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.ServerProperties;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ConnectTimeoutException;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -77,9 +73,9 @@ public abstract class BaseClient {
         if (command == Command.REGISTER || command == Command.LOGIN) {
             String[] userPass = body.split(" ", 3);
             if (userPass.length > 1) {
-                String username = userPass[0];
+                String email = userPass[0];
                 String pass = userPass[1];
-                body = username + "\0" + SHA256Util.makeHash(pass, username) + (userPass.length == 3 ? "\0" + userPass[2].replaceAll(" ", "\0") : "");
+                body = email + "\0" + SHA256Util.makeHash(pass, email) + (userPass.length == 3 ? "\0" + userPass[2].replaceAll(" ", "\0") : "");
             }
         }
         if (command == Command.SHARE_LOGIN || command == Command.GET_GRAPH_DATA) {

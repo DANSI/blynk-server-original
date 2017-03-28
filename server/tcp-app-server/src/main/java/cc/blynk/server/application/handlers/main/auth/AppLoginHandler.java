@@ -15,11 +15,7 @@ import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.JsonParser;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asynchttpclient.AsyncCompletionHandler;
@@ -29,10 +25,7 @@ import org.asynchttpclient.netty.handler.WebSocketHandler;
 
 import java.util.NoSuchElementException;
 
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
-import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_REGISTERED;
+import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
@@ -85,30 +78,30 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
             return;
         }
 
-        final String username = messageParts[0].toLowerCase();
+        final String email = messageParts[0].toLowerCase();
         final OsType osType = messageParts.length > 3 ? OsType.parse(messageParts[2]) : OsType.OTHER;
         final String version = messageParts.length > 3 ? messageParts[3] : null;
 
         if (messageParts.length == 5) {
             if (AppName.FACEBOOK.equals(messageParts[4])) {
-                facebookLogin(ctx, message.id, username, messageParts[1], osType, version);
+                facebookLogin(ctx, message.id, email, messageParts[1], osType, version);
             } else {
                 final String appName = messageParts[4];
-                blynkLogin(ctx, message.id, username, messageParts[1], osType, version, appName);
+                blynkLogin(ctx, message.id, email, messageParts[1], osType, version, appName);
             }
         } else {
             //todo this is for back compatibility
-            blynkLogin(ctx, message.id, username, messageParts[1], osType, version, AppName.BLYNK);
+            blynkLogin(ctx, message.id, email, messageParts[1], osType, version, AppName.BLYNK);
         }
     }
 
-    private void facebookLogin(ChannelHandlerContext ctx, int messageId, String username, String token, OsType osType, String version) {
+    private void facebookLogin(ChannelHandlerContext ctx, int messageId, String email, String token, OsType osType, String version) {
         asyncHttpClient.prepareGet(URL + token)
                 .execute(new AsyncCompletionHandler<Response>() {
                     @Override
                     public Response onCompleted(Response response) throws Exception {
                         if (response.getStatusCode() != 200) {
-                            log.warn("Error getting facebook token {} for user {}. Reason : {}", token, username, response.getResponseBody());
+                            log.warn("Error getting facebook token {} for user {}. Reason : {}", token, email, response.getResponseBody());
                             ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
                             return response;
                         }
@@ -116,16 +109,16 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
                         try {
                             String responseBody = response.getResponseBody();
                             FacebookTokenResponse facebookTokenResponse = JsonParser.parseFacebookTokenResponse(responseBody);
-                            if (username.equalsIgnoreCase(facebookTokenResponse.email)) {
-                                User user = holder.userDao.getByName(username, AppName.BLYNK);
+                            if (email.equalsIgnoreCase(facebookTokenResponse.email)) {
+                                User user = holder.userDao.getByName(email, AppName.BLYNK);
                                 if (user == null) {
-                                    user = holder.userDao.addFacebookUser(username, AppName.BLYNK);
+                                    user = holder.userDao.addFacebookUser(email, AppName.BLYNK);
                                 }
 
                                 login(ctx, messageId, user, osType, version);
                             }
                         } catch (Exception e) {
-                            log.error("Error during facebook response parsing for user {}. Reason : {}", username, response.getResponseBody());
+                            log.error("Error during facebook response parsing for user {}. Reason : {}", email, response.getResponseBody());
                             ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
                         }
 
@@ -134,29 +127,29 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
                     @Override
                     public void onThrowable(Throwable t) {
-                        log.error("Error performing facebook request. Token {} for user {}. Reason : {}", token, username, t.getMessage());
+                        log.error("Error performing facebook request. Token {} for user {}. Reason : {}", token, email, t.getMessage());
                         ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
                     }
                 });
     }
 
-    private void blynkLogin(ChannelHandlerContext ctx, int msgId, String username, String pass, OsType osType, String version, String appName) {
-        User user = holder.userDao.getByName(username, appName);
+    private void blynkLogin(ChannelHandlerContext ctx, int msgId, String email, String pass, OsType osType, String version, String appName) {
+        User user = holder.userDao.getByName(email, appName);
 
         if (user == null) {
-            log.warn("User '{}' not registered. {}", username, ctx.channel().remoteAddress());
+            log.warn("User '{}' not registered. {}", email, ctx.channel().remoteAddress());
             ctx.writeAndFlush(makeResponse(msgId, USER_NOT_REGISTERED), ctx.voidPromise());
             return;
         }
 
         if (user.pass == null) {
-            log.warn("Facebook user '{}' tries to login with pass. {}", username, ctx.channel().remoteAddress());
+            log.warn("Facebook user '{}' tries to login with pass. {}", email, ctx.channel().remoteAddress());
             ctx.writeAndFlush(makeResponse(msgId, USER_NOT_AUTHENTICATED), ctx.voidPromise());
             return;
         }
 
         if (!user.pass.equals(pass)) {
-            log.warn("User '{}' credentials are wrong. {}", username, ctx.channel().remoteAddress());
+            log.warn("User '{}' credentials are wrong. {}", email, ctx.channel().remoteAddress());
             ctx.writeAndFlush(makeResponse(msgId, USER_NOT_AUTHENTICATED), ctx.voidPromise());
             return;
         }
@@ -195,11 +188,11 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         channel.writeAndFlush(ok(msgId), channel.voidPromise());
         for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.isAppConnectedOn && dashBoard.isActive) {
-                log.trace("{}-{}. Sendeind App Connected event to hardware.", user.name, user.appName);
+                log.trace("{}-{}. Sendeind App Connected event to hardware.", user.email, user.appName);
                 session.sendMessageToHardware(dashBoard.id, Command.BLYNK_INTERNAL, 7777, "acon");
             }
         }
-        log.info("{} {}-app joined.", user.name, user.appName);
+        log.info("{} {}-app joined.", user.email, user.appName);
     }
 
     @Override

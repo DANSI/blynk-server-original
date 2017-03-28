@@ -34,16 +34,16 @@ public class FileManagerIntegrationTest {
     @Before
     public void cleanup() throws IOException {
         Path file;
-        file = fileManager.generateFileName(user1.name, user1.appName);
+        file = fileManager.generateFileName(user1.email, user1.appName);
         Files.deleteIfExists(file);
 
-        file = fileManager.generateFileName(user2.name, user1.appName);
+        file = fileManager.generateFileName(user2.email, user1.appName);
         Files.deleteIfExists(file);
     }
 
     @Test
     public void testGenerateFileName() {
-        Path file = fileManager.generateFileName(user1.name, user1.appName);
+        Path file = fileManager.generateFileName(user1.email, user1.appName);
         assertEquals("name1.Blynk.user", file.getFileName().toString());
     }
 
@@ -53,7 +53,7 @@ public class FileManagerIntegrationTest {
 
         Map<UserKey, User> users = fileManager.deserialize();
         assertNotNull(users);
-        assertNotNull(users.get(new UserKey(user1.name, AppName.BLYNK)));
+        assertNotNull(users.get(new UserKey(user1.email, AppName.BLYNK)));
     }
 
     @Test
@@ -74,8 +74,8 @@ public class FileManagerIntegrationTest {
         Map<UserKey, User> users = fileManager.deserialize();
         assertNotNull(users);
         assertEquals(2, users.size());
-        assertNotNull(users.get(new UserKey(user1.name, AppName.BLYNK)));
-        assertNotNull(users.get(new UserKey(user2.name, AppName.BLYNK)));
+        assertNotNull(users.get(new UserKey(user1.email, AppName.BLYNK)));
+        assertNotNull(users.get(new UserKey(user2.email, AppName.BLYNK)));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class FileManagerIntegrationTest {
 
         Map<UserKey, User> users = fileManager.deserialize();
         assertNotNull(users);
-        assertNotNull(users.get(new UserKey(user1.name, AppName.BLYNK)));
+        assertNotNull(users.get(new UserKey(user1.email, AppName.BLYNK)));
     }
 
 }

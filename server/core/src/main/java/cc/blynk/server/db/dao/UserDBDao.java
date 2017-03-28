@@ -21,7 +21,7 @@ import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
  */
 public class UserDBDao {
 
-    public static final String upsertUser = "INSERT INTO users (username, appName, region, pass, last_modified, last_logged, last_logged_ip, is_facebook_user, is_super_admin, energy, json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (username, appName) DO UPDATE SET pass = EXCLUDED.pass, last_modified = EXCLUDED.last_modified, last_logged = EXCLUDED.last_logged, last_logged_ip = EXCLUDED.last_logged_ip, is_facebook_user = EXCLUDED.is_facebook_user, is_super_admin = EXCLUDED.is_super_admin, energy = EXCLUDED.energy, json = EXCLUDED.json, region = EXCLUDED.region";
+    public static final String upsertUser = "INSERT INTO users (email, appName, region, name, pass, last_modified, last_logged, last_logged_ip, is_facebook_user, is_super_admin, energy, json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email, appName) DO UPDATE SET pass = EXCLUDED.pass, name = EXCLUDED.name, last_modified = EXCLUDED.last_modified, last_logged = EXCLUDED.last_logged, last_logged_ip = EXCLUDED.last_logged_ip, is_facebook_user = EXCLUDED.is_facebook_user, is_super_admin = EXCLUDED.is_super_admin, energy = EXCLUDED.energy, json = EXCLUDED.json, region = EXCLUDED.region";
     public static final String selectAllUsers = "SELECT * from users";
 
     private static final Logger log = LogManager.getLogger(UserDBDao.class);
@@ -61,9 +61,10 @@ public class UserDBDao {
             while (rs.next()) {
                 User user = new User();
 
-                user.name = rs.getString("username");
+                user.email = rs.getString("email");
                 user.appName = rs.getString("appName");
                 user.region = rs.getString("region");
+                user.name = rs.getString("name");
                 user.pass = rs.getString("pass");
                 user.lastModifiedTs = rs.getTimestamp("last_modified", UTC_CALENDAR).getTime();
                 user.lastLoggedAt = rs.getTimestamp("last_logged", UTC_CALENDAR).getTime();
@@ -95,17 +96,18 @@ public class UserDBDao {
              PreparedStatement ps = connection.prepareStatement(upsertUser)) {
 
             for (User user : users) {
-                ps.setString(1, user.name);
+                ps.setString(1, user.email);
                 ps.setString(2, user.appName);
                 ps.setString(3, user.region);
-                ps.setString(4, user.pass);
-                ps.setTimestamp(5, new Timestamp(user.lastModifiedTs), UTC_CALENDAR);
-                ps.setTimestamp(6, new Timestamp(user.lastLoggedAt), UTC_CALENDAR);
-                ps.setString(7, user.lastLoggedIP);//finish
-                ps.setBoolean(8, user.isFacebookUser);
-                ps.setBoolean(9, user.isSuperAdmin);
-                ps.setInt(10, user.energy);
-                ps.setString(11, user.profile.toString());
+                ps.setString(4, user.name);
+                ps.setString(5, user.pass);
+                ps.setTimestamp(6, new Timestamp(user.lastModifiedTs), UTC_CALENDAR);
+                ps.setTimestamp(7, new Timestamp(user.lastLoggedAt), UTC_CALENDAR);
+                ps.setString(8, user.lastLoggedIP);//finish
+                ps.setBoolean(9, user.isFacebookUser);
+                ps.setBoolean(10, user.isSuperAdmin);
+                ps.setInt(11, user.energy);
+                ps.setString(12, user.profile.toString());
                 ps.addBatch();
             }
 

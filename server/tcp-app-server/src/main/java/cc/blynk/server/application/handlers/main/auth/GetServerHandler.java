@@ -48,7 +48,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
             return;
         }
 
-        final String username = parts[0];
+        final String email = parts[0];
         final String appName = parts[1];
 
         if (appName == null || appName.isEmpty() || appName.length() > 100) {
@@ -56,21 +56,21 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
             return;
         }
 
-        if (BlynkEmailValidator.isNotValidEmail(username)) {
+        if (BlynkEmailValidator.isNotValidEmail(email)) {
             ctx.writeAndFlush(makeResponse(msg.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
             return;
         }
 
-        if (userDao.contains(username, appName)) {
+        if (userDao.contains(email, appName)) {
             //user exists on current server. so returning ip of current server
             ctx.writeAndFlush(makeASCIIStringMessage(msg.command, msg.id, currentIp), ctx.voidPromise());
         } else {
             //user is on other server
             blockingIOProcessor.execute(() -> {
-                String userServer = redisClient.getServerByUser(username);
+                String userServer = redisClient.getServerByUser(email);
                 if (userServer == null) {
                     //user not registered yet anywhere
-                    redisClient.assignServerToUser(username, currentIp);
+                    redisClient.assignServerToUser(email, currentIp);
                     userServer = currentIp;
                 }
 

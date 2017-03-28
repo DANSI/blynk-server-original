@@ -15,7 +15,7 @@ import java.sql.PreparedStatement;
  */
 public class PurchaseDBDao {
 
-    public static final String insertPurchase = "INSERT INTO purchase (username, reward, transactionId, price) values (?, ?, ?, ?)";
+    public static final String insertPurchase = "INSERT INTO purchase (email, reward, transactionId, price) values (?, ?, ?, ?)";
 
     private static final Logger log = LogManager.getLogger(PurchaseDBDao.class);
     private final HikariDataSource ds;
@@ -38,7 +38,7 @@ public class PurchaseDBDao {
     }
 
     private static void insert(PreparedStatement ps, Purchase purchase) throws Exception {
-        ps.setString(1, purchase.username);
+        ps.setString(1, purchase.email);
         ps.setInt(2, purchase.reward);
         ps.setString(3, purchase.transactionId);
         ps.setDouble(4, purchase.price);

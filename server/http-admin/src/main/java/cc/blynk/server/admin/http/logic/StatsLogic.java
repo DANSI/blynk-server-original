@@ -63,7 +63,7 @@ public class StatsLogic extends CookiesBaseHttpHandler {
             int hardReqRate = session.getHardRequestRate();
 
             if (appReqRate > 0 || hardReqRate > 0) {
-                res.add(new RequestPerSecondResponse(entry.getKey().name, appReqRate, hardReqRate));
+                res.add(new RequestPerSecondResponse(entry.getKey().email, appReqRate, hardReqRate));
             }
         }
         return ok(sort(res, sortField, sortOrder));
@@ -151,7 +151,7 @@ public class StatsLogic extends CookiesBaseHttpHandler {
 
         for (User user : userDao.users.values()) {
             if (user.lastLoggedIP != null) {
-                final String name = user.name + "-" + user.appName;
+                final String name = user.email + "-" + user.appName;
                 if (ip == null) {
                     res.add(new IpNameResponse(name, user.lastLoggedIP));
                     for (DashBoard dashBoard : user.profile.dashBoards) {

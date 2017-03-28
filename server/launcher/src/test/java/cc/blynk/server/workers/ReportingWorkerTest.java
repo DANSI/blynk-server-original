@@ -70,8 +70,8 @@ public class ReportingWorkerTest {
         reportingDaoMock = new ReportingDao(reportingFolder, averageAggregator, properties);
     }
 
-    private static void createReportingFolder(String reportingFolder, String username) {
-        Path reportingPath = Paths.get(reportingFolder, username);
+    private static void createReportingFolder(String reportingFolder, String email) {
+        Path reportingPath = Paths.get(reportingFolder, email);
         if (Files.notExists(reportingPath)) {
             try {
                 Files.createDirectories(reportingPath);
@@ -84,7 +84,7 @@ public class ReportingWorkerTest {
     @Test
     public void testStore() throws IOException {
         User user = new User();
-        user.name = "test";
+        user.email = "test";
         user.appName = AppName.BLYNK;
         ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock, reportingFolder, new DBManager(blockingIOProcessor, true));
 
@@ -127,7 +127,7 @@ public class ReportingWorkerTest {
         assertEquals(ts * AverageAggregatorProcessor.HOUR, data.getLong());
 
         User user2 = new User();
-        user2.name = "test2";
+        user2.email = "test2";
         user2.appName = AppName.BLYNK;
         data = ReportingDao.getByteBufferFromDisk(reportingFolder, user2, 2, 0, PinType.ANALOG, (byte) 2, 1, GraphType.HOURLY);
         assertNotNull(data);
@@ -168,7 +168,7 @@ public class ReportingWorkerTest {
         assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphType.HOURLY))));
 
         User user = new User();
-        user.name = "test";
+        user.email = "test";
         user.appName = AppName.BLYNK;
 
         //take less
@@ -231,7 +231,7 @@ public class ReportingWorkerTest {
         assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(2, 0, PinType.ANALOG.pintTypeChar, (byte) 2, GraphType.HOURLY))));
 
         User user = new User();
-        user.name = "test";
+        user.email = "test";
         user.appName = AppName.BLYNK;
 
         new ReportingDao(reportingFolder, properties).delete(user, 1, 0, PinType.ANALOG, (byte) 1);

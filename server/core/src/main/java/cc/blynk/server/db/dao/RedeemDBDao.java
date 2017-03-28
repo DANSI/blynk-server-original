@@ -18,7 +18,7 @@ import java.util.List;
 public class RedeemDBDao {
 
     public static final String selectRedeemToken = "SELECT * from redeem where token = ?";
-    public static final String updateRedeemToken = "UPDATE redeem SET username = ?, version = 2, isRedeemed = true, ts = NOW() WHERE token = ? and version = 1";
+    public static final String updateRedeemToken = "UPDATE redeem SET email = ?, version = 2, isRedeemed = true, ts = NOW() WHERE token = ? and version = 1";
     public static final String insertRedeemToken = "INSERT INTO redeem (token, company, reward) values (?, ?, ?)";
 
     private static final Logger log = LogManager.getLogger(RedeemDBDao.class);
@@ -41,7 +41,7 @@ public class RedeemDBDao {
 
             if (rs.next()) {
                 return new Redeem(rs.getString("token"), rs.getString("company"),
-                        rs.getBoolean("isRedeemed"), rs.getString("username"),
+                        rs.getBoolean("isRedeemed"), rs.getString("email"),
                         rs.getInt("reward"), rs.getInt("version"),
                         rs.getDate("ts")
                 );
@@ -55,11 +55,11 @@ public class RedeemDBDao {
         return null;
     }
 
-    public boolean updateRedeem(String username, String token) throws Exception {
+    public boolean updateRedeem(String email, String token) throws Exception {
         try (Connection connection = ds.getConnection();
              PreparedStatement statement = connection.prepareStatement(updateRedeemToken)) {
 
-            statement.setString(1, username);
+            statement.setString(1, email);
             statement.setString(2, token);
             int updatedRows = statement.executeUpdate();
             connection.commit();

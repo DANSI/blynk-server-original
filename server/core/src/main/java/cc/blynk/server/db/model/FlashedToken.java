@@ -13,7 +13,7 @@ public class FlashedToken {
 
     public String appName;
 
-    public String username;
+    public String email;
 
     public int deviceId;
 
@@ -27,10 +27,10 @@ public class FlashedToken {
         this.deviceId = deviceId;
     }
 
-    public FlashedToken(String token, String appName, String username, int deviceId, boolean isActivated, Date ts) {
+    public FlashedToken(String token, String appName, String email, int deviceId, boolean isActivated, Date ts) {
         this.token = token;
         this.appName = appName;
-        this.username = username;
+        this.email = email;
         this.deviceId = deviceId;
         this.isActivated = isActivated;
         this.ts = ts;

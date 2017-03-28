@@ -3,9 +3,10 @@ CREATE DATABASE blynk;
 \connect blynk
 
 CREATE TABLE users (
-  username text NOT NULL,
+  email text NOT NULL,
   appName text NOT NULL,
   region text,
+  name text,
   pass text,
   last_modified timestamp,
   last_logged timestamp,
@@ -14,7 +15,7 @@ CREATE TABLE users (
   is_super_admin bool DEFAULT FALSE,
   energy int,
   json text,
-  PRIMARY KEY(username, appName)
+  PRIMARY KEY(email, appName)
 );
 
 CREATE TABLE redeem (
@@ -22,7 +23,7 @@ CREATE TABLE redeem (
   company text,
   isRedeemed boolean DEFAULT FALSE,
   reward integer NOT NULL DEFAULT 0,
-  username text,
+  email text,
   version integer NOT NULL DEFAULT 1,
   ts timestamp
 );
@@ -30,7 +31,7 @@ CREATE TABLE redeem (
 CREATE TABLE flashed_tokens (
   token character(32),
   app_name text,
-  username text,
+  email text,
   device_id int4 NOT NULL,
   is_activated boolean DEFAULT FALSE,
   ts timestamp,
@@ -38,59 +39,58 @@ CREATE TABLE flashed_tokens (
 );
 
 CREATE TABLE purchase (
-  username text,
+  email text,
   reward integer NOT NULL,
   transactionId text,
   price float8,
   ts timestamp NOT NULL DEFAULT NOW(),
-  PRIMARY KEY (username, transactionId)
+  PRIMARY KEY (email, transactionId)
 );
 
 CREATE TABLE reporting_raw_data (
-  username text,
+  email text,
   project_id int4,
   device_id int4,
   pin int2,
   pinType char,
   ts timestamp,
-
   stringValue text,
   doubleValue float8,
 
-  PRIMARY KEY (username, project_id, device_id, pin, pinType, ts)
+  PRIMARY KEY (email, project_id, device_id, pin, pinType, ts)
 );
 
 CREATE TABLE reporting_average_minute (
-  username text,
+  email text,
   project_id int4,
   device_id int4,
   pin int2,
   pinType char,
   ts timestamp,
   value float8,
-  PRIMARY KEY (username, project_id, device_id, pin, pinType, ts)
+  PRIMARY KEY (email, project_id, device_id, pin, pinType, ts)
 );
 
 CREATE TABLE reporting_average_hourly (
-  username text,
+  email text,
   project_id int4,
   device_id int4,
   pin int2,
   pinType char,
   ts timestamp,
   value float8,
-  PRIMARY KEY (username, project_id, device_id, pin, pinType, ts)
+  PRIMARY KEY (email, project_id, device_id, pin, pinType, ts)
 );
 
 CREATE TABLE reporting_average_daily (
-  username text,
+  email text,
   project_id int4,
   device_id int4,
   pin int2,
   pinType char,
   ts timestamp,
   value float8,
-  PRIMARY KEY (username, project_id, device_id, pin, pinType, ts)
+  PRIMARY KEY (email, project_id, device_id, pin, pinType, ts)
 );
 
 CREATE TABLE reporting_app_stat_minute (

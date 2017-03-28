@@ -60,7 +60,7 @@ public class CSVGenerator {
         }
 
         onePinData.flip();
-        Path path = generateExportCSVPath(user.name, dashId, pinType, pin);
+        Path path = generateExportCSVPath(user.email, dashId, pinType, pin);
         makeGzippedCSVFile(onePinData, path);
         return path;
     }
@@ -89,12 +89,12 @@ public class CSVGenerator {
         }
     }
 
-    private static Path generateExportCSVPath(String username, int dashId, PinType pinType, byte pin) {
-        return Paths.get(CSV_DIR, format(username, dashId, pinType, pin));
+    private static Path generateExportCSVPath(String email, int dashId, PinType pinType, byte pin) {
+        return Paths.get(CSV_DIR, format(email, dashId, pinType, pin));
     }
 
     //"%s_%s_%c%d.csv.gz"
-    private static String format(String username, int dashId, PinType pinType, byte pin) {
-        return username + "_" + dashId + "_" + pinType.pintTypeChar + pin + ".csv.gz";
+    private static String format(String email, int dashId, PinType pinType, byte pin) {
+        return email + "_" + dashId + "_" + pinType.pintTypeChar + pin + ".csv.gz";
     }
 }

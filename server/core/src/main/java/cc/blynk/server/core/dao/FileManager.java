@@ -87,12 +87,12 @@ public class FileManager {
         return dataDir;
     }
 
-    public Path generateFileName(String userName, String appName) {
-        return Paths.get(dataDir.toString(), userName + "." + appName + ".user");
+    public Path generateFileName(String email, String appName) {
+        return Paths.get(dataDir.toString(), email + "." + appName + ".user");
     }
 
-    public Path generateBackupFileName(String userName, String appName) {
-        return Paths.get(backupDataDir.toString(), userName + "." + appName + ".user." +
+    public Path generateBackupFileName(String email, String appName) {
+        return Paths.get(backupDataDir.toString(), email + "." + appName + ".user." +
                 new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
     }
 
@@ -100,22 +100,22 @@ public class FileManager {
         return Paths.get(dataDir.toString(), "u_" + userName + ".user");
     }
 
-    public boolean delete(String name, String appName) {
-        Path file = generateFileName(name, appName);
+    public boolean delete(String email, String appName) {
+        Path file = generateFileName(email, appName);
         return FileUtils.move(file, this.deletedDataDir);
     }
 
     public void overrideUserFile(User user) throws IOException {
-        Path path = generateFileName(user.name, user.appName);
+        Path path = generateFileName(user.email, user.appName);
 
         JsonParser.writeUser(path.toFile(), user);
 
-        removeOldFile(user.name);
+        removeOldFile(user.email);
     }
 
-    private void removeOldFile(String username) {
+    private void removeOldFile(String email) {
         //this oldFileName is migration code. should be removed in future versions
-        Path oldFileName = generateOldFileName(username);
+        Path oldFileName = generateOldFileName(email);
         try {
             Files.deleteIfExists(oldFileName);
         } catch (Exception e) {
@@ -159,6 +159,9 @@ public class FileManager {
     }
 
     public static void migrateOldProfile(User user) {
+        if (user.email == null) {
+            user.email = user.name;
+        }
         for (DashBoard dashBoard : user.profile.dashBoards) {
             final Integer dashId = dashBoard.id;
             if (user.dashTokens != null) {

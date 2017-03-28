@@ -56,20 +56,20 @@ public class AddEnergyLogic {
 
         int energyAmountToAdd = ParseUtil.parseInt(bodyParts[0]);
         if (bodyParts.length == 2 && isValidTransactionId(bodyParts[1])) {
-            insertPurchase(user.name, energyAmountToAdd, bodyParts[1]);
+            insertPurchase(user.email, energyAmountToAdd, bodyParts[1]);
             user.purchaseEnergy(energyAmountToAdd);
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
-            throw new NotAllowedException("Purchase with invalid transaction id. User " + user.name);
+            throw new NotAllowedException("Purchase with invalid transaction id. User " + user.email);
         }
     }
 
-    private void insertPurchase(String username, int reward, String transactionId) {
+    private void insertPurchase(String email, int reward, String transactionId) {
         if (transactionId.equals("AdColonyAward") || transactionId.equals("homeScreen")) {
             return;
         }
         blockingIOProcessor.execute(
-            () -> dbManager.insertPurchase(new Purchase(username, reward, transactionId))
+            () -> dbManager.insertPurchase(new Purchase(email, reward, transactionId))
         );
     }
 

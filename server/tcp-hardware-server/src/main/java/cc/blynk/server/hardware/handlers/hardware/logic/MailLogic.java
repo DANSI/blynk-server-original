@@ -73,7 +73,7 @@ public class MailLogic extends NotificationBase {
             body = bodyParts[2];
         } else {
             if (mail.to == null || mail.to.isEmpty()) {
-                to = state.user.name;
+                to = state.user.email;
             } else {
                 to = mail.to;
             }
@@ -88,8 +88,8 @@ public class MailLogic extends NotificationBase {
             throw new IllegalCommandException("Invalid mail receiver.");
         }
 
-        log.trace("Sending Mail for user {}, with message : '{}'.", state.user.name, message.body);
-        mail(ctx.channel(), state.user.name, to, subj, body, message.id);
+        log.trace("Sending Mail for user {}, with message : '{}'.", state.user.email, message.body);
+        mail(ctx.channel(), state.user.email, to, subj, body, message.id);
         state.user.emailMessages++;
     }
 
@@ -106,13 +106,13 @@ public class MailLogic extends NotificationBase {
         }
     }
 
-    private void mail(Channel channel, String username, String to, String subj, String body, int msgId) {
+    private void mail(Channel channel, String email, String to, String subj, String body, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
                 mailWrapper.sendHtml(to, subj, body);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
-                log.error("Error sending email from hardware. From user {}, to : {}. Reason : {}",  username, to, e.getMessage());
+                log.error("Error sending email from hardware. From user {}, to : {}. Reason : {}",  email, to, e.getMessage());
                 channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_ERROR), channel.voidPromise());
             }
         });

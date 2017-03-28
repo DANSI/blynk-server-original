@@ -161,8 +161,8 @@ public class DBManager implements Closeable {
         return null;
     }
 
-    public boolean updateRedeem(String username, String token) throws Exception {
-        return redeemDBDao.updateRedeem(username, token);
+    public boolean updateRedeem(String email, String token) throws Exception {
+        return redeemDBDao.updateRedeem(email, token);
     }
 
     public void insertRedeems(List<Redeem> redeemList) {

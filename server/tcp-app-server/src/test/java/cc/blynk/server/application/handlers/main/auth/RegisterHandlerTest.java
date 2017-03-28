@@ -92,7 +92,7 @@ public class RegisterHandlerTest {
     public void testAllowedUsersSingleUserNotWork() throws Exception {
         RegisterHandler registerHandler = new RegisterHandler(userDao, new String[] {"test@gmail.com"});
 
-        String userName = "test2@gmail.com";
+        String email = "test2@gmail.com";
 
         when(ctx.alloc()).thenReturn(allocator);
         when(allocator.ioBuffer(anyInt())).thenReturn(byteBuf);
@@ -100,10 +100,10 @@ public class RegisterHandlerTest {
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
 
-        when(userDao.isUserExists(userName, AppName.BLYNK)).thenReturn(false);
-        registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + "\0" + "1"));
+        when(userDao.isUserExists(email, AppName.BLYNK)).thenReturn(false);
+        registerHandler.channelRead0(ctx, new RegisterMessage(1, email + "\0" + "1"));
 
-        verify(userDao, times(0)).add(eq(userName), eq("1"), eq(AppName.BLYNK));
+        verify(userDao, times(0)).add(eq(email), eq("1"), eq(AppName.BLYNK));
         //verify(ctx).writeAndFlush(eq(new ResponseMessage(1, NOT_ALLOWED)), any());
     }
 

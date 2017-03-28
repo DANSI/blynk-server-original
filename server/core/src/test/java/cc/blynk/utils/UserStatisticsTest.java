@@ -11,12 +11,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
@@ -188,7 +183,7 @@ public class UserStatisticsTest {
         if (user == null) {
             System.out.println("No user");
         } else {
-            System.out.println(user.name);
+            System.out.println(user.email);
         }
     }
 

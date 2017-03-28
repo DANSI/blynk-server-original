@@ -32,7 +32,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
 
     public HardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
         super(holder.limits, stateHolder);
-        this.hardware = new HardwareLogic(holder, stateHolder.user.name);
+        this.hardware = new HardwareLogic(holder, stateHolder.user.email);
         this.bridge = new BridgeLogic(holder.sessionDao, hardware);
 
         this.email = new MailLogic(holder.blockingIOProcessor, holder.mailWrapper, holder.limits.NOTIFICATION_PERIOD_LIMIT_SEC);

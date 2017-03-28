@@ -14,24 +14,12 @@ import cc.blynk.utils.StringUtils;
 import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.asynchttpclient.AsyncCompletionHandler;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.BoundRequestBuilder;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.HttpResponseBodyPart;
-import org.asynchttpclient.Response;
+import org.asynchttpclient.*;
 
 import java.time.Instant;
 
 import static cc.blynk.server.core.protocol.enums.Command.WEB_HOOKS;
-import static cc.blynk.utils.StringUtils.DATETIME_PATTERN;
-import static cc.blynk.utils.StringUtils.PIN_PATTERN;
-import static cc.blynk.utils.StringUtils.PIN_PATTERN_0;
-import static cc.blynk.utils.StringUtils.PIN_PATTERN_1;
-import static cc.blynk.utils.StringUtils.PIN_PATTERN_2;
-import static cc.blynk.utils.StringUtils.PIN_PATTERN_3;
-import static cc.blynk.utils.StringUtils.PIN_PATTERN_4;
-import static cc.blynk.utils.StringUtils.PIN_PATTERN_5;
+import static cc.blynk.utils.StringUtils.*;
 
 /**
  * Handles all webhooks logic.
@@ -47,19 +35,19 @@ public class WebhookProcessor extends NotificationBase {
     private final AsyncHttpClient httpclient;
     private final GlobalStats globalStats;
     private final int responseSizeLimit;
-    private final String username;
+    private final String email;
     private final int WEBHOOK_FAILURE_LIMIT;
 
     public WebhookProcessor(DefaultAsyncHttpClient httpclient,
                             long quotaFrequencyLimit,
                             int responseSizeLimit,
                             int failureLimit,
-                            GlobalStats stats, String username) {
+                            GlobalStats stats, String email) {
         super(quotaFrequencyLimit);
         this.httpclient = httpclient;
         this.globalStats = stats;
         this.responseSizeLimit = responseSizeLimit;
-        this.username = username;
+        this.email = email;
         this.WEBHOOK_FAILURE_LIMIT = failureLimit;
     }
 
@@ -111,7 +99,7 @@ public class WebhookProcessor extends NotificationBase {
                 length += content.length();
 
                 if (length > responseSizeLimit) {
-                    log.warn("Response from webhook is too big for {}. Skipping. Size : {}", username, length);
+                    log.warn("Response from webhook is too big for {}. Skipping. Size : {}", email, length);
                     return State.ABORT;
                 }
                 return super.onBodyPartReceived(content);
@@ -129,7 +117,7 @@ public class WebhookProcessor extends NotificationBase {
                     }
                 } else {
                     webHook.failureCounter++;
-                    log.error("Error sending webhook for {}. Code {}.", username, response.getStatusCode());
+                    log.error("Error sending webhook for {}. Code {}.", email, response.getStatusCode());
                     if (log.isDebugEnabled()) {
                         log.debug("Reason {}", response.getResponseBody());
                     }
@@ -141,7 +129,7 @@ public class WebhookProcessor extends NotificationBase {
             @Override
             public void onThrowable(Throwable t) {
                 webHook.failureCounter++;
-                log.error("Error sending webhook for {}.", username);
+                log.error("Error sending webhook for {}.", email);
                 if (log.isDebugEnabled()) {
                     log.debug("Reason {}", t.getMessage());
                 }

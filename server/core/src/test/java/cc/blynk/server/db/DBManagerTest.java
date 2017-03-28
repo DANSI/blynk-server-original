@@ -114,7 +114,7 @@ public class DBManagerTest {
 
             int i = 0;
             while (rs.next()) {
-                assertEquals(userName, rs.getString("username"));
+                assertEquals(userName, rs.getString("email"));
                 assertEquals(1, rs.getInt("project_id"));
                 assertEquals(2, rs.getInt("device_id"));
                 assertEquals(0, rs.getByte("pin"));
@@ -162,7 +162,7 @@ public class DBManagerTest {
             CopyManager copyManager = new CopyManager(connection.unwrap(BaseConnection.class));
 
 
-            String selectQuery = "select pintype || pin, ts, value from reporting_average_minute where project_id = 1 and username = 'test@gmail.com'";
+            String selectQuery = "select pintype || pin, ts, value from reporting_average_minute where project_id = 1 and email = 'test@gmail.com'";
             long res = copyManager.copyOut("COPY (" + selectQuery + " ) TO STDOUT WITH (FORMAT CSV)", gzipWriter);
             System.out.println(res);
         }
@@ -198,14 +198,14 @@ public class DBManagerTest {
     @Test
     public void testManyConnections() throws Exception {
         User user = new User();
-        user.name = "test@test.com";
+        user.email = "test@test.com";
         user.appName = AppName.BLYNK;
         Map<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
         AggregationValue value = new AggregationValue();
         value.update(1);
         long ts = System.currentTimeMillis();
         for (int i = 0; i < 60; i++) {
-            map.put(new AggregationKey(user.name, user.appName, i, 0, PinType.ANALOG.pintTypeChar, (byte) i, ts), value);
+            map.put(new AggregationKey(user.email, user.appName, i, 0, PinType.ANALOG.pintTypeChar, (byte) i, ts), value);
             dbManager.insertReporting(map, GraphType.MINUTE);
             dbManager.insertReporting(map, GraphType.HOURLY);
             dbManager.insertReporting(map, GraphType.DAILY);
@@ -249,6 +249,7 @@ public class DBManagerTest {
     public void testUpsertUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", false, false);
+        user.name = "123";
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
@@ -257,22 +258,25 @@ public class DBManagerTest {
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
+        user.name = "123";
         users.add(user);
         user = new User("test2@gmail.com", "pass", AppName.BLYNK, "local", false, false);
         user.lastModifiedTs = 0;
         user.lastLoggedAt = 1;
         user.lastLoggedIP = "127.0.0.1";
+        user.name = "123";
         users.add(user);
 
         dbManager.userDBDao.save(users);
 
         try (Connection connection = dbManager.getConnection();
              Statement statement = connection.createStatement();
-             ResultSet rs = statement.executeQuery("select * from users where username = 'test@gmail.com'")) {
+             ResultSet rs = statement.executeQuery("select * from users where email = 'test@gmail.com'")) {
             while (rs.next()) {
-                assertEquals("test@gmail.com", rs.getString("username"));
+                assertEquals("test@gmail.com", rs.getString("email"));
                 assertEquals(AppName.BLYNK, rs.getString("appName"));
                 assertEquals("local", rs.getString("region"));
+                assertEquals("123", rs.getString("name"));
                 assertEquals("pass", rs.getString("pass"));
                 assertEquals(0, rs.getTimestamp("last_modified", DateTimeUtils.UTC_CALENDAR).getTime());
                 assertEquals(1, rs.getTimestamp("last_logged", DateTimeUtils.UTC_CALENDAR).getTime());
@@ -301,6 +305,7 @@ public class DBManagerTest {
 
         users = new ArrayList<>();
         user = new User("test@gmail.com", "pass2", AppName.BLYNK, "local2", true, true);
+        user.name = "1234";
         user.lastModifiedTs = 1;
         user.lastLoggedAt = 2;
         user.lastLoggedIP = "127.0.0.2";
@@ -317,12 +322,13 @@ public class DBManagerTest {
 
         try (Connection connection = dbManager.getConnection();
              Statement statement = connection.createStatement();
-             ResultSet rs = statement.executeQuery("select * from users where username = 'test@gmail.com'")) {
+             ResultSet rs = statement.executeQuery("select * from users where email = 'test@gmail.com'")) {
             while (rs.next()) {
-                assertEquals("test@gmail.com", rs.getString("username"));
+                assertEquals("test@gmail.com", rs.getString("email"));
                 assertEquals(AppName.BLYNK, rs.getString("appName"));
                 assertEquals("local2", rs.getString("region"));
                 assertEquals("pass2", rs.getString("pass"));
+                assertEquals("1234", rs.getString("name"));
                 assertEquals(1, rs.getTimestamp("last_modified", DateTimeUtils.UTC_CALENDAR).getTime());
                 assertEquals(2, rs.getTimestamp("last_logged", DateTimeUtils.UTC_CALENDAR).getTime());
                 assertEquals("127.0.0.2", rs.getString("last_logged_ip"));
@@ -357,9 +363,9 @@ public class DBManagerTest {
 
         assertNotNull(dbUsers);
         assertEquals(1, dbUsers.size());
-        User dbUser = dbUsers.get(new UserKey(user.name, user.appName));
+        User dbUser = dbUsers.get(new UserKey(user.email, user.appName));
 
-        assertEquals("test@gmail.com", dbUser.name);
+        assertEquals("test@gmail.com", dbUser.email);
         assertEquals(AppName.BLYNK, dbUser.appName);
         assertEquals("local", dbUser.region);
         assertEquals("pass", dbUser.pass);
@@ -391,7 +397,7 @@ public class DBManagerTest {
              ResultSet rs = statement.executeQuery("select * from purchase")) {
 
             while (rs.next()) {
-                assertEquals("test@gmail.com", rs.getString("username"));
+                assertEquals("test@gmail.com", rs.getString("email"));
                 assertEquals(1000, rs.getInt("reward"));
                 assertEquals("123456", rs.getString("transactionId"));
                 assertEquals(0.99D, rs.getDouble("price"), 0.1D);
@@ -422,7 +428,7 @@ public class DBManagerTest {
         assertEquals(redeem.token, token);
         assertTrue(redeem.isRedeemed);
         assertEquals(2, redeem.version);
-        assertEquals("user@user.com", redeem.username);
+        assertEquals("user@user.com", redeem.email);
         assertNotNull(redeem.ts);
     }
 

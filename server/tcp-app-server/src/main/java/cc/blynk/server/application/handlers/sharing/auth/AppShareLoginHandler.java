@@ -13,11 +13,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -68,12 +64,12 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         }
     }
 
-    private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String token, OsType osType, String version, String uid) {
-        String userName = username.toLowerCase();
+    private void appLogin(ChannelHandlerContext ctx, int messageId, String email, String token, OsType osType, String version, String uid) {
+        String userName = email.toLowerCase();
 
         SharedTokenValue tokenValue = holder.tokenManager.getUserBySharedToken(token);
 
-        if (tokenValue == null || !tokenValue.user.name.equals(userName)) {
+        if (tokenValue == null || !tokenValue.user.email.equals(userName)) {
             log.debug("Share token is invalid. User : {}, token {}, {}", userName, token, ctx.channel().remoteAddress());
             ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
             return;
@@ -97,9 +93,9 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering app channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user.name, messageId));
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user.email, messageId));
         } else {
-            completeLogin(ctx.channel(), session, user.name, messageId);
+            completeLogin(ctx.channel(), session, user.email, messageId);
         }
     }
 

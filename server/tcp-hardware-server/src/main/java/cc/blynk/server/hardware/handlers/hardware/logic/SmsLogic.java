@@ -55,16 +55,16 @@ public class SmsLogic extends NotificationBase {
 
         checkIfNotificationQuotaLimitIsNotReached();
 
-        log.trace("Sending sms for user {}, with message : '{}'.", state.user.name, message.body);
-        sms(ctx.channel(), state.user.name, smsWidget.to, message.body, message.id);
+        log.trace("Sending sms for user {}, with message : '{}'.", state.user.email, message.body);
+        sms(ctx.channel(), state.user.email, smsWidget.to, message.body, message.id);
     }
 
-    private void sms(Channel channel, String username, String to, String body, int msgId) {
+    private void sms(Channel channel, String email, String to, String body, int msgId) {
         try {
             smsWrapper.send(to, body);
             channel.writeAndFlush(ok(msgId), channel.voidPromise());
         } catch (Exception e) {
-            log.error("Error sending sms for user {}. Reason : {}",  username, e.getMessage());
+            log.error("Error sending sms for user {}. Reason : {}",  email, e.getMessage());
             channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_ERROR), channel.voidPromise());
         }
     }

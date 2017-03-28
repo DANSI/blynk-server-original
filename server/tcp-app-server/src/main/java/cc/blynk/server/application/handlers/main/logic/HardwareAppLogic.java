@@ -43,14 +43,14 @@ public class HardwareAppLogic {
     private final WebhookProcessor webhookProcessor;
     private final EventorProcessor eventorProcessor;
 
-    public HardwareAppLogic(Holder holder, String username) {
+    public HardwareAppLogic(Holder holder, String email) {
         this.sessionDao = holder.sessionDao;
         this.webhookProcessor = new WebhookProcessor(holder.asyncHttpClient,
                 holder.limits.WEBHOOK_PERIOD_LIMITATION,
                 holder.limits.WEBHOOK_RESPONSE_SUZE_LIMIT_BYTES,
                 holder.limits.WEBHOOK_FAILURE_LIMIT,
                 holder.stats,
-                username);
+                email);
         this.eventorProcessor = holder.eventorProcessor;
     }
 

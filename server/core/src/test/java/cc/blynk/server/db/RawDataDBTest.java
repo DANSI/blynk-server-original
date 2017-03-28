@@ -36,7 +36,7 @@ public class RawDataDBTest {
         dbManager = new DBManager("db-test.properties", blockingIOProcessor, true);
         assertNotNull(dbManager.getConnection());
         user = new User();
-        user.name = "test@test.com";
+        user.email = "test@test.com";
         user.appName = AppName.BLYNK;
     }
 
@@ -65,7 +65,7 @@ public class RawDataDBTest {
 
 
             while (rs.next()) {
-                assertEquals("test@test.com", rs.getString("username"));
+                assertEquals("test@test.com", rs.getString("email"));
                 assertEquals(1, rs.getInt("project_id"));
                 assertEquals(2, rs.getInt("device_id"));
                 assertEquals(3, rs.getByte("pin"));
@@ -94,7 +94,7 @@ public class RawDataDBTest {
 
 
             while (rs.next()) {
-                assertEquals("test@test.com", rs.getString("username"));
+                assertEquals("test@test.com", rs.getString("email"));
                 assertEquals(1, rs.getInt("project_id"));
                 assertEquals(2, rs.getInt("device_id"));
                 assertEquals(3, rs.getByte("pin"));
