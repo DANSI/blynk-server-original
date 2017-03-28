@@ -41,7 +41,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
     private final String resetPassUrl;
     private final String pageContent;
 
-    public static final String RESET_PASS_STATIC_PATH = "static/reset/";
+    private static final String RESET_PASS_STATIC_PATH = "static/reset/";
 
     public ResetPasswordLogic(Holder holder) {
         super(holder, "");

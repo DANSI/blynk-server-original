@@ -305,6 +305,15 @@ public class HttpsAdminServerTest extends BaseTest {
     }
 
     @Test
+    public void getStaticFile() throws Exception {
+        HttpGet request = new HttpGet(httpsAdminServerUrl.replace("admin", "static/admin.html"));
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
     public void testGetFavIconHttp() throws Exception {
         HttpGet request = new HttpGet(httpServerUrl + "favicon.ico");
 

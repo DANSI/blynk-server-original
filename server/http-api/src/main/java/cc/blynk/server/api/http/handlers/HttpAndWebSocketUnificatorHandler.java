@@ -50,7 +50,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final GlobalStats stats;
 
     private final WebSocketsGenericLoginHandler genericLoginHandler;
-    private final String adminRootPath;
+    private final String rootPath;
     private final boolean isUnpacked;
     private final IpFilterHandler ipFilterHandler;
     private final AuthCookieHandler authCookieHandler;
@@ -67,11 +67,11 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final AdminAuthHandler adminAuthHandler;
     private final  CookieBasedUrlReWriterHandler cookieBasedUrlReWriterHandler;
 
-    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String adminRootPath, boolean isUnpacked) {
+    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath, boolean isUnpacked) {
         this.region = holder.region;
         this.stats = holder.stats;
         this.genericLoginHandler = new WebSocketsGenericLoginHandler(holder, port);
-        this.adminRootPath = adminRootPath;
+        this.rootPath = rootPath;
         this.isUnpacked = isUnpacked;
         this.ipFilterHandler = new IpFilterHandler(holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips"));
 
@@ -82,17 +82,17 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.noMatchHandler = new NoMatchHandler();
 
         //admin API handlers
-        this.usersLogic = new UsersLogic(holder, adminRootPath);
-        this.statsLogic = new StatsLogic(holder, adminRootPath);
-        this.configsLogic = new ConfigsLogic(holder, adminRootPath);
-        this.hardwareStatsLogic = new HardwareStatsLogic(holder, adminRootPath);
-        this.adminAuthHandler = new AdminAuthHandler(holder, adminRootPath);
+        this.usersLogic = new UsersLogic(holder, rootPath);
+        this.statsLogic = new StatsLogic(holder, rootPath);
+        this.configsLogic = new ConfigsLogic(holder, rootPath);
+        this.hardwareStatsLogic = new HardwareStatsLogic(holder, rootPath);
+        this.adminAuthHandler = new AdminAuthHandler(holder, rootPath);
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
-        this.cookieBasedUrlReWriterHandler = new CookieBasedUrlReWriterHandler(adminRootPath, "/static/admin/admin.html", "/static/admin/login.html");
+        this.cookieBasedUrlReWriterHandler = new CookieBasedUrlReWriterHandler(rootPath, "/static/admin.html", "/static/login.html");
     }
 
-    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String adminRootPath) {
-        this(holder, port, adminRootPath, false);
+    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath) {
+        this(holder, port, rootPath, false);
     }
 
     @Override
@@ -103,12 +103,12 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         if (uri.equals("/")) {
             //for local server do redirect to admin page
             if (region.equals("local")) {
-                ctx.writeAndFlush(redirect(adminRootPath));
+                ctx.writeAndFlush(redirect(rootPath));
             } else {
                 ctx.writeAndFlush(redirect(BLYNK_LANDING));
             }
             return;
-        } else if (uri.startsWith(adminRootPath) || uri.startsWith("/static/admin")) {
+        } else if (uri.startsWith(rootPath) || uri.startsWith("/static")) {
             initAdminPipeline(ctx, msg);
         } else if (req.uri().startsWith(HttpAPIServer.WEBSOCKET_PATH)) {
             initWebSocketPipeline(ctx, HttpAPIServer.WEBSOCKET_PATH);
