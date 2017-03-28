@@ -164,7 +164,9 @@ public class AppMailLogic {
             i++;
         }
 
-        dbManager.insertFlashedTokens(flashedTokens);
+        if (!dbManager.insertFlashedTokens(flashedTokens)) {
+            throw new Exception("App Publishing Preview requires enabled DB.");
+        }
 
         return qrHolders;
     }
