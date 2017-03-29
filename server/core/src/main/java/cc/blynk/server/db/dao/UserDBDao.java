@@ -23,6 +23,7 @@ public class UserDBDao {
 
     public static final String upsertUser = "INSERT INTO users (email, appName, region, name, pass, last_modified, last_logged, last_logged_ip, is_facebook_user, is_super_admin, energy, json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email, appName) DO UPDATE SET pass = EXCLUDED.pass, name = EXCLUDED.name, last_modified = EXCLUDED.last_modified, last_logged = EXCLUDED.last_logged, last_logged_ip = EXCLUDED.last_logged_ip, is_facebook_user = EXCLUDED.is_facebook_user, is_super_admin = EXCLUDED.is_super_admin, energy = EXCLUDED.energy, json = EXCLUDED.json, region = EXCLUDED.region";
     public static final String selectAllUsers = "SELECT * from users";
+    public static final String deleteUser = "DELETE FROM users WHERE email = ? AND appName = ?";
 
     private static final Logger log = LogManager.getLogger(UserDBDao.class);
     private final HikariDataSource ds;
@@ -117,5 +118,24 @@ public class UserDBDao {
             log.error("Error upserting users in DB.", e);
         }
         log.info("Storing users finished. Time {}. Users saved {}", System.currentTimeMillis() - start, users.size());
+    }
+
+    public boolean deleteUser(UserKey userKey) {
+        int removed = 0;
+
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(deleteUser)) {
+
+            ps.setString(1, userKey.email);
+            ps.setString(2, userKey.appName);
+
+            removed = ps.executeUpdate();
+
+            connection.commit();
+        } catch (Exception e) {
+            log.error("Error removing user {} from DB.", userKey, e);
+        }
+
+        return removed > 0;
     }
 }

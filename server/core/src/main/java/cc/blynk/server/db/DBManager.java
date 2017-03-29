@@ -1,6 +1,7 @@
 package cc.blynk.server.db;
 
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
@@ -122,6 +123,12 @@ public class DBManager implements Closeable {
         config.setMaxLifetime(0);
         config.setConnectionTestQuery("SELECT 1");
         return config;
+    }
+
+    public void deleteUser(UserKey userKey) {
+        if (isDBEnabled() && userKey != null) {
+            blockingIOProcessor.execute(() -> userDBDao.deleteUser(userKey));
+        }
     }
 
     public void saveUsers(ArrayList<User> users) {

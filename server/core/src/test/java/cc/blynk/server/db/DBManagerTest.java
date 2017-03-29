@@ -371,13 +371,58 @@ public class DBManagerTest {
         assertEquals("pass", dbUser.pass);
         assertEquals(0, dbUser.lastModifiedTs);
         assertEquals(1, dbUser.lastLoggedAt);
-        assertEquals("127.0.0.1", dbUser.lastLoggedIP);assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", dbUser.profile.toString());
+        assertEquals("127.0.0.1", dbUser.lastLoggedIP);
+        assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", dbUser.profile.toString());
         assertTrue(dbUser.isFacebookUser);
         assertTrue(dbUser.isSuperAdmin);
         assertEquals(2000, dbUser.energy);
 
-        assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", dbUser.profile.toString());
+        assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", dbUser.profile.toString());
     }
+
+    @Test
+    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
+    public void testInsertGetDeleteUser() throws Exception {
+        ArrayList<User> users = new ArrayList<>();
+        User user = new User("test@gmail.com", "pass", AppName.BLYNK, "local", true, true);
+        user.lastModifiedTs = 0;
+        user.lastLoggedAt = 1;
+        user.lastLoggedIP = "127.0.0.1";
+        user.profile = new Profile();
+        DashBoard dash = new DashBoard();
+        dash.id = 1;
+        dash.name = "123";
+        user.profile.dashBoards = new DashBoard[]{dash};
+        users.add(user);
+
+        dbManager.userDBDao.save(users);
+
+        Map<UserKey, User> dbUsers = dbManager.userDBDao.getAllUsers();
+
+        assertNotNull(dbUsers);
+        assertEquals(1, dbUsers.size());
+        User dbUser = dbUsers.get(new UserKey(user.email, user.appName));
+
+        assertEquals("test@gmail.com", dbUser.email);
+        assertEquals(AppName.BLYNK, dbUser.appName);
+        assertEquals("local", dbUser.region);
+        assertEquals("pass", dbUser.pass);
+        assertEquals(0, dbUser.lastModifiedTs);
+        assertEquals(1, dbUser.lastLoggedAt);
+        assertEquals("127.0.0.1", dbUser.lastLoggedIP);
+        assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", dbUser.profile.toString());
+        assertTrue(dbUser.isFacebookUser);
+        assertTrue(dbUser.isSuperAdmin);
+        assertEquals(2000, dbUser.energy);
+
+        assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", dbUser.profile.toString());
+
+        assertTrue(dbManager.userDBDao.deleteUser(new UserKey(user.email, user.appName)));
+        dbUsers = dbManager.userDBDao.getAllUsers();
+        assertNotNull(dbUsers);
+        assertEquals(0, dbUsers.size());
+    }
+
     @Test
     public void testRedeem() throws Exception {
         assertNull(dbManager.selectRedeemByToken("123"));

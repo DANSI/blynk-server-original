@@ -12,6 +12,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
 import io.netty.channel.ChannelHandler;
@@ -35,18 +36,21 @@ public class UsersLogic extends CookiesBaseHttpHandler {
 
     private final UserDao userDao;
     private final FileManager fileManager;
+    private final DBManager dbManager;
 
     public UsersLogic(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.userDao = holder.userDao;
         this.fileManager = holder.fileManager;
+        this.dbManager = holder.dbManager;
     }
 
     //for tests only
-    public UsersLogic(UserDao userDao, SessionDao sessionDao, FileManager fileManager, TokenManager tokenManager, String rootPath) {
+    public UsersLogic(UserDao userDao, SessionDao sessionDao, DBManager dbManager, FileManager fileManager, TokenManager tokenManager, String rootPath) {
         super(tokenManager, sessionDao, null, rootPath);
         this.userDao = userDao;
         this.fileManager = fileManager;
+        this.dbManager = dbManager;
     }
 
     @GET
@@ -177,6 +181,8 @@ public class UsersLogic extends CookiesBaseHttpHandler {
         if (!fileManager.delete(email, appName)) {
             return new Response(HTTP_1_1, NOT_FOUND);
         }
+
+        dbManager.deleteUser(userKey);
 
         Session session = sessionDao.userSession.remove(userKey);
         if (session != null) {
