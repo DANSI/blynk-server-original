@@ -1,6 +1,4 @@
-package cc.blynk.server.application.handlers.main.auth;
-
-import cc.blynk.utils.validator.EmailValidator;
+package cc.blynk.utils.validators;
 
 /**
  * The Blynk Project.

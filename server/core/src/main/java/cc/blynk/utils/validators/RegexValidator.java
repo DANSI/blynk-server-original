@@ -1,4 +1,4 @@
-package cc.blynk.utils.validator;
+package cc.blynk.utils.validators;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

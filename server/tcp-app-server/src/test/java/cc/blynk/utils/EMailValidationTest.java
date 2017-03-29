@@ -1,6 +1,6 @@
 package cc.blynk.utils;
 
-import cc.blynk.server.application.handlers.main.auth.BlynkEmailValidator;
+import cc.blynk.utils.validators.BlynkEmailValidator;
 import org.junit.Ignore;
 import org.junit.Test;
 

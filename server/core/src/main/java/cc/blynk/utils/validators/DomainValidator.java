@@ -1,4 +1,4 @@
-package cc.blynk.utils.validator;
+package cc.blynk.utils.validators;
 
 import java.net.IDN;
 import java.util.Arrays;
