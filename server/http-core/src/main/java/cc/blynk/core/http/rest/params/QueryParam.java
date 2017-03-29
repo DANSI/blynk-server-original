@@ -1,6 +1,7 @@
 package cc.blynk.core.http.rest.params;
 
 import cc.blynk.core.http.rest.URIDecoder;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.lang.reflect.Array;
 import java.util.List;
@@ -17,7 +18,7 @@ public class QueryParam extends Param {
     }
 
     @Override
-    public Object get(URIDecoder uriDecoder) {
+    public Object get(ChannelHandlerContext ctx, URIDecoder uriDecoder) {
         List<String> params = uriDecoder.parameters().get(name);
         if (params == null) {
             return null;

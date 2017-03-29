@@ -146,7 +146,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
 

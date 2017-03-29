@@ -7,6 +7,7 @@ import cc.blynk.core.http.annotation.GET;
 import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.PUT;
 import cc.blynk.core.http.rest.params.Param;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
 import org.apache.logging.log4j.LogManager;
@@ -33,7 +34,7 @@ public class Handler {
 
     public final Param[] params;
 
-    public Handler(UriTemplate uriTemplate, Method method, Object handler, int paramsCount) {
+    public Handler(UriTemplate uriTemplate, Method method, Object handler) {
         this.uriTemplate = uriTemplate;
         this.classMethod = method;
         this.handler = handler;
@@ -51,13 +52,13 @@ public class Handler {
             this.httpMethod = HttpMethod.DELETE;
         }
 
-        this.params = new Param[paramsCount];
+        this.params = new Param[method.getParameterCount()];
     }
 
-    public Object[] fetchParams(URIDecoder uriDecoder) {
+    public Object[] fetchParams(ChannelHandlerContext ctx, URIDecoder uriDecoder) {
         Object[] res = new Object[params.length];
         for (int i = 0; i < params.length; i++) {
-            res[i] = params[i].get(uriDecoder);
+            res[i] = params[i].get(ctx, uriDecoder);
         }
 
         return res;

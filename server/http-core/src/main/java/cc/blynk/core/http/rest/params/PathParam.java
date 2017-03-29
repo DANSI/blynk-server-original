@@ -1,6 +1,7 @@
 package cc.blynk.core.http.rest.params;
 
 import cc.blynk.core.http.rest.URIDecoder;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * The Blynk Project.
@@ -14,7 +15,7 @@ public class PathParam extends Param {
     }
 
     @Override
-    public Object get(URIDecoder uriDecoder) {
+    public Object get(ChannelHandlerContext ctx, URIDecoder uriDecoder) {
         return convertTo(uriDecoder.pathData.get(name));
     }
 

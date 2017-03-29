@@ -2,6 +2,7 @@ package cc.blynk.core.http.rest.params;
 
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.utils.ReflectionUtil;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.multipart.Attribute;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import org.apache.logging.log4j.LogManager;
@@ -24,7 +25,7 @@ public class FormParam extends Param {
     }
 
     @Override
-    public Object get(URIDecoder uriDecoder) {
+    public Object get(ChannelHandlerContext ctx, URIDecoder uriDecoder) {
         List<InterfaceHttpData> bodyHttpDatas = uriDecoder.getBodyHttpDatas();
         if (bodyHttpDatas == null || bodyHttpDatas.size() == 0) {
             return null;

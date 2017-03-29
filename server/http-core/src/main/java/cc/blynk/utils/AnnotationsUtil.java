@@ -7,6 +7,7 @@ import cc.blynk.core.http.annotation.Context;
 import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.rest.Handler;
 import cc.blynk.core.http.rest.params.*;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -48,7 +49,7 @@ public class AnnotationsUtil {
                 String fullPath = rootPath + handlerMainPath + ((Path) path).value();
                 UriTemplate uriTemplate = new UriTemplate(fullPath);
 
-                Handler handlerHolder = new Handler(uriTemplate, method, handler, method.getParameterCount());
+                Handler handlerHolder = new Handler(uriTemplate, method, handler);
 
                 for (int i = 0; i < method.getParameterCount(); i++) {
                     Parameter parameter = method.getParameters()[i];
@@ -70,7 +71,7 @@ public class AnnotationsUtil {
 
                     Annotation contextAnnotation = parameter.getAnnotation(Context.class);
                     if (contextAnnotation != null) {
-                        handlerHolder.params[i] = new ContextParam(parameter.getType());
+                        handlerHolder.params[i] = new ContextParam(ChannelHandlerContext.class);
                     }
 
                     if (pathParamAnnotation == null && queryParamAnnotation == null && formParamAnnotation == null &&

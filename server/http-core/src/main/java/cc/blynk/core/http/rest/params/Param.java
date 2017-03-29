@@ -1,6 +1,7 @@
 package cc.blynk.core.http.rest.params;
 
 import cc.blynk.core.http.rest.URIDecoder;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * The Blynk Project.
@@ -18,7 +19,7 @@ public abstract class Param {
         this.type = type;
     }
 
-    public abstract Object get(URIDecoder uriDecoder);
+    public abstract Object get(ChannelHandlerContext ctx, URIDecoder uriDecoder);
 
     Object convertTo(String value) {
         if (type == long.class) {

@@ -67,7 +67,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
             try {
                 URIDecoder uriDecoder = new URIDecoder(req);
                 uriDecoder.pathData = handlerHolder.extractParameters();
-                Object[] params = handlerHolder.handler.fetchParams(uriDecoder);
+                Object[] params = handlerHolder.handler.fetchParams(ctx, uriDecoder);
                 finishHttp(ctx, uriDecoder, handlerHolder.handler, params);
             } catch (Exception e) {
                 ctx.writeAndFlush(Response.serverError(e.getMessage()), ctx.voidPromise());
@@ -82,7 +82,9 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
 
     public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, Handler handler, Object[] params) {
         FullHttpResponse response = handler.invoke(params);
-        ctx.writeAndFlush(response);
+        if (response != Response.NO_RESPONSE) {
+            ctx.writeAndFlush(response);
+        }
     }
 
     private HandlerHolder lookupHandler(HttpRequest req) {

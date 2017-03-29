@@ -29,6 +29,8 @@ public class Response extends DefaultFullHttpResponse {
     private static final String JSON = "application/json;charset=utf-8";
     private static final String PLAIN_TEXT = "text/plain;charset=utf-8";
 
+    public static Response NO_RESPONSE = null;
+
     public Response(HttpVersion version, HttpResponseStatus status, String content, String contentType) {
         super(version, status, (content == null ? Unpooled.EMPTY_BUFFER : Unpooled.copiedBuffer(content, StandardCharsets.UTF_8)));
         fillHeaders(contentType);
@@ -51,7 +53,11 @@ public class Response extends DefaultFullHttpResponse {
         headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         headers().set(CONTENT_LENGTH, 0);
     }
-    
+
+    public static Response noResponse() {
+        return NO_RESPONSE;
+    }
+
     public static Response ok() {
         return new Response(HTTP_1_1, OK);
     }

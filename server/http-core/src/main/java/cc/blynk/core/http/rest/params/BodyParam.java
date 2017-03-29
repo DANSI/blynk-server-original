@@ -5,6 +5,7 @@ import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.utils.JsonParser;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +26,7 @@ public class BodyParam extends Param {
     }
 
     @Override
-    public Object get(URIDecoder uriDecoder) {
+    public Object get(ChannelHandlerContext ctx, URIDecoder uriDecoder) {
         if (uriDecoder.contentType == null || !uriDecoder.contentType.contains(expectedContentType)) {
             throw new RuntimeException("Unexpected content type. Expecting " + expectedContentType + ".");
         }

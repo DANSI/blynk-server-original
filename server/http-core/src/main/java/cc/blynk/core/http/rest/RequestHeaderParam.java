@@ -1,6 +1,7 @@
 package cc.blynk.core.http.rest;
 
 import cc.blynk.core.http.rest.params.Param;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * The Blynk Project.
@@ -14,7 +15,7 @@ public class RequestHeaderParam extends Param {
     }
 
     @Override
-    public Object get(URIDecoder uriDecoder) {
+    public Object get(ChannelHandlerContext ctx, URIDecoder uriDecoder) {
         String header = uriDecoder.headers.get(name);
         if (header == null) {
             return null;
