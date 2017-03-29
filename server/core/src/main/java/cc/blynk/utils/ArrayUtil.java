@@ -19,6 +19,7 @@ public class ArrayUtil {
     public static final Tag[] EMPTY_TAGS = {};
     public static final Device[] EMPTY_DEVICES = {};
     public static final Widget[] EMPTY_WIDGETS = {};
+    public static final byte[] EMPTY_BYTES = {};
 
     public static <T> T[] add(T[] array, T element, Class<T> type) {
         T[] newArray = copyArrayGrow1(array, type);

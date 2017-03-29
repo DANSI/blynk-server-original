@@ -20,7 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static cc.blynk.utils.ReportingUtil.EMPTY_ARRAY;
+import static cc.blynk.utils.ArrayUtil.EMPTY_BYTES;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 
 /**
@@ -157,7 +157,7 @@ public class ReportingDao implements Closeable {
             final ByteBuffer byteBuffer = getByteBufferFromDisk(user,
                     requestedPins[i].dashId, requestedPins[i].deviceId, requestedPins[i].pinType,
                     requestedPins[i].pin, requestedPins[i].count, requestedPins[i].type);
-            values[i] =  byteBuffer == null ? EMPTY_ARRAY : byteBuffer.array();
+            values[i] =  byteBuffer == null ? EMPTY_BYTES : byteBuffer.array();
         }
 
 
