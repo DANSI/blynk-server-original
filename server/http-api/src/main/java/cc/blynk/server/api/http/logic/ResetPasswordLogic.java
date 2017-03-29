@@ -46,7 +46,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
     public ResetPasswordLogic(Holder holder) {
         super(holder, "");
         this.userDao = holder.userDao;
-        this.tokensPool = new TokensPool();
+        this.tokensPool = new TokensPool(60 * 60 * 1000);
         this.emailBody = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "reset-email.html");
         this.mailWrapper = holder.mailWrapper;
 

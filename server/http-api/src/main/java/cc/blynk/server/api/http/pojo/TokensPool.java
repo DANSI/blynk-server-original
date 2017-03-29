@@ -16,11 +16,13 @@ import java.util.concurrent.ConcurrentMap;
 public final class TokensPool {
 
     private static final Logger log = LogManager.getLogger(TokensPool.class);
-    private static final int TOKEN_EXPIRATION_DEFAULT_PERIOD_IN_MILLIS = 60 * 60 * 1000;
+
+    private final int TOKEN_EXPIRATION_PERIOD_MILLIS;
     private final ConcurrentMap<String, TokenUser> holder;
 
-    public TokensPool() {
+    public TokensPool(int expirationPeriodMillis) {
         this.holder = new ConcurrentHashMap<>();
+        this.TOKEN_EXPIRATION_PERIOD_MILLIS = expirationPeriodMillis;
     }
 
     public void addToken(String token, TokenUser user) {
@@ -46,7 +48,7 @@ public final class TokensPool {
         final long now = System.currentTimeMillis();
         for (Iterator<Map.Entry<String, TokenUser>> iterator = holder.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry<String, TokenUser> entry = iterator.next();
-            if (entry.getValue().createdAt + TOKEN_EXPIRATION_DEFAULT_PERIOD_IN_MILLIS < now) {
+            if (entry.getValue().createdAt + TOKEN_EXPIRATION_PERIOD_MILLIS < now) {
                 iterator.remove();
             }
         }

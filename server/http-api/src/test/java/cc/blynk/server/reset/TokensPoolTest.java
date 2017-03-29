@@ -7,16 +7,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TokensPoolTest {
+
+    private static final int expirationPeriod = 60 * 60 * 1000;
 
     @Test
     public void addTokenTest() {
         final TokenUser user = new TokenUser("test.gmail.com", AppName.BLYNK);
         final String token = "123";
-        final TokensPool tokensPool = new TokensPool();
+        final TokensPool tokensPool = new TokensPool(expirationPeriod);
         tokensPool.addToken(token, user);
         assertEquals(user, tokensPool.getUser(token));
     }
@@ -25,7 +28,7 @@ public class TokensPoolTest {
     public void addTokenTwiceTest() {
         final TokenUser user = new TokenUser("test.gmail.com", AppName.BLYNK);
         final String token = "123";
-        final TokensPool tokensPool = new TokensPool();
+        final TokensPool tokensPool = new TokensPool(expirationPeriod);
         tokensPool.addToken(token, user);
         tokensPool.addToken(token, user);
         assertEquals(1, tokensPool.size());
@@ -35,7 +38,7 @@ public class TokensPoolTest {
     public void remoteTokenTest() {
         final TokenUser user = new TokenUser("test.gmail.com", AppName.BLYNK);
         final String token = "123";
-        final TokensPool tokensPool = new TokensPool();
+        final TokensPool tokensPool = new TokensPool(expirationPeriod);
         tokensPool.addToken(token, user);
         assertEquals(user, tokensPool.getUser(token));
         tokensPool.removeToken(token);
