@@ -84,7 +84,7 @@ public class Holder implements Closeable {
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
-                FileLoaderUtil.readFileAsString(BlockingIOProcessor.TOKEN_MAIL_BODY)
+                FileLoaderUtil.readTokenMailBody()
         );
         this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, currentIp);
         this.stats = new GlobalStats();
@@ -128,7 +128,7 @@ public class Holder implements Closeable {
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
                 serverProperties.getIntProperty("notifications.queue.limit", 10000),
-                FileLoaderUtil.readFileAsString(BlockingIOProcessor.TOKEN_MAIL_BODY)
+                FileLoaderUtil.readTokenMailBody()
         );
         this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, currentIp);
         this.stats = new GlobalStats();

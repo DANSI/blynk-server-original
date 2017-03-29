@@ -18,10 +18,16 @@ import java.util.List;
  */
 public class FileLoaderUtil {
 
+    public static final String TOKEN_MAIL_BODY = "single_token_mail_body.txt";
+
     private static final String NEW_LINE = System.getProperty("line.separator");
 
     private static Path getFileInCurrentDir(String filename) {
         return Paths.get(System.getProperty("user.dir"), filename);
+    }
+
+    public static String readTokenMailBody() {
+        return readFileAsString(TOKEN_MAIL_BODY);
     }
 
     /**
