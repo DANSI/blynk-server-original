@@ -18,15 +18,13 @@ import java.util.concurrent.TimeUnit;
 public class BlockingIOProcessor implements Closeable {
 
     private final ThreadPoolExecutor executor;
-    public volatile String tokenBody;
 
-    public BlockingIOProcessor(int poolSize, int maxQueueSize, String tokenBody) {
+    public BlockingIOProcessor(int poolSize, int maxQueueSize) {
         this.executor = new ThreadPoolExecutor(
                 poolSize, poolSize,
                 0L, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<>(maxQueueSize)
         );
-        this.tokenBody = tokenBody;
     }
 
     public void execute(Runnable task) {

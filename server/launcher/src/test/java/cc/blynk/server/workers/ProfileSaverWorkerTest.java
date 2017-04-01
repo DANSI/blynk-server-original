@@ -38,7 +38,7 @@ public class ProfileSaverWorkerTest {
     @Mock
     private GlobalStats stats;
 
-    private BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(1, 1, null);
+    private BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(1, 1);
 
     @Test
     public void testCorrectProfilesAreSaved() throws IOException {

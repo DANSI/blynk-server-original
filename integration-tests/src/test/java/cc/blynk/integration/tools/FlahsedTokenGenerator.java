@@ -21,7 +21,7 @@ public class FlahsedTokenGenerator {
 
     public static void main(String[] args) throws Exception{
         FlashedToken[] flashedTokens = generateTokens(100, "Grow", 2);
-        DBManager dbManager = new DBManager("db-test.properties", new BlockingIOProcessor(1, 100, null), true);
+        DBManager dbManager = new DBManager("db-test.properties", new BlockingIOProcessor(1, 100), true);
 
         dbManager.insertFlashedTokens(flashedTokens);
 

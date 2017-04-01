@@ -30,6 +30,14 @@ public class FileLoaderUtil {
         return readFileAsString(TOKEN_MAIL_BODY);
     }
 
+    public static String readDynamicMailBody() {
+        return readFileAsString("dynamic_provisioning_mail.html");
+    }
+
+    public static String readStaticMailBody() {
+        return readFileAsString("static_provisioning_mail.html");
+    }
+
     /**
      * First loads file from class path after that from current folder.
      * So file in current folder is always overrides properties in classpath.

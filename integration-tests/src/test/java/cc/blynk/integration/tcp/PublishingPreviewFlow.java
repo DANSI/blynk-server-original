@@ -66,7 +66,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
     }
 
     @Test
-    public void testSendEmailForAppPublish() throws Exception {
+    public void testSendStaticEmailForAppPublish() throws Exception {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
@@ -78,18 +78,21 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
 
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("Instruction for Blynk App Preview."), startsWith("Hello.\n" +
-                "You selected Static provisioning. In order to start it - please scan QR from attachment."), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY), eq(qrHolders));
+    }
 
-        clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].code);
+    @Test
+    public void testSenddynamicEmailForAppPublish() throws Exception {
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody();
 
-        DashBoard dashBoard = JsonParser.parseDashboard(clientPair.appClient.getBody(3));
-        assertNotNull(dashBoard);
-        assertNotNull(dashBoard.devices);
-        assertNull(dashBoard.devices[0].token);
-        assertNull(dashBoard.devices[0].lastLoggedIP);
-        assertEquals(0, dashBoard.devices[0].disconnectTime);
-        assertEquals(Status.OFFLINE, dashBoard.devices[0].status);
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        assertEquals(1, devices.length);
+
+        clientPair.appClient.send("email 1 Blynk DYNAMIC 123123 AppPreview");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        verify(mailWrapper, timeout(500)).sendHtml(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.DYNAMIC_MAIL_BODY));
     }
 
     @Test
@@ -105,8 +108,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
 
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("Instruction for Blynk App Preview."), startsWith("Hello.\n" +
-                "You selected Static provisioning. In order to start it - please scan QR from attachment."), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY), eq(qrHolders));
 
         clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].code);
 
@@ -150,8 +152,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
 
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("Instruction for Blynk App Preview."), startsWith("Hello.\n" +
-                "You selected Static provisioning. In order to start it - please scan QR from attachment."), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY), eq(qrHolders));
 
         clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].code);
 

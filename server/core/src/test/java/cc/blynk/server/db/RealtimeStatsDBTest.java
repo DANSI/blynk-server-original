@@ -32,7 +32,7 @@ public class RealtimeStatsDBTest {
 
     @BeforeClass
     public static void init() throws Exception {
-        blockingIOProcessor = new BlockingIOProcessor(2, 10000, null);
+        blockingIOProcessor = new BlockingIOProcessor(2, 10000);
         dbManager = new DBManager("db-test.properties", blockingIOProcessor, true);
         assertNotNull(dbManager.getConnection());
     }

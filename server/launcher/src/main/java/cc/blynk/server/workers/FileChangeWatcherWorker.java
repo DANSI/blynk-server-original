@@ -1,6 +1,6 @@
 package cc.blynk.server.workers;
 
-import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.Limits;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.ServerProperties;
 import org.apache.logging.log4j.LogManager;
@@ -24,12 +24,12 @@ public class FileChangeWatcherWorker implements Runnable {
 
     private final String fileName;
     private final Path propsFileFolder;
-    private final BlockingIOProcessor blockingIOProcessor;
+    private final Limits limits;
 
-    public FileChangeWatcherWorker(String fileName, BlockingIOProcessor blockingIOProcessor) {
+    public FileChangeWatcherWorker(String fileName, Limits limits) {
         this.fileName = fileName;
         this.propsFileFolder = getCurrentDir();
-        this.blockingIOProcessor = blockingIOProcessor;
+        this.limits = limits;
     }
 
     private static Path getCurrentDir() {
@@ -48,7 +48,7 @@ public class FileChangeWatcherWorker implements Runnable {
                     Path changedFile = propsFileFolder.resolve(changed.toString());
                     if (changed.getFileName().toString().endsWith(fileName) && Files.exists(changedFile)) {
                         log.info("File '{}' changed. Updating values.", changedFile);
-                        blockingIOProcessor.tokenBody = FileLoaderUtil.readFileAsString(fileName);
+                        limits.TOKEN_BODY = FileLoaderUtil.readFileAsString(fileName);
                     }
                 }
                 // reset the key

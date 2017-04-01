@@ -5,7 +5,7 @@ import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.Limits;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
@@ -32,12 +32,12 @@ import static cc.blynk.utils.AdminHttpUtil.sort;
 @ChannelHandler.Sharable
 public class ConfigsLogic extends CookiesBaseHttpHandler {
 
-    private final BlockingIOProcessor blockingIOProcessor;
+    private final Limits limits;
     private final ServerProperties serverProperties;
 
     public ConfigsLogic(Holder holder, String rootPath) {
         super(holder, rootPath);
-        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.limits = holder.limits;
         this.serverProperties = holder.props;
     }
 
@@ -67,7 +67,7 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
     public Response getConfigByName(@PathParam("name") String name) {
         switch (name) {
             case FileLoaderUtil.TOKEN_MAIL_BODY:
-                return ok(new Config(name, blockingIOProcessor.tokenBody).toString());
+                return ok(new Config(name, limits.TOKEN_BODY).toString());
             case ServerProperties.SERVER_PROPERTIES_FILENAME :
                 return ok(new Config(name, serverProperties).toString());
             default :
@@ -87,7 +87,7 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
 
         switch (name) {
             case FileLoaderUtil.TOKEN_MAIL_BODY:
-                blockingIOProcessor.tokenBody = updatedConfig.body;
+                limits.TOKEN_BODY = updatedConfig.body;
                 break;
             case ServerProperties.SERVER_PROPERTIES_FILENAME :
                 Properties properties = readPropertiesFromString(updatedConfig.body);

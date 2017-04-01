@@ -13,7 +13,6 @@ import cc.blynk.server.redis.RedisClient;
 import cc.blynk.server.transport.TransportTypeHolder;
 import cc.blynk.server.workers.ReadingWidgetsWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
-import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.ServerProperties;
 import org.asynchttpclient.DefaultAsyncHttpClient;
@@ -83,8 +82,7 @@ public class Holder implements Closeable {
         this.userDao = new UserDao(fileManager.deserialize(), this.region);
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
-                serverProperties.getIntProperty("notifications.queue.limit", 10000),
-                FileLoaderUtil.readTokenMailBody()
+                serverProperties.getIntProperty("notifications.queue.limit", 10000)
         );
         this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, currentIp);
         this.stats = new GlobalStats();
@@ -127,8 +125,7 @@ public class Holder implements Closeable {
         this.userDao = new UserDao(fileManager.deserialize(), this.region);
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
-                serverProperties.getIntProperty("notifications.queue.limit", 10000),
-                FileLoaderUtil.readTokenMailBody()
+                serverProperties.getIntProperty("notifications.queue.limit", 10000)
         );
         this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, currentIp);
         this.stats = new GlobalStats();

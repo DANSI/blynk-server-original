@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.Limits;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
@@ -39,7 +40,8 @@ import static cc.blynk.utils.BlynkByteBufUtil.ok;
 public class AppMailLogic {
 
     private static final Logger log = LogManager.getLogger(AppMailLogic.class);
-    private final String BODY;
+    private final String TOKEN_MAIL_BODY;
+    private final Limits limits;
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final MailWrapper mailWrapper;
@@ -47,9 +49,10 @@ public class AppMailLogic {
 
     public AppMailLogic(Holder holder) {
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.BODY = blockingIOProcessor.tokenBody;
+        this.TOKEN_MAIL_BODY = holder.limits.TOKEN_BODY;
         this.mailWrapper =  holder.mailWrapper;
         this.dbManager = holder.dbManager;
+        this.limits = holder.limits;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -80,7 +83,7 @@ public class AppMailLogic {
             String name = split[4];
             dash.publishing = new Publishing(theme, provisionType, color, name);
             log.debug("Sending app preview email to {}, provision type {}", user.email, provisionType);
-            makePublishPreviewEmail(ctx, dash, user.email, user.appName, message.id);
+            makePublishPreviewEmail(ctx, dash, user.email, name, user.appName, message.id);
 
         //dashId
         } else {
@@ -92,22 +95,28 @@ public class AppMailLogic {
         }
     }
 
-    private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash, String to, String appName, int msgId) {
-        String body;
+    private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash, String to, String appName, String appId, int msgId) {
+        String subj = appName + " - App details";
         if (dash.publishing.provisionType == ProvisionType.DYNAMIC) {
-            body = "Hello.\nYou selected Dynamic provisioning. In order to start it - please scan QR from attachment.";
+            mailDynamic(ctx.channel(), to, subj, limits.DYNAMIC_MAIL_BODY, msgId);
         } else {
-            if (dash.devices.length == 1) {
-               body = "Hello.\nYou selected Static provisioning. In order to start it - please scan QR from attachment.";
-            } else {
-                body = "Hello.\nYou selected Static provisioning. In order to start it - please scan QR from attachment for every device in your project.";
-            }
+            mailStatic(ctx.channel(), to, appId, subj, limits.STATIC_MAIL_BODY, dash, msgId);
         }
-
-        mail(ctx.channel(), to, appName, "Instruction for Blynk App Preview.", body + "\r\n" + BODY, dash, msgId);
     }
 
-    private void mail(Channel channel, String to, String appName, String subj, String body, DashBoard dash, int msgId) {
+    private void mailDynamic(Channel channel, String to, String subj, String body, int msgId) {
+        blockingIOProcessor.execute(() -> {
+            try {
+                mailWrapper.sendHtml(to, subj, body);
+                channel.writeAndFlush(ok(msgId), channel.voidPromise());
+            } catch (Exception e) {
+                log.error("Error sending email from application. For user {}. Reason : {}", to, e.getMessage());
+                channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_ERROR), channel.voidPromise());
+            }
+        });
+    }
+
+    private void mailStatic(Channel channel, String to, String appName, String subj, String body, DashBoard dash, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
                 QrHolder[] qrHolders = makeQRs(to, appName, dash, dash.id);
@@ -127,7 +136,7 @@ public class AppMailLogic {
         String body = "Auth Token : " + device.token + "\n";
 
         log.trace("Sending single token mail for user {}, with token : '{}'.", to, device.token);
-        mail(ctx.channel(), to, to, subj, body + BODY, msgId);
+        mail(ctx.channel(), to, to, subj, body + TOKEN_MAIL_BODY, msgId);
     }
 
     private void sendMultiTokenEmail(ChannelHandlerContext ctx, DashBoard dash, String to, int msgId) {
@@ -144,7 +153,7 @@ public class AppMailLogic {
                 .append("\n");
         }
 
-        body.append(BODY);
+        body.append(TOKEN_MAIL_BODY);
 
         log.trace("Sending multi tokens mail for user {}, with {} tokens.", to, dash.devices.length);
         mail(ctx.channel(), to, to, subj, body.toString(), msgId);
