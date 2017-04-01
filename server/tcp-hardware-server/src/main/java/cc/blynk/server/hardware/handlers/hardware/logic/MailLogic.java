@@ -10,6 +10,7 @@ import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -84,7 +85,7 @@ public class MailLogic extends NotificationBase {
         checkIfNotificationQuotaLimitIsNotReached();
 
         //minimal validation for receiver.
-        if (!to.contains("@")) {
+        if (BlynkEmailValidator.isNotValidEmail(to)) {
             throw new IllegalCommandException("Invalid mail receiver.");
         }
 

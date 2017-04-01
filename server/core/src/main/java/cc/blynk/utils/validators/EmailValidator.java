@@ -72,10 +72,6 @@ public class EmailValidator {
      * @return true if the email address is valid.
      */
     public boolean isValid(String email) {
-        if (email == null) {
-            return false;
-        }
-
         if (email.endsWith(".")) { // check this first - it's cheap!
             return false;
         }
