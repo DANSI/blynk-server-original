@@ -21,6 +21,11 @@ import java.util.Properties;
 public class ServerProperties extends Properties {
 
     public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
+    public static final String jarPath;
+
+    static {
+        jarPath = getJarPath();
+    }
 
     public ServerProperties(Map<String, String> cmdProperties) {
         this(cmdProperties, SERVER_PROPERTIES_FILENAME);
@@ -40,15 +45,18 @@ public class ServerProperties extends Properties {
         initProperties(propertiesFileName);
     }
 
-    public static Path getFileInCurrentDir(String filename) {
+    private static String getJarPath() {
         try {
             CodeSource codeSource = ServerProperties.class.getProtectionDomain().getCodeSource();
             File jarFile = new File(codeSource.getLocation().toURI().getPath());
-            String jarDir = jarFile.getParentFile().getPath();
-            return Paths.get(jarDir, filename);
+            return jarFile.getParentFile().getPath();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static Path getFileInCurrentDir(String filename) {
+        return Paths.get(jarPath, filename);
     }
 
     /**
