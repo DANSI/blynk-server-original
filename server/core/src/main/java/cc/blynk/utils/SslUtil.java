@@ -80,18 +80,33 @@ public class SslUtil {
     }
 
     public static SslContext build(File serverCert, File serverKey, String serverPass, SslProvider sslProvider) throws SSLException {
-        return SslContextBuilder.forServer(serverCert, serverKey, serverPass)
-                .sslProvider(sslProvider)
-                .build();
+        if (serverPass == null || serverPass.isEmpty()) {
+            return SslContextBuilder.forServer(serverCert, serverKey)
+                    .sslProvider(sslProvider)
+                    .build();
+        } else {
+            return SslContextBuilder.forServer(serverCert, serverKey, serverPass)
+                    .sslProvider(sslProvider)
+                    .build();
+        }
     }
 
     public static SslContext build(File serverCert, File serverKey, String serverPass, SslProvider sslProvider, File clientCert) throws SSLException {
-        return SslContextBuilder.forServer(serverCert, serverKey, serverPass)
-                .sslProvider(sslProvider)
-                .trustManager(clientCert)
-                //todo fix that after iOS release
-                .clientAuth(ClientAuth.NONE)
-                .build();
+        if (serverPass == null || serverPass.isEmpty()) {
+            return SslContextBuilder.forServer(serverCert, serverKey)
+                    .sslProvider(sslProvider)
+                    .trustManager(clientCert)
+                            //todo fix that after iOS release
+                    .clientAuth(ClientAuth.NONE)
+                    .build();
+        } else {
+            return SslContextBuilder.forServer(serverCert, serverKey, serverPass)
+                    .sslProvider(sslProvider)
+                    .trustManager(clientCert)
+                            //todo fix that after iOS release
+                    .clientAuth(ClientAuth.NONE)
+                    .build();
+        }
     }
 
 }
