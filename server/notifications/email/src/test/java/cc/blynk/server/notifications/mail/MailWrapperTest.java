@@ -8,9 +8,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Properties;
 
 /**
@@ -29,6 +26,48 @@ public class MailWrapperTest {
 
     @Test
     @Ignore
+    public void sendMailForStaticProvisioning() throws Exception {
+        String body =
+                "Hi there,<br>\n" +
+                        "<br>\n" +
+                        "Nice app you made with Blynk!<br>\n" +
+                        "<br>\n" +
+                        "Here is what's next:\n" +
+                        "\n" +
+                        "<ul>\n" +
+                        "    <li>For Static Provisioning you need to upload Auth Tokens provided in this email to your devices. Tokens are in the attachment.</li>\n" +
+                        "\n" +
+                        "    <li>During the provisioning process, device will be connected to your network. You need to scan provided QRs in order to connect your app to devices. Learn <a href=\"http://help.blynk.cc/publishing-apps-made-with-blynk/1240196-provisioning-products-with-auth-tokens/static-auth-token-provisioning\">how Static Device Provisioning works</a>.</li>\n" +
+                        "</ul>\n" +
+                        "\n" +
+                        "<b>If you would like to publish your app to App Store and Google Play, check out our <a href=\"http://www.blynk.io/plans/\">plans</a> and send a request.</b><br>\n" +
+                        "<br>\n" +
+                        "Let’s build a connected world together!<br>\n" +
+                        "<br>\n" +
+                        "--<br>\n" +
+                        "<br>\n" +
+                        "Blynk Team<br>\n" +
+                        "<br>\n" +
+                        "<a href=\"http://www.blynk.io\">blynk.io</a>\n" +
+                        "<br>\n" +
+                        "<a href=\"http://www.blynk.cc\">blynk.cc</a>";
+        QrHolder[] qrHolders = new QrHolder[] {
+                new QrHolder("!23", QRCode.from("21321321").to(ImageType.JPG).stream().toByteArray())
+        };
+
+        Properties properties = new Properties();
+        try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
+            if (classPath != null) {
+                properties.load(classPath);
+            }
+        }
+
+        MailWrapper mailWrapper = new MailWrapper(properties);
+        mailWrapper.sendWithAttachment("dmitriy@gmail.com", "yo", body, qrHolders);
+    }
+
+    @Test
+    @Ignore
     public void sendMailWithAttachments() throws Exception {
         Properties properties = new Properties();
         try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
@@ -44,13 +83,6 @@ public class MailWrapperTest {
         MailWrapper mailWrapper = new MailWrapper(properties);
         mailWrapper.sendWithAttachment(to, "Hello", "Body!", new QrHolder[]{qrHolder, qrHolder2});
     }
-
-    private static void generateQR(String text, Path outputFile) throws Exception {
-        try (OutputStream out = Files.newOutputStream(outputFile)) {
-            QRCode.from(text).to(ImageType.JPG).writeTo(out);
-        }
-    }
-
 
     @Test
     @Ignore

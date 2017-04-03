@@ -61,7 +61,7 @@ public class GMailClient implements MailClient {
         Multipart multipart = new MimeMultipart();
 
         MimeBodyPart bodyMessagePart = new MimeBodyPart();
-        bodyMessagePart.setContent(body, "text/plain; charset=UTF-8");
+        bodyMessagePart.setContent(body, "text/html; charset=UTF-8");
 
         multipart.addBodyPart(bodyMessagePart);
 
