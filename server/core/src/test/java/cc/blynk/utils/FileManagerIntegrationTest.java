@@ -39,6 +39,9 @@ public class FileManagerIntegrationTest {
 
         file = fileManager.generateFileName(user2.email, user1.appName);
         Files.deleteIfExists(file);
+
+        file = fileManager.generateFileName("admin@blynk.cc", AppName.BLYNK);
+        Files.deleteIfExists(file);
     }
 
     @Test
