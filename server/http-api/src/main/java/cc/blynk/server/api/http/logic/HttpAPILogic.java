@@ -97,7 +97,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
         if (tokenValue == null) {
-            log.warn("Requested token {} not found.", token);
+            log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
@@ -117,7 +117,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
         if (tokenValue == null) {
-            log.warn("Requested token {} not found.", token);
+            log.debug("Requested token {} not found.", token);
             return Response.badRequest("Invalid token.");
         }
 
