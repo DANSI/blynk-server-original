@@ -25,11 +25,7 @@ import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -150,8 +146,8 @@ public class ReadingWorkflowTest extends IntegrationBase {
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 500, TimeUnit.MILLISECONDS);
 
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 101"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(750)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
+        verify(hardClient2.responseMock, timeout(750)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 101"))));
     }
 
     @Test
