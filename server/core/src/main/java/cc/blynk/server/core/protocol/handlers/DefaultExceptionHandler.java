@@ -56,13 +56,13 @@ public interface DefaultExceptionHandler {
             if (cause.getCause() instanceof UnsupportedCommandException) {
                 log.debug("Input command is invalid. Closing socket. Reason {}. Address {}", cause.getMessage(), ctx.channel().remoteAddress());
             } else if (cause.getCause() instanceof SSLException) {
-                log.warn("Unsecured connection attempt. Channel : {}. Reason : {}", ctx.channel().remoteAddress(), cause.getMessage());
+                log.debug("Unsecured connection attempt. Channel : {}. Reason : {}", ctx.channel().remoteAddress(), cause.getMessage());
             } else {
                 log.error("DecoderException.", cause);
             }
             ctx.close();
         } else if (cause instanceof NotSslRecordException) {
-            log.warn("Not secure connection attempt detected. {}. IP {}", cause.getMessage(), ctx.channel().remoteAddress());
+            log.debug("Not secure connection attempt detected. {}. IP {}", cause.getMessage(), ctx.channel().remoteAddress());
             ctx.close();
         } else if (cause instanceof SSLException) {
             log.warn("SSL exception. {}.", cause.getMessage());
