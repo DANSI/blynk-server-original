@@ -1,11 +1,15 @@
 package cc.blynk.server.application.handlers.sharing.logic;
 
+import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
+import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -22,7 +26,7 @@ import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.utils.StringUtils.split2;
+import static cc.blynk.utils.StringUtils.*;
 
 /**
  * The Blynk Project.
@@ -45,35 +49,77 @@ public class HardwareAppShareLogic {
 
         String[] split = split2(message.body);
 
-        String[] dashIdAndDeviceIdString = split[0].split("-");
-        int dashId = ParseUtil.parseInt(dashIdAndDeviceIdString[0]);
-        int deviceId = 0;
+        String[] dashIdAndTargetIdString = split2Device(split[0]);;
+        int dashId = ParseUtil.parseInt(dashIdAndTargetIdString[0]);
+        //deviceId or tagId or device selector widget id
+        int targetId = 0;
 
         //new logic for multi devices
-        if (dashIdAndDeviceIdString.length == 2) {
-            deviceId = ParseUtil.parseInt(dashIdAndDeviceIdString[1]);
+        if (dashIdAndTargetIdString.length == 2) {
+            targetId = ParseUtil.parseInt(dashIdAndTargetIdString[1]);
         }
 
-        DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
-        if (!dashBoard.isActive) {
+        if (!dash.isActive) {
             log.debug("No active dashboard.");
             ctx.writeAndFlush(makeResponse(message.id, NO_ACTIVE_DASHBOARD), ctx.voidPromise());
             return;
         }
 
-        if (!dashBoard.isShared) {
+        if (!dash.isShared) {
             log.debug("Dashboard is not shared. User : {}, {}", state.user.email, ctx.channel().remoteAddress());
             ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
             return;
         }
 
-        char operation = split[1].charAt(1);
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        //sending message only if widget assigned to device or tag has assigned devices
+        Target target = dash.getTarget(targetId);
+        if (target == null) {
+            log.debug("No assigned target id for received command.");
+            return;
+        }
 
+        final int[] deviceIds = target.getDeviceIds();
+
+        if (deviceIds.length == 0) {
+            log.debug("No devices assigned to target.");
+            return;
+        }
+
+        final char operation = split[1].charAt(1);
         switch (operation) {
+            case 'u' :
+                String[] splitBody = split3(split[1]);
+                final int widgetId = ParseUtil.parseInt(splitBody[1]);
+                Widget deviceSelector = dash.getWidgetById(widgetId);
+                if (deviceSelector instanceof DeviceSelector) {
+                    final int selectedDeviceId = ParseUtil.parseInt(splitBody[2]);
+                    ((DeviceSelector) deviceSelector).value = selectedDeviceId;
+                    AppSyncLogic.sendSyncAndOk(ctx, dash, selectedDeviceId, message.id);
+                }
+                break;
             case 'w':
-                dash.update(deviceId, split[1]);
+                splitBody = split3(split[1]);
+
+                if (splitBody.length < 3) {
+                    log.debug("Not valid write command.");
+                    ctx.writeAndFlush(makeResponse(message.id, Response.ILLEGAL_COMMAND_BODY), ctx.voidPromise());
+                    return;
+                }
+
+                final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
+                final byte pin = ParseUtil.parseByte(splitBody[1]);
+                final String value = splitBody[2];
+
+                for (int deviceId : deviceIds) {
+                    dash.update(deviceId, pin, pinType, value);
+                }
+
+                //additional state for tag widget itself
+                if (target.isTag()) {
+                    dash.update(targetId, pin, pinType, value);
+                }
 
                 final String sharedToken = state.token;
                 if (sharedToken != null) {
@@ -84,7 +130,7 @@ public class HardwareAppShareLogic {
                     }
                 }
 
-                if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], deviceId)) {
+                if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], deviceIds)) {
                     log.debug("No device in session.");
                     ctx.writeAndFlush(makeResponse(message.id, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
                 }
@@ -93,14 +139,14 @@ public class HardwareAppShareLogic {
 
             //todo fully remove this section???
             case 'r':
-                Widget widget = dash.findWidgetByPin(deviceId, split[1].split(StringUtils.BODY_SEPARATOR_STRING));
+                Widget widget = dash.findWidgetByPin(targetId, split[1].split(StringUtils.BODY_SEPARATOR_STRING));
                 if (widget == null) {
                     throw new IllegalCommandBodyException("No frequency widget for read command.");
                 }
 
                 if (!(widget instanceof FrequencyWidget)) {
                     //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
-                    if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], deviceId)) {
+                    if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], targetId)) {
                         log.debug("No device in session.");
                         ctx.writeAndFlush(makeResponse(message.id, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
                     }
