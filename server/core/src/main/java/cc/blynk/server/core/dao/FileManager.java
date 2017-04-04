@@ -38,6 +38,7 @@ import static java.util.function.Function.identity;
 public class FileManager {
 
     private static final Logger log = LogManager.getLogger(FileManager.class);
+    private static final String USER_FILE_EXTENSION = ".user";
 
     /**
      * Folder where all user profiles are stored locally.
@@ -83,7 +84,7 @@ public class FileManager {
     }
 
     public Path generateFileName(String email, String appName) {
-        return Paths.get(dataDir.toString(), email + "." + appName + ".user");
+        return Paths.get(dataDir.toString(), email + "." + appName + USER_FILE_EXTENSION);
     }
 
     public Path generateBackupFileName(String email, String appName) {
@@ -92,7 +93,7 @@ public class FileManager {
     }
 
     public Path generateOldFileName(String userName) {
-        return Paths.get(dataDir.toString(), "u_" + userName + ".user");
+        return Paths.get(dataDir.toString(), "u_" + userName + USER_FILE_EXTENSION);
     }
 
     public boolean delete(String email, String appName) {
@@ -128,9 +129,10 @@ public class FileManager {
 
         final File[] files = dataDir.toFile().listFiles();
 
+        ConcurrentMap<UserKey, User> temp;
         if (files != null) {
-            ConcurrentMap<UserKey, User> tempUsers = Arrays.stream(files).parallel()
-                    .filter(file -> file.isFile() && file.getName().endsWith(".user"))
+            temp = Arrays.stream(files).parallel()
+                    .filter(file -> file.isFile() && file.getName().endsWith(USER_FILE_EXTENSION))
                     .flatMap(file -> {
                         try {
                             User user = JsonParser.parseUserFromFile(file);
@@ -143,14 +145,13 @@ public class FileManager {
                         }
                         return Stream.empty();
                     })
-                    .collect(Collectors.toConcurrentMap(UserKey::new, identity(), (user1, user2) -> user2));
-
-            log.debug("Reading user DB finished.");
-            return tempUsers;
+                    .collect(Collectors.toConcurrentMap(UserKey::new, identity()));
+        } else {
+            temp = new ConcurrentHashMap<>();
         }
 
         log.debug("Reading user DB finished.");
-        return new ConcurrentHashMap<>();
+        return temp;
     }
 
     public static void migrateOldProfile(User user) {
@@ -186,7 +187,7 @@ public class FileManager {
         File[] files = dataDir.toFile().listFiles();
         if (files != null) {
             for (File file : files) {
-                if (file.isFile() && file.getName().endsWith(".user")) {
+                if (file.isFile() && file.getName().endsWith(USER_FILE_EXTENSION)) {
                     userProfileSize.put(file.getName(), (int) file.length());
                 }
             }
