@@ -177,27 +177,6 @@ public class UserStatisticsTest {
 
     @Test
     @Ignore
-    public void testGetByToken() {
-        String token = "";
-        User user = getByToken(token, users);
-        if (user == null) {
-            System.out.println("No user");
-        } else {
-            System.out.println(user.email);
-        }
-    }
-
-    private User getByToken(String token, Map<UserKey, User> users) {
-        for (User user : users.values()) {
-            if (user.dashTokens.values().contains(token)) {
-                return user;
-            }
-        }
-        return null;
-    }
-
-    @Test
-    @Ignore
     public void testCompression() throws Exception{
         String largestDash = "{\"id\":2116221194,\"name\":\"Gusmer counter \",\"timestamp\":1431619485,\"widgets\":[{\"type\":\"NOTIFICATION\",\"id\":335157832,\"x\":5,\"y\":8,\"color\":-308477697,\"width\":2,\"height\":1,\"iOSToken\":\"lp7_YoJck4g:APA91bH7lOlsBsZGHwaguGYtkuJGXrcfJEA4i8NYCypwDd971W45ZNkvG7Tzonmla2zzGlB1l07XRmVRShqztbFjvR2L0KPV6gRj2NcrlaHXqVDlWEcaiTPQIRv006z4a3ku6eULSOZT\",\"notifyWhenOffline\":false},{\"type\":\"DIGIT4_DISPLAY\",\"id\":395092900,\"x\":0,\"y\":6,\"color\":-308477697,\"width\":2,\"height\":1,\"label\":\"Injection nr\",\"pinType\":\"VIRTUAL\",\"pin\":1,\"min\":0,\"max\":1023,\"frequency\":1000,\"mappingMode\":0},{\"type\":\"DIGIT4_DISPLAY\",\"id\":1192914074,\"x\":4,\"y\":3,\"color\":-308477697,\"width\":2,\"height\":1,\"label\":\"Per injection\",\"min\":0,\"max\":1023,\"frequency\":1000,\"mappingMode\":0},{\"type\":\"DIGIT4_DISPLAY\",\"id\":1178562802,\"x\":6,\"y\":3,\"color\":-308477697,\"width\":2,\"height\":1,\"label\":\"Kg Per Inj.\",\"min\":0,\"max\":1023,\"frequency\":1000,\"mappingMode\":0},{\"type\":\"DIGIT4_DISPLAY\",\"id\":2113736921,\"x\":4,\"y\":4,\"color\":-308477697,\"width\":2,\"height\":1,\"label\":\"Right heater\",\"min\":0,\"max\":1023,\"frequency\":1000,\"mappingMode\":0},{\"type\":\"BUTTON\",\"id\":2120531847,\"x\":0,\"y\":4,\"color\":616861439,\"width\":2,\"height\":2,\"label\":\"Reset to 0\",\"pushMode\":true},{\"type\":\"BUTTON\",\"id\":1812157287,\"x\":0,\"y\":7,\"color\":616861439,\"width\":2,\"height\":2,\"pinType\":\"VIRTUAL\",\"pin\":0,\"pushMode\":true},{\"type\":\"BUTTON\",\"id\":1126659723,\"x\":6,\"y\":4,\"color\":616861439,\"width\":2,\"height\":2,\"label\":\"Reset to 0\",\"pushMode\":true},{\"type\":\"LED\",\"id\":1377711592,\"x\":2,\"y\":8,\"color\":-308477697,\"width\":1,\"height\":1,\"frequency\":0},{\"type\":\"TIMER\",\"id\":298635238,\"x\":5,\"y\":6,\"color\":-308477697,\"width\":3,\"height\":1,\"label\":\"Time is\",\"startTime\":73958,\"startValue\":\"1\",\"stopTime\":74018,\"stopValue\":\"0\"},{\"type\":\"LED\",\"id\":364399500,\"x\":7,\"y\":7,\"color\":-308477697,\"width\":1,\"height\":1,\"frequency\":0},{\"type\":\"LED\",\"id\":778846748,\"x\":5,\"y\":5,\"color\":-308477697,\"width\":1,\"height\":1,\"label\":\"Of\",\"frequency\":0},{\"type\":\"TIMER\",\"id\":997498635,\"x\":2,\"y\":6,\"color\":-308477697,\"width\":3,\"height\":1,\"label\":\"Timer\",\"startTime\":82800,\"startValue\":\"1\",\"stopTime\":82800,\"stopValue\":\"0\"},{\"type\":\"LED\",\"id\":274842833,\"x\":2,\"y\":7,\"color\":-308477697,\"width\":1,\"height\":1,\"frequency\":0},{\"type\":\"BUTTON\",\"id\":752806213,\"x\":3,\"y\":7,\"color\":616861439,\"width\":2,\"height\":2,\"pushMode\":true},{\"type\":\"LED\",\"id\":357616364,\"x\":3,\"y\":5,\"color\":-308477697,\"width\":1,\"height\":1,\"label\":\"Of\",\"frequency\":0},{\"type\":\"DIGIT4_DISPLAY\",\"id\":1356688125,\"x\":2,\"y\":4,\"color\":-308477697,\"width\":2,\"height\":1,\"label\":\"Left heater\",\"min\":0,\"max\":60,\"frequency\":1000,\"mappingMode\":0},{\"type\":\"GAUGE\",\"id\":19562774,\"x\":4,\"y\":0,\"color\":-308477697,\"width\":4,\"height\":3,\"label\":\"Presure\",\"frequency\":1000,\"min\":0,\"max\":1023,\"mappingMode\":0},{\"type\":\"LED\",\"id\":189585006,\"x\":7,\"y\":8,\"color\":-308477697,\"width\":1,\"height\":1,\"frequency\":0},{\"type\":\"LED\",\"id\":24032975,\"x\":2,\"y\":5,\"color\":-308477697,\"width\":1,\"height\":1,\"label\":\"On\",\"frequency\":0},{\"type\":\"DIGIT4_DISPLAY\",\"id\":1564351632,\"x\":0,\"y\":3,\"color\":-308477697,\"width\":2,\"height\":1,\"label\":\"Counter\",\"min\":0,\"max\":6000,\"frequency\":500,\"mappingMode\":0},{\"type\":\"DIGIT4_DISPLAY\",\"id\":1225335621,\"x\":2,\"y\":3,\"color\":-308477697,\"width\":2,\"height\":1,\"label\":\"Total Kg\",\"min\":0,\"max\":2000,\"frequency\":500,\"mappingMode\":0},{\"type\":\"GAUGE\",\"id\":173315013,\"x\":0,\"y\":0,\"color\":616861439,\"width\":4,\"height\":3,\"label\":\"Pressure\",\"frequency\":1000,\"min\":0,\"max\":1023,\"mappingMode\":0},{\"type\":\"LED\",\"id\":1946992022,\"x\":4,\"y\":5,\"color\":-308477697,\"width\":1,\"height\":1,\"label\":\"On\",\"frequency\":0},{\"type\":\"DIGIT4_DISPLAY\",\"id\":1183934061,\"x\":5,\"y\":7,\"color\":-308477697,\"width\":2,\"height\":1,\"label\":\"Average \",\"min\":0,\"max\":1023,\"frequency\":1000,\"mappingMode\":0}],\"boardType\":\"Arduino Mega\",\"keepScreenOn\":false}";
         System.out.println("Dash json size : " + largestDash.length());
