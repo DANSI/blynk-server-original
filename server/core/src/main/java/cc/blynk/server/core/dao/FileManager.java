@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.nio.file.Files.createDirectories;
 import static java.util.function.Function.identity;
 
 
@@ -56,31 +57,25 @@ public class FileManager {
         }
         try {
             Path dataFolderPath = Paths.get(dataFolder);
-            this.dataDir = createDir(dataFolderPath);
-            this.deletedDataDir = createDir(Paths.get(dataFolder, DELETED_DATA_DIR_NAME));
-            this.backupDataDir = createDir(Paths.get(dataFolder, BACKUP_DATA_DIR_NAME));
-        } catch (RuntimeException e) {
+            this.dataDir = createDirectories(dataFolderPath);
+            this.deletedDataDir = createDirectories(Paths.get(dataFolder, DELETED_DATA_DIR_NAME));
+            this.backupDataDir = createDirectories(Paths.get(dataFolder, BACKUP_DATA_DIR_NAME));
+        } catch (Exception e) {
             Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk");
 
             System.out.println("WARNING : could not find folder '" + dataFolder + "'. Please specify correct -dataFolder parameter.");
             System.out.println("Your data may be lost during server restart. Using temp folder : " + tempDir.toString());
 
-            this.dataDir = createDir(tempDir);
-            this.deletedDataDir = createDir(Paths.get(this.dataDir.toString(), DELETED_DATA_DIR_NAME));
-            this.backupDataDir = createDir(Paths.get(this.dataDir.toString(), BACKUP_DATA_DIR_NAME));
+            try {
+                this.dataDir = createDirectories(tempDir);
+                this.deletedDataDir = createDirectories(Paths.get(this.dataDir.toString(), DELETED_DATA_DIR_NAME));
+                this.backupDataDir = createDirectories(Paths.get(this.dataDir.toString(), BACKUP_DATA_DIR_NAME));
+            } catch (Exception ioe) {
+                throw new RuntimeException(ioe);
+            }
         }
 
         log.info("Using data dir '{}'", dataDir);
-    }
-
-    private static Path createDir(Path dataDir) {
-        try {
-            Files.createDirectories(dataDir);
-        } catch (IOException ioe) {
-            log.error("Error creating data folder '{}'", dataDir);
-            throw new RuntimeException("Error creating data folder '" + dataDir + "'");
-        }
-        return dataDir;
     }
 
     public Path getDataDir() {
