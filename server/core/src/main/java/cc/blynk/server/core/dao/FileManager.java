@@ -128,7 +128,7 @@ public class FileManager {
      *
      * @return mapping between username and it's profile.
      */
-    public ConcurrentMap<UserKey, User> deserialize() {
+    public ConcurrentMap<UserKey, User> deserializeUsers() {
         log.debug("Starting reading user DB.");
 
         final File[] files = dataDir.toFile().listFiles();

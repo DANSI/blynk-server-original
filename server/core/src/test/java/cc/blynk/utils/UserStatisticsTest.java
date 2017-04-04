@@ -29,7 +29,7 @@ public class UserStatisticsTest {
     @BeforeClass
     public static void init() {
         fileManager = new FileManager("/home/doom369/test/root/data");
-        users = fileManager.deserialize();
+        users = fileManager.deserializeUsers();
     }
 
     public static byte[] compress(byte[] data) throws Exception {
