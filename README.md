@@ -483,7 +483,7 @@ Copy it to clipboard from your console.
 
         \i /tmp/create_schema.sql
         
-```/root/create_schema.sql``` - is path from step 4.
+```/tmp/create_schema.sql``` - is path from step 4.
         
 You should see next output:
 
