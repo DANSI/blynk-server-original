@@ -110,6 +110,54 @@ public class TimerTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
     }
 
+
+    @Test
+    public void testTimerEventNotActive() throws Exception {
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+
+        TimerTime timerTime = new TimerTime();
+
+        timerTime.days = new int[] {1,2,3,4,5,6,7};
+
+        //adding 2 seconds just to be sure we no gonna miss timer event
+        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2;
+        timerTime.tzName = DateTimeUtils.UTC;
+
+        Rule rule = new Rule();
+        rule.isActive = true;
+        rule.triggerTime = timerTime;
+        SetPinAction setPinAction = new SetPinAction();
+        setPinAction.pin = new Pin();
+        setPinAction.pin.pin = 1;
+        setPinAction.pin.pinType = PinType.VIRTUAL;
+        setPinAction.value = "1";
+        rule.actions = new BaseAction[] {
+                setPinAction
+        };
+
+        Eventor eventor = new Eventor(new Rule[] {
+                rule
+        });
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+
+        clientPair.appClient.reset();
+        clientPair.hardwareClient.reset();
+
+        rule.isActive = false;
+        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 1;
+
+        clientPair.appClient.send("updateWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        verify(clientPair.appClient.responseMock, after(1500).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
+        verify(clientPair.hardwareClient.responseMock, after(1500).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+    }
+
     @Test
     public void testTimerEventWithMultiActions() throws Exception {
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);

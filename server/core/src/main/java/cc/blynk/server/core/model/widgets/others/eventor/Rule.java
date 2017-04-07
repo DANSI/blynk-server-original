@@ -38,11 +38,11 @@ public class Rule {
     }
 
     public boolean isReady(byte pin, PinType pinType) {
-        return isActive && notEmpty() && triggerPin.isSame(pin, pinType);
+        return notEmpty() && triggerPin.isSame(pin, pinType);
     }
 
     public boolean isValidTimerRule() {
-        return triggerTime != null && actions != null && actions.length > 0 && actions[0].isValid();
+        return isActive && triggerTime != null && actions != null && actions.length > 0 && actions[0].isValid();
     }
 
     public boolean isValid(double value) {
