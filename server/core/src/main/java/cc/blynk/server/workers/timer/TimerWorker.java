@@ -6,6 +6,7 @@ import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
@@ -214,8 +215,23 @@ public class TimerWorker implements Runnable {
         for (BaseAction action : actions) {
             if (action instanceof SetPinAction) {
                 SetPinAction setPinAction = (SetPinAction) action;
-                dash.update(key.deviceId, setPinAction.pin.pin, setPinAction.pin.pinType, setPinAction.value, nowMillis);
-                triggerTimer(sessionDao, key.userKey, setPinAction.makeHardwareBody(), key.dashId, key.deviceId);
+
+                Target target = dash.getTarget(key.deviceId);
+                if (target == null) {
+                    return;
+                }
+
+                int[] deviceIds = target.getDeviceIds();
+
+                if (deviceIds.length == 0) {
+                    return;
+                }
+
+                for (int deviceId : deviceIds) {
+                    dash.update(deviceId, setPinAction.pin.pin, setPinAction.pin.pinType, setPinAction.value, nowMillis);
+                }
+
+                triggerTimer(sessionDao, key.userKey, setPinAction.makeHardwareBody(), key.dashId, deviceIds);
             } else if (action instanceof NotifyAction) {
                 NotifyAction notifyAction = (NotifyAction) action;
                 EventorProcessor.push(gcmWrapper, dash, notifyAction.message);
@@ -230,13 +246,15 @@ public class TimerWorker implements Runnable {
         return ArrayUtil.contains(timerTime.days, dayOfWeek);
     }
 
-    private void triggerTimer(SessionDao sessionDao, UserKey userKey, String value, int dashId, int deviceId) {
+    private void triggerTimer(SessionDao sessionDao, UserKey userKey, String value, int dashId, int[] deviceIds) {
         Session session = sessionDao.userSession.get(userKey);
         if (session != null) {
-            if (!session.sendMessageToHardware(dashId, HARDWARE, TIMER_MSG_ID, value, deviceId)) {
+            if (!session.sendMessageToHardware(dashId, HARDWARE, TIMER_MSG_ID, value, deviceIds)) {
                 actuallySendTimers++;
             }
-            session.sendToApps(HARDWARE, TIMER_MSG_ID, dashId, deviceId, value);
+            for (int deviceId : deviceIds) {
+                session.sendToApps(HARDWARE, TIMER_MSG_ID, dashId, deviceId, value);
+            }
         }
     }
 

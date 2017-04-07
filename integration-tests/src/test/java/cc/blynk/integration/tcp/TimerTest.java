@@ -7,6 +7,8 @@ import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
@@ -17,6 +19,8 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
+import cc.blynk.server.core.protocol.model.messages.appllication.CreateTag;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
@@ -40,8 +44,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static cc.blynk.server.workers.timer.TimerWorker.TIMER_MSG_ID;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -549,6 +552,61 @@ public class TimerTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
     }
 
+    @Test
+    public void testTimerWorksWithTag() throws Exception {
+        //creating new device
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.send("login " + device.token);
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.reset();
+
+        //creating new tag
+        Tag tag0 = new Tag(100_000, "Tag1");
+        //assigning 2 devices on 1 tag.
+        tag0.deviceIds = new int[] {0, 1};
+
+        clientPair.appClient.send("createTag 1\0" + tag0.toString());
+        String createdTag = clientPair.appClient.getBody();
+        Tag tag = JsonParser.parseTag(createdTag);
+        assertNotNull(tag);
+        assertEquals(100_000, tag.id);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(1, tag.toString())));
+
+
+
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        Timer timer = new Timer();
+        timer.id = 112;
+        timer.x = 1;
+        timer.y = 1;
+        timer.width = 2;
+        timer.height = 1;
+        timer.pinType = PinType.DIGITAL;
+        timer.pin = 5;
+        timer.startValue = b("dw 5 1");
+        timer.deviceId = 100_000;
+
+        LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
+        int curTime = localDateTime.toSecondOfDay();
+        timer.startTime = curTime + 1;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
+        verify(hardClient2.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
+    }
 
 
 }
