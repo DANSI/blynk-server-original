@@ -68,7 +68,7 @@ public interface DefaultExceptionHandler {
             log.warn("SSL exception. {}.", cause.getMessage());
             ctx.close();
         } else if (cause instanceof IOException) {
-            log.debug("Blynk server IOException.", cause);
+            log.trace("Blynk server IOException.", cause);
         } else {
             log.error("Unexpected error!!!", cause);
             log.error("Handler class : {}. Name : {}", ctx.handler().getClass(), ctx.name());
