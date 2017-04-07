@@ -21,8 +21,6 @@ import java.util.List;
 
 import static cc.blynk.core.http.Response.*;
 import static cc.blynk.utils.AdminHttpUtil.sort;
-import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 
 /**
@@ -175,11 +173,11 @@ public class UsersLogic extends CookiesBaseHttpHandler {
         UserKey userKey = new UserKey(email, appName);
         User user = userDao.delete(userKey);
         if (user == null) {
-            return new Response(HTTP_1_1, NOT_FOUND);
+            return notFound();
         }
 
         if (!fileManager.delete(email, appName)) {
-            return new Response(HTTP_1_1, NOT_FOUND);
+            return notFound();
         }
 
         dbManager.deleteUser(userKey);
