@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -97,6 +98,7 @@ public class CreateDashLogic {
                 device.token = null;
                 device.disconnectTime = 0;
                 device.lastLoggedIP = null;
+                device.status = Status.OFFLINE;
                 if (generateTokensForDevices) {
                     String token = TokenGeneratorUtil.generateNewToken();
                     tokenManager.assignToken(user, newDash.id, device.id, token);
