@@ -78,7 +78,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
 
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{device_section}", "<br>" + qrHolders[0].mailBodyPart)), eq(qrHolders));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
 
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{device_section}", "<br>" + qrHolders[0].mailBodyPart)), eq(qrHolders));
 
         clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].code);
 
@@ -152,7 +152,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
 
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{device_section}", "<br>" + qrHolders[0].mailBodyPart)), eq(qrHolders));
 
         clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].code);
 
@@ -191,10 +191,11 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         int i = 0;
         for (Device device : devices) {
-            final String newToken = flashedTokens.get(i).token;
-            final String name = newToken + "_" + dashId + "_" + device.id + ".jpg";
-            final String qrCode = newToken + " " + dashId + " " + to;
-            qrHolders[i] = new QrHolderTest(name, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray(), qrCode);
+            String newToken = flashedTokens.get(i).token;
+            String name = newToken + "_" + dashId + "_" + device.id + ".jpg";
+            String qrCode = newToken + " " + dashId + " " + to;
+            String mailBodyPart = device.name + ": " + newToken;
+            qrHolders[i] = new QrHolderTest(name, mailBodyPart, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray(), qrCode);
             i++;
         }
 
@@ -223,8 +224,8 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         String code;
 
-        public QrHolderTest(String name, byte[] data, String code) {
-            super(name, data);
+        public QrHolderTest(String name, String mailBodyPart, byte[] data, String code) {
+            super(name, mailBodyPart, data);
             this.code = code;
         }
     }

@@ -120,7 +120,12 @@ public class AppMailLogic {
         blockingIOProcessor.execute(() -> {
             try {
                 QrHolder[] qrHolders = makeQRs(to, appName, dash, dash.id);
-                mailWrapper.sendWithAttachment(to, subj, body, qrHolders);
+                StringBuilder sb = new StringBuilder();
+                for (QrHolder qrHolder : qrHolders) {
+                    sb.append("<br>");
+                    sb.append(qrHolder.mailBodyPart);
+                }
+                mailWrapper.sendWithAttachment(to, subj, body.replace("{device_section}", sb.toString()), qrHolders);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending email from application. For user {}. Reason : {}", to, e.getMessage());
@@ -165,10 +170,11 @@ public class AppMailLogic {
 
         int i = 0;
         for (Device device : dash.devices) {
-            final String newToken = TokenGeneratorUtil.generateNewToken();
-            final String name = newToken + "_" + dashId + "_" + device.id + ".jpg";
-            final String qrCode = newToken + " " + dashId + " " + publisherEmail;
-            qrHolders[i] = new QrHolder(name, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray());
+            String newToken = TokenGeneratorUtil.generateNewToken();
+            String name = newToken + "_" + dashId + "_" + device.id + ".jpg";
+            String qrCode = newToken + " " + dashId + " " + publisherEmail;
+            String mailBodyPart = device.name + ": " + newToken;
+            qrHolders[i] = new QrHolder(name, mailBodyPart, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray());
             flashedTokens[i] = new FlashedToken(newToken, appName, device.id);
             i++;
         }

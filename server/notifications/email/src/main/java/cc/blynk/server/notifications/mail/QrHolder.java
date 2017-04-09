@@ -11,10 +11,13 @@ public class QrHolder {
 
     public final String name;
 
+    public final String mailBodyPart;
+
     public final byte[] data;
 
-    public QrHolder(String name, byte[] data) {
+    public QrHolder(String name, String mailBodyPart, byte[] data) {
         this.name = name;
+        this.mailBodyPart = mailBodyPart;
         this.data = data;
     }
 
