@@ -549,24 +549,12 @@ For example
 
         ./certbot-auto certonly --agree-tos --email pupkin@blynk.cc --standalone -d blynk.cc
 
-+ Add password to your let's encrypt certificate and reformat it:
-
-        mkdir /srv/blynk-data
-        cp /etc/letsencrypt/live/YOUR_HOST/fullchain.pem /srv/blynk-data
-        cp /etc/letsencrypt/live/YOUR_HOST/privkey.pem /srv/blynk-data
-        cd /srv/blynk-data
-        openssl pkcs8 -topk8 -inform PEM -outform PEM -in privkey.pem -out privkey_pass.pem
-
 + Then add to your ```server.properties``` file (in folder with server.jar)
 
-        server.ssl.cert=/srv/blynk-data/fullchain.pem
-        server.ssl.key=/srv/blynk-data/privkey_pass.pem
-        server.ssl.key.pass=your_password
+        server.ssl.cert=/etc/letsencrypt/live/YOUR_HOST/fullchain.pem
+        server.ssl.key=/etc/letsencrypt/live/YOUR_HOST/privkey.pem
+        server.ssl.key.pass=
         
-        https.cert=/srv/blynk-data/fullchain.pem
-        https.key=/srv/blynk-data/privkey_pass.pem
-        https.key.pass=our_password
-
 ### Generate own SSL certificates
 
 + Generate self-signed certificate and key
