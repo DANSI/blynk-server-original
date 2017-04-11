@@ -536,7 +536,7 @@ To display the date/time in excel you may use formula:
 
 ### Generate Let's Encrypt SSL/TLS Certificates
 
-+ First install [certbot] (https://github.com/certbot/certbot) on your server (machine where you going to run Blynk Server)
++ First install [certbot](https://github.com/certbot/certbot) on your server (machine where you going to run Blynk Server)
 
         wget https://dl.eff.org/certbot-auto
         chmod a+x certbot-auto
