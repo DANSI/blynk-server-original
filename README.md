@@ -111,7 +111,7 @@ That's it!
        
 ## Enabling server auto restart on unix-like systems
         
-+ To enable server auto restart find /etc/init.d/rc.local file and add:
++ To enable server auto restart find /etc/rc.local file and add:
 
         java -jar /home/pi/server-0.23.5.jar -dataFolder /home/pi/Blynk &
         
