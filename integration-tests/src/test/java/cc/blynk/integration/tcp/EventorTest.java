@@ -195,6 +195,20 @@ public class EventorTest extends IntegrationBase {
     }
 
     @Test
+    public void testInactiveEventsNotTriggered() throws Exception {
+        Eventor eventor = oneRuleEventor("if v1 > 37 then setpin v2 123");
+        eventor.rules[0].isActive = false;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("hardware vw 1 38");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 38"))));
+        verify(clientPair.hardwareClient.responseMock, after(300).never()).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
+        verify(clientPair.appClient.responseMock, after(300).never()).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+    }
+
+    @Test
     public void testSimpleRule1AndDashUpdatedValue() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 > 37 then setpin v4 123");
 

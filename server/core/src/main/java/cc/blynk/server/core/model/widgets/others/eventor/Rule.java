@@ -38,7 +38,7 @@ public class Rule {
     }
 
     public boolean isReady(byte pin, PinType pinType) {
-        return notEmpty() && triggerPin.isSame(pin, pinType);
+        return isActive && notEmpty() && triggerPin.isSame(pin, pinType);
     }
 
     public boolean isValidTimerRule() {
