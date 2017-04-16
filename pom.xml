@@ -138,7 +138,7 @@
         <!-- maven plugins -->
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
-        <maven.assembly.plugin.version>2.6</maven.assembly.plugin.version>
+        <maven.shade.plugin.version>3.0.0</maven.shade.plugin.version>
         <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
 
         <!-- dependencies -->

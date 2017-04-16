@@ -102,10 +102,10 @@ public final class JarUtil {
      * @return server version
      */
     public static String getServerVersion() {
-        try (InputStream is = JarUtil.class.getResourceAsStream("/META-INF/maven/cc.blynk.server/launcher/pom.properties")) {
+        try (InputStream is = JarUtil.class.getResourceAsStream("/META-INF/MANIFEST.MF")) {
             Properties properties = new Properties();
             properties.load(is);
-            return properties.getProperty("version", "");
+            return properties.getProperty("Build-Number", "");
         } catch (Exception e) {
             return "";
         }
