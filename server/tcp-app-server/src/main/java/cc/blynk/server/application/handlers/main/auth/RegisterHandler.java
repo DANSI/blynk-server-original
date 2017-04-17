@@ -40,7 +40,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         if (allowedUsersArray != null && allowedUsersArray.length > 0 &&
                 allowedUsersArray[0] != null && !allowedUsersArray[0].isEmpty()) {
             allowedUsers = new HashSet<>(Arrays.asList(allowedUsersArray));
-            log.debug("Created allowed user list : {}", allowedUsersArray);
+            log.debug("Created allowed user list : {}", (Object[]) allowedUsersArray);
         } else {
             allowedUsers = null;
         }
