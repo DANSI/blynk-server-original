@@ -102,10 +102,14 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
         if (uri.equals("/")) {
             //for local server do redirect to admin page
-            if (region.equals("local")) {
-                ctx.writeAndFlush(redirect(rootPath));
-            } else {
-                ctx.writeAndFlush(redirect(BLYNK_LANDING));
+            try {
+                if (region.equals("local")) {
+                    ctx.writeAndFlush(redirect(rootPath));
+                } else {
+                    ctx.writeAndFlush(redirect(BLYNK_LANDING));
+                }
+            } finally {
+                req.release();
             }
             return;
         } else if (uri.startsWith(rootPath) || uri.startsWith("/static")) {

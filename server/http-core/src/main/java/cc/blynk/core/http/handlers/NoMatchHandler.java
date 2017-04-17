@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.util.ReferenceCountUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,10 +21,14 @@ public class NoMatchHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if ((msg instanceof HttpRequest)) {
-            HttpRequest req = (HttpRequest) msg;
-            log.debug("Error resolving url. No path found. {} : {}", req.method().name(), req.uri());
-            ctx.writeAndFlush(Response.notFound(), ctx.voidPromise());
+        try {
+            if (msg instanceof HttpRequest) {
+                HttpRequest req = (HttpRequest) msg;
+                log.debug("Error resolving url. No path found. {} : {}", req.method().name(), req.uri());
+                ctx.writeAndFlush(Response.notFound(), ctx.voidPromise());
+            }
+        } finally {
+            ReferenceCountUtil.release(msg);
         }
     }
 }
