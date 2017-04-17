@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.ParseUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -123,6 +124,21 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
 
     public boolean isPWMSupported() {
         return false;
+    }
+
+    @Override
+    public void setProperty(String property, String propertyValue) {
+        switch (property) {
+            case "min" :
+                this.min = ParseUtil.parseInt(propertyValue);
+                break;
+            case "max" :
+                this.max = ParseUtil.parseInt(propertyValue);
+                break;
+            default:
+                super.setProperty(property, propertyValue);
+                break;
+        }
     }
 
 }

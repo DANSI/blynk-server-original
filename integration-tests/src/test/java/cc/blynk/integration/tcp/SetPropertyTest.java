@@ -6,6 +6,7 @@ import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.others.Player;
@@ -62,7 +63,7 @@ public class SetPropertyTest extends IntegrationBase {
         assertEquals("Some Text", widget.label);
 
         clientPair.hardwareClient.send("setProperty 4 label MyNewLabel");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 4 label MyNewLabel"))));
 
         clientPair.appClient.reset();
@@ -77,11 +78,11 @@ public class SetPropertyTest extends IntegrationBase {
     @Test
     public void testSetButtonProperty() throws Exception {
         clientPair.appClient.send("createWidget 1\0{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"onLabel\":\"On\", \"offLabel\":\"Off\" , \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("setProperty 17 onLabel вкл");
         clientPair.hardwareClient.send("setProperty 17 offLabel выкл");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 17 onLabel вкл"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(2, b("1 17 offLabel выкл"))));
@@ -103,10 +104,10 @@ public class SetPropertyTest extends IntegrationBase {
     @Test
     public void testSetBooleanProperty() throws Exception {
         clientPair.appClient.send("createWidget 1\0{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"PLAYER\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("setProperty 17 isOnPlay true");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 17 isOnPlay true"))));
 
         clientPair.appClient.reset();
@@ -124,10 +125,10 @@ public class SetPropertyTest extends IntegrationBase {
     @Test
     public void testSetStringArrayWidgetPropertyForMenu() throws Exception {
         clientPair.appClient.send("createWidget 1\0{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"MENU\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("setProperty 17 labels label1 label2 label3");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 17 labels label1 label2 label3"))));
 
         clientPair.appClient.reset();
@@ -193,7 +194,7 @@ public class SetPropertyTest extends IntegrationBase {
     @Test
     public void testSetColorForWidget() throws Exception {
         clientPair.hardwareClient.send("setProperty 4 color #23C48E");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 4 color #23C48E"))));
 
         clientPair.appClient.reset();
@@ -203,6 +204,25 @@ public class SetPropertyTest extends IntegrationBase {
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertEquals(600084223, widget.color);
+    }
+
+    @Test
+    public void setMinMaxProperty() throws Exception {
+        clientPair.hardwareClient.send("setProperty 4 min 10");
+        clientPair.hardwareClient.send("setProperty 4 max 20");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 4 min 10"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(2, b("1 4 max 20"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = parseProfile(clientPair.appClient.getBody());
+        profile.dashBoards[0].updatedAt = 0;
+
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        assertEquals(10, ((OnePinWidget) widget).min);
+        assertEquals(20, ((OnePinWidget) widget).max);
     }
 
     @Test
