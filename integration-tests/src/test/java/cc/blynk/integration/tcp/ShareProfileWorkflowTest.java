@@ -15,7 +15,6 @@ import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.JsonParser;
 import org.junit.After;
 import org.junit.Before;
@@ -23,26 +22,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Command.SHARING;
-import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.zip.DeflaterOutputStream;
+
+import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 
 /**
@@ -449,9 +439,19 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         String body = clientPair.appClient.getBody();
 
         appClient2.send("loadProfileGzipped");
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(2, ByteUtils.compress(body))));
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(2, compress(body))));
     }
 
+    public static byte[] compress(String value) throws IOException {
+        byte[] stringData = value.getBytes(StandardCharsets.UTF_8);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(stringData.length);
+
+        try (OutputStream out = new DeflaterOutputStream(baos)) {
+            out.write(stringData);
+        }
+
+        return baos.toByteArray();
+    }
 
     @Test
     public void testGetShareTokenAndRefresh() throws Exception {

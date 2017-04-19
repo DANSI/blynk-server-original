@@ -27,7 +27,6 @@ import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandler;
@@ -224,7 +223,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         DashBoard dashBoard = user.profile.getDashById(dashId);
 
         try {
-            byte[] compressed = ByteUtils.compress(JsonParser.restrictiveDashWriter.writeValueAsString(dashBoard));
+            byte[] compressed = JsonParser.gzipDashRestrictive(dashBoard);
             String qrData = "bp1" + Base64.getEncoder().encodeToString(compressed);
             byte[] qrDataBinary = QRCode.from(qrData).to(ImageType.PNG).withSize(500, 500).stream().toByteArray();
             return ok(qrDataBinary, "image/png");

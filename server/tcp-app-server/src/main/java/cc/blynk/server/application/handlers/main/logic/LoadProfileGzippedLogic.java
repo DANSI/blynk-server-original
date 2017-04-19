@@ -4,11 +4,12 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
-import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.ParseUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,6 +21,7 @@ import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.JsonParser.*;
 
 /**
  * The Blynk Project.
@@ -44,7 +46,8 @@ public class LoadProfileGzippedLogic {
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         //load all
         if (message.length == 0) {
-            gzipAndWrite(ctx, state.user.profile.toString(), message.id);
+            Profile profile = state.user.profile;
+            write(ctx, gzipProfile(profile), message.id);
             return;
         }
 
@@ -52,7 +55,8 @@ public class LoadProfileGzippedLogic {
         if (parts.length == 1) {
             //load specific by id
             int dashId = ParseUtil.parseInt(message.body);
-            gzipAndWrite(ctx, state.user.profile.getDashByIdOrThrow(dashId).toString(), message.id);
+            DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+            write(ctx, gzipDash(dash), message.id);
         } else {
             String token = parts[0];
             int dashId = ParseUtil.parseInt(parts[1]);
@@ -63,29 +67,25 @@ public class LoadProfileGzippedLogic {
                     FlashedToken flashedToken = dbManager.selectFlashedToken(token, state.userKey.appName);
                     if (flashedToken != null) {
                         User publishingUser = userDao.getByName(publishingEmail, state.userKey.appName);
-                        gzipAndWrite(ctx, publishingUser.profile.getDashByIdOrThrow(dashId).toStringRestrictive(), message.id);
+                        DashBoard dash = publishingUser.profile.getDashByIdOrThrow(dashId);
+                        write(ctx, gzipDashRestrictive(dash), message.id);
                     }
                 } catch (Exception e) {
                     ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
-                    log.error("Error gettin publishing profile.", e.getMessage());
+                    log.error("Error getting publishing profile.", e.getMessage());
                 }
             });
         }
     }
 
-    private void gzipAndWrite(ChannelHandlerContext ctx, String response, int msgId) {
-        log.debug("Load Gzipped Profile {} ", response);
-
-        ByteBuf outputMsg;
-        try {
-            byte[] data = ByteUtils.compress(response);
-            outputMsg = makeBinaryMessage(LOAD_PROFILE_GZIPPED, msgId, data);
-        } catch (Exception e) {
-            log.error("Error compressing data.", e);
-            outputMsg = makeResponse(msgId, NO_DATA);
-        }
-
+    private void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
         if (ctx.channel().isWritable()) {
+            ByteBuf outputMsg;
+            if (data == null) {
+                outputMsg = makeResponse(msgId, NO_DATA);
+            } else {
+                outputMsg = makeBinaryMessage(LOAD_PROFILE_GZIPPED, msgId, data);
+            }
             ctx.writeAndFlush(outputMsg, ctx.voidPromise());
         }
     }
