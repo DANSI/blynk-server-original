@@ -35,7 +35,7 @@ public class TokenManager {
     public void deleteDevice(Device device) {
         String token = regularTokenManager.deleteDeviceToken(device);
         if (token != null) {
-            blockingIOProcessor.execute(() -> {
+            blockingIOProcessor.executeDB(() -> {
                 redisClient.removeToken(token);
             });
         }
@@ -47,7 +47,7 @@ public class TokenManager {
         String[] removedTokens = regularTokenManager.deleteProject(dash);
 
         if (removedTokens.length > 0) {
-            blockingIOProcessor.execute(() -> {
+            blockingIOProcessor.executeDB(() -> {
                 redisClient.removeToken(removedTokens);
             });
         }
@@ -65,7 +65,7 @@ public class TokenManager {
     public void assignToken(User user, int dashId, int deviceId, String newToken) {
         String oldToken = regularTokenManager.assignToken(user, dashId, deviceId, newToken);
 
-        blockingIOProcessor.execute(() -> {
+        blockingIOProcessor.executeDB(() -> {
             redisClient.assignServerToToken(newToken, currentIp);
             if (oldToken != null) {
                 redisClient.removeToken(oldToken);

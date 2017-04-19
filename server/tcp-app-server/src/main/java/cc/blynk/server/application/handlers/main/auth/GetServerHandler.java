@@ -67,7 +67,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
             ctx.writeAndFlush(makeASCIIStringMessage(msg.command, msg.id, currentIp), ctx.voidPromise());
         } else {
             //user is on other server
-            blockingIOProcessor.execute(() -> {
+            blockingIOProcessor.executeDB(() -> {
                 String userServer = redisClient.getServerByUser(email);
                 if (userServer == null) {
                     //user not registered yet anywhere

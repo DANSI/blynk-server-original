@@ -62,7 +62,7 @@ public class LoadProfileGzippedLogic {
             int dashId = ParseUtil.parseInt(parts[1]);
             String publishingEmail = parts[2];
 
-            blockingIOProcessor.execute(() -> {
+            blockingIOProcessor.executeDB(() -> {
                 try {
                     FlashedToken flashedToken = dbManager.selectFlashedToken(token, state.userKey.appName);
                     if (flashedToken != null) {

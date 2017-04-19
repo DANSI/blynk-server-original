@@ -36,7 +36,7 @@ public class RedeemLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String redeemToken = message.body;
 
-        blockingIOProcessor.execute(() -> ctx.writeAndFlush(verifyToken(message, redeemToken, user), ctx.voidPromise()));
+        blockingIOProcessor.executeDB(() -> ctx.writeAndFlush(verifyToken(message, redeemToken, user), ctx.voidPromise()));
     }
 
     private ResponseMessage verifyToken(StringMessage message, String redeemToken, User user) {

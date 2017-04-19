@@ -68,7 +68,7 @@ public class AddEnergyLogic {
         if (transactionId.equals("AdColonyAward") || transactionId.equals("homeScreen")) {
             return;
         }
-        blockingIOProcessor.execute(
+        blockingIOProcessor.executeDB(
             () -> dbManager.insertPurchase(new Purchase(email, reward, transactionId))
         );
     }

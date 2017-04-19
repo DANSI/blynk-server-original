@@ -57,7 +57,7 @@ public class GetTokenLogic {
         String token = split[1];
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        blockingIOProcessor.execute(() -> {
+        blockingIOProcessor.executeDB(() -> {
             FlashedToken dbFlashedToken = dbManager.selectFlashedToken(token, user.appName);
 
             if (dbFlashedToken == null) {

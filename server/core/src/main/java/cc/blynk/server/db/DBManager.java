@@ -127,13 +127,13 @@ public class DBManager implements Closeable {
 
     public void deleteUser(UserKey userKey) {
         if (isDBEnabled() && userKey != null) {
-            blockingIOProcessor.execute(() -> userDBDao.deleteUser(userKey));
+            blockingIOProcessor.executeDB(() -> userDBDao.deleteUser(userKey));
         }
     }
 
     public void saveUsers(ArrayList<User> users) {
         if (isDBEnabled() && users.size() > 0) {
-            blockingIOProcessor.execute(() -> userDBDao.save(users));
+            blockingIOProcessor.executeDB(() -> userDBDao.save(users));
         }
     }
 
@@ -145,19 +145,19 @@ public class DBManager implements Closeable {
 
     public void insertReporting(Map<AggregationKey, AggregationValue> map, GraphType graphType) {
         if (isDBEnabled() && map.size() > 0) {
-            blockingIOProcessor.execute(() -> reportingDBDao.insert(map, graphType));
+            blockingIOProcessor.executeDB(() -> reportingDBDao.insert(map, graphType));
         }
     }
 
     public void insertReportingRaw(Map<AggregationKey, Object> rawData) {
         if (isDBEnabled() && rawData.size() > 0) {
-            blockingIOProcessor.execute(() -> reportingDBDao.insertRawData(rawData));
+            blockingIOProcessor.executeDB(() -> reportingDBDao.insertRawData(rawData));
         }
     }
 
     public void cleanOldReportingRecords(Instant now) {
         if (isDBEnabled() && cleanOldReporting) {
-            blockingIOProcessor.execute(() -> reportingDBDao.cleanOldReportingRecords(now));
+            blockingIOProcessor.executeDB(() -> reportingDBDao.cleanOldReportingRecords(now));
         }
     }
 

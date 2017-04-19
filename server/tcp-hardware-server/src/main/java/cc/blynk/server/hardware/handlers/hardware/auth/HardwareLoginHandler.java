@@ -119,7 +119,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     }
 
     private void checkUserOnOtherServer(ChannelHandlerContext ctx, String token, int msgId) {
-        blockingIOProcessor.execute(() -> {
+        blockingIOProcessor.executeDB(() -> {
             String server = redisClient.getServerByToken(token);
             // no server found, that's means token is wrong.
             if (server == null || server.equals(holder.currentIp)) {

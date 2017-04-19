@@ -17,27 +17,36 @@ import java.util.concurrent.TimeUnit;
  */
 public class BlockingIOProcessor implements Closeable {
 
-    private final ThreadPoolExecutor executor;
+    private final ThreadPoolExecutor messagingExecutor;
+    //separate DB pool is needed as in case DB goes down messaging still should work
+    private final ThreadPoolExecutor dbExecutor;
 
     public BlockingIOProcessor(int poolSize, int maxQueueSize) {
-        this.executor = new ThreadPoolExecutor(
-                poolSize, poolSize,
+        int dbPoolSize = 2;
+        this.messagingExecutor = new ThreadPoolExecutor(
+                poolSize - dbPoolSize, poolSize - dbPoolSize,
                 0L, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<>(maxQueueSize)
         );
+        this.dbExecutor = new ThreadPoolExecutor(dbPoolSize, dbPoolSize, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(100));
     }
 
     public void execute(Runnable task) {
-        executor.execute(task);
+        messagingExecutor.execute(task);
+    }
+
+    public void executeDB(Runnable task) {
+        dbExecutor.execute(task);
     }
 
     @Override
     public void close() {
-        executor.shutdown();
+        dbExecutor.shutdown();
+        messagingExecutor.shutdown();
     }
 
     public int getActiveCount() {
-        return executor.getActiveCount();
+        return messagingExecutor.getActiveCount();
     }
 
 }
