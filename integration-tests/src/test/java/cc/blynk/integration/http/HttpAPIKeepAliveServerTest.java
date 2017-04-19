@@ -3,6 +3,7 @@ package cc.blynk.integration.http;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
+import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -70,15 +71,43 @@ public class HttpAPIKeepAliveServerTest extends BaseTest {
 
             try (CloseableHttpResponse response = httpclient.execute(request)) {
                 assertEquals(200, response.getStatusLine().getStatusCode());
+                assertEquals("keep-alive", response.getFirstHeader("Connection").getValue());
                 EntityUtils.consume(response.getEntity());
             }
 
             try (CloseableHttpResponse response2 = httpclient.execute(getRequest)) {
                 assertEquals(200, response2.getStatusLine().getStatusCode());
                 List<String> values = consumeJsonPinValues(response2);
+                assertEquals("keep-alive", response2.getFirstHeader("Connection").getValue());
                 assertEquals(1, values.size());
                 assertEquals(String.valueOf(i), values.get(0));
             }
+        }
+    }
+
+    @Test(expected = NoHttpResponseException.class)
+    public void keepAliveIsSupported()  throws Exception{
+        String url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14";
+
+        HttpPut request = new HttpPut(url);
+        request.setHeader("Connection", "close");
+
+        request.setEntity(new StringEntity("[\""+ 0 + "\"]", ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals("close", response.getFirstHeader("Connection").getValue());
+            EntityUtils.consume(response.getEntity());
+        }
+
+        request = new HttpPut(url);
+        request.setHeader("Connection", "close");
+
+        request.setEntity(new StringEntity("[\""+ 0 + "\"]", ContentType.APPLICATION_JSON));
+
+        //this should fail as connection is closed and httpClient is reusing connections
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
         }
     }
 

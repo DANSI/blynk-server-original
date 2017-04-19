@@ -8,6 +8,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.HttpServerKeepAliveHandler;
 
 /**
  * The Blynk Project.
@@ -31,6 +32,7 @@ public class HttpAPIServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
                 pipeline.addLast("HttpServerCodec", new HttpServerCodec());
+                pipeline.addLast("HttpServerKeepAlive", new HttpServerKeepAliveHandler());
                 pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(65536, true));
                 pipeline.addLast("HttpWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }
