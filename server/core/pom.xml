@@ -34,8 +34,8 @@
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
-            <artifactId>netty-tcnative</artifactId>
-            <version>${netty.tcnative.version}</version>
+            <artifactId>netty-tcnative-boringssl-static</artifactId>
+            <version>${netty.boring.ssl.version}</version>
             <classifier>${epoll.os}</classifier>
         </dependency>
         <dependency>
