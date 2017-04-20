@@ -52,7 +52,7 @@ public class GMailClient implements MailClient {
     }
 
     @Override
-    public void sendHtmlWithAttachment(String to, String subj, String body, QrHolder[] attachments) throws Exception {
+    public void sendHtmlWithAttachment(String to, String subj, String body, QrHolder[] attachmentData) throws Exception {
         MimeMessage message = new MimeMessage(session);
         message.setFrom(from);
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
@@ -65,19 +65,42 @@ public class GMailClient implements MailClient {
 
         multipart.addBodyPart(bodyMessagePart);
 
-        for (QrHolder qrHolder : attachments) {
-            MimeBodyPart attachmentsPart = new MimeBodyPart();
-            DataSource source = new ByteArrayDataSource(qrHolder.data, "image/jpeg");
-            attachmentsPart.setDataHandler(new DataHandler(source));
-            attachmentsPart.setFileName(qrHolder.name);
-            multipart.addBodyPart(attachmentsPart);
-        }
+        attachQRs(multipart, attachmentData);
+        attachCSV(multipart, attachmentData);
 
         message.setContent(multipart);
 
         Transport.send(message);
 
         log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
+    }
+
+    private void attachCSV(Multipart multipart, QrHolder[] attachmentData) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        for (QrHolder qrHolder : attachmentData) {
+            sb.append(qrHolder.token);
+            sb.append(",");
+            sb.append(qrHolder.deviceId);
+            sb.append(",");
+            sb.append(qrHolder.dashId);
+            sb.append("\n");
+        }
+        MimeBodyPart attachmentsPart = new MimeBodyPart();
+        DataSource source = new ByteArrayDataSource(sb.toString(), "text/csv");
+        attachmentsPart.setDataHandler(new DataHandler(source));
+        attachmentsPart.setFileName("tokens.csv");
+
+        multipart.addBodyPart(attachmentsPart);
+    }
+
+    private void attachQRs(Multipart multipart, QrHolder[] attachmentData) throws Exception {
+        for (QrHolder qrHolder : attachmentData) {
+            MimeBodyPart attachmentsPart = new MimeBodyPart();
+            DataSource source = new ByteArrayDataSource(qrHolder.data, "image/jpeg");
+            attachmentsPart.setDataHandler(new DataHandler(source));
+            attachmentsPart.setFileName(qrHolder.makeQRFilename());
+            multipart.addBodyPart(attachmentsPart);
+        }
     }
 
     private void send(String to, String subj, String body, String contentType) throws Exception {

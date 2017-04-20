@@ -52,7 +52,8 @@ public class MailWrapperTest {
                         "<br>\n" +
                         "<a href=\"http://www.blynk.cc\">blynk.cc</a>";
         QrHolder[] qrHolders = new QrHolder[] {
-                new QrHolder("!23", "123", QRCode.from("21321321").to(ImageType.JPG).stream().toByteArray())
+                new QrHolder(1, 0, "My device", "12345678901", QRCode.from("21321321").to(ImageType.JPG).stream().toByteArray()),
+                new QrHolder(1, 1, "My device2", "12345678902", QRCode.from("21321321").to(ImageType.JPG).stream().toByteArray())
         };
 
         Properties properties = new Properties();
@@ -63,7 +64,7 @@ public class MailWrapperTest {
         }
 
         MailWrapper mailWrapper = new MailWrapper(properties);
-        mailWrapper.sendWithAttachment("dmitriy@gmail.com", "yo", body, qrHolders);
+        mailWrapper.sendWithAttachment("dmitriy@blynk.cc", "yo", body, qrHolders);
     }
 
     @Test
@@ -76,8 +77,8 @@ public class MailWrapperTest {
             }
         }
 
-        QrHolder qrHolder = new QrHolder("123.jpg", "123", QRCode.from("123").to(ImageType.JPG).stream().toByteArray());
-        QrHolder qrHolder2 = new QrHolder("124.jpg", "123",  QRCode.from("124").to(ImageType.JPG).stream().toByteArray());
+        QrHolder qrHolder = new QrHolder(1, 0, "device name", "123", QRCode.from("123").to(ImageType.JPG).stream().toByteArray());
+        QrHolder qrHolder2 = new QrHolder(1, 1, "device name", "123",  QRCode.from("124").to(ImageType.JPG).stream().toByteArray());
 
         String to = "doom369@gmail.com";
         MailWrapper mailWrapper = new MailWrapper(properties);

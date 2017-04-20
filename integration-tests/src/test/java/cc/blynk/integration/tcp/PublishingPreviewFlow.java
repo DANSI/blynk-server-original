@@ -76,9 +76,10 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
-
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{device_section}", "<br>" + qrHolders[0].mailBodyPart)), eq(qrHolders));
+        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
+        StringBuilder sb = new StringBuilder();
+        qrHolders[0].attach(sb);
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{device_section}", sb.toString())), eq(qrHolders));
     }
 
     @Test
@@ -106,11 +107,13 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
+        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
 
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{device_section}", "<br>" + qrHolders[0].mailBodyPart)), eq(qrHolders));
+        StringBuilder sb = new StringBuilder();
+        qrHolders[0].attach(sb);
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{device_section}", sb.toString())), eq(qrHolders));
 
-        clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].code);
+        clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].token + " " + qrHolders[0].dashId + " " + DEFAULT_TEST_USER);
 
         DashBoard dashBoard = JsonParser.parseDashboard(clientPair.appClient.getBody(3));
         assertNotNull(dashBoard);
@@ -150,11 +153,13 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview");
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
-        QrHolderTest[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
+        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
 
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{device_section}", "<br>" + qrHolders[0].mailBodyPart)), eq(qrHolders));
+        StringBuilder sb = new StringBuilder();
+        qrHolders[0].attach(sb);
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{device_section}", sb.toString())), eq(qrHolders));
 
-        clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].code);
+        clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].token + " " + qrHolders[0].dashId + " " + DEFAULT_TEST_USER);
 
         DashBoard dashBoard = JsonParser.parseDashboard(clientPair.appClient.getBody(3));
         assertNotNull(dashBoard);
@@ -184,18 +189,16 @@ public class PublishingPreviewFlow extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(7, ILLEGAL_COMMAND)));
     }
 
-    private QrHolderTest[] makeQRs(String to, Device[] devices, int dashId) throws Exception {
-        QrHolderTest[] qrHolders = new QrHolderTest[devices.length];
+    private QrHolder[] makeQRs(String to, Device[] devices, int dashId) throws Exception {
+        QrHolder[] qrHolders = new QrHolder[devices.length];
 
         List<FlashedToken> flashedTokens = getAllTokens();
 
         int i = 0;
         for (Device device : devices) {
             String newToken = flashedTokens.get(i).token;
-            String name = newToken + "_" + dashId + "_" + device.id + ".jpg";
             String qrCode = newToken + " " + dashId + " " + to;
-            String mailBodyPart = device.name + ": " + newToken;
-            qrHolders[i] = new QrHolderTest(name, mailBodyPart, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray(), qrCode);
+            qrHolders[i] = new QrHolder(1, device.id, device.name, newToken, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray());
             i++;
         }
 
@@ -220,13 +223,4 @@ public class PublishingPreviewFlow extends IntegrationBase {
         return list;
     }
 
-    private static class QrHolderTest extends QrHolder {
-
-        String code;
-
-        public QrHolderTest(String name, String mailBodyPart, byte[] data, String code) {
-            super(name, mailBodyPart, data);
-            this.code = code;
-        }
-    }
 }

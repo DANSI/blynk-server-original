@@ -87,7 +87,7 @@ public class SparkPostMailClient implements MailClient {
         for (QrHolder qrHolder : attachments) {
             MimeBodyPart attachmentsPart = new MimeBodyPart();
             attachmentsPart.setDataHandler(new DataHandler(new ByteArrayDataSource(qrHolder.data, "image/jpeg")));
-            attachmentsPart.setFileName(qrHolder.name);
+            attachmentsPart.setFileName(qrHolder.makeQRFilename());
             multipart.addBodyPart(attachmentsPart);
         }
 

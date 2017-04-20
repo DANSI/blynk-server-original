@@ -122,8 +122,7 @@ public class AppMailLogic {
                 QrHolder[] qrHolders = makeQRs(to, appName, dash, dash.id);
                 StringBuilder sb = new StringBuilder();
                 for (QrHolder qrHolder : qrHolders) {
-                    sb.append("<br>");
-                    sb.append(qrHolder.mailBodyPart);
+                    qrHolder.attach(sb);
                 }
                 mailWrapper.sendWithAttachment(to, subj, body.replace("{device_section}", sb.toString()), qrHolders);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
@@ -171,10 +170,8 @@ public class AppMailLogic {
         int i = 0;
         for (Device device : dash.devices) {
             String newToken = TokenGeneratorUtil.generateNewToken();
-            String name = newToken + "_" + dashId + "_" + device.id + ".jpg";
             String qrCode = newToken + " " + dashId + " " + publisherEmail;
-            String mailBodyPart = device.name + ": " + newToken;
-            qrHolders[i] = new QrHolder(name, mailBodyPart, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray());
+            qrHolders[i] = new QrHolder(dashId, device.id, device.name, newToken, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray());
             flashedTokens[i] = new FlashedToken(newToken, appName, device.id);
             i++;
         }

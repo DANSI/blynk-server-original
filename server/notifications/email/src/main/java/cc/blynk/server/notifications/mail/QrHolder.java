@@ -1,7 +1,5 @@
 package cc.blynk.server.notifications.mail;
 
-import java.util.Arrays;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -9,16 +7,33 @@ import java.util.Arrays;
  */
 public class QrHolder {
 
-    public final String name;
+    public final int dashId;
 
-    public final String mailBodyPart;
+    public final int deviceId;
+
+    public final String deviceName;
+
+    public final String token;
 
     public final byte[] data;
 
-    public QrHolder(String name, String mailBodyPart, byte[] data) {
-        this.name = name;
-        this.mailBodyPart = mailBodyPart;
+    public QrHolder(int dashId, int deviceId, String deviceName, String token, byte[] data) {
+        this.dashId = dashId;
+        this.deviceId = deviceId;
+        this.deviceName = deviceName;
+        this.token = token;
         this.data = data;
+    }
+
+    public String makeQRFilename() {
+        return token + "_" + dashId + "_" + deviceId + ".jpg";
+    }
+
+    public void attach(StringBuilder sb) {
+        sb.append("<br>")
+                .append(deviceName)
+                .append(": ")
+                .append(token);
     }
 
     //for tests only
@@ -29,15 +44,17 @@ public class QrHolder {
 
         QrHolder qrHolder = (QrHolder) o;
 
-        if (name != null ? !name.equals(qrHolder.name) : qrHolder.name != null) return false;
-        return Arrays.equals(data, qrHolder.data);
+        if (dashId != qrHolder.dashId) return false;
+        if (deviceId != qrHolder.deviceId) return false;
+        return !(token != null ? !token.equals(qrHolder.token) : qrHolder.token != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (data != null ? Arrays.hashCode(data) : 0);
+        int result = dashId;
+        result = 31 * result + deviceId;
+        result = 31 * result + (token != null ? token.hashCode() : 0);
         return result;
     }
 }
