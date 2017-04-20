@@ -22,13 +22,14 @@ public class BlockingIOProcessor implements Closeable {
     private final ThreadPoolExecutor dbExecutor;
 
     public BlockingIOProcessor(int poolSize, int maxQueueSize) {
+        poolSize = Math.max(3, poolSize);
         int dbPoolSize = 2;
         this.messagingExecutor = new ThreadPoolExecutor(
                 poolSize - dbPoolSize, poolSize - dbPoolSize,
                 0L, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<>(maxQueueSize)
         );
-        this.dbExecutor = new ThreadPoolExecutor(dbPoolSize, dbPoolSize, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(100));
+        this.dbExecutor = new ThreadPoolExecutor(dbPoolSize, dbPoolSize, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(500));
     }
 
     public void execute(Runnable task) {
