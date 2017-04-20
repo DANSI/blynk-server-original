@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -24,24 +23,16 @@ import static org.junit.Assert.assertNotNull;
  */
 public class FileManagerIntegrationTest {
 
-    private final String dataFolder = new ServerProperties(Collections.emptyMap()).getProperty("data.folder");
-
     private final User user1 = new User("name1", "pass1", AppName.BLYNK, "local", false, false);
     private final User user2 = new User("name2", "pass2", AppName.BLYNK, "local", false, false);
 
-    private final FileManager fileManager = new FileManager(dataFolder);
+    private FileManager fileManager;
 
     @Before
     public void cleanup() throws IOException {
-        Path file;
-        file = fileManager.generateFileName(user1.email, user1.appName);
-        Files.deleteIfExists(file);
-
-        file = fileManager.generateFileName(user2.email, user1.appName);
-        Files.deleteIfExists(file);
-
-        file = fileManager.generateFileName("admin@blynk.cc", AppName.BLYNK);
-        Files.deleteIfExists(file);
+        String dataFolder = Paths.get(System.getProperty("java.io.tmpdir"), "blynk").toString();
+        org.apache.commons.io.FileUtils.deleteDirectory(Paths.get(dataFolder).toFile());
+        fileManager = new FileManager(dataFolder);
     }
 
     @Test
