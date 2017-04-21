@@ -73,7 +73,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
         assertEquals(1, devices.length);
 
-        clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview");
+        clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview icon1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
@@ -90,7 +90,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
         assertEquals(1, devices.length);
 
-        clientPair.appClient.send("email 1 Blynk DYNAMIC 123123 AppPreview");
+        clientPair.appClient.send("email 1 Blynk DYNAMIC 123123 AppPreview icon1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         verify(mailWrapper, timeout(500)).sendHtml(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.DYNAMIC_MAIL_BODY));
@@ -104,7 +104,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
         assertEquals(1, devices.length);
 
-        clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview");
+        clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview icon1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
@@ -150,7 +150,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
         assertEquals(1, devices.length);
 
-        clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview");
+        clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview icon1");
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);

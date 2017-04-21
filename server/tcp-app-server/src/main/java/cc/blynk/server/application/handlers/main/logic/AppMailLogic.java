@@ -73,7 +73,7 @@ public class AppMailLogic {
             makeSingleTokenEmail(ctx, dash, device, user.email, message.id);
 
         //dashId theme provisionType color appname
-        } else if (split.length == 5) {
+        } else if (split.length == 6) {
             if (dash.devices.length == 0) {
                 throw new IllegalCommandBodyException("No devices in project.");
             }
@@ -81,7 +81,8 @@ public class AppMailLogic {
             ProvisionType provisionType = ProvisionType.valueOf(split[2]);
             int color = Integer.parseInt(split[3]);
             String name = split[4];
-            dash.publishing = new Publishing(theme, provisionType, color, name);
+            String icon = split[5];
+            dash.publishing = new Publishing(theme, provisionType, color, name, icon);
             log.debug("Sending app preview email to {}, provision type {}", user.email, provisionType);
             makePublishPreviewEmail(ctx, dash, user.email, name, user.appName, message.id);
 
