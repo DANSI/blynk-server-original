@@ -251,12 +251,24 @@ public class DashBoard {
         }
     }
 
+    //todo add DashboardSettings as Dashboard field
+    public void updateSettings(DashboardSettings settings) {
+        this.name = settings.name;
+        this.isShared = settings.isShared;
+        this.theme = settings.theme;
+        this.keepScreenOn = settings.keepScreenOn;
+        this.isAppConnectedOn = settings.isAppConnectedOn;
+        this.updatedAt = System.currentTimeMillis();
+    }
+
     public void updateFields(DashBoard updatedDashboard) {
         this.name = updatedDashboard.name;
         this.isShared = updatedDashboard.isShared;
-        this.boardType = updatedDashboard.boardType;
-        this.keepScreenOn = updatedDashboard.keepScreenOn;
         this.theme = updatedDashboard.theme;
+        this.keepScreenOn = updatedDashboard.keepScreenOn;
+        this.isAppConnectedOn = updatedDashboard.isAppConnectedOn;
+
+        this.boardType = updatedDashboard.boardType;
         this.publishing = updatedDashboard.publishing;
 
         Notification newNotification = updatedDashboard.getWidgetByType(Notification.class);

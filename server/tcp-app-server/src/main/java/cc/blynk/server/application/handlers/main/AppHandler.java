@@ -6,6 +6,7 @@ import cc.blynk.server.application.handlers.main.logic.*;
 import cc.blynk.server.application.handlers.main.logic.dashboard.CreateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.DeleteDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.UpdateDashLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.UpdateDashSettingLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.CreateDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.DeleteDeviceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesLogic;
@@ -51,6 +52,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final GetSharedDashLogic getSharedDashLogic;
     private final CreateDashLogic createDashLogic;
     private final UpdateDashLogic updateDashLogic;
+    private final UpdateDashSettingLogic updateDashSettingLogic;
     private final ActivateDashboardLogic activateDashboardLogic;
     private final DeActivateDashboardLogic deActivateDashboardLogic;
     private final CreateWidgetLogic createWidgetLogic;
@@ -90,6 +92,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.updateWidgetLogic = new UpdateWidgetLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES, holder.timerWorker);
         this.deleteWidgetLogic = new DeleteWidgetLogic(holder.timerWorker);
         this.deleteDashLogic = new DeleteDashLogic(holder);
+        this.updateDashSettingLogic = new UpdateDashSettingLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES);
 
         this.createDeviceLogic = new CreateDeviceLogic(holder);
         this.updateDeviceLogic = new UpdateDeviceLogic();
@@ -180,6 +183,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case ADD_ENERGY :
                 addEnergyLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case UPDATE_PROJECT_SETTINGS :
+                updateDashSettingLogic.messageReceived(ctx, state, msg);
                 break;
             case CREATE_DEVICE :
                 createDeviceLogic.messageReceived(ctx, state.user, msg);

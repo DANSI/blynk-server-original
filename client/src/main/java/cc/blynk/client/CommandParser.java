@@ -61,6 +61,8 @@ public class CommandParser {
                 return UPDATE_DASH;
             case "deletedash" :
                 return DELETE_DASH;
+            case "updatesettings" :
+                return UPDATE_PROJECT_SETTINGS;
             case "createwidget" :
                 return CREATE_WIDGET;
             case "updatewidget" :

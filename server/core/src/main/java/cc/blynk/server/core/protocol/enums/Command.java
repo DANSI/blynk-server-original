@@ -59,6 +59,8 @@ public final class Command {
     public static final short GET_ENERGY = 36;
     public static final short ADD_ENERGY = 37;
 
+    public static final short UPDATE_PROJECT_SETTINGS = 38;
+
     public static final short GET_SERVER = 40;
     public static final short CONNECT_REDIRECT = 41;
 
@@ -144,6 +146,8 @@ public final class Command {
 
                 put(ADD_ENERGY, "AddEnergy");
                 put(GET_ENERGY, "GetEnergy");
+
+                put(UPDATE_PROJECT_SETTINGS, "UpdateProjectSettings");
 
                 put(GET_SERVER, "GetServer");
                 put(CONNECT_REDIRECT, "ConnectRedirect");

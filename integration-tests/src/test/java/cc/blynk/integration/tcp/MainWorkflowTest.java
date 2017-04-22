@@ -8,10 +8,12 @@ import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.GraphType;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Step;
@@ -561,6 +563,29 @@ public class MainWorkflowTest extends IntegrationBase {
         //todo fix
         profile.dashBoards[0].devices = null;
         assertEquals(expected, profile.toString());
+    }
+
+    @Test
+    public void settingsUpdateCommand() throws Exception{
+        DashboardSettings settings = new DashboardSettings();
+        settings.name = "New Name";
+        settings.isAppConnectedOn = true;
+        settings.isShared = true;
+        settings.keepScreenOn = true;
+        settings.theme = Theme.BlynkLight;
+
+        clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = parseProfile(clientPair.appClient.getBody(2));
+        DashBoard dashBoard = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(settings.name, dashBoard.name);
+        assertEquals(settings.isAppConnectedOn, dashBoard.isAppConnectedOn);
+        assertEquals(settings.isShared, dashBoard.isShared);
+        assertEquals(settings.keepScreenOn, dashBoard.keepScreenOn);
+        assertEquals(settings.theme, dashBoard.theme);
     }
 
     @Test
