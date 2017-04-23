@@ -7,8 +7,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.ProvisionType;
-import cc.blynk.server.core.model.enums.Theme;
-import cc.blynk.server.core.model.publishing.Publishing;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
@@ -77,14 +75,13 @@ public class AppMailLogic {
             if (dash.devices.length == 0) {
                 throw new IllegalCommandBodyException("No devices in project.");
             }
-            Theme theme = Theme.valueOf(split[1]);
+            //Theme theme = Theme.valueOf(split[1]);
             ProvisionType provisionType = ProvisionType.valueOf(split[2]);
-            int color = Integer.parseInt(split[3]);
+            //int color = Integer.parseInt(split[3]);
             String name = split[4];
-            String icon = split[5];
-            dash.publishing = new Publishing(theme, provisionType, color, name, icon);
+            //String icon = split[5];
             log.debug("Sending app preview email to {}, provision type {}", user.email, provisionType);
-            makePublishPreviewEmail(ctx, dash, user.email, name, user.appName, message.id);
+            makePublishPreviewEmail(ctx, dash, provisionType, user.email, name, user.appName, message.id);
 
         //dashId
         } else {
@@ -96,9 +93,9 @@ public class AppMailLogic {
         }
     }
 
-    private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash, String to, String appName, String appId, int msgId) {
+    private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash, ProvisionType provisionType, String to, String appName, String appId, int msgId) {
         String subj = appName + " - App details";
-        if (dash.publishing.provisionType == ProvisionType.DYNAMIC) {
+        if (provisionType == ProvisionType.DYNAMIC) {
             mailDynamic(ctx.channel(), to, subj, limits.DYNAMIC_MAIL_BODY, msgId);
         } else {
             mailStatic(ctx.channel(), to, appId, subj, limits.STATIC_MAIL_BODY, dash, msgId);
@@ -120,7 +117,7 @@ public class AppMailLogic {
     private void mailStatic(Channel channel, String to, String appName, String subj, String body, DashBoard dash, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
-                QrHolder[] qrHolders = makeQRs(to, appName, dash, dash.id);
+                QrHolder[] qrHolders = makeQRs(to, appName, dash);
                 StringBuilder sb = new StringBuilder();
                 for (QrHolder qrHolder : qrHolders) {
                     qrHolder.attach(sb);
@@ -164,15 +161,15 @@ public class AppMailLogic {
         mail(ctx.channel(), to, to, subj, body.toString(), msgId);
     }
 
-    private QrHolder[] makeQRs(String publisherEmail, String appName, DashBoard dash, int dashId) throws Exception {
+    private QrHolder[] makeQRs(String publisherEmail, String appName, DashBoard dash) throws Exception {
         QrHolder[] qrHolders = new QrHolder[dash.devices.length];
         FlashedToken[] flashedTokens = new FlashedToken[dash.devices.length];
-
+ProvisionType
         int i = 0;
         for (Device device : dash.devices) {
             String newToken = TokenGeneratorUtil.generateNewToken();
-            String qrCode = newToken + " " + dashId + " " + publisherEmail;
-            qrHolders[i] = new QrHolder(dashId, device.id, device.name, newToken, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray());
+            String qrCode = newToken + " " + dash.id + " " + publisherEmail;
+            qrHolders[i] = new QrHolder(dash.id, device.id, device.name, newToken, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray());
             flashedTokens[i] = new FlashedToken(newToken, appName, device.id);
             i++;
         }
