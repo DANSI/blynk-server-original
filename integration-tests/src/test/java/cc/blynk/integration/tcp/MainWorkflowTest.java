@@ -573,6 +573,7 @@ public class MainWorkflowTest extends IntegrationBase {
         settings.isShared = true;
         settings.keepScreenOn = true;
         settings.theme = Theme.BlynkLight;
+        settings.isCustomColor = true;
 
         clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -586,6 +587,7 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals(settings.isShared, dashBoard.isShared);
         assertEquals(settings.keepScreenOn, dashBoard.keepScreenOn);
         assertEquals(settings.theme, dashBoard.theme);
+        assertEquals(settings.isCustomColor, dashBoard.isCustomColor);
     }
 
     @Test
