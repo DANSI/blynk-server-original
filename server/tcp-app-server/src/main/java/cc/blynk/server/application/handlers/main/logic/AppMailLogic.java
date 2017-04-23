@@ -164,7 +164,7 @@ public class AppMailLogic {
     private QrHolder[] makeQRs(String publisherEmail, String appName, DashBoard dash) throws Exception {
         QrHolder[] qrHolders = new QrHolder[dash.devices.length];
         FlashedToken[] flashedTokens = new FlashedToken[dash.devices.length];
-ProvisionType
+
         int i = 0;
         for (Device device : dash.devices) {
             String newToken = TokenGeneratorUtil.generateNewToken();
