@@ -62,8 +62,6 @@ public class DashBoard {
 
     public volatile boolean isActive;
 
-    public volatile boolean isDefaultColor;
-
     public volatile HardwareInfo hardwareInfo;
 
     public volatile String sharedToken;
@@ -260,7 +258,6 @@ public class DashBoard {
         this.theme = settings.theme;
         this.keepScreenOn = settings.keepScreenOn;
         this.isAppConnectedOn = settings.isAppConnectedOn;
-        this.isDefaultColor = settings.isDefaultColor;
         this.updatedAt = System.currentTimeMillis();
     }
 
@@ -270,7 +267,6 @@ public class DashBoard {
         this.theme = updatedDashboard.theme;
         this.keepScreenOn = updatedDashboard.keepScreenOn;
         this.isAppConnectedOn = updatedDashboard.isAppConnectedOn;
-        this.isDefaultColor = updatedDashboard.isDefaultColor;
 
         this.boardType = updatedDashboard.boardType;
         this.publishing = updatedDashboard.publishing;

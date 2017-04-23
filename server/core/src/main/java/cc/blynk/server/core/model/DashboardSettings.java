@@ -19,6 +19,4 @@ public class DashboardSettings {
 
     public boolean isAppConnectedOn;
 
-    public boolean isDefaultColor;
-
 }

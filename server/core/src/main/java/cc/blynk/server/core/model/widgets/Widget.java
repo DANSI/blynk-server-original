@@ -114,6 +114,8 @@ public abstract class Widget {
 
     public volatile boolean isEnabled = true;
 
+    public boolean isDefaultColor;
+
     protected static void append(StringBuilder sb, byte pin, PinType pinType, String pinMode) {
         if (pin == Pin.NO_PIN || pinMode == null || pinType == PinType.VIRTUAL) {
             return;
