@@ -31,9 +31,12 @@ import static cc.blynk.utils.StringUtils.split3;
  */
 public class DashBoard {
 
+    //-1 means this is not child project
+    private static final int IS_PARENT_DASH = -1;
+
     public int id;
 
-    public int parentId = -1;
+    public int parentId = IS_PARENT_DASH;
 
     public boolean isPreview;
 
@@ -228,6 +231,10 @@ public class DashBoard {
 
 
     public int energySum() {
+        //means this is app preview project so do no manipulation with energy
+        if (parentId != IS_PARENT_DASH) {
+            return 0;
+        }
         int sum = 0;
         for (Widget widget : widgets) {
             sum += widget.getPrice();
