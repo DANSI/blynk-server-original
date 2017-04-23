@@ -116,8 +116,7 @@ public class ExportGraphDataLogic {
         for (FileLink link : fileUrls) {
             sb.append(link.toString()).append("<br>");
         }
-        sb.append("</body></html>");
-        return sb.toString();
+        return sb.append("</body></html>").toString();
     }
 
     private class FileLink {

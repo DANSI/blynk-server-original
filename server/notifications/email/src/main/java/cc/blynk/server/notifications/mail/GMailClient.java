@@ -78,12 +78,12 @@ public class GMailClient implements MailClient {
     private void attachCSV(Multipart multipart, QrHolder[] attachmentData) throws Exception {
         StringBuilder sb = new StringBuilder();
         for (QrHolder qrHolder : attachmentData) {
-            sb.append(qrHolder.token);
-            sb.append(",");
-            sb.append(qrHolder.deviceId);
-            sb.append(",");
-            sb.append(qrHolder.dashId);
-            sb.append("\n");
+            sb.append(qrHolder.token)
+            .append(",")
+            .append(qrHolder.deviceId)
+            .append(",")
+            .append(qrHolder.dashId)
+            .append("\n");
         }
         MimeBodyPart attachmentsPart = new MimeBodyPart();
         DataSource source = new ByteArrayDataSource(sb.toString(), "text/csv");
