@@ -48,7 +48,7 @@ public class RTCSerializationTest {
         String widgetString = JsonParser.mapper.writeValueAsString(rtc);
 
         assertNotNull(widgetString);
-        assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"isEnabled\":true,\"deviceId\":0,\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"tzName\":\"Australia/Sydney\"}", widgetString);
+        assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"isEnabled\":true,\"isDefaultColor\":false,\"deviceId\":0,\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"tzName\":\"Australia/Sydney\"}", widgetString);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class RTCSerializationTest {
         String widgetString = JsonParser.mapper.writeValueAsString(rtc);
 
         assertNotNull(widgetString);
-        assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"isEnabled\":true,\"deviceId\":0,\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"tzName\":\"UTC\"}", widgetString);
+        assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"isEnabled\":true,\"isDefaultColor\":false,\"deviceId\":0,\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"tzName\":\"UTC\"}", widgetString);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class RTCSerializationTest {
         String widgetString = JsonParser.mapper.writeValueAsString(rtc);
 
         assertNotNull(widgetString);
-        assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"isEnabled\":true,\"deviceId\":0,\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0}", widgetString);
+        assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"isEnabled\":true,\"isDefaultColor\":false,\"deviceId\":0,\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0}", widgetString);
     }
 
 }
