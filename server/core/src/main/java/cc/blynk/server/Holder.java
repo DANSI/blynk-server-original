@@ -15,6 +15,8 @@ import cc.blynk.server.workers.ReadingWidgetsWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.ServerProperties;
+import io.netty.util.ResourceLeakDetector;
+import io.netty.util.internal.SystemPropertyUtil;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
@@ -68,6 +70,7 @@ public class Holder implements Closeable {
 
     public Holder(ServerProperties serverProperties, ServerProperties mailProperties,
                   ServerProperties smsProperties, ServerProperties gcmProperties) {
+        disableNettyLeakDetector();
         this.props = serverProperties;
 
         this.region = serverProperties.getProperty("region", "local");
@@ -112,6 +115,7 @@ public class Holder implements Closeable {
 
     //for tests only
     public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper, MailWrapper mailWrapper, GCMWrapper gcmWrapper, SMSWrapper smsWrapper, String dbFileName) {
+        disableNettyLeakDetector();
         this.props = serverProperties;
 
         this.region = "local";
@@ -151,6 +155,14 @@ public class Holder implements Closeable {
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
+    }
+
+    private static void disableNettyLeakDetector() {
+        String leakProperty = SystemPropertyUtil.get("io.netty.leakDetection.level");
+        //we do not pass any with JVM option
+        if (leakProperty == null) {
+            ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
+        }
     }
 
     @Override
