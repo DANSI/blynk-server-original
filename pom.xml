@@ -154,6 +154,7 @@
         <HikariCP.version>2.6.1</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>
         <jedis.version>2.9.0</jedis.version>
+        <bcpg-jdk15on.version>1.56</bcpg-jdk15on.version>
 
         <!-- test dependencies -->
         <httpclient.version>4.5.2</httpclient.version>
@@ -181,6 +182,12 @@
             <version>${netty.version}</version>
         </dependency>
 
+        <!-- For Let's Encrypt certificates generation -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpg-jdk15on</artifactId>
+            <version>${bcpg-jdk15on.version}</version>
+        </dependency>
 
         <!-- Log4j2 dependencies -->
         <dependency>

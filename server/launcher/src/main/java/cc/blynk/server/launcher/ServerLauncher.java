@@ -16,6 +16,7 @@ import cc.blynk.utils.ServerProperties;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.SmsProperties;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.File;
 import java.net.BindException;
@@ -74,6 +75,10 @@ public class ServerLauncher {
                               ServerProperties smsProperties, ServerProperties gcmProperties,
                               boolean isUnpacked) {
         final Holder holder = new Holder(serverProperties, mailProperties, smsProperties, gcmProperties);
+
+        java.security.Security.addProvider(
+                new BouncyCastleProvider()
+        );
 
         final BaseServer[] servers = new BaseServer[] {
                 new HardwareServer(holder),
