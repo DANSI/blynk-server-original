@@ -5,8 +5,8 @@ import cc.blynk.client.core.AppClient;
 import cc.blynk.client.core.HardwareClient;
 import cc.blynk.client.enums.ClientMode;
 import cc.blynk.utils.ParseUtil;
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
@@ -34,7 +34,7 @@ public class ClientLauncher {
     }
 
     public static void main(String[] args) throws ParseException {
-        CommandLine cmd = new BasicParser().parse(options, args);
+        CommandLine cmd = new DefaultParser().parse(options, args);
 
         ClientMode mode = ClientMode.parse(cmd.getOptionValue("mode", ClientMode.HARDWARE.name()));
         String host = cmd.getOptionValue("host", DEFAULT_HOST);

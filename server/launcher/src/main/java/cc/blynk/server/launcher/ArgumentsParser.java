@@ -1,13 +1,13 @@
 package cc.blynk.server.launcher;
 
+import cc.blynk.cli.CommandLine;
+import cc.blynk.cli.DefaultParser;
+import cc.blynk.cli.Options;
+import cc.blynk.cli.ParseException;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.ServerProperties;
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +49,7 @@ class ArgumentsParser {
      * @throws ParseException
      */
     static Map<String, String> parse(String[] args) throws ParseException {
-        CommandLine cmd = new BasicParser().parse(options, args);
+        CommandLine cmd = new DefaultParser().parse(options, args);
 
         String hardPort = cmd.getOptionValue(HARDWARE_PORT_OPTION);
         String appPort = cmd.getOptionValue(APPLICATION_PORT_OPTION);
