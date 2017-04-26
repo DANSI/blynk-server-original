@@ -8,11 +8,9 @@ import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
 import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
-import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
 /**
@@ -33,12 +31,6 @@ public class HardwareSSLServer extends BaseServer {
 
         int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
 
-        final SslContext sslCtx = SslUtil.initSslContext(
-                holder.props.getProperty("server.ssl.cert"),
-                holder.props.getProperty("server.ssl.key"),
-                holder.props.getProperty("server.ssl.key.pass"),
-                SslUtil.fetchSslProvider(holder.props));
-
         this.channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
@@ -46,7 +38,7 @@ public class HardwareSSLServer extends BaseServer {
                 if (hardTimeoutSecs > 0) {
                     pipeline.addLast("HSSLReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
                 }
-                pipeline.addLast("HSSL", sslCtx.newHandler(ch.alloc()));
+                pipeline.addLast("HSSL", holder.sslCtx.newHandler(ch.alloc()));
                 pipeline.addLast("HSSLChannelState", hardwareChannelStateHandler);
                 pipeline.addLast("HSSLMessageDecoder", new MessageDecoder(holder.stats));
                 pipeline.addLast("HSSLMessageEncoder", new MessageEncoder(holder.stats));

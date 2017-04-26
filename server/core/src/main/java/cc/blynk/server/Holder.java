@@ -15,6 +15,9 @@ import cc.blynk.server.workers.ReadingWidgetsWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.SslUtil;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslProvider;
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.SystemPropertyUtil;
 import org.asynchttpclient.DefaultAsyncHttpClient;
@@ -68,6 +71,10 @@ public class Holder implements Closeable {
 
     public final String currentIp;
 
+    public final SslContext sslCtx;
+
+    public final SslContext sslCtxMutual;
+
     public Holder(ServerProperties serverProperties, ServerProperties mailProperties,
                   ServerProperties smsProperties, ServerProperties gcmProperties) {
         disableNettyLeakDetector();
@@ -111,6 +118,19 @@ public class Holder implements Closeable {
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
+
+        SslProvider sslProvider = SslUtil.fetchSslProvider(props);
+        this.sslCtx = SslUtil.initSslContext(
+                props.getProperty("server.ssl.cert"),
+                props.getProperty("server.ssl.key"),
+                props.getProperty("server.ssl.key.pass"),
+                sslProvider);
+        this.sslCtxMutual = SslUtil.initSslContext(
+                props.getProperty("server.ssl.cert"),
+                props.getProperty("server.ssl.key"),
+                props.getProperty("server.ssl.key.pass"),
+                props.getProperty("client.ssl.cert"),
+                sslProvider);
     }
 
     //for tests only
@@ -155,6 +175,19 @@ public class Holder implements Closeable {
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
+
+        SslProvider sslProvider = SslUtil.fetchSslProvider(props);
+        this.sslCtx = SslUtil.initSslContext(
+                props.getProperty("server.ssl.cert"),
+                props.getProperty("server.ssl.key"),
+                props.getProperty("server.ssl.key.pass"),
+                sslProvider);
+        this.sslCtxMutual = SslUtil.initSslContext(
+                props.getProperty("server.ssl.cert"),
+                props.getProperty("server.ssl.key"),
+                props.getProperty("server.ssl.key.pass"),
+                props.getProperty("client.ssl.cert"),
+                sslProvider);
     }
 
     private static void disableNettyLeakDetector() {
