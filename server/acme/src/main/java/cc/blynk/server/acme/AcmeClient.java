@@ -12,13 +12,16 @@ import org.shredzone.acme4j.util.CSRBuilder;
 import org.shredzone.acme4j.util.CertificateUtils;
 import org.shredzone.acme4j.util.KeyPairUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URI;
 import java.security.KeyPair;
 import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * A simple client test tool.
@@ -30,19 +33,46 @@ public class AcmeClient {
     private static final Logger log = LogManager.getLogger(AcmeClient.class);
 
     // File name of the User Key Pair
-    private static final File USER_KEY_FILE = new File("user.key");
+    private static final File USER_KEY_FILE = new File("user.pem");
 
     // File name of the Domain Key Pair
-    private static final File DOMAIN_KEY_FILE = new File("domain.key");
+    private static final File DOMAIN_KEY_FILE = new File("privkey.pem");
 
     // File name of the CSR
     private static final File DOMAIN_CSR_FILE = new File("domain.csr");
 
     // File name of the signed certificate
-    private static final File DOMAIN_CHAIN_FILE = new File("domain-chain.crt");
+    private static final File DOMAIN_CHAIN_FILE = new File("fullchain.crt");
 
     // RSA key size of generated key pairs
     private static final int KEY_SIZE = 2048;
+
+    private final String letsEncryptUrl;
+
+    public static final String STAGING = "acme://letsencrypt.org/staging";
+    public static final String PRODUCTION = "acme://letsencrypt.org";
+
+    public static void main(String[] args) throws Exception {
+        AcmeClient acmeClient = new AcmeClient(STAGING);
+        acmeClient.requestCertificate("dmitriy@blynk.cc", "test.blynk.cc");
+    }
+
+    public AcmeClient() {
+        this(PRODUCTION);
+    }
+
+    public AcmeClient(String letsEncryptUrl) {
+        this.letsEncryptUrl = letsEncryptUrl;
+    }
+
+    public void requestCertificate(String contact, String... domains) throws Exception {
+        if (domains.length == 0) {
+            throw new RuntimeException("NO domains specified.");
+        }
+        log.info("Starting up...");
+        Security.addProvider(new BouncyCastleProvider());
+        fetchCertificate(contact, Arrays.asList(domains));
+    }
 
     /**
      * Generates a certificate for the given domains. Also takes care for the registration
@@ -51,19 +81,17 @@ public class AcmeClient {
      * @param domains
      *            Domains to get a common certificate for
      */
-    public void fetchCertificate(Collection<String> domains) throws IOException, AcmeException {
+    public void fetchCertificate(String contact, List<String> domains) throws IOException, AcmeException {
         // Load the user key file. If there is no key file, create a new one.
         // Keep this key pair in a safe place! In a production environment, you will not be
         // able to access your account again if you should lose the key pair.
         KeyPair userKeyPair = loadOrCreateKeyPair(USER_KEY_FILE);
 
-        // Create a session for Let's Encrypt.
-        // Use "acme://letsencrypt.org" for production server
-        Session session = new Session("acme://letsencrypt.org/staging", userKeyPair);
+        Session session = new Session(letsEncryptUrl, userKeyPair);
 
         // Get the Registration to the account.
         // If there is no account yet, create a new one.
-        Registration reg = findOrRegisterAccount(session);
+        Registration reg = findOrRegisterAccount(session, contact);
 
         // Separately authorize every requested domain.
         for (String domain : domains) {
@@ -79,9 +107,9 @@ public class AcmeClient {
         csrb.sign(domainKeyPair);
 
         // Write the CSR to a file, for later use.
-        try (Writer out = new FileWriter(DOMAIN_CSR_FILE)) {
-            csrb.write(out);
-        }
+        //try (Writer out = new FileWriter(DOMAIN_CSR_FILE)) {
+        //    csrb.write(out);
+        //}
 
         // Now request a signed certificate.
         Certificate certificate = reg.requestCertificate(csrb.getEncoded());
@@ -136,12 +164,12 @@ public class AcmeClient {
      *            {@link Session} to bind with
      * @return {@link Registration} connected to your account
      */
-    private Registration findOrRegisterAccount(Session session) throws AcmeException {
+    private Registration findOrRegisterAccount(Session session, String contact) throws AcmeException {
         Registration reg;
 
         try {
             // Try to create a new Registration.
-            reg = new RegistrationBuilder().create(session);
+            reg = new RegistrationBuilder().addContact("mailto:" + contact).create(session);
             log.info("Registered a new user, URI: " + reg.getLocation());
 
             // This is a new account. Let the user accept the Terms of Service.
@@ -250,32 +278,6 @@ public class AcmeClient {
         log.info("Content: {}", challenge.getAuthorization());
 
         return challenge;
-    }
-
-
-    /**
-     * Invokes this example.
-     *
-     * @param args
-     *            Domains to get a certificate for
-     */
-    public static void main(String... args) {
-        if (args.length == 0) {
-            System.err.println("Usage: AcmeClient <domain>...");
-            System.exit(1);
-        }
-
-        log.info("Starting up...");
-
-        Security.addProvider(new BouncyCastleProvider());
-
-        Collection<String> domains = Arrays.asList(args);
-        try {
-            AcmeClient ct = new AcmeClient();
-            ct.fetchCertificate(domains);
-        } catch (Exception ex) {
-            log.error("Failed to get a certificate for domains " + domains, ex);
-        }
     }
 
 }
