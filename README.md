@@ -425,7 +425,7 @@ NOTE : you'll need to setup Gmail to allow less secured applications. Go [here](
 
 ### Enabling sms on local server
 To enable SMS notifications on Local Server you need to provide credentials for SMS gateway (currently Blynk server
-supports only 1 provider - [Nexmo] (https://www.nexmo.com/)). You need to create file ```sms.properties``` 
+supports only 1 provider - [Nexmo](https://www.nexmo.com/). You need to create file ```sms.properties``` 
 within same folder where server.jar is.
 
         nexmo.api.key=
