@@ -41,7 +41,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.smsLogic = new SmsLogic(holder.smsWrapper, holder.limits.NOTIFICATION_PERIOD_LIMIT_SEC);
         this.propertyLogic = new SetWidgetPropertyLogic(holder.sessionDao);
         this.sync = new HardwareSyncLogic();
-        this.info = new BlynkInternalLogic(holder.props.getIntProperty("hard.socket.idle.timeout", 0));
+        this.info = new BlynkInternalLogic(holder.limits.HARDWARE_IDLE_TIMEOUT);
 
         this.state = stateHolder;
         this.stats = holder.stats;

@@ -29,7 +29,7 @@ public class HardwareSSLServer extends BaseServer {
         final HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);
         final AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
 
-        int hardTimeoutSecs = holder.props.getIntProperty("hard.socket.idle.timeout", 0);
+        final int hardTimeoutSecs = holder.limits.HARDWARE_IDLE_TIMEOUT;
 
         this.channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
