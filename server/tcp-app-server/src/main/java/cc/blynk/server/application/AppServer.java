@@ -29,6 +29,7 @@ public class AppServer extends BaseServer {
     public AppServer(Holder holder) {
         super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("app.ssl.port"), holder.transportTypeHolder);
 
+        final int appTimeoutSecs = holder.limits.APP_IDLE_TIMEOUT;
         final String[] loadBalancingIPs = holder.props.getCommaSeparatedValueAsArray("load.balancing.ips");
         final String[] allowedUsers = holder.props.getCommaSeparatedValueAsArray("allowed.users.list");
 
@@ -39,7 +40,6 @@ public class AppServer extends BaseServer {
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
         final GetServerHandler getServerHandler = new GetServerHandler(holder, loadBalancingIPs);
 
-        int appTimeoutSecs = holder.props.getIntProperty("app.socket.idle.timeout", 0);
         log.debug("app.socket.idle.timeout = {}", appTimeoutSecs);
 
         this.channelInitializer = new ChannelInitializer<SocketChannel>() {

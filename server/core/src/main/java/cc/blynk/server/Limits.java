@@ -29,6 +29,7 @@ public class Limits {
     public final int WEBHOOK_RESPONSE_SUZE_LIMIT_BYTES;
     public final int WEBHOOK_FAILURE_LIMIT;
     public final int HARDWARE_IDLE_TIMEOUT;
+    public final int APP_IDLE_TIMEOUT;
 
     //texts
     public volatile String TOKEN_BODY;
@@ -50,6 +51,7 @@ public class Limits {
         this.WEBHOOK_RESPONSE_SUZE_LIMIT_BYTES = props.getIntProperty("webhooks.response.size.limit", 64) * 1024;
         this.WEBHOOK_FAILURE_LIMIT = isUnlimited(props.getIntProperty("webhooks.failure.count.limit", 10), Integer.MAX_VALUE);
         this.HARDWARE_IDLE_TIMEOUT = props.getIntProperty("hard.socket.idle.timeout", 0);
+        this.APP_IDLE_TIMEOUT = props.getIntProperty("app.socket.idle.timeout", 0);
 
         this.TOKEN_BODY = FileLoaderUtil.readTokenMailBody();
         this.DYNAMIC_MAIL_BODY = FileLoaderUtil.readDynamicMailBody();
