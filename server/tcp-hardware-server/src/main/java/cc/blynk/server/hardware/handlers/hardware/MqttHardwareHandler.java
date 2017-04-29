@@ -42,7 +42,7 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
         this.smsLogic = new SmsLogic(holder.smsWrapper, defaultNotificationQuotaLimit);
         this.propertyLogic = new SetWidgetPropertyLogic(holder.sessionDao);
         this.sync = new HardwareSyncLogic();
-        this.info = new BlynkInternalLogic(holder.props.getIntProperty("hard.socket.idle.timeout", 0));
+        this.info = new BlynkInternalLogic(holder.limits.HARDWARE_IDLE_TIMEOUT);
 
         this.state = stateHolder;
         this.stats = holder.stats;

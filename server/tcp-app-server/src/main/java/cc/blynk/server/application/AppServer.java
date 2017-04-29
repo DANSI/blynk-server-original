@@ -10,11 +10,9 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
-import cc.blynk.utils.SslUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
 /**
@@ -31,6 +29,7 @@ public class AppServer extends BaseServer {
     public AppServer(Holder holder) {
         super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("app.ssl.port"), holder.transportTypeHolder);
 
+        final int appTimeoutSecs = holder.limits.APP_IDLE_TIMEOUT;
         final String[] loadBalancingIPs = holder.props.getCommaSeparatedValueAsArray("load.balancing.ips");
         final String[] allowedUsers = holder.props.getCommaSeparatedValueAsArray("allowed.users.list");
 
@@ -41,14 +40,6 @@ public class AppServer extends BaseServer {
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
         final GetServerHandler getServerHandler = new GetServerHandler(holder, loadBalancingIPs);
 
-        final SslContext sslCtx = SslUtil.initMutualSslContext(
-                holder.props.getProperty("server.ssl.cert"),
-                holder.props.getProperty("server.ssl.key"),
-                holder.props.getProperty("server.ssl.key.pass"),
-                holder.props.getProperty("client.ssl.cert"),
-                SslUtil.fetchSslProvider(holder.props));
-
-        int appTimeoutSecs = holder.props.getIntProperty("app.socket.idle.timeout", 0);
         log.debug("app.socket.idle.timeout = {}", appTimeoutSecs);
 
         this.channelInitializer = new ChannelInitializer<SocketChannel>() {
@@ -60,7 +51,7 @@ public class AppServer extends BaseServer {
                     pipeline.addLast("AReadTimeout", new ReadTimeoutHandler(appTimeoutSecs));
                 }
 
-                pipeline.addLast("ASSL", sslCtx.newHandler(ch.alloc()));
+                pipeline.addLast("ASSL", holder.sslCtxMutual.newHandler(ch.alloc()));
                 pipeline.addLast("AChannelState", appChannelStateHandler);
                 pipeline.addLast("AMessageDecoder", new MessageDecoder(holder.stats));
                 pipeline.addLast("AMessageEncoder", new MessageEncoder(holder.stats));

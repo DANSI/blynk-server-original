@@ -21,7 +21,7 @@ public class SslUtil {
 
     private final static Logger log = LogManager.getLogger(SslUtil.class);
 
-    public static SslContext initMutualSslContext(String serverCertPath, String serverKeyPath, String serverPass,
+    public static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
                                                   String clientCertPath,
                                                   SslProvider sslProvider) {
         try {
@@ -55,21 +55,7 @@ public class SslUtil {
 
     public static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
                                             SslProvider sslProvider) {
-        try {
-            File serverCert =  new File(serverCertPath);
-            File serverKey = new File(serverKeyPath);
-
-            if (!serverCert.exists() || !serverKey.exists()) {
-                log.warn("ATTENTION. Certificate {} and key {} paths not valid. Using embedded certs. This is not secure. Please replace it with your own certs.",
-                        serverCert.getAbsolutePath(), serverKey.getAbsolutePath());
-                return SslUtil.build(sslProvider);
-            }
-
-            return SslUtil.build(serverCert, serverKey, serverPass, sslProvider);
-        } catch (CertificateException | SSLException | IllegalArgumentException e) {
-            log.error("Error initializing ssl context. Reason : {}", e.getMessage());
-            throw new RuntimeException(e.getMessage());
-        }
+        return initSslContext(serverCertPath, serverKeyPath, serverPass, "non-existing-client.crt", sslProvider);
     }
 
     public static SslContext build(SslProvider sslProvider) throws CertificateException, SSLException {
