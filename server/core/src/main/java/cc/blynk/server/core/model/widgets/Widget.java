@@ -149,6 +149,7 @@ public abstract class Widget {
                 break;
             case "color" :
                 this.color = ByteUtils.parseColor(propertyValue);
+                this.isDefaultColor = false;
                 break;
             case "isEnabled" :
                 this.isEnabled = Boolean.parseBoolean(propertyValue);
