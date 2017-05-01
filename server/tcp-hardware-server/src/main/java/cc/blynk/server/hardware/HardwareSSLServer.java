@@ -38,7 +38,7 @@ public class HardwareSSLServer extends BaseServer {
                 if (hardTimeoutSecs > 0) {
                     pipeline.addLast("HSSLReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
                 }
-                pipeline.addLast("HSSL", holder.sslCtx.newHandler(ch.alloc()));
+                pipeline.addLast("HSSL", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()));
                 pipeline.addLast("HSSLChannelState", hardwareChannelStateHandler);
                 pipeline.addLast("HSSLMessageDecoder", new MessageDecoder(holder.stats));
                 pipeline.addLast("HSSLMessageEncoder", new MessageEncoder(holder.stats));

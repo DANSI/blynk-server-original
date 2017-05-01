@@ -2,7 +2,6 @@ package cc.blynk.server.acme;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.shredzone.acme4j.*;
 import org.shredzone.acme4j.challenge.Challenge;
 import org.shredzone.acme4j.challenge.Http01Challenge;
@@ -18,10 +17,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.security.KeyPair;
-import java.security.Security;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * A simple client test tool.
@@ -33,55 +29,48 @@ public class AcmeClient {
     private static final Logger log = LogManager.getLogger(AcmeClient.class);
 
     // File name of the User Key Pair
-    private static final File USER_KEY_FILE = new File("user.pem");
+    public static final File USER_KEY_FILE = new File("user.pem");
 
     // File name of the Domain Key Pair
-    private static final File DOMAIN_KEY_FILE = new File("privkey.pem");
-
-    // File name of the CSR
-    private static final File DOMAIN_CSR_FILE = new File("domain.csr");
+    public static final File DOMAIN_KEY_FILE = new File("privkey.pem");
 
     // File name of the signed certificate
-    private static final File DOMAIN_CHAIN_FILE = new File("fullchain.crt");
+    public static final File DOMAIN_CHAIN_FILE = new File("fullchain.crt");
+
+    private static final String PRODUCTION = "acme://letsencrypt.org";
 
     // RSA key size of generated key pairs
     private static final int KEY_SIZE = 2048;
 
     private final String letsEncryptUrl;
+    private final String email;
+    private final String host;
+    private final ContentHolder contentHolder;
 
-    public static final String STAGING = "acme://letsencrypt.org/staging";
-    public static final String PRODUCTION = "acme://letsencrypt.org";
-
-    public static void main(String[] args) throws Exception {
-        AcmeClient acmeClient = new AcmeClient(STAGING);
-        acmeClient.requestCertificate("dmitriy@blynk.cc", "test.blynk.cc");
+    public AcmeClient(String email, String host, ContentHolder contentHolder) {
+        this(PRODUCTION, email, host, contentHolder);
     }
 
-    public AcmeClient() {
-        this(PRODUCTION);
-    }
-
-    public AcmeClient(String letsEncryptUrl) {
+    public AcmeClient(String letsEncryptUrl, String email, String host, ContentHolder contentHolder) {
         this.letsEncryptUrl = letsEncryptUrl;
+        this.email = email;
+        this.host = host;
+        this.contentHolder = contentHolder;
     }
 
-    public void requestCertificate(String contact, String... domains) throws Exception {
-        if (domains.length == 0) {
-            throw new RuntimeException("NO domains specified.");
-        }
-        log.info("Starting up...");
-        Security.addProvider(new BouncyCastleProvider());
-        fetchCertificate(contact, Arrays.asList(domains));
+    public boolean requestCertificate() throws Exception {
+        log.info("Starting up certificate retrieval process for host {} and email {}.", host, email);
+        return fetchCertificate(email, host);
     }
 
     /**
      * Generates a certificate for the given domains. Also takes care for the registration
      * process.
      *
-     * @param domains
+     * @param domain
      *            Domains to get a common certificate for
      */
-    public void fetchCertificate(String contact, List<String> domains) throws IOException, AcmeException {
+    public boolean fetchCertificate(String contact, String domain) throws IOException, AcmeException {
         // Load the user key file. If there is no key file, create a new one.
         // Keep this key pair in a safe place! In a production environment, you will not be
         // able to access your account again if you should lose the key pair.
@@ -94,16 +83,15 @@ public class AcmeClient {
         Registration reg = findOrRegisterAccount(session, contact);
 
         // Separately authorize every requested domain.
-        for (String domain : domains) {
-            authorize(reg, domain);
-        }
+        authorize(reg, domain);
 
         // Load or create a key pair for the domains. This should not be the userKeyPair!
         KeyPair domainKeyPair = loadOrCreateKeyPair(DOMAIN_KEY_FILE);
 
         // Generate a CSR for all of the domains, and sign it with the domain key pair.
         CSRBuilder csrb = new CSRBuilder();
-        csrb.addDomains(domains);
+        csrb.addDomain(domain);
+        csrb.setOrganization("Blynk Inc.");
         csrb.sign(domainKeyPair);
 
         // Write the CSR to a file, for later use.
@@ -114,9 +102,6 @@ public class AcmeClient {
         // Now request a signed certificate.
         Certificate certificate = reg.requestCertificate(csrb.getEncoded());
 
-        log.info("Success! The certificate for domains " + domains + " has been generated!");
-        log.info("Certificate URI: " + certificate.getLocation());
-
         // Download the leaf certificate and certificate chain.
         X509Certificate cert = certificate.download();
         X509Certificate[] chain = certificate.downloadChain();
@@ -126,8 +111,7 @@ public class AcmeClient {
             CertificateUtils.writeX509CertificateChain(fw, cert, chain);
         }
 
-        // That's all! Configure your web server to use the DOMAIN_KEY_FILE and
-        // DOMAIN_CHAIN_FILE for the requested domans.
+        return true;
     }
 
     /**
@@ -175,14 +159,14 @@ public class AcmeClient {
             // This is a new account. Let the user accept the Terms of Service.
             // We won't be able to authorize domains until the ToS is accepted.
             URI agreement = reg.getAgreement();
-            log.info("Terms of Service: " + agreement);
             reg.modify().setAgreement(agreement).commit();
 
         } catch (AcmeConflictException ex) {
             // The Key Pair is already registered. getLocation() contains the
             // URL of the existing registration's location. Bind it to the session.
             reg = Registration.bind(session, ex.getLocation());
-            log.info("Account does already exist, URI: " + reg.getLocation(), ex);
+            log.info("Account does already exist, URI: " + reg.getLocation());
+            log.debug(ex);
         }
 
         return reg;
@@ -206,7 +190,8 @@ public class AcmeClient {
         log.info("Authorization for domain " + domain);
 
         // Find the desired challenge and prepare it.
-        Challenge challenge = httpChallenge(auth, domain);
+        Http01Challenge challenge = httpChallenge(auth, domain);
+        contentHolder.content = challenge.getAuthorization();
 
         // If the challenge is already verified, there's no need to execute it again.
         if (challenge.getStatus() == Status.VALID) {
@@ -258,7 +243,7 @@ public class AcmeClient {
      *            Domain name to be authorized
      * @return {@link Challenge} to verify
      */
-    public Challenge httpChallenge(Authorization auth, String domain) throws AcmeException {
+    public Http01Challenge httpChallenge(Authorization auth, String domain) throws AcmeException {
         // Find a single http-01 challenge
         Http01Challenge challenge = auth.findChallenge(Http01Challenge.TYPE);
         if (challenge == null) {
@@ -266,18 +251,12 @@ public class AcmeClient {
         }
 
         // Output the challenge, wait for acknowledge...
-        log.info("Please create a file in your web server's base directory.");
-        log.info("It must be reachable at: http://" + domain + "/.well-known/acme-challenge/" + challenge.getToken());
-        log.info("File name: " + challenge.getToken());
-        log.info("Content: " + challenge.getAuthorization());
-        log.info("The file must not contain any leading or trailing whitespaces or line breaks!");
-        log.info("If you're ready, dismiss the dialog...");
-
-        log.info("Please create a file in your web server's base directory.");
         log.info("http://{}/.well-known/acme-challenge/{}", domain, challenge.getToken());
         log.info("Content: {}", challenge.getAuthorization());
 
         return challenge;
     }
+
+
 
 }

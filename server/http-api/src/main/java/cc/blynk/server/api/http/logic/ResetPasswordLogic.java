@@ -53,7 +53,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
         this.mailWrapper = holder.mailWrapper;
 
         String netInterface = holder.props.getProperty("net.interface", "eth");
-        String host = holder.props.getProperty("reset-pass.http.host", IPUtils.resolveHostIP(netInterface));
+        String host = holder.props.getProperty("server.host", IPUtils.resolveHostIP(netInterface));
         this.resetPassUrl = "http://" + host + "/landing?token=";
         this.pageContent = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "enterNewPassword.html");
         this.blockingIOProcessor = holder.blockingIOProcessor;

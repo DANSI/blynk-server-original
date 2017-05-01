@@ -3,10 +3,7 @@ package cc.blynk.server.launcher;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
-import cc.blynk.server.workers.ProfileSaverWorker;
-import cc.blynk.server.workers.ReportingWorker;
-import cc.blynk.server.workers.ShutdownHookWorker;
-import cc.blynk.server.workers.StatsWorker;
+import cc.blynk.server.workers.*;
 import cc.blynk.utils.ReportingUtil;
 
 import java.util.concurrent.Executors;
@@ -46,6 +43,12 @@ class JobLauncher {
         StatsWorker statsWorker = new StatsWorker(holder);
         scheduler.scheduleAtFixedRate(statsWorker, 1000,
                 holder.props.getIntProperty("stats.print.worker.period"), TimeUnit.MILLISECONDS);
+
+        if (holder.sslContextHolder.isAutoGenerationEnabled) {
+            scheduler.scheduleAtFixedRate(
+                    new CertificateRenewalWorker(holder.sslContextHolder.acmeClient), 1, 1, TimeUnit.DAYS
+            );
+        }
 
         //millis we need to wait to start scheduler at the beginning of a second.
         startDelay = 1000 - (System.currentTimeMillis() % 1000);

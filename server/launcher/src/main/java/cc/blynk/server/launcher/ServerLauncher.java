@@ -20,6 +20,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.File;
 import java.net.BindException;
+import java.security.Security;
 import java.util.Map;
 
 /**
@@ -68,6 +69,8 @@ public class ServerLauncher {
         ServerProperties smsProperties = new SmsProperties(cmdProperties);
         ServerProperties gcmProperties = new GCMProperties(cmdProperties);
 
+        Security.addProvider(new BouncyCastleProvider());
+
         start(serverProperties, mailProperties, smsProperties, gcmProperties, isUnpacked);
     }
 
@@ -75,10 +78,6 @@ public class ServerLauncher {
                               ServerProperties smsProperties, ServerProperties gcmProperties,
                               boolean isUnpacked) {
         final Holder holder = new Holder(serverProperties, mailProperties, smsProperties, gcmProperties);
-
-        java.security.Security.addProvider(
-                new BouncyCastleProvider()
-        );
 
         final BaseServer[] servers = new BaseServer[] {
                 new HardwareServer(holder),
@@ -97,6 +96,8 @@ public class ServerLauncher {
             System.out.println("Blynk Server " + JarUtil.getServerVersion() + " successfully started.");
             String path = new File(System.getProperty("logs.folder")).getAbsolutePath().replace("/./", "/");
             System.out.println("All server output is stored in folder '" + path + "' file.");
+
+            holder.sslContextHolder.generateInitialCertificates(holder.props);
 
             createSuperUser(holder);
         }

@@ -27,7 +27,7 @@ public class HttpAPIServer extends BaseServer {
         String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
 
         final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler = new HttpAndWebSocketUnificatorHandler(holder, port, adminRootPath);
-        final LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler("");
+        final LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override

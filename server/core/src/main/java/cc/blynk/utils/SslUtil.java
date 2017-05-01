@@ -78,6 +78,8 @@ public class SslUtil {
     }
 
     public static SslContext build(File serverCert, File serverKey, String serverPass, SslProvider sslProvider, File clientCert) throws SSLException {
+        log.info("Creating SSL context for cert '{}', key '{}', key pass '{}'",
+                serverCert.getAbsolutePath(), serverKey.getAbsoluteFile(), serverPass);
         if (serverPass == null || serverPass.isEmpty()) {
             return SslContextBuilder.forServer(serverCert, serverKey)
                     .sslProvider(sslProvider)

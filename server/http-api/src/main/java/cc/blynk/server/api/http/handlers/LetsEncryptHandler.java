@@ -1,6 +1,6 @@
 package cc.blynk.server.api.http.handlers;
 
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
+import cc.blynk.server.acme.ContentHolder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -23,15 +23,16 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * Created on 10.12.15.
  */
 @ChannelHandler.Sharable
-public class LetsEncryptHandler extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
+public class LetsEncryptHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LogManager.getLogger(LetsEncryptHandler.class);
 
-    private final String content;
     private static final String LETS_ENCRYPT_PATH = "/.well-known/acme-challenge/";
 
-    public LetsEncryptHandler( String content) {
-        this.content = content;
+    private final ContentHolder contentHolder;
+
+    public LetsEncryptHandler(ContentHolder contentHolder) {
+        this.contentHolder = contentHolder;
     }
 
     private static void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
@@ -73,6 +74,13 @@ public class LetsEncryptHandler extends ChannelInboundHandlerAdapter implements 
             return;
         }
 
+        final String content = contentHolder.content;
+
+        if (content == null) {
+            log.error("No content for certificate.");
+            return;
+        }
+
         log.info("Delivering content {}", content);
 
         HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
@@ -87,28 +95,16 @@ public class LetsEncryptHandler extends ChannelInboundHandlerAdapter implements 
 
         // Write the content.
         ChannelFuture lastContentFuture;
-        ByteBuf buf = null;
-        try {
-            buf = ctx.alloc().buffer(content.length());
-            buf.writeBytes(content.getBytes());
-            ctx.write(buf);
-            lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-        } finally {
-            if (buf != null) {
-                buf.release();
-            }
-        }
+        ByteBuf buf = ctx.alloc().buffer(content.length());
+        buf.writeBytes(content.getBytes());
+        ctx.write(buf);
+        lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
 
         // Decide whether to close the connection or not.
         if (!HttpUtil.isKeepAlive(request)) {
             // Close the connection when the whole content is written out.
             lastContentFuture.addListener(ChannelFutureListener.CLOSE);
         }
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        handleGeneralException(ctx, cause);
     }
 
 }

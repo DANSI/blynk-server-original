@@ -66,6 +66,11 @@
             <artifactId>sms</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cc.blynk.server.acme</groupId>
+            <artifactId>acme</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- DB dependencies -->
         <dependency>
