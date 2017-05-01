@@ -153,6 +153,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(httpAPILogic);
         pipeline.addLast(noMatchHandler);
         pipeline.remove(this);
+        pipeline.remove(LetsEncryptHandler.class);
     }
 
     private void initHttpPipeline(ChannelHandlerContext ctx) {
@@ -181,6 +182,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast("WSMessageEncoder", new MessageEncoder(stats));
         pipeline.addLast("WSWebSocketGenericLoginHandler", genericLoginHandler);
         pipeline.remove(this);
+        pipeline.remove(LetsEncryptHandler.class);
     }
 
     @Override

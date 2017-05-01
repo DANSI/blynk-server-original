@@ -2,6 +2,7 @@ package cc.blynk.server.api.http;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
+import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.core.BaseServer;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -26,6 +27,7 @@ public class HttpsAPIServer extends BaseServer {
 
         final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
                 new HttpAndWebSocketUnificatorHandler(holder, port, adminRootPath, isUnpacked);
+        final LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -35,6 +37,7 @@ public class HttpsAPIServer extends BaseServer {
                 pipeline.addLast("HttpsServerCodec", new HttpServerCodec());
                 pipeline.addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler());
                 pipeline.addLast("HttpsObjectAggregator", new HttpObjectAggregator(65536, true));
+                pipeline.addLast(letsEncryptHandler);
                 pipeline.addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }
         };
