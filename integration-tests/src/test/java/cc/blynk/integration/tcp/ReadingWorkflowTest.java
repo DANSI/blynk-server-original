@@ -114,8 +114,8 @@ public class ReadingWorkflowTest extends IntegrationBase {
 
         clientPair.hardwareClient.reset();
 
-        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 101"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(1500)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(1500)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 101"))));
     }
 
     @Test
