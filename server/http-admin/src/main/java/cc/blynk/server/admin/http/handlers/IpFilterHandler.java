@@ -61,13 +61,8 @@ public class IpFilterHandler extends AbstractRemoteAddressFilter<InetSocketAddre
         }
 
         for (IpSubnetFilterRule rule : rules) {
-            try {
-                if (rule.matches(remoteAddress)) {
-                    return true;
-                }
-            } catch (ClassCastException cce) {
-                //ignore for now.
-                //this is ugly fix for allowing ip4V and ip6V filters
+            if (rule.matches(remoteAddress)) {
+                return true;
             }
         }
 
