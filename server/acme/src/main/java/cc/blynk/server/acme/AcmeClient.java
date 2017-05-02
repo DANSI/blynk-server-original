@@ -251,8 +251,8 @@ public class AcmeClient {
         }
 
         // Output the challenge, wait for acknowledge...
-        log.info("http://{}/.well-known/acme-challenge/{}", domain, challenge.getToken());
-        log.info("Content: {}", challenge.getAuthorization());
+        log.debug("http://{}/.well-known/acme-challenge/{}", domain, challenge.getToken());
+        log.debug("Content: {}", challenge.getAuthorization());
 
         return challenge;
     }

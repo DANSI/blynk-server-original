@@ -11,6 +11,7 @@ import cc.blynk.utils.ServerProperties;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -23,6 +24,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
+import java.security.Security;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,6 +36,10 @@ import static org.mockito.Mockito.mock;
  * Created on 20.01.16.
  */
 public abstract class BaseTest {
+
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
 
     public static ServerProperties properties;
 
