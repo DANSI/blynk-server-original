@@ -23,21 +23,25 @@ public class SslUtil {
 
     public static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
                                                   String clientCertPath,
-                                                  SslProvider sslProvider) {
+                                                  SslProvider sslProvider, boolean printWarn) {
         try {
             File serverCert = new File(serverCertPath);
             File serverKey = new File(serverKeyPath);
             File clientCert = new File(clientCertPath);
 
             if (!serverCert.exists() || !serverKey.exists()) {
-                log.warn("ATTENTION. Server certificate paths cert : '{}', key : '{}' - not valid. Using embedded server certs and one way ssl. This is not secure. Please replace it with your own certs.",
-                        serverCert.getAbsolutePath(), serverKey.getAbsolutePath());
+                if (printWarn) {
+                    log.warn("ATTENTION. Server certificate paths (cert : '{}', key : '{}') not valid. Using embedded server certs and one way ssl. This is not secure. Please replace it with your own certs.",
+                            serverCert.getAbsolutePath(), serverKey.getAbsolutePath());
+                }
 
                 return build(sslProvider);
             }
 
             if (!clientCert.exists()) {
-                log.warn("Found server certificates but no client certificate for '{}' path. Using one way ssl.", clientCert.getAbsolutePath());
+                if (printWarn) {
+                    log.warn("Found server certificate but no client certificate for '{}' path. Using one way ssl.", clientCert.getAbsolutePath());
+                }
 
                 return build(serverCert, serverKey, serverPass, sslProvider);
             }
@@ -54,8 +58,8 @@ public class SslUtil {
     }
 
     public static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
-                                            SslProvider sslProvider) {
-        return initSslContext(serverCertPath, serverKeyPath, serverPass, "non-existing-client.crt", sslProvider);
+                                            SslProvider sslProvider, boolean printWarn) {
+        return initSslContext(serverCertPath, serverKeyPath, serverPass, "non-existing-client.crt", sslProvider, printWarn);
     }
 
     public static SslContext build(SslProvider sslProvider) throws CertificateException, SSLException {

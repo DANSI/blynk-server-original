@@ -58,8 +58,8 @@ public class SslContextHolder {
         } else {
             log.info("Didn't find Let's Encrypt certificates.");
             if (host == null || host.isEmpty() || email == null || email.isEmpty() || email.equals("example@gmail.com")) {
-                log.warn("You didn't specified 'server.host' property in server.properties and 'mail.smtp.username' property in mail.properties.");
-                log.warn("Automatic certificate generation is turned off. Please specify above properties for automatic certificates retrieval.");
+                log.warn("You didn't specified 'server.host' property in server.properties and 'mail.smtp.username' property in mail.properties. " +
+                        "Automatic certificate generation is turned off. Please specify above properties for automatic certificates retrieval.");
                 this.acmeClient = null;
                 this.isNeedInitializeOnStart = false;
             } else {
@@ -70,8 +70,8 @@ public class SslContextHolder {
         }
 
         SslProvider sslProvider = SslUtil.fetchSslProvider(props);
-        this.sslCtx = SslUtil.initSslContext(certPath, keyPath, keyPass, sslProvider);
-        this.sslCtxMutual = SslUtil.initSslContext(certPath, keyPath, keyPass, clientCertPath, sslProvider);
+        this.sslCtx = SslUtil.initSslContext(certPath, keyPath, keyPass, sslProvider, true);
+        this.sslCtxMutual = SslUtil.initSslContext(certPath, keyPath, keyPass, clientCertPath, sslProvider, false);
     }
 
     public void regenerate(ServerProperties props) {
@@ -81,8 +81,8 @@ public class SslContextHolder {
         String clientCertPath = props.getProperty("client.ssl.cert");
 
         SslProvider sslProvider = SslUtil.fetchSslProvider(props);
-        this.sslCtx = SslUtil.initSslContext(certPath, keyPath, keyPass, sslProvider);
-        this.sslCtxMutual = SslUtil.initSslContext(certPath, keyPath, keyPass, clientCertPath, sslProvider);
+        this.sslCtx = SslUtil.initSslContext(certPath, keyPath, keyPass, sslProvider, true);
+        this.sslCtxMutual = SslUtil.initSslContext(certPath, keyPath, keyPass, clientCertPath, sslProvider, false);
     }
 
     public void generateInitialCertificates(ServerProperties props) {
