@@ -41,25 +41,6 @@ public class Stat {
     public final int totalOnlineHards;
     public final transient long ts;
 
-    //for tests only
-    //todo remove
-    public Stat(int oneMinRate, int registrations, int active, int activeWeek,
-                int activeMonth, int connected, int onlineApps,
-                int totalOnlineApps, int onlineHards, int totalOnlineHards, long ts) {
-        this.oneMinRate = oneMinRate;
-        this.registrations = registrations;
-        this.active = active;
-        this.activeWeek = activeWeek;
-        this.activeMonth = activeMonth;
-        this.connected = connected;
-        this.onlineApps = onlineApps;
-        this.totalOnlineApps = totalOnlineApps;
-        this.onlineHards = onlineHards;
-        this.totalOnlineHards = totalOnlineHards;
-        this.ts = ts;
-        this.ioStat = new BlockingIOStat(0, 0L);
-    }
-
     public Stat(SessionDao sessionDao, UserDao userDao, BlockingIOProcessor blockingIOProcessor, GlobalStats globalStats, boolean reset) {
         //yeap, some stats updates may be lost (because of sumThenReset()),
         //but we don't care, cause this is just for general monitoring

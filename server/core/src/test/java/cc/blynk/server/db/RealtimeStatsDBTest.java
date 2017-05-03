@@ -1,7 +1,10 @@
 package cc.blynk.server.db;
 
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.model.CommandStat;
 import cc.blynk.server.core.stats.model.HttpStat;
 import cc.blynk.server.core.stats.model.Stat;
@@ -15,9 +18,11 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 /**
  * The Blynk Project.
@@ -55,7 +60,11 @@ public class RealtimeStatsDBTest {
         String region = "ua";
         long now = System.currentTimeMillis();
 
-        Stat stat = new Stat(1,2,3,4,5,6,7,8,9,10,now);
+        SessionDao sessionDao = new SessionDao();
+        UserDao userDao = new UserDao(new ConcurrentHashMap<>(), "test");
+        BlockingIOProcessor blockingIOProcessor = mock(BlockingIOProcessor.class);
+
+        Stat stat = new Stat(sessionDao, userDao, blockingIOProcessor, new GlobalStats(), false);
         int i;
 
         final HttpStat hs = stat.http;
@@ -135,16 +144,16 @@ public class RealtimeStatsDBTest {
                 assertEquals(region, rs.getString("region"));
                 assertEquals((now / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE, rs.getTimestamp("ts", UTC).getTime());
 
-                assertEquals(1, rs.getInt("minute_rate"));
-                assertEquals(2, rs.getInt("registrations"));
-                assertEquals(3, rs.getInt("active"));
-                assertEquals(4, rs.getInt("active_week"));
-                assertEquals(5, rs.getInt("active_month"));
-                assertEquals(6, rs.getInt("connected"));
-                assertEquals(7, rs.getInt("online_apps"));
-                assertEquals(8, rs.getInt("total_online_apps"));
-                assertEquals(9, rs.getInt("online_hards"));
-                assertEquals(10, rs.getInt("total_online_hards"));
+                assertEquals(0, rs.getInt("minute_rate"));
+                assertEquals(0, rs.getInt("registrations"));
+                assertEquals(0, rs.getInt("active"));
+                assertEquals(0, rs.getInt("active_week"));
+                assertEquals(0, rs.getInt("active_month"));
+                assertEquals(0, rs.getInt("connected"));
+                assertEquals(0, rs.getInt("online_apps"));
+                assertEquals(0, rs.getInt("total_online_apps"));
+                assertEquals(0, rs.getInt("online_hards"));
+                assertEquals(0, rs.getInt("total_online_hards"));
             }
 
             connection.commit();
