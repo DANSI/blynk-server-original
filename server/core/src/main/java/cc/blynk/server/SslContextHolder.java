@@ -57,8 +57,9 @@ public class SslContextHolder {
             this.acmeClient = new AcmeClient(email, host, contentHolder);
         } else {
             log.info("Didn't find Let's Encrypt certificates.");
-            if (host == null || host.isEmpty() || email == null || email.isEmpty() || email.equals("example@gmail.com")) {
-                log.warn("You didn't specified 'server.host' property in server.properties and 'mail.smtp.username' property in mail.properties. " +
+            if (host == null || host.isEmpty() || email == null || email.isEmpty() ||
+                    email.equals("example@gmail.com") || email.startsWith("SMTP")) {
+                log.warn("You didn't specified 'server.host' or 'contact.email' properties in server.properties file. " +
                         "Automatic certificate generation is turned off. Please specify above properties for automatic certificates retrieval.");
                 this.acmeClient = null;
                 this.isNeedInitializeOnStart = false;

@@ -114,7 +114,8 @@ public class Holder implements Closeable {
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
 
-        this.sslContextHolder = new SslContextHolder(props, mailProperties.getProperty("mail.smtp.username"));
+        String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getProperty("mail.smtp.username"));
+        this.sslContextHolder = new SslContextHolder(props, contactEmail);
     }
 
     //for tests only
