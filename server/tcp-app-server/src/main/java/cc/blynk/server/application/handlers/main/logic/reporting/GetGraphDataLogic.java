@@ -80,7 +80,7 @@ public class GetGraphDataLogic {
     }
 
     private void readGraphData(Channel channel, User user, GraphPinRequest[] requestedPins, int msgId) {
-        blockingIOProcessor.execute(() -> {
+        blockingIOProcessor.executeHistory(() -> {
             try {
                 byte[][] data = reportingDao.getAllFromDisk(user, requestedPins);
                 byte[] compressed = compress(requestedPins[0].dashId, data);

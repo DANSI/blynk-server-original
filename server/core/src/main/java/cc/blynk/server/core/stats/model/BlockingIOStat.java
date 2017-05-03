@@ -9,16 +9,33 @@ import cc.blynk.server.core.BlockingIOProcessor;
  */
 public class BlockingIOStat {
 
-    private final int activeTasks;
+    private final int messagingActiveTasks;
 
-    private final long executedTasks;
+    private final long messagingExecutedTasks;
+
+    private final int historyActiveTasks;
+
+    private final long historyExecutedTasks;
+
+    private final int dbActiveTasks;
+
+    private final long dbExecutedTasks;
+
 
     public BlockingIOStat(BlockingIOProcessor blockingIOProcessor) {
-        this(blockingIOProcessor.messagingExecutorTasksQueue(), blockingIOProcessor.messagingExecutorTasksExecuted());
+        this(blockingIOProcessor.messagingActiveTasks(), blockingIOProcessor.messagingExecutedTasks(),
+             blockingIOProcessor.historyActiveTasks(), blockingIOProcessor.historyExecutedTasks(),
+             blockingIOProcessor.dbActiveTasks(), blockingIOProcessor.dbExecutedTasks());
     }
 
-    public BlockingIOStat(int activeTasks, long executedTasks) {
-        this.activeTasks = activeTasks;
-        this.executedTasks = executedTasks;
+    public BlockingIOStat(int messagingActiveTasks, long messagingExecutedTasks,
+                          int historyActiveTasks, long historyExecutedTasks,
+                          int dbActiveTasks, long dbExecutedTasks) {
+        this.messagingActiveTasks = messagingActiveTasks;
+        this.messagingExecutedTasks = messagingExecutedTasks;
+        this.historyActiveTasks = historyActiveTasks;
+        this.historyExecutedTasks = historyExecutedTasks;
+        this.dbActiveTasks = dbActiveTasks;
+        this.dbExecutedTasks = dbExecutedTasks;
     }
 }
