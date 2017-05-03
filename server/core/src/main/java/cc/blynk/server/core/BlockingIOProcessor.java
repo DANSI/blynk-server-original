@@ -50,4 +50,11 @@ public class BlockingIOProcessor implements Closeable {
         return messagingExecutor.getActiveCount();
     }
 
+    public int messagingExecutorTasksQueue() {
+        return messagingExecutor.getQueue().size();
+    }
+
+    public long messagingExecutorTasksExecuted() {
+        return messagingExecutor.getCompletedTaskCount();
+    }
 }

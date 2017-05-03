@@ -8,6 +8,7 @@ import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.response.IpNameResponse;
 import cc.blynk.server.admin.http.response.RequestPerSecondResponse;
+import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
@@ -38,17 +39,19 @@ public class StatsLogic extends CookiesBaseHttpHandler {
 
     private final UserDao userDao;
     private final FileManager fileManager;
+    private final BlockingIOProcessor blockingIOProcessor;
 
     public StatsLogic(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.userDao = holder.userDao;
         this.fileManager = holder.fileManager;
+        this.blockingIOProcessor = holder.blockingIOProcessor;
     }
 
     @GET
     @Path("/realtime")
     public Response getReatime() {
-       return ok(Collections.singletonList(new Stat(sessionDao, userDao, globalStats, false)));
+       return ok(Collections.singletonList(new Stat(sessionDao, userDao, blockingIOProcessor, globalStats, false)));
     }
 
     @GET
@@ -73,7 +76,7 @@ public class StatsLogic extends CookiesBaseHttpHandler {
     @Path("/messages")
     public Response getMessages(@QueryParam("_sortField") String sortField,
                                     @QueryParam("_sortDir") String sortOrder) {
-        return ok(sort(convertObjectToMap(new Stat(sessionDao, userDao, globalStats, false).commands), sortField, sortOrder));
+        return ok(sort(convertObjectToMap(new Stat(sessionDao, userDao, blockingIOProcessor, globalStats, false).commands), sortField, sortOrder));
     }
 
     @GET
