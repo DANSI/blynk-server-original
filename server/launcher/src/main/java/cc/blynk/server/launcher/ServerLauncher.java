@@ -71,13 +71,14 @@ public class ServerLauncher {
 
         Security.addProvider(new BouncyCastleProvider());
 
-        start(serverProperties, mailProperties, smsProperties, gcmProperties, isUnpacked);
+        boolean restore = Boolean.parseBoolean(cmdProperties.get(ArgumentsParser.RESTORE_OPTION));
+        start(serverProperties, mailProperties, smsProperties, gcmProperties, isUnpacked, restore);
     }
 
     private static void start(ServerProperties serverProperties, ServerProperties mailProperties,
                               ServerProperties smsProperties, ServerProperties gcmProperties,
-                              boolean isUnpacked) {
-        final Holder holder = new Holder(serverProperties, mailProperties, smsProperties, gcmProperties);
+                              boolean isUnpacked, boolean restore) {
+        final Holder holder = new Holder(serverProperties, mailProperties, smsProperties, gcmProperties, restore);
 
         final BaseServer[] servers = new BaseServer[] {
                 new HardwareServer(holder),

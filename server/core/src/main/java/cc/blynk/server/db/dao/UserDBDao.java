@@ -22,7 +22,7 @@ import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
 public class UserDBDao {
 
     public static final String upsertUser = "INSERT INTO users (email, appName, region, name, pass, last_modified, last_logged, last_logged_ip, is_facebook_user, is_super_admin, energy, json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email, appName) DO UPDATE SET pass = EXCLUDED.pass, name = EXCLUDED.name, last_modified = EXCLUDED.last_modified, last_logged = EXCLUDED.last_logged, last_logged_ip = EXCLUDED.last_logged_ip, is_facebook_user = EXCLUDED.is_facebook_user, is_super_admin = EXCLUDED.is_super_admin, energy = EXCLUDED.energy, json = EXCLUDED.json, region = EXCLUDED.region";
-    public static final String selectAllUsers = "SELECT * from users";
+    public static final String selectAllUsers = "SELECT * from users where region = ?";
     public static final String deleteUser = "DELETE FROM users WHERE email = ? AND appName = ?";
 
     private static final Logger log = LogManager.getLogger(UserDBDao.class);
@@ -50,25 +50,32 @@ public class UserDBDao {
         return dbVersion;
     }
 
-    public ConcurrentMap<UserKey, User> getAllUsers() throws Exception {
+    public ConcurrentMap<UserKey, User> getAllUsers(String region) throws Exception {
         ResultSet rs = null;
         ConcurrentMap<UserKey, User> users = new ConcurrentHashMap<>();
 
         try (Connection connection = ds.getConnection();
-             Statement statement = connection.createStatement()) {
+             PreparedStatement statement = connection.prepareStatement(selectAllUsers)) {
 
-            rs = statement.executeQuery(selectAllUsers);
+            statement.setString(1, region);
+            rs = statement.executeQuery();
 
             while (rs.next()) {
                 User user = new User();
 
+                Timestamp t;
                 user.email = rs.getString("email");
                 user.appName = rs.getString("appName");
                 user.region = rs.getString("region");
                 user.name = rs.getString("name");
                 user.pass = rs.getString("pass");
-                user.lastModifiedTs = rs.getTimestamp("last_modified", UTC_CALENDAR).getTime();
-                user.lastLoggedAt = rs.getTimestamp("last_logged", UTC_CALENDAR).getTime();
+
+                t = rs.getTimestamp("last_modified", UTC_CALENDAR);
+                user.lastModifiedTs = t == null ? 0 : t.getTime();
+
+                t = rs.getTimestamp("last_logged", UTC_CALENDAR);
+                user.lastLoggedAt = t == null ? 0 : t.getTime();
+
                 user.lastLoggedIP = rs.getString("last_logged_ip");
                 user.isFacebookUser = rs.getBoolean("is_facebook_user");
                 user.isSuperAdmin = rs.getBoolean("is_super_admin");

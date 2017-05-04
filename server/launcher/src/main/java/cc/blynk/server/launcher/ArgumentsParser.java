@@ -30,6 +30,7 @@ class ArgumentsParser {
     private static final String SERVER_CONFIG_PATH_OPTION = "serverConfig";
     private static final String MAIL_CONFIG_PATH_OPTION = "mailConfig";
     private static final String SMS_CONFIG_PATH_OPTION = "smsConfig";
+    public static final String RESTORE_OPTION = "restore";
 
     static  {
         options = new Options();
@@ -39,7 +40,8 @@ class ArgumentsParser {
                .addOption(DATA_FOLDER_OPTION, true, "Folder where user profiles will be stored.")
                .addOption(SERVER_CONFIG_PATH_OPTION, true, "Path to server.properties config file.")
                .addOption(MAIL_CONFIG_PATH_OPTION, true, "Path to mail.properties config file.")
-               .addOption(SMS_CONFIG_PATH_OPTION, true, "Path to sms.properties config file.");
+               .addOption(SMS_CONFIG_PATH_OPTION, true, "Path to sms.properties config file.")
+               .addOption(RESTORE_OPTION, false, "Restore data from DB.");
     }
 
     /**
@@ -58,6 +60,7 @@ class ArgumentsParser {
         String serverConfigPath = cmd.getOptionValue(SERVER_CONFIG_PATH_OPTION);
         String mailConfigPath = cmd.getOptionValue(MAIL_CONFIG_PATH_OPTION);
         String smsConfigPath = cmd.getOptionValue(SMS_CONFIG_PATH_OPTION);
+        boolean restore = cmd.hasOption(RESTORE_OPTION);
 
         Map<String, String> properties = new HashMap<>();
 
@@ -85,6 +88,8 @@ class ArgumentsParser {
         if (smsConfigPath != null) {
             properties.put(SMSWrapper.SMS_PROPERTIES_FILENAME, smsConfigPath);
         }
+
+        properties.put(RESTORE_OPTION, Boolean.toString(restore));
 
         return properties;
     }

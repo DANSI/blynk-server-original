@@ -71,7 +71,7 @@ public class Holder implements Closeable {
     public final SslContextHolder sslContextHolder;
 
     public Holder(ServerProperties serverProperties, ServerProperties mailProperties,
-                  ServerProperties smsProperties, ServerProperties gcmProperties) {
+                  ServerProperties smsProperties, ServerProperties gcmProperties, boolean restore) {
         disableNettyLeakDetector();
         this.props = serverProperties;
 
@@ -84,11 +84,24 @@ public class Holder implements Closeable {
         String dataFolder = serverProperties.getProperty("data.folder");
         this.fileManager = new FileManager(dataFolder);
         this.sessionDao = new SessionDao();
-        this.userDao = new UserDao(fileManager.deserializeUsers(), this.region);
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 6),
                 serverProperties.getIntProperty("notifications.queue.limit", 5000)
         );
+        this.dbManager = new DBManager(blockingIOProcessor, serverProperties.getBoolProperty("enable.db"));
+
+        if (restore) {
+            try {
+                this.userDao = new UserDao(dbManager.userDBDao.getAllUsers(this.region), this.region);
+            } catch (Exception e) {
+                System.out.println("Error restoring data from DB!");
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        } else {
+            this.userDao = new UserDao(fileManager.deserializeUsers(), this.region);
+        }
+
         this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, currentIp);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
@@ -109,7 +122,6 @@ public class Holder implements Closeable {
         this.smsWrapper = new SMSWrapper(smsProperties, asyncHttpClient);
 
         this.eventorProcessor = new EventorProcessor(gcmWrapper, twitterWrapper, blockingIOProcessor, stats);
-        this.dbManager = new DBManager(blockingIOProcessor, serverProperties.getBoolProperty("enable.db"));
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);

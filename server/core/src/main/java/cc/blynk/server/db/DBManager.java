@@ -38,7 +38,7 @@ public class DBManager implements Closeable {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final boolean cleanOldReporting;
-    protected UserDBDao userDBDao;
+    public UserDBDao userDBDao;
     protected ReportingDBDao reportingDBDao;
     protected RedeemDBDao redeemDBDao;
     protected PurchaseDBDao purchaseDBDao;

@@ -55,7 +55,8 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         localHolder = new Holder(properties,
                 new MailProperties(Collections.emptyMap()),
                 new SmsProperties(Collections.emptyMap()),
-                new GCMProperties(Collections.emptyMap())
+                new GCMProperties(Collections.emptyMap()),
+                false
         );
         httpServer = new HttpAPIServer(localHolder).start();
         httpsServerUrl = String.format("http://localhost:%s/", httpPort);
