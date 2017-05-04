@@ -33,6 +33,7 @@ public final class Response {
     public static final int SERVER_ERROR = 19;
     public static final int NOT_SUPPORTED_VERSION = 20;
     public static final int ENERGY_LIMIT = 21;
+    public static final int FACEBOOK_USER_LOGIN_WITH_PASS = 22;
 
     //all this code just to make logging more user-friendly
     private final static Map<Integer, String> valuesName = ReflectionUtil.generateMapOfValueNameInteger(Response.class);

@@ -144,7 +144,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
         if (user.pass == null) {
             log.warn("Facebook user '{}' tries to login with pass. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(makeResponse(msgId, USER_NOT_AUTHENTICATED), ctx.voidPromise());
+            ctx.writeAndFlush(makeResponse(msgId, FACEBOOK_USER_LOGIN_WITH_PASS), ctx.voidPromise());
             return;
         }
 
