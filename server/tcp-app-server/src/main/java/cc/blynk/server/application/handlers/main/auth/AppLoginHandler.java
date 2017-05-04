@@ -174,6 +174,9 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, ctx.channel().eventLoop());
         user.lastLoggedIP = IPUtils.getIp(ctx.channel());
         user.lastLoggedAt = System.currentTimeMillis();
+        if (user.region == null || user.region.isEmpty()) {
+            user.region = holder.region;
+        }
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering app channel. {}", ctx.channel());
