@@ -70,8 +70,13 @@ public interface DefaultExceptionHandler {
         } else if (cause instanceof IOException) {
             log.trace("Blynk server IOException.", cause);
         } else {
-            log.error("Unexpected error!!!", cause);
-            log.error("Handler class : {}. Name : {}", ctx.handler().getClass(), ctx.name());
+            String message = cause == null ? "" : cause.getMessage();
+            if (message != null && message.contains("OutOfDirectMemoryError")) {
+                log.error("OutOfDirectMemoryError!!!");
+            } else {
+                log.error("Unexpected error!!!", message);
+                log.error("Handler class : {}. Name : {}", ctx.handler().getClass(), ctx.name());
+            }
         }
 
     }
