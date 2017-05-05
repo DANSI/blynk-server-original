@@ -2,6 +2,8 @@ package cc.blynk.server.core.reporting.average;
 
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.Closeable;
 import java.nio.file.Path;
@@ -18,6 +20,8 @@ import static cc.blynk.utils.ReportingUtil.write;
  * Created on 10.08.15.
  */
 public class AverageAggregatorProcessor implements Closeable {
+
+    private static final Logger log = LogManager.getLogger(AverageAggregatorProcessor.class);
 
     public static final long MINUTE = 1000 * 60;
     public static final long HOUR = 60 * MINUTE;
@@ -81,7 +85,11 @@ public class AverageAggregatorProcessor implements Closeable {
 
     @Override
     public void close() {
-        write(Paths.get(dataFolder, MINUTE_TEMP_FILENAME), minute);
+        if (minute.size() > 100_000) {
+            log.info("Too many minute records ({}). This may cause performance issues on server start. Skipping.", minute.size());
+        } else {
+            write(Paths.get(dataFolder, MINUTE_TEMP_FILENAME), minute);
+        }
         write(Paths.get(dataFolder, HOURLY_TEMP_FILENAME), hourly);
         write(Paths.get(dataFolder, DAILY_TEMP_FILENAME), daily);
     }
