@@ -33,7 +33,7 @@ public class PurchaseDBDao {
 
             connection.commit();
         } catch (Throwable e) {
-            log.error("Error inserting purchase data in DB.", e);
+            log.error("Error inserting purchase data in DB. {}", e.getMessage());
         }
     }
 
