@@ -9,7 +9,6 @@ import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -94,10 +93,11 @@ public class ReportingWorker implements Runnable {
 
                     FileUtils.write(filePath, value.calcAverage(), keyToRemove.getTs(type));
 
-                    final AggregationValue removedValue = map.remove(keyToRemove);
-                    removedKeys.put(keyToRemove, removedValue);
-                } catch (IOException ioe) {
-                    log.error("Error open user data reporting file. Reason : {}", ioe.getMessage());
+                    removedKeys.put(keyToRemove, value);
+                } catch (Exception ioe) {
+                    log.error("Error writing reporting file. Reason : {}", ioe.getMessage());
+                } finally {
+                    map.remove(keyToRemove);
                 }
             }
         }
