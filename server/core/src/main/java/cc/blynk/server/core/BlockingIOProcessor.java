@@ -61,6 +61,7 @@ public class BlockingIOProcessor implements Closeable {
     public void close() {
         dbExecutor.shutdown();
         messagingExecutor.shutdown();
+        historyExecutor.shutdown();
     }
 
     public int getActiveCount() {
