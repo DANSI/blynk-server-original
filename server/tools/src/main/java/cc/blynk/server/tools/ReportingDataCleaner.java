@@ -46,6 +46,13 @@ public class ReportingDataCleaner {
                 File[] userFiles = userDirectory.listFiles();
                 if (userFiles == null || userFiles.length == 0) {
                     System.out.println(userDirectory + " is empty.");
+                    try {
+                        if (userDirectory.delete()) {
+                            System.out.println(userDirectory + " deleted.");
+                        }
+                    } catch (Exception e) {
+                        //ignore
+                    }
                     continue;
                 }
                 for (File file : userFiles) {
