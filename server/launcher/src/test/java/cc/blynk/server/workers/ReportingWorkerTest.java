@@ -82,6 +82,29 @@ public class ReportingWorkerTest {
     }
 
     @Test
+    public void testFailure() throws IOException {
+        User user = new User();
+        user.email = "test";
+        user.appName = AppName.BLYNK;
+        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock, reportingFolder, new DBManager(blockingIOProcessor, true));
+
+        ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
+
+        long ts = getTS() / AverageAggregatorProcessor.HOUR;
+
+        AggregationKey aggregationKey = new AggregationKey("ddd\0+123@gmail.com", AppName.BLYNK, 1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, ts);
+        AggregationValue aggregationValue = new AggregationValue();
+        aggregationValue.update(100);
+
+        map.put(aggregationKey, aggregationValue);
+
+        when(averageAggregator.getMinute()).thenReturn(map);
+
+        reportingWorker.run();
+        assertTrue(map.isEmpty());
+    }
+
+    @Test
     public void testStore() throws IOException {
         User user = new User();
         user.email = "test";
@@ -114,6 +137,8 @@ public class ReportingWorkerTest {
 
         assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphType.HOURLY))));
         assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(2, 0, PinType.ANALOG.pintTypeChar, (byte) 2, GraphType.HOURLY))));
+
+        assertTrue(map.isEmpty());
 
         ByteBuffer data = ReportingDao.getByteBufferFromDisk(reportingFolder, user, 1, 0, PinType.ANALOG, (byte) 1, 2, GraphType.HOURLY);
         assertNotNull(data);
@@ -166,6 +191,8 @@ public class ReportingWorkerTest {
         reportingWorker.run();
 
         assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphType.HOURLY))));
+
+        assertTrue(map.isEmpty());
 
         User user = new User();
         user.email = "test";
