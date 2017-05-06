@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.RGB;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.commons.lang3.ArrayUtils;
@@ -11,6 +12,7 @@ import org.junit.Test;
 
 import java.io.InputStream;
 
+import static cc.blynk.utils.StringUtils.split3;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -43,13 +45,13 @@ public class PinValuesUpdateCorrectTest {
         assertEquals(PinType.DIGITAL, button.pinType);
         assertEquals("1", button.value);
 
-        dash.update(0, "dw 1 0".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        update(dash, 0, "dw 1 0".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
         assertEquals("0", button.value);
 
-        dash.update(0, "aw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        update(dash, 0, "aw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
         assertEquals("0", button.value);
 
-        dash.update(0, "dw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        update(dash, 0, "dw 1 1".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
         assertEquals("1", button.value);
 
         RGB rgb = new RGB();
@@ -67,9 +69,9 @@ public class PinValuesUpdateCorrectTest {
 
         dash.widgets = ArrayUtils.add(dash.widgets, rgb);
 
-        dash.update(0, "vw 0 100".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
-        dash.update(0, "vw 1 101".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
-        dash.update(0, "vw 2 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        update(dash, 0, "vw 0 100".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        update(dash, 0, "vw 1 101".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        update(dash, 0, "vw 2 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
 
         for (int i = 0; i < rgb.pins.length; i++) {
             assertEquals("10" + i, rgb.pins[i].value);
@@ -89,10 +91,19 @@ public class PinValuesUpdateCorrectTest {
 
         dash.widgets = ArrayUtils.add(dash.widgets, rgb);
 
-        dash.update(0, "vw 4 100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        update(dash, 0, "vw 4 100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
 
         assertEquals("100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), rgb.pins[0].value);
     }
 
+    public static void update(DashBoard dash, int deviceId, String body) {
+        update(dash, deviceId, split3(body));
+    }
+
+    public static void update(DashBoard dash, int deviceId, String[] splitted) {
+        final PinType type = PinType.getPinType(splitted[0].charAt(0));
+        final byte pin = ParseUtil.parseByte(splitted[1]);
+        dash.update(deviceId, pin, type, splitted[2], System.currentTimeMillis());
+    }
 
 }

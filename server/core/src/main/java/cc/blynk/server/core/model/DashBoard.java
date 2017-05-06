@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static cc.blynk.utils.ArrayUtil.*;
-import static cc.blynk.utils.StringUtils.split3;
 
 /**
  * User: ddumanskiy
@@ -74,16 +73,6 @@ public class DashBoard {
 
     public volatile Publishing publishing;
 
-    public void update(int deviceId, String body) {
-        update(deviceId, split3(body));
-    }
-
-    private void update(int deviceId, String[] splitted) {
-        final PinType type = PinType.getPinType(splitted[0].charAt(0));
-        final byte pin = ParseUtil.parseByte(splitted[1]);
-        update(deviceId, pin, type, splitted[2]);
-    }
-
     public void update(final int deviceId, final byte pin, final PinType type, final String value, final long now) {
         boolean hasWidget = false;
         for (Widget widget : widgets) {
@@ -97,10 +86,6 @@ public class DashBoard {
         }
 
         this.updatedAt = now;
-    }
-
-    public void update(final int deviceId, final byte pin, final PinType type, final String value) {
-        update(deviceId, pin, type, value, System.currentTimeMillis());
     }
 
     public void activate() {
