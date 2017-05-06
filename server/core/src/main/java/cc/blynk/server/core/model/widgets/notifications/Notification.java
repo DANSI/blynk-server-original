@@ -42,11 +42,11 @@ public class Notification extends NoPinWidget {
         return 400;
     }
 
-    public void push(GCMWrapper gcmWrapper, String body, int dashId) {
+    public void push(GCMWrapper gcmWrapper, String body, int dashId, long now) {
         if (androidTokens.size() != 0) {
             for (Map.Entry<String, String> entry : androidTokens.entrySet()) {
                 gcmWrapper.send(
-                        new AndroidGCMMessage(entry.getValue(), priority, body, dashId),
+                        new AndroidGCMMessage(entry.getValue(), priority, body, dashId, now),
                         androidTokens,
                         entry.getKey()
                 );
@@ -55,7 +55,7 @@ public class Notification extends NoPinWidget {
 
         if (iOSTokens.size() != 0) {
             for (Map.Entry<String, String> entry : iOSTokens.entrySet()) {
-                gcmWrapper.send(new IOSGCMMessage(entry.getValue(), priority, body, dashId),
+                gcmWrapper.send(new IOSGCMMessage(entry.getValue(), priority, body, dashId, now),
                         iOSTokens,
                         entry.getKey()
                 );

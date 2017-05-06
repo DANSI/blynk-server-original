@@ -19,8 +19,11 @@ public abstract class NotificationBase {
     }
 
     public void checkIfNotificationQuotaLimitIsNotReached() {
-        long currentTs = System.currentTimeMillis();
-        long timePassedSinceLastMessage = (currentTs - lastSentTs);
+        checkIfNotificationQuotaLimitIsNotReached(System.currentTimeMillis());
+    }
+
+    public void checkIfNotificationQuotaLimitIsNotReached(final long currentTs) {
+        final long timePassedSinceLastMessage = (currentTs - lastSentTs);
         if (timePassedSinceLastMessage < NOTIFICATION_QUOTA_LIMIT) {
             throw EXCEPTION_CACHE;
         }

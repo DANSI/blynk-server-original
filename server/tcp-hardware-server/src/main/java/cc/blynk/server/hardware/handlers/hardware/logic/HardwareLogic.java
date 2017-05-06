@@ -89,7 +89,7 @@ public class HardwareLogic {
             reportingDao.process(state.user, dashId, deviceId, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);
 
-            process(dash, deviceId, session, pin, pinType, value);
+            process(dash, deviceId, session, pin, pinType, value, now);
         }
 
         if (dash.isActive) {
@@ -99,10 +99,10 @@ public class HardwareLogic {
         }
     }
 
-    private void process(DashBoard dash, int deviceId, Session session, byte pin, PinType pinType, String value) {
+    private void process(DashBoard dash, int deviceId, Session session, byte pin, PinType pinType, String value, long now) {
         try {
-            eventorProcessor.process(session, dash, deviceId, pin, pinType, value);
-            webhookProcessor.process(session, dash, deviceId, pin, pinType, value);
+            eventorProcessor.process(session, dash, deviceId, pin, pinType, value, now);
+            webhookProcessor.process(session, dash, deviceId, pin, pinType, value, now);
         } catch (Exception e) {
             log.error("Error processing eventor/webhook.", e);
         }

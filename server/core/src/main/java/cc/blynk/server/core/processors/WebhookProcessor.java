@@ -51,14 +51,14 @@ public class WebhookProcessor extends NotificationBase {
         this.WEBHOOK_FAILURE_LIMIT = failureLimit;
     }
 
-    public void process(Session session, DashBoard dash, int deviceId, byte pin, PinType pinType, String triggerValue) {
+    public void process(Session session, DashBoard dash, int deviceId, byte pin, PinType pinType, String triggerValue, long now) {
         WebHook widget = dash.findWebhookByPin(deviceId, pin, pinType);
         if (widget == null) {
             return;
         }
 
         try {
-            checkIfNotificationQuotaLimitIsNotReached();
+            checkIfNotificationQuotaLimitIsNotReached(now);
         } catch (QuotaLimitException qle) {
             log.debug("Webhook quota limit reached. Ignoring hook.");
             return;

@@ -114,14 +114,15 @@ public class HardwareAppLogic {
                 final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
                 final byte pin = ParseUtil.parseByte(splitBody[1]);
                 final String value = splitBody[2];
+                final long now = System.currentTimeMillis();
 
                 for (int deviceId : deviceIds) {
-                    dash.update(deviceId, pin, pinType, value);
+                    dash.update(deviceId, pin, pinType, value, now);
                 }
 
                 //additional state for tag widget itself
                 if (target.isTag()) {
-                    dash.update(targetId, pin, pinType, value);
+                    dash.update(targetId, pin, pinType, value, now);
                 }
 
                 //sending to shared dashes and master-master apps
@@ -132,7 +133,7 @@ public class HardwareAppLogic {
                     ctx.writeAndFlush(makeResponse(message.id, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
                 }
 
-                process(dash, targetId, session, pin, pinType, value);
+                process(dash, targetId, session, pin, pinType, value, now);
 
                 break;
 
@@ -156,10 +157,10 @@ public class HardwareAppLogic {
         }
     }
 
-    private void process(DashBoard dash, int deviceId, Session session, byte pin, PinType pinType, String value) {
+    private void process(DashBoard dash, int deviceId, Session session, byte pin, PinType pinType, String value, long now) {
         try {
-            eventorProcessor.process(session, dash, deviceId, pin, pinType, value);
-            webhookProcessor.process(session, dash, deviceId, pin, pinType, value);
+            eventorProcessor.process(session, dash, deviceId, pin, pinType, value, now);
+            webhookProcessor.process(session, dash, deviceId, pin, pinType, value, now);
         } catch (Exception e) {
             log.error("Error processing eventor/webhook.", e);
         }

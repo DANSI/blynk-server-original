@@ -57,10 +57,11 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        checkIfNotificationQuotaLimitIsNotReached();
+        final long now = System.currentTimeMillis();
+        checkIfNotificationQuotaLimitIsNotReached(now);
 
         log.trace("Sending push for user {}, with message : '{}'.", state.user.email, message.body);
-        widget.push(gcmWrapper, message.body, state.dashId);
+        widget.push(gcmWrapper, message.body, state.dashId, now);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 

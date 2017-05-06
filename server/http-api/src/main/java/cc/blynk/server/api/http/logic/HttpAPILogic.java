@@ -424,11 +424,13 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("Wrong pin format.");
         }
 
+        final long now = System.currentTimeMillis();
+
         String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING, pinValues);
 
-        reportingDao.process(user, dashId, deviceId, pin, pinType, pinValue, System.currentTimeMillis());
+        reportingDao.process(user, dashId, deviceId, pin, pinType, pinValue, now);
 
-        dash.update(deviceId, pin, pinType, pinValue);
+        dash.update(deviceId, pin, pinType, pinValue, now);
 
         String body = makeBody(dash, deviceId, pin, pinType, pinValue);
 
@@ -438,7 +440,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.ok();
         }
 
-        eventorProcessor.process(session, dash, deviceId, pin, pinType, pinValue);
+        eventorProcessor.process(session, dash, deviceId, pin, pinType, pinValue, now);
 
         session.sendMessageToHardware(dashId, HARDWARE, 111, body, deviceId);
 
@@ -491,7 +493,8 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             reportingDao.process(user, dashId, deviceId, pin, pinType, pinData.value, pinData.timestamp);
         }
 
-        dash.update(deviceId, pin, pinType, pinsData[0].value);
+        final long now = System.currentTimeMillis();
+        dash.update(deviceId, pin, pinType, pinsData[0].value, now);
 
         String body = makeBody(dash, deviceId, pin, pinType, pinsData[0].value);
 
@@ -553,7 +556,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         }
 
         log.trace("Sending push for user {}, with message : '{}'.", user.email, message.body);
-        notification.push(gcmWrapper, message.body, 1);
+        notification.push(gcmWrapper, message.body, 1, System.currentTimeMillis());
 
         return Response.ok();
     }

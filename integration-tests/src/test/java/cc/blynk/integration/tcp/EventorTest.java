@@ -340,7 +340,7 @@ public class EventorTest extends IntegrationBase {
         verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
-        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Yo!!!!!", 1).toJson();
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Yo!!!!!", 1, getPrivateAndroidTSField(message)).toJson();
         assertEquals(expectedJson, message.toJson());
     }
 
@@ -358,7 +358,7 @@ public class EventorTest extends IntegrationBase {
         verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
-        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Temperatureis:37.", 1).toJson();
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Temperatureis:37.", 1, getPrivateAndroidTSField(message)).toJson();
         assertEquals(expectedJson, message.toJson());
     }
 

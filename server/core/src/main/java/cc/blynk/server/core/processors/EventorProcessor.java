@@ -48,7 +48,7 @@ public class EventorProcessor {
         this.globalStats = stats;
     }
 
-    public void process(Session session, DashBoard dash, int deviceId, byte pin, PinType type, String triggerValue) {
+    public void process(Session session, DashBoard dash, int deviceId, byte pin, PinType type, String triggerValue, long now) {
         Eventor eventor = dash.getWidgetByType(Eventor.class);
         if (eventor == null || eventor.rules == null || eventor.deviceId != deviceId) {
             return;
@@ -72,9 +72,9 @@ public class EventorProcessor {
                         for (BaseAction action : rule.actions) {
                             if (action.isValid()) {
                                 if (action instanceof SetPinAction) {
-                                    execute(session, dash, deviceId, (SetPinAction) action);
+                                    execute(session, dash, deviceId, (SetPinAction) action, now);
                                 } else if (action instanceof NotificationAction) {
-                                    execute(dash, triggerValue, (NotificationAction) action);
+                                    execute(dash, triggerValue, (NotificationAction) action, now);
                                 }
                             }
                         }
@@ -87,10 +87,10 @@ public class EventorProcessor {
         }
     }
 
-    private void execute(DashBoard dash, String triggerValue, NotificationAction notificationAction) {
+    private void execute(DashBoard dash, String triggerValue, NotificationAction notificationAction, long now) {
         String body = PIN_PATTERN.matcher(notificationAction.message).replaceAll(triggerValue);
         if (notificationAction instanceof NotifyAction) {
-            push(gcmWrapper, dash, body);
+            push(gcmWrapper, dash, body, now);
         } else if (notificationAction instanceof TwitAction) {
             twit(dash, body);
         } else if (notificationAction instanceof MailAction) {
@@ -126,7 +126,7 @@ public class EventorProcessor {
         });
     }
 
-    public static void push(GCMWrapper gcmWrapper, DashBoard dash, String body) {
+    public static void push(GCMWrapper gcmWrapper, DashBoard dash, String body, long now) {
         if (Notification.isWrongBody(body)) {
             log.debug("Wrong push body.");
             return;
@@ -144,17 +144,17 @@ public class EventorProcessor {
             return;
         }
 
-        widget.push(gcmWrapper, body, dash.id);
+        widget.push(gcmWrapper, body, dash.id, now);
     }
 
-    private void execute(Session session, DashBoard dash, int deviceId, SetPinAction action) {
+    private void execute(Session session, DashBoard dash, int deviceId, SetPinAction action, long now) {
         final String body = action.makeHardwareBody();
         session.sendMessageToHardware(dash.id, HARDWARE, 888, body, deviceId);
         if (dash.isActive) {
             session.sendToApps(HARDWARE, 888, dash.id, deviceId, body);
         }
 
-        dash.update(deviceId, action.pin.pin, action.pin.pinType, action.value);
+        dash.update(deviceId, action.pin.pin, action.pin.pinType, action.value, now);
 
         globalStats.mark(EVENTOR);
     }

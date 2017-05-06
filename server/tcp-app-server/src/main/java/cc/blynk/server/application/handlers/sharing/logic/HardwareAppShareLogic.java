@@ -111,14 +111,15 @@ public class HardwareAppShareLogic {
                 final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
                 final byte pin = ParseUtil.parseByte(splitBody[1]);
                 final String value = splitBody[2];
+                final long now = System.currentTimeMillis();
 
                 for (int deviceId : deviceIds) {
-                    dash.update(deviceId, pin, pinType, value);
+                    dash.update(deviceId, pin, pinType, value, now);
                 }
 
                 //additional state for tag widget itself
                 if (target.isTag()) {
-                    dash.update(targetId, pin, pinType, value);
+                    dash.update(targetId, pin, pinType, value, now);
                 }
 
                 final String sharedToken = state.token;

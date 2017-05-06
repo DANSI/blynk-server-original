@@ -95,7 +95,8 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         if (notification.notifyWhenOfflineIgnorePeriod == 0 || device == null) {
             notification.push(gcmWrapper,
                     message,
-                    dashId
+                    dashId,
+                    System.currentTimeMillis()
             );
         } else {
             //delayed notification
@@ -126,7 +127,8 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                     now - device.disconnectTime > notification.notifyWhenOfflineIgnorePeriod) {
                 notification.push(gcmWrapper,
                         message,
-                        dashId);
+                        dashId,
+                        now);
             }
         }
     }

@@ -174,22 +174,22 @@ public class TimerWorker implements Runnable {
             return;
         }
 
-        final long nowMillis = System.currentTimeMillis();
+        final long now = System.currentTimeMillis();
         int activeTimers = 0;
 
         try {
-            activeTimers = send(tickedExecutors, currentDateTime, curSeconds, nowMillis);
+            activeTimers = send(tickedExecutors, currentDateTime, curSeconds, now);
         } catch (Exception e) {
             log.error("Error running timers. ", e);
         }
 
         if (activeTimers > 0) {
             log.info("Timer finished. Ready {}, Active {}, Actual {}. Processing time : {} ms",
-                    readyForTickTimers, activeTimers, actuallySendTimers, System.currentTimeMillis() - nowMillis);
+                    readyForTickTimers, activeTimers, actuallySendTimers, System.currentTimeMillis() - now);
         }
     }
 
-    private int send(ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors, ZonedDateTime currentDateTime, int curSeconds, long nowMillis) {
+    private int send(ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors, ZonedDateTime currentDateTime, int curSeconds, long now) {
         int activeTimers = 0;
         actuallySendTimers = 0;
 
@@ -202,7 +202,7 @@ public class TimerWorker implements Runnable {
                     DashBoard dash = user.profile.getDashById(key.dashId);
                     if (dash != null && dash.isActive) {
                         activeTimers++;
-                        process(dash, key, actions, nowMillis);
+                        process(dash, key, actions, now);
                     }
                 }
             }
@@ -211,7 +211,7 @@ public class TimerWorker implements Runnable {
         return activeTimers;
     }
 
-    private void process(DashBoard dash, TimerKey key, BaseAction[] actions, long nowMillis) {
+    private void process(DashBoard dash, TimerKey key, BaseAction[] actions, long now) {
         for (BaseAction action : actions) {
             if (action instanceof SetPinAction) {
                 SetPinAction setPinAction = (SetPinAction) action;
@@ -228,13 +228,13 @@ public class TimerWorker implements Runnable {
                 }
 
                 for (int deviceId : deviceIds) {
-                    dash.update(deviceId, setPinAction.pin.pin, setPinAction.pin.pinType, setPinAction.value, nowMillis);
+                    dash.update(deviceId, setPinAction.pin.pin, setPinAction.pin.pinType, setPinAction.value, now);
                 }
 
                 triggerTimer(sessionDao, key.userKey, setPinAction.makeHardwareBody(), key.dashId, deviceIds);
             } else if (action instanceof NotifyAction) {
                 NotifyAction notifyAction = (NotifyAction) action;
-                EventorProcessor.push(gcmWrapper, dash, notifyAction.message);
+                EventorProcessor.push(gcmWrapper, dash, notifyAction.message, now);
             }
             //todo other type of actions not supported yet. maybe in future.
         }

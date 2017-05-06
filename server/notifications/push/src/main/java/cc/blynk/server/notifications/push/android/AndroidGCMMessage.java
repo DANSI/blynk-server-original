@@ -23,10 +23,10 @@ public class AndroidGCMMessage implements GCMMessage {
     private final Priority priority;
     private final GCMData data;
 
-    public AndroidGCMMessage(String to, Priority priority, String message, int dashId) {
+    public AndroidGCMMessage(String to, Priority priority, String message, int dashId, long now) {
         this.to = to;
         this.priority = priority;
-        this.data = new GCMData(message, dashId);
+        this.data = new GCMData(message, dashId, now);
     }
 
     @Override
@@ -37,16 +37,6 @@ public class AndroidGCMMessage implements GCMMessage {
     @Override
     public String toJson() throws JsonProcessingException {
         return writer.writeValueAsString(this);
-    }
-
-    private static class GCMData {
-        private final String message;
-        private final int dashId;
-
-        public GCMData(String message, int dashId) {
-            this.message = message;
-            this.dashId = dashId;
-        }
     }
 
 }
