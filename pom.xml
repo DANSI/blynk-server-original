@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Blynk Server</name>
-    <url>http://www.blynk.cc/</url>
+    <url>https://www.blynk.cc/</url>
     <description>
         Blynk - platform with iOs and Android apps to control Arduino,
         Raspberry Pi and similar micro-controllers boards over Internet.
     </description>
     <organization>
-        <name>Blynk</name>
-        <url>http://www.blynk.cc/</url>
+        <name>Blynk Inc.</name>
+        <url>https://www.blynk.cc/</url>
     </organization>
     <issueManagement>
         <system>github</system>
@@ -147,7 +147,7 @@
         <log4j2.version>2.8.2</log4j2.version>
         <jackson-databind.version>2.8.6</jackson-databind.version>
         <disruptor.version>3.3.6</disruptor.version>
-        <async-http-client.version>2.1.0-alpha16</async-http-client.version>
+        <async-http-client.version>2.1.0-alpha17</async-http-client.version>
         <twitter4j-core.version>4.0.2</twitter4j-core.version>
         <javax.mail.version>1.5.5</javax.mail.version>
         <postgresql.version>42.0.0</postgresql.version>
