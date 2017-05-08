@@ -13,6 +13,8 @@ public class OneAxisJoystick extends OnePinWidget {
 
     public boolean horizontal;
 
+    public int frequency;
+
     @Override
     public String getModeType() {
         return "out";

@@ -11,6 +11,8 @@ public class Slider extends OnePinWidget {
 
     public boolean sendOnReleaseOn;
 
+    public int frequency;
+
     @Override
     public String getModeType() {
         return "out";
