@@ -10,6 +10,8 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class Light extends OnePinWidget {
 
+    private int frequency;
+
     @Override
     public String getModeType() {
         return "out";

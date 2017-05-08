@@ -12,6 +12,8 @@ public class Temperature extends OnePinWidget {
 
     public boolean isCelsius;
 
+    private int frequency;
+
     @Override
     public String getModeType() {
         return "out";

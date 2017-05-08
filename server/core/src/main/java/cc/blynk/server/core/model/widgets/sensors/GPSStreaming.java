@@ -10,7 +10,9 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class GPSStreaming extends OnePinWidget {
 
-     public int accuracy;
+    public int accuracy;
+
+    private int frequency;
 
     @Override
     public String getModeType() {
