@@ -234,7 +234,7 @@ public class TimerWorker implements Runnable {
                 triggerTimer(sessionDao, key.userKey, setPinAction.makeHardwareBody(), key.dashId, deviceIds);
             } else if (action instanceof NotifyAction) {
                 NotifyAction notifyAction = (NotifyAction) action;
-                EventorProcessor.push(gcmWrapper, dash, notifyAction.message, now);
+                EventorProcessor.push(gcmWrapper, dash, notifyAction.message);
             }
             //todo other type of actions not supported yet. maybe in future.
         }

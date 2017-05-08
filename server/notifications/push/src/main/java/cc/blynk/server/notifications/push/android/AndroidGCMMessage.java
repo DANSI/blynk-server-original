@@ -23,10 +23,10 @@ public class AndroidGCMMessage implements GCMMessage {
     private final Priority priority;
     private final GCMData data;
 
-    public AndroidGCMMessage(String to, Priority priority, String message, int dashId, long now) {
+    public AndroidGCMMessage(String to, Priority priority, String message, int dashId) {
         this.to = to;
         this.priority = priority;
-        this.data = new GCMData(message, dashId, now);
+        this.data = new GCMData(message, dashId);
     }
 
     @Override

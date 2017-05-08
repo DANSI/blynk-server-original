@@ -20,24 +20,24 @@ public class GCMWrapperTest {
     @Ignore
     public void testIOS() throws Exception {
         GCMWrapper gcmWrapper = new GCMWrapper(null, null);
-        gcmWrapper.send(new IOSGCMMessage("to", Priority.normal, "yo!!!", 1, 0), null, null);
+        gcmWrapper.send(new IOSGCMMessage("to", Priority.normal, "yo!!!", 1), null, null);
     }
 
     @Test
     @Ignore
     public void testAndroid() throws Exception {
         GCMWrapper gcmWrapper = new GCMWrapper(null, null);
-        gcmWrapper.send(new AndroidGCMMessage("", Priority.normal, "yo!!!", 1, 0), null, null);
+        gcmWrapper.send(new AndroidGCMMessage("", Priority.normal, "yo!!!", 1), null, null);
     }
 
     @Test
     public void testValidAndroidJson() throws JsonProcessingException {
-        assertEquals("{\"to\":\"to\",\"priority\":\"normal\",\"data\":{\"message\":\"yo!!!\",\"dashId\":1,\"ts\":0}}", new AndroidGCMMessage("to", Priority.normal, "yo!!!", 1, 0).toJson());
+        assertEquals("{\"to\":\"to\",\"priority\":\"normal\",\"data\":{\"message\":\"yo!!!\",\"dashId\":1,\"ts\":0}}", new AndroidGCMMessage("to", Priority.normal, "yo!!!", 1).toJson());
     }
 
     @Test
     public void testValidIOSJson() throws JsonProcessingException {
-        assertEquals("{\"to\":\"to\",\"priority\":\"normal\",\"notification\":{\"title\":\"Blynk Notification\",\"body\":\"yo!!!\",\"dashId\":1,\"ts\":0,\"sound\":\"default\"}}", new IOSGCMMessage("to", Priority.normal, "yo!!!", 1, 0).toJson());
+        assertEquals("{\"to\":\"to\",\"priority\":\"normal\",\"notification\":{\"title\":\"Blynk Notification\",\"body\":\"yo!!!\",\"dashId\":1,\"ts\":0,\"sound\":\"default\"}}", new IOSGCMMessage("to", Priority.normal, "yo!!!", 1).toJson());
     }
 
 }

@@ -23,10 +23,10 @@ public class IOSGCMMessage implements GCMMessage {
     private final Priority priority;
     private final IOSBody notification;
 
-    public IOSGCMMessage(String to, Priority priority, String message, int dashId, long now) {
+    public IOSGCMMessage(String to, Priority priority, String message, int dashId) {
         this.to = to;
         this.priority = priority;
-        this.notification = new IOSBody(message, dashId, now);
+        this.notification = new IOSBody(message, dashId);
     }
 
     @Override
@@ -43,13 +43,11 @@ public class IOSGCMMessage implements GCMMessage {
         private final String title;
         private final String body;
         private final int dashId;
-        private final long ts;
         private final String sound;
 
-        public IOSBody(String body, int dashId, long ts) {
+        public IOSBody(String body, int dashId) {
             this.body = body;
             this.dashId = dashId;
-            this.ts = ts;
             this.sound = "default";
             this.title = "Blynk Notification";
         }
