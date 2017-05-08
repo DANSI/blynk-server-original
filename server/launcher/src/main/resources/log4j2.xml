@@ -6,7 +6,7 @@
         <RollingFile name="postgresDBLog" fileName="${sys:logs.folder}/postgres.log"
               filePattern="${sys:logs.folder}/archive/postgres.log.%d{yyyy-MM-dd}">
             <PatternLayout>
-                <pattern>%d{yyyy-MM-dd} %d{HH:mm:ss.SSS} - %msg%n</pattern>
+                <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern>
             </PatternLayout>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
@@ -36,7 +36,7 @@
         <RollingFile name="userLog" fileName="${sys:logs.folder}/blynk.log"
                      filePattern="${sys:logs.folder}/archive/blynk.log.%d{yyyy-MM-dd}">
             <PatternLayout>
-                <pattern>%d{yyyy-MM-dd} %d{HH:mm:ss.SSS} %-5level- %msg%n</pattern>
+                <pattern>%d{HH:mm:ss.SSS} %-5level- %msg%n</pattern>
             </PatternLayout>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
