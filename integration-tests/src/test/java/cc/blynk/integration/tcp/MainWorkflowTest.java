@@ -25,8 +25,6 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
-import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
@@ -750,31 +748,6 @@ public class MainWorkflowTest extends IntegrationBase {
         hardClient2.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("2 aw 1 1"))));
         hardClient2.stop().awaitUninterruptibly();
-    }
-
-    @Test
-    public void testPushWhenHardwareOffline() throws Exception {
-        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
-        channelFuture.await();
-
-        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
-        AndroidGCMMessage message = objectArgumentCaptor.getValue();
-
-        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your UNO went offline. \"My Dashboard\" project is disconnected.", 1, getPrivateAndroidTSField(message)).toJson();
-        assertEquals(expectedJson, message.toJson());
-    }
-
-    @Test
-    public void testPushHandler() throws Exception {
-        clientPair.hardwareClient.send("push Yo!");
-
-        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
-        AndroidGCMMessage message = objectArgumentCaptor.getValue();
-
-        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Yo!", 1, getPrivateAndroidTSField(message)).toJson();
-        assertEquals(expectedJson, message.toJson());
     }
 
     @Test

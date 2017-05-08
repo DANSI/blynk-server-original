@@ -180,7 +180,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
-        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your UNO went offline. \"My Dashboard\" project is disconnected.", 1, getPrivateAndroidTSField(message)).toJson();
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your UNO went offline. \"My Dashboard\" project is disconnected.", 1).toJson();
         assertEquals(expectedJson, message.toJson());
     }
 
@@ -205,7 +205,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
         assertTrue(System.currentTimeMillis() - now > notification.notifyWhenOfflineIgnorePeriod );
 
-        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your UNO went offline. \"My Dashboard\" project is disconnected.", 1, getPrivateAndroidTSField(message)).toJson();
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your UNO went offline. \"My Dashboard\" project is disconnected.", 1).toJson();
         assertEquals(expectedJson, message.toJson());
     }
 
@@ -256,9 +256,33 @@ public class NotificationsLogicTest extends IntegrationBase {
         verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
-        String expectedJson = new AndroidGCMMessage("token1", Priority.high, "123", 1, getPrivateAndroidTSField(message)).toJson();
+        String expectedJson = new AndroidGCMMessage("token1", Priority.high, "123", 1).toJson();
         assertEquals(expectedJson, message.toJson());
     }
 
+    @Test
+    public void testPushWhenHardwareOffline() throws Exception {
+        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
+        channelFuture.await();
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        AndroidGCMMessage message = objectArgumentCaptor.getValue();
+
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your UNO went offline. \"My Dashboard\" project is disconnected.", 1).toJson();
+        assertEquals(expectedJson, message.toJson());
+    }
+
+    @Test
+    public void testPushHandler() throws Exception {
+        clientPair.hardwareClient.send("push Yo!");
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        AndroidGCMMessage message = objectArgumentCaptor.getValue();
+
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Yo!", 1).toJson();
+        assertEquals(expectedJson, message.toJson());
+    }
 
 }
