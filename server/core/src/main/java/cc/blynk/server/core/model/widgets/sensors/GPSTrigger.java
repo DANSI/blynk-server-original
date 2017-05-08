@@ -18,8 +18,6 @@ public class GPSTrigger extends OnePinWidget {
 
     public int triggerRadius;
 
-    private int frequency;
-
     @Override
     public String getModeType() {
         return "out";
