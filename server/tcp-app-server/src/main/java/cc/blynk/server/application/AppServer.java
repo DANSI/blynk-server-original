@@ -51,7 +51,7 @@ public class AppServer extends BaseServer {
                     pipeline.addLast("AReadTimeout", new ReadTimeoutHandler(appTimeoutSecs));
                 }
 
-                pipeline.addLast("ASSL", holder.sslContextHolder.sslCtxMutual.newHandler(ch.alloc()));
+                pipeline.addLast("ASSL", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()));
                 pipeline.addLast("AChannelState", appChannelStateHandler);
                 pipeline.addLast("AMessageDecoder", new MessageDecoder(holder.stats));
                 pipeline.addLast("AMessageEncoder", new MessageEncoder(holder.stats));

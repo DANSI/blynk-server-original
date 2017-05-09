@@ -1,6 +1,5 @@
 package cc.blynk.utils;
 
-import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
@@ -22,12 +21,11 @@ public class SslUtil {
     private final static Logger log = LogManager.getLogger(SslUtil.class);
 
     public static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
-                                                  String clientCertPath,
                                                   SslProvider sslProvider, boolean printWarn) {
         try {
             File serverCert = new File(serverCertPath);
             File serverKey = new File(serverKeyPath);
-            File clientCert = new File(clientCertPath);
+
 
             if (!serverCert.exists() || !serverKey.exists()) {
                 if (printWarn) {
@@ -38,15 +36,7 @@ public class SslUtil {
                 return build(sslProvider);
             }
 
-            if (!clientCert.exists()) {
-                if (printWarn) {
-                    log.warn("Found server certificate but no client certificate for '{}' path. Using one way ssl.", clientCert.getAbsolutePath());
-                }
-
-                return build(serverCert, serverKey, serverPass, sslProvider);
-            }
-
-            return build(serverCert, serverKey, serverPass, sslProvider, clientCert);
+            return build(serverCert, serverKey, serverPass, sslProvider);
         } catch (CertificateException | SSLException | IllegalArgumentException e) {
             log.error("Error initializing ssl context. Reason : {}", e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -55,11 +45,6 @@ public class SslUtil {
 
     public static SslProvider fetchSslProvider(ServerProperties props) {
         return props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK;
-    }
-
-    public static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
-                                            SslProvider sslProvider, boolean printWarn) {
-        return initSslContext(serverCertPath, serverKeyPath, serverPass, "non-existing-client.crt", sslProvider, printWarn);
     }
 
     public static SslContext build(SslProvider sslProvider) throws CertificateException, SSLException {
@@ -88,15 +73,11 @@ public class SslUtil {
             return SslContextBuilder.forServer(serverCert, serverKey)
                     .sslProvider(sslProvider)
                     .trustManager(clientCert)
-                            //todo fix that after iOS release
-                    .clientAuth(ClientAuth.NONE)
                     .build();
         } else {
             return SslContextBuilder.forServer(serverCert, serverKey, serverPass)
                     .sslProvider(sslProvider)
                     .trustManager(clientCert)
-                            //todo fix that after iOS release
-                    .clientAuth(ClientAuth.NONE)
                     .build();
         }
     }

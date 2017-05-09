@@ -20,8 +20,6 @@ public class SslContextHolder {
 
     public volatile SslContext sslCtx;
 
-    public volatile SslContext sslCtxMutual;
-
     public final AcmeClient acmeClient;
 
     public final boolean isAutoGenerationEnabled;
@@ -36,7 +34,6 @@ public class SslContextHolder {
         String certPath = props.getProperty("server.ssl.cert");
         String keyPath = props.getProperty("server.ssl.key");
         String keyPass = props.getProperty("server.ssl.key.pass");
-        String clientCertPath = props.getProperty("client.ssl.cert");
 
         if (certPath == null || certPath.isEmpty()) {
             log.info("Didn't find custom user certificates.");
@@ -72,18 +69,14 @@ public class SslContextHolder {
 
         SslProvider sslProvider = SslUtil.fetchSslProvider(props);
         this.sslCtx = SslUtil.initSslContext(certPath, keyPath, keyPass, sslProvider, true);
-        this.sslCtxMutual = SslUtil.initSslContext(certPath, keyPath, keyPass, clientCertPath, sslProvider, false);
     }
 
     public void regenerate(ServerProperties props) {
         String certPath = AcmeClient.DOMAIN_CHAIN_FILE.getAbsolutePath();
         String keyPath = AcmeClient.DOMAIN_KEY_FILE.getAbsolutePath();
-        String keyPass = null;
-        String clientCertPath = props.getProperty("client.ssl.cert");
 
         SslProvider sslProvider = SslUtil.fetchSslProvider(props);
-        this.sslCtx = SslUtil.initSslContext(certPath, keyPath, keyPass, sslProvider, true);
-        this.sslCtxMutual = SslUtil.initSslContext(certPath, keyPath, keyPass, clientCertPath, sslProvider, false);
+        this.sslCtx = SslUtil.initSslContext(certPath, keyPath, null, sslProvider, true);
     }
 
     public void generateInitialCertificates(ServerProperties props) {
