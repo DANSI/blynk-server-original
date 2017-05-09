@@ -102,7 +102,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
                     public Response onCompleted(Response response) throws Exception {
                         if (response.getStatusCode() != 200) {
                             String errMessage = response.getResponseBody();
-                            if (errMessage.contains("expired")) {
+                            if (errMessage != null && errMessage.contains("expired")) {
                                 log.warn("Facebook token expired for user {}.", email);
                             } else {
                                 log.warn("Error getting facebook token for user {}. Reason : {}", email, errMessage);
