@@ -128,6 +128,13 @@ public class MessageFactory {
             case APP_CONNECTED :
                 return new AppConnectedMessage(messageId);
 
+            case CREATE_APP :
+                return new CreateAppMessage(messageId, body);
+            case UPDATE_APP :
+                return new UpdateAppMessage(messageId, body);
+            case DELETE_APP :
+                return new DeleteAppMessage(messageId, body);
+
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);
         }
     }

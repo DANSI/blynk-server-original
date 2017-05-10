@@ -112,6 +112,13 @@ public class CommandParser {
             case "refreshsharetoken" :
                 return REFRESH_SHARE_TOKEN;
 
+            case "createapp" :
+                return CREATE_APP;
+            case "updateapp" :
+                return UPDATE_APP;
+            case "deleteapp" :
+                return DELETE_APP;
+
             default:
                 throw new IllegalArgumentException("Unsupported command");
         }

@@ -67,6 +67,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final UpdateDeviceLogic updateDeviceLogic;
     private final DeleteDeviceLogic deleteDeviceLogic;
     private final LoadProfileGzippedLogic loadProfileGzippedLogic;
+    private final CreateAppLogic createAppLogic;
+    private final UpdateAppLogic updateAppLogic;
+
     private final GlobalStats stats;
 
     public AppHandler(Holder holder, AppStateHolder state) {
@@ -103,6 +106,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.shareLogic = new ShareLogic(holder.sessionDao);
         this.redeemLogic = new RedeemLogic(holder.dbManager, holder.blockingIOProcessor);
         this.addEnergyLogic = new AddEnergyLogic(holder.dbManager, holder.blockingIOProcessor);
+
+        this.createAppLogic = new CreateAppLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES);
+        this.updateAppLogic = new UpdateAppLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES);
 
         this.loadProfileGzippedLogic = new LoadProfileGzippedLogic(holder);
 
@@ -218,6 +224,16 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case APP_SYNC :
                 AppSyncLogic.messageReceived(ctx, state, msg);
+                break;
+            case CREATE_APP :
+                createAppLogic.messageReceived(ctx, state, msg);
+                break;
+            case UPDATE_APP :
+                updateAppLogic.messageReceived(ctx, state, msg);
+                break;
+            case DELETE_APP :
+                DeleteAppLogic.messageReceived(ctx, state, msg);
+                break;
         }
     }
 

@@ -86,6 +86,11 @@ public final class Command {
     public static final short EVENTOR = 53;
     public static final short WEB_HOOKS = 54;
 
+    public static final short CREATE_APP = 55;
+    public static final short UPDATE_APP = 56;
+    public static final short DELETE_APP = 57;
+
+
     //http codes. Used only for stats
     public static final short HTTP_IS_HARDWARE_CONNECTED = 62;
     public static final short HTTP_IS_APP_CONNECTED = 63;
@@ -154,6 +159,8 @@ public final class Command {
 
                 put(GET_SERVER, "GetServer");
                 put(CONNECT_REDIRECT, "ConnectRedirect");
+
+                put(CREATE_APP, "CreateApp");
 
                 put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
                 put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");
