@@ -63,7 +63,7 @@ public class AssignTokenTest extends IntegrationBase {
 
     @Test
     public void testNoTokenExists() throws Exception {
-        clientPair.appClient.send("getToken 1\0" + "123");
+        clientPair.appClient.send("assignToken 1\0" + "123");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
     }
 
@@ -75,10 +75,10 @@ public class AssignTokenTest extends IntegrationBase {
         list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
 
-        clientPair.appClient.send("getToken 1\0" + flashedToken.token);
+        clientPair.appClient.send("assignToken 1\0" + flashedToken.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("getToken 1\0" + flashedToken.token);
+        clientPair.appClient.send("assignToken 1\0" + flashedToken.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(2)));
     }
 
@@ -90,7 +90,7 @@ public class AssignTokenTest extends IntegrationBase {
         list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
 
-        clientPair.appClient.send("getToken 1\0" + flashedToken.token);
+        clientPair.appClient.send("assignToken 1\0" + flashedToken.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);

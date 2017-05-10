@@ -42,6 +42,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
     public final AppStateHolder state;
     private final GetTokenLogic token;
+    private final AssignTokenLogic assignTokenLogic;
     private final HardwareAppLogic hardwareApp;
     private final RefreshTokenLogic refreshToken;
     private final GetGraphDataLogic graphData;
@@ -71,6 +72,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     public AppHandler(Holder holder, AppStateHolder state) {
         super(holder.limits, state);
         this.token = new GetTokenLogic(holder);
+        this.assignTokenLogic = new AssignTokenLogic(holder);
         this.hardwareApp = new HardwareAppLogic(holder, state.user.email);
         this.refreshToken = new RefreshTokenLogic(holder);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
@@ -129,6 +131,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case GET_TOKEN :
                 token.messageReceived(ctx, state.user, msg);
+                break;
+            case ASSIGN_TOKEN :
+                assignTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
             case ADD_PUSH_TOKEN :
                 AddPushLogic.messageReceived(ctx, state, msg);

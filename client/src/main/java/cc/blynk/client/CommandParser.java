@@ -25,6 +25,8 @@ public class CommandParser {
                 return SHARING;
             case "gettoken" :
                 return GET_TOKEN;
+            case "assigntoken" :
+                return ASSIGN_TOKEN;
             case "refreshtoken" :
                 return REFRESH_TOKEN;
             case "login" :
