@@ -134,6 +134,8 @@ public class MessageFactory {
                 return new UpdateAppMessage(messageId, body);
             case DELETE_APP :
                 return new DeleteAppMessage(messageId, body);
+            case GET_PROJECT_BY_TOKEN :
+                return new GetProjectByTokenMessage(messageId, body);
 
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);
         }

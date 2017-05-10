@@ -66,6 +66,29 @@ public class PublishingPreviewFlow extends IntegrationBase {
     }
 
     @Test
+    public void testGetProjectByToken() throws Exception {
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody();
+
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        assertEquals(1, devices.length);
+
+        clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview icon1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
+        StringBuilder sb = new StringBuilder();
+        qrHolders[0].attach(sb);
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{device_section}", sb.toString())), eq(qrHolders));
+
+        clientPair.appClient.send("getProjectByToken " + qrHolders[0].token);
+        String body = clientPair.appClient.getBody(3);
+        assertNotNull(body);
+        DashBoard dashBoard = JsonParser.parseDashboard(body);
+        assertNotNull(dashBoard);
+    }
+
+    @Test
     public void testSendStaticEmailForAppPublish() throws Exception {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();

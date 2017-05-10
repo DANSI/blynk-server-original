@@ -118,6 +118,8 @@ public class CommandParser {
                 return UPDATE_APP;
             case "deleteapp" :
                 return DELETE_APP;
+            case "getprojectbytoken" :
+                return GET_PROJECT_BY_TOKEN;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

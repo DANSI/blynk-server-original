@@ -78,7 +78,7 @@ public class LoadProfileGzippedLogic {
         }
     }
 
-    private void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
+    public static void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
         if (ctx.channel().isWritable()) {
             ByteBuf outputMsg;
             if (data == null) {
