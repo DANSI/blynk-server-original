@@ -31,6 +31,8 @@ public class MessageFactory {
                 return new SharingMessage(messageId, body);
             case GET_TOKEN :
                 return new GetTokenMessage(messageId, body);
+            case ASSIGN_TOKEN :
+                return new AssignTokenMessage(messageId, body);
             case PING :
                 return new PingMessage(messageId);
             case ACTIVATE_DASHBOARD :
