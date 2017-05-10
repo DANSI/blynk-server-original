@@ -54,7 +54,7 @@ public class AppWorkflowTest extends IntegrationBase {
     @Test
     public void testPrintApp() throws Exception {
         App app = new App();
-        app.id = 1;
+        app.id = "1";
         app.projectIds = new int[] {1};
         app.name = "My App";
         app.provisionType = ProvisionType.STATIC;
@@ -66,34 +66,51 @@ public class AppWorkflowTest extends IntegrationBase {
 
     @Test
     public void testAppCreated() throws Exception {
-        clientPair.appClient.send("createApp {\"id\":1,\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
+        assertEquals(8, app.id.length());
+        assertEquals(Theme.Blynk, app.theme);
+        assertEquals(ProvisionType.STATIC, app.provisionType);
+        assertEquals(0, app.color);
+        assertEquals("My App", app.name);
+        assertEquals("myIcon", app.icon);
+        assertArrayEquals(new int[]{1}, app.projectIds);
     }
 
     @Test
     public void testAppCreated2() throws Exception {
-        clientPair.appClient.send("createApp {\"id\":1,\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
 
-        clientPair.appClient.send("createApp {\"id\":2,\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[2]}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[2]}");
+        app = JsonParser.parseApp(clientPair.appClient.getBody(2));
+        assertNotNull(app);
+        assertNotNull(app.id);
     }
 
     @Test
     public void testCantCreateWithSameId() throws Exception {
-        clientPair.appClient.send("createApp {\"id\":1,\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
 
-        clientPair.appClient.send("createApp {\"id\":1,\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[2]}");
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[2]}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(2)));
     }
 
     @Test
     public void testAppUpdated() throws Exception {
-        clientPair.appClient.send("createApp {\"id\":1,\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
 
-        clientPair.appClient.send("updateApp {\"id\":1,\"theme\":\"BlynkLight\",\"provisionType\":\"DYNAMIC\",\"color\":1,\"name\":\"My App 2\",\"icon\":\"myIcon2\",\"projectIds\":[1,2]}");
+        clientPair.appClient.send("updateApp {\"id\":\"" + app.id  + "\",\"theme\":\"BlynkLight\",\"provisionType\":\"DYNAMIC\",\"color\":1,\"name\":\"My App 2\",\"icon\":\"myIcon2\",\"projectIds\":[1,2]}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.send("loadProfileGzipped");
@@ -104,22 +121,24 @@ public class AppWorkflowTest extends IntegrationBase {
 
         assertNotNull(profile.apps);
         assertEquals(1, profile.apps.length);
-        App app = profile.apps[0];
-        assertEquals(1, app.id);
-        assertEquals(Theme.BlynkLight, app.theme);
-        assertEquals(ProvisionType.DYNAMIC, app.provisionType);
-        assertEquals(1, app.color);
-        assertEquals("My App 2", app.name);
-        assertEquals("myIcon2", app.icon);
-        assertArrayEquals(new int[]{1, 2}, app.projectIds);
+        App app2 = profile.apps[0];
+        assertEquals(app.id, app2.id);
+        assertEquals(Theme.BlynkLight, app2.theme);
+        assertEquals(ProvisionType.DYNAMIC, app2.provisionType);
+        assertEquals(1, app2.color);
+        assertEquals("My App 2", app2.name);
+        assertEquals("myIcon2", app2.icon);
+        assertArrayEquals(new int[]{1, 2}, app2.projectIds);
     }
 
     @Test
     public void testAppDelete() throws Exception {
         clientPair.appClient.send("createApp {\"id\":1,\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
 
-        clientPair.appClient.send("deleteApp 1");
+        clientPair.appClient.send("deleteApp " + app.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.send("loadProfileGzipped");

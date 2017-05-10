@@ -11,7 +11,7 @@ import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
  */
 public class App {
 
-    public int id;
+    public String id;
 
     public volatile Theme theme;
 

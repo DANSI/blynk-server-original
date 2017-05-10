@@ -69,18 +69,18 @@ public class Profile {
         return null;
     }
 
-    public int getAppIndexById(int id) {
+    public int getAppIndexById(String id) {
         for (int i = 0; i < apps.length; i++) {
-            if (apps[i].id == id) {
+            if (apps[i].id.equals(id)) {
                 return i;
             }
         }
         return -1;
     }
 
-    public App getAppById(int id) {
+    public App getAppById(String id) {
         for (App app : apps) {
-            if (app.id == id) {
+            if (app.id.equals(id)) {
                 return app;
             }
         }

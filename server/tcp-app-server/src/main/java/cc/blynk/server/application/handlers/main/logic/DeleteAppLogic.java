@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
-import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
@@ -20,7 +19,7 @@ import static cc.blynk.utils.BlynkByteBufUtil.ok;
 public class DeleteAppLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        int id = ParseUtil.parseInt(message.body);
+        String id = message.body;
 
         final User user = state.user;
 

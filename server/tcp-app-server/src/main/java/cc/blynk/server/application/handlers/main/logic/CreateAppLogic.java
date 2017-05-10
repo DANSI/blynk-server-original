@@ -8,11 +8,13 @@ import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_APP;
+import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
 
 /**
  * The Blynk Project.
@@ -42,6 +44,8 @@ public class CreateAppLogic {
 
         App newApp = JsonParser.parseApp(appString);
 
+        //leaving only last 8 chars
+        newApp.id = TokenGeneratorUtil.generateNewToken().substring(24);
         newApp.validate();
 
         log.debug("Creating new app {}.", newApp);
@@ -49,7 +53,7 @@ public class CreateAppLogic {
         final User user = state.user;
 
         for (App app : user.profile.apps) {
-            if (app.id == newApp.id) {
+            if (app.id.equals(newApp.id)) {
                 throw new NotAllowedException("App with same id already exists.");
             }
         }
@@ -57,7 +61,7 @@ public class CreateAppLogic {
         user.profile.apps = ArrayUtil.add(user.profile.apps, newApp, App.class);
         user.lastModifiedTs = System.currentTimeMillis();
 
-        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+        ctx.writeAndFlush(makeASCIIStringMessage(CREATE_APP, message.id, JsonParser.toJson(newApp)), ctx.voidPromise());
     }
 
 }
