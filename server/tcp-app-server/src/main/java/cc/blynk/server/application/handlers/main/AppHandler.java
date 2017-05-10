@@ -69,6 +69,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final LoadProfileGzippedLogic loadProfileGzippedLogic;
     private final CreateAppLogic createAppLogic;
     private final UpdateAppLogic updateAppLogic;
+    private final GetProjectByTokenLogic getProjectByTokenLogic;
 
     private final GlobalStats stats;
 
@@ -111,6 +112,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.updateAppLogic = new UpdateAppLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES);
 
         this.loadProfileGzippedLogic = new LoadProfileGzippedLogic(holder);
+        this.getProjectByTokenLogic = new GetProjectByTokenLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -233,6 +235,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case DELETE_APP :
                 DeleteAppLogic.messageReceived(ctx, state, msg);
+                break;
+            case GET_PROJECT_BY_TOKEN :
+                getProjectByTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }

@@ -38,7 +38,7 @@ public class FlahsedTokenGenerator {
         for (int deviceId = 0; deviceId < deviceCount; deviceId++) {
             for (int i = 0; i < count; i++) {
                 String token = UUID.randomUUID().toString().replace("-", "");
-                flashedTokens[counter++] = new FlashedToken(token, appName, deviceId);
+                flashedTokens[counter++] = new FlashedToken(token, appName, 1, deviceId);
                 System.out.println("Token : " + token + ", deviceId : " + deviceId + ", appName : " + appName);
             }
         }

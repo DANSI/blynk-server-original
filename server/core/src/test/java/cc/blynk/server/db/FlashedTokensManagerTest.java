@@ -56,7 +56,7 @@ public class FlashedTokensManagerTest {
     public void testInsertAndSelect() throws Exception {
         FlashedToken[] list = new FlashedToken[1];
         String token = UUID.randomUUID().toString().replace("-", "");
-        FlashedToken flashedToken = new FlashedToken(token, "appname", 0);
+        FlashedToken flashedToken = new FlashedToken(token, "appname", 1, 0);
         list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
 
@@ -70,7 +70,7 @@ public class FlashedTokensManagerTest {
     public void testInsertToken() throws Exception {
         FlashedToken[] list = new FlashedToken[1];
         String token = UUID.randomUUID().toString().replace("-", "");
-        FlashedToken flashedToken = new FlashedToken(token, "appname", 0);
+        FlashedToken flashedToken = new FlashedToken(token, "appname", 1, 0);
         list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
 
@@ -94,7 +94,7 @@ public class FlashedTokensManagerTest {
     public void testInsertAndActivate() throws Exception {
         FlashedToken[] list = new FlashedToken[1];
         String token = UUID.randomUUID().toString().replace("-", "");
-        FlashedToken flashedToken = new FlashedToken(token, "appname", 0);
+        FlashedToken flashedToken = new FlashedToken(token, "appname", 1, 0);
         list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
         dbManager.activateFlashedToken(flashedToken.token, flashedToken.appName);

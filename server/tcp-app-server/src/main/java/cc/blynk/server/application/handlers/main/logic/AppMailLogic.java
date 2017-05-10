@@ -170,7 +170,7 @@ public class AppMailLogic {
             String newToken = TokenGeneratorUtil.generateNewToken();
             String qrCode = newToken + " " + dash.id + " " + publisherEmail;
             qrHolders[i] = new QrHolder(dash.id, device.id, device.name, newToken, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray());
-            flashedTokens[i] = new FlashedToken(newToken, appName, device.id);
+            flashedTokens[i] = new FlashedToken(newToken, appName, dash.id, device.id);
             i++;
         }
 

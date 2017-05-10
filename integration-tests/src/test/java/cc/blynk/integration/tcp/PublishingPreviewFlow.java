@@ -214,7 +214,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
             int i = 0;
             if (rs.next()) {
                 list.add(new FlashedToken(rs.getString("token"), rs.getString("app_name"),
-                        rs.getString("email"), rs.getInt("device_id"),
+                        rs.getString("email"), rs.getInt("project_id"), rs.getInt("device_id"),
                         rs.getBoolean("is_activated"), rs.getDate("ts")
                 ));
             }

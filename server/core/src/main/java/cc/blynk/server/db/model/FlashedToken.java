@@ -15,22 +15,26 @@ public class FlashedToken {
 
     public String email;
 
+    public int dashId;
+
     public int deviceId;
 
     public boolean isActivated;
 
     public Date ts;
 
-    public FlashedToken(String token, String appName, int deviceId) {
+    public FlashedToken(String token, String appName, int dashId, int deviceId) {
         this.token = token;
         this.appName = appName;
+        this.dashId = dashId;
         this.deviceId = deviceId;
     }
 
-    public FlashedToken(String token, String appName, String email, int deviceId, boolean isActivated, Date ts) {
+    public FlashedToken(String token, String appName, String email, int dashId, int deviceId, boolean isActivated, Date ts) {
         this.token = token;
         this.appName = appName;
         this.email = email;
+        this.dashId = dashId;
         this.deviceId = deviceId;
         this.isActivated = isActivated;
         this.ts = ts;

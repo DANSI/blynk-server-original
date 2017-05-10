@@ -89,6 +89,7 @@ public final class Command {
     public static final short CREATE_APP = 55;
     public static final short UPDATE_APP = 56;
     public static final short DELETE_APP = 57;
+    public static final short GET_PROJECT_BY_TOKEN = 58;
 
 
     //http codes. Used only for stats
@@ -161,6 +162,9 @@ public final class Command {
                 put(CONNECT_REDIRECT, "ConnectRedirect");
 
                 put(CREATE_APP, "CreateApp");
+                put(UPDATE_APP, "UpdateApp");
+                put(DELETE_APP, "DeleteApp");
+                put(GET_PROJECT_BY_TOKEN, "GetProjectByToken");
 
                 put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
                 put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");

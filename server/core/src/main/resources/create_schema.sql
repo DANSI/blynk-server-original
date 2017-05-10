@@ -32,6 +32,7 @@ CREATE TABLE flashed_tokens (
   token character(32),
   app_name text,
   email text,
+  project_id int4 NOT_NULL,
   device_id int4 NOT NULL,
   is_activated boolean DEFAULT FALSE,
   ts timestamp,
