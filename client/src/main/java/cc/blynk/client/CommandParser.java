@@ -120,6 +120,8 @@ public class CommandParser {
                 return DELETE_APP;
             case "getprojectbytoken" :
                 return GET_PROJECT_BY_TOKEN;
+            case "emailqr" :
+                return EMAIL_QR;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

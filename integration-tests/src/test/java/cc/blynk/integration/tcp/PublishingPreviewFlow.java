@@ -7,6 +7,7 @@ import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -67,16 +68,22 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
     @Test
     public void testGetProjectByToken() throws Exception {
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
+        clientPair.appClient.reset();
+
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
         Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
         assertEquals(1, devices.length);
 
-        clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview icon1");
+        clientPair.appClient.send("emailQr 1\0" + app.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
+        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
         verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{device_section}", sb.toString())), eq(qrHolders));
@@ -86,51 +93,72 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertNotNull(body);
         DashBoard dashBoard = JsonParser.parseDashboard(body);
         assertNotNull(dashBoard);
+        assertEquals(1, dashBoard.id);
     }
 
     @Test
     public void testSendStaticEmailForAppPublish() throws Exception {
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
+        clientPair.appClient.reset();
+
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
         Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
         assertEquals(1, devices.length);
 
-        clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview icon1");
+        clientPair.appClient.send("emailQr 1\0" + app.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
+        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
         verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{device_section}", sb.toString())), eq(qrHolders));
     }
 
     @Test
-    public void testSenddynamicEmailForAppPublish() throws Exception {
+    public void testSendDynamicEmailForAppPublish() throws Exception {
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"DYNAMIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
+        clientPair.appClient.reset();
+
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
         Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
         assertEquals(1, devices.length);
 
-        clientPair.appClient.send("email 1 Blynk DYNAMIC 123123 AppPreview icon1");
+        clientPair.appClient.send("emailQr 1\0" + app.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        verify(mailWrapper, timeout(500)).sendHtml(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.DYNAMIC_MAIL_BODY));
+        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1, false);
+
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.DYNAMIC_MAIL_BODY), eq(qrHolders));
     }
 
     @Test
     public void testDeleteWorksForPreviewApp() throws Exception {
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
+        clientPair.appClient.reset();
+
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
         Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
         assertEquals(1, devices.length);
 
-        clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview icon1");
+        clientPair.appClient.send("emailQr 1\0" + app.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
+        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1, false);
 
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
@@ -167,16 +195,22 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
     @Test
     public void testDeleteWorksForParentOfPreviewApp() throws Exception {
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
+        clientPair.appClient.reset();
+
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
         Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
         assertEquals(1, devices.length);
 
-        clientPair.appClient.send("email 1 Blynk STATIC 123123 AppPreview icon1");
+        clientPair.appClient.send("emailQr 1\0" + app.id);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
-        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1);
+        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1, false);
 
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
@@ -212,13 +246,16 @@ public class PublishingPreviewFlow extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(7, ILLEGAL_COMMAND)));
     }
 
-    private QrHolder[] makeQRs(String to, Device[] devices, int dashId) throws Exception {
+    private QrHolder[] makeQRs(String to, Device[] devices, int dashId, boolean onlyFirst) throws Exception {
         QrHolder[] qrHolders = new QrHolder[devices.length];
 
         List<FlashedToken> flashedTokens = getAllTokens();
 
         int i = 0;
         for (Device device : devices) {
+            if (onlyFirst && i > 0) {
+                break;
+            }
             String newToken = flashedTokens.get(i).token;
             String qrCode = newToken + " " + dashId + " " + to;
             qrHolders[i] = new QrHolder(1, device.id, device.name, newToken, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray());

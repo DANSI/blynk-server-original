@@ -99,8 +99,10 @@ public class AppWorkflowTest extends IntegrationBase {
         assertNotNull(app);
         assertNotNull(app.id);
 
-        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[2]}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(2)));
+        clientPair.appClient.send("createApp {\"id\":\"" + app.id + "\",\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[2]}");
+        app = JsonParser.parseApp(clientPair.appClient.getBody(2));
+        assertNotNull(app);
+        assertNotNull(app.id);
     }
 
     @Test
