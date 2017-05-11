@@ -19,6 +19,8 @@ public class App {
 
     public volatile int color;
 
+    public volatile boolean isMultiFace;
+
     public volatile String name;
 
     public volatile String icon;
@@ -32,6 +34,7 @@ public class App {
         this.theme = newApp.theme;
         this.provisionType = newApp.provisionType;
         this.color = newApp.color;
+        this.isMultiFace = newApp.isMultiFace;
         this.name = newApp.name;
         this.icon = newApp.icon;
         this.projectIds = newApp.projectIds;

@@ -66,7 +66,7 @@ public class AppWorkflowTest extends IntegrationBase {
 
     @Test
     public void testAppCreated() throws Exception {
-        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"isMultiFace\":true,\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
         App app = JsonParser.parseApp(clientPair.appClient.getBody());
         assertNotNull(app);
         assertNotNull(app.id);
@@ -76,6 +76,7 @@ public class AppWorkflowTest extends IntegrationBase {
         assertEquals(0, app.color);
         assertEquals("My App", app.name);
         assertEquals("myIcon", app.icon);
+        assertTrue(app.isMultiFace);
         assertArrayEquals(new int[]{1}, app.projectIds);
     }
 
