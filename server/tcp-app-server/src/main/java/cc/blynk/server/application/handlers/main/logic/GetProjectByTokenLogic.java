@@ -8,11 +8,14 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.utils.JsonParser;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
+import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 
 /**
@@ -53,7 +56,14 @@ public class GetProjectByTokenLogic {
                 return;
             }
 
-            LoadProfileGzippedLogic.write(ctx, JsonParser.gzipDashRestrictive(dash), message.id);
+            write(ctx, JsonParser.gzipDashRestrictive(dash), message.id);
         });
+    }
+
+    public static void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
+        if (ctx.channel().isWritable()) {
+            ByteBuf outputMsg = makeBinaryMessage(GET_PROJECT_BY_TOKEN, msgId, data);
+            ctx.writeAndFlush(outputMsg, ctx.voidPromise());
+        }
     }
 }
