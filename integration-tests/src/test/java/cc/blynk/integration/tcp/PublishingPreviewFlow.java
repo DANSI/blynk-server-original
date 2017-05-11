@@ -257,8 +257,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
                 break;
             }
             String newToken = flashedTokens.get(i).token;
-            String qrCode = newToken + " " + dashId + " " + to;
-            qrHolders[i] = new QrHolder(1, device.id, device.name, newToken, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray());
+            qrHolders[i] = new QrHolder(1, device.id, device.name, newToken, QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
             i++;
         }
 

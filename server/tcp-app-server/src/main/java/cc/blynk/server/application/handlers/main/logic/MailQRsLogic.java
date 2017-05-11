@@ -85,7 +85,7 @@ public class MailQRsLogic {
     private void mailDynamic(Channel channel, String to, String subj, String body, String appName, DashBoard dash, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
-                QrHolder[] qrHolders = makeQRs(to, appName, dash, true);
+                QrHolder[] qrHolders = makeQRs(appName, dash, true);
 
                 mailWrapper.sendWithAttachment(to, subj, body, qrHolders);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
@@ -99,7 +99,7 @@ public class MailQRsLogic {
     private void mailStatic(Channel channel, String to, String subj, String body, String appName, DashBoard dash, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
-                QrHolder[] qrHolders = makeQRs(to, appName, dash, false);
+                QrHolder[] qrHolders = makeQRs(appName, dash, false);
                 StringBuilder sb = new StringBuilder();
                 for (QrHolder qrHolder : qrHolders) {
                     qrHolder.attach(sb);
@@ -113,7 +113,7 @@ public class MailQRsLogic {
         });
     }
 
-    private QrHolder[] makeQRs(String publisherEmail, String appName, DashBoard dash, boolean onlyFirst) throws Exception {
+    private QrHolder[] makeQRs(String appName, DashBoard dash, boolean onlyFirst) throws Exception {
         QrHolder[] qrHolders = new QrHolder[dash.devices.length];
         FlashedToken[] flashedTokens = new FlashedToken[dash.devices.length];
 
@@ -123,8 +123,7 @@ public class MailQRsLogic {
                 break;
             }
             String newToken = TokenGeneratorUtil.generateNewToken();
-            String qrCode = newToken + " " + dash.id + " " + publisherEmail;
-            qrHolders[i] = new QrHolder(dash.id, device.id, device.name, newToken, QRCode.from(qrCode).to(ImageType.JPG).stream().toByteArray());
+            qrHolders[i] = new QrHolder(dash.id, device.id, device.name, newToken, QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
             flashedTokens[i] = new FlashedToken(newToken, appName, dash.id, device.id);
             i++;
         }
