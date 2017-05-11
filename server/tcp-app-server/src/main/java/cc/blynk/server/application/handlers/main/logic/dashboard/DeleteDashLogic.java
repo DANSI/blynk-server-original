@@ -10,12 +10,10 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.ParseUtil;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,24 +41,7 @@ public class DeleteDashLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        String[] parts = StringUtils.split2(message.body);
-
-        int dashId = ParseUtil.parseInt(parts[0]);
-
-        if (parts.length == 2) {
-            if (parts[1].equals("child")) {
-                dashId = state.user.profile.getChildDashId(dashId);
-                if (dashId == -1) {
-                    throw new IllegalCommandException("Child dashboard with passed id not found.");
-                }
-            }
-        } else {
-            //delete child project if present
-            int childId = state.user.profile.getChildDashId(dashId);
-            if (childId != -1) {
-                deleteDash(state, childId);
-            }
-        }
+        int dashId = ParseUtil.parseInt(message.body);
 
         deleteDash(state, dashId);
         state.user.lastModifiedTs = System.currentTimeMillis();
