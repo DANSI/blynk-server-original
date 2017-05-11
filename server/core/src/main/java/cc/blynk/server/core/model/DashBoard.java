@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
-import cc.blynk.server.core.model.publishing.Publishing;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Target;
@@ -70,8 +69,6 @@ public class DashBoard {
 
     @JsonDeserialize(keyUsing = PinStorageKeyDeserializer.class)
     public Map<PinStorageKey, String> pinsStorage = new HashMap<>();
-
-    public volatile Publishing publishing;
 
     public void update(final int deviceId, final byte pin, final PinType type, final String value, final long now) {
         boolean hasWidget = false;
@@ -261,7 +258,6 @@ public class DashBoard {
         this.isAppConnectedOn = updatedDashboard.isAppConnectedOn;
 
         this.boardType = updatedDashboard.boardType;
-        this.publishing = updatedDashboard.publishing;
 
         Notification newNotification = updatedDashboard.getWidgetByType(Notification.class);
         if (newNotification != null) {
