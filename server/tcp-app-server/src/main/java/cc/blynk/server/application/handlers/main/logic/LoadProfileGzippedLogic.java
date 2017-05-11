@@ -64,7 +64,7 @@ public class LoadProfileGzippedLogic {
 
             blockingIOProcessor.executeDB(() -> {
                 try {
-                    FlashedToken flashedToken = dbManager.selectFlashedToken(token, state.userKey.appName);
+                    FlashedToken flashedToken = dbManager.selectFlashedToken(token);
                     if (flashedToken != null) {
                         User publishingUser = userDao.getByName(publishingEmail, state.userKey.appName);
                         DashBoard dash = publishingUser.profile.getDashByIdOrThrow(dashId);

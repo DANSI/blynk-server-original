@@ -49,7 +49,7 @@ public class FlashedTokensManagerTest {
 
     @Test
     public void testNoToken() throws Exception {
-        assertNull(dbManager.selectFlashedToken("123", "123"));
+        assertNull(dbManager.selectFlashedToken("123"));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class FlashedTokensManagerTest {
         dbManager.insertFlashedTokens(list);
 
 
-        FlashedToken selected = dbManager.selectFlashedToken(token, "appname");
+        FlashedToken selected = dbManager.selectFlashedToken(token);
 
         assertEquals(flashedToken, selected);
     }

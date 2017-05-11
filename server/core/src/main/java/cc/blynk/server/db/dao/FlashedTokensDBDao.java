@@ -16,7 +16,7 @@ import java.sql.ResultSet;
  */
 public class FlashedTokensDBDao {
 
-    public static final String selectToken = "SELECT * from flashed_tokens where token = ? and app_name = ?";
+    public static final String selectToken = "SELECT * from flashed_tokens where token = ?";
     public static final String activateToken = "UPDATE flashed_tokens SET is_activated = true, ts = NOW() WHERE token = ? and app_name = ?";
     public static final String insertToken = "INSERT INTO flashed_tokens (token, app_name, project_id, device_id) values (?, ?, ?, ?)";
 
@@ -27,15 +27,14 @@ public class FlashedTokensDBDao {
         this.ds = ds;
     }
 
-    public FlashedToken selectFlashedToken(String token, String appName) {
-        log.info("Select flashed {}, app {}", token, appName);
+    public FlashedToken selectFlashedToken(String token) {
+        log.info("Select flashed token {}.", token);
 
         ResultSet rs = null;
         try (Connection connection = ds.getConnection();
              PreparedStatement statement = connection.prepareStatement(selectToken)) {
 
             statement.setString(1, token);
-            statement.setString(2, appName);
             rs = statement.executeQuery();
             connection.commit();
 

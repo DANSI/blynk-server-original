@@ -49,7 +49,7 @@ public class AssignTokenLogic {
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         blockingIOProcessor.executeDB(() -> {
-            FlashedToken dbFlashedToken = dbManager.selectFlashedToken(token, user.appName);
+            FlashedToken dbFlashedToken = dbManager.selectFlashedToken(token);
 
             if (dbFlashedToken == null) {
                 log.error("{} token not exists for app {}.", token, user.appName);

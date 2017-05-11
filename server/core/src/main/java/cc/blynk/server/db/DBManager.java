@@ -178,9 +178,9 @@ public class DBManager implements Closeable {
         }
     }
 
-    public FlashedToken selectFlashedToken(String token, String appName) {
+    public FlashedToken selectFlashedToken(String token) {
         if (isDBEnabled()) {
-            return flashedTokensDBDao.selectFlashedToken(token, appName);
+            return flashedTokensDBDao.selectFlashedToken(token);
         }
         return null;
     }

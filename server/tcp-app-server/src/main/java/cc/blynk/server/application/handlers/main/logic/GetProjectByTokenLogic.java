@@ -37,7 +37,7 @@ public class GetProjectByTokenLogic {
         String token = message.body;
 
         blockingIOProcessor.executeDB(() -> {
-            FlashedToken dbFlashedToken = dbManager.selectFlashedToken(token, user.appName);
+            FlashedToken dbFlashedToken = dbManager.selectFlashedToken(token);
 
             if (dbFlashedToken == null) {
                 log.error("{} token not exists for app {}.", token, user.appName);
