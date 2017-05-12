@@ -1,15 +1,27 @@
 package cc.blynk.server.application.handlers.main.auth;
 
+import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.AppName;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.App;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
+import cc.blynk.server.workers.timer.TimerWorker;
+import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,10 +45,20 @@ import static cc.blynk.utils.BlynkByteBufUtil.ok;
 public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage> implements DefaultExceptionHandler {
 
     private final UserDao userDao;
+    private final TokenManager tokenManager;
+    private final TimerWorker timerWorker;
     private final Set<String> allowedUsers;
 
-    public RegisterHandler(UserDao userDao, String[] allowedUsersArray) {
+    public RegisterHandler(Holder holder) {
+        this(holder.userDao, holder.tokenManager, holder.timerWorker, holder.props.getCommaSeparatedValueAsArray("allowed.users.list"));
+    }
+
+    //for tests only
+    public RegisterHandler(UserDao userDao, TokenManager tokenManager, TimerWorker timerWorker, String[] allowedUsersArray) {
         this.userDao = userDao;
+        this.tokenManager = tokenManager;
+        this.timerWorker = timerWorker;
+
         if (allowedUsersArray != null && allowedUsersArray.length > 0 &&
                 allowedUsersArray[0] != null && !allowedUsersArray[0].isEmpty()) {
             allowedUsers = new HashSet<>(Arrays.asList(allowedUsersArray));
@@ -81,11 +103,69 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        userDao.add(email, pass, appName);
+        User newUser = userDao.add(email, pass, appName);
 
         log.info("Registered {}.", email);
 
+        createProjectForExportedApp(newUser, appName);
+
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+    }
+
+    private void createProjectForExportedApp(User newUser, String appName) {
+        if (appName.equals(AppName.BLYNK)) {
+            return;
+        }
+
+        User parentUser = null;
+        App app = null;
+
+        for (User user : userDao.users.values()) {
+            app = user.profile.getAppById(appName);
+            if (app != null) {
+                parentUser = user;
+                break;
+            }
+        }
+
+        if (app == null) {
+            log.error("Unable to find app with id {}", appName);
+            return;
+        }
+
+        if (app.isMultiFace) {
+            log.info("App supports multi faces. Skipping profile creation.");
+            return;
+        }
+
+        int dashId = app.projectIds[0];
+        DashBoard dash = parentUser.profile.getDashByIdOrThrow(dashId);
+
+        DashBoard clonedDash = JsonParser.parseDashboard(dash.toStringRestrictive());
+
+        clonedDash.id = 1;
+        clonedDash.parentId = dashId;
+        clonedDash.createdAt = System.currentTimeMillis();
+        clonedDash.updatedAt = clonedDash.createdAt;
+        clonedDash.isActive = true;
+        clonedDash.pinsStorage = new HashMap<>();
+        clonedDash.eraseValues();
+
+        clonedDash.addTimers(timerWorker, new UserKey(newUser));
+
+        newUser.profile.dashBoards = new DashBoard[] {clonedDash};
+
+        if (app.provisionType == ProvisionType.STATIC) {
+            for (Device device : clonedDash.devices) {
+                device.erase();
+            }
+        } else {
+            for (Device device : clonedDash.devices) {
+                device.erase();
+                String token = TokenGeneratorUtil.generateNewToken();
+                tokenManager.assignToken(newUser, clonedDash.id, device.id, token);
+            }
+        }
     }
 
 }

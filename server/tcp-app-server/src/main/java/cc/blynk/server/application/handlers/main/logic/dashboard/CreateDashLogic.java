@@ -3,15 +3,8 @@ package cc.blynk.server.application.handlers.main.logic.dashboard;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.device.Status;
-import cc.blynk.server.core.model.widgets.MultiPinWidget;
-import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.controls.Timer;
-import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
@@ -95,10 +88,7 @@ public class CreateDashLogic {
         } else {
             for (Device device : newDash.devices) {
                 //this case only possible for clone,
-                device.token = null;
-                device.disconnectTime = 0;
-                device.lastLoggedIP = null;
-                device.status = Status.OFFLINE;
+                device.erase();
                 if (generateTokensForDevices) {
                     String token = TokenGeneratorUtil.generateNewToken();
                     tokenManager.assignToken(user, newDash.id, device.id, token);
@@ -108,25 +98,10 @@ public class CreateDashLogic {
 
         user.lastModifiedTs = System.currentTimeMillis();
 
-        for (Widget widget : newDash.widgets) {
-            if (widget instanceof Timer) {
-                timerWorker.add(state.userKey, (Timer) widget, newDash.id);
-            }
-            if (widget instanceof Eventor) {
-                timerWorker.add(state.userKey, (Eventor) widget, newDash.id);
-            }
-            if (!generateTokensForDevices) {
-                if (widget instanceof OnePinWidget) {
-                    ((OnePinWidget) widget).value = null;
-                }
-                if (widget instanceof MultiPinWidget) {
-                    for (Pin pin : ((MultiPinWidget) widget).pins) {
-                        if (pin != null) {
-                            pin.value = null;
-                        }
-                    }
-                }
-            }
+        newDash.addTimers(timerWorker, state.userKey);
+
+        if (!generateTokensForDevices) {
+            newDash.eraseValues();
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

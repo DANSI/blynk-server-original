@@ -63,6 +63,13 @@ public class Device implements Target {
         this.disconnectTime = System.currentTimeMillis();
     }
 
+    public void erase() {
+        this.token = null;
+        this.disconnectTime = 0;
+        this.lastLoggedIP = null;
+        this.status = Status.OFFLINE;
+    }
+
     public void connected() {
         this.status = Status.ONLINE;
     }

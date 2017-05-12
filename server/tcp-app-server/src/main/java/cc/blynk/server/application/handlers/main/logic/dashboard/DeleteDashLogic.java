@@ -7,9 +7,6 @@ import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.controls.Timer;
-import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
@@ -59,13 +56,7 @@ public class DeleteDashLogic {
 
         user.recycleEnergy(dash.energySum());
 
-        for (Widget widget : dash.widgets) {
-            if (widget instanceof Timer) {
-                timerWorker.delete(state.userKey, (Timer) widget, dashId);
-            } else if (widget instanceof Eventor) {
-                timerWorker.delete(state.userKey, (Eventor) widget, dashId);
-            }
-        }
+        dash.deleteTimers(timerWorker, state.userKey);
 
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index, DashBoard.class);
         tokenManager.deleteDash(dash);

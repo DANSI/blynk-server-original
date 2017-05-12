@@ -256,10 +256,11 @@ public class UserDao {
         return newUser;
     }
 
-    public void add(String email, String pass, String appName) {
+    public User add(String email, String pass, String appName) {
         log.debug("Adding new user {}. App : {}", email, appName);
         User newUser = new User(email, pass, appName, region, false, false);
         users.put(new UserKey(email, appName), newUser);
+        return newUser;
     }
 
     public void add(String email, String pass, String appName, boolean isSuperAdmin) {

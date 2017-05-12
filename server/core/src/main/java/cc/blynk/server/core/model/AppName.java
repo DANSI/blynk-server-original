@@ -9,6 +9,7 @@ public final class AppName {
 
     public static final String ALL = "*";
     public static final String BLYNK = "Blynk";
+    public static final String BLYNK_LOWERCASE = "blynk";
     public static final String FACEBOOK = "facebook";
 
 }

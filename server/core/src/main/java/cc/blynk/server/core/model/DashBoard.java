@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model;
 
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
@@ -8,10 +9,13 @@ import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -222,6 +226,42 @@ public class DashBoard {
             sum += widget.getPrice();
         }
         return sum;
+    }
+
+    public void eraseValues() {
+        for (Widget widget : widgets) {
+            if (widget instanceof OnePinWidget) {
+                ((OnePinWidget) widget).value = null;
+            }
+            if (widget instanceof MultiPinWidget) {
+                for (Pin pin : ((MultiPinWidget) widget).pins) {
+                    if (pin != null) {
+                        pin.value = null;
+                    }
+                }
+            }
+        }
+    }
+
+    public void deleteTimers(TimerWorker timerWorker, UserKey userKey) {
+        for (Widget widget : widgets) {
+            if (widget instanceof Timer) {
+                timerWorker.delete(userKey, (Timer) widget, id);
+            } else if (widget instanceof Eventor) {
+                timerWorker.delete(userKey, (Eventor) widget, id);
+            }
+        }
+    }
+
+    public void addTimers(TimerWorker timerWorker, UserKey userKey) {
+        for (Widget widget : widgets) {
+            if (widget instanceof Timer) {
+                timerWorker.add(userKey, (Timer) widget, id);
+            }
+            if (widget instanceof Eventor) {
+                timerWorker.add(userKey, (Eventor) widget, id);
+            }
+        }
     }
 
     public void cleanPinStorage(Widget widget) {

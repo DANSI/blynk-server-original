@@ -31,10 +31,9 @@ public class AppServer extends BaseServer {
 
         final int appTimeoutSecs = holder.limits.APP_IDLE_TIMEOUT;
         final String[] loadBalancingIPs = holder.props.getCommaSeparatedValueAsArray("load.balancing.ips");
-        final String[] allowedUsers = holder.props.getCommaSeparatedValueAsArray("allowed.users.list");
 
         final AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
-        final RegisterHandler registerHandler = new RegisterHandler(holder.userDao, allowedUsers);
+        final RegisterHandler registerHandler = new RegisterHandler(holder);
         final AppLoginHandler appLoginHandler = new AppLoginHandler(holder);
         final AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
