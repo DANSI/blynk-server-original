@@ -181,7 +181,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("createDash " + dashBoard.toString());
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
-        clientPair.appClient.send("deleteDash 1" + "\0" + "child");
+        clientPair.appClient.send("deleteDash 2");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
 
         clientPair.appClient.send("loadProfileGzipped 1");
@@ -240,10 +240,11 @@ public class PublishingPreviewFlow extends IntegrationBase {
         Profile profile = JsonParser.parseProfileFromString(clientPair.appClient.getBody(6));
         assertNotNull(profile);
         assertNotNull(profile.dashBoards);
-        assertEquals(0, profile.dashBoards.length);
+        assertEquals(1, profile.dashBoards.length);
 
         clientPair.appClient.send("loadProfileGzipped 2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(7, ILLEGAL_COMMAND)));
+        response = clientPair.appClient.getBody(7);
+        assertNotNull(response);
     }
 
     private QrHolder[] makeQRs(String to, Device[] devices, int dashId, boolean onlyFirst) throws Exception {

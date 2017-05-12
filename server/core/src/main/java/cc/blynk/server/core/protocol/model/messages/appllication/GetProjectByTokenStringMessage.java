@@ -9,14 +9,14 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class GetProjectByTokenMessage extends StringMessage {
+public class GetProjectByTokenStringMessage extends StringMessage {
 
-    public GetProjectByTokenMessage(int messageId, String body) {
+    public GetProjectByTokenStringMessage(int messageId, String body) {
         super(messageId, GET_PROJECT_BY_TOKEN, body.length(), body);
     }
 
     @Override
     public String toString() {
-        return "GetProjectByTokenMessage{" + super.toString() + "}";
+        return "GetProjectByTokenStringMessage{" + super.toString() + "}";
     }
 }

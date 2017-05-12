@@ -7,6 +7,7 @@ import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataBinaryMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetProjectByTokenBinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -68,6 +69,11 @@ public class ClientMessageDecoder extends ByteToMessageDecoder implements Defaul
                     bytes = new byte[buf.readableBytes()];
                     buf.readBytes(bytes);
                     message = new LoadProfileGzippedBinaryMessage(messageId, bytes);
+                    break;
+                case Command.GET_PROJECT_BY_TOKEN :
+                    bytes = new byte[buf.readableBytes()];
+                    buf.readBytes(bytes);
+                    message = new GetProjectByTokenBinaryMessage(messageId, bytes);
                     break;
                 default:
                     message = produce(messageId, command, buf.toString(StandardCharsets.UTF_8));

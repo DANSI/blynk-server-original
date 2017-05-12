@@ -6,6 +6,7 @@ import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetProjectByTokenBinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.ByteUtils;
@@ -20,9 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -62,6 +61,8 @@ public class TestAppClient extends AppClient {
         if (messageBase instanceof StringMessage) {
             return ((StringMessage) messageBase).body;
         } else if (messageBase instanceof LoadProfileGzippedBinaryMessage) {
+            return new String(ByteUtils.decompress(messageBase.getBytes()));
+        } else if (messageBase instanceof GetProjectByTokenBinaryMessage) {
             return new String(ByteUtils.decompress(messageBase.getBytes()));
         }
 

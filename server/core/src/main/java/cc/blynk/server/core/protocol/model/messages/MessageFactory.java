@@ -135,7 +135,7 @@ public class MessageFactory {
             case DELETE_APP :
                 return new DeleteAppMessage(messageId, body);
             case GET_PROJECT_BY_TOKEN :
-                return new GetProjectByTokenMessage(messageId, body);
+                return new GetProjectByTokenStringMessage(messageId, body);
             case EMAIL_QR :
                 return new EmailQRsMessage(messageId, body);
 
