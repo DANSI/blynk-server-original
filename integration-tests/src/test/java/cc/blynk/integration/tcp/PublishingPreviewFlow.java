@@ -117,6 +117,14 @@ public class PublishingPreviewFlow extends IntegrationBase {
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
         verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{device_section}", sb.toString())), eq(qrHolders));
+
+        FlashedToken flashedToken = holder.dbManager.selectFlashedToken(qrHolders[0].token);
+        assertNotNull(flashedToken);
+        assertEquals(flashedToken.appName, app.id);
+        assertEquals(1, flashedToken.dashId);
+        assertEquals(0, flashedToken.deviceId);
+        assertEquals(qrHolders[0].token, flashedToken.token);
+        assertEquals(false, flashedToken.isActivated);
     }
 
     @Test

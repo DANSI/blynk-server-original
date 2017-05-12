@@ -70,22 +70,22 @@ public class MailQRsLogic {
         }
 
         log.debug("Sending app preview email to {}, provision type {}", user.email, app.provisionType);
-        makePublishPreviewEmail(ctx, dash, app.provisionType, user.email, app.name, user.appName, message.id);
+        makePublishPreviewEmail(ctx, dash, app.provisionType, user.email, app.name, appId, message.id);
     }
 
-    private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash, ProvisionType provisionType, String to, String publishAppName, String appName, int msgId) {
+    private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash, ProvisionType provisionType, String to, String publishAppName, String publishAppId, int msgId) {
         String subj = publishAppName + " - App details";
         if (provisionType == ProvisionType.DYNAMIC) {
-            mailDynamic(ctx.channel(), to, subj, limits.DYNAMIC_MAIL_BODY, appName, dash, msgId);
+            mailDynamic(ctx.channel(), to, subj, limits.DYNAMIC_MAIL_BODY, publishAppId, dash, msgId);
         } else {
-            mailStatic(ctx.channel(), to, subj, limits.STATIC_MAIL_BODY, appName, dash, msgId);
+            mailStatic(ctx.channel(), to, subj, limits.STATIC_MAIL_BODY, publishAppId, dash, msgId);
         }
     }
 
-    private void mailDynamic(Channel channel, String to, String subj, String body, String appName, DashBoard dash, int msgId) {
+    private void mailDynamic(Channel channel, String to, String subj, String body, String publishAppId, DashBoard dash, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
-                QrHolder[] qrHolders = makeQRs(appName, dash, true);
+                QrHolder[] qrHolders = makeQRs(publishAppId, dash, true);
 
                 mailWrapper.sendWithAttachment(to, subj, body, qrHolders);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
@@ -96,10 +96,10 @@ public class MailQRsLogic {
         });
     }
 
-    private void mailStatic(Channel channel, String to, String subj, String body, String appName, DashBoard dash, int msgId) {
+    private void mailStatic(Channel channel, String to, String subj, String body, String publishAppId, DashBoard dash, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
-                QrHolder[] qrHolders = makeQRs(appName, dash, false);
+                QrHolder[] qrHolders = makeQRs(publishAppId, dash, false);
                 StringBuilder sb = new StringBuilder();
                 for (QrHolder qrHolder : qrHolders) {
                     qrHolder.attach(sb);
