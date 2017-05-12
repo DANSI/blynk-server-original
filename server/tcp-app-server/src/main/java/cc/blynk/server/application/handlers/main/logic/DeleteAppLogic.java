@@ -8,6 +8,8 @@ import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
@@ -17,6 +19,8 @@ import static cc.blynk.utils.BlynkByteBufUtil.ok;
  * Created on 01.02.16.
  */
 public class DeleteAppLogic {
+
+    private static final Logger log = LogManager.getLogger(DeleteAppLogic.class);
 
     public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String id = message.body;
@@ -30,8 +34,12 @@ public class DeleteAppLogic {
         }
 
         for (int projectId : user.profile.apps[existingAppIndex].projectIds) {
-            int index = user.profile.getDashIndexOrThrow(projectId);
-            user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index, DashBoard.class);
+            try {
+                int index = user.profile.getDashIndexOrThrow(projectId);
+                user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index, DashBoard.class);
+            } catch (Exception e) {
+                log.debug("Can't delete dash {} from app {}.", projectId, id);
+            }
         }
 
         user.profile.apps = ArrayUtil.remove(user.profile.apps, existingAppIndex, App.class);
