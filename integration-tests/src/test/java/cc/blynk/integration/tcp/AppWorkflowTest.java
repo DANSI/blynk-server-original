@@ -94,6 +94,15 @@ public class AppWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testUnicodeName() throws Exception {
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"Моя апка\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
+        assertEquals("Моя апка", app.name);
+    }
+
+    @Test
     public void testCantCreateWithSameId() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
         App app = JsonParser.parseApp(clientPair.appClient.getBody());
