@@ -70,7 +70,7 @@ public class AppWorkflowTest extends IntegrationBase {
         App app = JsonParser.parseApp(clientPair.appClient.getBody());
         assertNotNull(app);
         assertNotNull(app.id);
-        assertEquals(8, app.id.length());
+        assertEquals(13, app.id.length());
         assertEquals(Theme.Blynk, app.theme);
         assertEquals(ProvisionType.STATIC, app.provisionType);
         assertEquals(0, app.color);

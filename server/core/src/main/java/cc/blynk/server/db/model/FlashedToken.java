@@ -11,7 +11,7 @@ public class FlashedToken {
 
     public String token;
 
-    public String appName;
+    public String appId;
 
     public String email;
 
@@ -23,16 +23,17 @@ public class FlashedToken {
 
     public Date ts;
 
-    public FlashedToken(String token, String appName, int dashId, int deviceId) {
+    public FlashedToken(String email, String token, String appId, int dashId, int deviceId) {
+        this.email = email;
         this.token = token;
-        this.appName = appName;
+        this.appId = appId;
         this.dashId = dashId;
         this.deviceId = deviceId;
     }
 
-    public FlashedToken(String token, String appName, String email, int dashId, int deviceId, boolean isActivated, Date ts) {
+    public FlashedToken(String token, String appId, String email, int dashId, int deviceId, boolean isActivated, Date ts) {
         this.token = token;
-        this.appName = appName;
+        this.appId = appId;
         this.email = email;
         this.dashId = dashId;
         this.deviceId = deviceId;
@@ -49,14 +50,14 @@ public class FlashedToken {
 
         if (deviceId != that.deviceId) return false;
         if (token != null ? !token.equals(that.token) : that.token != null) return false;
-        return !(appName != null ? !appName.equals(that.appName) : that.appName != null);
+        return !(appId != null ? !appId.equals(that.appId) : that.appId != null);
 
     }
 
     @Override
     public int hashCode() {
         int result = token != null ? token.hashCode() : 0;
-        result = 31 * result + (appName != null ? appName.hashCode() : 0);
+        result = 31 * result + (appId != null ? appId.hashCode() : 0);
         result = 31 * result + deviceId;
         return result;
     }

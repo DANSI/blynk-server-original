@@ -120,7 +120,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         FlashedToken flashedToken = holder.dbManager.selectFlashedToken(qrHolders[0].token);
         assertNotNull(flashedToken);
-        assertEquals(flashedToken.appName, app.id);
+        assertEquals(flashedToken.appId, app.id);
         assertEquals(1, flashedToken.dashId);
         assertEquals(0, flashedToken.deviceId);
         assertEquals(qrHolders[0].token, flashedToken.token);

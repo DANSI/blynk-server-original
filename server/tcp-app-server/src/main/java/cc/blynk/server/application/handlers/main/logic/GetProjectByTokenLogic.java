@@ -2,6 +2,8 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -30,10 +32,12 @@ public class GetProjectByTokenLogic {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
+    private final UserDao userDao;
 
     public GetProjectByTokenLogic(Holder holder) {
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.dbManager = holder.dbManager;
+        this.userDao = holder.userDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -48,7 +52,9 @@ public class GetProjectByTokenLogic {
                 return;
             }
 
-            DashBoard dash = user.profile.getDashById(dbFlashedToken.dashId);
+            User publishUser = userDao.getByName(dbFlashedToken.email, AppName.BLYNK);
+
+            DashBoard dash = publishUser.profile.getDashById(dbFlashedToken.dashId);
 
             if (dash == null) {
                 log.error("Dash with {} id not exists in dashboards.", dbFlashedToken.dashId);

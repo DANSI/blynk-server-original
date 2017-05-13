@@ -85,7 +85,7 @@ public class MailQRsLogic {
     private void mailDynamic(Channel channel, String to, String subj, String body, String publishAppId, DashBoard dash, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
-                QrHolder[] qrHolders = makeQRs(publishAppId, dash, true);
+                QrHolder[] qrHolders = makeQRs(to, publishAppId, dash, true);
 
                 mailWrapper.sendWithAttachment(to, subj, body, qrHolders);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
@@ -99,7 +99,7 @@ public class MailQRsLogic {
     private void mailStatic(Channel channel, String to, String subj, String body, String publishAppId, DashBoard dash, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
-                QrHolder[] qrHolders = makeQRs(publishAppId, dash, false);
+                QrHolder[] qrHolders = makeQRs(to, publishAppId, dash, false);
                 StringBuilder sb = new StringBuilder();
                 for (QrHolder qrHolder : qrHolders) {
                     qrHolder.attach(sb);
@@ -113,7 +113,7 @@ public class MailQRsLogic {
         });
     }
 
-    private QrHolder[] makeQRs(String appName, DashBoard dash, boolean onlyFirst) throws Exception {
+    private QrHolder[] makeQRs(String username, String appId, DashBoard dash, boolean onlyFirst) throws Exception {
         QrHolder[] qrHolders = new QrHolder[dash.devices.length];
         FlashedToken[] flashedTokens = new FlashedToken[dash.devices.length];
 
@@ -124,7 +124,7 @@ public class MailQRsLogic {
             }
             String newToken = TokenGeneratorUtil.generateNewToken();
             qrHolders[i] = new QrHolder(dash.id, device.id, device.name, newToken, QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
-            flashedTokens[i] = new FlashedToken(newToken, appName, dash.id, device.id);
+            flashedTokens[i] = new FlashedToken(username, newToken, appId, dash.id, device.id);
             i++;
         }
 

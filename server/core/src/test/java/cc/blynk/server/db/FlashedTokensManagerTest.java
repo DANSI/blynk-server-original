@@ -56,7 +56,7 @@ public class FlashedTokensManagerTest {
     public void testInsertAndSelect() throws Exception {
         FlashedToken[] list = new FlashedToken[1];
         String token = UUID.randomUUID().toString().replace("-", "");
-        FlashedToken flashedToken = new FlashedToken(token, "appname", 1, 0);
+        FlashedToken flashedToken = new FlashedToken("test@blynk.cc", token, "appname", 1, 0);
         list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
 
@@ -70,7 +70,7 @@ public class FlashedTokensManagerTest {
     public void testInsertToken() throws Exception {
         FlashedToken[] list = new FlashedToken[1];
         String token = UUID.randomUUID().toString().replace("-", "");
-        FlashedToken flashedToken = new FlashedToken(token, "appname", 1, 0);
+        FlashedToken flashedToken = new FlashedToken("test@blynk.cc", token, "appname", 1, 0);
         list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
 
@@ -80,7 +80,7 @@ public class FlashedTokensManagerTest {
 
             while (rs.next()) {
                 assertEquals(flashedToken.token, rs.getString("token"));
-                assertEquals(flashedToken.appName, rs.getString("app_name"));
+                assertEquals(flashedToken.appId, rs.getString("app_name"));
                 assertEquals(flashedToken.deviceId, rs.getInt("device_id"));
                 assertFalse(rs.getBoolean("is_activated"));
                 assertNull(rs.getDate("ts"));
@@ -94,10 +94,10 @@ public class FlashedTokensManagerTest {
     public void testInsertAndActivate() throws Exception {
         FlashedToken[] list = new FlashedToken[1];
         String token = UUID.randomUUID().toString().replace("-", "");
-        FlashedToken flashedToken = new FlashedToken(token, "appname", 1, 0);
+        FlashedToken flashedToken = new FlashedToken("test@blynk.cc", token, "appname", 1, 0);
         list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
-        dbManager.activateFlashedToken(flashedToken.token, flashedToken.appName);
+        dbManager.activateFlashedToken(flashedToken.token, flashedToken.appId);
 
         try (Connection connection = dbManager.getConnection();
              Statement statement = connection.createStatement();
@@ -105,7 +105,7 @@ public class FlashedTokensManagerTest {
 
             while (rs.next()) {
                 assertEquals(flashedToken.token, rs.getString("token"));
-                assertEquals(flashedToken.appName, rs.getString("app_name"));
+                assertEquals(flashedToken.appId, rs.getString("app_name"));
                 assertEquals(flashedToken.deviceId, rs.getInt("device_id"));
                 assertTrue(rs.getBoolean("is_activated"));
                 assertNotNull(rs.getDate("ts"));

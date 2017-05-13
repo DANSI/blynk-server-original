@@ -71,7 +71,7 @@ public class AssignTokenTest extends IntegrationBase {
     public void testTokenActivate() throws Exception {
         FlashedToken[] list = new FlashedToken[1];
         String token = UUID.randomUUID().toString().replace("-", "");
-        FlashedToken flashedToken = new FlashedToken(token, AppName.BLYNK, 1, 0);
+        FlashedToken flashedToken = new FlashedToken("test@blynk.cc", token, AppName.BLYNK, 1, 0);
         list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
 
@@ -86,7 +86,7 @@ public class AssignTokenTest extends IntegrationBase {
     public void testCorrectToken() throws Exception {
         FlashedToken[] list = new FlashedToken[1];
         String token = UUID.randomUUID().toString().replace("-", "");
-        FlashedToken flashedToken = new FlashedToken(token, AppName.BLYNK, 1, 0);
+        FlashedToken flashedToken = new FlashedToken("test@blynk.cc", token, AppName.BLYNK, 1, 0);
         list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
 

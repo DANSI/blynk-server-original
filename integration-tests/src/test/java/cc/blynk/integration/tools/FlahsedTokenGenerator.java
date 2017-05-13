@@ -20,7 +20,7 @@ import java.util.UUID;
 public class FlahsedTokenGenerator {
 
     public static void main(String[] args) throws Exception{
-        FlashedToken[] flashedTokens = generateTokens(100, "Grow", 2);
+        FlashedToken[] flashedTokens = generateTokens("test@blynk.cc", 100, "Grow", 2);
         DBManager dbManager = new DBManager("db-test.properties", new BlockingIOProcessor(1, 100), true);
 
         dbManager.insertFlashedTokens(flashedTokens);
@@ -31,14 +31,14 @@ public class FlahsedTokenGenerator {
         }
     }
 
-    private static FlashedToken[] generateTokens(int count, String appName, int deviceCount) {
+    private static FlashedToken[] generateTokens(String email, int count, String appName, int deviceCount) {
         FlashedToken[] flashedTokens = new FlashedToken[count * deviceCount];
 
         int counter = 0;
         for (int deviceId = 0; deviceId < deviceCount; deviceId++) {
             for (int i = 0; i < count; i++) {
                 String token = UUID.randomUUID().toString().replace("-", "");
-                flashedTokens[counter++] = new FlashedToken(token, appName, 1, deviceId);
+                flashedTokens[counter++] = new FlashedToken(email, token, appName, 1, deviceId);
                 System.out.println("Token : " + token + ", deviceId : " + deviceId + ", appName : " + appName);
             }
         }
