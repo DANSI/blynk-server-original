@@ -10,7 +10,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     users.listView()
         .sortField('lastModifiedTs')
         .fields([
-            nga.field('name', 'email').isDetailLink(true),
+            nga.field('email').isDetailLink(true),
             nga.field('appName'),
             nga.field('# of projects').map(function (value, entry) {
                 if (entry["profile.dashBoards"]) {
@@ -27,9 +27,10 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         ]);
 
     users.editionView()
-        .title('Edit user "{{entry.values.name}}"')
+        .title('Edit user "{{entry.values.email}}"')
         .fields(
-            nga.field('name', 'email'),
+            nga.field('email'),
+            nga.field('name'),
             nga.field('pass', 'password'),
             nga.field('lastModifiedTs'),
             nga.field('energy'),
