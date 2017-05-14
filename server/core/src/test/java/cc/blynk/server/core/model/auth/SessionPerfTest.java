@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.auth;
 
 import cc.blynk.server.Limits;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelFuture;
@@ -99,10 +100,15 @@ public class SessionPerfTest {
     }
 
     private ChannelHandler newChannelHandler(final HardwareStateHolder hardwareStateHolder) {
-        return new BaseSimpleChannelInboundHandler<Object>(Object.class, new Limits(new ServerProperties(Collections.emptyMap())), hardwareStateHolder) {
+        return new BaseSimpleChannelInboundHandler<Object>(Object.class, new Limits(new ServerProperties(Collections.emptyMap()))) {
             @Override
             public void messageReceived(ChannelHandlerContext ctx, Object msg) {
                 throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public StateHolderBase getState() {
+                return hardwareStateHolder;
             }
         };
     }

@@ -18,19 +18,17 @@ import io.netty.util.ReferenceCountUtil;
  */
 public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
-    public final StateHolderBase state;
     private final int USER_QUOTA_LIMIT_WARN_PERIOD;
     private final int USER_QUOTA_LIMIT;
     private final Class<?> type;
     private final InstanceLoadMeter quotaMeter;
     private long lastQuotaExceededTime;
 
-    protected BaseSimpleChannelInboundHandler(Class<?> type, Limits limits, StateHolderBase state) {
+    protected BaseSimpleChannelInboundHandler(Class<?> type, Limits limits) {
         this.type = type;
         this.USER_QUOTA_LIMIT = limits.USER_QUOTA_LIMIT;
         this.USER_QUOTA_LIMIT_WARN_PERIOD = limits.USER_QUOTA_LIMIT_WARN_PERIOD_MILLIS;
         this.quotaMeter = new InstanceLoadMeter();
-        this.state = state;
     }
 
     private static int getMsgId(Object o) {
@@ -80,6 +78,8 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
      * @param msg           the message to handle
      */
     public abstract void messageReceived(ChannelHandlerContext ctx, I msg);
+
+    public abstract StateHolderBase getState();
 
     public InstanceLoadMeter getQuotaMeter() {
         return quotaMeter;

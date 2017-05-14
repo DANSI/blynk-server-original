@@ -25,6 +25,7 @@ import cc.blynk.server.application.handlers.main.logic.sharing.GetSharedDashLogi
 import cc.blynk.server.application.handlers.main.logic.sharing.RefreshShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.ShareLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
@@ -75,7 +76,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final GlobalStats stats;
 
     public AppHandler(Holder holder, AppStateHolder state) {
-        super(StringMessage.class, holder.limits, state);
+        super(StringMessage.class, holder.limits);
         this.token = new GetTokenLogic(holder);
         this.assignTokenLogic = new AssignTokenLogic(holder);
         this.hardwareApp = new HardwareAppLogic(holder, state.user.email);
@@ -245,4 +246,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         }
     }
 
+    @Override
+    public StateHolderBase getState() {
+        return state;
+    }
 }

@@ -29,7 +29,7 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
  */
 public class HardwareSyncLogic {
 
-    public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
+    public static void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         final int dashId = state.dashId;
         final int deviceId = state.deviceId;
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
@@ -41,7 +41,7 @@ public class HardwareSyncLogic {
         }
     }
 
-    private void syncAll(ChannelHandlerContext ctx, int msgId, DashBoard dash, int deviceId) {
+    private static void syncAll(ChannelHandlerContext ctx, int msgId, DashBoard dash, int deviceId) {
         //return all widgets state
         for (Widget widget : dash.widgets) {
             //one exclusion, no need to sync RTC
@@ -63,7 +63,7 @@ public class HardwareSyncLogic {
 
     //message format is "vr 22 33"
     //return specific widget state
-    private void syncSpecificPins(ChannelHandlerContext ctx, String messageBody, int msgId, DashBoard dash, int deviceId) {
+    private static void syncSpecificPins(ChannelHandlerContext ctx, String messageBody, int msgId, DashBoard dash, int deviceId) {
         String[] bodyParts = messageBody.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (bodyParts.length < 2 || bodyParts[0].isEmpty()) {

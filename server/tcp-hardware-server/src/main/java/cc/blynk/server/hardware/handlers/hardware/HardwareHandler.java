@@ -3,6 +3,7 @@ package cc.blynk.server.hardware.handlers.hardware;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
@@ -26,12 +27,11 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final TwitLogic tweet;
     private final SmsLogic smsLogic;
     private final SetWidgetPropertyLogic propertyLogic;
-    private final HardwareSyncLogic sync;
     private final BlynkInternalLogic info;
     private final GlobalStats stats;
 
     public HardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
-        super(StringMessage.class, holder.limits, stateHolder);
+        super(StringMessage.class, holder.limits);
         this.hardware = new HardwareLogic(holder, stateHolder.user.email);
         this.bridge = new BridgeLogic(holder.sessionDao, hardware);
 
@@ -40,7 +40,6 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.tweet = new TwitLogic(holder.blockingIOProcessor, holder.twitterWrapper, holder.limits.NOTIFICATION_PERIOD_LIMIT_SEC);
         this.smsLogic = new SmsLogic(holder.smsWrapper, holder.limits.NOTIFICATION_PERIOD_LIMIT_SEC);
         this.propertyLogic = new SetWidgetPropertyLogic(holder.sessionDao);
-        this.sync = new HardwareSyncLogic();
         this.info = new BlynkInternalLogic(holder.limits.HARDWARE_IDLE_TIMEOUT);
 
         this.state = stateHolder;
@@ -73,7 +72,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 smsLogic.messageReceived(ctx, state, msg);
                 break;
             case HARDWARE_SYNC:
-                sync.messageReceived(ctx, state, msg);
+                HardwareSyncLogic.messageReceived(ctx, state, msg);
                 break;
             case BLYNK_INTERNAL:
                 info.messageReceived(ctx, state, msg);
@@ -84,4 +83,8 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         }
     }
 
+    @Override
+    public StateHolderBase getState() {
+        return state;
+    }
 }

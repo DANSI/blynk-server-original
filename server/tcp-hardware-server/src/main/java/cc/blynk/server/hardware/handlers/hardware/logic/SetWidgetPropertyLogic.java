@@ -37,8 +37,6 @@ public class SetWidgetPropertyLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        Session session = sessionDao.userSession.get(state.userKey);
-
         String[] bodyParts = split3(message.body);
 
         if (bodyParts.length != 3) {
@@ -83,6 +81,7 @@ public class SetWidgetPropertyLogic {
             return;
         }
 
+        Session session = sessionDao.userSession.get(state.userKey);
         session.sendToApps(SET_WIDGET_PROPERTY, message.id, dash.id, deviceId, message.body);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

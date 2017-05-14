@@ -2,6 +2,7 @@ package cc.blynk.server.hardware.handlers.hardware;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.hardware.handlers.hardware.logic.*;
@@ -32,7 +33,7 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
     private final GlobalStats stats;
 
     public MqttHardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
-        super(MqttMessage.class, holder.limits, stateHolder);
+        super(MqttMessage.class, holder.limits);
         this.hardware = new MqttHardwareLogic(holder.sessionDao, holder.reportingDao);
 
         final long defaultNotificationQuotaLimit = holder.props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
@@ -75,7 +76,10 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
                 ctx.close();
                 break;
         }
-
     }
 
+    @Override
+    public StateHolderBase getState() {
+        return state;
+    }
 }

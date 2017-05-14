@@ -9,6 +9,7 @@ import cc.blynk.server.application.handlers.main.logic.reporting.GetGraphDataLog
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.application.handlers.sharing.logic.HardwareAppShareLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
@@ -31,7 +32,7 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final GlobalStats stats;
 
     public AppShareHandler(Holder holder, AppShareStateHolder state) {
-        super(StringMessage.class, holder.limits, state);
+        super(StringMessage.class, holder.limits);
         this.hardwareApp = new HardwareAppShareLogic(holder.sessionDao);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.loadProfileGzippedLogic = new LoadProfileGzippedLogic(holder);
@@ -68,4 +69,8 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         }
     }
 
+    @Override
+    public StateHolderBase getState() {
+        return state;
+    }
 }
