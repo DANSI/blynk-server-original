@@ -24,7 +24,7 @@ public class UpdateDeviceLogic {
 
     private static final Logger log = LogManager.getLogger(UpdateDeviceLogic.class);
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {

@@ -65,7 +65,6 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final RedeemLogic redeemLogic;
     private final AddEnergyLogic addEnergyLogic;
     private final CreateDeviceLogic createDeviceLogic;
-    private final UpdateDeviceLogic updateDeviceLogic;
     private final DeleteDeviceLogic deleteDeviceLogic;
     private final LoadProfileGzippedLogic loadProfileGzippedLogic;
     private final CreateAppLogic createAppLogic;
@@ -101,7 +100,6 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.updateDashSettingLogic = new UpdateDashSettingLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES);
 
         this.createDeviceLogic = new CreateDeviceLogic(holder);
-        this.updateDeviceLogic = new UpdateDeviceLogic();
         this.deleteDeviceLogic = new DeleteDeviceLogic(holder.tokenManager, holder.sessionDao);
 
         this.shareLogic = new ShareLogic(holder.sessionDao);
@@ -205,7 +203,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 createDeviceLogic.messageReceived(ctx, state.user, msg);
                 break;
             case UPDATE_DEVICE :
-                updateDeviceLogic.messageReceived(ctx, state.user, msg);
+                UpdateDeviceLogic.messageReceived(ctx, state.user, msg);
                 break;
             case DELETE_DEVICE :
                 deleteDeviceLogic.messageReceived(ctx, state, msg);
