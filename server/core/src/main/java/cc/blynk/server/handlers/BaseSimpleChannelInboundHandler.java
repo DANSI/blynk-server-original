@@ -10,7 +10,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.ReferenceCountUtil;
-import io.netty.util.internal.TypeParameterMatcher;
 
 /**
  * The Blynk Project.
@@ -22,12 +21,12 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
     public final StateHolderBase state;
     private final int USER_QUOTA_LIMIT_WARN_PERIOD;
     private final int USER_QUOTA_LIMIT;
-    private final TypeParameterMatcher matcher;
+    private final Class<?> type;
     private final InstanceLoadMeter quotaMeter;
     private long lastQuotaExceededTime;
 
-    protected BaseSimpleChannelInboundHandler(Limits limits, StateHolderBase state) {
-        this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
+    protected BaseSimpleChannelInboundHandler(Class<?> type, Limits limits, StateHolderBase state) {
+        this.type = type;
         this.USER_QUOTA_LIMIT = limits.USER_QUOTA_LIMIT;
         this.USER_QUOTA_LIMIT_WARN_PERIOD = limits.USER_QUOTA_LIMIT_WARN_PERIOD_MILLIS;
         this.quotaMeter = new InstanceLoadMeter();
@@ -44,7 +43,7 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
     @Override
     @SuppressWarnings("unchecked")
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (matcher.match(msg)) {
+        if (type.isInstance(msg)) {
             final I typedMsg = (I) msg;
             try {
                 if (quotaMeter.getOneMinuteRate() > USER_QUOTA_LIMIT) {

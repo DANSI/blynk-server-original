@@ -31,7 +31,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final GlobalStats stats;
 
     public HardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
-        super(holder.limits, stateHolder);
+        super(StringMessage.class, holder.limits, stateHolder);
         this.hardware = new HardwareLogic(holder, stateHolder.user.email);
         this.bridge = new BridgeLogic(holder.sessionDao, hardware);
 

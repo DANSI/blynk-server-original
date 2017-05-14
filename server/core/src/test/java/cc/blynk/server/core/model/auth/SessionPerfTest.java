@@ -99,7 +99,7 @@ public class SessionPerfTest {
     }
 
     private ChannelHandler newChannelHandler(final HardwareStateHolder hardwareStateHolder) {
-        return new BaseSimpleChannelInboundHandler(new Limits(new ServerProperties(Collections.emptyMap())), hardwareStateHolder) {
+        return new BaseSimpleChannelInboundHandler<Object>(Object.class, new Limits(new ServerProperties(Collections.emptyMap())), hardwareStateHolder) {
             @Override
             public void messageReceived(ChannelHandlerContext ctx, Object msg) {
                 throw new UnsupportedOperationException();

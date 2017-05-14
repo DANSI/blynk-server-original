@@ -31,7 +31,7 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final GlobalStats stats;
 
     public AppShareHandler(Holder holder, AppShareStateHolder state) {
-        super(holder.limits, state);
+        super(StringMessage.class, holder.limits, state);
         this.hardwareApp = new HardwareAppShareLogic(holder.sessionDao);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.loadProfileGzippedLogic = new LoadProfileGzippedLogic(holder);
