@@ -36,11 +36,11 @@ public class MQTTHardwareServer extends BaseServer {
                 if (hardTimeoutSecs > 0) {
                     pipeline.addLast("MqttReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
                 }
-                pipeline.addLast(hardwareChannelStateHandler);
-                pipeline.addLast(new MqttDecoder());
-                pipeline.addLast(MqttEncoder.INSTANCE);
-                pipeline.addLast(mqttHardwareLoginHandler);
-                pipeline.addLast(new HardwareNotLoggedHandler());
+                pipeline.addLast(hardwareChannelStateHandler)
+                .addLast(new MqttDecoder())
+                .addLast(MqttEncoder.INSTANCE)
+                .addLast(mqttHardwareLoginHandler)
+                .addLast(new HardwareNotLoggedHandler());
             }
         };
 

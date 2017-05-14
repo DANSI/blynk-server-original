@@ -50,15 +50,15 @@ public class AppServer extends BaseServer {
                     pipeline.addLast("AReadTimeout", new ReadTimeoutHandler(appTimeoutSecs));
                 }
 
-                pipeline.addLast("ASSL", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()));
-                pipeline.addLast("AChannelState", appChannelStateHandler);
-                pipeline.addLast("AMessageDecoder", new MessageDecoder(holder.stats));
-                pipeline.addLast("AMessageEncoder", new MessageEncoder(holder.stats));
-                pipeline.addLast("AGetServer", getServerHandler);
-                pipeline.addLast("ARegister", registerHandler);
-                pipeline.addLast("ALogin", appLoginHandler);
-                pipeline.addLast("AShareLogin", appShareLoginHandler);
-                pipeline.addLast("ANotLogged", userNotLoggedHandler);
+                pipeline.addLast("ASSL", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
+                        .addLast("AChannelState", appChannelStateHandler)
+                        .addLast("AMessageDecoder", new MessageDecoder(holder.stats))
+                        .addLast("AMessageEncoder", new MessageEncoder(holder.stats))
+                        .addLast("AGetServer", getServerHandler)
+                        .addLast("ARegister", registerHandler)
+                        .addLast("ALogin", appLoginHandler)
+                        .addLast("AShareLogin", appShareLoginHandler)
+                        .addLast("ANotLogged", userNotLoggedHandler);
             }
         };
     }

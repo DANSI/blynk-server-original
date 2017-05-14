@@ -34,16 +34,16 @@ public class HardwareServer extends BaseServer {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
-                //non-sharable handlers
+
                 if (hardTimeoutSecs > 0) {
                     pipeline.addLast("H_ReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
                 }
-                pipeline.addLast("H_ChannelState", hardwareChannelStateHandler);
-                pipeline.addLast("H_MessageDecoder", new MessageDecoder(holder.stats));
-                pipeline.addLast("H_MessageEncoder", new MessageEncoder(holder.stats));
-                pipeline.addLast("H_Login", hardwareLoginHandler);
-                pipeline.addLast("H_NotLogged", new HardwareNotLoggedHandler());
-                pipeline.addLast("H_AlreadyLogged", alreadyLoggedHandler);
+                pipeline.addLast("H_ChannelState", hardwareChannelStateHandler)
+                .addLast("H_MessageDecoder", new MessageDecoder(holder.stats))
+                .addLast("H_MessageEncoder", new MessageEncoder(holder.stats))
+                .addLast("H_Login", hardwareLoginHandler)
+                .addLast("H_NotLogged", new HardwareNotLoggedHandler())
+                .addLast("H_AlreadyLogged", alreadyLoggedHandler);
             }
         };
 

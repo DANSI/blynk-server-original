@@ -5,7 +5,6 @@ import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.core.BaseServer;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
@@ -32,12 +31,12 @@ public class HttpAPIServer extends BaseServer {
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                final ChannelPipeline pipeline = ch.pipeline();
-                pipeline.addLast("HttpServerCodec", new HttpServerCodec());
-                pipeline.addLast("HttpServerKeepAlive", new HttpServerKeepAliveHandler());
-                pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(65536, true));
-                pipeline.addLast(letsEncryptHandler);
-                pipeline.addLast("HttpWebSocketUnificator", httpAndWebSocketUnificatorHandler);
+                ch.pipeline()
+                .addLast("HttpServerCodec", new HttpServerCodec())
+                .addLast("HttpServerKeepAlive", new HttpServerKeepAliveHandler())
+                .addLast("HttpObjectAggregator", new HttpObjectAggregator(65536, true))
+                .addLast(letsEncryptHandler)
+                .addLast("HttpWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }
         };
     }
