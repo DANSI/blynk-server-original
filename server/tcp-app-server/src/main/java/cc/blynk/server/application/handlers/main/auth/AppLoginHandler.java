@@ -55,15 +55,21 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     }
 
     private static void cleanPipeline(ChannelPipeline pipeline) {
-        //common handlers for websockets and app pipeline
-        pipeline.remove(AppLoginHandler.class);
-        pipeline.remove(UserNotLoggedHandler.class);
-        pipeline.remove(GetServerHandler.class);
+        try {
+            //common handlers for websockets and app pipeline
+            pipeline.remove(AppLoginHandler.class);
+            pipeline.remove(UserNotLoggedHandler.class);
+            pipeline.remove(GetServerHandler.class);
 
-        //app pipeline sepcific handlers
-        if (pipeline.get(WebSocketHandler.class) != null) {
-            pipeline.remove(RegisterHandler.class);
-            pipeline.remove(AppShareLoginHandler.class);
+            //app pipeline sepcific handlers
+            if (pipeline.get(WebSocketHandler.class) != null) {
+                pipeline.remove(RegisterHandler.class);
+                pipeline.remove(AppShareLoginHandler.class);
+            }
+        } catch (NoSuchElementException e) {
+            //this case possible when few login commands come at same time to different threads
+            //just do nothing and ignore.
+            //https://github.com/blynkkk/blynk-server/issues/224
         }
     }
 
@@ -163,31 +169,28 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
     }
 
     private void login(ChannelHandlerContext ctx, int messageId, User user, OsType osType, String version) {
+        final ChannelPipeline pipeline = ctx.pipeline();
+        cleanPipeline(pipeline);
+
         AppStateHolder appStateHolder = new AppStateHolder(user, osType, version);
+        pipeline.addLast("AAppHandler", new AppHandler(holder, appStateHolder));
 
-        try {
-            cleanPipeline(ctx.pipeline());
-        } catch (NoSuchElementException e) {
-            //this case possible when few login commands come at same time to different threads
-            //just do nothing and ignore.
-            //https://github.com/blynkkk/blynk-server/issues/224
-            return;
-        }
+        final Channel channel = ctx.channel();
 
-        ctx.pipeline().addLast("AAppHandler", new AppHandler(holder, appStateHolder));
-
-        Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, ctx.channel().eventLoop());
-        user.lastLoggedIP = IPUtils.getIp(ctx.channel());
+        user.lastLoggedIP = IPUtils.getIp(channel);
         user.lastLoggedAt = System.currentTimeMillis();
+
+        //todo back compatibility code. remove in future.
         if (user.region == null || user.region.isEmpty()) {
             user.region = holder.region;
         }
 
-        if (session.initialEventLoop != ctx.channel().eventLoop()) {
+        Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, channel.eventLoop());
+        if (session.initialEventLoop != channel.eventLoop()) {
             log.debug("Re registering app channel. {}", ctx.channel());
             reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, messageId));
         } else {
-            completeLogin(ctx.channel(), session, user, messageId);
+            completeLogin(channel, session, user, messageId);
         }
     }
 
@@ -196,7 +199,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         channel.writeAndFlush(ok(msgId), channel.voidPromise());
         for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.isAppConnectedOn && dashBoard.isActive) {
-                log.trace("{}-{}. Sendeind App Connected event to hardware.", user.email, user.appName);
+                log.trace("{}-{}. Sending App Connected event to hardware.", user.email, user.appName);
                 session.sendMessageToHardware(dashBoard.id, Command.BLYNK_INTERNAL, 7777, "acon");
             }
         }
