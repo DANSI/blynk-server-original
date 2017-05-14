@@ -48,14 +48,13 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
     @SuppressWarnings("unchecked")
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (type.isInstance(msg)) {
-            final I typedMsg = (I) msg;
             try {
                 if (quotaMeter.getOneMinuteRate() > USER_QUOTA_LIMIT) {
                     sendErrorResponseIfTicked();
                     return;
                 }
                 quotaMeter.mark();
-                messageReceived(ctx, typedMsg);
+                messageReceived(ctx, (I) msg);
             } catch (Exception e) {
                 handleGeneralException(ctx, e, getMsgId(msg));
             } finally {
