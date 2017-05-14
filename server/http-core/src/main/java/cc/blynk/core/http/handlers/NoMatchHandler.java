@@ -25,8 +25,7 @@ public class NoMatchHandler extends ChannelInboundHandlerAdapter {
             if (msg instanceof HttpRequest) {
                 HttpRequest req = (HttpRequest) msg;
                 log.debug("Error resolving url. No path found. {} : {}", req.method().name(), req.uri());
-                //todo fix that after new netty version
-                ctx.writeAndFlush(Response.notFound());
+                ctx.writeAndFlush(Response.notFound(), ctx.voidPromise());
             }
         } finally {
             ReferenceCountUtil.release(msg);
