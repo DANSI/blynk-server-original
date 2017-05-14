@@ -97,7 +97,7 @@ public class FlashedTokensManagerTest {
         FlashedToken flashedToken = new FlashedToken("test@blynk.cc", token, "appname", 1, 0);
         list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
-        dbManager.activateFlashedToken(flashedToken.token, flashedToken.appId);
+        dbManager.activateFlashedToken(flashedToken.token);
 
         try (Connection connection = dbManager.getConnection();
              Statement statement = connection.createStatement();

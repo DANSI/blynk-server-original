@@ -185,8 +185,8 @@ public class DBManager implements Closeable {
         return null;
     }
 
-    public boolean activateFlashedToken(String token, String appName) {
-        return flashedTokensDBDao.activateFlashedToken(token, appName);
+    public boolean activateFlashedToken(String token) {
+        return flashedTokensDBDao.activateFlashedToken(token);
     }
 
     public boolean insertFlashedTokens(FlashedToken[] flashedTokenList) throws Exception {

@@ -71,7 +71,7 @@ public class AssignTokenLogic {
                 return;
             }
 
-            if (!dbManager.activateFlashedToken(token, user.appName)) {
+            if (!dbManager.activateFlashedToken(token)) {
                 log.error("Error activated flashed token {}", token);
                 ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
                 return;
