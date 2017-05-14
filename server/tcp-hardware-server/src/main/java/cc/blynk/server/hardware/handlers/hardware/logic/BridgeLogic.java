@@ -10,8 +10,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
 import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
@@ -33,11 +32,11 @@ public class BridgeLogic {
     private static final Logger log = LogManager.getLogger(BridgeLogic.class);
     private final HardwareLogic hardwareLogic;
     private final SessionDao sessionDao;
-    private final Map<String, String> sendToMap;
+    private final HashMap<String, String> sendToMap;
 
     public BridgeLogic(SessionDao sessionDao, HardwareLogic hardwareLogic) {
         this.sessionDao = sessionDao;
-        this.sendToMap = new ConcurrentHashMap<>();
+        this.sendToMap = new HashMap<>();
         this.hardwareLogic = hardwareLogic;
     }
 
