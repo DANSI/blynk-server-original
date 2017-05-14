@@ -54,14 +54,8 @@ public class EventorProcessor {
             return;
         }
 
-        double valueParsed;
-        try {
-            valueParsed = NumberUtil.parseDouble(triggerValue);
-            if (valueParsed == NumberUtil.NO_RESULT) {
-                return;
-            }
-        } catch (Exception e) {
-            //should never happen. just in case.
+        double valueParsed = NumberUtil.parseDouble(triggerValue);
+        if (valueParsed == NumberUtil.NO_RESULT) {
             return;
         }
 

@@ -64,9 +64,6 @@ public class NumberUtil {
 
         double number;
 
-        // Look for the special csqings NaN, Inf,
-
-
         boolean error = true;
 
         int startOffset = off;
