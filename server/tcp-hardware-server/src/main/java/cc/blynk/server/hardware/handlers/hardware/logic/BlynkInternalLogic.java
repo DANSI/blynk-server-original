@@ -7,15 +7,14 @@ import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.StringUtils;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
-import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
@@ -28,6 +27,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  * Created on 2/1/2015.
  *
  */
+@ChannelHandler.Sharable
 public class BlynkInternalLogic {
 
     private static final Logger log = LogManager.getLogger(BlynkInternalLogic.class);

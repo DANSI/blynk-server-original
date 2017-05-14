@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.StateHolderBase;
-import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.*;
@@ -28,7 +27,6 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final SmsLogic smsLogic;
     private final SetWidgetPropertyLogic propertyLogic;
     private final BlynkInternalLogic info;
-    private final GlobalStats stats;
 
     public HardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
         super(StringMessage.class, holder.limits);
@@ -43,12 +41,10 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.info = new BlynkInternalLogic(holder.limits.HARDWARE_IDLE_TIMEOUT);
 
         this.state = stateHolder;
-        this.stats = holder.stats;
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
-        this.stats.incrementHardStat();
         switch (msg.command) {
             case HARDWARE:
                 hardware.messageReceived(ctx, state, msg);

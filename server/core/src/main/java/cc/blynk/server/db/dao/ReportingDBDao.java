@@ -42,6 +42,7 @@ public class ReportingDBDao {
 
     public static final String insertStatMinute = "INSERT INTO reporting_app_stat_minute (region, ts, active, active_week, active_month, minute_rate, connected, online_apps, online_hards, total_online_apps, total_online_hards, registrations) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
     public static final String insertStatCommandsMinute = "INSERT INTO reporting_app_command_stat_minute (region, ts, response, register, login, load_profile, app_sync, sharing, get_token, ping, activate, deactivate, refresh_token, get_graph_data, export_graph_data, set_widget_property, bridge, hardware, get_share_dash, get_share_token, refresh_share_token, share_login, create_project, update_project, delete_project, hardware_sync, internal, sms, tweet, email, push, add_push_token, create_widget, update_widget, delete_widget, create_device, update_device, delete_device, get_devices, create_tag, update_tag, delete_tag, get_tags, add_energy, get_energy, get_server, connect_redirect, web_sockets, eventor, webhooks, appTotal, hardTotal) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    //todo add one more column mqttTotal and replace hardTotal with mqtt total
     public static final String insertStatHttpCommandMinute = "INSERT INTO reporting_http_command_stat_minute (region, ts, is_hardware_connected, is_app_connected, get_pin_data, update_pin, email, push, get_project, qr, get_history_pin_data, total) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
     private static final Logger log = LogManager.getLogger(ReportingDBDao.class);
@@ -228,7 +229,7 @@ public class ReportingDBDao {
             commandStatPS.setInt(49, cs.eventor);
             commandStatPS.setInt(50, cs.webhooks);
             commandStatPS.setInt(51, cs.appTotal);
-            commandStatPS.setInt(52, cs.hardTotal);
+            commandStatPS.setInt(52, cs.mqttTotal);
             commandStatPS.executeUpdate();
 
             connection.commit();

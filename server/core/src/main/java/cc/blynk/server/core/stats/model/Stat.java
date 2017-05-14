@@ -53,7 +53,7 @@ public class Stat {
         }
 
         this.commands.appTotal = (int) globalStats.getTotalAppCounter(reset);
-        this.commands.hardTotal = (int) globalStats.getTotalHardCounter(reset);
+        this.commands.mqttTotal = (int) globalStats.getTotalMqttCounter(reset);
 
         this.oneMinRate = (int) globalStats.totalMessages.getOneMinuteRate();
         int connectedSessions = 0;

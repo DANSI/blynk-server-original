@@ -69,7 +69,7 @@ public class CommandStat {
     public int webhooks;
 
     public int appTotal;
-    public int hardTotal;
+    public int mqttTotal;
 
     public void assign(short field, int val) {
         switch (field) {

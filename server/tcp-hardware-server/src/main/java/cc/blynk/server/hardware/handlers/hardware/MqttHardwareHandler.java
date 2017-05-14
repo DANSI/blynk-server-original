@@ -5,7 +5,6 @@ import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.hardware.handlers.hardware.logic.*;
 import cc.blynk.server.hardware.handlers.hardware.mqtt.logic.MqttHardwareLogic;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttMessage;
@@ -22,36 +21,18 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
 
     public final HardwareStateHolder state;
     private final MqttHardwareLogic hardware;
-    private final MailLogic email;
-    //private final BridgeLogic bridge;
-    private final PushLogic push;
-    private final TwitLogic tweet;
-    private final SmsLogic smsLogic;
-    private final SetWidgetPropertyLogic propertyLogic;
-    private final HardwareSyncLogic sync;
-    private final BlynkInternalLogic info;
     private final GlobalStats stats;
 
     public MqttHardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
         super(MqttMessage.class, holder.limits);
         this.hardware = new MqttHardwareLogic(holder.sessionDao, holder.reportingDao);
-
-        final long defaultNotificationQuotaLimit = holder.props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
-        this.email = new MailLogic(holder.blockingIOProcessor, holder.mailWrapper, defaultNotificationQuotaLimit);
-        this.push = new PushLogic(holder.gcmWrapper, defaultNotificationQuotaLimit);
-        this.tweet = new TwitLogic(holder.blockingIOProcessor, holder.twitterWrapper, defaultNotificationQuotaLimit);
-        this.smsLogic = new SmsLogic(holder.smsWrapper, defaultNotificationQuotaLimit);
-        this.propertyLogic = new SetWidgetPropertyLogic(holder.sessionDao);
-        this.sync = new HardwareSyncLogic();
-        this.info = new BlynkInternalLogic(holder.limits.HARDWARE_IDLE_TIMEOUT);
-
         this.state = stateHolder;
         this.stats = holder.stats;
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MqttMessage msg) {
-        this.stats.incrementHardStat();
+        this.stats.incrementMqttStat();
         MqttMessageType messageType = msg.fixedHeader().messageType();
 
         switch (messageType) {

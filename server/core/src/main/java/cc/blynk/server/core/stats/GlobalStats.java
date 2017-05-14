@@ -12,7 +12,7 @@ public class GlobalStats {
     private static final int LAST_COMMAND_INDEX = 72 + 2;
 
     private static final int APP_STAT_COUNTER_INDEX = LAST_COMMAND_INDEX - 1;
-    private static final int HARD_STAT_COUNTER_INDEX = LAST_COMMAND_INDEX - 2;
+    private static final int MQTT_STAT_COUNTER_INDEX = LAST_COMMAND_INDEX - 2;
 
     //separate by income/outcome?
     public final Meter totalMessages;
@@ -39,8 +39,8 @@ public class GlobalStats {
         specificCounters[APP_STAT_COUNTER_INDEX].increment();
     }
 
-    public void incrementHardStat() {
-        specificCounters[HARD_STAT_COUNTER_INDEX].increment();
+    public void incrementMqttStat() {
+        specificCounters[MQTT_STAT_COUNTER_INDEX].increment();
     }
 
     public long getTotalAppCounter(boolean reset) {
@@ -48,8 +48,8 @@ public class GlobalStats {
         return reset ? longAdder.sumThenReset() : longAdder.sum();
     }
 
-    public long getTotalHardCounter(boolean reset) {
-        LongAdder longAdder = specificCounters[HARD_STAT_COUNTER_INDEX];
+    public long getTotalMqttCounter(boolean reset) {
+        LongAdder longAdder = specificCounters[MQTT_STAT_COUNTER_INDEX];
         return reset ? longAdder.sumThenReset() : longAdder.sum();
     }
 
