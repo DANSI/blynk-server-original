@@ -18,7 +18,14 @@ import io.netty.util.ReferenceCountUtil;
  */
 public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
-    private final int USER_QUOTA_LIMIT_WARN_PERIOD;
+    /*
+     * in case of consistent quota limit exceed during long term, sending warning response back to exceeding channel
+     * for performance reason sending only 1 message within interval. In millis
+     *
+     * this property was never changed, so moving it to static field
+     */
+    private final static int USER_QUOTA_LIMIT_WARN_PERIOD = 60_000;
+
     private final int USER_QUOTA_LIMIT;
     private final Class<?> type;
     private final InstanceLoadMeter quotaMeter;
@@ -27,7 +34,6 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
     protected BaseSimpleChannelInboundHandler(Class<?> type, Limits limits) {
         this.type = type;
         this.USER_QUOTA_LIMIT = limits.USER_QUOTA_LIMIT;
-        this.USER_QUOTA_LIMIT_WARN_PERIOD = limits.USER_QUOTA_LIMIT_WARN_PERIOD_MILLIS;
         this.quotaMeter = new InstanceLoadMeter();
     }
 

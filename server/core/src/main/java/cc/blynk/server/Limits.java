@@ -24,7 +24,6 @@ public class Limits {
     //hardware side limits
     public final long NOTIFICATION_PERIOD_LIMIT_SEC;
     public final int USER_QUOTA_LIMIT;
-    public final int USER_QUOTA_LIMIT_WARN_PERIOD_MILLIS;
     public final long WEBHOOK_PERIOD_LIMITATION;
     public final int WEBHOOK_RESPONSE_SUZE_LIMIT_BYTES;
     public final int WEBHOOK_FAILURE_LIMIT;
@@ -46,7 +45,6 @@ public class Limits {
 
         this.NOTIFICATION_PERIOD_LIMIT_SEC = props.getLongProperty("notifications.frequency.user.quota.limit", 15L) * 1000L;
         this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit", 100);
-        this.USER_QUOTA_LIMIT_WARN_PERIOD_MILLIS = props.getIntProperty("user.message.quota.limit.exceeded.warning.period", 60000);
         this.WEBHOOK_PERIOD_LIMITATION = isUnlimited(props.getLongProperty("webhooks.frequency.user.quota.limit", 1000), -1L);
         this.WEBHOOK_RESPONSE_SUZE_LIMIT_BYTES = props.getIntProperty("webhooks.response.size.limit", 64) * 1024;
         this.WEBHOOK_FAILURE_LIMIT = isUnlimited(props.getIntProperty("webhooks.failure.count.limit", 10), Integer.MAX_VALUE);
