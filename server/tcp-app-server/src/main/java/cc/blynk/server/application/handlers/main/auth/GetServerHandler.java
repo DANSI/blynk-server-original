@@ -37,7 +37,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.redisClient = holder.redisClient;
         this.userDao = holder.userDao;
-        this.currentIp = holder.currentIp;
+        this.currentIp = holder.host;
     }
 
     @Override

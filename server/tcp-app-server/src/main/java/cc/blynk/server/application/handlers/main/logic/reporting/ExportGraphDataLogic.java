@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.reporting;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -43,11 +44,11 @@ public class ExportGraphDataLogic {
     private final MailWrapper mailWrapper;
     private final String csvDownloadUrl;
 
-    public ExportGraphDataLogic(ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor, MailWrapper mailWrapper, String host, int httpPort) {
-        this.reportingDao = reportingDao;
-        this.blockingIOProcessor = blockingIOProcessor;
-        this.mailWrapper = mailWrapper;
-        this.csvDownloadUrl = "http://" + host + ":" + httpPort + "/";
+    public ExportGraphDataLogic(Holder holder) {
+        this.reportingDao = holder.reportingDao;
+        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.mailWrapper = holder.mailWrapper;
+        this.csvDownloadUrl = holder.csvDownloadUrl;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {

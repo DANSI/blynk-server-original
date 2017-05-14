@@ -90,4 +90,8 @@ public class FileUtils {
         }
         return email + "_" + appName;
     }
+
+    public static String csvDownloadUrl(String host, String httpPort) {
+        return "http://" + host + ":" + httpPort + "/";
+    }
 }

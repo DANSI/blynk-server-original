@@ -122,7 +122,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         blockingIOProcessor.executeDB(() -> {
             String server = redisClient.getServerByToken(token);
             // no server found, that's means token is wrong.
-            if (server == null || server.equals(holder.currentIp)) {
+            if (server == null || server.equals(holder.host)) {
                 log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
                 ctx.writeAndFlush(makeResponse(msgId, INVALID_TOKEN), ctx.voidPromise());
             } else {
