@@ -9,10 +9,11 @@ import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
-import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.security.SecureRandom;
 
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_APP;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
@@ -45,8 +46,8 @@ public class CreateAppLogic {
 
         App newApp = JsonParser.parseApp(appString);
 
-        //leaving only last 8 chars
-        newApp.id = AppName.BLYNK_LOWERCASE + TokenGeneratorUtil.generateNewToken().substring(24);
+        newApp.id = AppName.BLYNK_LOWERCASE + randomString(8);
+
         newApp.validate();
 
         log.debug("Creating new app {}.", newApp);
@@ -63,6 +64,19 @@ public class CreateAppLogic {
         user.lastModifiedTs = System.currentTimeMillis();
 
         ctx.writeAndFlush(makeUTF8StringMessage(CREATE_APP, message.id, JsonParser.toJson(newApp)), ctx.voidPromise());
+    }
+
+    //todo move to utils class
+    private static final String inData = "abcdefghijklmnopqrstuvwxyz";
+    private static SecureRandom rnd = new SecureRandom();
+
+    private static String randomString(int len) {
+        StringBuilder sb = new StringBuilder(len);
+        int inDataLen = inData.length();
+        for (int i = 0; i < len; i++) {
+            sb.append(inData.charAt(rnd.nextInt(inDataLen)));
+        }
+        return sb.toString();
     }
 
 }
