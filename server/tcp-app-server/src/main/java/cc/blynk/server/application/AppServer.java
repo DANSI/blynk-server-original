@@ -11,7 +11,6 @@ import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
@@ -29,7 +28,6 @@ public class AppServer extends BaseServer {
     public AppServer(Holder holder) {
         super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("app.ssl.port"), holder.transportTypeHolder);
 
-        final int appTimeoutSecs = holder.limits.APP_IDLE_TIMEOUT;
         final String[] loadBalancingIPs = holder.props.getCommaSeparatedValueAsArray("load.balancing.ips");
 
         final AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
@@ -39,18 +37,16 @@ public class AppServer extends BaseServer {
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
         final GetServerHandler getServerHandler = new GetServerHandler(holder, loadBalancingIPs);
 
-        log.debug("app.socket.idle.timeout = {}", appTimeoutSecs);
+        log.debug("app.socket.idle.timeout = 600");
 
         this.channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                final ChannelPipeline pipeline = ch.pipeline();
-
-                if (appTimeoutSecs > 0) {
-                    pipeline.addLast("AReadTimeout", new ReadTimeoutHandler(appTimeoutSecs));
-                }
-
-                pipeline.addLast("ASSL", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
+                //600 specifies maximum seconds when application socket could be idle. After which
+                //socket will be closed due to non activity. In seconds.
+                ch.pipeline()
+                        .addLast("AReadTimeout", new ReadTimeoutHandler(600))
+                        .addLast("ASSL", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
                         .addLast("AChannelState", appChannelStateHandler)
                         .addLast("AMessageDecoder", new MessageDecoder(holder.stats))
                         .addLast("AMessageEncoder", new MessageEncoder(holder.stats))

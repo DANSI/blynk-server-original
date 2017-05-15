@@ -19,7 +19,6 @@ public class Limits {
     public final int DASHBOARDS_LIMIT;
     public final int WIDGET_SIZE_LIMIT_BYTES;
     public final int PROFILE_SIZE_LIMIT_BYTES;
-    public final long TRAFFIC_LIMIT;
 
     //hardware side limits
     public final long NOTIFICATION_PERIOD_LIMIT_SEC;
@@ -28,7 +27,6 @@ public class Limits {
     public final int WEBHOOK_RESPONSE_SUZE_LIMIT_BYTES;
     public final int WEBHOOK_FAILURE_LIMIT;
     public final int HARDWARE_IDLE_TIMEOUT;
-    public final int APP_IDLE_TIMEOUT;
 
     //texts
     public volatile String TOKEN_BODY;
@@ -41,7 +39,6 @@ public class Limits {
         this.DASHBOARDS_LIMIT = props.getIntProperty("user.dashboard.max.limit", 100);
         this.WIDGET_SIZE_LIMIT_BYTES = props.getIntProperty("user.widget.max.size.limit", 10) * 1024;
         this.PROFILE_SIZE_LIMIT_BYTES = props.getIntProperty("user.profile.max.size", 64) * 1024;
-        this.TRAFFIC_LIMIT = props.getIntProperty("user.traffic.limit", 256) * 1024;
 
         this.NOTIFICATION_PERIOD_LIMIT_SEC = props.getLongProperty("notifications.frequency.user.quota.limit", 15L) * 1000L;
         this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit", 100);
@@ -49,7 +46,6 @@ public class Limits {
         this.WEBHOOK_RESPONSE_SUZE_LIMIT_BYTES = props.getIntProperty("webhooks.response.size.limit", 64) * 1024;
         this.WEBHOOK_FAILURE_LIMIT = isUnlimited(props.getIntProperty("webhooks.failure.count.limit", 10), Integer.MAX_VALUE);
         this.HARDWARE_IDLE_TIMEOUT = props.getIntProperty("hard.socket.idle.timeout", 0);
-        this.APP_IDLE_TIMEOUT = props.getIntProperty("app.socket.idle.timeout", 0);
 
         this.TOKEN_BODY = FileLoaderUtil.readTokenMailBody();
         this.DYNAMIC_MAIL_BODY = FileLoaderUtil.readDynamicMailBody();
