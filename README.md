@@ -531,18 +531,21 @@ To display the date/time in excel you may use formula:
         
 ### Automatic Let's Encrypt certificates generation
 
-Latest Blynk server has super cool feature - automatic Let's Encrypt certificates generation. #613However, it has few requirements: 
+Latest Blynk server has super cool feature - automatic Let's Encrypt certificates generation. 
+However, it has few requirements: 
  
-+ Define ```server.host``` property in ```server.properties``` file. For example (IP is not supported, this is the limitation of Let's Encrypt) : 
++ Add ```server.host``` property in ```server.properties``` file. For example (IP is not supported, this is the limitation of Let's Encrypt) : 
  
         server.host=myhost.com
         
-+ Define ```contact.email``` property in ```server.properties```. For example : 
++ Add ```contact.email``` property in ```server.properties```. For example : 
  
         contact.email=test@gmail.com
         
 + You need to start server on port 80 (requires root or admin rights) or 
 make [port forwarding](https://github.com/blynkkk/blynk-server#port-forwarding-for-https-api) to default Blynk HTTP port - 8080.
+
+That's it! Run server as regular and certificates will be generated automatically.
 
 ![](https://gifyu.com/images/certs.gif)
 
