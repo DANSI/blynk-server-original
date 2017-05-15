@@ -3,6 +3,7 @@ package cc.blynk.server.core.model.auth;
 import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
+import cc.blynk.utils.JsonParser;
 
 /**
  * The Blynk Project.
@@ -45,5 +46,10 @@ public class App {
                 name.isEmpty() || projectIds == null) {
             throw new NotAllowedException("App is not valid.");
         }
+    }
+
+    @Override
+    public String toString() {
+        return JsonParser.toJson(this);
     }
 }
