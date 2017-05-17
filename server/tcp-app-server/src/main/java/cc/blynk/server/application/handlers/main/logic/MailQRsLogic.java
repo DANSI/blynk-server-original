@@ -90,7 +90,7 @@ public class MailQRsLogic {
                 mailWrapper.sendWithAttachment(to, subj, body, qrHolders);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
-                log.error("Error sending email from application. For user {}. Reason : {}", to, e.getMessage());
+                log.error("Error sending dynamic email from application. For user {}. Error: ", to, e);
                 channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_ERROR), channel.voidPromise());
             }
         });
@@ -107,7 +107,7 @@ public class MailQRsLogic {
                 mailWrapper.sendWithAttachment(to, subj, body.replace("{device_section}", sb.toString()), qrHolders);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
-                log.error("Error sending email from application. For user {}. Reason : {}", to, e.getMessage());
+                log.error("Error sending static email from application. For user {}. Error:", to, e);
                 channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_ERROR), channel.voidPromise());
             }
         });
@@ -115,7 +115,7 @@ public class MailQRsLogic {
 
     private QrHolder[] makeQRs(String username, String appId, DashBoard dash, boolean onlyFirst) throws Exception {
         QrHolder[] qrHolders = new QrHolder[dash.devices.length];
-        FlashedToken[] flashedTokens = new FlashedToken[dash.devices.length];
+        FlashedToken[] flashedTokens = new FlashedToken[onlyFirst ? 1: dash.devices.length];
 
         int i = 0;
         for (Device device : dash.devices) {

@@ -150,6 +150,36 @@ public class PublishingPreviewFlow extends IntegrationBase {
     }
 
     @Test
+    public void testSendDynamicEmailForAppPublishWithFewDevices() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        device1 = JsonParser.parseDevice(clientPair.appClient.getBody(1));
+        assertNotNull(device1);
+        assertEquals(1, device1.id);
+
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"DYNAMIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody(2));
+        assertNotNull(app);
+        assertNotNull(app.id);
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody();
+
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        assertEquals(2, devices.length);
+
+        clientPair.appClient.send("emailQr 1\0" + app.id);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
+
+        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1, false);
+
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.DYNAMIC_MAIL_BODY), eq(qrHolders));
+    }
+
+    @Test
     public void testDeleteWorksForPreviewApp() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
         App app = JsonParser.parseApp(clientPair.appClient.getBody());
