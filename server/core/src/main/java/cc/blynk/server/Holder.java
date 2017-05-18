@@ -16,7 +16,6 @@ import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.ServerProperties;
-import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.SystemPropertyUtil;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -187,7 +186,7 @@ public class Holder implements Closeable {
         String leakProperty = SystemPropertyUtil.get("io.netty.leakDetection.level");
         //we do not pass any with JVM option
         if (leakProperty == null) {
-            ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
+            System.setProperty("io.netty.leakDetection.level", "disabled");
         }
     }
 
