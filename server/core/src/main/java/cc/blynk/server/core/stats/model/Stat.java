@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.JsonParser;
+import io.netty.buffer.ByteBufAllocator;
 
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
@@ -28,6 +29,7 @@ public class Stat {
     public final CommandStat commands = new CommandStat();
     public final HttpStat http = new HttpStat();
     public final BlockingIOStat ioStat;
+    public final MemoryStat memoryStat;
 
     public final int oneMinRate;
     public final int registrations;
@@ -116,6 +118,7 @@ public class Stat {
         this.registrations = userDao.users.size();
 
         this.ioStat = new BlockingIOStat(blockingIOProcessor);
+        this.memoryStat = new MemoryStat(ByteBufAllocator.DEFAULT);
     }
 
     private boolean dashUpdated(User user, long now, long period) {
