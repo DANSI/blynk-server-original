@@ -7,6 +7,7 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -73,15 +74,14 @@ class RegularTokenManager {
     }
 
     String[] deleteProject(DashBoard dash) {
-        String[] removedTokens = new String[dash.devices.length];
-        for (int i = 0; i < dash.devices.length; i++) {
-            Device device = dash.devices[i];
+        ArrayList<String> removedTokens = new ArrayList<>(dash.devices.length);
+        for (Device device : dash.devices) {
             if (device != null && device.token != null) {
                 cache.remove(device.token);
-                removedTokens[i] = device.token;
+                removedTokens.add(device.token);
             }
         }
-        return removedTokens;
+        return removedTokens.toArray(new String[removedTokens.size()]);
     }
 
 }
