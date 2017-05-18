@@ -87,7 +87,9 @@ public class MailQRsLogic {
             try {
                 QrHolder[] qrHolders = makeQRs(to, publishAppId, dash, true);
 
-                mailWrapper.sendWithAttachment(to, subj, body, qrHolders);
+                String finalBody = body.replace("{project_name}", dash.name);
+
+                mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolders);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending dynamic email from application. For user {}. Error: ", to, e);
@@ -104,7 +106,11 @@ public class MailQRsLogic {
                 for (QrHolder qrHolder : qrHolders) {
                     qrHolder.attach(sb);
                 }
-                mailWrapper.sendWithAttachment(to, subj, body.replace("{device_section}", sb.toString()), qrHolders);
+
+                String finalBody = body.replace("{project_name}", dash.name)
+                                       .replace("{device_section}", sb.toString());
+
+                mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolders);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending static email from application. For user {}. Error:", to, e);

@@ -75,7 +75,7 @@ public class AppMailLogic {
         String body = "Auth Token : " + device.token + "\n";
 
         log.trace("Sending single token mail for user {}, with token : '{}'.", to, device.token);
-        mail(ctx.channel(), to, to, subj, body + TOKEN_MAIL_BODY, msgId);
+        mail(ctx.channel(), to, subj, body + TOKEN_MAIL_BODY, msgId);
     }
 
     private void sendMultiTokenEmail(ChannelHandlerContext ctx, DashBoard dash, String to, int msgId) {
@@ -95,16 +95,16 @@ public class AppMailLogic {
         body.append(TOKEN_MAIL_BODY);
 
         log.trace("Sending multi tokens mail for user {}, with {} tokens.", to, dash.devices.length);
-        mail(ctx.channel(), to, to, subj, body.toString(), msgId);
+        mail(ctx.channel(), to, subj, body.toString(), msgId);
     }
 
-    private void mail(Channel channel, String email, String to, String subj, String body, int msgId) {
+    private void mail(Channel channel, String to, String subj, String body, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
                 mailWrapper.sendText(to, subj, body);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
-                log.error("Error sending email from application. From user {}, to : {}. Reason : {}",  email, to, e.getMessage());
+                log.error("Error sending email auth token too user : {}. Error: {}", to, e.getMessage());
                 channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_ERROR), channel.voidPromise());
             }
         });
