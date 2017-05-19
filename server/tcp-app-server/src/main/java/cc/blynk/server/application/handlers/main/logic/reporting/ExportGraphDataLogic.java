@@ -73,7 +73,7 @@ public class ExportGraphDataLogic {
 
         DashBoard dashBoard = user.profile.getDashByIdOrThrow(dashId);
 
-        Widget widget = dashBoard.getWidgetById(widgetId);
+        Widget widget = dashBoard.getWidgetByIdOrThrow(widgetId);
         if (!(widget instanceof HistoryGraph)) {
             throw new IllegalCommandException("Passed wrong widget id.");
         }

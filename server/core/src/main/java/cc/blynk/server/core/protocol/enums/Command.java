@@ -78,6 +78,8 @@ public final class Command {
 
     public static final short APP_CONNECTED = 50;
 
+    public static final short UPDATE_FACE = 51;
+
     //------------------------------------------
 
     //web sockets
@@ -167,6 +169,7 @@ public final class Command {
                 put(DELETE_APP, "DeleteApp");
                 put(GET_PROJECT_BY_TOKEN, "GetProjectByToken");
                 put(EMAIL_QR, "MailQRs");
+                put(UPDATE_FACE, "UpdateFace");
 
                 put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
                 put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");

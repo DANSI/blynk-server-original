@@ -3,6 +3,7 @@ package cc.blynk.server.core.model.widgets.outputs;
 import cc.blynk.server.core.model.enums.GraphPeriod;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
+import cc.blynk.server.core.model.widgets.Widget;
 import io.netty.channel.Channel;
 
 /**
@@ -35,6 +36,11 @@ public class HistoryGraph extends MultiPinWidget {
     @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
         return false;
+    }
+
+    @Override
+    public void updateIfSame(Widget widget) {
+        //do nothing
     }
 
     @Override

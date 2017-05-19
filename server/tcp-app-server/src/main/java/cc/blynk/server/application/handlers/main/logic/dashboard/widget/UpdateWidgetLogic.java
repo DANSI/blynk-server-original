@@ -67,7 +67,7 @@ public class UpdateWidgetLogic {
 
         log.debug("Updating widget {}.", widgetString);
 
-        int existingWidgetIndex = dash.getWidgetIndexById(newWidget.id);
+        int existingWidgetIndex = dash.getWidgetIndexByIdOrThrow(newWidget.id);
 
         if (newWidget instanceof Tabs) {
             Tabs newTabs = (Tabs) newWidget;

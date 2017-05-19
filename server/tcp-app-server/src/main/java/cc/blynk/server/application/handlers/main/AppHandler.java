@@ -71,6 +71,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final UpdateAppLogic updateAppLogic;
     private final GetProjectByTokenLogic getProjectByTokenLogic;
     private final MailQRsLogic mailQRsLogic;
+    private final UpdateFaceLogic updateFaceLogic;
 
     private final GlobalStats stats;
 
@@ -112,6 +113,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.loadProfileGzippedLogic = new LoadProfileGzippedLogic(holder);
         this.getProjectByTokenLogic = new GetProjectByTokenLogic(holder);
         this.mailQRsLogic = new MailQRsLogic(holder);
+        this.updateFaceLogic = new UpdateFaceLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -240,6 +242,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case EMAIL_QR :
                 mailQRsLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case UPDATE_FACE :
+                updateFaceLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }

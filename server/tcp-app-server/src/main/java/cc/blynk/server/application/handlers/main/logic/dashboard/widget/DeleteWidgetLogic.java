@@ -52,13 +52,13 @@ public class DeleteWidgetLogic {
 
         log.debug("Removing widget with id {}.", widgetId);
 
-        int existingWidgetIndex = dash.getWidgetIndexById(widgetId);
+        int existingWidgetIndex = dash.getWidgetIndexByIdOrThrow(widgetId);
         Widget widgetToDelete = dash.widgets[existingWidgetIndex];
         if (widgetToDelete instanceof Tabs) {
             deleteTabs(timerWorker, user, state.userKey, dash, 0);
         }
 
-        existingWidgetIndex = dash.getWidgetIndexById(widgetId);
+        existingWidgetIndex = dash.getWidgetIndexByIdOrThrow(widgetId);
         deleteWidget(user, dash, existingWidgetIndex);
 
         if (widgetToDelete instanceof Timer) {

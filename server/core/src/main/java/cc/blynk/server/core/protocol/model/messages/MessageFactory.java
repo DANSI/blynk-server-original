@@ -138,6 +138,8 @@ public class MessageFactory {
                 return new GetProjectByTokenStringMessage(messageId, body);
             case EMAIL_QR :
                 return new EmailQRsMessage(messageId, body);
+            case UPDATE_FACE :
+                return new UpdateFaceMessage(messageId, body);
 
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);
         }

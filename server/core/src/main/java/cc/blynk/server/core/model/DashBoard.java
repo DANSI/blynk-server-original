@@ -20,6 +20,7 @@ import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -126,7 +127,7 @@ public class DashBoard {
         return null;
     }
 
-    public int getWidgetIndexById(long id) {
+    public int getWidgetIndexByIdOrThrow(long id) {
         for (int i = 0; i < widgets.length; i++) {
             if (widgets[i].id == id) {
                 return i;
@@ -176,7 +177,7 @@ public class DashBoard {
             return getTagById(targetId);
         } else {
             //means widget assigned to device selector widget.
-            Widget widget = getWidgetById(targetId);
+            Widget widget = getWidgetByIdOrThrow(targetId);
             if (widget instanceof Target) {
                 return (Target) widget;
             }
@@ -194,8 +195,17 @@ public class DashBoard {
         return null;
     }
 
+    public Widget getWidgetByIdOrThrow(long id) {
+        return widgets[getWidgetIndexByIdOrThrow(id)];
+    }
+
     public Widget getWidgetById(long id) {
-        return widgets[getWidgetIndexById(id)];
+        for (Widget widget : widgets) {
+            if (widget.id == id) {
+                return widget;
+            }
+        }
+        return null;
     }
 
     public  <T> T getWidgetByType(Class<T> clazz) {
@@ -314,8 +324,52 @@ public class DashBoard {
             cleanPinStorage(widget);
         }
 
-        this.isAppConnectedOn = updatedDashboard.isAppConnectedOn;
         this.updatedAt = System.currentTimeMillis();
+    }
+
+    public void updateFaceFields(DashBoard parent) {
+        this.name = parent.name;
+        this.isShared = parent.isShared;
+        this.theme = parent.theme;
+        this.keepScreenOn = parent.keepScreenOn;
+        this.isAppConnectedOn = parent.isAppConnectedOn;
+        this.boardType = parent.boardType;
+        this.tags = copyTags(parent.tags);
+        //do not update devices by purpose
+        //this.devices = parent.devices;
+        this.widgets = copyWidgets(parent.widgets);
+    }
+
+    private Widget[] copyWidgets(Widget[] widgetsToCopy) {
+        if (widgets.length == 0) {
+            return widgets;
+        }
+        ArrayList<Widget> copy = new ArrayList<>(widgetsToCopy.length);
+        for (Widget newWidget : widgetsToCopy) {
+            Widget oldWidget = getWidgetById(newWidget.id);
+
+            //todo safe copy for notifications, twits, emails, sms
+            String copyWidgetString = JsonParser.toJson(newWidget);
+            Widget copyWidget = JsonParser.parseWidget(copyWidgetString);
+
+            if (oldWidget != null) {
+                copyWidget.updateIfSame(oldWidget);
+            }
+            copy.add(copyWidget);
+        }
+
+        return copy.toArray(new Widget[widgetsToCopy.length]);
+    }
+
+    private Tag[] copyTags(Tag[] tagsToCopy) {
+        if (tagsToCopy.length == 0) {
+            return tagsToCopy;
+        }
+        Tag[] copy = new Tag[tagsToCopy.length];
+        for (int i = 0; i < copy.length; i++) {
+            copy[i] = tagsToCopy[i].copy();
+        }
+        return copy;
     }
 
     @Override

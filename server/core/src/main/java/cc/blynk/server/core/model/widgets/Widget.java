@@ -128,6 +128,8 @@ public abstract class Widget {
 
     public abstract boolean updateIfSame(int deviceId, byte pin, PinType type, String value);
 
+    public abstract void updateIfSame(Widget widget);
+
     public abstract boolean isSame(int deviceId, byte pin, PinType type);
 
     public abstract String getJsonValue();

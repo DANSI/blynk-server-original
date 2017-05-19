@@ -31,6 +31,12 @@ public class Tag implements Target {
         this.name = name;
     }
 
+    private Tag(int id, String name, int[] deviceIds) {
+        this.id = id;
+        this.name = name;
+        this.deviceIds = deviceIds;
+    }
+
     @Override
     public int[] getDeviceIds() {
         return deviceIds;
@@ -44,6 +50,10 @@ public class Tag implements Target {
     public void update(Tag tag) {
         this.name = tag.name;
         this.deviceIds = tag.deviceIds;
+    }
+
+    public Tag copy() {
+        return new Tag(id, name, deviceIds);
     }
 
     @Override

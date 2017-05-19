@@ -180,6 +180,12 @@ public class PublishingPreviewFlow extends IntegrationBase {
     }
 
     @Test
+    public void testFaceEdit() throws Exception {
+        clientPair.appClient.send("updateFace 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
+    }
+
+    @Test
     public void testDeleteWorksForPreviewApp() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
         App app = JsonParser.parseApp(clientPair.appClient.getBody());

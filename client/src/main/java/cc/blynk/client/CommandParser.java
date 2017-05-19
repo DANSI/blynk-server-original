@@ -122,6 +122,8 @@ public class CommandParser {
                 return GET_PROJECT_BY_TOKEN;
             case "emailqr" :
                 return EMAIL_QR;
+            case "updateface" :
+                return UPDATE_FACE;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");
