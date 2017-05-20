@@ -3,6 +3,7 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.hardware.BridgeMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 
 import static cc.blynk.utils.BlynkByteBufUtil.*;
 import static cc.blynk.utils.StateHolderUtil.getHardState;
+import static cc.blynk.utils.StringUtils.split3;
 
 /**
  * Bridge handler responsible for forwarding messages between different hardware via Blynk Server.
@@ -44,7 +46,7 @@ public class BridgeLogic {
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.userKey);
-        String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+        String[] split = split3(message.body);
 
         if (split.length < 3) {
             log.error("Wrong bridge body. '{}'", message.body);
@@ -71,14 +73,15 @@ public class BridgeLogic {
 
             if (session.hardwareChannels.size() > 1) {
                 boolean messageWasSent = false;
-                message.body = message.body.substring(message.body.indexOf(StringUtils.BODY_SEPARATOR_STRING) + 1);
+                final String body = message.body.substring(message.body.indexOf(StringUtils.BODY_SEPARATOR_STRING) + 1);
+                BridgeMessage bridgeMessage = new BridgeMessage(message.id, body);
                 for (Channel channel : session.hardwareChannels) {
                     if (channel != ctx.channel() && channel.isWritable()) {
                         HardwareStateHolder hardwareState = getHardState(channel);
                         if (token.equals(hardwareState.token)) {
                             messageWasSent = true;
-                            hardwareLogic.messageReceived(ctx, hardwareState, message);
-                            channel.writeAndFlush(message, channel.voidPromise());
+                            hardwareLogic.messageReceived(ctx, hardwareState, bridgeMessage);
+                            channel.writeAndFlush(bridgeMessage, channel.voidPromise());
                         }
                     }
                 }

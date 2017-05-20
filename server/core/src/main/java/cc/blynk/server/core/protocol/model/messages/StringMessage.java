@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
  */
 public abstract class StringMessage extends MessageBase {
 
-    public String body;
+    public final String body;
 
     public StringMessage(int messageId, short command, int length, String body) {
         super(messageId, command, length);
