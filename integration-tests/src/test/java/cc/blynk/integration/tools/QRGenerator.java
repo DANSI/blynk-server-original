@@ -22,7 +22,7 @@ import java.util.UUID;
 public class QRGenerator {
 
     public static void main(String[] args) throws Exception {
-        DBManager dbManager = new DBManager("db.properties", new BlockingIOProcessor(1, 100), true);
+        DBManager dbManager = new DBManager("db.properties", new BlockingIOProcessor(4, 100), true);
         List<Redeem> redeems;
 
         redeems = generateQR(361, "/home/doom369/QR/blynk25", "Blynk", 25000);

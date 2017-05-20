@@ -58,7 +58,7 @@ public class ReportingWorkerTest {
 
     @Before
     public void cleanup() throws IOException {
-        blockingIOProcessor = new BlockingIOProcessor(1, 1);
+        blockingIOProcessor = new BlockingIOProcessor(4, 1);
         Path dataFolder1 = Paths.get(reportingFolder, "test");
         FileUtils.deleteDirectory(dataFolder1.toFile());
         createReportingFolder(reportingFolder, "test");

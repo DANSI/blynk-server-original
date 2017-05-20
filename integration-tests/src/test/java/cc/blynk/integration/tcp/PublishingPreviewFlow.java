@@ -172,9 +172,9 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(2, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
-        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1, false);
+        QrHolder[] qrHolders = makeQRs(DEFAULT_TEST_USER, devices, 1, true);
 
         verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.DYNAMIC_MAIL_BODY.replace("{project_name}", "My Dashboard")), eq(qrHolders));
     }
@@ -292,7 +292,12 @@ public class PublishingPreviewFlow extends IntegrationBase {
     }
 
     private QrHolder[] makeQRs(String to, Device[] devices, int dashId, boolean onlyFirst) throws Exception {
-        QrHolder[] qrHolders = new QrHolder[devices.length];
+        QrHolder[] qrHolders;
+        if (onlyFirst) {
+            qrHolders = new QrHolder[1];
+        } else {
+            qrHolders = new QrHolder[devices.length];
+        }
 
         List<FlashedToken> flashedTokens = getAllTokens();
 
@@ -302,7 +307,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
                 break;
             }
             String newToken = flashedTokens.get(i).token;
-            qrHolders[i] = new QrHolder(1, device.id, device.name, newToken, QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
+            qrHolders[i] = new QrHolder(dashId, device.id, device.name, newToken, QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
             i++;
         }
 

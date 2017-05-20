@@ -32,7 +32,7 @@ public class RawDataDBTest {
 
     @BeforeClass
     public static void init() throws Exception {
-        blockingIOProcessor = new BlockingIOProcessor(2, 10000);
+        blockingIOProcessor = new BlockingIOProcessor(4, 10000);
         dbManager = new DBManager("db-test.properties", blockingIOProcessor, true);
         assertNotNull(dbManager.getConnection());
         user = new User();

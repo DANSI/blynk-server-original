@@ -18,7 +18,7 @@ public class FlashedTokensDBDao {
 
     public static final String selectToken = "SELECT * from flashed_tokens where token = ?";
     public static final String activateToken = "UPDATE flashed_tokens SET is_activated = true, ts = NOW() WHERE token = ?";
-    public static final String insertToken = "INSERT INTO flashed_tokens (token, app_name, project_id, device_id, email) values (?, ?, ?, ?, ?)";
+    public static final String insertToken = "INSERT INTO flashed_tokens (token, app_name, email, project_id, device_id) values (?, ?, ?, ?, ?)";
 
     private static final Logger log = LogManager.getLogger(FlashedTokensDBDao.class);
     private final HikariDataSource ds;
@@ -89,8 +89,8 @@ public class FlashedTokensDBDao {
     private static void insert(PreparedStatement ps, FlashedToken flashedToken) throws Exception {
         ps.setString(1, flashedToken.token);
         ps.setString(2, flashedToken.appId);
-        ps.setInt(3, flashedToken.dashId);
-        ps.setInt(4, flashedToken.deviceId);
-        ps.setString(5, flashedToken.email);
+        ps.setString(3, flashedToken.email);
+        ps.setInt(4, flashedToken.dashId);
+        ps.setInt(5, flashedToken.deviceId);
     }
 }
