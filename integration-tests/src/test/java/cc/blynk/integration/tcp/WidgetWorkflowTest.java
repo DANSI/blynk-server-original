@@ -15,13 +15,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static cc.blynk.server.core.protocol.enums.Response.*;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -83,7 +78,7 @@ public class WidgetWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":1112, \"width\":1, \"height\":1,\"type\":\"WEBHOOK\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(2)));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":1113, \"width\":1, \"height\":1,\"url\":\"https://123.com\",\"type\":\"WEBHOOK\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
@@ -92,7 +87,7 @@ public class WidgetWorkflowTest extends IntegrationBase {
     @Test
     public void testCantCreateWebHookWithNoScheme() throws Exception {
         clientPair.appClient.send("createWidget 1\0{\"id\":1111, \"width\":1, \"height\":1,\"url\":\"123.com\",\"type\":\"WEBHOOK\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
     }
 
     @Test
