@@ -74,9 +74,9 @@ public class CreateWidgetLogic {
         }
 
         if (newWidget instanceof WebHook) {
-            String url = ((WebHook) newWidget).url;
-            if (url != null && !url.regionMatches(true, 0, "http", 0, 4)) {
-                throw new IllegalCommandException("Url for webhook doesn't have scheme.");
+            WebHook webHook = (WebHook) newWidget;
+            if (!webHook.isValidUrl()) {
+                throw new NotAllowedException("Url for webhook is empty or doesn't have scheme.");
             }
         }
 

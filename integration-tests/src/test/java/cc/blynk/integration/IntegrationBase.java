@@ -25,8 +25,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
+import static cc.blynk.server.core.protocol.enums.Response.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.timeout;
@@ -81,6 +80,10 @@ public abstract class IntegrationBase extends BaseTest {
 
     public static String b(String body) {
         return body.replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING);
+    }
+
+    public static ResponseMessage illegalCommand(int msgId) {
+        return new ResponseMessage(msgId, ILLEGAL_COMMAND);
     }
 
     public static ResponseMessage ok(int msgId) {

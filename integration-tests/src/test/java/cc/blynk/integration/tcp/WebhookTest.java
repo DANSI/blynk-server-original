@@ -16,12 +16,7 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Response;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -34,11 +29,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -441,7 +432,46 @@ public class WebhookTest extends IntegrationBase {
         values = consumeJsonPinValues(response.getResponseBody());
         assertEquals(1, values.size());
         assertEquals("11", values.get(0));
+    }
 
+    @Test
+    public void testWebhookInvalidUrl() throws Exception {
+        WebHook webHook = new WebHook();
+        webHook.url = "";
+        webHook.method = PUT;
+        webHook.headers = new Header[]{new Header("Content-Type", "application/json")};
+        webHook.body = "[\"/pin/\"]";
+        webHook.pin = 123;
+        webHook.pinType = PinType.VIRTUAL;
+        webHook.width = 2;
+        webHook.height = 1;
+        webHook.id = 111;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
+
+        webHook.url = "http://adasd.com";
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        webHook.id = 222;
+        webHook.url = "https://adasd.com";
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+
+        webHook.url = "htdtps://adasd.com";
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(4)));
+
+        webHook.id = 333;
+        webHook.url = "Http://adasd.com";
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+
+        webHook.id = 444;
+        webHook.url = "adasd.com";
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(6)));
     }
 
 }
