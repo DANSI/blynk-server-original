@@ -111,11 +111,6 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     }
 
     @Override
-    public boolean hasValue(String searchValue) {
-        return searchValue.equals(value);
-    }
-
-    @Override
     public String getJsonValue() {
         if (value == null) {
             return "[]";

@@ -93,18 +93,6 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
     }
 
     @Override
-    public boolean hasValue(String searchValue) {
-        if (pins != null) {
-            for (Pin pin : pins) {
-                if (searchValue.equals(pin.value)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
     public void append(StringBuilder sb, int deviceId) {
         if (pins != null && this.deviceId == deviceId) {
             for (Pin pin : pins) {

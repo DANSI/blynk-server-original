@@ -58,11 +58,6 @@ public class Eventor extends NoPinWidget {
     }
 
     @Override
-    public boolean hasValue(String searchValue) {
-        return false;
-    }
-
-    @Override
     public void append(StringBuilder sb, int deviceId) {
         if (rules != null && this.deviceId == deviceId) {
             for (Rule rule : rules) {
