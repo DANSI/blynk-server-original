@@ -58,10 +58,12 @@ public class BridgeLogic {
 
         if (isInit(split[1])) {
             final String token = split[2];
-
-            sendToMap.put(bridgePin, token);
-
-            ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+            if (sendToMap.size() > 100 || token.length() != 32) {
+                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            } else {
+                sendToMap.put(bridgePin, token);
+                ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+            }
         } else {
             final String token = sendToMap.get(bridgePin);
 
