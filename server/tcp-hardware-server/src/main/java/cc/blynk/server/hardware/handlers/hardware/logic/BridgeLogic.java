@@ -32,11 +32,10 @@ public class BridgeLogic {
     private static final Logger log = LogManager.getLogger(BridgeLogic.class);
     private final HardwareLogic hardwareLogic;
     private final SessionDao sessionDao;
-    private final HashMap<String, String> sendToMap;
+    private HashMap<String, String> sendToMap;
 
     public BridgeLogic(SessionDao sessionDao, HardwareLogic hardwareLogic) {
         this.sessionDao = sessionDao;
-        this.sendToMap = new HashMap<>();
         this.hardwareLogic = hardwareLogic;
     }
 
@@ -58,6 +57,9 @@ public class BridgeLogic {
 
         if (isInit(split[1])) {
             final String token = split[2];
+            if (sendToMap == null) {
+                sendToMap = new HashMap<>();
+            }
             if (sendToMap.size() > 100 || token.length() != 32) {
                 ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
             } else {
@@ -65,10 +67,15 @@ public class BridgeLogic {
                 ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
             }
         } else {
-            final String token = sendToMap.get(bridgePin);
-
-            if (sendToMap.size() == 0 || token == null) {
+            if (sendToMap == null || sendToMap.size() == 0) {
                 log.debug("Bridge not initialized. {}", state.user.email);
+                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+                return;
+            }
+
+            final String token = sendToMap.get(bridgePin);
+            if (token == null) {
+                log.debug("No token. Bridge not initialized. {}", state.user.email);
                 ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }
