@@ -13,8 +13,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
@@ -60,7 +59,7 @@ public class UpdateFaceLogic {
         if (hasFaces) {
             ctx.writeAndFlush(ok(message.id));
         } else {
-            ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED));
+            ctx.writeAndFlush(notAllowed(message.id));
         }
     }
 

@@ -12,9 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
-import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 
 /**
  * Handler sends push notifications to Applications. Initiation is on hardware side.
@@ -45,7 +43,7 @@ public class PushLogic extends NotificationBase {
 
         if (!dash.isActive) {
             log.debug("No active dashboard.");
-            ctx.writeAndFlush(makeResponse(message.id, NO_ACTIVE_DASHBOARD), ctx.voidPromise());
+            ctx.writeAndFlush(noActiveDash(message.id), ctx.voidPromise());
             return;
         }
 

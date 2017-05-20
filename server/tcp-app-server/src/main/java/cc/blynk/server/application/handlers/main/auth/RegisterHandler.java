@@ -25,9 +25,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.core.protocol.enums.Response.USER_ALREADY_REGISTERED;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 
 /**
  * Process register message.
@@ -76,7 +75,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         //expecting message with 3 parts, described above in comment.
         if (messageParts.length < 2) {
             log.error("Register Handler. Wrong income message format. {}", message);
-            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
             return;
         }
 
@@ -87,7 +86,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         if (BlynkEmailValidator.isNotValidEmail(email)) {
             log.error("Register Handler. Wrong email: {}", email);
-            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
             return;
         }
 
@@ -99,7 +98,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         if (allowedUsers != null && !allowedUsers.contains(email)) {
             log.warn("User with email {} not allowed to register.", email);
-            ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
+            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
             return;
         }
 

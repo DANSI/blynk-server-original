@@ -15,8 +15,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_ERROR;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.notificationError;
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
@@ -105,7 +104,7 @@ public class AppMailLogic {
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending email auth token too user : {}. Error: {}", to, e.getMessage());
-                channel.writeAndFlush(makeResponse(msgId, NOTIFICATION_ERROR), channel.voidPromise());
+                channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
             }
         });
     }

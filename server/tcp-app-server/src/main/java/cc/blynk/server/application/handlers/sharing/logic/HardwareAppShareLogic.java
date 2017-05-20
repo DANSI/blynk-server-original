@@ -10,7 +10,6 @@ import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
@@ -22,10 +21,7 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 import static cc.blynk.utils.StringUtils.*;
 
 /**
@@ -63,13 +59,13 @@ public class HardwareAppShareLogic {
 
         if (!dash.isActive) {
             log.debug("No active dashboard.");
-            ctx.writeAndFlush(makeResponse(message.id, NO_ACTIVE_DASHBOARD), ctx.voidPromise());
+            ctx.writeAndFlush(noActiveDash(message.id), ctx.voidPromise());
             return;
         }
 
         if (!dash.isShared) {
             log.debug("Dashboard is not shared. User : {}, {}", state.user.email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
+            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
             return;
         }
 
@@ -104,7 +100,7 @@ public class HardwareAppShareLogic {
 
                 if (splitBody.length < 3) {
                     log.debug("Not valid write command.");
-                    ctx.writeAndFlush(makeResponse(message.id, Response.ILLEGAL_COMMAND_BODY), ctx.voidPromise());
+                    ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
                     return;
                 }
 
@@ -133,7 +129,7 @@ public class HardwareAppShareLogic {
 
                 if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], deviceIds)) {
                     log.debug("No device in session.");
-                    ctx.writeAndFlush(makeResponse(message.id, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+                    ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
                 }
                 break;
 
@@ -149,7 +145,7 @@ public class HardwareAppShareLogic {
                     //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
                     if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], targetId)) {
                         log.debug("No device in session.");
-                        ctx.writeAndFlush(makeResponse(message.id, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+                        ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
                     }
                 }
                 break;

@@ -3,7 +3,6 @@ package cc.blynk.server.application.handlers.main.auth;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
 import cc.blynk.server.redis.RedisClient;
 import cc.blynk.utils.StringUtils;
@@ -12,9 +11,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
-import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 
 
 /**
@@ -45,7 +42,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
         final String[] parts = StringUtils.split2(msg.body);
 
         if (parts.length < 2) {
-            ctx.writeAndFlush(makeResponse(msg.id, Response.ILLEGAL_COMMAND), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommand(msg.id), ctx.voidPromise());
             return;
         }
 
@@ -53,12 +50,12 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
         final String appName = parts[1];
 
         if (appName == null || appName.isEmpty() || appName.length() > 100) {
-            ctx.writeAndFlush(makeResponse(msg.id, Response.ILLEGAL_COMMAND), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommand(msg.id), ctx.voidPromise());
             return;
         }
 
         if (BlynkEmailValidator.isNotValidEmail(email)) {
-            ctx.writeAndFlush(makeResponse(msg.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommandBody(msg.id), ctx.voidPromise());
             return;
         }
 

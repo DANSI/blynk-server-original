@@ -20,10 +20,8 @@ import org.apache.logging.log4j.Logger;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_ERROR;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 import static cc.blynk.utils.StringUtils.split2Device;
 
@@ -106,7 +104,7 @@ public class ExportGraphDataLogic {
 
             } catch (Exception e) {
                 log.error("Error making csv file for data export. Reason {}", e.getMessage());
-                ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_ERROR), ctx.voidPromise());
+                ctx.writeAndFlush(notificationError(message.id), ctx.voidPromise());
             }
         });
     }

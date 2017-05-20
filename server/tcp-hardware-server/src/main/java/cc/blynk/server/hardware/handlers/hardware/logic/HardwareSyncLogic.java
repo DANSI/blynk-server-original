@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.HardwareSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.ParseUtil;
@@ -18,7 +17,7 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.Map;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -67,7 +66,7 @@ public class HardwareSyncLogic {
         String[] bodyParts = messageBody.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (bodyParts.length < 2 || bodyParts[0].isEmpty()) {
-            ctx.writeAndFlush(makeResponse(msgId, Response.ILLEGAL_COMMAND), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommand(msgId), ctx.voidPromise());
             return;
         }
 

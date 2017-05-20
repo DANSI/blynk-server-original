@@ -12,9 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 import static cc.blynk.utils.StateHolderUtil.getHardState;
 
 /**
@@ -50,7 +48,7 @@ public class BridgeLogic {
 
         if (split.length < 3) {
             log.error("Wrong bridge body. '{}'", message.body);
-            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
             return;
         }
 
@@ -67,7 +65,7 @@ public class BridgeLogic {
 
             if (sendToMap.size() == 0 || token == null) {
                 log.debug("Bridge not initialized. {}", state.user.email);
-                ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
+                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }
 
@@ -85,10 +83,10 @@ public class BridgeLogic {
                     }
                 }
                 if (!messageWasSent) {
-                    ctx.writeAndFlush(makeResponse(message.id, DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+                    ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
                 }
             } else {
-                ctx.writeAndFlush(makeResponse(message.id, DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+                ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
             }
         }
     }

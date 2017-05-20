@@ -16,8 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
 import static cc.blynk.utils.StringUtils.split3;
 
 /**
@@ -63,7 +62,7 @@ public class HardwareLogic {
         //minimum command - "ar 1"
         if (body.length() < 4) {
             log.debug("HardwareLogic command body too short.");
-            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
             return;
         }
 
@@ -77,7 +76,7 @@ public class HardwareLogic {
 
             if (splitBody.length < 3 || splitBody[0].length() == 0 || splitBody[2].length() == 0) {
                 log.debug("Write command is wrong.");
-                ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+                ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
                 return;
             }
 

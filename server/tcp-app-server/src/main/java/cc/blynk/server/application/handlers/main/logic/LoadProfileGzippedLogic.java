@@ -17,10 +17,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
-import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 import static cc.blynk.utils.JsonParser.*;
 
 /**
@@ -71,7 +69,7 @@ public class LoadProfileGzippedLogic {
                         write(ctx, gzipDashRestrictive(dash), message.id);
                     }
                 } catch (Exception e) {
-                    ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+                    ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
                     log.error("Error getting publishing profile.", e.getMessage());
                 }
             });

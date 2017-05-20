@@ -12,7 +12,6 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.processors.WebhookProcessor;
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
@@ -22,8 +21,8 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.deviceNotInNetwork;
+import static cc.blynk.utils.BlynkByteBufUtil.illegalCommandBody;
 import static cc.blynk.utils.StringUtils.*;
 
 /**
@@ -107,7 +106,7 @@ public class HardwareAppLogic {
 
                 if (splitBody.length < 3) {
                     log.debug("Not valid write command.");
-                    ctx.writeAndFlush(makeResponse(message.id, Response.ILLEGAL_COMMAND_BODY), ctx.voidPromise());
+                    ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
                     return;
                 }
 
@@ -130,7 +129,7 @@ public class HardwareAppLogic {
 
                 if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], deviceIds)) {
                     log.debug("No device in session.");
-                    ctx.writeAndFlush(makeResponse(message.id, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+                    ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
                 }
 
                 process(dash, targetId, session, pin, pinType, value, now);
@@ -143,14 +142,14 @@ public class HardwareAppLogic {
                 Widget widget = dash.findWidgetByPin(targetId, split[1].split(StringUtils.BODY_SEPARATOR_STRING));
                 if (widget == null) {
                     log.debug("No widget for read command.");
-                    ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
+                    ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
                     return;
                 }
                 //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
                 if (!(widget instanceof FrequencyWidget)) {
                     if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], targetId)) {
                         log.debug("No device in session.");
-                        ctx.writeAndFlush(makeResponse(message.id, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+                        ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
                     }
                 }
                 break;

@@ -14,8 +14,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
@@ -53,13 +52,13 @@ public class AssignTokenLogic {
 
             if (dbFlashedToken == null) {
                 log.error("{} token not exists for app {}.", token, user.appName);
-                ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
+                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }
 
             if (dbFlashedToken.isActivated) {
                 log.error("{} token is already activated for app {}.", token, user.appName);
-                ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
+                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }
 
@@ -67,13 +66,13 @@ public class AssignTokenLogic {
 
             if (device == null) {
                 log.error("Device with {} id not exists in dashboards.", dbFlashedToken.deviceId);
-                ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
+                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }
 
             if (!dbManager.activateFlashedToken(token)) {
                 log.error("Error activated flashed token {}", token);
-                ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
+                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }
 

@@ -17,10 +17,7 @@ import io.netty.channel.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 
 /**
  * Handler responsible for managing apps sharing login messages.
@@ -48,7 +45,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
         if (messageParts.length < 2) {
             log.error("Wrong income message format.");
-            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
         } else {
             OsType osType = null;
             String version = null;
@@ -71,7 +68,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
         if (tokenValue == null || !tokenValue.user.email.equals(userName)) {
             log.debug("Share token is invalid. User : {}, token {}, {}", userName, token, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
+            ctx.writeAndFlush(notAllowed(messageId), ctx.voidPromise());
             return;
         }
 
@@ -81,7 +78,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         DashBoard dash = user.profile.getDashById(dashId);
         if (!dash.isShared) {
             log.debug("Dashboard is not shared. User : {}, token {}, {}", userName, token, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
+            ctx.writeAndFlush(notAllowed(messageId), ctx.voidPromise());
             return;
         }
 

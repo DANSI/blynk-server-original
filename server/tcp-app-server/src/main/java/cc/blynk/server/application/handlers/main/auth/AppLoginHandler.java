@@ -26,8 +26,7 @@ import org.asynchttpclient.netty.handler.WebSocketHandler;
 import java.util.NoSuchElementException;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 
@@ -80,7 +79,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
         if (messageParts.length < 2) {
             log.error("Wrong income message format.");
-            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
             return;
         }
 
@@ -113,7 +112,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
                             } else {
                                 log.warn("Error getting facebook token for user {}. Reason : {}", email, errMessage);
                             }
-                            ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
+                            ctx.writeAndFlush(notAllowed(messageId), ctx.voidPromise());
                             return response;
                         }
 
@@ -130,7 +129,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
                             }
                         } catch (Exception e) {
                             log.error("Error during facebook response parsing for user {}. Reason : {}", email, response.getResponseBody());
-                            ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
+                            ctx.writeAndFlush(notAllowed(messageId), ctx.voidPromise());
                         }
 
                         return response;
@@ -139,7 +138,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
                     @Override
                     public void onThrowable(Throwable t) {
                         log.error("Error performing facebook request. Token {} for user {}. Reason : {}", token, email, t.getMessage());
-                        ctx.writeAndFlush(makeResponse(messageId, NOT_ALLOWED), ctx.voidPromise());
+                        ctx.writeAndFlush(notAllowed(messageId), ctx.voidPromise());
                     }
                 });
     }

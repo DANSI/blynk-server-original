@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.Channel;
@@ -17,7 +16,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.utils.AppStateHolderUtil.getAppState;
 import static cc.blynk.utils.BlynkByteBufUtil.*;
 
@@ -58,7 +56,7 @@ public class ActivateDashboardLogic {
                 if (session.sendMessageToHardware(dashId, HARDWARE, PIN_MODE_MSG_ID, dash.buildPMMessage(device.id), device.id)) {
                     log.debug("No device in session.");
                     if (ctx.channel().isWritable()) {
-                        ctx.writeAndFlush(makeResponse(PIN_MODE_MSG_ID, Response.DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+                        ctx.writeAndFlush(deviceNotInNetwork(PIN_MODE_MSG_ID), ctx.voidPromise());
                     }
                 }
             }
@@ -66,7 +64,7 @@ public class ActivateDashboardLogic {
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
             log.debug("No device in session.");
-            ctx.writeAndFlush(makeResponse(message.id, DEVICE_NOT_IN_NETWORK), ctx.voidPromise());
+            ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
         }
 
         for (Channel appChannel : session.appChannels) {

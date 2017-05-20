@@ -14,10 +14,9 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.utils.AppStateHolderUtil.getShareState;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
 
 /**
  * The Blynk Project.
@@ -54,7 +53,7 @@ public class RefreshShareTokenLogic {
         for (Channel appChannel : session.appChannels) {
             AppShareStateHolder localState = getShareState(appChannel);
             if (localState != null && localState.dashId == dashId) {
-                ChannelFuture cf = appChannel.writeAndFlush(makeResponse(message.id, NOT_ALLOWED));
+                ChannelFuture cf = appChannel.writeAndFlush(notAllowed(message.id));
                 cf.addListener(channelFuture -> appChannel.close());
             }
         }

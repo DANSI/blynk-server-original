@@ -16,9 +16,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
 
 /**
  * The Blynk Project.
@@ -48,7 +47,7 @@ public class GetProjectByTokenLogic {
 
             if (dbFlashedToken == null) {
                 log.error("{} token not exists for app {}.", token, user.appName);
-                ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
+                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }
 
@@ -58,7 +57,7 @@ public class GetProjectByTokenLogic {
 
             if (dash == null) {
                 log.error("Dash with {} id not exists in dashboards.", dbFlashedToken.dashId);
-                ctx.writeAndFlush(makeResponse(message.id, NOT_ALLOWED), ctx.voidPromise());
+                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }
 

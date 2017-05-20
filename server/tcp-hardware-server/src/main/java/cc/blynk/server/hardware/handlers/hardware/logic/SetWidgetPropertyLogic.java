@@ -13,8 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.illegalCommandBody;
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split3;
 
@@ -41,7 +40,7 @@ public class SetWidgetPropertyLogic {
 
         if (bodyParts.length != 3) {
             log.debug("SetWidgetProperty command body has wrong format. {}", message.body);
-            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
             return;
         }
 
@@ -53,7 +52,7 @@ public class SetWidgetPropertyLogic {
 
         if (property.length() == 0 || propertyValue.length() == 0) {
             log.debug("SetWidgetProperty command body has wrong format. {}", message.body);
-            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
             return;
         }
 
@@ -68,7 +67,7 @@ public class SetWidgetPropertyLogic {
 
         if (widget == null) {
             log.debug("No widget for SetWidgetProperty command. {}", message.body);
-            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
             return;
         }
 
@@ -77,7 +76,7 @@ public class SetWidgetPropertyLogic {
             dash.updatedAt = System.currentTimeMillis();
         } catch (Exception e) {
             log.debug("Error setting widget property. Reason : {}", e.getMessage());
-            ctx.writeAndFlush(makeResponse(message.id, ILLEGAL_COMMAND_BODY), ctx.voidPromise());
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
             return;
         }
 
