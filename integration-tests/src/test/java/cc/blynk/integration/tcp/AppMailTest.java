@@ -90,14 +90,14 @@ public class AppMailTest extends IntegrationBase {
                 "\n" +
                 "Happy Blynking!\n" +
                 "-\n" +
-                "Getting Started Guide -> http://www.blynk.cc/getting-started\n" +
+                "Getting Started Guide -> https://www.blynk.cc/getting-started\n" +
                 "Documentation -> http://docs.blynk.cc/\n" +
-                "Sketch generator -> http://examples.blynk.cc/\n" +
+                "Sketch generator -> https://examples.blynk.cc/\n" +
                 "\n" +
                 "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.7/Blynk_Release_v0.4.7.zip\n" +
                 "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.24.4/server-0.24.4.jar\n" +
                 "-\n" +
-                "http://www.blynk.cc\n" +
+                "https://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
                 "www.facebook.com/blynkapp\n", devices[0].token);
 
@@ -132,14 +132,14 @@ public class AppMailTest extends IntegrationBase {
                 "\n" +
                 "Happy Blynking!\n" +
                 "-\n" +
-                "Getting Started Guide -> http://www.blynk.cc/getting-started\n" +
+                "Getting Started Guide -> https://www.blynk.cc/getting-started\n" +
                 "Documentation -> http://docs.blynk.cc/\n" +
-                "Sketch generator -> http://examples.blynk.cc/\n" +
+                "Sketch generator -> https://examples.blynk.cc/\n" +
                 "\n" +
                 "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.7/Blynk_Release_v0.4.7.zip\n" +
                 "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.24.4/server-0.24.4.jar\n" +
                 "-\n" +
-                "http://www.blynk.cc\n" +
+                "https://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
                 "www.facebook.com/blynkapp\n", devices[0].token, devices[1].token);
 

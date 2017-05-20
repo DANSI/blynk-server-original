@@ -40,7 +40,7 @@ public class MailWrapperTest {
                         "    <li>During the provisioning process, device will be connected to your network. You need to scan provided QRs in order to connect your app to devices. Learn <a href=\"http://help.blynk.cc/publishing-apps-made-with-blynk/1240196-provisioning-products-with-auth-tokens/static-auth-token-provisioning\">how Static Device Provisioning works</a>.</li>\n" +
                         "</ul>\n" +
                         "\n" +
-                        "<b>If you would like to publish your app to App Store and Google Play, check out our <a href=\"http://www.blynk.io/plans/\">plans</a> and send a request.</b><br>\n" +
+                        "<b>If you would like to publish your app to App Store and Google Play, check out our <a href=\"https://www.blynk.io/plans/\">plans</a> and send a request.</b><br>\n" +
                         "<br>\n" +
                         "Let’s build a connected world together!<br>\n" +
                         "<br>\n" +
@@ -48,9 +48,9 @@ public class MailWrapperTest {
                         "<br>\n" +
                         "Blynk Team<br>\n" +
                         "<br>\n" +
-                        "<a href=\"http://www.blynk.io\">blynk.io</a>\n" +
+                        "<a href=\"https://www.blynk.io\">blynk.io</a>\n" +
                         "<br>\n" +
-                        "<a href=\"http://www.blynk.cc\">blynk.cc</a>";
+                        "<a href=\"https://www.blynk.cc\">blynk.cc</a>";
         QrHolder[] qrHolders = new QrHolder[] {
                 new QrHolder(1, 0, "My device", "12345678901", QRCode.from("21321321").to(ImageType.JPG).stream().toByteArray()),
                 new QrHolder(1, 1, "My device2", "12345678902", QRCode.from("21321321").to(ImageType.JPG).stream().toByteArray())
@@ -132,14 +132,14 @@ public class MailWrapperTest {
 
         mailWrapper.sendText(to, "Hello", "Happy Blynking!\n" +
                 "-\n" +
-                "Getting Started Guide -> http://www.blynk.cc/getting-started\n" +
+                "Getting Started Guide -> https://www.blynk.cc/getting-started\n" +
                 "Documentation -> http://docs.blynk.cc/\n" +
-                "Sketch generator -> http://examples.blynk.cc/\n" +
+                "Sketch generator -> https://examples.blynk.cc/\n" +
                 "\n" +
                 "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.3.9/Blynk_v0.3.9.zip\n" +
                 "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.18.1/server-0.18.1.jar\n" +
                 "-\n" +
-                "http://www.blynk.cc\n" +
+                "https://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
                 "www.facebook.com/blynkapp");
     }
