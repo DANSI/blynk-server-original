@@ -19,11 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -68,8 +64,7 @@ public class BlynkInternalLogicTest {
         BlynkInternalMessage hardwareInfoLogic = new BlynkInternalMessage(1, "ver 0.3.2-beta h-beat 60 buff-in 256 dev ESP8266".replaceAll(" ", "\0"));
         logic.messageReceived(ctx, hardwareStateHolder, hardwareInfoLogic);
 
-        verify(pipeline).remove(ReadTimeoutHandler.class);
-        verify(pipeline).addFirst(any(ReadTimeoutHandler.class));
+        verify(pipeline).replace(eq(ReadTimeoutHandler.class), eq("H_ReadTimeout"), any());
         verify(ctx).writeAndFlush(any(), any());
     }
 
