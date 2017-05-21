@@ -64,18 +64,16 @@ public class UpdateFaceLogic {
 
         boolean hasFaces = false;
         for (User existingUser : userDao.users.values()) {
-            if (existingUser == user || appIds.contains(existingUser.appName)) {
-                for (DashBoard existingDash : existingUser.profile.dashBoards) {
-                    if (existingDash.parentId == dashId) {
-                        hasFaces = true;
-                        //we found child project-face
-                        try {
-                            existingDash.updateFaceFields(dash);
-                        } catch (Exception e) {
-                            log.error("Error updating face for user {}, dashId {}.", existingUser.email, existingDash.id, e);
-                            ctx.writeAndFlush(notAllowed(message.id));
-                            return;
-                        }
+            for (DashBoard existingDash : existingUser.profile.dashBoards) {
+                if (existingDash.parentId == dashId && (existingUser == user || appIds.contains(existingUser.appName))) {
+                    hasFaces = true;
+                    //we found child project-face
+                    try {
+                        existingDash.updateFaceFields(dash);
+                    } catch (Exception e) {
+                        log.error("Error updating face for user {}, dashId {}.", existingUser.email, existingDash.id, e);
+                        ctx.writeAndFlush(notAllowed(message.id));
+                        return;
                     }
                 }
             }

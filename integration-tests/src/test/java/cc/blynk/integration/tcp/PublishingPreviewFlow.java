@@ -200,7 +200,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
 
         QrHolder[] qrHolders = makeQRs(devices, 1, false);
         StringBuilder sb = new StringBuilder();
@@ -225,9 +225,20 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, dashBoard.parentId);
         assertEquals(16, dashBoard.widgets.length);
 
+        clientPair.appClient.send("createWidget 1\0{\"id\":222, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
         clientPair.appClient.send("updateFace 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+
+        appClient2.send("loadProfileGzipped");
+        profile = parseProfile(appClient2.getBody(4));
+        assertEquals(1, profile.dashBoards.length);
+        dashBoard = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(1, dashBoard.id);
+        assertEquals(1, dashBoard.parentId);
+        assertEquals(17, dashBoard.widgets.length);
     }
 
     @Test
