@@ -67,6 +67,11 @@ public final class JsonParser {
             .addMixIn(Device.class, DeviceIgnoreMixIn.class)
             .writerFor(DashBoard.class);
 
+    public static final ObjectWriter restrictiveWidgetWriter = init()
+            .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
+            .addMixIn(Notification.class, NotificationIgnoreMixIn.class)
+            .writerFor(Widget.class);
+
     private static final ObjectWriter statWriter = init().writerWithDefaultPrettyPrinter().forType(Stat.class);
 
     public static ObjectMapper init() {
@@ -140,6 +145,15 @@ public final class JsonParser {
             log.error("Error jsoning object.", e);
         }
         return "{}";
+    }
+
+    public static String toJson(Widget widget) {
+        try {
+            return restrictiveWidgetWriter.writeValueAsString(widget);
+        } catch (Exception e) {
+            log.error("Error jsoning widget.", e);
+        }
+        return null;
     }
 
     public static String toJson(Object o) {

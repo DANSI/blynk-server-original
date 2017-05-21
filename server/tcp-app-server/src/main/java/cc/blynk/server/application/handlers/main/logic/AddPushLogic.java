@@ -20,7 +20,7 @@ import static cc.blynk.utils.BlynkByteBufUtil.ok;
 public class AddPushLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        String[] data = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+        String[] data = StringUtils.split3(message.body);
 
         int dashId = ParseUtil.parseInt(data[0]);
         String uid = data[1];
