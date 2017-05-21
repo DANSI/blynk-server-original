@@ -53,7 +53,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
                     isSame = true;
                 }
             }
-            if (advancedMode && isSame) {
+            if (advancedMode && isSame && value != null) {
                 lastCommands.add(value);
             }
         }
