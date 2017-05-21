@@ -51,14 +51,14 @@ public class AppSyncLogic {
 
         final Channel appChannel = ctx.channel();
         for (Widget widget : dash.widgets) {
-            if (widget instanceof AppSyncWidget) {
+            if (widget instanceof AppSyncWidget && appChannel.isWritable()) {
                 ((AppSyncWidget) widget).sendAppSync(appChannel, dash.id, targetId);
             }
         }
 
         for (Map.Entry<PinStorageKey, String> entry : dash.pinsStorage.entrySet()) {
             PinStorageKey key = entry.getKey();
-            if (targetId == ANY_TARGET || targetId == key.deviceId) {
+            if ((targetId == ANY_TARGET || targetId == key.deviceId) && appChannel.isWritable()) {
                 String body = prependDashIdAndDeviceId(dash.id, key.deviceId, Pin.makeHardwareBody(key.pinType, key.pin, entry.getValue()));
                 ctx.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body), ctx.voidPromise());
             }

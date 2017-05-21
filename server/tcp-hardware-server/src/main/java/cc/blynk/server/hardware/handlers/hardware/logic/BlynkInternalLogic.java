@@ -65,7 +65,7 @@ public class BlynkInternalLogic {
     private void sendRTC(ChannelHandlerContext ctx, HardwareStateHolder state, int msgId) {
         DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(state.dashId);
         RTC rtc = dashBoard.getWidgetByType(RTC.class);
-        if (rtc != null) {
+        if (rtc != null && ctx.channel().isWritable()) {
             ctx.writeAndFlush(makeASCIIStringMessage(BLYNK_INTERNAL, msgId, "rtc" + BODY_SEPARATOR + rtc.getTime()), ctx.voidPromise());
         }
     }

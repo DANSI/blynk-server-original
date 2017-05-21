@@ -58,6 +58,8 @@ public class RefreshShareTokenLogic {
             }
         }
 
-        ctx.writeAndFlush(makeUTF8StringMessage(REFRESH_SHARE_TOKEN, message.id, token), ctx.voidPromise());
+        if (ctx.channel().isWritable()) {
+            ctx.writeAndFlush(makeUTF8StringMessage(REFRESH_SHARE_TOKEN, message.id, token), ctx.voidPromise());
+        }
     }
 }

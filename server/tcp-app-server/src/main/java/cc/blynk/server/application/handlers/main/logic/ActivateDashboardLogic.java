@@ -68,13 +68,13 @@ public class ActivateDashboardLogic {
         }
 
         for (Channel appChannel : session.appChannels) {
-            if (appChannel != ctx.channel() && getAppState(appChannel) != null) {
+            if (appChannel != ctx.channel() && getAppState(appChannel) != null && appChannel.isWritable()) {
                 appChannel.write(makeUTF8StringMessage(message.command, message.id, message.body));
             }
 
             //todo remove after migration to new "AppSync" method
             for (Widget widget : dash.widgets) {
-                if (widget instanceof AppSyncWidget) {
+                if (widget instanceof AppSyncWidget && appChannel.isWritable()) {
                     ((AppSyncWidget) widget).sendAppSync(appChannel, dashId);
                 }
             }

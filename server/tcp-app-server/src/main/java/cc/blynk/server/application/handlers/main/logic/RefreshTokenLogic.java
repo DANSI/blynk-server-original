@@ -40,6 +40,8 @@ public class RefreshTokenLogic {
 
         String token = tokenManager.refreshToken(user, dashId, deviceId);
 
-        ctx.writeAndFlush(makeUTF8StringMessage(REFRESH_TOKEN, message.id, token), ctx.voidPromise());
+        if (ctx.channel().isWritable()) {
+            ctx.writeAndFlush(makeUTF8StringMessage(REFRESH_TOKEN, message.id, token), ctx.voidPromise());
+        }
     }
 }

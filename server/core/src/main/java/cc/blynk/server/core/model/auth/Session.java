@@ -189,6 +189,8 @@ public class Session {
             if (channel.isWritable()) {
                 log.trace("Sending {} to channel {}", body, channel);
                 channel.writeAndFlush(msg, channel.voidPromise());
+            } else {
+                msg.release();
             }
             if (msg.refCnt() > 0) {
                 msg.resetReaderIndex();
@@ -199,7 +201,7 @@ public class Session {
     public void sendToSharedApps(Channel sendingChannel, String sharedToken, short cmd, int msgId, String body) {
         final Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : appChannels) {
-            if (channel != sendingChannel && channel.isWritable() && needSync(channel, sharedToken)) {
+            if (channel != sendingChannel && needSync(channel, sharedToken)) {
                 targetChannels.add(channel);
             }
         }

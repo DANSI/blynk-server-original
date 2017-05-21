@@ -44,14 +44,14 @@ public class HardwareSyncLogic {
         //return all widgets state
         for (Widget widget : dash.widgets) {
             //one exclusion, no need to sync RTC
-            if (widget instanceof HardwareSyncWidget && !(widget instanceof RTC)) {
+            if (widget instanceof HardwareSyncWidget && !(widget instanceof RTC) && ctx.channel().isWritable()) {
                 ((HardwareSyncWidget) widget).sendHardSync(ctx, msgId, deviceId);
             }
         }
         //return all static server holders
         for (Map.Entry<PinStorageKey, String> entry : dash.pinsStorage.entrySet()) {
             PinStorageKey key = entry.getKey();
-            if (deviceId == key.deviceId) {
+            if (deviceId == key.deviceId && ctx.channel().isWritable()) {
                 String body = Pin.makeHardwareBody(key.pinType, key.pin, entry.getValue());
                 ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
             }
@@ -76,14 +76,16 @@ public class HardwareSyncLogic {
             for (int i = 1; i < bodyParts.length; i++) {
                 byte pin = ParseUtil.parseByte(bodyParts[i]);
                 Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
-                if (widget == null) {
-                    String value = dash.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
-                    if (value != null) {
-                        String body = Pin.makeHardwareBody(pinType, pin, value);
-                        ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
+                if (ctx.channel().isWritable()) {
+                    if (widget == null) {
+                        String value = dash.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
+                        if (value != null) {
+                            String body = Pin.makeHardwareBody(pinType, pin, value);
+                            ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
+                        }
+                    } else if (widget instanceof HardwareSyncWidget) {
+                        ((HardwareSyncWidget) widget).sendHardSync(ctx, msgId, deviceId);
                     }
-                } else if (widget instanceof HardwareSyncWidget) {
-                    ((HardwareSyncWidget) widget).sendHardSync(ctx, msgId, deviceId);
                 }
             }
             ctx.flush();

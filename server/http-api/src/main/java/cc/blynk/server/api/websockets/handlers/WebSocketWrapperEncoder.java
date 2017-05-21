@@ -19,10 +19,12 @@ public class WebSocketWrapperEncoder extends ChannelOutboundHandlerAdapter {
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        if (msg instanceof ByteBuf) {
-            super.write(ctx, new BinaryWebSocketFrame((ByteBuf) msg), promise);
-        } else {
-            super.write(ctx, msg, promise);
+        if (ctx.channel().isWritable()) {
+            if (msg instanceof ByteBuf) {
+                super.write(ctx, new BinaryWebSocketFrame((ByteBuf) msg), promise);
+            } else {
+                super.write(ctx, msg, promise);
+            }
         }
     }
 

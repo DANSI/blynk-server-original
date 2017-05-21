@@ -51,6 +51,8 @@ public class GetTokenLogic {
             tokenManager.assignToken(user, dashId, deviceId, token);
         }
 
-        ctx.writeAndFlush(makeASCIIStringMessage(GET_TOKEN, message.id, token), ctx.voidPromise());
+        if (ctx.channel().isWritable()) {
+            ctx.writeAndFlush(makeASCIIStringMessage(GET_TOKEN, message.id, token), ctx.voidPromise());
+        }
     }
 }

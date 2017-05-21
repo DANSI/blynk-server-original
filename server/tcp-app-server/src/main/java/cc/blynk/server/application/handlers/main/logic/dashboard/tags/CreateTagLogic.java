@@ -59,7 +59,9 @@ public class CreateTagLogic {
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
 
-        ctx.writeAndFlush(makeUTF8StringMessage(CREATE_TAG, message.id, newTag.toString()), ctx.voidPromise());
+        if (ctx.channel().isWritable()) {
+            ctx.writeAndFlush(makeUTF8StringMessage(CREATE_TAG, message.id, newTag.toString()), ctx.voidPromise());
+        }
     }
 
 }

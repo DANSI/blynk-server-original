@@ -15,7 +15,9 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
 public class GetEnergyLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        ctx.writeAndFlush(makeASCIIStringMessage(GET_ENERGY, message.id, "" + user.energy), ctx.voidPromise());
+        if (ctx.channel().isWritable()) {
+            ctx.writeAndFlush(makeASCIIStringMessage(GET_ENERGY, message.id, "" + user.energy), ctx.voidPromise());
+        }
     }
 
 }

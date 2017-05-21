@@ -45,6 +45,8 @@ public class GetShareTokenLogic {
             user.subtractEnergy(PRIVATE_TOKEN_PRICE);
         }
 
-        ctx.writeAndFlush(makeUTF8StringMessage(GET_SHARE_TOKEN, message.id, token), ctx.voidPromise());
+        if (ctx.channel().isWritable()) {
+            ctx.writeAndFlush(makeUTF8StringMessage(GET_SHARE_TOKEN, message.id, token), ctx.voidPromise());
+        }
     }
 }
