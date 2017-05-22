@@ -6,8 +6,10 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
@@ -141,6 +143,77 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("hardware 1 vw 1 1");
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 1 1"))));
+
+        appClient2.send("hardware 1 vw 2 2");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 2 2"))));
+
+        clientPair.appClient.reset();
+        clientPair.hardwareClient.reset();
+        appClient2.reset();
+
+        appClient2.send("hardware 1 ar 30");
+        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(produce(1, HARDWARE, b("ar 30"))));
+
+        clientPair.appClient.send("hardware 1 ar 30");
+        verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(produce(2, HARDWARE, b("ar 30"))));
+
+        clientPair.hardwareClient.reset();
+        clientPair.hardwareClient.send("ping");
+
+        appClient2.send("hardware 1 pm 2 2");
+        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock,  after(500).atMost(1)).channelRead(any(), any());
+
+        clientPair.appClient.send("hardware 1 ar 30");
+        verify(appClient2.responseMock, after(500).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(produce(2, HARDWARE, b("ar 30"))));
+
+        clientPair.appClient.send("hardware 1 pm 2 2");
+        verify(appClient2.responseMock, after(250).never()).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, after(250).never()).channelRead(any(), eq(produce(3, HARDWARE, b("pm 2 2"))));
+    }
+
+    @Test
+    public void getShareMultipleTokensAndLoginViaIt() throws Exception {
+        clientPair.appClient.send("getShareToken 1");
+
+        String token1 = clientPair.appClient.getBody();
+        assertNotNull(token1);
+        assertEquals(32, token1.length());
+
+        DashBoard dash = new DashBoard();
+        dash.id = 2;
+        dash.name = "test";
+        clientPair.appClient.send("createDash " + dash.toString());
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+
+        DashboardSettings settings = new DashboardSettings();
+        settings.name = dash.name;
+        settings.theme = Theme.Blynk;
+        settings.isShared = true;
+        clientPair.appClient.send("updateSettings 2\0" + JsonParser.toJson(settings));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+
+        clientPair.appClient.send("getShareToken 2");
+
+        String token2 = clientPair.appClient.getBody(4);
+        assertNotNull(token2);
+        assertEquals(32, token2.length());
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.send("shareLogin " + "dima@mail.ua " + token1 + " Android 24");
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient3.start();
+        appClient3.send("shareLogin " + "dima@mail.ua " + token2 + " Android 24");
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("hardware 1 vw 1 1");
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(5, APP_SYNC, b("1 vw 1 1"))));
 
         appClient2.send("hardware 1 vw 2 2");
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 2 2"))));
