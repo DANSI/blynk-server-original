@@ -54,6 +54,10 @@ public class CreateAppLogic {
 
         final User user = state.user;
 
+        if (user.profile.apps.length > 25) {
+            throw new NotAllowedException("App with same id already exists.");
+        }
+
         for (App app : user.profile.apps) {
             if (app.id.equals(newApp.id)) {
                 throw new NotAllowedException("App with same id already exists.");
