@@ -20,10 +20,7 @@ import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static cc.blynk.utils.ArrayUtil.*;
 
@@ -73,7 +70,7 @@ public class DashBoard {
     public volatile String sharedToken;
 
     @JsonDeserialize(keyUsing = PinStorageKeyDeserializer.class)
-    public Map<PinStorageKey, String> pinsStorage = new HashMap<>();
+    public Map<PinStorageKey, String> pinsStorage = Collections.emptyMap();
 
     public void update(final int deviceId, final byte pin, final PinType type, final String value, final long now) {
         boolean hasWidget = false;
@@ -84,6 +81,9 @@ public class DashBoard {
         }
         //special case. #237 if no widget - storing without widget.
         if (!hasWidget) {
+            if (pinsStorage == Collections.EMPTY_MAP) {
+                pinsStorage = new HashMap<>();
+            }
             pinsStorage.put(new PinStorageKey(deviceId, type, pin), value);
         }
 
