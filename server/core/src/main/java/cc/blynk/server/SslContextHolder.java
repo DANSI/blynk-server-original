@@ -84,7 +84,7 @@ public class SslContextHolder {
             System.out.println("Generating own initial certificates...");
             try {
                 if (this.acmeClient.requestCertificate()) {
-                    System.out.println("Success! The certificate for your domain has been generated!");
+                    System.out.println("Success! The certificate for your domain " + props.getProperty("server.host") + " has been generated!");
                     regenerate(props);
                 }
             } catch (Exception e) {
