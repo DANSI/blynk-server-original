@@ -6,20 +6,32 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
+import cc.blynk.server.core.model.enums.GraphType;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.AppSyncMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.utils.ByteUtils;
+import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
@@ -203,6 +215,96 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(6, b("vw 88 0"))));
         verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(6, b("vw 88 0"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(6, b("1-200000 vw 88 0"))));
+    }
+
+    @Test
+    public void testGetHistoryGraphDataForDeviceSelector() throws Exception {
+        Device device0 = new Device(0, "My Dashboard", "UNO");
+        device0.status = Status.ONLINE;
+        Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        clientPair.appClient.send("createWidget 1\0{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Button\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
+        clientPair.appClient.send("createWidget 1\0{\"id\":89, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Display\", \"type\":\"DIGIT4_DISPLAY\", \"pinType\":\"VIRTUAL\", \"pin\":89}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
+
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody(5);
+
+        clientPair.appClient.reset();
+
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        assertNotNull(devices);
+        assertEquals(2, devices.length);
+
+        assertEqualDevice(device0, devices[0]);
+        assertEqualDevice(device1, devices[1]);
+
+        String tempDir = holder.props.getProperty("data.folder");
+
+        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphType.HOURLY));
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphType.HOURLY));
+
+        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
+
+        FileUtils.write(pinReportingDataPath2, 3D, 33);
+        FileUtils.write(pinReportingDataPath2, 4D, 44);
+
+        clientPair.appClient.send("getgraphdata 1-200000 d 8 24 h");
+
+        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(2, bb.getInt());
+        assertEquals(1.11D, bb.getDouble(), 0.1);
+        assertEquals(1111111, bb.getLong());
+        assertEquals(1.22D, bb.getDouble(), 0.1);
+        assertEquals(2222222, bb.getLong());
+
+        //changing device
+        clientPair.appClient.send("hardware 1 vu 200000 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getgraphdata 1-200000 d 8 24 h");
+
+        objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        graphDataResponse = objectArgumentCaptor.getValue();
+
+        assertNotNull(graphDataResponse);
+        decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(2, bb.getInt());
+        assertEquals(3D, bb.getDouble(), 0.1);
+        assertEquals(33, bb.getLong());
+        assertEquals(4D, bb.getDouble(), 0.1);
+        assertEquals(44, bb.getLong());
     }
 
     @Test

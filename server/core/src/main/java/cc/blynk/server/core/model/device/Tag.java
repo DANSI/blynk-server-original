@@ -43,6 +43,11 @@ public class Tag implements Target {
     }
 
     @Override
+    public int getDeviceId() {
+        return deviceIds[0];
+    }
+
+    @Override
     public boolean isTag() {
         return true;
     }

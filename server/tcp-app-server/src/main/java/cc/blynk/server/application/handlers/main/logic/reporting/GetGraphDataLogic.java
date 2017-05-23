@@ -2,8 +2,10 @@ package cc.blynk.server.application.handlers.main.logic.reporting;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
@@ -50,19 +52,30 @@ public class GetGraphDataLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        String[] dashIdDeviceId = split2Device(messageParts[0]);
-        int dashId = Integer.parseInt(dashIdDeviceId[0]);
-        int deviceId = 0;
-        if (dashIdDeviceId.length == 2) {
-            deviceId = Integer.parseInt(dashIdDeviceId[1]);
+        String[] dashIdTargetId = split2Device(messageParts[0]);
+        int dashId = Integer.parseInt(dashIdTargetId[0]);
+        int targetId = 0;
+        if (dashIdTargetId.length == 2) {
+            targetId = Integer.parseInt(dashIdTargetId[1]);
         }
+
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+
+        Target target = dash.getTarget(targetId);
+        if (target == null) {
+            log.debug("No assigned target for received command.");
+            ctx.writeAndFlush(makeResponse(message.id, NO_DATA), ctx.voidPromise());
+            return;
+        }
+
+        //history graph could be assigned only to device or device selector
+        final int deviceId = target.getDeviceId();
 
         //special case for delete command
         if (messageParts.length == 4) {
             deleteGraphData(messageParts, user, dashId, deviceId);
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
-            user.profile.validateDashId(dashId);
             process(ctx.channel(), dashId, deviceId, Arrays.copyOfRange(messageParts, 1, messageParts.length), user, message.id, 4);
         }
     }

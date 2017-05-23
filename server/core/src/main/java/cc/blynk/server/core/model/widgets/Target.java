@@ -9,6 +9,8 @@ public interface Target {
 
     int[] getDeviceIds();
 
+    int getDeviceId();
+
     default boolean isTag() {
         return false;
     }

@@ -24,6 +24,11 @@ public class DeviceSelector extends NoPinWidget implements Target {
     }
 
     @Override
+    public int getDeviceId() {
+        return value;
+    }
+
+    @Override
     public int getPrice() {
         return 1900;
     }
