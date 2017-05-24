@@ -112,7 +112,7 @@ public class MailQRsLogic {
                 mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolders);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
-                log.error("Error sending static email from application. For user {}. Error:", to, e);
+                log.error("Error sending static email from application. For user {}. Reason: {}", to, e.getMessage());
                 channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
             }
         });
