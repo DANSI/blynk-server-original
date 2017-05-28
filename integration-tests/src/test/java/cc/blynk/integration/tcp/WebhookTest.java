@@ -447,31 +447,20 @@ public class WebhookTest extends IntegrationBase {
         webHook.height = 1;
         webHook.id = 111;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
 
         webHook.url = "http://adasd.com";
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         webHook.id = 222;
         webHook.url = "https://adasd.com";
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
-
-        webHook.url = "htdtps://adasd.com";
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(4)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         webHook.id = 333;
         webHook.url = "Http://adasd.com";
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
-
-        webHook.id = 444;
-        webHook.url = "adasd.com";
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(6)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
     }
 
 }
