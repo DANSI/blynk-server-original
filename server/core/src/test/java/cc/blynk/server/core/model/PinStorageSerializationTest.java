@@ -5,7 +5,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.utils.JsonParser;
 import org.junit.Test;
 
-import java.util.Collections;
+import java.util.HashMap;
 
 import static org.junit.Assert.*;
 
@@ -25,7 +25,7 @@ public class PinStorageSerializationTest {
                 new DashBoard()
         };
         user.lastModifiedTs = 0;
-        user.profile.dashBoards[0].pinsStorage = Collections.emptyMap();
+        user.profile.dashBoards[0].pinsStorage = new HashMap<>();
         PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (byte) 0);
         PinStorageKey pinStorageKey2 = new PinStorageKey(0, PinType.DIGITAL, (byte) 1);
         user.profile.dashBoards[0].pinsStorage.put(pinStorageKey, "0");
