@@ -29,6 +29,8 @@ public class Notification extends NoPinWidget {
 
     public Priority priority = Priority.normal;
 
+    public String soundUri;
+
     public static boolean isWrongBody(String body) {
         return body == null || body.isEmpty() || body.length() > MAX_PUSH_BODY_SIZE;
     }
