@@ -556,7 +556,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         }
 
         log.trace("Sending push for user {}, with message : '{}'.", user.email, message.body);
-        notification.push(gcmWrapper, message.body, 1);
+        notification.push(gcmWrapper, message.body, dash.id);
 
         return Response.ok();
     }
