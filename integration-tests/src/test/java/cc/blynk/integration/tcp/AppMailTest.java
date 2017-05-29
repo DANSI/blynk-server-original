@@ -95,7 +95,7 @@ public class AppMailTest extends IntegrationBase {
                 "Sketch generator -> https://examples.blynk.cc/\n" +
                 "\n" +
                 "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.7/Blynk_Release_v0.4.7.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.24.5/server-0.24.5.jar\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.24.6/server-0.24.6.jar\n" +
                 "-\n" +
                 "https://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
@@ -137,7 +137,7 @@ public class AppMailTest extends IntegrationBase {
                 "Sketch generator -> https://examples.blynk.cc/\n" +
                 "\n" +
                 "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.4.7/Blynk_Release_v0.4.7.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.24.5/server-0.24.5.jar\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.24.6/server-0.24.6.jar\n" +
                 "-\n" +
                 "https://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
