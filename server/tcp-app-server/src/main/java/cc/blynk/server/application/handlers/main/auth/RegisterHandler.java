@@ -143,7 +143,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         DashBoard clonedDash = JsonParser.parseDashboard(dash.toStringRestrictive());
 
         clonedDash.id = 1;
-        clonedDash.parentId = dashId;
+        clonedDash.parentId = dash.parentId;
         clonedDash.createdAt = System.currentTimeMillis();
         clonedDash.updatedAt = clonedDash.createdAt;
         clonedDash.isActive = true;

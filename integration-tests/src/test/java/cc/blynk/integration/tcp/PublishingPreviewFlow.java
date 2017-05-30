@@ -14,6 +14,7 @@ import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.notifications.mail.QrHolder;
@@ -189,25 +190,38 @@ public class PublishingPreviewFlow extends IntegrationBase {
     }
 
     @Test
-    public void testFaceEdit() throws Exception {
-        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+    public void testFaceUpdateWorks() throws Exception {
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 10;
+        dashBoard.parentId = 1;
+        dashBoard.isPreview = true;
+        dashBoard.name = "Face Edit Test";
+
+        clientPair.appClient.send("createDash " + dashBoard.toString());
+
+        Device device0 = new Device(0, "My Dashboard", "UNO");
+        device0.status = Status.ONLINE;
+
+        clientPair.appClient.send("createDevice 10\0" + device0.toString());
+        String createdDevice = clientPair.appClient.getBody(2);
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(2, device.toString())));
+
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[10]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody(3));
         assertNotNull(app);
         assertNotNull(app.id);
 
-        clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody(2);
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
-        assertEquals(1, devices.length);
+        clientPair.appClient.send("emailQr 10\0" + app.id);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(4)));
 
-        clientPair.appClient.send("emailQr 1\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
-
-        QrHolder[] qrHolders = makeQRs(devices, 1, false);
+        QrHolder[] qrHolders = makeQRs(new Device[] {device}, 10, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{project_name}", "Face Edit Test").replace("{device_section}", sb.toString())), eq(qrHolders));
 
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
@@ -221,14 +235,11 @@ public class PublishingPreviewFlow extends IntegrationBase {
         appClient2.send("loadProfileGzipped");
         Profile profile = parseProfile(appClient2.getBody(3));
         assertEquals(1, profile.dashBoards.length);
-        DashBoard dashBoard = profile.dashBoards[0];
+        dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
         assertEquals(1, dashBoard.id);
         assertEquals(1, dashBoard.parentId);
-        assertEquals(16, dashBoard.widgets.length);
-
-        clientPair.appClient.send("createWidget 1\0{\"id\":222, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+        assertEquals(0, dashBoard.widgets.length);
 
         clientPair.appClient.send("updateFace 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
@@ -240,29 +251,44 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertNotNull(dashBoard);
         assertEquals(1, dashBoard.id);
         assertEquals(1, dashBoard.parentId);
-        assertEquals(17, dashBoard.widgets.length);
+        assertEquals(16, dashBoard.widgets.length);
     }
 
     @Test
     public void testFaceEditForRestrictiveFields() throws Exception {
-        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        Profile profile = JsonParser.parseProfileFromString(readTestUserProfile());
+
+        DashBoard dashBoard = profile.dashBoards[0];
+        dashBoard.id = 10;
+        dashBoard.parentId = 1;
+        dashBoard.isPreview = true;
+        dashBoard.name = "Face Edit Test";
+
+        clientPair.appClient.send("createDash " + dashBoard.toString());
+
+        Device device0 = new Device(0, "My Dashboard", "UNO");
+        device0.status = Status.ONLINE;
+
+        clientPair.appClient.send("createDevice 10\0" + device0.toString());
+        String createdDevice = clientPair.appClient.getBody(2);
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(2, device.toString())));
+
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[10]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody(3));
         assertNotNull(app);
         assertNotNull(app.id);
 
-        clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody(2);
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
-        assertEquals(1, devices.length);
+        clientPair.appClient.send("emailQr 10\0" + app.id);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(4)));
 
-        clientPair.appClient.send("emailQr 1\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
-
-        QrHolder[] qrHolders = makeQRs(devices, 1, false);
+        QrHolder[] qrHolders = makeQRs(new Device[] {device}, 10, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.STATIC_MAIL_BODY.replace("{project_name}", "Face Edit Test").replace("{device_section}", sb.toString())), eq(qrHolders));
 
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
@@ -274,22 +300,22 @@ public class PublishingPreviewFlow extends IntegrationBase {
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         appClient2.send("loadProfileGzipped");
-        Profile profile = parseProfile(appClient2.getBody(3));
+        profile = parseProfile(appClient2.getBody(3));
         assertEquals(1, profile.dashBoards.length);
-        DashBoard dashBoard = profile.dashBoards[0];
+        dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
         assertEquals(1, dashBoard.id);
         assertEquals(1, dashBoard.parentId);
         assertEquals(16, dashBoard.widgets.length);
 
         clientPair.appClient.send("addPushToken 1\0uid1\0token1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
-
-        clientPair.appClient.send("updateWidget 1\0" + "{\"id\":10, \"height\":2, \"width\":1, \"x\":22, \"y\":23, \"username\":\"pupkin@gmail.com\", \"token\":\"token\", \"secret\":\"secret\", \"type\":\"TWITTER\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
 
-        clientPair.appClient.send("updateFace 1");
+        clientPair.appClient.send("updateWidget 1\0" + "{\"id\":10, \"height\":2, \"width\":1, \"x\":22, \"y\":23, \"username\":\"pupkin@gmail.com\", \"token\":\"token\", \"secret\":\"secret\", \"type\":\"TWITTER\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(6)));
+
+        clientPair.appClient.send("updateFace 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(7)));
 
         appClient2.send("loadProfileGzipped");
         profile = parseProfile(appClient2.getBody(4));

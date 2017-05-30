@@ -341,8 +341,8 @@ public class DashBoard {
     }
 
     private Widget[] copyWidgets(Widget[] widgetsToCopy) {
-        if (widgets.length == 0) {
-            return widgets;
+        if (widgetsToCopy.length == 0) {
+            return widgetsToCopy;
         }
         ArrayList<Widget> copy = new ArrayList<>(widgetsToCopy.length);
         for (Widget newWidget : widgetsToCopy) {
