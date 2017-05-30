@@ -353,7 +353,14 @@ public class DashBoard {
             Widget copyWidget = JsonParser.parseWidget(copyWidgetString);
 
             if (oldWidget != null) {
-                copyWidget.updateIfSame(oldWidget);
+                if (oldWidget instanceof OnePinWidget) {
+                    OnePinWidget onePinWidget = (OnePinWidget) oldWidget;
+                    if (onePinWidget.value != null) {
+                        copyWidget.updateIfSame(oldWidget);
+                    }
+                } else {
+                    copyWidget.updateIfSame(oldWidget);
+                }
             }
             copy.add(copyWidget);
         }
