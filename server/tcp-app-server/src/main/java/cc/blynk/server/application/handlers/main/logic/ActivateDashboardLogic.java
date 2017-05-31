@@ -50,7 +50,6 @@ public class ActivateDashboardLogic {
 
         Session session = sessionDao.userSession.get(state.userKey);
 
-        //todo simplify?
         if (session.isHardwareConnected(dashId)) {
             for (Device device : dash.devices) {
                 if (session.sendMessageToHardware(dashId, HARDWARE, PIN_MODE_MSG_ID, dash.buildPMMessage(device.id), device.id)) {

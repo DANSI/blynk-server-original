@@ -1,5 +1,6 @@
 package cc.blynk.utils;
 
+import java.security.SecureRandom;
 import java.util.regex.Pattern;
 
 /**
@@ -28,6 +29,9 @@ public class StringUtils {
      * Every hard message has at least 3 starting chars we don't need.
      */
     private static final int START_INDEX = 3;
+
+    private static final String inData = "abcdefghijklmnopqrstuvwxyz";
+    private static final SecureRandom rnd = new SecureRandom();
 
     /**
      * Efficient split method (instead of String.split).
@@ -114,4 +118,12 @@ public class StringUtils {
         return "" + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR+ body;
     }
 
+    public static String randomString(int len) {
+        StringBuilder sb = new StringBuilder(len);
+        int inDataLen = inData.length();
+        for (int i = 0; i < len; i++) {
+            sb.append(inData.charAt(rnd.nextInt(inDataLen)));
+        }
+        return sb.toString();
+    }
 }

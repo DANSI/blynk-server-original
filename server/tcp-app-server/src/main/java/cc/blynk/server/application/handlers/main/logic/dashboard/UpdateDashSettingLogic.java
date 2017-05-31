@@ -32,7 +32,6 @@ public class UpdateDashSettingLogic {
         this.SETTINGS_SIZE_LIMIT = settingSizeLimit;
     }
 
-    //todo should accept only dash info and ignore widgets. should be fixed after migration
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String[] split = StringUtils.split2(message.body);
 
