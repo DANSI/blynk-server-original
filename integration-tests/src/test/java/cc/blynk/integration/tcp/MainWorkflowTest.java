@@ -522,16 +522,19 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void loadGzippedProfile() throws Exception{
-        String expected = readTestUserProfile();
+        Profile expectedProfile = JsonParser.parseProfileFromString(readTestUserProfile());
 
         clientPair.appClient.send("loadProfileGzipped");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
 
         Profile profile = parseProfile(clientPair.appClient.getBody());
+
         profile.dashBoards[0].updatedAt = 0;
-        //todo fix
+
+        expectedProfile.dashBoards[0].devices = null;
         profile.dashBoards[0].devices = null;
-        assertEquals(expected, profile.toString());
+
+        assertEquals(expectedProfile.toString(), profile.toString());
     }
 
     @Test

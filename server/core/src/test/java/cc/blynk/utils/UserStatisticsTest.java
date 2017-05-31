@@ -48,27 +48,6 @@ public class UserStatisticsTest {
     }
 
     @Test
-    public void printBoardTypes() {
-        System.out.println();
-        System.out.println("Board Types :");
-        Map<String, Integer> boards = new HashMap<>();
-        for (User user : users.values()) {
-                for (DashBoard dashBoard : user.profile.dashBoards) {
-                    String type = dashBoard.boardType;
-                    Integer i = boards.get(type);
-                    if (i == null) {
-                        i = 0;
-                    }
-                    boards.put(type, ++i);
-                }
-        }
-
-        for (Map.Entry<String, Integer> entry : boards.entrySet()) {
-            System.out.println(entry.getKey() + " : " + entry.getValue());
-        }
-    }
-
-    @Test
     public void printWidgetUsage() {
         System.out.println();
         System.out.println("Widget Usage :");

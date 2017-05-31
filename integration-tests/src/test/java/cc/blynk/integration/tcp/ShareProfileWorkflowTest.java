@@ -95,8 +95,6 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         String dashboard = clientPair2.appClient.getBody();
         DashBoard serverDash = JsonParser.parseDashboard(dashboard);
-        //todo fix
-        serverDash.devices = null;
 
         Profile profile = parseProfile(readTestUserProfile());
         Twitter twitter = profile.dashBoards[0].getWidgetByType(Twitter.class);
@@ -108,6 +106,9 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         profile.dashBoards[0].updatedAt = serverDash.updatedAt;
         assertNotNull(serverDash.sharedToken);
         serverDash.sharedToken = null;
+        //todo fix
+        serverDash.devices = null;
+        profile.dashBoards[0].devices = null;
 
         assertEquals(profile.dashBoards[0].toString(), serverDash.toString());
 
@@ -556,8 +557,6 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         dashboard = clientPair.appClient.getBody();
         DashBoard serverDash = JsonParser.parseDashboard(dashboard);
-        //todo fix
-        serverDash.devices = null;
 
         assertNotNull(dashboard);
         Profile profile = parseProfile(readTestUserProfile());
@@ -570,7 +569,11 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         DashBoard temp = JsonParser.parseDashboard(dashboard);
         profile.dashBoards[0].updatedAt = temp.updatedAt;
         assertNotNull(serverDash.sharedToken);
+
+        //todo fix
+        serverDash.devices = null;
         serverDash.sharedToken = null;
+        profile.dashBoards[0].devices = null;
 
         assertEquals(profile.dashBoards[0].toString(), serverDash.toString());
         //System.out.println(dashboard);

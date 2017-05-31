@@ -43,7 +43,7 @@ public class GetTokenLogic {
         if (token == null) {
             //todo back compatibility code. remove in future
             dash.devices = new Device[] {
-                    new Device(deviceId, dash.boardType, dash.boardType)
+                    new Device(deviceId, "ESP8266", "ESP8266")
             };
             //
 

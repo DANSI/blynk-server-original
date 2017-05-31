@@ -53,8 +53,6 @@ public class JsonParsingTest {
         assertEquals("My Dashboard", dashBoard.name);
         assertNotNull(dashBoard.widgets);
         assertEquals(dashBoard.widgets.length, 8);
-        assertNotNull(dashBoard.boardType);
-        assertEquals("UNO", dashBoard.boardType);
 
         for (Widget widget : dashBoard.widgets) {
             assertNotNull(widget);

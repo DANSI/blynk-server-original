@@ -263,10 +263,12 @@ public class PublishingPreviewFlow extends IntegrationBase {
         dashBoard.parentId = 1;
         dashBoard.isPreview = true;
         dashBoard.name = "Face Edit Test";
+        dashBoard.devices = null;
 
         clientPair.appClient.send("createDash " + dashBoard.toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Device", "UNO");
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("createDevice 10\0" + device0.toString());

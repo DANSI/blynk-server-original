@@ -57,7 +57,7 @@ public class AppMailTest extends IntegrationBase {
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         appClient.send("email 1");
-        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device UNO"), startsWith("Auth Token : "));
+        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device My Device"), startsWith("Auth Token : "));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class AppMailTest extends IntegrationBase {
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
         appClient.send("email 1 0");
-        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device UNO"), startsWith("Auth Token : "));
+        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device My Device"), startsWith("Auth Token : "));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class AppMailTest extends IntegrationBase {
                 "twitter.com/blynk_app\n" +
                 "www.facebook.com/blynkapp\n", devices[0].token);
 
-        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device UNO"), eq(expectedBody));
+        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device My Device"), eq(expectedBody));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class AppMailTest extends IntegrationBase {
         appClient.send("login dima@mail.ua 1");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device2", "ESP8266");
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
@@ -127,8 +127,8 @@ public class AppMailTest extends IntegrationBase {
 
         appClient.send("email 1");
 
-        String expectedBody = String.format("Auth Token for device 'UNO' : %s\n" +
-                "Auth Token for device 'My Device' : %s\n" +
+        String expectedBody = String.format("Auth Token for device 'My Device' : %s\n" +
+                "Auth Token for device 'My Device2' : %s\n" +
                 "\n" +
                 "Happy Blynking!\n" +
                 "-\n" +

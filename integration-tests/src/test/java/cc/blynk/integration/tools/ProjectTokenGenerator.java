@@ -39,7 +39,6 @@ public class ProjectTokenGenerator {
         for (int i = 1; i <= count; i++) {
             DashBoard dash = new DashBoard();
             dash.id = i;
-            dash.boardType = "Generic Board";
             dash.theme = Theme.Blynk;
             dash.isActive = true;
             user.profile.dashBoards[i - 1] = dash;

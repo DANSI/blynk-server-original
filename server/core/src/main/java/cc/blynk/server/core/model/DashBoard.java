@@ -52,9 +52,6 @@ public class DashBoard {
 
     public volatile Tag[] tags = EMPTY_TAGS;
 
-    //todo should be removed after migration
-    public String boardType;
-
     public volatile Theme theme = Theme.Blynk;
 
     public volatile boolean keepScreenOn;
@@ -307,8 +304,6 @@ public class DashBoard {
         this.keepScreenOn = updatedDashboard.keepScreenOn;
         this.isAppConnectedOn = updatedDashboard.isAppConnectedOn;
 
-        this.boardType = updatedDashboard.boardType;
-
         Notification newNotification = updatedDashboard.getWidgetByType(Notification.class);
         if (newNotification != null) {
             Notification oldNotification = this.getWidgetByType(Notification.class);
@@ -333,7 +328,6 @@ public class DashBoard {
         this.theme = parent.theme;
         this.keepScreenOn = parent.keepScreenOn;
         this.isAppConnectedOn = parent.isAppConnectedOn;
-        this.boardType = parent.boardType;
         this.tags = copyTags(parent.tags);
         //do not update devices by purpose
         //this.devices = parent.devices;

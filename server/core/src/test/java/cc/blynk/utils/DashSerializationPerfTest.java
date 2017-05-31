@@ -46,7 +46,6 @@ public class DashSerializationPerfTest {
         dash = new DashBoard();
         dash.id = 1;
         dash.name = "My new Dashboard";
-        dash.boardType = "Arduino UNO";
         dash.hardwareInfo = new HardwareInfo();
         dash.devices = new Device[10];
         for (int i = 0; i < 10; i++) {
