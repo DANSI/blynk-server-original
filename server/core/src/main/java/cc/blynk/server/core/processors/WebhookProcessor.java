@@ -138,7 +138,6 @@ public class WebhookProcessor extends NotificationBase {
         globalStats.mark(WEB_HOOKS);
     }
 
-    //todo this is very straightforward solution. should be optimized.
     private String format(String data, String triggerValue, boolean doBlynkCheck) {
         //this is an ugly hack to make it work with Blynk HTTP API.
         if (doBlynkCheck || !data.toLowerCase().contains("/pin/v")) {

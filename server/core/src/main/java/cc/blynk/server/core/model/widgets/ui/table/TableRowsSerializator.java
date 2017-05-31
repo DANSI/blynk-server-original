@@ -16,7 +16,7 @@ import java.io.IOException;
  *
  * Temporary fix.
  *
- * //todo fins better solution
+ * //todo find better solution
  *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.

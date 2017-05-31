@@ -56,13 +56,14 @@ public class Timer extends OnePinWidget {
     }
 
     @Override
-    //todo refactor value of timer.
     public String getJsonValue() {
         if (value == null) {
             return "[]";
         }
-        String[] values = value.split(StringUtils.BODY_SEPARATOR_STRING);
-        if (values.length == 3) {
+
+        //todo back compatibility. remove this later.
+        if (value.contains(StringUtils.BODY_SEPARATOR_STRING)) {
+            String[] values = StringUtils.split3(value);
             return JsonParser.valueToJsonAsString(values[2]);
         } else {
             return JsonParser.valueToJsonAsString(value);

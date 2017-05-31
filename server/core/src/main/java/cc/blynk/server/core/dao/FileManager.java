@@ -136,8 +136,7 @@ public class FileManager {
                     .flatMap(file -> {
                         try {
                             User user = JsonParser.parseUserFromFile(file);
-                            //todo this is migration code. remove during next deploy.
-                            migrateOldProfile(user);
+                            makeProfileChanges(user);
 
                             return Stream.of(user);
                         } catch (IOException ioe) {
@@ -154,7 +153,7 @@ public class FileManager {
         return temp;
     }
 
-    public static void migrateOldProfile(User user) {
+    public static void makeProfileChanges(User user) {
         if (user.email == null) {
             user.email = user.name;
         }

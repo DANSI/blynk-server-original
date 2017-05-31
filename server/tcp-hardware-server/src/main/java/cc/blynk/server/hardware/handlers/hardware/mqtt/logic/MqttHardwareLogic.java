@@ -87,7 +87,6 @@ public class MqttHardwareLogic {
             dash.update(0, pin, pinType, value, now);
         }
 
-        //todo do not send if no widget pin
         if (dash.isActive) {
             session.sendToApps(HARDWARE, msg.variableHeader().messageId(), dashId, deviceId, body);
         } else {

@@ -69,7 +69,6 @@ public class NumberUtil {
         int startOffset = off;
         double dval;
 
-        // TODO: check too many digits (overflow)
         for (dval = 0d; (len > 0) && ((ch = s.charAt(off)) >= '0') && (ch <= '9');) {
             dval *= 10d;
             dval += ch - '0';
@@ -92,7 +91,6 @@ public class NumberUtil {
 
             startOffset = off;
 
-            // TODO: check too many digits (overflow)
             for (dval = 0d; (len > 0) && ((ch = s.charAt(off)) >= '0') && (ch <= '9');) {
                 dval *= 10d;
                 dval += ch - '0';
@@ -102,7 +100,6 @@ public class NumberUtil {
             numberLength = off - startOffset;
 
             if (numberLength > 0) {
-                // TODO: try factorizing pow10 with exponent below: only 1 long + operation
                 number += getPow10(-numberLength) * dval;
                 error = false;
             }
@@ -144,7 +141,6 @@ public class NumberUtil {
                         len--;
                     }
 
-                    // TODO: check exponent < 1024 (overflow)
                     if (!expSign) {
                         exponent = -exponent;
                     }
@@ -152,7 +148,6 @@ public class NumberUtil {
                     // For very small numbers we try to miminize
                     // effects of denormalization.
                     if (exponent > -300) {
-                        // TODO: cache Math.pow ?? see web page
                         number *= getPow10(exponent);
                     } else {
                         number = 1.0E-300 * (number * getPow10(exponent + 300));

@@ -50,7 +50,6 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
             case LOAD_PROFILE_GZIPPED :
                 loadProfileGzippedLogic.messageReceived(ctx, state, msg);
                 break;
-            //todo add test for that case
             case ADD_PUSH_TOKEN :
                 AddPushLogic.messageReceived(ctx, state, msg);
                 break;

@@ -342,7 +342,6 @@ public class DashBoard {
         for (Widget newWidget : widgetsToCopy) {
             Widget oldWidget = getWidgetById(newWidget.id);
 
-            //todo safe copy for notifications, twits, emails, sms
             String copyWidgetString = JsonParser.toJson(newWidget);
             Widget copyWidget = JsonParser.parseWidget(copyWidgetString);
 

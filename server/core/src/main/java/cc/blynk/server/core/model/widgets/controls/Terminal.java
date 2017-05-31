@@ -30,8 +30,6 @@ public class Terminal extends OnePinWidget {
     @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
         if (isSame(deviceId, pin, type)) {
-            //todo remove this line after migration.
-            this.value = null;
             this.lastCommands.add(value);
             return true;
         }

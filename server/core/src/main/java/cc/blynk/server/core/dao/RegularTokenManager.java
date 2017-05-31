@@ -3,7 +3,6 @@ package cc.blynk.server.core.dao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,11 +43,6 @@ class RegularTokenManager {
         Device device = dash.getDeviceById(deviceId);
 
         String oldToken = deleteDeviceToken(device);
-
-        //todo should never happen. but due to back compatibility
-        if (device == null) {
-            throw new IllegalCommandBodyException("Error refreshing token for user + " + user.email);
-        }
 
         //assign new token
         device.token = newToken;
