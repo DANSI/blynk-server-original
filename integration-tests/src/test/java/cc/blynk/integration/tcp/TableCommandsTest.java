@@ -212,8 +212,6 @@ public class TableCommandsTest extends IntegrationBase {
 
     @Test
     public void testTableRowLimit() throws Exception {
-        System.setProperty("table.rows.pool.size", "5");
-
         Table table = new Table();
         table.pin = 123;
         table.pinType = PinType.VIRTUAL;
@@ -229,7 +227,7 @@ public class TableCommandsTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), any());
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 123 clr"))));
 
-        for (int i = 1; i <= 6; i++) {
+        for (int i = 1; i <= 101; i++) {
             String cmd = "vw 123 add " + i + " Row0 row0";
             clientPair.hardwareClient.send("hardware " + cmd);
             verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i + 1, HARDWARE, b("1 " + cmd))));
@@ -241,8 +239,8 @@ public class TableCommandsTest extends IntegrationBase {
 
         assertNotNull(table);
         assertNotNull(table.rows);
-        assertEquals(5, table.rows.size());
-        for (int i = 2; i <= 6; i++) {
+        assertEquals(100, table.rows.size());
+        for (int i = 2; i <= 101; i++) {
             row = table.rows.get(i - 2);
             assertNotNull(row);
             assertEquals(i, row.id);
