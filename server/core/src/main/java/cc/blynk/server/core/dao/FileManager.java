@@ -159,17 +159,6 @@ public class FileManager {
             user.email = user.name;
         }
         for (DashBoard dashBoard : user.profile.dashBoards) {
-            final Integer dashId = dashBoard.id;
-            if (user.dashTokens != null) {
-                String token = user.dashTokens.get(dashId);
-                if (token != null && !token.isEmpty()) {
-                    dashBoard.devices = new Device[]{
-                            new Device(0, dashBoard.boardType, dashBoard.boardType, token, null)
-                    };
-                    user.dashTokens.remove(dashId);
-                }
-            }
-
             if (dashBoard.devices != null) {
                 for (Device device : dashBoard.devices) {
                     device.status = null;

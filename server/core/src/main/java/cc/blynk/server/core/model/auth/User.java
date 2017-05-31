@@ -7,8 +7,6 @@ import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.concurrent.ConcurrentMap;
-
 /**
  * User: ddumanskiy
  * Date: 8/11/13
@@ -17,9 +15,6 @@ import java.util.concurrent.ConcurrentMap;
 public class User {
 
     private static final int INITIAL_ENERGY_AMOUNT = ParseUtil.parseInt(System.getProperty("initial.energy", "2000"));
-
-    //todo remove after migration
-    public ConcurrentMap<Integer, String> dashTokens;
 
     public String name;
 
