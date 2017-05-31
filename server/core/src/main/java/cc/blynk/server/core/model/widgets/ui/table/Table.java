@@ -51,6 +51,18 @@ public class Table extends OnePinWidget {
                             rows.add(new Row(id, rowName, rowValue));
                         }
                         break;
+                    case "update" :
+                        if (values.length > 3) {
+                            int id = ParseUtil.parseInt(values[1]);
+                            String rowName = values[2];
+                            String rowValue = values[3];
+                            for (Row row : rows) {
+                                if (row.id == id) {
+                                    row.update(rowName, rowValue);
+                                }
+                            }
+                        }
+                        break;
                     case "pick" :
                         if (values.length > 1) {
                             currentRowIndex = Math.min(ParseUtil.parseInt(values[1]), rows.size() - 1);

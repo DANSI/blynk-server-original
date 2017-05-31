@@ -9,9 +9,9 @@ public class Row {
 
     public int id;
 
-    public String name;
+    public volatile String name;
 
-    public String value;
+    public volatile String value;
 
     public boolean isSelected;
 
@@ -23,5 +23,10 @@ public class Row {
         this.name = name;
         this.value = value;
         this.isSelected = true;
+    }
+
+    public void update(String name, String value) {
+        this.name = name;
+        this.value = value;
     }
 }
