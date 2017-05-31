@@ -151,8 +151,6 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     @Test
     public void testRTCWorksViaHttpAPI() throws Exception {
         RTC rtc = new RTC();
-        rtc.pin = 113;
-        rtc.pinType = PinType.VIRTUAL;
         rtc.id = 434;
         rtc.height = 1;
         rtc.width = 2;
@@ -165,7 +163,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-        HttpGet request = new HttpGet(httpServerUrl + token + "/pin/v113");
+        HttpGet request = new HttpGet(httpServerUrl + token + "/rtc");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

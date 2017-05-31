@@ -21,6 +21,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
@@ -202,6 +203,34 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         }
 
         return ok(widget.getJsonValue());
+    }
+
+    @GET
+    @Path("{token}/rtc")
+    public Response getWidgetPinData(@PathParam("token") String token) {
+        globalStats.mark(HTTP_GET_PIN_DATA);
+
+        TokenValue tokenValue = tokenManager.getUserByToken(token);
+
+        if (tokenValue == null) {
+            log.debug("Requested token {} not found.", token);
+            return Response.badRequest("Invalid token.");
+        }
+
+        final User user = tokenValue.user;
+        final int dashId = tokenValue.dashId;
+
+        DashBoard dashBoard = user.profile.getDashById(dashId);
+
+        RTC rtc = dashBoard.getWidgetByType(RTC.class);
+
+
+        if (rtc == null) {
+            log.debug("Requested rtc widget not found. User {}", user.email);
+            return Response.badRequest("Requested rtc not exists in app.");
+        }
+
+        return ok(rtc.getJsonValue());
     }
 
     @GET
