@@ -10,7 +10,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
@@ -49,12 +49,13 @@ public class RefreshShareTokenLogic {
 
         String token = tokenManager.refreshSharedToken(user, dash);
 
+        //todo move to session class?
         Session session = sessionDao.userSession.get(state.userKey);
         for (Channel appChannel : session.appChannels) {
             AppShareStateHolder localState = getShareState(appChannel);
             if (localState != null && localState.dashId == dashId) {
-                ChannelFuture cf = appChannel.writeAndFlush(notAllowed(message.id));
-                cf.addListener(channelFuture -> appChannel.close());
+                appChannel.writeAndFlush(notAllowed(message.id))
+                          .addListener(ChannelFutureListener.CLOSE);
             }
         }
 

@@ -991,6 +991,20 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testRefreshTokenClosesExistingConnections() throws Exception {
+        clientPair.appClient.send("refreshToken 1");
+        String newToken = clientPair.appClient.getBody();
+        assertNotNull(newToken);
+        assertEquals(32, newToken.length());
+        assertTrue(clientPair.hardwareClient.isClosed());
+
+        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
+        hardClient.start();
+        hardClient.send("login " + newToken);
+        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+    }
+
+    @Test
     public void testSendPinModeCommandWhenHardwareGoesOnline() throws Exception {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();

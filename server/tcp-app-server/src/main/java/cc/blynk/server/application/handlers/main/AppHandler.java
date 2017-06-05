@@ -148,7 +148,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 AddPushLogic.messageReceived(ctx, state, msg);
                 break;
             case REFRESH_TOKEN :
-                refreshToken.messageReceived(ctx, state.user, msg);
+                refreshToken.messageReceived(ctx, state, msg);
                 break;
             case GET_GRAPH_DATA :
                 graphData.messageReceived(ctx, state.user, msg);
