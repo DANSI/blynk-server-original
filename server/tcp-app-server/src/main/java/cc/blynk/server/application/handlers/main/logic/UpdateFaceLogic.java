@@ -58,6 +58,8 @@ public class UpdateFaceLogic {
         }
 
         boolean hasFaces = false;
+        int count = 0;
+        log.info("Updating face {} for user {}.", parentDashId, user.email);
         for (User existingUser : userDao.users.values()) {
             for (DashBoard existingDash : existingUser.profile.dashBoards) {
                 if (existingDash.parentId == parentDashId && (existingUser == user || appIds.contains(existingUser.appName))) {
@@ -65,6 +67,7 @@ public class UpdateFaceLogic {
                     //we found child project-face
                     try {
                         existingDash.updateFaceFields(dash);
+                        count++;
                     } catch (Exception e) {
                         log.error("Error updating face for user {}, dashId {}.", existingUser.email, existingDash.id, e);
                         ctx.writeAndFlush(notAllowed(message.id));
@@ -75,6 +78,7 @@ public class UpdateFaceLogic {
         }
 
         if (hasFaces) {
+            log.debug("{} faces were updated successfully.", count);
             ctx.writeAndFlush(ok(message.id));
         } else {
             log.info("No child faces found for update.");
