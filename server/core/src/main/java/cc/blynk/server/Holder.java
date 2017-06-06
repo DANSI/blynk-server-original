@@ -81,7 +81,7 @@ public class Holder implements Closeable {
         String netInterface = serverProperties.getProperty("net.interface", "eth");
         this.host = serverProperties.getProperty("server.host", IPUtils.resolveHostIP(netInterface));
 
-        this.redisClient = new RedisClient(new ServerProperties(RedisClient.REDIS_PROPERTIES), region);
+        this.redisClient = new RedisClient(new ServerProperties(RedisClient.REDIS_PROPERTIES));
 
         String dataFolder = serverProperties.getProperty("data.folder");
         this.fileManager = new FileManager(dataFolder);
@@ -142,7 +142,7 @@ public class Holder implements Closeable {
         this.region = "local";
         String netInterface = serverProperties.getProperty("net.interface", "eth");
         this.host = serverProperties.getProperty("server.host", IPUtils.resolveHostIP(netInterface));
-        this.redisClient = new RedisClient(new ServerProperties(RedisClient.REDIS_PROPERTIES), "real");
+        this.redisClient = new RedisClient(new ServerProperties(RedisClient.REDIS_PROPERTIES));
 
         String dataFolder = serverProperties.getProperty("data.folder");
         this.fileManager = new FileManager(dataFolder);

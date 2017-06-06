@@ -27,16 +27,16 @@ public class RedisClient implements Closeable {
     private final JedisPool userPool;
     private final boolean isEnabled;
 
-    public RedisClient(Properties props, String region) {
-        this(props.getProperty("redis.host"), props.getProperty("redis.pass"), props.getProperty("redis.port"), "local".equals(region));
+    public RedisClient(Properties props) {
+        this(props.getProperty("redis.host"), props.getProperty("redis.pass"), props.getProperty("redis.port"));
     }
 
-    protected RedisClient(String host, String pass, String port, boolean isLocalMode) {
-        this(host, pass, (port == null ? Protocol.DEFAULT_PORT : Integer.parseInt(port)), isLocalMode);
+    private RedisClient(String host, String pass, String port) {
+        this(host, pass, (port == null ? Protocol.DEFAULT_PORT : Integer.parseInt(port)), !(host == null || host.isEmpty()));
     }
 
-    protected RedisClient(String host, String pass, int port, boolean isLocalMode) {
-        this.isEnabled = !isLocalMode;
+    protected RedisClient(String host, String pass, int port, boolean isEnabled) {
+        this.isEnabled = isEnabled;
         if (isEnabled) {
             JedisPoolConfig config = new JedisPoolConfig();
             config.setMaxTotal(10);
