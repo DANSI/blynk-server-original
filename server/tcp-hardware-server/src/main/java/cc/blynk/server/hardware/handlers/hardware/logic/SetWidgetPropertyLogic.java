@@ -65,19 +65,15 @@ public class SetWidgetPropertyLogic {
         //for now supporting only virtual pins
         Widget widget = dash.findWidgetByPin(deviceId, pin, PinType.VIRTUAL);
 
-        if (widget == null) {
-            log.debug("No widget for SetWidgetProperty command. {}", message.body);
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-            return;
-        }
-
-        try {
-            widget.setProperty(property, propertyValue);
-            dash.updatedAt = System.currentTimeMillis();
-        } catch (Exception e) {
-            log.debug("Error setting widget property. Reason : {}", e.getMessage());
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-            return;
+        if (widget != null) {
+            try {
+                widget.setProperty(property, propertyValue);
+                dash.updatedAt = System.currentTimeMillis();
+            } catch (Exception e) {
+                log.debug("Error setting widget property. Reason : {}", e.getMessage());
+                ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+                return;
+            }
         }
 
         Session session = sessionDao.userSession.get(state.userKey);
