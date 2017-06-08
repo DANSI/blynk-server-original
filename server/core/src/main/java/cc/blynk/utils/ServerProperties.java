@@ -133,6 +133,16 @@ public class ServerProperties extends Properties {
         return ParseUtil.parseLong(getProperty(propertyName));
     }
 
+    public String getServerHost() {
+        final String host = getProperty("server.host");
+        if (host == null || host.isEmpty()) {
+            final String netInterface = getProperty("net.interface", "eth");
+            return IPUtils.resolveHostIP(netInterface);
+        } else {
+            return host;
+        }
+    }
+
     public long getLongProperty(String propertyName, long defaultValue) {
         String prop = getProperty(propertyName);
         if (prop == null || prop.isEmpty()) {

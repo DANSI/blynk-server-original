@@ -14,7 +14,6 @@ import cc.blynk.server.transport.TransportTypeHolder;
 import cc.blynk.server.workers.ReadingWidgetsWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.FileUtils;
-import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.ServerProperties;
 import io.netty.util.internal.SystemPropertyUtil;
 import org.asynchttpclient.DefaultAsyncHttpClient;
@@ -78,8 +77,7 @@ public class Holder implements Closeable {
         this.props = serverProperties;
 
         this.region = serverProperties.getProperty("region", "local");
-        String netInterface = serverProperties.getProperty("net.interface", "eth");
-        this.host = serverProperties.getProperty("server.host", IPUtils.resolveHostIP(netInterface));
+        this.host = serverProperties.getServerHost();
 
         this.redisClient = new RedisClient(new ServerProperties(RedisClient.REDIS_PROPERTIES));
 
@@ -140,8 +138,7 @@ public class Holder implements Closeable {
         this.props = serverProperties;
 
         this.region = "local";
-        String netInterface = serverProperties.getProperty("net.interface", "eth");
-        this.host = serverProperties.getProperty("server.host", IPUtils.resolveHostIP(netInterface));
+        this.host = serverProperties.getServerHost();
         this.redisClient = new RedisClient(new ServerProperties(RedisClient.REDIS_PROPERTIES));
 
         String dataFolder = serverProperties.getProperty("data.folder");

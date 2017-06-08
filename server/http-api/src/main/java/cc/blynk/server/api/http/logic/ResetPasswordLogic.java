@@ -13,7 +13,6 @@ import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
-import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -52,8 +51,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
         this.emailBody = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "reset-email.html");
         this.mailWrapper = holder.mailWrapper;
 
-        String netInterface = holder.props.getProperty("net.interface", "eth");
-        String host = holder.props.getProperty("server.host", IPUtils.resolveHostIP(netInterface));
+        String host = holder.props.getServerHost();
         this.resetPassUrl = "http://" + host + "/landing?token=";
         this.pageContent = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "enterNewPassword.html");
         this.blockingIOProcessor = holder.blockingIOProcessor;
