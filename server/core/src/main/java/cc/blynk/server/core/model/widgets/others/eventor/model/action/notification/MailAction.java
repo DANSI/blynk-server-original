@@ -10,9 +10,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class MailAction extends NotificationAction {
 
+    public final String to;
+
+    public final String subject;
+
     @JsonCreator
-    public MailAction(@JsonProperty("message") String message) {
+    public MailAction(@JsonProperty("to") String to,
+                      @JsonProperty("subject") String subject,
+                      @JsonProperty("message") String message) {
         super(message);
+        this.to = to;
+        this.subject = subject;
     }
 
 }
