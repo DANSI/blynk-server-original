@@ -95,7 +95,7 @@ public class EventorTest extends IntegrationBase {
             case "notify" :
                 return new NotifyAction(value);
             case "mail" :
-                return new MailAction(value);
+                return new MailAction("Subj", value);
             case "twit" :
                 return new TwitAction(value);
 
@@ -173,7 +173,7 @@ public class EventorTest extends IntegrationBase {
                 new SetPinAction(pin.pin, pin.pinType, "pinValuetoSEt"),
                 new WaitAction(360, new SetPinAction(pin.pin, pin.pinType, "pinValueToSet")),
                 new NotifyAction("Hello!!!"),
-                new MailAction("Hello mail")
+                new MailAction("Subj", "Hello mail")
         };
 
         for (BaseAction action : actions) {
@@ -375,6 +375,39 @@ public class EventorTest extends IntegrationBase {
         verify(twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("Yo!!!!!"));
     }
 
+    @Test
+    public void testSimpleRule8Email() throws Exception {
+        Eventor eventor = oneRuleEventor("if v1 = 37 then mail Yo!!!!!");
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+
+        clientPair.hardwareClient.send("hardware vw 1 37");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(mailWrapper, timeout(500).times(1)).sendText(eq("dima@mail.ua"), eq("Subj"), eq("Yo!!!!!"));
+    }
+
+    @Test
+    public void testSimpleRule8EmailAndFormat() throws Exception {
+        Eventor eventor = oneRuleEventor("if v1 = 37 then mail Yo/pin/!!!!!");
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+
+        clientPair.hardwareClient.send("hardware vw 1 37");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(mailWrapper, timeout(500).times(1)).sendText(eq("dima@mail.ua"), eq("Subj"), eq("Yo37!!!!!"));
+    }
 
     @Test
     public void testSimpleRuleCreateUpdateConditionWorks() throws Exception {

@@ -469,7 +469,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.ok();
         }
 
-        eventorProcessor.process(session, dash, deviceId, pin, pinType, pinValue, now);
+        eventorProcessor.process(user, session, dash, deviceId, pin, pinType, pinValue, now);
 
         session.sendMessageToHardware(dashId, HARDWARE, 111, body, deviceId);
 

@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.processors.WebhookProcessor;
@@ -88,7 +89,7 @@ public class HardwareLogic {
             reportingDao.process(state.user, dashId, deviceId, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);
 
-            process(dash, deviceId, session, pin, pinType, value, now);
+            process(state.user, dash, deviceId, session, pin, pinType, value, now);
         }
 
         if (dash.isActive) {
@@ -98,9 +99,9 @@ public class HardwareLogic {
         }
     }
 
-    private void process(DashBoard dash, int deviceId, Session session, byte pin, PinType pinType, String value, long now) {
+    private void process(User user, DashBoard dash, int deviceId, Session session, byte pin, PinType pinType, String value, long now) {
         try {
-            eventorProcessor.process(session, dash, deviceId, pin, pinType, value, now);
+            eventorProcessor.process(user, session, dash, deviceId, pin, pinType, value, now);
             webhookProcessor.process(session, dash, deviceId, pin, pinType, value, now);
         } catch (Exception e) {
             log.error("Error processing eventor/webhook.", e);

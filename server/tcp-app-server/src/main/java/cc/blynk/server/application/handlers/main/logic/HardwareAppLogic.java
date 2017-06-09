@@ -5,6 +5,7 @@ import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.Target;
@@ -132,7 +133,7 @@ public class HardwareAppLogic {
                     ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
                 }
 
-                process(dash, targetId, session, pin, pinType, value, now);
+                process(state.user, dash, targetId, session, pin, pinType, value, now);
 
                 break;
 
@@ -156,9 +157,9 @@ public class HardwareAppLogic {
         }
     }
 
-    private void process(DashBoard dash, int deviceId, Session session, byte pin, PinType pinType, String value, long now) {
+    private void process(User user, DashBoard dash, int deviceId, Session session, byte pin, PinType pinType, String value, long now) {
         try {
-            eventorProcessor.process(session, dash, deviceId, pin, pinType, value, now);
+            eventorProcessor.process(user, session, dash, deviceId, pin, pinType, value, now);
             webhookProcessor.process(session, dash, deviceId, pin, pinType, value, now);
         } catch (Exception e) {
             log.error("Error processing eventor/webhook.", e);
