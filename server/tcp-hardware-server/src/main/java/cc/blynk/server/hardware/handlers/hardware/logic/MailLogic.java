@@ -2,6 +2,7 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -40,7 +41,9 @@ public class MailLogic extends NotificationBase {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(state.dashId);
+        final User user = state.user;
+
+        DashBoard dash = user.profile.getDashByIdOrThrow(state.dashId);
 
         Mail mail = dash.getWidgetByType(Mail.class);
 
@@ -52,7 +55,7 @@ public class MailLogic extends NotificationBase {
             throw new IllegalCommandException("Invalid mail notification body.");
         }
 
-        state.user.checkDailyEmailLimit();
+        user.checkDailyEmailLimit();
 
         String[] bodyParts = message.body.split("\0");
 
@@ -69,11 +72,7 @@ public class MailLogic extends NotificationBase {
             subj = bodyParts[1];
             body = bodyParts[2];
         } else {
-            if (mail.to == null || mail.to.isEmpty()) {
-                to = state.user.email;
-            } else {
-                to = mail.to;
-            }
+            to = (mail.to == null || mail.to.isEmpty()) ? user.email : mail.to;
             subj = bodyParts[0];
             body = bodyParts[1];
         }
@@ -85,9 +84,9 @@ public class MailLogic extends NotificationBase {
             throw new IllegalCommandException("Invalid mail receiver.");
         }
 
-        log.trace("Sending Mail for user {}, with message : '{}'.", state.user.email, message.body);
-        mail(ctx.channel(), state.user.email, to, subj, body, message.id);
-        state.user.emailMessages++;
+        log.trace("Sending Mail for user {}, with message : '{}'.", user.email, message.body);
+        mail(ctx.channel(), user.email, to, subj, body, message.id);
+        user.emailMessages++;
     }
 
     private void mail(Channel channel, String email, String to, String subj, String body, int msgId) {
