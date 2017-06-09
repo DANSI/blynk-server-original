@@ -221,8 +221,7 @@ public class TimerTest extends IntegrationBase {
         setPinAction.pin.pin = 1;
         setPinAction.pin.pinType = PinType.VIRTUAL;
         setPinAction.value = "1";
-        NotifyAction notifyAction = new NotifyAction();
-        notifyAction.message = "Hello";
+        NotifyAction notifyAction = new NotifyAction("Hello");
         rule.actions = new BaseAction[] {
                 setPinAction,
                 notifyAction

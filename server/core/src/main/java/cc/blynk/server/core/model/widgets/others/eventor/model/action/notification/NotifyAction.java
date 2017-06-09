@@ -1,5 +1,8 @@
 package cc.blynk.server.core.model.widgets.others.eventor.model.action.notification;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -7,11 +10,9 @@ package cc.blynk.server.core.model.widgets.others.eventor.model.action.notificat
  */
 public class NotifyAction extends NotificationAction {
 
-    public NotifyAction() {
-    }
-
-    public NotifyAction(String message) {
-        this.message = message;
+    @JsonCreator
+    public NotifyAction(@JsonProperty("message") String message) {
+        super(message);
     }
 
 }

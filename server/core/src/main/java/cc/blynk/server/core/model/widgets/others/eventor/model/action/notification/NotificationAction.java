@@ -9,7 +9,11 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction
  */
 public abstract class NotificationAction extends BaseAction {
 
-    public String message;
+    public final String message;
+
+    NotificationAction(String message) {
+        this.message = message;
+    }
 
     @Override
     public boolean isValid() {
