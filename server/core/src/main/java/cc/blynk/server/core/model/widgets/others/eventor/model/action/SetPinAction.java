@@ -33,11 +33,6 @@ public class SetPinAction extends BaseAction {
         }
     }
 
-    public SetPinAction(Pin pin, String value) {
-        this.pin = pin;
-        this.value = value;
-    }
-
     public String makeHardwareBody() {
         return Pin.makeHardwareBody(pin.pwmMode, pin.pinType, pin.pin, value);
     }

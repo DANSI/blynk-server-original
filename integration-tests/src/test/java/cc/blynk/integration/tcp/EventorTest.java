@@ -89,7 +89,7 @@ public class EventorTest extends IntegrationBase {
     private static BaseAction resolveAction(String action, Pin pin, String value) {
         switch (action) {
             case "setpin" :
-                return new SetPinAction(pin, value);
+                return new SetPinAction(pin.pin, pin.pinType, value);
             case "wait" :
                 return new WaitAction();
             case "notify" :
@@ -170,8 +170,8 @@ public class EventorTest extends IntegrationBase {
         Pin pin = new Pin(1, PinType.VIRTUAL);
 
         BaseAction[] actions = new BaseAction[] {
-                new SetPinAction(pin, "pinValuetoSEt"),
-                new WaitAction(360, new SetPinAction(pin, "pinValueToSet")),
+                new SetPinAction(pin.pin, pin.pinType, "pinValuetoSEt"),
+                new WaitAction(360, new SetPinAction(pin.pin, pin.pinType, "pinValueToSet")),
                 new NotifyAction("Hello!!!"),
                 new MailAction("Hello mail")
         };
