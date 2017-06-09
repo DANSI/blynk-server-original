@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.auth;
 
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
@@ -39,7 +40,7 @@ public class User {
     public volatile int energy;
 
     public transient int emailMessages;
-    public transient long emailSentTs;
+    private transient long emailSentTs;
 
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
@@ -82,6 +83,21 @@ public class User {
         //non-atomic. we are fine with that
         this.energy += price;
         this.lastModifiedTs = System.currentTimeMillis();
+    }
+
+    private static final int EMAIL_DAY_LIMIT = 100;
+    private static final long MILLIS_IN_DAY = 24 * 60 * 60 * 1000;
+
+    public void checkDailyEmailLimit() {
+        long now = System.currentTimeMillis();
+        if (now - emailSentTs < MILLIS_IN_DAY) {
+            if (emailMessages > EMAIL_DAY_LIMIT) {
+                throw NotificationBase.EXCEPTION_CACHE;
+            }
+        } else {
+            this.emailMessages = 0;
+            this.emailSentTs = now;
+        }
     }
 
     @Override

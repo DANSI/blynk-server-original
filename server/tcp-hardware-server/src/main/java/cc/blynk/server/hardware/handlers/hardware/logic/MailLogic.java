@@ -2,7 +2,6 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -33,8 +32,6 @@ public class MailLogic extends NotificationBase {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final MailWrapper mailWrapper;
-    private static final int EMAIL_DAY_LIMIT = 100;
-    private static final int MILLIS_IN_DAY = 24 * 60 * 60 * 1000;
 
     public MailLogic(BlockingIOProcessor blockingIOProcessor, MailWrapper mailWrapper, long notificationQuotaLimit) {
         super(notificationQuotaLimit);
@@ -55,7 +52,7 @@ public class MailLogic extends NotificationBase {
             throw new IllegalCommandException("Invalid mail notification body.");
         }
 
-        checkDailyEmailLimit(state.user);
+        state.user.checkDailyEmailLimit();
 
         String[] bodyParts = message.body.split("\0");
 
@@ -91,19 +88,6 @@ public class MailLogic extends NotificationBase {
         log.trace("Sending Mail for user {}, with message : '{}'.", state.user.email, message.body);
         mail(ctx.channel(), state.user.email, to, subj, body, message.id);
         state.user.emailMessages++;
-    }
-
-    //todo add test for it.
-    private void checkDailyEmailLimit(User user) {
-        long now = System.currentTimeMillis();
-        if (now - user.emailSentTs < MILLIS_IN_DAY) {
-            if (user.emailMessages > EMAIL_DAY_LIMIT) {
-                throw EXCEPTION_CACHE;
-            }
-        } else {
-            user.emailMessages = 0;
-            user.emailSentTs = now;
-        }
     }
 
     private void mail(Channel channel, String email, String to, String subj, String body, int msgId) {
