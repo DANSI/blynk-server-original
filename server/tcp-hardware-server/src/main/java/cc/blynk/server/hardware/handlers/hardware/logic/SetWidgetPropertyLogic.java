@@ -44,11 +44,8 @@ public class SetWidgetPropertyLogic {
             return;
         }
 
-        final int deviceId = state.deviceId;
-
-        byte pin = ParseUtil.parseByte(bodyParts[0]);
-        String property = bodyParts[1];
-        String propertyValue = bodyParts[2];
+        final String property = bodyParts[1];
+        final String propertyValue = bodyParts[2];
 
         if (property.length() == 0 || propertyValue.length() == 0) {
             log.debug("SetWidgetProperty command body has wrong format. {}", message.body);
@@ -61,6 +58,9 @@ public class SetWidgetPropertyLogic {
         if (!dash.isActive) {
             return;
         }
+
+        final int deviceId = state.deviceId;
+        final byte pin = ParseUtil.parseByte(bodyParts[0]);
 
         //for now supporting only virtual pins
         Widget widget = dash.findWidgetByPin(deviceId, pin, PinType.VIRTUAL);
