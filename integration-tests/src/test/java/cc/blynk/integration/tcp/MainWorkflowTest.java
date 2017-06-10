@@ -21,7 +21,6 @@ import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.hardware.HardwareServer;
@@ -649,17 +648,8 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("hardware 1 dw 1 1");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 1 1"))));
 
-        clientPair.hardwareClient.send("hardware ar 1");
-
-        ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
-
-        List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
-        StringMessage hardMessage = arguments.get(0);
-        assertEquals(1, hardMessage.id);
-        assertEquals(HARDWARE, hardMessage.command);
-        assertEquals(6, hardMessage.length);
-        assertEquals(b("1 ar 1"), hardMessage.body);
+        clientPair.hardwareClient.send("hardware ar 2");
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(produce(2, HARDWARE, b("ar 2"))));
     }
 
     @Test

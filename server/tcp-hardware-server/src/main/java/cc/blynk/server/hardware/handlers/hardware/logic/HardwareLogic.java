@@ -56,8 +56,6 @@ public class HardwareLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        Session session = sessionDao.userSession.get(state.userKey);
-
         final String body = message.body;
 
         //minimum command - "ar 1"
@@ -89,13 +87,14 @@ public class HardwareLogic {
             reportingDao.process(state.user, dashId, deviceId, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);
 
+            final Session session = sessionDao.userSession.get(state.userKey);
             process(state.user, dash, deviceId, session, pin, pinType, value, now);
-        }
 
-        if (dash.isActive) {
-            session.sendToApps(HARDWARE, message.id, dashId, deviceId, body);
-        } else {
-            log.debug("No active dashboard.");
+            if (dash.isActive) {
+                session.sendToApps(HARDWARE, message.id, dashId, deviceId, body);
+            } else {
+                log.debug("No active dashboard.");
+            }
         }
     }
 

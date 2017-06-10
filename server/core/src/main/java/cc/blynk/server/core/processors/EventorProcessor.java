@@ -140,7 +140,7 @@ public class EventorProcessor {
         if (twitterWidget == null ||
                 twitterWidget.token == null || twitterWidget.token.isEmpty() ||
                 twitterWidget.secret == null || twitterWidget.secret.isEmpty()) {
-            log.debug("User has no access token provided for eventor twitting.");
+            log.debug("User has no access token provided for eventor twit.");
             return;
         }
 
