@@ -8,11 +8,11 @@ import cc.blynk.utils.StringUtils;
  * Created by Dmitriy Dumanskiy.
  * Created on 19.11.16.
  */
-public final class PinStorageKey {
+public class PinStorageKey {
 
     public final int deviceId;
 
-    private final byte pin;
+    final byte pin;
 
     private final char pinTypeChar;
 

@@ -47,9 +47,7 @@ public class Pin {
     }
 
     public static String makeHardwareBody(char pinType, String pin, String value) {
-        return "" + pinType + 'w'
-                + BODY_SEPARATOR + pin
-                + BODY_SEPARATOR + value;
+        return "" + pinType + 'w' + BODY_SEPARATOR + pin + BODY_SEPARATOR + value;
     }
 
     public static String makeHardwareBody(PinType pinType, byte pin, String value) {
@@ -57,9 +55,7 @@ public class Pin {
     }
 
     public static String makeHardwareBody(char pinTypeChar, byte pin, String value) {
-        return "" + pinTypeChar + 'w'
-                + BODY_SEPARATOR + pin
-                + BODY_SEPARATOR + value;
+        return "" + pinTypeChar + 'w' + BODY_SEPARATOR + pin + BODY_SEPARATOR + value;
     }
 
     public static String makeHardwareBody(boolean pwmMode, PinType pinType, byte pin, String value) {

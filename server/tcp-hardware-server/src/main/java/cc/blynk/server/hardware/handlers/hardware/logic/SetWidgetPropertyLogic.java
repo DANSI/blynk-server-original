@@ -59,6 +59,12 @@ public class SetWidgetPropertyLogic {
             return;
         }
 
+        if (Widget.isNotValidProperty(property)) {
+            log.debug("Unsupported set property {}.", property);
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            return;
+        }
+
         final int deviceId = state.deviceId;
         final byte pin = ParseUtil.parseByte(bodyParts[0]);
 
@@ -74,6 +80,9 @@ public class SetWidgetPropertyLogic {
                 ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
                 return;
             }
+        } else {
+            //this is possible case for device selector
+            dash.putPinPropertyStorageValue(deviceId, PinType.VIRTUAL, pin, property, propertyValue);
         }
 
         Session session = sessionDao.userSession.get(state.userKey);

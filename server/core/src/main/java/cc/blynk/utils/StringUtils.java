@@ -115,7 +115,7 @@ public class StringUtils {
         if (deviceId == 0) {
             return "" + dashId + BODY_SEPARATOR + body;
         }
-        return "" + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR+ body;
+        return "" + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + body;
     }
 
     public static String randomString(int len) {

@@ -158,4 +158,21 @@ public abstract class Widget {
                 throw new RuntimeException("Error setting widget property.");
         }
     }
+
+    public static boolean isNotValidProperty(String property) {
+        switch (property) {
+            case "label":
+            case "color":
+            case "isEnabled":
+            case "onLabel":
+            case "offLabel":
+            case "labels":
+            case "min":
+            case "max":
+            case "isOnPlay":
+                return false;
+            default:
+                return true;
+        }
+    }
 }
