@@ -53,7 +53,11 @@ public class Pin {
     }
 
     public static String makeHardwareBody(PinType pinType, byte pin, String value) {
-        return "" + pinType.pintTypeChar + 'w'
+        return makeHardwareBody(pinType.pintTypeChar, pin, value);
+    }
+
+    public static String makeHardwareBody(char pinTypeChar, byte pin, String value) {
+        return "" + pinTypeChar + 'w'
                 + BODY_SEPARATOR + pin
                 + BODY_SEPARATOR + value;
     }

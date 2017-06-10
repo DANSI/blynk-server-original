@@ -2,7 +2,6 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -57,9 +56,10 @@ public class AppSyncLogic {
         }
 
         for (Map.Entry<PinStorageKey, String> entry : dash.pinsStorage.entrySet()) {
-            PinStorageKey key = entry.getKey();
-            if ((targetId == ANY_TARGET || targetId == key.deviceId) && appChannel.isWritable()) {
-                String body = prependDashIdAndDeviceId(dash.id, key.deviceId, Pin.makeHardwareBody(key.pinType, key.pin, entry.getValue()));
+            final PinStorageKey key = entry.getKey();
+            final int deviceId = key.deviceId;
+            if ((targetId == ANY_TARGET || targetId == deviceId) && appChannel.isWritable()) {
+                String body = prependDashIdAndDeviceId(dash.id, deviceId, key.makeHardwareBody(entry.getValue()));
                 ctx.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body), ctx.voidPromise());
             }
         }

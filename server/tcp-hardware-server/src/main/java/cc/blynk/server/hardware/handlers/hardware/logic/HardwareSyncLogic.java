@@ -52,7 +52,7 @@ public class HardwareSyncLogic {
         for (Map.Entry<PinStorageKey, String> entry : dash.pinsStorage.entrySet()) {
             PinStorageKey key = entry.getKey();
             if (deviceId == key.deviceId && ctx.channel().isWritable()) {
-                String body = Pin.makeHardwareBody(key.pinType, key.pin, entry.getValue());
+                String body = key.makeHardwareBody(entry.getValue());
                 ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
             }
         }
