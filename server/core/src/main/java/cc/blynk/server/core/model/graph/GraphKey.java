@@ -42,14 +42,13 @@ public class GraphKey {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof GraphKey)) return false;
 
-        GraphKey key = (GraphKey) o;
+        GraphKey graphKey = (GraphKey) o;
 
-        if (dashId != key.dashId) return false;
-        if (pin != key.pin) return false;
-        return pinType == key.pinType;
-
+        if (dashId != graphKey.dashId) return false;
+        if (pin != graphKey.pin) return false;
+        return pinType == graphKey.pinType;
     }
 
     @Override

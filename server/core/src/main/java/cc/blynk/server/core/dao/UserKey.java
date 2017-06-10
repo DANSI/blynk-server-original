@@ -32,13 +32,12 @@ public final class UserKey {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof UserKey)) return false;
 
         UserKey userKey = (UserKey) o;
 
         if (email != null ? !email.equals(userKey.email) : userKey.email != null) return false;
-        return !(appName != null ? !appName.equals(userKey.appName) : userKey.appName != null);
-
+        return appName != null ? appName.equals(userKey.appName) : userKey.appName == null;
     }
 
     @Override
