@@ -274,12 +274,14 @@ public class DashBoard {
     public void cleanPinStorage(Widget widget) {
         if (widget instanceof OnePinWidget) {
             OnePinWidget onePinWidget = (OnePinWidget) widget;
-            pinsStorage.remove(new PinStorageKey(onePinWidget.deviceId, onePinWidget.pinType, onePinWidget.pin));
+            if (onePinWidget.pinType != null) {
+                pinsStorage.remove(new PinStorageKey(onePinWidget.deviceId, onePinWidget.pinType, onePinWidget.pin));
+            }
         } else if (widget instanceof MultiPinWidget) {
             MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
             if (multiPinWidget.pins != null) {
                 for (Pin pin : multiPinWidget.pins) {
-                    if (pin != null) {
+                    if (pin != null && pin.pinType != null) {
                         pinsStorage.remove(new PinStorageKey(multiPinWidget.deviceId, pin.pinType, pin.pin));
                     }
                 }
