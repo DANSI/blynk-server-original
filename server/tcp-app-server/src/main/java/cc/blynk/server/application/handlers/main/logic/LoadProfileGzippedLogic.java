@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
+import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
 import static cc.blynk.utils.BlynkByteBufUtil.*;
 import static cc.blynk.utils.JsonParser.*;
 
@@ -82,7 +83,12 @@ public class LoadProfileGzippedLogic {
             if (data == null) {
                 outputMsg = makeResponse(msgId, NO_DATA);
             } else {
-                outputMsg = makeBinaryMessage(LOAD_PROFILE_GZIPPED, msgId, data);
+                if (data.length > 65_535) {
+                    log.error("User profile is too big. Size : {}", data.length);
+                    outputMsg = makeResponse(msgId, SERVER_ERROR);
+                } else {
+                    outputMsg = makeBinaryMessage(LOAD_PROFILE_GZIPPED, msgId, data);
+                }
             }
             ctx.writeAndFlush(outputMsg, ctx.voidPromise());
         }
