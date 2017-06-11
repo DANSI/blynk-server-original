@@ -27,6 +27,7 @@ import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelFuture;
 import org.junit.After;
 import org.junit.Before;
@@ -627,14 +628,13 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    @Ignore
     public void testLargeMessageIsNotAccepted() throws Exception {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 32 * 1024 + 1; i++) {
-            sb.append("a");
+        for (int i = 0; i < 127 ; i++) {
+            clientPair.hardwareClient.send("hardware vw " + i + " " + StringUtils.randomString(1000));
         }
-        clientPair.hardwareClient.send("hardware vw 1 " + sb.toString());
-        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), any());
+
+        clientPair.appClient.send("loadProfileGzipped");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(serverError(1)));
     }
 
     @Test
@@ -667,10 +667,10 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     public void testHardwareSendsWrongCommand() throws Exception {
         clientPair.hardwareClient.send("hardware aw 1 ");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(1)));
 
         clientPair.hardwareClient.send("hardware aw 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, ILLEGAL_COMMAND)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(2)));
     }
 
     @Test
