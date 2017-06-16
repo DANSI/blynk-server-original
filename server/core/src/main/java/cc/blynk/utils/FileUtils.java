@@ -9,7 +9,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.EnumSet;
+
+import static java.nio.file.StandardOpenOption.*;
 
 /**
  * The Blynk Project.
@@ -50,7 +56,7 @@ public class FileUtils {
      */
     public static void write(Path reportingPath, double value, long ts) throws IOException {
         try (DataOutputStream dos = new DataOutputStream(
-                Files.newOutputStream(reportingPath, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
+                Files.newOutputStream(reportingPath, CREATE, APPEND))) {
             dos.writeDouble(value);
             dos.writeLong(ts);
             dos.flush();
@@ -68,14 +74,14 @@ public class FileUtils {
      * @throws IOException
      */
     public static ByteBuffer read(Path userDataFile, int count) throws IOException {
-        try (SeekableByteChannel channel = Files.newByteChannel(userDataFile, StandardOpenOption.READ)) {
+        try (SeekableByteChannel channel = Files.newByteChannel(userDataFile, EnumSet.of(READ))) {
             final int size = (int) Files.size(userDataFile);
             final int dataSize = count * SIZE_OF_REPORT_ENTRY;
             final int readDataSize = Math.min(dataSize, size);
 
-            ByteBuffer buf = ByteBuffer.allocate(readDataSize);
-            channel.position(Math.max(0, size - dataSize));
-            channel.read(buf);
+            final ByteBuffer buf = ByteBuffer.allocate(readDataSize);
+            channel.position(Math.max(0, size - dataSize))
+                   .read(buf);
             return buf;
         }
     }
