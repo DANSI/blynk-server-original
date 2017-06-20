@@ -20,6 +20,7 @@ server.properties
         admin.rootPath=/admin
         server.host=xxx.blynk.cc
         contact.email=xxx@blynk.cc
+        region=xxx
         
 db.properties
 
