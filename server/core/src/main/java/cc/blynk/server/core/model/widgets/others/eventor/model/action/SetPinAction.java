@@ -3,6 +3,8 @@ package cc.blynk.server.core.model.widgets.others.eventor.model.action;
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.utils.StringUtils;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Blynk Project.
@@ -11,13 +13,19 @@ import cc.blynk.utils.StringUtils;
  */
 public class SetPinAction extends BaseAction {
 
-    public Pin pin;
+    public final Pin pin;
 
-    public String value;
+    public final String value;
 
-    public SetPinActionType setPinType;
+    private final SetPinActionType setPinType;
 
-    public SetPinAction() {
+    @JsonCreator
+    public SetPinAction(@JsonProperty("pin") Pin pin,
+                        @JsonProperty("value") String value,
+                        @JsonProperty("setPinType") SetPinActionType setPinType) {
+        this.pin = pin;
+        this.value = value;
+        this.setPinType = setPinType;
     }
 
     public SetPinAction(byte pin, PinType pinType, String value) {
@@ -31,6 +39,7 @@ public class SetPinAction extends BaseAction {
         } else {
             this.value = value;
         }
+        this.setPinType = SetPinActionType.CUSTOM;
     }
 
     public String makeHardwareBody() {
