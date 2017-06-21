@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.enums.GraphType;
+import cc.blynk.server.core.model.enums.GraphGranularityType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
@@ -206,9 +206,9 @@ public class DBManagerTest {
         long ts = System.currentTimeMillis();
         for (int i = 0; i < 60; i++) {
             map.put(new AggregationKey(user.email, user.appName, i, 0, PinType.ANALOG.pintTypeChar, (byte) i, ts), value);
-            dbManager.insertReporting(map, GraphType.MINUTE);
-            dbManager.insertReporting(map, GraphType.HOURLY);
-            dbManager.insertReporting(map, GraphType.DAILY);
+            dbManager.insertReporting(map, GraphGranularityType.MINUTE);
+            dbManager.insertReporting(map, GraphGranularityType.HOURLY);
+            dbManager.insertReporting(map, GraphGranularityType.DAILY);
 
             map.clear();
         }

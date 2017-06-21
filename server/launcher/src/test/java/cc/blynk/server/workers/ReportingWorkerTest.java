@@ -4,7 +4,7 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.enums.GraphType;
+import cc.blynk.server.core.model.enums.GraphGranularityType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.reporting.average.AggregationKey;
@@ -135,12 +135,12 @@ public class ReportingWorkerTest {
 
         reportingWorker.run();
 
-        assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphType.HOURLY))));
-        assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(2, 0, PinType.ANALOG.pintTypeChar, (byte) 2, GraphType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphGranularityType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(2, 0, PinType.ANALOG.pintTypeChar, (byte) 2, GraphGranularityType.HOURLY))));
 
         assertTrue(map.isEmpty());
 
-        ByteBuffer data = ReportingDao.getByteBufferFromDisk(reportingFolder, user, 1, 0, PinType.ANALOG, (byte) 1, 2, GraphType.HOURLY);
+        ByteBuffer data = ReportingDao.getByteBufferFromDisk(reportingFolder, user, 1, 0, PinType.ANALOG, (byte) 1, 2, GraphGranularityType.HOURLY);
         assertNotNull(data);
         data.flip();
         assertEquals(32, data.capacity());
@@ -154,7 +154,7 @@ public class ReportingWorkerTest {
         User user2 = new User();
         user2.email = "test2";
         user2.appName = AppName.BLYNK;
-        data = ReportingDao.getByteBufferFromDisk(reportingFolder, user2, 2, 0, PinType.ANALOG, (byte) 2, 1, GraphType.HOURLY);
+        data = ReportingDao.getByteBufferFromDisk(reportingFolder, user2, 2, 0, PinType.ANALOG, (byte) 2, 1, GraphGranularityType.HOURLY);
         assertNotNull(data);
         data.flip();
         assertEquals(16, data.capacity());
@@ -190,7 +190,7 @@ public class ReportingWorkerTest {
 
         reportingWorker.run();
 
-        assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphGranularityType.HOURLY))));
 
         assertTrue(map.isEmpty());
 
@@ -199,7 +199,7 @@ public class ReportingWorkerTest {
         user.appName = AppName.BLYNK;
 
         //take less
-        ByteBuffer data = ReportingDao.getByteBufferFromDisk(reportingFolder, user, 1, 0, PinType.ANALOG, (byte) 1, 1, GraphType.HOURLY);
+        ByteBuffer data = ReportingDao.getByteBufferFromDisk(reportingFolder, user, 1, 0, PinType.ANALOG, (byte) 1, 1, GraphGranularityType.HOURLY);
         assertNotNull(data);
         data.flip();
         assertEquals(16, data.capacity());
@@ -209,7 +209,7 @@ public class ReportingWorkerTest {
 
 
         //take more
-        data = ReportingDao.getByteBufferFromDisk(reportingFolder, user, 1, 0, PinType.ANALOG, (byte) 1, 24, GraphType.HOURLY);
+        data = ReportingDao.getByteBufferFromDisk(reportingFolder, user, 1, 0, PinType.ANALOG, (byte) 1, 24, GraphGranularityType.HOURLY);
         assertNotNull(data);
         data.flip();
         assertEquals(48, data.capacity());
@@ -254,15 +254,15 @@ public class ReportingWorkerTest {
 
         reportingWorker.run();
 
-        assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphType.HOURLY))));
-        assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(2, 0, PinType.ANALOG.pintTypeChar, (byte) 2, GraphType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphGranularityType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(2, 0, PinType.ANALOG.pintTypeChar, (byte) 2, GraphGranularityType.HOURLY))));
 
         User user = new User();
         user.email = "test";
         user.appName = AppName.BLYNK;
 
         new ReportingDao(reportingFolder, properties).delete(user, 1, 0, PinType.ANALOG, (byte) 1);
-        assertFalse(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphType.HOURLY))));
+        assertFalse(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphGranularityType.HOURLY))));
     }
 
     private long getTS() {

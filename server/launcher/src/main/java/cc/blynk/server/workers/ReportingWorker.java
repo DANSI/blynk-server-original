@@ -1,7 +1,7 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.server.core.dao.ReportingDao;
-import cc.blynk.server.core.model.enums.GraphType;
+import cc.blynk.server.core.model.enums.GraphGranularityType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.db.DBManager;
@@ -45,13 +45,13 @@ public class ReportingWorker implements Runnable {
     @Override
     public void run() {
         try {
-            Map<AggregationKey, AggregationValue> removedKeysMinute = process(reportingDao.averageAggregator.getMinute(), GraphType.MINUTE);
-            Map<AggregationKey, AggregationValue> removedKeysHour = process(reportingDao.averageAggregator.getHourly(), GraphType.HOURLY);
-            Map<AggregationKey, AggregationValue> removedKeysDay = process(reportingDao.averageAggregator.getDaily(), GraphType.DAILY);
+            Map<AggregationKey, AggregationValue> removedKeysMinute = process(reportingDao.averageAggregator.getMinute(), GraphGranularityType.MINUTE);
+            Map<AggregationKey, AggregationValue> removedKeysHour = process(reportingDao.averageAggregator.getHourly(), GraphGranularityType.HOURLY);
+            Map<AggregationKey, AggregationValue> removedKeysDay = process(reportingDao.averageAggregator.getDaily(), GraphGranularityType.DAILY);
 
-            dbManager.insertReporting(removedKeysMinute, GraphType.MINUTE);
-            dbManager.insertReporting(removedKeysHour, GraphType.HOURLY);
-            dbManager.insertReporting(removedKeysDay, GraphType.DAILY);
+            dbManager.insertReporting(removedKeysMinute, GraphGranularityType.MINUTE);
+            dbManager.insertReporting(removedKeysHour, GraphGranularityType.HOURLY);
+            dbManager.insertReporting(removedKeysDay, GraphGranularityType.DAILY);
 
             dbManager.insertReportingRaw(reportingDao.rawDataProcessor.rawStorage);
 
@@ -69,7 +69,7 @@ public class ReportingWorker implements Runnable {
      * @param type - type of reporting. Could be minute, hourly, daily.
      * @return - returns list of reporting entries that were successfully flushed to disk.
      */
-    private Map<AggregationKey, AggregationValue>  process(Map<AggregationKey, AggregationValue> map, GraphType type) {
+    private Map<AggregationKey, AggregationValue>  process(Map<AggregationKey, AggregationValue> map, GraphGranularityType type) {
         long nowTruncatedToPeriod = System.currentTimeMillis() / type.period;
 
         ArrayList<AggregationKey> keys = new ArrayList<>(map.keySet());

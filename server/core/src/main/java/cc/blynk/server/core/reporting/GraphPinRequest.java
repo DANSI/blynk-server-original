@@ -1,6 +1,6 @@
 package cc.blynk.server.core.reporting;
 
-import cc.blynk.server.core.model.enums.GraphType;
+import cc.blynk.server.core.model.enums.GraphGranularityType;
 import cc.blynk.server.core.model.enums.PinType;
 
 /**
@@ -20,6 +20,6 @@ public abstract class GraphPinRequest {
 
     public int count;
 
-    public GraphType type;
+    public GraphGranularityType type;
 
 }

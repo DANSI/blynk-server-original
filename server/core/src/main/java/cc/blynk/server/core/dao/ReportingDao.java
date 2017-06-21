@@ -1,7 +1,7 @@
 package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.enums.GraphType;
+import cc.blynk.server.core.model.enums.GraphGranularityType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
@@ -57,7 +57,7 @@ public class ReportingDao implements Closeable {
         this.csvGenerator = new CSVGenerator(this);
     }
 
-    public static String generateFilename(int dashId, int deviceId, char pinType, byte pin, GraphType type) {
+    public static String generateFilename(int dashId, int deviceId, char pinType, byte pin, GraphGranularityType type) {
         switch (type) {
             case MINUTE :
                 return formatMinute(dashId, deviceId, pinType, pin);
@@ -68,7 +68,7 @@ public class ReportingDao implements Closeable {
         }
     }
 
-    public static ByteBuffer getByteBufferFromDisk(String dataFolder, User user, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphType type) {
+    public static ByteBuffer getByteBufferFromDisk(String dataFolder, User user, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphGranularityType type) {
         Path userDataFile = Paths.get(dataFolder, FileUtils.getUserReportingDir(user), generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type));
         if (Files.notExists(userDataFile)) {
             return null;
@@ -93,7 +93,7 @@ public class ReportingDao implements Closeable {
         return noData;
     }
 
-    public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphType type) {
+    public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphGranularityType type) {
         return getByteBufferFromDisk(dataFolder, user, dashId, deviceId, pinType, pin, count, type);
     }
 

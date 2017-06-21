@@ -1,6 +1,6 @@
 package cc.blynk.server.db.dao;
 
-import cc.blynk.server.core.model.enums.GraphType;
+import cc.blynk.server.core.model.enums.GraphGranularityType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
@@ -60,7 +60,7 @@ public class ReportingDBDao {
 
     private static void prepareReportingInsert(PreparedStatement ps,
                                                Map.Entry<AggregationKey, AggregationValue> entry,
-                                               GraphType type) throws SQLException {
+                                               GraphGranularityType type) throws SQLException {
         final AggregationKey key = entry.getKey();
         final AggregationValue value = entry.getValue();
         prepareReportingInsert(ps, key.email, key.dashId, key.deviceId, key.pin, key.pinType, key.getTs(type), value.calcAverage());
@@ -83,8 +83,8 @@ public class ReportingDBDao {
         ps.setDouble(7, value);
     }
 
-    private static String getTableByGraphType(GraphType graphType) {
-        switch (graphType) {
+    private static String getTableByGraphType(GraphGranularityType graphGranularityType) {
+        switch (graphGranularityType) {
             case MINUTE :
                 return insertMinute;
             case HOURLY :
@@ -238,18 +238,18 @@ public class ReportingDBDao {
         }
     }
 
-    public void insert(Map<AggregationKey, AggregationValue> map, GraphType graphType) {
+    public void insert(Map<AggregationKey, AggregationValue> map, GraphGranularityType graphGranularityType) {
         long start = System.currentTimeMillis();
 
-        log.info("Storing {} reporting...", graphType.name());
+        log.info("Storing {} reporting...", graphGranularityType.name());
 
-        String insertSQL = getTableByGraphType(graphType);
+        String insertSQL = getTableByGraphType(graphGranularityType);
 
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(insertSQL)) {
 
             for (Map.Entry<AggregationKey, AggregationValue> entry : map.entrySet()) {
-                prepareReportingInsert(ps, entry, graphType);
+                prepareReportingInsert(ps, entry, graphGranularityType);
                 ps.addBatch();
             }
 
@@ -259,7 +259,7 @@ public class ReportingDBDao {
             log.error("Error inserting reporting data in DB.", e);
         }
 
-        log.info("Storing {} reporting finished. Time {}. Records saved {}", graphType.name(), System.currentTimeMillis() - start, map.size());
+        log.info("Storing {} reporting finished. Time {}. Records saved {}", graphGranularityType.name(), System.currentTimeMillis() - start, map.size());
     }
 
     public void cleanOldReportingRecords(Instant now) {

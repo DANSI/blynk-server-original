@@ -1,6 +1,6 @@
 package cc.blynk.server.core.reporting.average;
 
-import cc.blynk.server.core.model.enums.GraphType;
+import cc.blynk.server.core.model.enums.GraphGranularityType;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -32,7 +32,7 @@ public final class AggregationKey implements Serializable {
         this.ts = ts;
     }
 
-    public long getTs(GraphType type) {
+    public long getTs(GraphGranularityType type) {
         return ts * type.period;
     }
 
