@@ -42,7 +42,7 @@ public class TokenManager {
     }
 
     public void deleteDash(DashBoard dash) {
-        //todo clear shared token from redis?
+        //todo clear shared token from DB?
         sharedTokenManager.deleteProject(dash);
         String[] removedTokens = regularTokenManager.deleteProject(dash);
 
