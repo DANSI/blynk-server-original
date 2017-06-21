@@ -12,6 +12,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.*;
+import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.sensors.*;
 import cc.blynk.server.core.model.widgets.ui.*;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
@@ -57,6 +58,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = VerticalLevelDisplay.class, name = "VERTICAL_LEVEL_DISPLAY"),
         @JsonSubTypes.Type(value = Video.class, name = "VIDEO"),
         @JsonSubTypes.Type(value = HistoryGraph.class, name = "LOGGER"),
+        @JsonSubTypes.Type(value = EnhancedHistoryGraph.class, name = "ENHANCED_GRAPH"),
 
         //sensors
         @JsonSubTypes.Type(value = GPSTrigger.class, name = "GPS_TRIGGER"),
