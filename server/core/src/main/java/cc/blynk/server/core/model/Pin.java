@@ -1,6 +1,8 @@
 package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
@@ -13,28 +15,43 @@ public class Pin {
 
     public static final int NO_PIN = -1;
 
-    public byte pin = NO_PIN;
+    public final byte pin;
 
-    public boolean pwmMode;
+    public final boolean pwmMode;
 
-    public boolean rangeMappingOn;
+    public final boolean rangeMappingOn;
 
-    public PinType pinType;
+    public final PinType pinType;
 
-    public String value;
+    public volatile String value;
 
-    public int min;
+    public final int min;
 
-    public int max = 255;
+    public final int max;
 
-    public String label;
+    public final String label;
 
-    public Pin() {
+    @JsonCreator
+    public Pin(@JsonProperty("pin") byte pin,
+               @JsonProperty("pwmMode") boolean pwmMode,
+               @JsonProperty("rangeMappingOn") boolean rangeMappingOn,
+               @JsonProperty("pinType") PinType pinType,
+               @JsonProperty("value") String value,
+               @JsonProperty("min") int min,
+               @JsonProperty("max") int max,
+               @JsonProperty("label") String label) {
+        this.pin = pin;
+        this.pwmMode = pwmMode;
+        this.rangeMappingOn = rangeMappingOn;
+        this.pinType = pinType;
+        this.value = value;
+        this.min = min;
+        this.max = max;
+        this.label = label;
     }
 
     public Pin(byte pin, PinType pinType) {
-        this.pin = pin;
-        this.pinType = pinType;
+        this(pin, false, false, pinType, null, 0, 255, null);
     }
 
     public static String makeReadingHardwareBody(char pinType, byte pin) {

@@ -214,9 +214,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         Rule rule = new Rule();
         rule.isActive = true;
         rule.triggerTime = timerTime;
-        Pin pin = new Pin();
-        pin.pin = 4;
-        pin.pinType = PinType.VIRTUAL;
+        Pin pin = new Pin((byte) 4, PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
         rule.actions = new BaseAction[] {
                 setPinAction

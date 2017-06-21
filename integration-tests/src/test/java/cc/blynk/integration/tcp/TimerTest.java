@@ -91,9 +91,7 @@ public class TimerTest extends IntegrationBase {
         Rule rule = new Rule();
         rule.isActive = true;
         rule.triggerTime = timerTime;
-        Pin pin = new Pin();
-        pin.pin = 1;
-        pin.pinType = PinType.VIRTUAL;
+        Pin pin = new Pin((byte)1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
         rule.actions = new BaseAction[] {
                 setPinAction
@@ -126,9 +124,7 @@ public class TimerTest extends IntegrationBase {
         Rule rule = new Rule();
         rule.isActive = true;
         rule.triggerTime = timerTime;
-        Pin pin = new Pin();
-        pin.pin = 1;
-        pin.pinType = PinType.VIRTUAL;
+        Pin pin = new Pin((byte)1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
         rule.actions = new BaseAction[] {
                 setPinAction
@@ -173,14 +169,10 @@ public class TimerTest extends IntegrationBase {
         rule.isActive = true;
         rule.triggerTime = timerTime;
 
-        Pin pin = new Pin();
-        pin.pin = 1;
-        pin.pinType = PinType.VIRTUAL;
+        Pin pin = new Pin((byte)1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
 
-        Pin pin2 = new Pin();
-        pin2.pin = 2;
-        pin2.pinType = PinType.VIRTUAL;
+        Pin pin2 = new Pin((byte)2,PinType.VIRTUAL);
         SetPinAction setPinAction2 = new SetPinAction(pin2, "2", SetPinActionType.CUSTOM);
 
         rule.actions = new BaseAction[] {
@@ -217,9 +209,7 @@ public class TimerTest extends IntegrationBase {
         rule.isActive = true;
         rule.triggerTime = timerTime;
 
-        Pin pin = new Pin();
-        pin.pin = 1;
-        pin.pinType = PinType.VIRTUAL;
+        Pin pin = new Pin((byte)1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
 
         NotifyAction notifyAction = new NotifyAction("Hello");
@@ -275,9 +265,7 @@ public class TimerTest extends IntegrationBase {
         rule.isActive = true;
         rule.triggerTime = timerTime;
 
-        Pin pin = new Pin();
-        pin.pin = 1;
-        pin.pinType = PinType.VIRTUAL;
+        Pin pin = new Pin((byte)1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
 
         rule.actions = new BaseAction[] {

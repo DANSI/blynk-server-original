@@ -56,15 +56,9 @@ public class PinValuesUpdateCorrectTest {
 
         RGB rgb = new RGB();
         rgb.pins = new Pin[3];
-        rgb.pins[0] = new Pin();
-        rgb.pins[0].pin = 0;
-        rgb.pins[0].pinType = PinType.VIRTUAL;
-        rgb.pins[1] = new Pin();
-        rgb.pins[1].pin = 1;
-        rgb.pins[1].pinType = PinType.VIRTUAL;
-        rgb.pins[2] = new Pin();
-        rgb.pins[2].pin = 2;
-        rgb.pins[2].pinType = PinType.VIRTUAL;
+        rgb.pins[0] = new Pin((byte)0, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.pins[1] = new Pin((byte)1, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.pins[2] = new Pin((byte)2, false, false, PinType.VIRTUAL, null, 0, 255, null);
 
 
         dash.widgets = ArrayUtils.add(dash.widgets, rgb);
@@ -79,15 +73,9 @@ public class PinValuesUpdateCorrectTest {
 
         rgb = new RGB();
         rgb.pins = new Pin[3];
-        rgb.pins[0] = new Pin();
-        rgb.pins[0].pin = 4;
-        rgb.pins[0].pinType = PinType.VIRTUAL;
-        rgb.pins[1] = new Pin();
-        rgb.pins[1].pin = 4;
-        rgb.pins[1].pinType = PinType.VIRTUAL;
-        rgb.pins[2] = new Pin();
-        rgb.pins[2].pin = 4;
-        rgb.pins[2].pinType = PinType.VIRTUAL;
+        rgb.pins[0] = new Pin((byte)4, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.pins[1] = new Pin((byte)4, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.pins[2] = new Pin((byte)4, false, false, PinType.VIRTUAL, null, 0, 255, null);
 
         dash.widgets = ArrayUtils.add(dash.widgets, rgb);
 

@@ -17,11 +17,7 @@ import static org.junit.Assert.assertEquals;
 public class PinGetJsonValueTest {
 
     private static Pin createPinWithValue(String val) {
-        Pin pin = new Pin();
-        pin.value = val;
-        pin.pinType = PinType.VIRTUAL;
-        pin.pin = 1;
-        return pin;
+        return new Pin((byte)1, false, false, PinType.VIRTUAL, val, 0, 255, null);
     }
 
     @Test

@@ -13,6 +13,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.eventor.Rule;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.WaitAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.MailAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
@@ -526,7 +527,12 @@ public class EventorTest extends IntegrationBase {
         //here is special case. right now eventor for digital pins supports only LOW/HIGH values
         //that's why eventor doesn't work with PWM pins, as they handled as analog, where HIGH doesn't work.
         SetPinAction setPinAction = (SetPinAction) eventor.rules[0].actions[0];
-        setPinAction.pin.pwmMode = true;
+        Pin pin = setPinAction.pin;
+        eventor.rules[0].actions[0] = new SetPinAction(
+                new Pin(pin.pin, true, false, pin.pinType, null, 0, 255, null),
+                setPinAction.value,
+                SetPinActionType.CUSTOM
+        );
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
