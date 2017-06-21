@@ -167,7 +167,7 @@ public class EventorTest extends IntegrationBase {
             System.out.println(JsonParser.mapper.writeValueAsString(eventor));
         }
 
-        Pin pin = new Pin(1, PinType.VIRTUAL);
+        Pin pin = new Pin((byte) 1, PinType.VIRTUAL);
 
         BaseAction[] actions = new BaseAction[] {
                 new SetPinAction(pin.pin, pin.pinType, "pinValuetoSEt"),

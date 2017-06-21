@@ -32,11 +32,6 @@ public class Pin {
     public Pin() {
     }
 
-    public Pin(int pin, PinType pinType) {
-        this.pin = (byte) pin;
-        this.pinType = pinType;
-    }
-
     public Pin(byte pin, PinType pinType) {
         this.pin = pin;
         this.pinType = pinType;
