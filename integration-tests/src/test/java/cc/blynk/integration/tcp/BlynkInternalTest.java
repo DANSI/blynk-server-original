@@ -86,12 +86,7 @@ public class BlynkInternalTest extends IntegrationBase {
         clientPair.appClient.reset();
 
 
-        HardwareInfo hardwareInfo = new HardwareInfo();
-        hardwareInfo.version = "0.3.1";
-        hardwareInfo.heartbeatInterval = 10;
-        hardwareInfo.boardType = "Arduino";
-        hardwareInfo.cpuType = "ATmega328P";
-        hardwareInfo.connectionType = "W5100";
+        HardwareInfo hardwareInfo = new HardwareInfo("0.3.1", "Arduino", "ATmega328P", "W5100", null, 10);
 
         clientPair.appClient.send("loadProfileGzipped");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());

@@ -1,5 +1,8 @@
 package cc.blynk.server.core.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -19,8 +22,19 @@ public class HardwareInfo {
 
     public int heartbeatInterval;
 
-    //used for json.
-    public HardwareInfo() {
+    @JsonCreator
+    public HardwareInfo(@JsonProperty("version") String version,
+                        @JsonProperty("boardType") String boardType,
+                        @JsonProperty("cpuType") String cpuType,
+                        @JsonProperty("connectionType") String connectionType,
+                        @JsonProperty("buildDate") String buildDate,
+                        @JsonProperty("heartbeatInterval") int heartbeatInterval) {
+        this.version = version;
+        this.boardType = boardType;
+        this.cpuType = cpuType;
+        this.connectionType = connectionType;
+        this.buildDate = buildDate;
+        this.heartbeatInterval = heartbeatInterval;
     }
 
     public HardwareInfo(String[] info) {
