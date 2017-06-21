@@ -9,7 +9,6 @@ import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
-import cc.blynk.server.redis.RedisClient;
 import cc.blynk.server.transport.TransportTypeHolder;
 import cc.blynk.server.workers.ReadingWidgetsWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -41,8 +40,6 @@ public class Holder implements Closeable {
     public final TokenManager tokenManager;
 
     public final ReportingDao reportingDao;
-
-    public final RedisClient redisClient;
 
     public final DBManager dbManager;
 
@@ -79,8 +76,6 @@ public class Holder implements Closeable {
         this.region = serverProperties.getProperty("region", "local");
         this.host = serverProperties.getServerHost();
 
-        this.redisClient = new RedisClient(new ServerProperties(RedisClient.REDIS_PROPERTIES));
-
         String dataFolder = serverProperties.getProperty("data.folder");
         this.fileManager = new FileManager(dataFolder);
         this.sessionDao = new SessionDao();
@@ -102,7 +97,7 @@ public class Holder implements Closeable {
             this.userDao = new UserDao(fileManager.deserializeUsers(), this.region);
         }
 
-        this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, host);
+        this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, dbManager, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.reportingDao = new ReportingDao(reportingFolder, serverProperties);
@@ -139,7 +134,6 @@ public class Holder implements Closeable {
 
         this.region = "local";
         this.host = serverProperties.getServerHost();
-        this.redisClient = new RedisClient(new ServerProperties(RedisClient.REDIS_PROPERTIES));
 
         String dataFolder = serverProperties.getProperty("data.folder");
         this.fileManager = new FileManager(dataFolder);
@@ -149,7 +143,9 @@ public class Holder implements Closeable {
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
                 serverProperties.getIntProperty("notifications.queue.limit", 10000)
         );
-        this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, redisClient, host);
+
+        this.dbManager = new DBManager(dbFileName, blockingIOProcessor, serverProperties.getBoolProperty("enable.db"));
+        this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, dbManager, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.reportingDao = new ReportingDao(reportingFolder, serverProperties);
@@ -169,7 +165,6 @@ public class Holder implements Closeable {
                 .build()
         );
 
-        this.dbManager = new DBManager(dbFileName, blockingIOProcessor, serverProperties.getBoolProperty("enable.db"));
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
@@ -199,7 +194,5 @@ public class Holder implements Closeable {
 
         System.out.println("Stopping Transport Holder...");
         transportTypeHolder.close();
-
-        redisClient.close();
     }
 }

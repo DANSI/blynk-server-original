@@ -4,7 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
-import cc.blynk.server.redis.RedisClient;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
@@ -22,17 +22,15 @@ import static cc.blynk.utils.BlynkByteBufUtil.*;
 @ChannelHandler.Sharable
 public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessage> {
 
-    private final String[] loadBalancingIps;
     private final BlockingIOProcessor blockingIOProcessor;
-    private final RedisClient redisClient;
+    private final DBManager dbManager;
     private final UserDao userDao;
     private final String currentIp;
 
     public GetServerHandler(Holder holder, String[] ips) {
         super();
-        this.loadBalancingIps = ips;
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.redisClient = holder.redisClient;
+        this.dbManager = holder.dbManager;
         this.userDao = holder.userDao;
         this.currentIp = holder.host;
     }
@@ -65,10 +63,10 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
         } else {
             //user is on other server
             blockingIOProcessor.executeDB(() -> {
-                String userServer = redisClient.getServerByUser(email);
+                String userServer = dbManager.getServerByUser(email);
                 if (userServer == null) {
                     //user not registered yet anywhere
-                    redisClient.assignServerToUser(email, currentIp);
+                    dbManager.assignServerToUser(email, currentIp);
                     userServer = currentIp;
                 }
 

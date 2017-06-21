@@ -10,10 +10,10 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
-import cc.blynk.server.redis.RedisClient;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
@@ -44,13 +44,13 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     private static final int HARDWARE_PIN_MODE_MSG_ID = 1;
 
     private final Holder holder;
-    private final RedisClient redisClient;
+    private final DBManager dbManager;
     private final BlockingIOProcessor blockingIOProcessor;
     private final String listenPort;
 
     public HardwareLoginHandler(Holder holder, int listenPort) {
         this.holder = holder;
-        this.redisClient = holder.redisClient;
+        this.dbManager = holder.dbManager;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.listenPort = String.valueOf(listenPort);
     }
@@ -120,7 +120,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
     private void checkUserOnOtherServer(ChannelHandlerContext ctx, String token, int msgId) {
         blockingIOProcessor.executeDB(() -> {
-            String server = redisClient.getServerByToken(token);
+            String server = dbManager.getServerByToken(token);
             // no server found, that's means token is wrong.
             if (server == null || server.equals(holder.host)) {
                 log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());

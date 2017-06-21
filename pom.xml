@@ -153,7 +153,6 @@
         <postgresql.version>42.1.1</postgresql.version>
         <HikariCP.version>2.6.2</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>
-        <jedis.version>2.9.0</jedis.version>
         <bcpg-jdk15on.version>1.56</bcpg-jdk15on.version>
 
         <!-- test dependencies -->

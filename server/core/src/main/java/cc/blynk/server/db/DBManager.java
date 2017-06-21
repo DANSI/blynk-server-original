@@ -216,6 +216,24 @@ public class DBManager implements Closeable {
         }
     }
 
+    //todo
+    //not implemented methods section. not used for now. for GEO DNS fix
+    public String getServerByUser(String email) {
+        return null;
+    }
+    public void assignServerToUser(String email, String ip) {
+        //do nothing
+    }
+    public String getServerByToken(String token) {
+        return null;
+    }
+    public void assignServerToToken(String token, String serverIp) {
+        //do nothing
+    }
+    public void removeToken(String... token) {
+        //do nothing
+    }
+
     public Connection getConnection() throws Exception {
         return ds.getConnection();
     }
