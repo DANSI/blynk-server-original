@@ -83,10 +83,10 @@ public class GetGraphDataLogic {
     private void process(Channel channel, int dashId, int deviceId, String[] messageParts, User user, int msgId, int valuesPerPin) {
         int numberOfPins = messageParts.length / valuesPerPin;
 
-        GraphPinRequest[] requestedPins = new GraphPinRequestData[numberOfPins];
+        GraphPinRequest[] requestedPins = new GraphPinRequest[numberOfPins];
 
         for (int i = 0; i < numberOfPins; i++) {
-            requestedPins[i] = new GraphPinRequestData(dashId, deviceId, messageParts, i, valuesPerPin);
+            requestedPins[i] = new GraphPinRequest(dashId, deviceId, messageParts, i, valuesPerPin);
         }
 
         readGraphData(channel, user, requestedPins, msgId);
