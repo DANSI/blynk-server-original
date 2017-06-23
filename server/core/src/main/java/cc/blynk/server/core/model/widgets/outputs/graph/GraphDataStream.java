@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.06.17.
  */
-public class DataStream {
+public class GraphDataStream {
 
     private final GraphType graphType;
 
@@ -32,16 +32,16 @@ public class DataStream {
     private final boolean connectMissingPointsEnabled;
 
     @JsonCreator
-    public DataStream(@JsonProperty("graphType") GraphType graphType,
-                      @JsonProperty("color") int color,
-                      @JsonProperty("targetId") int targetId,
-                      @JsonProperty("targetId") Pin pin,
-                      @JsonProperty("mathFormula") String mathFormula,
-                      @JsonProperty("yAxisMin") int yAxisMin,
-                      @JsonProperty("yAxisMax") int yAxisMax,
-                      @JsonProperty("suffix") String suffix,
-                      @JsonProperty("cubicSmoothingEnabled") boolean cubicSmoothingEnabled,
-                      @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled) {
+    public GraphDataStream(@JsonProperty("graphType") GraphType graphType,
+                           @JsonProperty("color") int color,
+                           @JsonProperty("targetId") int targetId,
+                           @JsonProperty("targetId") Pin pin,
+                           @JsonProperty("mathFormula") String mathFormula,
+                           @JsonProperty("yAxisMin") int yAxisMin,
+                           @JsonProperty("yAxisMax") int yAxisMax,
+                           @JsonProperty("suffix") String suffix,
+                           @JsonProperty("cubicSmoothingEnabled") boolean cubicSmoothingEnabled,
+                           @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled) {
         this.graphType = graphType;
         this.color = color;
         this.targetId = targetId;
