@@ -14,7 +14,7 @@ import static cc.blynk.utils.ArrayUtil.EMPTY_DATA_STREAMS;
  */
 public class EnhancedHistoryGraph extends Widget {
 
-    public DataStream[] dataStreams = EMPTY_DATA_STREAMS;
+    public GraphDataStream[] dataStreams = EMPTY_DATA_STREAMS;
 
     public GraphPeriod period;
 
