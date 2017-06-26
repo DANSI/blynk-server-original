@@ -1,5 +1,8 @@
 package cc.blynk.server.core.model.auth;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -7,6 +10,11 @@ package cc.blynk.server.core.model.auth;
  */
 public class FacebookTokenResponse {
 
-    public String email;
+    public final String email;
+
+    @JsonCreator
+    public FacebookTokenResponse(@JsonProperty("email") String email) {
+        this.email = email;
+    }
 
 }

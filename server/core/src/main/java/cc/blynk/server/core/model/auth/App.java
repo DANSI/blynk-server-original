@@ -4,6 +4,8 @@ import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.utils.JsonParser;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Blynk Project.
@@ -12,7 +14,7 @@ import cc.blynk.utils.JsonParser;
  */
 public class App {
 
-    public String id;
+    public final String id;
 
     public volatile Theme theme;
 
@@ -28,7 +30,23 @@ public class App {
 
     public volatile int[] projectIds;
 
-    public App() {
+    @JsonCreator
+    public App(@JsonProperty("id") String id,
+               @JsonProperty("theme") Theme theme,
+               @JsonProperty("provisionType") ProvisionType provisionType,
+               @JsonProperty("color") int color,
+               @JsonProperty("isMultiFace") boolean isMultiFace,
+               @JsonProperty("name") String name,
+               @JsonProperty("icon") String icon,
+               @JsonProperty("projectIds") int[] projectIds) {
+        this.id = id;
+        this.theme = theme;
+        this.provisionType = provisionType;
+        this.color = color;
+        this.isMultiFace = isMultiFace;
+        this.name = name;
+        this.icon = icon;
+        this.projectIds = projectIds;
     }
 
     public void update(App newApp) {

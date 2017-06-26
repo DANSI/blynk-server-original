@@ -3,6 +3,8 @@ package cc.blynk.server.core.model.device;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Blynk Project.
@@ -13,25 +15,26 @@ public class Tag implements Target {
 
     public static final int START_TAG_ID = 100_000;
 
-    public int id;
+    public final int id;
 
     public volatile String name;
 
-    public volatile int[] deviceIds = ArrayUtil.EMPTY_INTS;
+    public volatile int[] deviceIds;
 
     public boolean isNotValid() {
         return name == null || name.isEmpty() || name.length() > 40 || id < START_TAG_ID || deviceIds.length > 100;
     }
 
-    public Tag() {
-    }
-
     public Tag(int id, String name) {
         this.id = id;
         this.name = name;
+        this.deviceIds = ArrayUtil.EMPTY_INTS;
     }
 
-    private Tag(int id, String name, int[] deviceIds) {
+    @JsonCreator
+    public Tag(@JsonProperty("id") int id,
+               @JsonProperty("name") String name,
+               @JsonProperty("deviceIds") int[] deviceIds) {
         this.id = id;
         this.name = name;
         this.deviceIds = deviceIds;
