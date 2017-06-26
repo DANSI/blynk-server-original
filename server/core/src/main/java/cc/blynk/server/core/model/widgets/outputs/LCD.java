@@ -93,7 +93,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
 
     @Override
     public boolean isTicked(long now) {
-        if (frequency > 0 && now > lastRequestTS + frequency) {
+        if (frequency > 0 && now >= lastRequestTS + frequency) {
             this.lastRequestTS = now;
             return true;
         }

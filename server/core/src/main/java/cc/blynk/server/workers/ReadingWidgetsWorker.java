@@ -61,19 +61,19 @@ public class ReadingWidgetsWorker implements Runnable {
     private int process(long now) {
         int tickedWidgets = 0;
         for (Map.Entry<UserKey, Session> entry : sessionDao.userSession.entrySet()) {
-            final Session session = entry.getValue();
+            Session session = entry.getValue();
             //for now checking widgets for active app only
             if (session.isAppConnected() && session.isHardwareConnected()) {
-                final UserKey userKey = entry.getKey();
-                final User user = userDao.users.get(userKey);
+                UserKey userKey = entry.getKey();
+                User user = userDao.users.get(userKey);
                 for (DashBoard dashBoard : user.profile.dashBoards) {
                     if (dashBoard.isActive) {
                         for (Channel channel : session.hardwareChannels) {
-                            final HardwareStateHolder stateHolder = StateHolderUtil.getHardState(channel);
+                            HardwareStateHolder stateHolder = StateHolderUtil.getHardState(channel);
                             if (stateHolder != null && stateHolder.dashId == dashBoard.id) {
                                 for (Widget widget : dashBoard.widgets) {
                                     if (widget instanceof FrequencyWidget) {
-                                        final FrequencyWidget frequencyWidget = (FrequencyWidget) widget;
+                                        FrequencyWidget frequencyWidget = (FrequencyWidget) widget;
                                         if (channel.isWritable() &&
                                                 sameDeviceId(dashBoard, frequencyWidget.getDeviceId(), stateHolder.deviceId) &&
                                                 frequencyWidget.isTicked(now)) {
@@ -94,7 +94,7 @@ public class ReadingWidgetsWorker implements Runnable {
     }
 
     private boolean sameDeviceId(DashBoard dash, int targetId, int channelDeviceId) {
-        final Target target = dash.getTarget(targetId);
+        Target target = dash.getTarget(targetId);
         return target != null && ArrayUtil.contains(target.getDeviceIds(), channelDeviceId);
     }
 
