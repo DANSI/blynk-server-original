@@ -6,7 +6,7 @@
         sudo apt-get update
         sudo apt-get install oracle-java8-installer
         
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.25.0/server-0.25.0.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.25.1/server-0.25.1.jar"
         
 
 server.properties
