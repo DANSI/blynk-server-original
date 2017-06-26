@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class App {
 
-    public final String id;
+    public String id;
 
     public volatile Theme theme;
 

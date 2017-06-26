@@ -12,7 +12,7 @@ public class GCMResponseMessage {
 
     private final int success;
 
-    private final int failure;
+    final int failure;
 
     private final long multicast_id;
 

@@ -37,7 +37,7 @@ public class Tag implements Target {
                @JsonProperty("deviceIds") int[] deviceIds) {
         this.id = id;
         this.name = name;
-        this.deviceIds = deviceIds;
+        this.deviceIds = deviceIds == null ? ArrayUtil.EMPTY_INTS : deviceIds;
     }
 
     @Override

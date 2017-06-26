@@ -53,14 +53,7 @@ public class AppWorkflowTest extends IntegrationBase {
 
     @Test
     public void testPrintApp() throws Exception {
-        App app = new App();
-        app.id = "1";
-        app.projectIds = new int[] {1};
-        app.name = "My App";
-        app.provisionType = ProvisionType.STATIC;
-        app.color = 0;
-        app.icon = "myIcon";
-        app.theme = Theme.Blynk;
+        App app = new App("1", Theme.Blynk, ProvisionType.STATIC, 0, false, "My App", "myIcon", new int[] {1});
         System.out.println(JsonParser.mapper.writeValueAsString(app));
     }
 
