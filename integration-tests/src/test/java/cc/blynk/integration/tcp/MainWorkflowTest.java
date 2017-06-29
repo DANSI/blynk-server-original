@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.GraphGranularityType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
@@ -21,6 +22,7 @@ import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.hardware.HardwareServer;
@@ -37,12 +39,17 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -1171,7 +1178,137 @@ public class MainWorkflowTest extends IntegrationBase {
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT)));
         verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE, b(body))));
+    }
 
+    @Test
+    public void testGeneratedCSVIsCorrect() throws Exception {
+        //generate fake reporting data
+        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
+        Files.createDirectories(userReportDirectory);
+        String filename = ReportingDao.generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 7, GraphGranularityType.MINUTE);
+        Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
+        FileUtils.write(userReportFile, 1.1, 1L);
+        FileUtils.write(userReportFile, 2.2, 2L);
+
+        clientPair.appClient.send("export 1 14");
+
+        String csvFileName = "/dima@mail.ua_1_a7.csv.gz";
+        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
+
+        try (InputStream fileStream = new FileInputStream(Paths.get("/tmp/blynk", csvFileName).toString());
+             InputStream gzipStream = new GZIPInputStream(fileStream);
+             BufferedReader buffered = new BufferedReader(new InputStreamReader(gzipStream))) {
+
+            String[] lineSplit = buffered.readLine().split(",");
+            assertEquals(1.1D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(1, Long.parseLong(lineSplit[1]));
+            assertEquals(0, Long.parseLong(lineSplit[2]));
+
+            lineSplit = buffered.readLine().split(",");
+            assertEquals(2.2D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(2, Long.parseLong(lineSplit[1]));
+            assertEquals(0, Long.parseLong(lineSplit[2]));
+        }
+    }
+
+    @Test
+    public void testGeneratedCSVIsCorrectForMultiDevices() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+
+
+        clientPair.appClient.reset();
+
+        //generate fake reporting data
+        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
+        Files.createDirectories(userReportDirectory);
+
+        String filename = ReportingDao.generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 7, GraphGranularityType.MINUTE);
+        Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
+        FileUtils.write(userReportFile, 1.1, 1L);
+        FileUtils.write(userReportFile, 2.2, 2L);
+
+        filename = ReportingDao.generateFilename(1, 1, PinType.ANALOG.pintTypeChar, (byte) 7, GraphGranularityType.MINUTE);
+        userReportFile = Paths.get(userReportDirectory.toString(), filename);
+        FileUtils.write(userReportFile, 11.1, 11L);
+        FileUtils.write(userReportFile, 12.2, 12L);
+
+        clientPair.appClient.send("export 1-200000 14");
+
+        String csvFileName = "/dima@mail.ua_1_a7.csv.gz";
+        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
+
+        try (InputStream fileStream = new FileInputStream(Paths.get("/tmp/blynk", csvFileName).toString());
+             InputStream gzipStream = new GZIPInputStream(fileStream);
+             BufferedReader buffered = new BufferedReader(new InputStreamReader(gzipStream))) {
+
+            //first device
+            String[] lineSplit = buffered.readLine().split(",");
+            assertEquals(1.1D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(1, Long.parseLong(lineSplit[1]));
+            assertEquals(0, Long.parseLong(lineSplit[2]));
+
+            lineSplit = buffered.readLine().split(",");
+            assertEquals(2.2D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(2, Long.parseLong(lineSplit[1]));
+            assertEquals(0, Long.parseLong(lineSplit[2]));
+
+            //second device
+            lineSplit = buffered.readLine().split(",");
+            assertEquals(11.1D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(11, Long.parseLong(lineSplit[1]));
+            assertEquals(1, Long.parseLong(lineSplit[2]));
+
+            lineSplit = buffered.readLine().split(",");
+            assertEquals(12.2D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(12, Long.parseLong(lineSplit[1]));
+            assertEquals(1, Long.parseLong(lineSplit[2]));
+        }
+    }
+
+    @Test
+    public void testGeneratedCSVIsCorrectForMultiDevicesNoData() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+
+
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("export 1-200000 14");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
+
+        String csvFileName = "/dima@mail.ua_1_a7.csv.gz";
+
+        assertTrue(Files.exists(Paths.get("/tmp/blynk", csvFileName)));
+
+        try (InputStream fileStream = new FileInputStream(Paths.get("/tmp/blynk", csvFileName).toString());
+             InputStream gzipStream = new GZIPInputStream(fileStream);
+             BufferedReader buffered = new BufferedReader(new InputStreamReader(gzipStream))) {
+
+            //first device
+            String line = buffered.readLine();
+            assertNull(line);
+        }
     }
 
 }
