@@ -208,7 +208,7 @@ public class DashBoard {
         return widgets[getWidgetIndexByIdOrThrow(id)];
     }
 
-    private Widget getWidgetById(long id) {
+    public Widget getWidgetById(long id) {
         for (Widget widget : widgets) {
             if (widget.id == id) {
                 return widget;

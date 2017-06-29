@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -84,7 +85,15 @@ public class ExportGraphDataLogic {
                 for (Pin pin : historyGraph.pins) {
                     if (pin != null) {
                         try {
-                            Path path = reportingDao.csvGenerator.createCSV(user, dashId, deviceId, pin.pinType, pin.pin);
+                            int[] deviceIds = new int[] {deviceId};
+                            //special case, this is not actually a deviceId but device selector widget id
+                            if (deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+                                Widget deviceSelector = dashBoard.getWidgetById(deviceId);
+                                if (deviceSelector != null && deviceSelector instanceof DeviceSelector) {
+                                    deviceIds = ((DeviceSelector) deviceSelector).deviceIds;
+                                }
+                            }
+                            Path path = reportingDao.csvGenerator.createCSV(user, dashId, pin.pinType, pin.pin, deviceIds);
                             pinsCSVFilePath.add(new FileLink(path.getFileName(), dashName, pin.pinType, pin.pin));
                         } catch (Exception e) {
                             //ignore eny exception.

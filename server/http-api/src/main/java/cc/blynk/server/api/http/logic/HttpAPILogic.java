@@ -292,7 +292,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         //todo may be optimized
         try {
-            java.nio.file.Path path = reportingDao.csvGenerator.createCSV(user, dashId, deviceId, pinType, pin);
+            java.nio.file.Path path = reportingDao.csvGenerator.createCSV(user, dashId, pinType, pin, deviceId);
             return redirect("/" + path.getFileName().toString());
         } catch (IllegalCommandBodyException e1) {
             log.debug(e1.getMessage());
