@@ -1,5 +1,6 @@
 package cc.blynk.utils;
 
+import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +21,7 @@ public class SHA256Util {
     public static String makeHash(String password, String salt) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(password.getBytes("UTF-8"));
+            md.update(password.getBytes(CharsetUtil.UTF_8));
 
             byte byteData[] = md.digest(makeHash(salt.toLowerCase()));
 
@@ -33,7 +34,7 @@ public class SHA256Util {
     }
 
     private static byte[] makeHash(String val) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        return MessageDigest.getInstance("SHA-256").digest(val.getBytes("UTF-8"));
+        return MessageDigest.getInstance("SHA-256").digest(val.getBytes(CharsetUtil.UTF_8));
     }
 
 }

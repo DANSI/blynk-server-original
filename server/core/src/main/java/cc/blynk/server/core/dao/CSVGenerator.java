@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.enums.GraphGranularityType;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
+import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -75,16 +76,13 @@ public class CSVGenerator {
      */
     private static void makeGzippedCSVFile(ByteBuffer onePinData, Path path) throws IOException {
         try (OutputStream output = Files.newOutputStream(path);
-             Writer writer = new OutputStreamWriter(new GZIPOutputStream(output), "UTF-8")) {
+             Writer writer = new OutputStreamWriter(new GZIPOutputStream(output), CharsetUtil.US_ASCII)) {
 
             while (onePinData.remaining() > 0) {
                 double value = onePinData.getDouble();
                 long ts = onePinData.getLong();
 
-                writer.write("" + value);
-                writer.write(',');
-                writer.write("" + ts);
-                writer.write('\n');
+                writer.write("" + value + ',' + ts + '\n');
             }
         }
     }

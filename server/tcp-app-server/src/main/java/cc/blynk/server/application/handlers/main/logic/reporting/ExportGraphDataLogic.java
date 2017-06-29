@@ -67,10 +67,9 @@ public class ExportGraphDataLogic {
             deviceId = 0;
         }
 
-        long widgetId = ParseUtil.parseLong(messageParts[1]);
-
         DashBoard dashBoard = user.profile.getDashByIdOrThrow(dashId);
 
+        long widgetId = ParseUtil.parseLong(messageParts[1]);
         Widget widget = dashBoard.getWidgetByIdOrThrow(widgetId);
         if (!(widget instanceof HistoryGraph)) {
             throw new IllegalCommandException("Passed wrong widget id.");
@@ -78,7 +77,7 @@ public class ExportGraphDataLogic {
 
         HistoryGraph historyGraph = (HistoryGraph) widget;
 
-        blockingIOProcessor.execute(() -> {
+        blockingIOProcessor.executeHistory(() -> {
             try {
                 String dashName = dashBoard.name == null ? "" : dashBoard.name;
                 ArrayList<FileLink> pinsCSVFilePath = new ArrayList<>();
