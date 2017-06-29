@@ -48,7 +48,7 @@ public class GMailClient implements MailClient {
 
     @Override
     public void sendHtml(String to, String subj, String body) throws Exception {
-        send(to, subj, body, "text/html");
+        send(to, subj, body, "text/html; charset=UTF-8");
     }
 
     @Override
