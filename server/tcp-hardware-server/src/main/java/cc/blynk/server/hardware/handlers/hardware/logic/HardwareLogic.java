@@ -66,7 +66,6 @@ public class HardwareLogic {
         }
 
         final int dashId = state.dashId;
-        final int deviceId = state.deviceId;
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
@@ -83,6 +82,7 @@ public class HardwareLogic {
             final byte pin = ParseUtil.parseByte(splitBody[1]);
             final String value = splitBody[2];
             final long now = System.currentTimeMillis();
+            final int deviceId = state.deviceId;
 
             reportingDao.process(state.user, dashId, deviceId, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);
