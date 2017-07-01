@@ -93,7 +93,7 @@ public class ExportGraphDataLogic {
                                     deviceIds = ((DeviceSelector) deviceSelector).deviceIds;
                                 }
                             }
-                            Path path = reportingDao.csvGenerator.createCSV(user, dashId, pin.pinType, pin.pin, deviceIds);
+                            Path path = reportingDao.csvGenerator.createCSV(user, dashId, deviceId, pin.pinType, pin.pin, deviceIds);
                             pinsCSVFilePath.add(new FileLink(path.getFileName(), dashName, pin.pinType, pin.pin));
                         } catch (Exception e) {
                             //ignore eny exception.

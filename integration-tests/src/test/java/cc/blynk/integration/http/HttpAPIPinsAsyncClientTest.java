@@ -204,16 +204,16 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
     public void testGetCSVDataRedirect() throws Exception {
         Path reportingPath = Paths.get(localHolder.reportingDao.dataFolder, "dmitriy@blynk.cc");
         Files.createDirectories(reportingPath);
-        FileUtils.write(Paths.get(reportingPath.toString(), "history_125564119_v10_minute.bin"), 1, 2);
+        FileUtils.write(Paths.get(reportingPath.toString(), "history_125564119_0_v10_minute.bin"), 1, 2);
 
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/data/v10").execute();
         Response response = f.get();
         assertEquals(301, response.getStatusCode());
         String redirectLocation = response.getHeader("location");
         assertNotNull(redirectLocation);
-        assertEquals("/dmitriy@blynk.cc_125564119_v10.csv.gz", redirectLocation);
+        assertEquals("/dmitriy@blynk.cc_125564119_0_v10.csv.gz", redirectLocation);
 
-        f = httpclient.prepareGet(httpsServerUrl + "dmitriy@blynk.cc_125564119_v10.csv.gz").execute();
+        f = httpclient.prepareGet(httpsServerUrl + "dmitriy@blynk.cc_125564119_0_v10.csv.gz").execute();
         response = f.get();
         assertEquals(200, response.getStatusCode());
         assertEquals("application/x-gzip", response.getHeader("content-type"));

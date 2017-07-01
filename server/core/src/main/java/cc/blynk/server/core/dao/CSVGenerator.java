@@ -42,19 +42,18 @@ public class CSVGenerator {
     }
 
     private final ReportingDao reportingDao;
-    private final int FETCH_COUNT;
+    private final static int FETCH_COUNT = 60 * 24 * 30;
 
     public CSVGenerator(ReportingDao reportingDao) {
         this.reportingDao = reportingDao;
-        this.FETCH_COUNT = 60 * 24 * 30;
     }
 
-    public Path createCSV(User user, int dashId, PinType pinType, byte pin, int... deviceIds) throws Exception {
+    public Path createCSV(User user, int dashId, int inDeviceId, PinType pinType, byte pin, int... deviceIds) throws Exception {
         if (pinType == null || pin == Pin.NO_PIN) {
             throw new IllegalCommandBodyException("Wrong pin format.");
         }
 
-        Path path = generateExportCSVPath(user.email, dashId, pinType, pin);
+        Path path = generateExportCSVPath(user.email, dashId, inDeviceId, pinType, pin);
 
         try (OutputStream output = Files.newOutputStream(path);
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(output), CharsetUtil.US_ASCII))) {
@@ -86,12 +85,12 @@ public class CSVGenerator {
         }
     }
 
-    private static Path generateExportCSVPath(String email, int dashId, PinType pinType, byte pin) {
-        return Paths.get(CSV_DIR, format(email, dashId, pinType, pin));
+    private static Path generateExportCSVPath(String email, int dashId, int deviceId, PinType pinType, byte pin) {
+        return Paths.get(CSV_DIR, format(email, dashId, deviceId, pinType, pin));
     }
 
     //"%s_%s_%c%d.csv.gz"
-    private static String format(String email, int dashId, PinType pinType, byte pin) {
-        return email + "_" + dashId + "_" + pinType.pintTypeChar + pin + ".csv.gz";
+    private static String format(String email, int dashId, int deviceId, PinType pinType, byte pin) {
+        return email + "_" + dashId + "_" + deviceId + "_" + pinType.pintTypeChar + pin + ".csv.gz";
     }
 }
