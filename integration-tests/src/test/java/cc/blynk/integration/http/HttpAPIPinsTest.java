@@ -101,7 +101,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
-            assertEquals("Requested pin not exists in app.", consumeText(response));
+            assertEquals("Requested pin doesn't exist in the app.", consumeText(response));
         }
     }
 

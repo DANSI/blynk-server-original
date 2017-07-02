@@ -106,7 +106,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v11").execute();
         Response response = f.get();
         assertEquals(400, response.getStatusCode());
-        assertEquals("Requested pin not exists in app.", response.getResponseBody());
+        assertEquals("Requested pin doesn't exist in the app.", response.getResponseBody());
     }
 
     @Test
