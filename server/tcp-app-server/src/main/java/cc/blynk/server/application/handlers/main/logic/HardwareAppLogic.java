@@ -94,7 +94,7 @@ public class HardwareAppLogic {
         switch (operation) {
             case 'u' :
                 String[] splitBody = split3(split[1]);
-                final int widgetId = ParseUtil.parseInt(splitBody[1]);
+                long widgetId = ParseUtil.parseLong(splitBody[1]);
                 Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
                 if (deviceSelector instanceof DeviceSelector) {
                     final int selectedDeviceId = ParseUtil.parseInt(splitBody[2]);
