@@ -90,7 +90,7 @@ public class Session {
         final Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
             final HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState.dashId == activeDashId &&
+            if (hardwareState != null && hardwareState.dashId == activeDashId &&
                     (deviceIds.length == 0 || ArrayUtil.contains(deviceIds, hardwareState.deviceId))) {
                 targetChannels.add(channel);
             }
@@ -182,7 +182,7 @@ public class Session {
     private void send(Set<Channel> targets, int targetsNum, short cmd, int msgId, String body) {
         ByteBuf msg = makeUTF8StringMessage(cmd, msgId, body);
         if (targetsNum > 1) {
-            msg.retain(targetsNum - 1).markReaderIndex();
+            msg.retain(targetsNum - 1);
         }
 
         for (Channel channel : targets) {
@@ -192,9 +192,7 @@ public class Session {
             } else {
                 msg.release();
             }
-            if (msg.refCnt() > 0) {
-                msg.resetReaderIndex();
-            }
+            msg.resetReaderIndex();
         }
     }
 
