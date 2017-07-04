@@ -2,6 +2,7 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.PinPropertyStorageKey;
 import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.HardwareSyncWidget;
@@ -51,7 +52,7 @@ public class HardwareSyncLogic {
         //return all static server holders
         for (Map.Entry<PinStorageKey, String> entry : dash.pinsStorage.entrySet()) {
             PinStorageKey key = entry.getKey();
-            if (deviceId == key.deviceId && ctx.channel().isWritable()) {
+            if (deviceId == key.deviceId && !(key instanceof PinPropertyStorageKey) && ctx.channel().isWritable()) {
                 String body = key.makeHardwareBody(entry.getValue());
                 ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
             }

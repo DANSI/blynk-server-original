@@ -16,6 +16,7 @@ import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
+import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.AppSyncMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
@@ -28,27 +29,14 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -79,7 +67,6 @@ public class SyncWorkflowTest extends IntegrationBase {
     }
 
 
-    //todo more tests for that case
     @Test
     public void testHardSyncReturnHardwareCommands() throws Exception {
         clientPair.hardwareClient.send("hardsync");
@@ -92,6 +79,16 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 7 3"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 30 3"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 13 60 143 158"))));
+    }
+
+    @Test
+    public void testHardSyncReturnNoSetPropertyCommands() throws Exception {
+        clientPair.hardwareClient.send("setProperty 44 label hello");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 44 label hello"))));
+        clientPair.hardwareClient.reset();
+
+        testHardSyncReturnHardwareCommands();
     }
 
     @Test
