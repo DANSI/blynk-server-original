@@ -2,7 +2,9 @@ package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.utils.StringUtils;
+import io.netty.buffer.ByteBuf;
 
+import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
@@ -24,6 +26,10 @@ public final class PinPropertyStorageKey extends PinStorageKey {
         return "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + value;
     }
 
+    @Override
+    public ByteBuf makeByteBuf(int dashId, String value) {
+        return makeByteBuf(dashId, value, SET_WIDGET_PROPERTY);
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
