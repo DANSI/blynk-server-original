@@ -346,6 +346,18 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testSetPropertyIsSentForDeviceSelectorWidgetOnActivateForExistingWidget() throws Exception {
+        testSetPropertyIsSentForDeviceSelectorWidget();
+
+        clientPair.hardwareClient.send("hardware vw 89 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1 vw 89 1"))));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1111, b("1 89 label 123"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(1111, b("1 vw 89 1"))));
+    }
+
+    @Test
     public void testSetPropertyIsRememberedBetweenDevices() throws Exception {
         Device device0 = new Device(0, "My Dashboard", "UNO");
         device0.status = Status.ONLINE;
