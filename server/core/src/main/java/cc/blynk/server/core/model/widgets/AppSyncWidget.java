@@ -18,8 +18,4 @@ public interface AppSyncWidget {
 
     void sendAppSync(Channel appChannel, int dashId, int targetId);
 
-    default void sendAppSync(Channel appChannel, int dashId) {
-        sendAppSync(appChannel, dashId, ANY_TARGET);
-    }
-
 }

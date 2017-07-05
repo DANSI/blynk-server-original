@@ -15,6 +15,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.utils.AppStateHolderUtil.getAppState;
 import static cc.blynk.utils.BlynkByteBufUtil.*;
@@ -74,7 +75,7 @@ public class ActivateDashboardLogic {
             //todo remove after migration to new "AppSync" method
             for (Widget widget : dash.widgets) {
                 if (widget instanceof AppSyncWidget && appChannel.isWritable()) {
-                    ((AppSyncWidget) widget).sendAppSync(appChannel, dashId);
+                    ((AppSyncWidget) widget).sendAppSync(appChannel, dashId, ANY_TARGET);
                 }
             }
 
