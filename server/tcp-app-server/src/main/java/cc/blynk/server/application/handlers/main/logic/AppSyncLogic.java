@@ -2,18 +2,11 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
-import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.Map;
-
-import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
 import static cc.blynk.utils.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2Device;
 
@@ -39,27 +32,8 @@ public class AppSyncLogic {
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
-        sendSyncAndOk(ctx, dash, targetId, message.id);
-    }
-
-    public static void sendSyncAndOk(ChannelHandlerContext ctx, DashBoard dash, int targetId, int msgId) {
-        ctx.write(ok(msgId), ctx.voidPromise());
-
-        final Channel appChannel = ctx.channel();
-        for (Widget widget : dash.widgets) {
-            if (widget instanceof AppSyncWidget && appChannel.isWritable()) {
-                ((AppSyncWidget) widget).sendAppSync(appChannel, dash.id, targetId);
-            }
-        }
-
-        for (Map.Entry<PinStorageKey, String> entry : dash.pinsStorage.entrySet()) {
-            PinStorageKey key = entry.getKey();
-            if ((targetId == ANY_TARGET || targetId == key.deviceId) && appChannel.isWritable()) {
-                ByteBuf byteBuf = key.makeByteBuf(dash.id, entry.getValue());
-                ctx.write(byteBuf, ctx.voidPromise());
-            }
-        }
-
+        ctx.write(ok(message.id), ctx.voidPromise());
+        dash.sendSyncs(ctx.channel(), targetId);
         ctx.flush();
     }
 

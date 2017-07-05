@@ -1,6 +1,5 @@
 package cc.blynk.server.application.handlers.sharing.logic;
 
-import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -92,7 +91,9 @@ public class HardwareAppShareLogic {
                 if (deviceSelector instanceof DeviceSelector) {
                     final int selectedDeviceId = ParseUtil.parseInt(splitBody[2]);
                     ((DeviceSelector) deviceSelector).value = selectedDeviceId;
-                    AppSyncLogic.sendSyncAndOk(ctx, dash, selectedDeviceId, message.id);
+                    ctx.write(ok(message.id), ctx.voidPromise());
+                    dash.sendSyncs(ctx.channel(), selectedDeviceId);
+                    ctx.flush();
                 }
                 break;
             case 'w':

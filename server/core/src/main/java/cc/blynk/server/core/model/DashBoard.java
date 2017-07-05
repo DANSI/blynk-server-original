@@ -5,10 +5,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
-import cc.blynk.server.core.model.widgets.MultiPinWidget;
-import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.server.core.model.widgets.Target;
-import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.*;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
@@ -19,9 +16,12 @@ import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
 
 import java.util.*;
 
+import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
 import static cc.blynk.utils.ArrayUtil.*;
 
 /**
@@ -297,6 +297,22 @@ public class DashBoard {
                         pinsStorage.remove(new PinStorageKey(multiPinWidget.deviceId, pin.pinType, pin.pin));
                     }
                 }
+            }
+        }
+    }
+
+    public void sendSyncs(Channel appChannel, int targetId) {
+        for (Widget widget : widgets) {
+            if (widget instanceof AppSyncWidget && appChannel.isWritable()) {
+                ((AppSyncWidget) widget).sendAppSync(appChannel, id, targetId);
+            }
+        }
+
+        for (Map.Entry<PinStorageKey, String> entry : pinsStorage.entrySet()) {
+            PinStorageKey key = entry.getKey();
+            if ((targetId == ANY_TARGET || targetId == key.deviceId) && appChannel.isWritable()) {
+                ByteBuf byteBuf = key.makeByteBuf(id, entry.getValue());
+                appChannel.write(byteBuf, appChannel.voidPromise());
             }
         }
     }

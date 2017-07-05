@@ -6,8 +6,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.widgets.AppSyncWidget;
-import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.Channel;
@@ -56,29 +54,24 @@ public class ActivateDashboardLogic {
                 if (session.sendMessageToHardware(dashId, HARDWARE, PIN_MODE_MSG_ID, dash.buildPMMessage(device.id), device.id)) {
                     log.debug("No device in session.");
                     if (ctx.channel().isWritable()) {
-                        ctx.writeAndFlush(deviceNotInNetwork(PIN_MODE_MSG_ID), ctx.voidPromise());
+                        ctx.write(deviceNotInNetwork(PIN_MODE_MSG_ID), ctx.voidPromise());
                     }
                 }
             }
 
-            ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+            ctx.write(ok(message.id), ctx.voidPromise());
         } else {
             log.debug("No device in session.");
-            ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
+            ctx.write(deviceNotInNetwork(message.id), ctx.voidPromise());
         }
 
         for (Channel appChannel : session.appChannels) {
+            //send activate for shared apps
             if (appChannel != ctx.channel() && getAppState(appChannel) != null && appChannel.isWritable()) {
                 appChannel.write(makeUTF8StringMessage(message.command, message.id, message.body));
             }
 
-            //todo remove after migration to new "AppSync" method
-            for (Widget widget : dash.widgets) {
-                if (widget instanceof AppSyncWidget && appChannel.isWritable()) {
-                    ((AppSyncWidget) widget).sendAppSync(appChannel, dashId, ANY_TARGET);
-                }
-            }
-
+            dash.sendSyncs(appChannel, ANY_TARGET);
             appChannel.flush();
         }
     }
