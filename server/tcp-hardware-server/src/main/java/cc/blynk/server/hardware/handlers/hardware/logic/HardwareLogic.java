@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.processors.WebhookProcessor;
+import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.ParseUtil;
@@ -102,6 +103,8 @@ public class HardwareLogic {
         try {
             eventorProcessor.process(user, session, dash, deviceId, pin, pinType, value, now);
             webhookProcessor.process(session, dash, deviceId, pin, pinType, value, now);
+        } catch (QuotaLimitException qle) {
+            log.error("User {} reached notification limit for eventor/webhook.", user.name);
         } catch (Exception e) {
             log.error("Error processing eventor/webhook.", e);
         }
