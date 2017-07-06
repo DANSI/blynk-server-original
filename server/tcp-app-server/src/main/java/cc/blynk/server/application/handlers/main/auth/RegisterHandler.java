@@ -14,6 +14,7 @@ import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
@@ -69,10 +70,9 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterMessage message) throws Exception {
-        //warn: split may be optimized
-        String[] messageParts = message.body.split("\0");
+        String[] messageParts = StringUtils.split3(message.body);
 
-        //expecting message with 3 parts, described above in comment.
+        //expecting message with 2 parts at least.
         if (messageParts.length < 2) {
             log.error("Register Handler. Wrong income message format. {}", message);
             ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
