@@ -90,7 +90,7 @@ public class StatsLogic extends CookiesBaseHttpHandler {
     @Path("/projectsPerUser")
     public Response getProjectsPerUser(@QueryParam("_sortField") String sortField,
                                            @QueryParam("_sortDir") String sortOrder) {
-        return ok(sort(convertMapToPair(userDao.getProjectsPerUser()), sortField, sortOrder, true));
+        return ok(sortStringAsInt(convertMapToPair(userDao.getProjectsPerUser()), sortField, sortOrder));
     }
 
     @GET
@@ -111,14 +111,14 @@ public class StatsLogic extends CookiesBaseHttpHandler {
     @Path("/filledSpace")
     public Response getFilledSpace(@QueryParam("_sortField") String sortField,
                                   @QueryParam("_sortDir") String sortOrder) {
-        return ok(sort(convertMapToPair(userDao.getFilledSpace()), sortField, sortOrder, true));
+        return ok(sortStringAsInt(convertMapToPair(userDao.getFilledSpace()), sortField, sortOrder));
     }
 
     @GET
     @Path("/userProfileSize")
     public Response getUserProfileSize(@QueryParam("_sortField") String sortField,
                                    @QueryParam("_sortDir") String sortOrder) {
-        return ok(sort(convertMapToPair(fileManager.getUserProfilesSize()), sortField, sortOrder, true));
+        return ok(sortStringAsInt(convertMapToPair(fileManager.getUserProfilesSize()), sortField, sortOrder));
     }
 
 
@@ -126,7 +126,7 @@ public class StatsLogic extends CookiesBaseHttpHandler {
     @Path("/webHookHosts")
     public Response getWebHookHosts(@QueryParam("_sortField") String sortField,
                                        @QueryParam("_sortDir") String sortOrder) {
-        return ok(sort(convertMapToPair(userDao.getWebHookHosts()), sortField, sortOrder, true));
+        return ok(sortStringAsInt(convertMapToPair(userDao.getWebHookHosts()), sortField, sortOrder));
     }
 
     @GET

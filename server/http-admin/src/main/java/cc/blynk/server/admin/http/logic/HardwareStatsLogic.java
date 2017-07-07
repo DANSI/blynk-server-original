@@ -10,8 +10,7 @@ import cc.blynk.server.core.dao.UserDao;
 import io.netty.channel.ChannelHandler;
 
 import static cc.blynk.core.http.Response.ok;
-import static cc.blynk.utils.AdminHttpUtil.convertMapToPair;
-import static cc.blynk.utils.AdminHttpUtil.sort;
+import static cc.blynk.utils.AdminHttpUtil.*;
 
 /**
  * The Blynk Project.
@@ -33,7 +32,7 @@ public class HardwareStatsLogic extends CookiesBaseHttpHandler {
     @Path("/version")
     public Response getLibraryVersion(@QueryParam("_sortField") String sortField,
                                            @QueryParam("_sortDir") String sortOrder) {
-        return ok(sort(convertMapToPair(userDao.getLibraryVersion()), sortField, sortOrder, true));
+        return ok(sortStringAsInt(convertMapToPair(userDao.getLibraryVersion()), sortField, sortOrder));
     }
 
     @GET

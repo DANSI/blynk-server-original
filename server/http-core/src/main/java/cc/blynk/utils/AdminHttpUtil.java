@@ -2,8 +2,6 @@ package cc.blynk.utils;
 
 import cc.blynk.core.http.model.NameCountResponse;
 import cc.blynk.server.core.stats.model.CommandStat;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
@@ -19,28 +17,26 @@ import java.util.stream.Collectors;
  */
 public class AdminHttpUtil {
 
-    private static final Logger log = LogManager.getLogger(AdminHttpUtil.class);
-
-    @SuppressWarnings("unchecked")
-    public static List<?> sort(List<?> list, String field, String order, boolean nameAsInt) {
+    public static List<?> sortStringAsInt(List<?> list, String field, String order) {
         if (list.size() == 0) {
             return list;
         }
 
-        try {
-            Comparator c = new GenericComparator(list.get(0).getClass(), field, nameAsInt);
-            Collections.sort(list, "ASC".equals(order) ? c : Collections.reverseOrder(c));
-        } catch (NoSuchFieldException e) {
-            log.warn("No order field '{}'", field);
-        } catch (Exception e) {
-            log.error("Problem sorting.", e);
-        }
+        Comparator c = new GenericStringAsIntComparator(list.get(0).getClass(), field);
+        list.sort("asc".equalsIgnoreCase(order) ? c : Collections.reverseOrder(c));
 
         return list;
     }
 
     public static List<?> sort(List<?> list, String field, String order) {
-        return sort(list, field, order, false);
+        if (list.size() == 0) {
+            return list;
+        }
+
+        Comparator c = new GenericComparator(list.get(0).getClass(), field);
+        list.sort("asc".equalsIgnoreCase(order) ? c : Collections.reverseOrder(c));
+
+        return list;
     }
 
     public static List<NameCountResponse> convertMapToPair(Map<String, ?> map) {
@@ -61,12 +57,14 @@ public class AdminHttpUtil {
 
         private final Class<?> fieldType;
         private final Field field;
-        private final boolean nameAsInt;
 
-        public GenericComparator(Class<?> type, String sortField, boolean nameAsInt) throws NoSuchFieldException{
-            this.field = type.getField(sortField);
+        GenericComparator(Class<?> type, String sortField) {
+            try {
+                this.field = type.getField(sortField);
+            } catch (NoSuchFieldException nsfe) {
+                throw new RuntimeException("Can't find field.");
+            }
             this.fieldType = field.getType();
-            this.nameAsInt = nameAsInt;
         }
 
         @Override
@@ -81,7 +79,7 @@ public class AdminHttpUtil {
             }
         }
 
-        private int compareActual(Object v1, Object v2, Class<?> returnType) {
+        public int compareActual(Object v1, Object v2, Class<?> returnType) {
             if (returnType == int.class || returnType == Integer.class) {
                 return Integer.compare((int) v1, (int) v2);
             }
@@ -89,11 +87,30 @@ public class AdminHttpUtil {
                 return Long.compare((long) v1, (long) v2);
             }
             if (returnType == String.class) {
-                if (nameAsInt) {
-                    return Integer.valueOf((String) v1).compareTo(Integer.valueOf((String) v2));
-                } else {
-                    return ((String) v1).compareTo((String) v2);
-                }
+                return ((String) v1).compareTo((String) v2);
+            }
+
+            throw new RuntimeException("Unexpected field type. Type : " + returnType.getName());
+        }
+
+    }
+
+    public static class GenericStringAsIntComparator extends GenericComparator {
+
+        GenericStringAsIntComparator(Class<?> type, String sortField) {
+            super(type, sortField);
+        }
+
+        @Override
+        public int compareActual(Object v1, Object v2, Class<?> returnType) {
+            if (returnType == int.class || returnType == Integer.class) {
+                return Integer.compare((int) v1, (int) v2);
+            }
+            if (returnType == long.class || returnType == Long.class) {
+                return Long.compare((long) v1, (long) v2);
+            }
+            if (returnType == String.class) {
+                return Integer.valueOf((String) v1).compareTo(Integer.valueOf((String) v2));
             }
 
             throw new RuntimeException("Unexpected field type. Type : " + returnType.getName());
