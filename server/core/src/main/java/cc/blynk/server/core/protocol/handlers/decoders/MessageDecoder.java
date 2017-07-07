@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 
 /**
  * Decodes input byte array into java message.
@@ -24,7 +24,7 @@ import static cc.blynk.server.core.protocol.model.messages.MessageFactory.*;
  */
 public class MessageDecoder extends ByteToMessageDecoder {
 
-    protected static final Logger log = LogManager.getLogger(MessageDecoder.class);
+    private static final Logger log = LogManager.getLogger(MessageDecoder.class);
 
     private final GlobalStats stats;
 
