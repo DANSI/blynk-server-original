@@ -355,7 +355,8 @@ public class DashBoard {
     public void updateFaceFields(DashBoard parent) {
         this.name = parent.name;
         this.isShared = parent.isShared;
-        this.theme = parent.theme;
+        //do not update theme by purpose
+        //this.theme = parent.theme;
         this.keepScreenOn = parent.keepScreenOn;
         this.isAppConnectedOn = parent.isAppConnectedOn;
         this.tags = copyTags(parent.tags);
