@@ -38,7 +38,7 @@ public class GraphDataStream {
                            @JsonProperty("graphType") GraphType graphType,
                            @JsonProperty("color") int color,
                            @JsonProperty("targetId") int targetId,
-                           @JsonProperty("targetId") Pin pin,
+                           @JsonProperty("pin") Pin pin,
                            @JsonProperty("mathFormula") String mathFormula,
                            @JsonProperty("yAxisMin") int yAxisMin,
                            @JsonProperty("yAxisMax") int yAxisMax,
