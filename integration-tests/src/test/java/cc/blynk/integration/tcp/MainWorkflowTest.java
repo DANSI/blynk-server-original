@@ -597,7 +597,6 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals(1111111, bb.getLong());
         assertEquals(1.22D, bb.getDouble(), 0.1);
         assertEquals(2222222, bb.getLong());
-
     }
 
     @Test
@@ -607,7 +606,37 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
     }
 
+    @Test
+    public void testGetGraphDataForEnhancedGraph() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
 
+        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY));
+
+        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" d 8 24 h"));
+
+        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(2, bb.getInt());
+        assertEquals(1.11D, bb.getDouble(), 0.1);
+        assertEquals(1111111, bb.getLong());
+        assertEquals(1.22D, bb.getDouble(), 0.1);
+        assertEquals(2222222, bb.getLong());
+    }
 
     @Test
     public void testExportDataFromHistoryGraph() throws Exception {

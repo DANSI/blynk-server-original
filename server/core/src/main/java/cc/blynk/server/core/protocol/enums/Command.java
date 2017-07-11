@@ -93,6 +93,7 @@ public final class Command {
     public static final short DELETE_APP = 57;
     public static final short GET_PROJECT_BY_TOKEN = 58;
     public static final short EMAIL_QR = 59;
+    public static final short GET_ENHANCED_GRAPH_DATA = 60;
 
 
     //http codes. Used only for stats
@@ -127,6 +128,7 @@ public final class Command {
                 put(DEACTIVATE_DASHBOARD, "Deactivate");
                 put(REFRESH_TOKEN, "RefreshToken");
                 put(GET_GRAPH_DATA, "GetGraphDataRequest");
+                put(GET_ENHANCED_GRAPH_DATA, "GetEnhancedGraphDataRequest");
                 put(GET_GRAPH_DATA_RESPONSE, "GetGraphDataResponse");
                 put(EXPORT_GRAPH_DATA, "ExportGraphData");
                 put(SET_WIDGET_PROPERTY, "setWidgetProperty");

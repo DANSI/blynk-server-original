@@ -43,6 +43,8 @@ public class MessageFactory {
                 return new RefreshTokenMessage(messageId, body);
             case GET_GRAPH_DATA :
                 return new GetGraphDataStringMessage(messageId, body);
+            case GET_ENHANCED_GRAPH_DATA :
+                return new GetEnhancedGraphDataStringMessage(messageId, body);
             case EXPORT_GRAPH_DATA :
                 return new ExportDataMessage(messageId, body);
             case SET_WIDGET_PROPERTY :

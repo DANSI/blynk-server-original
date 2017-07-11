@@ -6,6 +6,7 @@ import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetEnhancedGraphDataBinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataBinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetProjectByTokenBinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
@@ -64,6 +65,11 @@ public class ClientMessageDecoder extends ByteToMessageDecoder implements Defaul
                     byte[] bytes = new byte[buf.readableBytes()];
                     buf.readBytes(bytes);
                     message = new GetGraphDataBinaryMessage(messageId, bytes);
+                    break;
+                case Command.GET_ENHANCED_GRAPH_DATA :
+                    bytes = new byte[buf.readableBytes()];
+                    buf.readBytes(bytes);
+                    message = new GetEnhancedGraphDataBinaryMessage(messageId, bytes);
                     break;
                 case Command.LOAD_PROFILE_GZIPPED :
                     bytes = new byte[buf.readableBytes()];
