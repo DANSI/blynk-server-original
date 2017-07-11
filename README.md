@@ -58,6 +58,7 @@ messages between Blynk mobile application and various microcontroller boards and
 - Java 8 required (OpenJDK, Oracle) 
 - Any OS that can run java 
 - At least 30 MB of RAM (could be less with tuning)
+- Open ports 8443 (for app), 8442 (for hardware without ssl), 8441 (for hardware with ssl)
 
 [Ubuntu java installation instruction](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu).
 
@@ -143,7 +144,7 @@ You can also use [this](https://github.com/blynkkk/blynk-server/tree/master/scri
 ## Update instruction for unix-like systems
 
 **IMPORTANT**
-Server should be always updated befor you update Blynk App. To update your server to a newer version you would need to kill old process and start a new one.
+Server should be always updated before you update Blynk App. To update your server to a newer version you would need to kill old process and start a new one.
 
 + Find process id of Blynk server
 
