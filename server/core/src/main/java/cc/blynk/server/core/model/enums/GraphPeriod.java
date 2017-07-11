@@ -7,6 +7,7 @@ package cc.blynk.server.core.model.enums;
  */
 public enum GraphPeriod {
 
+    LIVE,
     ONE_HOUR,
     SIX_HOURS,
     DAY,
