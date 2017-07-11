@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class GraphDataStream {
 
+    private final String title;
+
     private final GraphType graphType;
 
     private final int color;
@@ -32,7 +34,8 @@ public class GraphDataStream {
     private final boolean connectMissingPointsEnabled;
 
     @JsonCreator
-    public GraphDataStream(@JsonProperty("graphType") GraphType graphType,
+    public GraphDataStream(@JsonProperty("title") String title,
+                           @JsonProperty("graphType") GraphType graphType,
                            @JsonProperty("color") int color,
                            @JsonProperty("targetId") int targetId,
                            @JsonProperty("targetId") Pin pin,
@@ -42,6 +45,7 @@ public class GraphDataStream {
                            @JsonProperty("suffix") String suffix,
                            @JsonProperty("cubicSmoothingEnabled") boolean cubicSmoothingEnabled,
                            @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled) {
+        this.title = title;
         this.graphType = graphType;
         this.color = color;
         this.targetId = targetId;
