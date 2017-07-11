@@ -9,6 +9,7 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
+import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
@@ -19,6 +20,9 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.others.Player;
+import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -607,6 +611,37 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testGetGraphDataForEnhancedGraphWithEmptyDataStream() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+
+        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY));
+
+        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, null, null, 0, 0, null, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NO_DATA)));
+    }
+
+    @Test
     public void testGetGraphDataForEnhancedGraph() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
@@ -620,7 +655,21 @@ public class MainWorkflowTest extends IntegrationBase {
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" d 8 24 h"));
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        Pin pin = new Pin((byte) 8, PinType.DIGITAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, 0, null, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
 
         ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
@@ -636,6 +685,29 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals(1111111, bb.getLong());
         assertEquals(1.22D, bb.getDouble(), 0.1);
         assertEquals(2222222, bb.getLong());
+    }
+
+    @Test
+    public void testDeleteWorksForEnhancedGraph() throws Exception {
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        Pin pin = new Pin((byte) 8, PinType.DIGITAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, 0, null, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("deleteEnhancedData 1\0" + "432");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
     @Test

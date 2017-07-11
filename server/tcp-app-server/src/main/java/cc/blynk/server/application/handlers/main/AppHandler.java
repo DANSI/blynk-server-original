@@ -18,6 +18,7 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.tags.UpdateTagL
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.CreateWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.DeleteWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.UpdateWidgetLogic;
+import cc.blynk.server.application.handlers.main.logic.reporting.DeleteEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.ExportGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.GetEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.GetGraphDataLogic;
@@ -49,6 +50,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final RefreshTokenLogic refreshToken;
     private final GetGraphDataLogic graphData;
     private final GetEnhancedGraphDataLogic enhancedGraphDataLogic;
+    private final DeleteEnhancedGraphDataLogic deleteEnhancedGraphDataLogic;
     private final ExportGraphDataLogic exportGraphData;
     private final AppMailLogic appMailLogic;
     private final GetShareTokenLogic getShareTokenLogic;
@@ -85,6 +87,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.refreshToken = new RefreshTokenLogic(holder);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.enhancedGraphDataLogic = new GetEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
+        this.deleteEnhancedGraphDataLogic = new DeleteEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.exportGraphData = new ExportGraphDataLogic(holder);
         this.appMailLogic = new AppMailLogic(holder);
         this.getShareTokenLogic = new GetShareTokenLogic(holder.tokenManager);
@@ -158,6 +161,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case GET_ENHANCED_GRAPH_DATA :
                 enhancedGraphDataLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case DELETE_ENHANCED_GRAPH_DATA :
+                deleteEnhancedGraphDataLogic.messageReceived(ctx, state.user, msg);
                 break;
             case EXPORT_GRAPH_DATA :
                 exportGraphData.messageReceived(ctx, state.user, msg);

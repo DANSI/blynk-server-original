@@ -1,6 +1,8 @@
 package cc.blynk.server.core.reporting;
 
+import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.enums.GraphGranularityType;
+import cc.blynk.server.core.model.enums.GraphPeriod;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 
@@ -34,6 +36,20 @@ public class GraphPinRequest {
         } catch (NumberFormatException e) {
             throw new IllegalCommandException("Graph request command body incorrect.");
         }
+    }
+
+    public GraphPinRequest(int dashId, int deviceId, Pin pin, GraphPeriod graphPeriod) {
+        this.dashId = dashId;
+        this.deviceId = deviceId;
+        if (pin == null) {
+            this.pinType = PinType.VIRTUAL;
+            this.pin = (byte) Pin.NO_PIN;
+        } else {
+            this.pinType = pin.pinType;
+            this.pin = pin.pin;
+        }
+        this.count = graphPeriod.numberOfPoints;
+        this.type = graphPeriod.granularityType;
     }
 
 }

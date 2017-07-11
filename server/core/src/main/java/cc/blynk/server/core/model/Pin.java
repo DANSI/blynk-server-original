@@ -15,6 +15,8 @@ public class Pin {
 
     public static final int NO_PIN = -1;
 
+    public static final Pin EMPTY_PIN = new Pin((byte) NO_PIN, false, false, PinType.VIRTUAL, null, 0, 255, null);
+
     public final byte pin;
 
     public final boolean pwmMode;

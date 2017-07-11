@@ -45,6 +45,8 @@ public class MessageFactory {
                 return new GetGraphDataStringMessage(messageId, body);
             case GET_ENHANCED_GRAPH_DATA :
                 return new GetEnhancedGraphDataStringMessage(messageId, body);
+            case DELETE_ENHANCED_GRAPH_DATA :
+                return new DeleteEnhancedGraphDataStringMessage(messageId, body);
             case EXPORT_GRAPH_DATA :
                 return new ExportDataMessage(messageId, body);
             case SET_WIDGET_PROPERTY :

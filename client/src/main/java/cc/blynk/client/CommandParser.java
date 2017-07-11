@@ -35,6 +35,8 @@ public class CommandParser {
                 return GET_GRAPH_DATA;
             case "getenhanceddata" :
                 return GET_ENHANCED_GRAPH_DATA;
+            case "deleteenhanceddata" :
+                return DELETE_ENHANCED_GRAPH_DATA;
             case "export" :
                 return EXPORT_GRAPH_DATA;
             case "activate" :

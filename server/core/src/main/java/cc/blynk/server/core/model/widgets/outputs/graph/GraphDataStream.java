@@ -17,9 +17,9 @@ public class GraphDataStream {
 
     private final int color;
 
-    private final int targetId;
+    public final int targetId;
 
-    private final Pin pin;
+    public final Pin pin;
 
     private final String mathFormula;
 
