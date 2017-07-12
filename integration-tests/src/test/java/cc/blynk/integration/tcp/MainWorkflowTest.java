@@ -732,7 +732,7 @@ public class MainWorkflowTest extends IntegrationBase {
         FileUtils.write(userReportFile, 2.2, 2L);
 
         clientPair.appClient.send("export 1 14");
-        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/dima@mail.ua_1_0_a7.csv.gz"));
+        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/dima@mail.ua_1_0_a7_"));
     }
 
     @Test
@@ -1292,8 +1292,9 @@ public class MainWorkflowTest extends IntegrationBase {
         FileUtils.write(userReportFile, 2.2, 2L);
 
         clientPair.appClient.send("export 1 14");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        String csvFileName = "/dima@mail.ua_1_0_a7.csv.gz";
+        String csvFileName = getFileNameByMask("/tmp/blynk", "dima@mail.ua_1_0_a7_");
         verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
 
         try (InputStream fileStream = new FileInputStream(Paths.get("/tmp/blynk", csvFileName).toString());
@@ -1357,8 +1358,9 @@ public class MainWorkflowTest extends IntegrationBase {
         FileUtils.write(userReportFile, 12.2, 12L);
 
         clientPair.appClient.send("export 1 432");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        String csvFileName = "/dima@mail.ua_1_200000_d8.csv.gz";
+        String csvFileName = getFileNameByMask("/tmp/blynk", "dima@mail.ua_1_200000_d8_");
         verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
 
         try (InputStream fileStream = new FileInputStream(Paths.get("/tmp/blynk", csvFileName).toString());
@@ -1442,8 +1444,9 @@ public class MainWorkflowTest extends IntegrationBase {
         FileUtils.write(userReportFile, 12.2, 12L);
 
         clientPair.appClient.send("export 1 14");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        String csvFileName = "/dima@mail.ua_1_200000_a7.csv.gz";
+        String csvFileName = getFileNameByMask("/tmp/blynk", "dima@mail.ua_1_200000_a7_");
         verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
 
         try (InputStream fileStream = new FileInputStream(Paths.get("/tmp/blynk", csvFileName).toString());
@@ -1487,15 +1490,15 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
-
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.reset();
 
         clientPair.appClient.send("export 1-200000 14");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
 
-        String csvFileName = "/dima@mail.ua_1_200000_a7.csv.gz";
+        /*
+        String csvFileName = getFileNameByMask("/tmp/blynk", "dima@mail.ua_1_200000_a7_");
 
         assertTrue(Files.exists(Paths.get("/tmp/blynk", csvFileName)));
 
@@ -1507,6 +1510,7 @@ public class MainWorkflowTest extends IntegrationBase {
             String line = buffered.readLine();
             assertNull(line);
         }
+        */
     }
 
 }

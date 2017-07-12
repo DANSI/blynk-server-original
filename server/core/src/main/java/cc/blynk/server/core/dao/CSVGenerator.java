@@ -91,6 +91,7 @@ public class CSVGenerator {
 
     //"%s_%s_%c%d.csv.gz"
     private static String format(String email, int dashId, int deviceId, PinType pinType, byte pin) {
-        return email + "_" + dashId + "_" + deviceId + "_" + pinType.pintTypeChar + pin + ".csv.gz";
+        long now = System.currentTimeMillis();
+        return email + "_" + dashId + "_" + deviceId + "_" + pinType.pintTypeChar + pin + "_" + now + ".csv.gz";
     }
 }

@@ -26,8 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * The Blynk Project.
@@ -211,9 +210,9 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         assertEquals(301, response.getStatusCode());
         String redirectLocation = response.getHeader("location");
         assertNotNull(redirectLocation);
-        assertEquals("/dmitriy@blynk.cc_125564119_0_v10.csv.gz", redirectLocation);
+        assertTrue(redirectLocation.contains("/dmitriy@blynk.cc_125564119_0_v10_"));
 
-        f = httpclient.prepareGet(httpsServerUrl + "dmitriy@blynk.cc_125564119_0_v10.csv.gz").execute();
+        f = httpclient.prepareGet(httpsServerUrl + redirectLocation).execute();
         response = f.get();
         assertEquals(200, response.getStatusCode());
         assertEquals("application/x-gzip", response.getHeader("content-type"));
