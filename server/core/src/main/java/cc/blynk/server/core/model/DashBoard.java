@@ -84,6 +84,10 @@ public class DashBoard {
         this.updatedAt = now;
     }
 
+    public String getNameOrEmpty() {
+        return name == null ? "" : name;
+    }
+
     public void putPinPropertyStorageValue(int deviceId, PinType type, byte pin, String property, String value) {
         puntPinStorageValue(new PinPropertyStorageKey(deviceId, type, pin, property), value);
     }

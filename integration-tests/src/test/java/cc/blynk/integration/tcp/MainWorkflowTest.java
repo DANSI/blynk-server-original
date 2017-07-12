@@ -1313,6 +1313,83 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testGeneratedCSVIsCorrectForMultiDevicesAndEnhancedGraph() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        Pin pin = new Pin((byte) 8, PinType.DIGITAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 200_000, pin, null, 0, 0, null, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+
+        clientPair.appClient.reset();
+
+        //generate fake reporting data
+        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
+        Files.createDirectories(userReportDirectory);
+
+        String filename = ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.MINUTE);
+        Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
+        FileUtils.write(userReportFile, 1.1, 1L);
+        FileUtils.write(userReportFile, 2.2, 2L);
+
+        filename = ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.MINUTE);
+        userReportFile = Paths.get(userReportDirectory.toString(), filename);
+        FileUtils.write(userReportFile, 11.1, 11L);
+        FileUtils.write(userReportFile, 12.2, 12L);
+
+        clientPair.appClient.send("export 1 432");
+
+        String csvFileName = "/dima@mail.ua_1_200000_d8.csv.gz";
+        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
+
+        try (InputStream fileStream = new FileInputStream(Paths.get("/tmp/blynk", csvFileName).toString());
+             InputStream gzipStream = new GZIPInputStream(fileStream);
+             BufferedReader buffered = new BufferedReader(new InputStreamReader(gzipStream))) {
+
+            //first device
+            String[] lineSplit = buffered.readLine().split(",");
+            assertEquals(1.1D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(1, Long.parseLong(lineSplit[1]));
+            assertEquals(0, Long.parseLong(lineSplit[2]));
+
+            lineSplit = buffered.readLine().split(",");
+            assertEquals(2.2D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(2, Long.parseLong(lineSplit[1]));
+            assertEquals(0, Long.parseLong(lineSplit[2]));
+
+            //second device
+            lineSplit = buffered.readLine().split(",");
+            assertEquals(11.1D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(11, Long.parseLong(lineSplit[1]));
+            assertEquals(1, Long.parseLong(lineSplit[2]));
+
+            lineSplit = buffered.readLine().split(",");
+            assertEquals(12.2D, Double.parseDouble(lineSplit[0]), 0.001D);
+            assertEquals(12, Long.parseLong(lineSplit[1]));
+            assertEquals(1, Long.parseLong(lineSplit[2]));
+        }
+    }
+
+    @Test
     public void testGeneratedCSVIsCorrectForMultiDevices() throws Exception {
         Device device1 = new Device(1, "My Device", "ESP8266");
         device1.status = Status.OFFLINE;
@@ -1327,6 +1404,26 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
+        clientPair.appClient.send("updateWidget 1\0" + "{\n" +
+                "                    \"type\":\"LOGGER\",\n" +
+                "                    \"id\":14,\n" +
+                "                    \"x\":0,\n" +
+                "                    \"y\":6,\n" +
+                "                    \"color\":0,\n" +
+                "                    \"width\":8,\n" +
+                "                    \"height\":3,\n" +
+                "                    \"tabId\":0,\n" +
+                "                    \"deviceId\":200000,\n" +
+                "                    \"pins\":\n" +
+                "                        [\n" +
+                "                            {\"pinType\":\"ANALOG\", \"pin\":7,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":255},\n" +
+                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},\n" +
+                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},\n" +
+                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0}\n" +
+                "                        ],\n" +
+                "                    \"period\":\"THREE_MONTHS\",\n" +
+                "                    \"showLegends\":true\n" +
+                "                }");
 
         clientPair.appClient.reset();
 
@@ -1344,7 +1441,7 @@ public class MainWorkflowTest extends IntegrationBase {
         FileUtils.write(userReportFile, 11.1, 11L);
         FileUtils.write(userReportFile, 12.2, 12L);
 
-        clientPair.appClient.send("export 1-200000 14");
+        clientPair.appClient.send("export 1 14");
 
         String csvFileName = "/dima@mail.ua_1_200000_a7.csv.gz";
         verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));

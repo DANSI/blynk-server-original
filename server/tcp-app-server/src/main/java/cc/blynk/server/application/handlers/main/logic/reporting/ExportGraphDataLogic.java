@@ -9,6 +9,8 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
+import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -60,40 +62,63 @@ public class ExportGraphDataLogic {
         String[] dashIdAndDeviceId = split2Device(messageParts[0]);
         int dashId = ParseUtil.parseInt(dashIdAndDeviceId[0]);
 
-        //todo new device code. remove after migration.
-        int deviceId;
-        if (dashIdAndDeviceId.length == 2) {
-            deviceId = ParseUtil.parseInt(dashIdAndDeviceId[1]);
-        } else {
-            deviceId = 0;
-        }
-
         DashBoard dashBoard = user.profile.getDashByIdOrThrow(dashId);
 
         long widgetId = ParseUtil.parseLong(messageParts[1]);
         Widget widget = dashBoard.getWidgetByIdOrThrow(widgetId);
-        if (!(widget instanceof HistoryGraph)) {
+
+        if (widget instanceof HistoryGraph) {
+            HistoryGraph historyGraph = (HistoryGraph) widget;
+
+            blockingIOProcessor.executeHistory(
+                    new ExportHistoryGraphJob(ctx, dashBoard, historyGraph, message.id, user)
+            );
+        } else if (widget instanceof EnhancedHistoryGraph) {
+            EnhancedHistoryGraph enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
+
+            blockingIOProcessor.executeHistory(
+                    new ExportEnhancedHistoryGraphJob(ctx, dashBoard, enhancedHistoryGraph, message.id, user)
+            );
+        } else {
             throw new IllegalCommandException("Passed wrong widget id.");
         }
+    }
 
-        HistoryGraph historyGraph = (HistoryGraph) widget;
+    private class ExportHistoryGraphJob implements Runnable {
 
-        blockingIOProcessor.executeHistory(() -> {
+        private final ChannelHandlerContext ctx;
+        private final DashBoard dash;
+        private final HistoryGraph historyGraph;
+        private final int msgId;
+        private final User user;
+
+        ExportHistoryGraphJob(ChannelHandlerContext ctx, DashBoard dash,
+                                     HistoryGraph historyGraph, int msgId, User user) {
+            this.ctx = ctx;
+            this.dash = dash;
+            this.historyGraph = historyGraph;
+            this.msgId = msgId;
+            this.user = user;
+        }
+
+        @Override
+        public void run() {
             try {
-                String dashName = dashBoard.name == null ? "" : dashBoard.name;
+                String dashName = dash.getNameOrEmpty();
                 ArrayList<FileLink> pinsCSVFilePath = new ArrayList<>();
+                int deviceId = historyGraph.deviceId;
                 for (Pin pin : historyGraph.pins) {
                     if (pin != null) {
                         try {
                             int[] deviceIds = new int[] {deviceId};
                             //special case, this is not actually a deviceId but device selector widget id
                             if (deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                                Widget deviceSelector = dashBoard.getWidgetById(deviceId);
+                                Widget deviceSelector = dash.getWidgetById(deviceId);
                                 if (deviceSelector != null && deviceSelector instanceof DeviceSelector) {
                                     deviceIds = ((DeviceSelector) deviceSelector).deviceIds;
                                 }
                             }
-                            Path path = reportingDao.csvGenerator.createCSV(user, dashId, deviceId, pin.pinType, pin.pin, deviceIds);
+                            Path path = reportingDao.csvGenerator.createCSV(user, dash.id, deviceId, pin.pinType, pin.pin, deviceIds);
                             pinsCSVFilePath.add(new FileLink(path.getFileName(), dashName, pin.pinType, pin.pin));
                         } catch (Exception e) {
                             //ignore eny exception.
@@ -102,19 +127,77 @@ public class ExportGraphDataLogic {
                 }
 
                 if (pinsCSVFilePath.size() == 0) {
-                    ctx.writeAndFlush(makeResponse(message.id, NO_DATA), ctx.voidPromise());
+                    ctx.writeAndFlush(makeResponse(msgId, NO_DATA), ctx.voidPromise());
                 } else {
-
                     String title = "History graph data for project " + dashName;
                     mailWrapper.sendHtml(user.email, title, makeBody(pinsCSVFilePath));
-                    ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+                    ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
                 }
 
             } catch (Exception e) {
                 log.error("Error making csv file for data export. Reason {}", e.getMessage());
-                ctx.writeAndFlush(notificationError(message.id), ctx.voidPromise());
+                ctx.writeAndFlush(notificationError(msgId), ctx.voidPromise());
             }
-        });
+        }
+    }
+
+    private class ExportEnhancedHistoryGraphJob implements Runnable {
+
+        private final ChannelHandlerContext ctx;
+        private final DashBoard dash;
+        private final EnhancedHistoryGraph enhancedHistoryGraph;
+        private final int msgId;
+        private final User user;
+
+        ExportEnhancedHistoryGraphJob(ChannelHandlerContext ctx, DashBoard dash,
+                              EnhancedHistoryGraph enhancedHistoryGraph, int msgId, User user) {
+            this.ctx = ctx;
+            this.dash = dash;
+            this.enhancedHistoryGraph = enhancedHistoryGraph;
+            this.msgId = msgId;
+            this.user = user;
+        }
+
+        @Override
+        public void run() {
+            try {
+                String dashName = dash.getNameOrEmpty();
+                ArrayList<FileLink> pinsCSVFilePath = new ArrayList<>();
+                for (GraphDataStream graphDataStream : enhancedHistoryGraph.dataStreams) {
+                    Pin pin = graphDataStream.pin;
+                    int deviceId = graphDataStream.targetId;
+                    if (pin != null) {
+                        try {
+                            int[] deviceIds = new int[] {deviceId};
+                            //special case, this is not actually a deviceId but device selector widget id
+                            if (deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+                                Widget deviceSelector = dash.getWidgetById(deviceId);
+                                if (deviceSelector != null && deviceSelector instanceof DeviceSelector) {
+                                    deviceIds = ((DeviceSelector) deviceSelector).deviceIds;
+                                }
+                            }
+
+                            Path path = reportingDao.csvGenerator.createCSV(user, dash.id, deviceId, pin.pinType, pin.pin, deviceIds);
+                            pinsCSVFilePath.add(new FileLink(path.getFileName(), dashName, pin.pinType, pin.pin));
+                        } catch (Exception e) {
+                            //ignore eny exception.
+                        }
+                    }
+                }
+
+                if (pinsCSVFilePath.size() == 0) {
+                    ctx.writeAndFlush(makeResponse(msgId, NO_DATA), ctx.voidPromise());
+                } else {
+                    String title = "History graph data for project " + dashName;
+                    mailWrapper.sendHtml(user.email, title, makeBody(pinsCSVFilePath));
+                    ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
+                }
+
+            } catch (Exception e) {
+                log.error("Error making csv file for data export. Reason {}", e.getMessage());
+                ctx.writeAndFlush(notificationError(msgId), ctx.voidPromise());
+            }
+        }
     }
 
     private String makeBody(ArrayList<FileLink> fileUrls) {
@@ -132,7 +215,7 @@ public class ExportGraphDataLogic {
         final PinType pinType;
         final byte pin;
 
-        public FileLink(Path path, String dashName, PinType pinType, byte pin) {
+        FileLink(Path path, String dashName, PinType pinType, byte pin) {
             this.path = path;
             this.dashName = dashName;
             this.pinType = pinType;
