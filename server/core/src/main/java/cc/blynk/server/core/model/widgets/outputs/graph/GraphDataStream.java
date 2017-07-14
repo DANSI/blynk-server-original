@@ -33,6 +33,8 @@ public class GraphDataStream {
 
     private final boolean connectMissingPointsEnabled;
 
+    private final boolean isPercentMaxMin;
+
     @JsonCreator
     public GraphDataStream(@JsonProperty("title") String title,
                            @JsonProperty("graphType") GraphType graphType,
@@ -44,7 +46,8 @@ public class GraphDataStream {
                            @JsonProperty("yAxisMax") int yAxisMax,
                            @JsonProperty("suffix") String suffix,
                            @JsonProperty("cubicSmoothingEnabled") boolean cubicSmoothingEnabled,
-                           @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled) {
+                           @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled,
+                           @JsonProperty("isPercentMaxMin") boolean isPercentMaxMin) {
         this.title = title;
         this.graphType = graphType;
         this.color = color;
@@ -56,5 +59,6 @@ public class GraphDataStream {
         this.suffix = suffix;
         this.cubicSmoothingEnabled = cubicSmoothingEnabled;
         this.connectMissingPointsEnabled = connectMissingPointsEnabled;
+        this.isPercentMaxMin = isPercentMaxMin;
     }
 }
