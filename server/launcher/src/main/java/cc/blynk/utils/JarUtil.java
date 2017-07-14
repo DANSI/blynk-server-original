@@ -71,7 +71,7 @@ public final class JarUtil {
 
                 while ((ze = zip.getNextEntry()) != null) {
                     String entryName = ze.getName();
-                    if (entryName.startsWith(staticResourcesFolder) && isResource(entryName)) {
+                    if (!ze.isDirectory() && entryName.startsWith(staticResourcesFolder)) {
                         log.debug("Unpacking : {}", entryName);
                         staticResources.add(entryName);
                     }
@@ -80,20 +80,6 @@ public final class JarUtil {
         }
 
         return staticResources;
-    }
-
-    /**
-     * Extension which defines what files are 'resources'.
-     *
-     * @param filename - name of file
-     * @return - true is this file is resource that should be unpacked
-     */
-    private static boolean isResource(String filename) {
-        return filename.endsWith(".js") ||
-               filename.endsWith(".css") ||
-               filename.endsWith(".html") ||
-               filename.endsWith(".ico") ||
-               filename.endsWith(".png");
     }
 
     /**
