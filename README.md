@@ -416,6 +416,8 @@ Mail properties:
         
 Find example [here](https://github.com/blynkkk/blynk-server/blob/master/server/notifications/email/src/main/resources/mail.properties).
 
+WARNING : only gmail accounts are allowed.
+
 NOTE : you'll need to setup Gmail to allow less secured applications. Go [here](https://www.google.com/settings/security/lesssecureapps) and then click "Allow less secure apps".
 
 
