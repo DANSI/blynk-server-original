@@ -30,6 +30,8 @@ public class EnhancedHistoryGraph extends Widget {
 
     public boolean yAxisValues;
 
+    public boolean xAxisValues;
+
     public boolean allowFullScreen;
 
     public int flip;
