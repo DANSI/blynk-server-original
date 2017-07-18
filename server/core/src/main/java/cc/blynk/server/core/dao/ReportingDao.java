@@ -70,27 +70,24 @@ public class ReportingDao implements Closeable {
 
     public static ByteBuffer getByteBufferFromDisk(String dataFolder, User user, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphGranularityType type) {
         Path userDataFile = Paths.get(dataFolder, FileUtils.getUserReportingDir(user), generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type));
-        if (Files.notExists(userDataFile)) {
-            return null;
-        }
-
-        try {
-            return FileUtils.read(userDataFile, count);
-        } catch (IOException ioe) {
-            log.error(ioe);
+        if (Files.exists(userDataFile)) {
+            try {
+                return FileUtils.read(userDataFile, count);
+            } catch (IOException ioe) {
+                log.error(ioe);
+            }
         }
 
         return null;
     }
 
-    private static boolean checkNoData(byte[][] data) {
-        boolean noData = true;
-
+    private static boolean hasData(byte[][] data) {
         for (byte[] pinData : data) {
-            noData = noData && pinData.length == 0;
+            if (pinData.length > 0) {
+                return true;
+            }
         }
-
-        return noData;
+        return false;
     }
 
     public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphGranularityType type) {
@@ -161,7 +158,7 @@ public class ReportingDao implements Closeable {
         }
 
 
-        if (checkNoData(values)) {
+        if (!hasData(values)) {
             throw new NoDataException();
         }
 

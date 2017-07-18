@@ -63,6 +63,7 @@ public class FileUtils {
         }
     }
 
+    //reporting entry is long value (8 bytes) + timestamp (8 bytes)
     private static final int SIZE_OF_REPORT_ENTRY = 16;
 
     /**
@@ -75,11 +76,11 @@ public class FileUtils {
      */
     public static ByteBuffer read(Path userDataFile, int count) throws IOException {
         try (SeekableByteChannel channel = Files.newByteChannel(userDataFile, EnumSet.of(READ))) {
-            final int size = (int) Files.size(userDataFile);
-            final int dataSize = count * SIZE_OF_REPORT_ENTRY;
-            final int readDataSize = Math.min(dataSize, size);
+            int size = (int) Files.size(userDataFile);
+            int dataSize = count * SIZE_OF_REPORT_ENTRY;
+            int readDataSize = Math.min(dataSize, size);
 
-            final ByteBuffer buf = ByteBuffer.allocate(readDataSize);
+            ByteBuffer buf = ByteBuffer.allocate(readDataSize);
             channel.position(Math.max(0, size - dataSize))
                    .read(buf);
             return buf;
