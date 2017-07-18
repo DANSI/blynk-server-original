@@ -19,7 +19,8 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static cc.blynk.server.core.protocol.enums.Response.OK;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -66,7 +67,7 @@ public class BlynkInternalTest extends IntegrationBase {
 
         assertNotNull(rtcTime);
         assertEquals(10, rtcTime.length());
-        assertTrue(rtcTime.startsWith("14"));
+        assertEquals(System.currentTimeMillis(), Long.parseLong(rtcTime) * 1000, 10000L);
     }
 
     @Test
