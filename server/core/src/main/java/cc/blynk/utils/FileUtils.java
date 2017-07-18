@@ -71,17 +71,36 @@ public class FileUtils {
      *
      * @param userDataFile - file to read
      * @param count = number of records to read
+     *
      * @return - byte buffer with data
      * @throws IOException
      */
     public static ByteBuffer read(Path userDataFile, int count) throws IOException {
-        try (SeekableByteChannel channel = Files.newByteChannel(userDataFile, EnumSet.of(READ))) {
-            int size = (int) Files.size(userDataFile);
-            int dataSize = count * SIZE_OF_REPORT_ENTRY;
-            int readDataSize = Math.min(dataSize, size);
+        return read(userDataFile, count, 0);
+    }
 
-            ByteBuffer buf = ByteBuffer.allocate(readDataSize);
-            channel.position(Math.max(0, size - dataSize))
+    /**
+     * Read bunch of last records from file.
+     *
+     * @param userDataFile - file to read
+     * @param count - number of records to read
+     * @param skip - number of entries to skip from the end
+     *
+     * @return - byte buffer with data
+     * @throws IOException
+     */
+    public static ByteBuffer read(Path userDataFile, int count, int skip) throws IOException {
+        int size = (int) Files.size(userDataFile);
+        int expectedMinimumLength = (count + skip) * SIZE_OF_REPORT_ENTRY;
+        int diff = size - expectedMinimumLength;
+        int startReadIndex = Math.max(0, diff);
+
+        int bufferSize = diff < 0 ? count * SIZE_OF_REPORT_ENTRY + diff : count * SIZE_OF_REPORT_ENTRY;
+
+        ByteBuffer buf = ByteBuffer.allocate(bufferSize);
+
+        try (SeekableByteChannel channel = Files.newByteChannel(userDataFile, EnumSet.of(READ))) {
+            channel.position(startReadIndex)
                    .read(buf);
             return buf;
         }

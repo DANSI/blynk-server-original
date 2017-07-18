@@ -1,8 +1,8 @@
 package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.enums.GraphGranularityType;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
@@ -68,11 +68,16 @@ public class ReportingDao implements Closeable {
         }
     }
 
-    public static ByteBuffer getByteBufferFromDisk(String dataFolder, User user, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphGranularityType type) {
-        Path userDataFile = Paths.get(dataFolder, FileUtils.getUserReportingDir(user), generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type));
+    public static ByteBuffer getByteBufferFromDisk(String dataFolder, User user, int dashId, int deviceId,
+                                                   PinType pinType, byte pin, int count, GraphGranularityType type, int skipCount) {
+        Path userDataFile = Paths.get(
+                dataFolder,
+                FileUtils.getUserReportingDir(user),
+                generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type)
+        );
         if (Files.exists(userDataFile)) {
             try {
-                return FileUtils.read(userDataFile, count);
+                return FileUtils.read(userDataFile, count, skipCount);
             } catch (IOException ioe) {
                 log.error(ioe);
             }
@@ -90,8 +95,17 @@ public class ReportingDao implements Closeable {
         return false;
     }
 
+    public ByteBuffer getByteBufferFromDisk(User user, GraphPinRequest graphPinRequest) {
+        return getByteBufferFromDisk(dataFolder, user,
+                graphPinRequest.dashId, graphPinRequest.deviceId,
+                graphPinRequest.pinType, graphPinRequest.pin,
+                graphPinRequest.count, graphPinRequest.type,
+                graphPinRequest.skipCount
+        );
+    }
+
     public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphGranularityType type) {
-        return getByteBufferFromDisk(dataFolder, user, dashId, deviceId, pinType, pin, count, type);
+        return getByteBufferFromDisk(dataFolder, user, dashId, deviceId, pinType, pin, count, type, 0);
     }
 
     public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {
@@ -151,12 +165,9 @@ public class ReportingDao implements Closeable {
         byte[][] values = new byte[requestedPins.length][];
 
         for (int i = 0; i < requestedPins.length; i++) {
-            final ByteBuffer byteBuffer = getByteBufferFromDisk(user,
-                    requestedPins[i].dashId, requestedPins[i].deviceId, requestedPins[i].pinType,
-                    requestedPins[i].pin, requestedPins[i].count, requestedPins[i].type);
-            values[i] =  byteBuffer == null ? EMPTY_BYTES : byteBuffer.array();
+            final ByteBuffer byteBuffer = getByteBufferFromDisk(user, requestedPins[i]);
+            values[i] = byteBuffer == null ? EMPTY_BYTES : byteBuffer.array();
         }
-
 
         if (!hasData(values)) {
             throw new NoDataException();

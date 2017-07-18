@@ -4,11 +4,11 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.enums.GraphPeriod;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -45,7 +45,7 @@ public class GetEnhancedGraphDataLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] messageParts = StringUtils.split3(message.body);
+        String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 3) {
             throw new IllegalCommandException("Wrong income message format.");
@@ -54,6 +54,11 @@ public class GetEnhancedGraphDataLogic {
         int dashId = Integer.parseInt(messageParts[0]);
         long widgetId = Long.parseLong(messageParts[1]);
         GraphPeriod graphPeriod = GraphPeriod.valueOf(messageParts[2]);
+        int page = 0;
+        if (messageParts.length == 4) {
+            page = Integer.parseInt(messageParts[3]);
+        }
+        int skipCount = graphPeriod.numberOfPoints * page;
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         Widget widget = dash.getWidgetById(widgetId);
@@ -77,7 +82,7 @@ public class GetEnhancedGraphDataLogic {
         for (GraphDataStream graphDataStream : enhancedHistoryGraph.dataStreams) {
             Target target = dash.getTarget(graphDataStream.targetId);
             int deviceId = target == null ? -1 : target.getDeviceId();
-            requestedPins[i] = new GraphPinRequest(dashId, deviceId, graphDataStream.pin, graphPeriod);
+            requestedPins[i] = new GraphPinRequest(dashId, deviceId, graphDataStream.pin, graphPeriod, skipCount);
             i++;
         }
 

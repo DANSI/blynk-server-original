@@ -1,7 +1,7 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.server.core.dao.ReportingDao;
-import cc.blynk.server.core.model.enums.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.db.DBManager;

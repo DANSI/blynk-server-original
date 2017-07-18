@@ -1,6 +1,6 @@
 package cc.blynk.server.core.reporting.average;
 
-import cc.blynk.server.core.model.enums.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 
 import java.io.Serializable;
 import java.util.Comparator;

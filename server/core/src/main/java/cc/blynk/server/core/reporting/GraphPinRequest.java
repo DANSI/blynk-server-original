@@ -1,9 +1,9 @@
 package cc.blynk.server.core.reporting;
 
 import cc.blynk.server.core.model.Pin;
-import cc.blynk.server.core.model.enums.GraphGranularityType;
-import cc.blynk.server.core.model.enums.GraphPeriod;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 
 /**
@@ -25,6 +25,8 @@ public class GraphPinRequest {
 
     public final GraphGranularityType type;
 
+    public final int skipCount;
+
     public GraphPinRequest(int dashId, int deviceId, String[] messageParts, int pinIndex, int valuesPerPin) {
         try {
             this.dashId = dashId;
@@ -33,12 +35,13 @@ public class GraphPinRequest {
             this.pin = Byte.parseByte(messageParts[pinIndex * valuesPerPin + 1]);
             this.count = Integer.parseInt(messageParts[pinIndex * valuesPerPin + 2]);
             this.type = GraphGranularityType.getPeriodByType(messageParts[pinIndex * valuesPerPin + 3].charAt(0));
+            this.skipCount = 0;
         } catch (NumberFormatException e) {
             throw new IllegalCommandException("Graph request command body incorrect.");
         }
     }
 
-    public GraphPinRequest(int dashId, int deviceId, Pin pin, GraphPeriod graphPeriod) {
+    public GraphPinRequest(int dashId, int deviceId, Pin pin, GraphPeriod graphPeriod, int skipCount) {
         this.dashId = dashId;
         this.deviceId = deviceId;
         if (pin == null) {
@@ -50,6 +53,8 @@ public class GraphPinRequest {
         }
         this.count = graphPeriod.numberOfPoints;
         this.type = graphPeriod.granularityType;
+        this.skipCount = skipCount;
+
     }
 
 }
