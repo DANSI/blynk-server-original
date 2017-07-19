@@ -197,14 +197,14 @@ public class Session {
     }
 
     public void sendToSharedApps(Channel sendingChannel, String sharedToken, short cmd, int msgId, String body) {
-        final Set<Channel> targetChannels = new HashSet<>();
+        Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : appChannels) {
             if (channel != sendingChannel && needSync(channel, sharedToken)) {
                 targetChannels.add(channel);
             }
         }
 
-        final int channelsNum = targetChannels.size();
+        int channelsNum = targetChannels.size();
         if (channelsNum == 0) {
             return;
         }

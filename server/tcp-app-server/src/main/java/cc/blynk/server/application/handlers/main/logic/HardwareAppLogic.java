@@ -16,6 +16,7 @@ import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,23 +57,26 @@ public class HardwareAppLogic {
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         Session session = sessionDao.userSession.get(state.userKey);
 
+        //here expecting command in format "1-200000 vw 88 1"
         String[] split = split2(message.body);
 
+        //here we have "1-200000"
         String[] dashIdAndTargetIdString = split2Device(split[0]);
         int dashId = ParseUtil.parseInt(dashIdAndTargetIdString[0]);
-        //deviceId or tagId or device selector widget id
-        int targetId = 0;
-
-        //new logic for multi devices
-        if (dashIdAndTargetIdString.length == 2) {
-            targetId = ParseUtil.parseInt(dashIdAndTargetIdString[1]);
-        }
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         //if no active dashboard - do nothing. this could happen only in case of app. bug
         if (!dash.isActive) {
             return;
+        }
+
+        //deviceId or tagId or device selector widget id
+        int targetId = 0;
+
+        //new logic for multi devices
+        if (dashIdAndTargetIdString.length == 2) {
+            targetId = ParseUtil.parseInt(dashIdAndTargetIdString[1]);
         }
 
         //sending message only if widget assigned to device or tag has assigned devices
@@ -92,16 +96,9 @@ public class HardwareAppLogic {
         final char operation = split[1].charAt(1);
         switch (operation) {
             case 'u' :
+                //splitting "vu 200000 1"
                 String[] splitBody = split3(split[1]);
-                long widgetId = ParseUtil.parseLong(splitBody[1]);
-                Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
-                if (deviceSelector instanceof DeviceSelector) {
-                    final int selectedDeviceId = ParseUtil.parseInt(splitBody[2]);
-                    ((DeviceSelector) deviceSelector).value = selectedDeviceId;
-                    ctx.write(ok(message.id), ctx.voidPromise());
-                    dash.sendSyncs(ctx.channel(), selectedDeviceId);
-                    ctx.flush();
-                }
+                processDeviceSelectorCommand(ctx, session, dash, message, splitBody);
                 break;
             case 'w' :
                 splitBody = split3(split[1]);
@@ -155,6 +152,28 @@ public class HardwareAppLogic {
                     }
                 }
                 break;
+        }
+    }
+
+    public static void processDeviceSelectorCommand(ChannelHandlerContext ctx, Session session, DashBoard dash, StringMessage message, String[] splitBody) {
+        //in format "vu 200000 1"
+        long widgetId = ParseUtil.parseLong(splitBody[1]);
+        Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
+        if (deviceSelector instanceof DeviceSelector) {
+            int selectedDeviceId = ParseUtil.parseInt(splitBody[2]);
+            ((DeviceSelector) deviceSelector).value = selectedDeviceId;
+            ctx.write(ok(message.id), ctx.voidPromise());
+
+            //we need to send syncs not only to main app, but all to all shared apps
+            for (Channel channel : session.appChannels) {
+                if (Session.needSync(channel, dash.sharedToken)) {
+                    dash.sendSyncs(channel, selectedDeviceId);
+                }
+                channel.flush();
+            }
+
+            //sending to shared dashes and master-master apps
+            session.sendToSharedApps(ctx.channel(), dash.sharedToken, APP_SYNC, message.id, message.body);
         }
     }
 

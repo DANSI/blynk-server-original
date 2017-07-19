@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
@@ -18,6 +17,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.application.handlers.main.logic.HardwareAppLogic.processDeviceSelectorCommand;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.utils.BlynkByteBufUtil.*;
@@ -86,15 +86,7 @@ public class HardwareAppShareLogic {
         switch (operation) {
             case 'u' :
                 String[] splitBody = split3(split[1]);
-                final int widgetId = ParseUtil.parseInt(splitBody[1]);
-                Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
-                if (deviceSelector instanceof DeviceSelector) {
-                    final int selectedDeviceId = ParseUtil.parseInt(splitBody[2]);
-                    ((DeviceSelector) deviceSelector).value = selectedDeviceId;
-                    ctx.write(ok(message.id), ctx.voidPromise());
-                    dash.sendSyncs(ctx.channel(), selectedDeviceId);
-                    ctx.flush();
-                }
+                processDeviceSelectorCommand(ctx, session, dash, message, splitBody);
                 break;
             case 'w':
                 splitBody = split3(split[1]);
@@ -151,8 +143,5 @@ public class HardwareAppShareLogic {
                 }
                 break;
         }
-
-
     }
-
 }
