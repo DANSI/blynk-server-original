@@ -28,6 +28,8 @@ public class Map extends OnePinWidget {
 
     public boolean isMyLocationSupported;
 
+    public boolean isSatelliteMode;
+
     public String labelFormat;
 
     public int radius; //zoom level / radius which user selected.
