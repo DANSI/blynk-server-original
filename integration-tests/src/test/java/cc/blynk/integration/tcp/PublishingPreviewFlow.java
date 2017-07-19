@@ -353,7 +353,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         QrHolder[] qrHolders = makeQRs(devices, 1, false);
 
