@@ -155,8 +155,6 @@ public class TimerTest extends IntegrationBase {
 
     @Test
     public void testTimerEventWithMultiActions() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
-
         TimerTime timerTime = new TimerTime();
 
         timerTime.days = new int[] {1,2,3,4,5,6,7};
@@ -187,10 +185,12 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
-        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 2 2"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 2 2"))));
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+
+        verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 2 2"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 2 2"))));
     }
 
     @Test
