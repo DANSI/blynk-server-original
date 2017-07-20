@@ -11,6 +11,8 @@ public class Image extends NoPinWidget {
 
     public String imageId;
 
+    public boolean isColorOverlay;
+
     @Override
     public int getPrice() {
         return 200;
