@@ -26,6 +26,9 @@ public class FileUtils {
 
     private final static Logger log = LogManager.getLogger(FileUtils.class);
 
+    //reporting entry is long value (8 bytes) + timestamp (8 bytes)
+    public static final int SIZE_OF_REPORT_ENTRY = 16;
+
     public static void deleteQuietly(Path path) {
         try {
             Files.deleteIfExists(path);
@@ -62,9 +65,6 @@ public class FileUtils {
             dos.flush();
         }
     }
-
-    //reporting entry is long value (8 bytes) + timestamp (8 bytes)
-    private static final int SIZE_OF_REPORT_ENTRY = 16;
 
     /**
      * Read bunch of last records from file.

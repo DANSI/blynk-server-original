@@ -6,6 +6,8 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 
+import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.LIVE;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -35,7 +37,10 @@ public class GraphPinRequest {
             this.deviceId = deviceId;
             this.pinType = PinType.getPinType(messageParts[pinIndex * valuesPerPin].charAt(0));
             this.pin = Byte.parseByte(messageParts[pinIndex * valuesPerPin + 1]);
-            this.graphPeriod = null;
+
+            //not used for old graphs, so setting any value.
+            this.graphPeriod = GraphPeriod.ALL;
+
             this.count = Integer.parseInt(messageParts[pinIndex * valuesPerPin + 2]);
             this.type = GraphGranularityType.getPeriodByType(messageParts[pinIndex * valuesPerPin + 3].charAt(0));
             this.skipCount = 0;
@@ -61,4 +66,7 @@ public class GraphPinRequest {
 
     }
 
+    public boolean isLiveData() {
+        return graphPeriod == LIVE;
+    }
 }

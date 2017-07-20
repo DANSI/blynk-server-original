@@ -7,6 +7,7 @@ import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
+import cc.blynk.server.core.reporting.raw.GraphValue;
 import cc.blynk.server.core.reporting.raw.RawDataCacheForGraphProcessor;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.utils.FileUtils;
@@ -165,14 +166,21 @@ public class ReportingDao implements Closeable {
 
         BaseReportingKey key = new BaseReportingKey(user.email, user.appName, dashId, deviceId, pinType, pin);
         averageAggregator.collect(key, ts, doubleVal);
-        rawDataCacheForGraphProcessor.collect(key, doubleVal);
+        rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
     }
 
     public byte[][] getReportingData(User user, GraphPinRequest[] requestedPins) {
         byte[][] values = new byte[requestedPins.length][];
 
         for (int i = 0; i < requestedPins.length; i++) {
-            final ByteBuffer byteBuffer = getByteBufferFromDisk(user, requestedPins[i]);
+            GraphPinRequest graphPinRequest = requestedPins[i];
+            //live graph data is not on disk but in memory
+            ByteBuffer byteBuffer;
+            if (graphPinRequest.isLiveData()) {
+                byteBuffer = rawDataCacheForGraphProcessor.getLiveGraphData(user, graphPinRequest);
+            } else {
+                byteBuffer = getByteBufferFromDisk(user, graphPinRequest);
+            }
             values[i] = byteBuffer == null ? EMPTY_BYTES : byteBuffer.array();
         }
 
