@@ -101,13 +101,18 @@ public class ReportingDao implements Closeable {
         return false;
     }
 
-    public ByteBuffer getByteBufferFromDisk(User user, GraphPinRequest graphPinRequest) {
-        return getByteBufferFromDisk(dataFolder, user,
+    public byte[] getByteBufferFromDisk(User user, GraphPinRequest graphPinRequest) {
+        ByteBuffer byteBuffer = getByteBufferFromDisk(dataFolder, user,
                 graphPinRequest.dashId, graphPinRequest.deviceId,
                 graphPinRequest.pinType, graphPinRequest.pin,
                 graphPinRequest.count, graphPinRequest.type,
                 graphPinRequest.skipCount
         );
+
+        if (byteBuffer == null) {
+            return EMPTY_BYTES;
+        }
+        return byteBuffer.array();
     }
 
     public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphGranularityType type) {
@@ -174,14 +179,10 @@ public class ReportingDao implements Closeable {
 
         for (int i = 0; i < requestedPins.length; i++) {
             GraphPinRequest graphPinRequest = requestedPins[i];
-            //live graph data is not on disk but in memory
-            ByteBuffer byteBuffer;
-            if (graphPinRequest.isLiveData()) {
-                byteBuffer = rawDataCacheForGraphProcessor.getLiveGraphData(user, graphPinRequest);
-            } else {
-                byteBuffer = getByteBufferFromDisk(user, graphPinRequest);
-            }
-            values[i] = byteBuffer == null ? EMPTY_BYTES : byteBuffer.array();
+            values[i] = graphPinRequest.isLiveData() ?
+                    //live graph data is not on disk but in memory
+                    rawDataCacheForGraphProcessor.getLiveGraphData(user, graphPinRequest) :
+                    getByteBufferFromDisk(user, graphPinRequest);
         }
 
         if (!hasData(values)) {

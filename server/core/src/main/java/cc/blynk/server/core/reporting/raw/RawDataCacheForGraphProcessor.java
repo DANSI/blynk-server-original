@@ -9,6 +9,8 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static cc.blynk.utils.ArrayUtil.EMPTY_BYTES;
+
 /**
  * Raw data storage for graph LIVE stream.
  *
@@ -35,17 +37,20 @@ public class RawDataCacheForGraphProcessor {
         cache.add(graphCacheValue);
     }
 
-    public ByteBuffer getLiveGraphData(User user, GraphPinRequest graphPinRequest) {
+    public byte[] getLiveGraphData(User user, GraphPinRequest graphPinRequest) {
         LimitedArrayDeque<GraphValue> cache = rawStorage.get(new BaseReportingKey(user.email, user.appName,
                 graphPinRequest.dashId, graphPinRequest.deviceId,
                 graphPinRequest.pinType, graphPinRequest.pin));
 
+        if (cache == null) {
+            return EMPTY_BYTES;
+        }
 
         ByteBuffer byteBuffer = ByteBuffer.allocate(cache.size() * FileUtils.SIZE_OF_REPORT_ENTRY);
         for (GraphValue graphValue : cache) {
             byteBuffer.putDouble(graphValue.value)
                       .putLong(graphValue.ts);
         }
-        return byteBuffer;
+        return byteBuffer.array();
     }
 }
