@@ -1,6 +1,7 @@
 package cc.blynk.server.core.reporting.average;
 
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -14,21 +15,11 @@ public final class AggregationKey implements Serializable {
 
     public static final Comparator<AggregationKey> AGGREGATION_KEY_COMPARATOR = (o1, o2) -> (int) (o1.ts - o2.ts);
 
-    public final String email;
-    public final String appName;
-    public final int dashId;
-    public final int deviceId;
-    public final char pinType;
-    public final byte pin;
+    private final BaseReportingKey baseReportingKey;
     public final long ts;
 
-    public AggregationKey(String email, String appName, int dashId, int deviceId, char pinType, byte pin, long ts) {
-        this.email = email;
-        this.appName = appName;
-        this.dashId = dashId;
-        this.deviceId = deviceId;
-        this.pinType = pinType;
-        this.pin = pin;
+    public AggregationKey(BaseReportingKey baseReportingKey, long ts) {
+        this.baseReportingKey = baseReportingKey;
         this.ts = ts;
     }
 
@@ -40,6 +31,30 @@ public final class AggregationKey implements Serializable {
         return ts < nowTruncatedToPeriod;
     }
 
+    public String getEmail() {
+        return baseReportingKey.email;
+    }
+
+    public String getAppName() {
+        return baseReportingKey.appName;
+    }
+
+    public int getDashId() {
+        return baseReportingKey.dashId;
+    }
+
+    public int getDeviceId() {
+        return baseReportingKey.deviceId;
+    }
+
+    public char getPinType() {
+        return baseReportingKey.pinType;
+    }
+
+    public byte getPin() {
+        return baseReportingKey.pin;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -47,24 +62,13 @@ public final class AggregationKey implements Serializable {
 
         AggregationKey that = (AggregationKey) o;
 
-        if (dashId != that.dashId) return false;
-        if (deviceId != that.deviceId) return false;
-        if (pinType != that.pinType) return false;
-        if (pin != that.pin) return false;
         if (ts != that.ts) return false;
-        if (email != null ? !email.equals(that.email) : that.email != null) return false;
-        return !(appName != null ? !appName.equals(that.appName) : that.appName != null);
-
+        return baseReportingKey != null ? baseReportingKey.equals(that.baseReportingKey) : that.baseReportingKey == null;
     }
 
     @Override
     public int hashCode() {
-        int result = email != null ? email.hashCode() : 0;
-        result = 31 * result + (appName != null ? appName.hashCode() : 0);
-        result = 31 * result + dashId;
-        result = 31 * result + deviceId;
-        result = 31 * result + (int) pinType;
-        result = 31 * result + (int) pin;
+        int result = baseReportingKey != null ? baseReportingKey.hashCode() : 0;
         result = 31 * result + (int) (ts ^ (ts >>> 32));
         return result;
     }

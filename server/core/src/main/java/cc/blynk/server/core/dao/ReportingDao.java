@@ -6,6 +6,8 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
+import cc.blynk.server.core.reporting.raw.BaseReportingKey;
+import cc.blynk.server.core.reporting.raw.RawDataCacheForGraphProcessor;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.NumberUtil;
@@ -33,6 +35,7 @@ public class ReportingDao implements Closeable {
     private static final Logger log = LogManager.getLogger(ReportingDao.class);
 
     public final AverageAggregatorProcessor averageAggregator;
+    public final RawDataCacheForGraphProcessor rawDataCacheForGraphProcessor;
     public final RawDataProcessor rawDataProcessor;
     public final CSVGenerator csvGenerator;
 
@@ -43,6 +46,7 @@ public class ReportingDao implements Closeable {
     //for test only
     public ReportingDao(String reportingFolder, AverageAggregatorProcessor averageAggregator, ServerProperties serverProperties) {
         this.averageAggregator = averageAggregator;
+        this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
         this.ENABLE_RAW_DB_DATA_STORE = serverProperties.getBoolProperty("enable.raw.db.data.store");
         this.rawDataProcessor = new RawDataProcessor(ENABLE_RAW_DB_DATA_STORE);
@@ -51,6 +55,7 @@ public class ReportingDao implements Closeable {
 
     public ReportingDao(String reportingFolder , ServerProperties serverProperties) {
         this.averageAggregator = new AverageAggregatorProcessor(reportingFolder);
+        this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
         this.ENABLE_RAW_DB_DATA_STORE = serverProperties.getBoolProperty("enable.raw.db.data.store");
         this.rawDataProcessor = new RawDataProcessor(ENABLE_RAW_DB_DATA_STORE);
@@ -150,7 +155,7 @@ public class ReportingDao implements Closeable {
 
     private void process(User user, int dashId, int deviceId, byte pin, PinType pinType, String value, long ts, double doubleVal) {
         if (ENABLE_RAW_DB_DATA_STORE) {
-            rawDataProcessor.collect(user, dashId, deviceId, pinType.pintTypeChar, pin, ts, value, doubleVal);
+            rawDataProcessor.collect(new BaseReportingKey(user.email, user.appName, dashId, deviceId, pinType, pin), ts, value, doubleVal);
         }
 
         //not a number, nothing to aggregate
@@ -158,7 +163,9 @@ public class ReportingDao implements Closeable {
             return;
         }
 
-        averageAggregator.collect(user, dashId, deviceId, pinType.pintTypeChar, pin, ts, doubleVal);
+        BaseReportingKey key = new BaseReportingKey(user.email, user.appName, dashId, deviceId, pinType, pin);
+        averageAggregator.collect(key, ts, doubleVal);
+        rawDataCacheForGraphProcessor.collect(key, doubleVal);
     }
 
     public byte[][] getAllFromDisk(User user, GraphPinRequest[] requestedPins) {

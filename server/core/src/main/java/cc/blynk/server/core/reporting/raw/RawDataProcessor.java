@@ -1,6 +1,5 @@
 package cc.blynk.server.core.reporting.raw;
 
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.utils.NumberUtil;
 
@@ -30,8 +29,8 @@ public class RawDataProcessor {
     }
 
     //todo 2 millis is minimum allowed interval for data pushing.
-    public void collect(User user, int dashId, int deviceId, char pinType, byte pin, long ts, String stringValue, double doubleValue) {
-        final AggregationKey aggregationKey = new AggregationKey(user.email, user.appName, dashId, deviceId, pinType, pin, ts);
+    public void collect(BaseReportingKey key, long ts, String stringValue, double doubleValue) {
+        final AggregationKey aggregationKey = new AggregationKey(key, ts);
         if (doubleValue == NumberUtil.NO_RESULT) {
             rawStorage.put(aggregationKey, stringValue);
         } else {

@@ -61,9 +61,9 @@ public class ReportingDBDao {
     private static void prepareReportingInsert(PreparedStatement ps,
                                                Map.Entry<AggregationKey, AggregationValue> entry,
                                                GraphGranularityType type) throws SQLException {
-        final AggregationKey key = entry.getKey();
-        final AggregationValue value = entry.getValue();
-        prepareReportingInsert(ps, key.email, key.dashId, key.deviceId, key.pin, key.pinType, key.getTs(type), value.calcAverage());
+        AggregationKey key = entry.getKey();
+        AggregationValue value = entry.getValue();
+        prepareReportingInsert(ps, key.getEmail(), key.getDashId(), key.getDeviceId(), key.getPin(), key.getPinType(), key.getTs(type), value.calcAverage());
     }
 
     public static void prepareReportingInsert(PreparedStatement ps,
@@ -109,11 +109,11 @@ public class ReportingDBDao {
                 final AggregationKey key = entry.getKey();
                 final Object value = entry.getValue();
 
-                ps.setString(1, key.email);
-                ps.setInt(2, key.dashId);
-                ps.setInt(3, key.deviceId);
-                ps.setByte(4, key.pin);
-                ps.setString(5, PinType.getPinTypeString(key.pinType));
+                ps.setString(1, key.getEmail());
+                ps.setInt(2, key.getDashId());
+                ps.setInt(3, key.getDeviceId());
+                ps.setByte(4, key.getPin());
+                ps.setString(5, PinType.getPinTypeString(key.getPinType()));
                 ps.setTimestamp(6, new Timestamp(key.ts), DateTimeUtils.UTC_CALENDAR);
 
                 if (value instanceof String) {

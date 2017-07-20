@@ -3,6 +3,8 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.utils.NumberUtil;
 import org.junit.AfterClass;
@@ -54,7 +56,7 @@ public class RawDataDBTest {
     @Test
     public void testInsertStringAsRawData() throws Exception {
         RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
-        rawDataProcessor.collect(user, 1, 2, 'v', (byte) 3, 1111111111, "Lamp is ON", NumberUtil.NO_RESULT);
+        rawDataProcessor.collect(new BaseReportingKey(user.email, user.appName, 1, 2, PinType.VIRTUAL, (byte) 3), 1111111111, "Lamp is ON", NumberUtil.NO_RESULT);
 
         //invoking directly dao to avoid separate thread execution
         dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
@@ -83,7 +85,7 @@ public class RawDataDBTest {
     @Test
     public void testInsertDoubleAsRawData() throws Exception {
         RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
-        rawDataProcessor.collect(user, 1, 2, 'v', (byte) 3, 1111111111, "Lamp is ON", 1.33D);
+        rawDataProcessor.collect(new BaseReportingKey(user.email, user.appName, 1, 2, PinType.VIRTUAL, (byte) 3), 1111111111, "Lamp is ON", 1.33D);
 
         //invoking directly dao to avoid separate thread execution
         dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
