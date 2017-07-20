@@ -164,6 +164,9 @@ public class HardwareAppLogic {
             ((DeviceSelector) deviceSelector).value = selectedDeviceId;
             ctx.write(ok(message.id), ctx.voidPromise());
 
+            //sending to shared dashes and master-master apps
+            session.sendToSharedApps(ctx.channel(), dash.sharedToken, APP_SYNC, message.id, message.body);
+
             //we need to send syncs not only to main app, but all to all shared apps
             for (Channel channel : session.appChannels) {
                 if (Session.needSync(channel, dash.sharedToken)) {
@@ -171,9 +174,6 @@ public class HardwareAppLogic {
                 }
                 channel.flush();
             }
-
-            //sending to shared dashes and master-master apps
-            session.sendToSharedApps(ctx.channel(), dash.sharedToken, APP_SYNC, message.id, message.body);
         }
     }
 
