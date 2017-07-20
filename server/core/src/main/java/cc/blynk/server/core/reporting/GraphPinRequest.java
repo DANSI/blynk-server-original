@@ -21,6 +21,8 @@ public class GraphPinRequest {
 
     public final byte pin;
 
+    public final GraphPeriod graphPeriod;
+
     public final int count;
 
     public final GraphGranularityType type;
@@ -33,6 +35,7 @@ public class GraphPinRequest {
             this.deviceId = deviceId;
             this.pinType = PinType.getPinType(messageParts[pinIndex * valuesPerPin].charAt(0));
             this.pin = Byte.parseByte(messageParts[pinIndex * valuesPerPin + 1]);
+            this.graphPeriod = null;
             this.count = Integer.parseInt(messageParts[pinIndex * valuesPerPin + 2]);
             this.type = GraphGranularityType.getPeriodByType(messageParts[pinIndex * valuesPerPin + 3].charAt(0));
             this.skipCount = 0;
@@ -51,6 +54,7 @@ public class GraphPinRequest {
             this.pinType = pin.pinType;
             this.pin = pin.pin;
         }
+        this.graphPeriod = graphPeriod;
         this.count = graphPeriod.numberOfPoints;
         this.type = graphPeriod.granularityType;
         this.skipCount = skipCount;

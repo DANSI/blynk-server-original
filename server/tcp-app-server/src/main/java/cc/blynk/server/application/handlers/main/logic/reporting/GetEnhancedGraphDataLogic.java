@@ -92,7 +92,7 @@ public class GetEnhancedGraphDataLogic {
     private void readGraphData(Channel channel, User user, GraphPinRequest[] requestedPins, int msgId) {
         blockingIOProcessor.executeHistory(() -> {
             try {
-                byte[][] data = reportingDao.getAllFromDisk(user, requestedPins);
+                byte[][] data = reportingDao.getReportingData(user, requestedPins);
                 byte[] compressed = compress(requestedPins[0].dashId, data);
 
                 if (channel.isWritable()) {

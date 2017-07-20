@@ -168,7 +168,7 @@ public class ReportingDao implements Closeable {
         rawDataCacheForGraphProcessor.collect(key, doubleVal);
     }
 
-    public byte[][] getAllFromDisk(User user, GraphPinRequest[] requestedPins) {
+    public byte[][] getReportingData(User user, GraphPinRequest[] requestedPins) {
         byte[][] values = new byte[requestedPins.length][];
 
         for (int i = 0; i < requestedPins.length; i++) {
