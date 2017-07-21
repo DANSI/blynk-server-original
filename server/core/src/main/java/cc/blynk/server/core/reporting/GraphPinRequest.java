@@ -56,7 +56,7 @@ public class GraphPinRequest {
             this.pinType = PinType.VIRTUAL;
             this.pin = (byte) Pin.NO_PIN;
         } else {
-            this.pinType = pin.pinType;
+            this.pinType = (pin.pinType == null ? PinType.VIRTUAL : pin.pinType);
             this.pin = pin.pin;
         }
         this.graphPeriod = graphPeriod;

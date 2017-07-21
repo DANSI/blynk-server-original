@@ -187,6 +187,38 @@ public class HistoryGraphTest extends IntegrationBase {
     }
 
     @Test
+    public void testGetGraphDataForEnhancedGraphWithWrongDataStream() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+
+        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY));
+
+        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        Pin pin = new Pin((byte) 8, null);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, 0, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
+    }
+
+    @Test
     public void testGetLIVEGraphDataForEnhancedGraph() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
