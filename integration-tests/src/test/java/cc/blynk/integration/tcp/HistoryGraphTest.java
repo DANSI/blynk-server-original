@@ -127,7 +127,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, null, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, null, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -159,7 +159,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -205,7 +205,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 8, null);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -233,7 +233,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -315,7 +315,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -366,7 +366,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -419,7 +419,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -439,7 +439,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -532,7 +532,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 200_000, pin, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 200_000, pin, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
