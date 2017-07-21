@@ -9,12 +9,12 @@ public enum GraphPeriod {
 
     LIVE(60, GraphGranularityType.MINUTE),
     ONE_HOUR(60, GraphGranularityType.MINUTE),
-    SIX_HOURS(360, GraphGranularityType.MINUTE),
-    DAY(24, GraphGranularityType.HOURLY),
+    SIX_HOURS(6 * 60, GraphGranularityType.MINUTE),
+    DAY(24 * 60, GraphGranularityType.MINUTE),
     WEEK(24 * 7, GraphGranularityType.HOURLY),
-    MONTH(30, GraphGranularityType.DAILY),
-    THREE_MONTHS(3 * 30, GraphGranularityType.DAILY),
-    ALL(12 * 30, GraphGranularityType.DAILY);
+    MONTH(30 * 24, GraphGranularityType.HOURLY),
+    THREE_MONTHS(3 * 30 * 24, GraphGranularityType.HOURLY),
+    ALL(12 * 30 * 24, GraphGranularityType.HOURLY);
 
     public final int numberOfPoints;
     public final GraphGranularityType granularityType;
