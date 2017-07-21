@@ -111,7 +111,7 @@ public class FileUtils {
     }
 
     public static String getUserReportingDir(String email, String appName) {
-        if (appName.equals(AppName.BLYNK)) {
+        if (AppName.BLYNK.equals(appName)) {
             return email;
         }
         return email + "_" + appName;
