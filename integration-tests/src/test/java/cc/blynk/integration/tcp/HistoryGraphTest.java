@@ -8,14 +8,13 @@ import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
+import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
+import cc.blynk.server.core.model.widgets.outputs.graph.*;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
+import cc.blynk.server.core.protocol.model.messages.appllication.CreateTag;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.ByteUtils;
@@ -110,6 +109,426 @@ public class HistoryGraphTest extends IntegrationBase {
     }
 
     @Test
+    public void testGetGraphDataForTagAndForEnhancedGraphMAX() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
+
+        clientPair.appClient.send("createTAg 1\0" + tag0.toString());
+        String createdTag = clientPair.appClient.getBody(2);
+        Tag tag = JsonParser.parseTag(createdTag);
+        assertNotNull(tag);
+        assertEquals(100_000, tag.id);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(2, tag.toString())));
+
+
+        String tempDir = holder.props.getProperty("data.folder");
+
+        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
+
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 1, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
+        FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        Pin pin = new Pin((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, pin, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+
+        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(2, bb.getInt());
+        assertEquals(1.112D, bb.getDouble(), 0.1);
+        assertEquals(1111111, bb.getLong());
+        assertEquals(1.222D, bb.getDouble(), 0.1);
+        assertEquals(2222222, bb.getLong());
+    }
+
+    @Test
+    public void testGetGraphDataForTagAndForEnhancedGraphMIN() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
+
+        clientPair.appClient.send("createTAg 1\0" + tag0.toString());
+        String createdTag = clientPair.appClient.getBody(2);
+        Tag tag = JsonParser.parseTag(createdTag);
+        assertNotNull(tag);
+        assertEquals(100_000, tag.id);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(2, tag.toString())));
+
+
+        String tempDir = holder.props.getProperty("data.folder");
+
+        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
+
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 1, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
+        FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        Pin pin = new Pin((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, pin, AggregationFunctionType.MIN, 0, null, null, null, 0, 0, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+
+        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(2, bb.getInt());
+        assertEquals(1.11D, bb.getDouble(), 0.1);
+        assertEquals(1111111, bb.getLong());
+        assertEquals(1.22D, bb.getDouble(), 0.1);
+        assertEquals(2222222, bb.getLong());
+    }
+
+    @Test
+    public void testGetGraphDataForTagAndForEnhancedGraphSUM() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
+
+        clientPair.appClient.send("createTAg 1\0" + tag0.toString());
+        String createdTag = clientPair.appClient.getBody(2);
+        Tag tag = JsonParser.parseTag(createdTag);
+        assertNotNull(tag);
+        assertEquals(100_000, tag.id);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(2, tag.toString())));
+
+
+        String tempDir = holder.props.getProperty("data.folder");
+
+        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
+
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 1, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
+        FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        Pin pin = new Pin((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, pin, AggregationFunctionType.SUM, 0, null, null, null, 0, 0, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+
+        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(2, bb.getInt());
+        assertEquals(2.222D, bb.getDouble(), 0.001);
+        assertEquals(1111111, bb.getLong());
+        assertEquals(2.442D, bb.getDouble(), 0.001);
+        assertEquals(2222222, bb.getLong());
+    }
+
+    @Test
+    public void testGetGraphDataForTagAndForEnhancedGraphAVG() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
+
+        clientPair.appClient.send("createTAg 1\0" + tag0.toString());
+        String createdTag = clientPair.appClient.getBody(2);
+        Tag tag = JsonParser.parseTag(createdTag);
+        assertNotNull(tag);
+        assertEquals(100_000, tag.id);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(2, tag.toString())));
+
+
+        String tempDir = holder.props.getProperty("data.folder");
+
+        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
+
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 1, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
+        FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        Pin pin = new Pin((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, pin, AggregationFunctionType.AVG, 0, null, null, null, 0, 0, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+
+        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(2, bb.getInt());
+        assertEquals(1.111D, bb.getDouble(), 0.001);
+        assertEquals(1111111, bb.getLong());
+        assertEquals(1.221D, bb.getDouble(), 0.001);
+        assertEquals(2222222, bb.getLong());
+    }
+
+    @Test
+    public void testGetGraphDataForTagAndForEnhancedGraphMEDIAN() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
+
+        clientPair.appClient.send("createTAg 1\0" + tag0.toString());
+        String createdTag = clientPair.appClient.getBody(2);
+        Tag tag = JsonParser.parseTag(createdTag);
+        assertNotNull(tag);
+        assertEquals(100_000, tag.id);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(2, tag.toString())));
+
+
+        String tempDir = holder.props.getProperty("data.folder");
+
+        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
+
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 1, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
+        FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        Pin pin = new Pin((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, pin, AggregationFunctionType.MED, 0, null, null, null, 0, 0, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+
+        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(2, bb.getInt());
+        assertEquals(1.112D, bb.getDouble(), 0.001);
+        assertEquals(1111111, bb.getLong());
+        assertEquals(1.222D, bb.getDouble(), 0.001);
+        assertEquals(2222222, bb.getLong());
+    }
+
+    @Test
+    public void testGetGraphDataForTagAndForEnhancedGraphMEDIANFor3Devices() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device2 = new Device(2, "My Device", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        clientPair.appClient.send("createDevice 1\0" + device2.toString());
+        createdDevice = clientPair.appClient.getBody(2);
+        device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(2, device.toString())));
+
+        Tag tag0 = new Tag(100_000, "Tag1", new int[] {0, 1, 2});
+
+        clientPair.appClient.send("createTAg 1\0" + tag0.toString());
+        String createdTag = clientPair.appClient.getBody(3);
+        Tag tag = JsonParser.parseTag(createdTag);
+        assertNotNull(tag);
+        assertEquals(100_000, tag.id);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(3, tag.toString())));
+
+
+        String tempDir = holder.props.getProperty("data.folder");
+
+        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
+
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 1, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
+        FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
+
+        Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 2, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath3, 1.113D, 1111111);
+        FileUtils.write(pinReportingDataPath3, 1.223D, 2222222);
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        Pin pin = new Pin((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, pin, AggregationFunctionType.MED, 0, null, null, null, 0, 0, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+
+        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(2, bb.getInt());
+        assertEquals(1.112D, bb.getDouble(), 0.001);
+        assertEquals(1111111, bb.getLong());
+        assertEquals(1.222D, bb.getDouble(), 0.001);
+        assertEquals(2222222, bb.getLong());
+    }
+
+    @Test
     public void testGetGraphDataForEnhancedGraphWithEmptyDataStream() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
@@ -127,7 +546,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, null, null, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, null, null, 0, null, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -159,7 +578,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, null, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -205,7 +624,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 8, null);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, null, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -233,7 +652,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, null, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -315,7 +734,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, null, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -366,7 +785,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, null, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -419,7 +838,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, null, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -439,7 +858,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, null, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -532,7 +951,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         Pin pin = new Pin((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 200_000, pin, null, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 200_000, pin, null, 0, null, null, null, 0, 0, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };

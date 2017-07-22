@@ -13,7 +13,7 @@ public enum AggregationFunctionType {
     MAX(MaxFunction.class),
     AVG(AverageFunction.class),
     SUM(SumFunction.class),
-    MED(MedFunction.class);
+    MED(MedianFunction.class);
 
     private Class<? extends Function> clazz;
 

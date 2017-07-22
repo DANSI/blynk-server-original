@@ -1,7 +1,9 @@
 package cc.blynk.server.core.dao;
 
+import cc.blynk.server.core.dao.functions.Function;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
@@ -22,8 +24,11 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static cc.blynk.utils.ArrayUtil.EMPTY_BYTES;
+import static cc.blynk.utils.FileUtils.SIZE_OF_REPORT_ENTRY;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 
 /**
@@ -101,13 +106,51 @@ public class ReportingDao implements Closeable {
         return false;
     }
 
+    private ByteBuffer getDataForTag(User user, GraphPinRequest graphPinRequest) {
+        TreeMap<Long, Function> data = new TreeMap<>();
+        AggregationFunctionType functionType = graphPinRequest.functionType;
+        for (int deviceId : graphPinRequest.deviceIds) {
+            ByteBuffer localByteBuf = getByteBufferFromDisk(dataFolder, user,
+                    graphPinRequest.dashId, deviceId,
+                    graphPinRequest.pinType, graphPinRequest.pin,
+                    graphPinRequest.count, graphPinRequest.type,
+                    graphPinRequest.skipCount
+            );
+            if (localByteBuf != null) {
+                localByteBuf.flip();
+                while (localByteBuf.hasRemaining()) {
+                    double newVal = localByteBuf.getDouble();
+                    Long ts = localByteBuf.getLong();
+                    Function functionObj = data.get(ts);
+                    if (functionObj == null) {
+                        functionObj = functionType.produce();
+                        data.put(ts, functionObj);
+                    }
+                    functionObj.apply(newVal);
+                }
+            }
+        }
+        ByteBuffer result = ByteBuffer.allocate(data.size() * SIZE_OF_REPORT_ENTRY);
+        for (Map.Entry<Long, Function> entry : data.entrySet()) {
+            result.putDouble(entry.getValue().getResult());
+            result.putLong(entry.getKey());
+        }
+        return result;
+
+    }
+
     public byte[] getByteBufferFromDisk(User user, GraphPinRequest graphPinRequest) {
-        ByteBuffer byteBuffer = getByteBufferFromDisk(dataFolder, user,
-                graphPinRequest.dashId, graphPinRequest.deviceId,
-                graphPinRequest.pinType, graphPinRequest.pin,
-                graphPinRequest.count, graphPinRequest.type,
-                graphPinRequest.skipCount
-        );
+        ByteBuffer byteBuffer;
+        if (graphPinRequest.isTag) {
+            byteBuffer = getDataForTag(user, graphPinRequest);
+        } else {
+            byteBuffer = getByteBufferFromDisk(dataFolder, user,
+                    graphPinRequest.dashId, graphPinRequest.deviceId,
+                    graphPinRequest.pinType, graphPinRequest.pin,
+                    graphPinRequest.count, graphPinRequest.type,
+                    graphPinRequest.skipCount
+            );
+        }
 
         if (byteBuffer == null) {
             return EMPTY_BYTES;
@@ -179,10 +222,14 @@ public class ReportingDao implements Closeable {
 
         for (int i = 0; i < requestedPins.length; i++) {
             GraphPinRequest graphPinRequest = requestedPins[i];
-            values[i] = graphPinRequest.isLiveData() ?
-                    //live graph data is not on disk but in memory
-                    rawDataCacheForGraphProcessor.getLiveGraphData(user, graphPinRequest) :
-                    getByteBufferFromDisk(user, graphPinRequest);
+            if (graphPinRequest.isValid()) {
+                values[i] = graphPinRequest.isLiveData() ?
+                        //live graph data is not on disk but in memory
+                        rawDataCacheForGraphProcessor.getLiveGraphData(user, graphPinRequest) :
+                        getByteBufferFromDisk(user, graphPinRequest);
+            } else {
+                values[i] = EMPTY_BYTES;
+            }
         }
 
         if (!hasData(values)) {
