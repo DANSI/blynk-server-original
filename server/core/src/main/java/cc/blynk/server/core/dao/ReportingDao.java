@@ -79,8 +79,9 @@ public class ReportingDao implements Closeable {
         }
     }
 
-    public static ByteBuffer getByteBufferFromDisk(String dataFolder, User user, int dashId, int deviceId,
-                                                   PinType pinType, byte pin, int count, GraphGranularityType type, int skipCount) {
+    public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId,
+                                            PinType pinType, byte pin, int count,
+                                            GraphGranularityType type, int skipCount) {
         Path userDataFile = Paths.get(
                 dataFolder,
                 FileUtils.getUserReportingDir(user),
@@ -108,58 +109,59 @@ public class ReportingDao implements Closeable {
 
     private ByteBuffer getDataForTag(User user, GraphPinRequest graphPinRequest) {
         TreeMap<Long, Function> data = new TreeMap<>();
-        AggregationFunctionType functionType = graphPinRequest.functionType;
         for (int deviceId : graphPinRequest.deviceIds) {
-            ByteBuffer localByteBuf = getByteBufferFromDisk(dataFolder, user,
+            ByteBuffer localByteBuf = getByteBufferFromDisk(user,
                     graphPinRequest.dashId, deviceId,
                     graphPinRequest.pinType, graphPinRequest.pin,
                     graphPinRequest.count, graphPinRequest.type,
                     graphPinRequest.skipCount
             );
-            if (localByteBuf != null) {
-                localByteBuf.flip();
-                while (localByteBuf.hasRemaining()) {
-                    double newVal = localByteBuf.getDouble();
-                    Long ts = localByteBuf.getLong();
-                    Function functionObj = data.get(ts);
-                    if (functionObj == null) {
-                        functionObj = functionType.produce();
-                        data.put(ts, functionObj);
-                    }
-                    functionObj.apply(newVal);
-                }
-            }
+            addBufferToResult(data, graphPinRequest.functionType, localByteBuf);
         }
-        ByteBuffer result = ByteBuffer.allocate(data.size() * SIZE_OF_REPORT_ENTRY);
-        for (Map.Entry<Long, Function> entry : data.entrySet()) {
-            result.putDouble(entry.getValue().getResult());
-            result.putLong(entry.getKey());
-        }
-        return result;
 
+        return toByteBuf(data);
     }
 
-    public byte[] getByteBufferFromDisk(User user, GraphPinRequest graphPinRequest) {
-        ByteBuffer byteBuffer;
+    private void addBufferToResult(TreeMap<Long, Function> data, AggregationFunctionType functionType, ByteBuffer localByteBuf) {
+        if (localByteBuf != null) {
+            localByteBuf.flip();
+            while (localByteBuf.hasRemaining()) {
+                double newVal = localByteBuf.getDouble();
+                Long ts = localByteBuf.getLong();
+                Function functionObj = data.get(ts);
+                if (functionObj == null) {
+                    functionObj = functionType.produce();
+                    data.put(ts, functionObj);
+                }
+                functionObj.apply(newVal);
+            }
+        }
+    }
+
+    private ByteBuffer toByteBuf(TreeMap<Long, Function> data) {
+        ByteBuffer result = ByteBuffer.allocate(data.size() * SIZE_OF_REPORT_ENTRY);
+        for (Map.Entry<Long, Function> entry : data.entrySet()) {
+            result.putDouble(entry.getValue().getResult())
+                  .putLong(entry.getKey());
+        }
+        return result;
+    }
+
+    public ByteBuffer getByteBufferFromDisk(User user, GraphPinRequest graphPinRequest) {
         if (graphPinRequest.isTag) {
-            byteBuffer = getDataForTag(user, graphPinRequest);
+            return getDataForTag(user, graphPinRequest);
         } else {
-            byteBuffer = getByteBufferFromDisk(dataFolder, user,
+            return getByteBufferFromDisk(user,
                     graphPinRequest.dashId, graphPinRequest.deviceId,
                     graphPinRequest.pinType, graphPinRequest.pin,
                     graphPinRequest.count, graphPinRequest.type,
                     graphPinRequest.skipCount
             );
         }
-
-        if (byteBuffer == null) {
-            return EMPTY_BYTES;
-        }
-        return byteBuffer.array();
     }
 
     public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphGranularityType type) {
-        return getByteBufferFromDisk(dataFolder, user, dashId, deviceId, pinType, pin, count, type, 0);
+        return getByteBufferFromDisk(user, dashId, deviceId, pinType, pin, count, type, 0);
     }
 
     public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {
@@ -223,10 +225,11 @@ public class ReportingDao implements Closeable {
         for (int i = 0; i < requestedPins.length; i++) {
             GraphPinRequest graphPinRequest = requestedPins[i];
             if (graphPinRequest.isValid()) {
-                values[i] = graphPinRequest.isLiveData() ?
+                ByteBuffer byteBuffer = graphPinRequest.isLiveData() ?
                         //live graph data is not on disk but in memory
                         rawDataCacheForGraphProcessor.getLiveGraphData(user, graphPinRequest) :
                         getByteBufferFromDisk(user, graphPinRequest);
+                values[i] = byteBuffer == null ? EMPTY_BYTES : byteBuffer.array();
             } else {
                 values[i] = EMPTY_BYTES;
             }

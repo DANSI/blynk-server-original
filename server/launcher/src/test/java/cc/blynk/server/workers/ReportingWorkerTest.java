@@ -141,7 +141,7 @@ public class ReportingWorkerTest {
 
         assertTrue(map.isEmpty());
 
-        ByteBuffer data = ReportingDao.getByteBufferFromDisk(reportingFolder, user, 1, 0, PinType.ANALOG, (byte) 1, 2, GraphGranularityType.HOURLY, 0);
+        ByteBuffer data = reportingDaoMock.getByteBufferFromDisk(user, 1, 0, PinType.ANALOG, (byte) 1, 2, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
         data.flip();
         assertEquals(32, data.capacity());
@@ -155,7 +155,7 @@ public class ReportingWorkerTest {
         User user2 = new User();
         user2.email = "test2";
         user2.appName = AppName.BLYNK;
-        data = ReportingDao.getByteBufferFromDisk(reportingFolder, user2, 2, 0, PinType.ANALOG, (byte) 2, 1, GraphGranularityType.HOURLY, 0);
+        data = reportingDaoMock.getByteBufferFromDisk(user2, 2, 0, PinType.ANALOG, (byte) 2, 1, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
         data.flip();
         assertEquals(16, data.capacity());
@@ -200,7 +200,7 @@ public class ReportingWorkerTest {
         user.appName = AppName.BLYNK;
 
         //take less
-        ByteBuffer data = ReportingDao.getByteBufferFromDisk(reportingFolder, user, 1, 0, PinType.ANALOG, (byte) 1, 1, GraphGranularityType.HOURLY, 0);
+        ByteBuffer data = reportingDaoMock.getByteBufferFromDisk(user, 1, 0, PinType.ANALOG, (byte) 1, 1, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
         data.flip();
         assertEquals(16, data.capacity());
@@ -210,7 +210,7 @@ public class ReportingWorkerTest {
 
 
         //take more
-        data = ReportingDao.getByteBufferFromDisk(reportingFolder, user, 1, 0, PinType.ANALOG, (byte) 1, 24, GraphGranularityType.HOURLY, 0);
+        data = reportingDaoMock.getByteBufferFromDisk(user, 1, 0, PinType.ANALOG, (byte) 1, 24, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
         data.flip();
         assertEquals(48, data.capacity());
