@@ -1,6 +1,8 @@
 package cc.blynk.server.core.reporting.raw;
 
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.reporting.GraphPinRequest;
 
 import java.io.Serializable;
 
@@ -17,6 +19,12 @@ public final class BaseReportingKey implements Serializable {
     public final int deviceId;
     public final char pinType;
     public final byte pin;
+
+    public BaseReportingKey(User user, GraphPinRequest graphPinRequest) {
+        this(user.email, user.appName,
+             graphPinRequest.dashId, graphPinRequest.deviceId,
+             graphPinRequest.pinType, graphPinRequest.pin);
+    }
 
     public BaseReportingKey(String email, String appName, int dashId, int deviceId, PinType pinType, byte pin) {
         this.email = email;

@@ -38,18 +38,20 @@ public class RawDataCacheForGraphProcessor {
     }
 
     public byte[] getLiveGraphData(User user, GraphPinRequest graphPinRequest) {
-        LimitedArrayDeque<GraphValue> cache = rawStorage.get(new BaseReportingKey(user.email, user.appName,
-                graphPinRequest.dashId, graphPinRequest.deviceId,
-                graphPinRequest.pinType, graphPinRequest.pin));
+        LimitedArrayDeque<GraphValue> cache = rawStorage.get(new BaseReportingKey(user, graphPinRequest));
 
-        if (cache == null) {
-            return EMPTY_BYTES;
+        if (cache != null) {
+            return toByteArray(cache);
         }
 
+        return EMPTY_BYTES;
+    }
+
+    private byte[] toByteArray(LimitedArrayDeque<GraphValue> cache) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(cache.size() * FileUtils.SIZE_OF_REPORT_ENTRY);
         for (GraphValue graphValue : cache) {
             byteBuffer.putDouble(graphValue.value)
-                      .putLong(graphValue.ts);
+                    .putLong(graphValue.ts);
         }
         return byteBuffer.array();
     }
