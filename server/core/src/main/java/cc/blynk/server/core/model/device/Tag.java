@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Tag implements Target {
 
     public static final int START_TAG_ID = 100_000;
+    public static final int MAX_NUMBER_OF_DEVICE_PER_TAG = 25;
 
     public final int id;
 
@@ -22,7 +23,7 @@ public class Tag implements Target {
     public volatile int[] deviceIds;
 
     public boolean isNotValid() {
-        return name == null || name.isEmpty() || name.length() > 40 || id < START_TAG_ID || deviceIds.length > 100;
+        return name == null || name.isEmpty() || name.length() > 40 || id < START_TAG_ID || deviceIds.length > MAX_NUMBER_OF_DEVICE_PER_TAG;
     }
 
     public Tag(int id, String name) {
