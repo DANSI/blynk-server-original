@@ -33,12 +33,6 @@ public class EnhancedHistoryGraph extends Widget {
 
     public boolean allowFullScreen;
 
-    public int flip;
-
-    public String low;
-
-    public String high;
-
     public String goalText;
 
     public GoalLine goalLine;

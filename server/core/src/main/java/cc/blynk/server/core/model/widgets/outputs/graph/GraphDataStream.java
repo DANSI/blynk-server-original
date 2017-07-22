@@ -21,7 +21,13 @@ public class GraphDataStream {
 
     public final Pin pin;
 
-    public final AggregationFunction function;
+    public final AggregationFunctionType functionType;
+
+    public int flip;
+
+    public String low;
+
+    public String high;
 
     private final String mathFormula;
 
@@ -43,7 +49,10 @@ public class GraphDataStream {
                            @JsonProperty("color") int color,
                            @JsonProperty("targetId") int targetId,
                            @JsonProperty("pin") Pin pin,
-                           @JsonProperty("function") AggregationFunction function,
+                           @JsonProperty("functionType") AggregationFunctionType functionType,
+                           @JsonProperty("flip") int flip,
+                           @JsonProperty("low") String low,
+                           @JsonProperty("high") String high,
                            @JsonProperty("mathFormula") String mathFormula,
                            @JsonProperty("yAxisMin") int yAxisMin,
                            @JsonProperty("yAxisMax") int yAxisMax,
@@ -56,7 +65,10 @@ public class GraphDataStream {
         this.color = color;
         this.targetId = targetId;
         this.pin = pin;
-        this.function = function;
+        this.functionType = functionType;
+        this.flip = flip;
+        this.low = low;
+        this.high = high;
         this.mathFormula = mathFormula;
         this.yAxisMin = yAxisMin;
         this.yAxisMax = yAxisMax;
