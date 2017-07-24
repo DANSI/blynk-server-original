@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
@@ -119,5 +120,18 @@ public class FileUtils {
 
     public static String csvDownloadUrl(String host, String httpPort) {
         return "http://" + host + ":" + httpPort + "/";
+    }
+
+    public static File getLatestFile(File[] files) {
+        if (files == null || files.length ==0) {
+            return null;
+        }
+        File lastModifiedFile = files[0];
+        for (int i = 1; i < files.length; i++) {
+            if (lastModifiedFile.lastModified() < files[i].lastModified()) {
+                lastModifiedFile = files[i];
+            }
+        }
+        return lastModifiedFile;
     }
 }

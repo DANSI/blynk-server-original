@@ -140,7 +140,11 @@ public class FileManager {
 
                             return Stream.of(user);
                         } catch (IOException ioe) {
-                            log.error("Error parsing file '{}'. Error : {}", file, ioe.getMessage());
+                            String errorMessage = ioe.getMessage();
+                            log.error("Error parsing file '{}'. Error : {}", file, errorMessage);
+                            if (errorMessage != null && errorMessage.contains("Unexpected end-of-input")) {
+                                return restoreFromBackup(file.getName());
+                            }
                         }
                         return Stream.empty();
                     })
@@ -151,6 +155,35 @@ public class FileManager {
 
         log.debug("Reading user DB finished.");
         return temp;
+    }
+
+    private Stream<User> restoreFromBackup(String filename) {
+        log.info("Trying to recover from backup...");
+        try {
+            File[] files = backupDataDir.toFile().listFiles(
+                    (dir, name) -> name.startsWith(filename)
+            );
+
+            File backupFile = FileUtils.getLatestFile(files);
+            if (backupFile == null) {
+                log.info("Didn't find any files for recovery :(.");
+                return Stream.empty();
+            }
+            log.info("Found {}. You are lucky today :).", backupFile.getAbsoluteFile());
+
+            User user = JsonParser.parseUserFromFile(backupFile);
+            makeProfileChanges(user);
+            //profile saver thread is launched after file manager is initialized.
+            //so making sure user profile will be saved
+            //this is not very important as profile will be updated by user anyway.
+            user.lastModifiedTs = System.currentTimeMillis() + 10 * 1000;
+            log.info("Restored.", backupFile.getAbsoluteFile());
+            return Stream.of(user);
+        } catch (Exception e) {
+            //ignore
+            log.error("Restoring from backup failed. {}", e.getMessage());
+        }
+        return Stream.empty();
     }
 
     public static void makeProfileChanges(User user) {
