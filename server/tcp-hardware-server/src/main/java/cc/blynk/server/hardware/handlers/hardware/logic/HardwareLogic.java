@@ -66,7 +66,7 @@ public class HardwareLogic {
             return;
         }
 
-        final int dashId = state.dashId;
+        int dashId = state.dashId;
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
@@ -79,16 +79,16 @@ public class HardwareLogic {
                 return;
             }
 
-            final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
-            final byte pin = ParseUtil.parseByte(splitBody[1]);
-            final String value = splitBody[2];
-            final long now = System.currentTimeMillis();
-            final int deviceId = state.deviceId;
+            PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
+            byte pin = ParseUtil.parseByte(splitBody[1]);
+            String value = splitBody[2];
+            long now = System.currentTimeMillis();
+            int deviceId = state.deviceId;
 
             reportingDao.process(state.user, dashId, deviceId, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);
 
-            final Session session = sessionDao.userSession.get(state.userKey);
+            Session session = sessionDao.userSession.get(state.userKey);
             process(state.user, dash, deviceId, session, pin, pinType, value, now);
 
             if (dash.isActive) {
