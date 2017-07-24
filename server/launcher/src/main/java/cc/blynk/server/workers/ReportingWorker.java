@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,7 +72,7 @@ public class ReportingWorker implements Runnable {
         long nowTruncatedToPeriod = System.currentTimeMillis() / type.period;
 
         ArrayList<AggregationKey> keys = new ArrayList<>(map.keySet());
-        Collections.sort(keys, AggregationKey.AGGREGATION_KEY_COMPARATOR);
+        keys.sort(AggregationKey.AGGREGATION_KEY_COMPARATOR);
 
         Map<AggregationKey, AggregationValue> removedKeys = new HashMap<>();
 
