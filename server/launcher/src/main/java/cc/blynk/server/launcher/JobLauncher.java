@@ -46,7 +46,7 @@ class JobLauncher {
 
         if (holder.sslContextHolder.isAutoGenerationEnabled) {
             scheduler.scheduleAtFixedRate(
-                    new CertificateRenewalWorker(holder.sslContextHolder.acmeClient, 7), 1, 1, TimeUnit.DAYS
+                    new CertificateRenewalWorker(holder.sslContextHolder.acmeClient, 21), 1, 1, TimeUnit.DAYS
             );
         }
 
