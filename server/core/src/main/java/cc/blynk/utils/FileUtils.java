@@ -95,8 +95,10 @@ public class FileUtils {
         int expectedMinimumLength = (count + skip) * SIZE_OF_REPORT_ENTRY;
         int diff = size - expectedMinimumLength;
         int startReadIndex = Math.max(0, diff);
-
         int bufferSize = diff < 0 ? count * SIZE_OF_REPORT_ENTRY + diff : count * SIZE_OF_REPORT_ENTRY;
+        if (bufferSize <= 0) {
+            return null;
+        }
 
         ByteBuffer buf = ByteBuffer.allocate(bufferSize);
 

@@ -855,6 +855,44 @@ public class HistoryGraphTest extends IntegrationBase {
     }
 
     @Test
+    public void testPagingWorksForGetEnhancedHistoryDataFullDataAndSecondPage() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+
+        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.MINUTE));
+
+        try (DataOutputStream dos = new DataOutputStream(
+                Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
+            for (int i = 1; i <= 120; i++) {
+                dos.writeDouble(i);
+                dos.writeLong(i * 1000);
+            }
+            dos.flush();
+        }
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        Pin pin = new Pin((byte) 8, PinType.DIGITAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, null, null, null, 0, 0, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 ONE_HOUR 5"));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
+    }
+
+    @Test
     public void testPagingWorksForGetEnhancedHistoryDataWhenNoData() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 

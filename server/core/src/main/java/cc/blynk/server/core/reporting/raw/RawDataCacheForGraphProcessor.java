@@ -52,6 +52,9 @@ public class RawDataCacheForGraphProcessor {
         int diff = size - expectedMinimumLength;
         int startReadIndex = Math.max(0, diff);
         int expectedResultSize = diff < 0 ? count + diff : count;
+        if (expectedResultSize <= 0) {
+            return null;
+        }
 
         ByteBuffer byteBuffer = ByteBuffer.allocate(expectedResultSize * SIZE_OF_REPORT_ENTRY);
 

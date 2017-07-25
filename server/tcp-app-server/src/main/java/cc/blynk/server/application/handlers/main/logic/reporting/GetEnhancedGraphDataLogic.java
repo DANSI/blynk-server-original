@@ -108,7 +108,7 @@ public class GetEnhancedGraphDataLogic {
             } catch (NoDataException noDataException) {
                 channel.writeAndFlush(makeResponse(msgId, NO_DATA), channel.voidPromise());
             } catch (Exception e) {
-                log.error("Error reading reporting data. For user {}", user.email);
+                log.error("Error reading reporting data. For user {}. Error: {}", user.email, e.getMessage());
                 channel.writeAndFlush(makeResponse(msgId, SERVER_ERROR), channel.voidPromise());
             }
         });
