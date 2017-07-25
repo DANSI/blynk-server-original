@@ -69,7 +69,7 @@ public class DashBoard {
     @JsonDeserialize(keyUsing = PinStorageKeyDeserializer.class)
     public Map<PinStorageKey, String> pinsStorage = Collections.emptyMap();
 
-    public void update(final int deviceId, final byte pin, final PinType type, final String value, final long now) {
+    public void update(int deviceId, byte pin, PinType type, String value, long now) {
         boolean hasWidget = false;
         for (Widget widget : widgets) {
             if (widget.updateIfSame(deviceId, pin, type, value)) {
