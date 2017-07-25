@@ -2,12 +2,13 @@ package cc.blynk.server.core.reporting.raw;
 
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.reporting.GraphPinRequest;
-import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.structure.LimitedArrayDeque;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static cc.blynk.utils.FileUtils.SIZE_OF_REPORT_ENTRY;
 
 /**
  * Raw data storage for graph LIVE stream.
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RawDataCacheForGraphProcessor {
 
-    private static final int GRAPH_CACHE_SIZE = 60;
+    private static final int GRAPH_CACHE_SIZE = 2 * 60;
 
     private final Map<BaseReportingKey, LimitedArrayDeque<GraphValue>> rawStorage;
 
@@ -38,18 +39,31 @@ public class RawDataCacheForGraphProcessor {
     public ByteBuffer getLiveGraphData(User user, GraphPinRequest graphPinRequest) {
         LimitedArrayDeque<GraphValue> cache = rawStorage.get(new BaseReportingKey(user, graphPinRequest));
 
-        if (cache != null) {
-            return toByteBuffer(cache);
+        if (cache != null && cache.size() > graphPinRequest.skipCount) {
+            return toByteBuffer(cache, graphPinRequest.count, graphPinRequest.skipCount);
         }
 
         return null;
     }
 
-    private ByteBuffer toByteBuffer(LimitedArrayDeque<GraphValue> cache) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(cache.size() * FileUtils.SIZE_OF_REPORT_ENTRY);
+    private ByteBuffer toByteBuffer(LimitedArrayDeque<GraphValue> cache, int count, int skipCount) {
+        int size = cache.size();
+        int expectedMinimumLength = count + skipCount;
+        int diff = size - expectedMinimumLength;
+        int startReadIndex = Math.max(0, diff);
+        int expectedResultSize = diff < 0 ? count + diff : count;
+
+        ByteBuffer byteBuffer = ByteBuffer.allocate(expectedResultSize * SIZE_OF_REPORT_ENTRY);
+
+        int i = 0;
+        int counter = 0;
         for (GraphValue graphValue : cache) {
-            byteBuffer.putDouble(graphValue.value)
-                    .putLong(graphValue.ts);
+            if (startReadIndex <= i && counter < expectedResultSize) {
+                counter++;
+                byteBuffer.putDouble(graphValue.value)
+                        .putLong(graphValue.ts);
+            }
+            i++;
         }
         return byteBuffer;
     }

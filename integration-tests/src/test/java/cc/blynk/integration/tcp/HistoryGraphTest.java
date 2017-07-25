@@ -706,6 +706,47 @@ public class HistoryGraphTest extends IntegrationBase {
             assertEquals(i, bb.getDouble(), 0.1);
             assertEquals(System.currentTimeMillis(), bb.getLong(), 10000);
         }
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE 1"));
+
+        objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        graphDataResponse = objectArgumentCaptor.getValue();
+
+        assertNotNull(graphDataResponse);
+        decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(1, bb.getInt());
+        assertEquals(111D, bb.getDouble(), 0.1);
+        assertEquals(System.currentTimeMillis(), bb.getLong(), 5000);
+
+        for (int i = 300; i < 420; i++) {
+            clientPair.hardwareClient.send("hardware vw 88 " + i);
+        }
+
+        verify(clientPair.appClient.responseMock, timeout(5000)).channelRead(any(), eq(new HardwareMessage(181, b("1 vw 88 419"))));
+        clientPair.appClient.reset();
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE 1"));
+
+        objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        graphDataResponse = objectArgumentCaptor.getValue();
+
+        assertNotNull(graphDataResponse);
+        decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(60, bb.getInt());
+        for (int i = 300; i < 360; i++) {
+            assertEquals(i, bb.getDouble(), 0.1);
+            assertEquals(System.currentTimeMillis(), bb.getLong(), 10000);
+        }
+
+
     }
 
 

@@ -5,7 +5,7 @@ package cc.blynk.server.core.reporting.raw;
  * Created by Dmitriy Dumanskiy.
  * Created on 20.07.17.
  */
-public class GraphValue {
+public final class GraphValue {
 
     public final double value;
 
