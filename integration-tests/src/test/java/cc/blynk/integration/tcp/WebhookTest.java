@@ -224,6 +224,45 @@ public class WebhookTest extends IntegrationBase {
     }
 
     @Test
+    public void testWebhookWorksWithBlynkHttpApiWithArray10PlaceholdersInURL() throws Exception {
+        WebHook webHook = new WebHook();
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124?" +
+                "value=/pin[0]/" +
+                "&value=/pin[1]/" +
+                "&value=/pin[2]/" +
+                "&value=/pin[3]/" +
+                "&value=/pin[4]/" +
+                "&value=/pin[5]/" +
+                "&value=/pin[6]/" +
+                "&value=/pin[7]/" +
+                "&value=/pin[8]/" +
+                "&value=/pin[9]/";
+
+        webHook.method = GET;
+        webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
+        webHook.pin = 123;
+        webHook.pinType = PinType.VIRTUAL;
+        webHook.width = 2;
+        webHook.height = 1;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("hardware vw 123 " + b("0 1 2 3 4 5 6 7 8 9"));
+        verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
+
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Response response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        List<String> values = consumeJsonPinValues(response.getResponseBody());
+        assertEquals(10, values.size());
+        for (int i = 0; i < 10; i++) {
+            assertEquals("" + i, values.get(i));
+        }
+    }
+
+    @Test
     public void testWebhookWorksWithBlynkHttpApiWithDateTimePlaceholder() throws Exception {
         WebHook webHook = new WebHook();
         webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
