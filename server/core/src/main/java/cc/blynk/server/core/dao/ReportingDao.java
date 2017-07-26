@@ -19,7 +19,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -90,7 +89,7 @@ public class ReportingDao implements Closeable {
         if (Files.exists(userDataFile)) {
             try {
                 return FileUtils.read(userDataFile, count, skipCount);
-            } catch (IOException ioe) {
+            } catch (Exception ioe) {
                 log.error(ioe);
             }
         }
@@ -148,15 +147,20 @@ public class ReportingDao implements Closeable {
     }
 
     public ByteBuffer getByteBufferFromDisk(User user, GraphPinRequest graphPinRequest) {
-        if (graphPinRequest.isTag) {
-            return getDataForTag(user, graphPinRequest);
-        } else {
-            return getByteBufferFromDisk(user,
-                    graphPinRequest.dashId, graphPinRequest.deviceId,
-                    graphPinRequest.pinType, graphPinRequest.pin,
-                    graphPinRequest.count, graphPinRequest.type,
-                    graphPinRequest.skipCount
-            );
+        try {
+            if (graphPinRequest.isTag) {
+                return getDataForTag(user, graphPinRequest);
+            } else {
+                return getByteBufferFromDisk(user,
+                        graphPinRequest.dashId, graphPinRequest.deviceId,
+                        graphPinRequest.pinType, graphPinRequest.pin,
+                        graphPinRequest.count, graphPinRequest.type,
+                        graphPinRequest.skipCount
+                );
+            }
+        } catch (Exception e) {
+            log.error("Error getting data from disk.", e);
+            return null;
         }
     }
 
