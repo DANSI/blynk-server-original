@@ -606,6 +606,56 @@ public class HistoryGraphTest extends IntegrationBase {
     }
 
     @Test
+    public void testGetGraphDataForEnhancedGraphFor2Streams() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+
+        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.MINUTE));
+
+        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        Pin pin = new Pin((byte) 8, PinType.DIGITAL);
+        Pin pin2 = new Pin((byte) 9, PinType.DIGITAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, null, null, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, pin2, null, 0, null, null, null, 0, 0, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream,
+                graphDataStream2
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+
+        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(2, bb.getInt());
+        assertEquals(1.11D, bb.getDouble(), 0.1);
+        assertEquals(1111111, bb.getLong());
+        assertEquals(1.22D, bb.getDouble(), 0.1);
+        assertEquals(2222222, bb.getLong());
+        assertEquals(0, bb.getInt());
+    }
+
+    @Test
     public void testGetGraphDataForEnhancedGraphWithWrongDataStream() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
