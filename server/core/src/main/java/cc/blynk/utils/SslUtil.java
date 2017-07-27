@@ -1,5 +1,6 @@
 package cc.blynk.utils;
 
+import io.netty.handler.ssl.OpenSsl;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
@@ -43,8 +44,8 @@ public class SslUtil {
         }
     }
 
-    public static SslProvider fetchSslProvider(ServerProperties props) {
-        return props.getBoolProperty("enable.native.openssl") ? SslProvider.OPENSSL : SslProvider.JDK;
+    public static SslProvider fetchSslProvider() {
+        return OpenSsl.isAvailable() ? SslProvider.OPENSSL : SslProvider.JDK;
     }
 
     public static SslContext build(SslProvider sslProvider) throws CertificateException, SSLException {

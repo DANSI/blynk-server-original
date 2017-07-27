@@ -4,6 +4,7 @@ import cc.blynk.server.acme.AcmeClient;
 import cc.blynk.server.acme.ContentHolder;
 import cc.blynk.utils.ServerProperties;
 import cc.blynk.utils.SslUtil;
+import io.netty.handler.ssl.OpenSsl;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslProvider;
 import org.apache.logging.log4j.LogManager;
@@ -67,15 +68,18 @@ public class SslContextHolder {
             }
         }
 
-        SslProvider sslProvider = SslUtil.fetchSslProvider(props);
+        if (OpenSsl.isAvailable()) {
+            log.info("Using native openSSL provider.");
+        }
+        SslProvider sslProvider = SslUtil.fetchSslProvider();
         this.sslCtx = SslUtil.initSslContext(certPath, keyPath, keyPass, sslProvider, true);
     }
 
-    public void regenerate(ServerProperties props) {
+    public void regenerate() {
         String certPath = AcmeClient.DOMAIN_CHAIN_FILE.getAbsolutePath();
         String keyPath = AcmeClient.DOMAIN_KEY_FILE.getAbsolutePath();
 
-        SslProvider sslProvider = SslUtil.fetchSslProvider(props);
+        SslProvider sslProvider = SslUtil.fetchSslProvider();
         this.sslCtx = SslUtil.initSslContext(certPath, keyPath, null, sslProvider, true);
     }
 
@@ -85,7 +89,7 @@ public class SslContextHolder {
             try {
                 if (this.acmeClient.requestCertificate()) {
                     System.out.println("Success! The certificate for your domain " + props.getProperty("server.host") + " has been generated!");
-                    regenerate(props);
+                    regenerate();
                 }
             } catch (Exception e) {
                 System.out.println("Error during certificate generation.");

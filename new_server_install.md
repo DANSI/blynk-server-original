@@ -14,7 +14,6 @@ server.properties
         data.folder=./data
         logs.folder=./logs
         log.level=info
-        enable.native.openssl=true
         enable.db=true
         admin.rootPath=/admin
         allowed.administrator.ips=

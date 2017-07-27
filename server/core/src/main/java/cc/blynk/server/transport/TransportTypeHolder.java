@@ -31,15 +31,11 @@ public class TransportTypeHolder implements Closeable {
 
     public TransportTypeHolder(ServerProperties serverProperties) {
         this(serverProperties.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors() * 2));
-
-        if (serverProperties.getBoolProperty("enable.native.openssl")) {
-            log.info("Using native openSSL provider.");
-        }
     }
 
     private TransportTypeHolder(int workerThreads) {
         if (Epoll.isAvailable()) {
-            log.warn("Using native epoll transport.");
+            log.info("Using native epoll transport.");
             bossGroup = new EpollEventLoopGroup(1);
             workerGroup = new EpollEventLoopGroup(workerThreads);
             channelClass = EpollServerSocketChannel.class;
