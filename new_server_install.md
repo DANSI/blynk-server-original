@@ -18,6 +18,7 @@ server.properties
         enable.native.openssl=true
         enable.db=true
         admin.rootPath=/admin
+        allowed.administrator.ips=
         server.host=xxx.blynk.cc
         contact.email=xxx@blynk.cc
         region=xxx
