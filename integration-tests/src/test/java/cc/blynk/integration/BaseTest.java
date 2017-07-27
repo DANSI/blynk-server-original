@@ -8,7 +8,6 @@ import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -78,12 +77,6 @@ public abstract class BaseTest {
     @BeforeClass
     public static void initProps() {
         properties = new ServerProperties(Collections.emptyMap());
-
-        //disable native linux epoll transport for non linux envs.
-        if (!SystemUtils.IS_OS_LINUX) {
-            System.out.println("WARNING : DISABLING NATIVE EPOLL TRANSPORT. SYSTEM : " + SystemUtils.OS_NAME);
-            properties.put("enable.native.epoll.transport", false);
-        }
 
         tcpAppPort = properties.getIntProperty("app.ssl.port");
         tcpHardPort = properties.getIntProperty("hardware.default.port");

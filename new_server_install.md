@@ -14,7 +14,6 @@ server.properties
         data.folder=./data
         logs.folder=./logs
         log.level=info
-        enable.native.epoll.transport=true
         enable.native.openssl=true
         enable.db=true
         admin.rootPath=/admin

@@ -9,7 +9,6 @@ import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.workers.CertificateRenewalWorker;
 import cc.blynk.utils.ServerProperties;
-import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -42,11 +41,6 @@ public class AcmeTest extends BaseTest {
     @Before
     public void init() throws Exception {
         ServerProperties properties2 = new ServerProperties("no_certs.properties");
-        //disable native linux epoll transport for non linux envs.
-        if (!SystemUtils.IS_OS_LINUX) {
-            System.out.println("WARNING : DISABLING NATIVE EPOLL TRANSPORT. SYSTEM : " + SystemUtils.OS_NAME);
-            properties2.put("enable.native.epoll.transport", false);
-        }
         this.holder2 = new Holder(properties2, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "no-db.properties");
         httpServer = new HttpAPIServer(holder2).start();
     }
