@@ -256,27 +256,27 @@ public class ReadingWorkflowTest extends IntegrationBase {
         device2 = JsonParser.parseDevice(createdDevice);
         assertNotNull(device2);
         assertNotNull(device2.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device2.toString())));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new CreateDevice(1, device2.toString())));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
         hardClient2.send("login " + device2.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
         clientPair.appClient.reset();
 
 
         clientPair.appClient.send("createWidget 1\0{\"id\":155, \"deviceId\":0, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":156, \"deviceId\":2, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":101}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.stop().await();
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 500, TimeUnit.MILLISECONDS);
 
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
-        verify(hardClient2.responseMock, after(500).never()).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 101"))));
+        verify(clientPair.hardwareClient.responseMock, after(1000).never()).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 100"))));
+        verify(hardClient2.responseMock, after(1000).never()).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 101"))));
     }
 
 }
