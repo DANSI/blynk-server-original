@@ -17,9 +17,9 @@ import java.util.List;
  */
 public class RedeemDBDao {
 
-    public static final String selectRedeemToken = "SELECT * from redeem where token = ?";
-    public static final String updateRedeemToken = "UPDATE redeem SET email = ?, version = 2, isRedeemed = true, ts = NOW() WHERE token = ? and version = 1";
-    public static final String insertRedeemToken = "INSERT INTO redeem (token, company, reward) values (?, ?, ?)";
+    private static final String selectRedeemToken = "SELECT * from redeem where token = ?";
+    private static final String updateRedeemToken = "UPDATE redeem SET email = ?, version = 2, isRedeemed = true, ts = NOW() WHERE token = ? and version = 1";
+    private static final String insertRedeemToken = "INSERT INTO redeem (token, company, reward) values (?, ?, ?)";
 
     private static final Logger log = LogManager.getLogger(RedeemDBDao.class);
     private final HikariDataSource ds;
@@ -31,24 +31,20 @@ public class RedeemDBDao {
     public Redeem selectRedeemByToken(String token) throws Exception {
         log.info("Redeem select for {}", token);
 
-        ResultSet rs = null;
         try (Connection connection = ds.getConnection();
              PreparedStatement statement = connection.prepareStatement(selectRedeemToken)) {
 
             statement.setString(1, token);
-            rs = statement.executeQuery();
-            connection.commit();
 
-            if (rs.next()) {
-                return new Redeem(rs.getString("token"), rs.getString("company"),
-                        rs.getBoolean("isRedeemed"), rs.getString("email"),
-                        rs.getInt("reward"), rs.getInt("version"),
-                        rs.getDate("ts")
-                );
-            }
-        } finally {
-            if (rs != null) {
-                rs.close();
+            try (ResultSet rs = statement.executeQuery()) {
+                connection.commit();
+                if (rs.next()) {
+                    return new Redeem(rs.getString("token"), rs.getString("company"),
+                            rs.getBoolean("isRedeemed"), rs.getString("email"),
+                            rs.getInt("reward"), rs.getInt("version"),
+                            rs.getDate("ts")
+                    );
+                }
             }
         }
 

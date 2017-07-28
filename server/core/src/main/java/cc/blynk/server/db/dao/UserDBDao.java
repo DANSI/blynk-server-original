@@ -21,9 +21,9 @@ import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
  */
 public class UserDBDao {
 
-    public static final String upsertUser = "INSERT INTO users (email, appName, region, name, pass, last_modified, last_logged, last_logged_ip, is_facebook_user, is_super_admin, energy, json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email, appName) DO UPDATE SET pass = EXCLUDED.pass, name = EXCLUDED.name, last_modified = EXCLUDED.last_modified, last_logged = EXCLUDED.last_logged, last_logged_ip = EXCLUDED.last_logged_ip, is_facebook_user = EXCLUDED.is_facebook_user, is_super_admin = EXCLUDED.is_super_admin, energy = EXCLUDED.energy, json = EXCLUDED.json, region = EXCLUDED.region";
-    public static final String selectAllUsers = "SELECT * from users where region = ?";
-    public static final String deleteUser = "DELETE FROM users WHERE email = ? AND appName = ?";
+    private static final String upsertUser = "INSERT INTO users (email, appName, region, name, pass, last_modified, last_logged, last_logged_ip, is_facebook_user, is_super_admin, energy, json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email, appName) DO UPDATE SET pass = EXCLUDED.pass, name = EXCLUDED.name, last_modified = EXCLUDED.last_modified, last_logged = EXCLUDED.last_logged, last_logged_ip = EXCLUDED.last_logged_ip, is_facebook_user = EXCLUDED.is_facebook_user, is_super_admin = EXCLUDED.is_super_admin, energy = EXCLUDED.energy, json = EXCLUDED.json, region = EXCLUDED.region";
+    private static final String selectAllUsers = "SELECT * from users where region = ?";
+    private static final String deleteUser = "DELETE FROM users WHERE email = ? AND appName = ?";
 
     private static final Logger log = LogManager.getLogger(UserDBDao.class);
     private final HikariDataSource ds;
@@ -33,61 +33,52 @@ public class UserDBDao {
     }
 
     public int getDBVersion() throws Exception {
-        ResultSet rs = null;
-        int dbVersion = 0;
+        int dbVersion;
         try (Connection connection = ds.getConnection();
              Statement statement = connection.createStatement()) {
 
-            rs = statement.executeQuery("SELECT current_setting('server_version_num')");
-            rs.next();
-            dbVersion = rs.getInt(1);
-            connection.commit();
-        } finally {
-            if (rs != null) {
-                rs.close();
+            try (ResultSet rs = statement.executeQuery("SELECT current_setting('server_version_num')")) {
+                rs.next();
+                dbVersion = rs.getInt(1);
+                connection.commit();
             }
         }
         return dbVersion;
     }
 
     public ConcurrentMap<UserKey, User> getAllUsers(String region) throws Exception {
-        ResultSet rs = null;
         ConcurrentMap<UserKey, User> users = new ConcurrentHashMap<>();
 
         try (Connection connection = ds.getConnection();
              PreparedStatement statement = connection.prepareStatement(selectAllUsers)) {
 
             statement.setString(1, region);
-            rs = statement.executeQuery();
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    User user = new User();
 
-            while (rs.next()) {
-                User user = new User();
+                    Timestamp t;
+                    user.email = rs.getString("email");
+                    user.appName = rs.getString("appName");
+                    user.region = rs.getString("region");
+                    user.name = rs.getString("name");
+                    user.pass = rs.getString("pass");
 
-                Timestamp t;
-                user.email = rs.getString("email");
-                user.appName = rs.getString("appName");
-                user.region = rs.getString("region");
-                user.name = rs.getString("name");
-                user.pass = rs.getString("pass");
+                    t = rs.getTimestamp("last_modified", UTC_CALENDAR);
+                    user.lastModifiedTs = t == null ? 0 : t.getTime();
 
-                t = rs.getTimestamp("last_modified", UTC_CALENDAR);
-                user.lastModifiedTs = t == null ? 0 : t.getTime();
+                    t = rs.getTimestamp("last_logged", UTC_CALENDAR);
+                    user.lastLoggedAt = t == null ? 0 : t.getTime();
 
-                t = rs.getTimestamp("last_logged", UTC_CALENDAR);
-                user.lastLoggedAt = t == null ? 0 : t.getTime();
+                    user.lastLoggedIP = rs.getString("last_logged_ip");
+                    user.isFacebookUser = rs.getBoolean("is_facebook_user");
+                    user.isSuperAdmin = rs.getBoolean("is_super_admin");
+                    user.energy = rs.getInt("energy");
+                    user.profile = JsonParser.parseProfileFromString(rs.getString("json"));
 
-                user.lastLoggedIP = rs.getString("last_logged_ip");
-                user.isFacebookUser = rs.getBoolean("is_facebook_user");
-                user.isSuperAdmin = rs.getBoolean("is_super_admin");
-                user.energy = rs.getInt("energy");
-                user.profile = JsonParser.parseProfileFromString(rs.getString("json"));
-
-                users.put(new UserKey(user), user);
-            }
-            connection.commit();
-        } finally {
-            if (rs != null) {
-                rs.close();
+                    users.put(new UserKey(user), user);
+                }
+                connection.commit();
             }
         }
 

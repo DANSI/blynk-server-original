@@ -16,9 +16,9 @@ import java.sql.ResultSet;
  */
 public class FlashedTokensDBDao {
 
-    public static final String selectToken = "SELECT * from flashed_tokens where token = ?";
-    public static final String activateToken = "UPDATE flashed_tokens SET is_activated = true, ts = NOW() WHERE token = ?";
-    public static final String insertToken = "INSERT INTO flashed_tokens (token, app_name, email, project_id, device_id) values (?, ?, ?, ?, ?)";
+    private static final String selectToken = "SELECT * from flashed_tokens where token = ?";
+    private static final String activateToken = "UPDATE flashed_tokens SET is_activated = true, ts = NOW() WHERE token = ?";
+    private static final String insertToken = "INSERT INTO flashed_tokens (token, app_name, email, project_id, device_id) values (?, ?, ?, ?, ?)";
 
     private static final Logger log = LogManager.getLogger(FlashedTokensDBDao.class);
     private final HikariDataSource ds;
@@ -30,30 +30,23 @@ public class FlashedTokensDBDao {
     public FlashedToken selectFlashedToken(String token) {
         log.info("Select flashed token {}.", token);
 
-        ResultSet rs = null;
         try (Connection connection = ds.getConnection();
              PreparedStatement statement = connection.prepareStatement(selectToken)) {
 
             statement.setString(1, token);
-            rs = statement.executeQuery();
-            connection.commit();
 
-            if (rs.next()) {
-                return new FlashedToken(rs.getString("token"), rs.getString("app_name"),
-                        rs.getString("email"), rs.getInt("project_id"), rs.getInt("device_id"),
-                        rs.getBoolean("is_activated"), rs.getDate("ts")
-                );
+            try (ResultSet rs = statement.executeQuery()) {
+                connection.commit();
+
+                if (rs.next()) {
+                    return new FlashedToken(rs.getString("token"), rs.getString("app_name"),
+                            rs.getString("email"), rs.getInt("project_id"), rs.getInt("device_id"),
+                            rs.getBoolean("is_activated"), rs.getDate("ts")
+                    );
+                }
             }
         } catch (Exception e) {
             log.error("Error getting flashed token.", e);
-        } finally {
-            if (rs != null) {
-                 try {
-                     rs.close();
-                 } catch (Exception e) {
-                     //ignore
-                 }
-            }
         }
 
         return null;
