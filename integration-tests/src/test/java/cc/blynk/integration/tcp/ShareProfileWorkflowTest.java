@@ -102,10 +102,8 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         Notification notification = profile.dashBoards[0].getWidgetByType(Notification.class);
         clearPrivateData(notification);
 
-        //one field update, cause it is hard to compare.
         profile.dashBoards[0].updatedAt = serverDash.updatedAt;
-        assertNotNull(serverDash.sharedToken);
-        serverDash.sharedToken = null;
+        assertNull(serverDash.sharedToken);
         //todo fix
         serverDash.devices = null;
         profile.dashBoards[0].devices = null;
@@ -568,11 +566,10 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         //one field update, cause it is hard to compare.
         DashBoard temp = JsonParser.parseDashboard(dashboard);
         profile.dashBoards[0].updatedAt = temp.updatedAt;
-        assertNotNull(serverDash.sharedToken);
+        assertNull(serverDash.sharedToken);
 
         //todo fix
         serverDash.devices = null;
-        serverDash.sharedToken = null;
         profile.dashBoards[0].devices = null;
 
         assertEquals(profile.dashBoards[0].toString(), serverDash.toString());
