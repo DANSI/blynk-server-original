@@ -76,6 +76,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final GetProjectByTokenLogic getProjectByTokenLogic;
     private final MailQRsLogic mailQRsLogic;
     private final UpdateFaceLogic updateFaceLogic;
+    private final GetCloneCodeLogic getCloneCodeLogic;
+    private final GetProjectByClonedTokenLogic getProjectByCloneCodeLogic;
 
     private final GlobalStats stats;
 
@@ -120,6 +122,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.getProjectByTokenLogic = new GetProjectByTokenLogic(holder);
         this.mailQRsLogic = new MailQRsLogic(holder);
         this.updateFaceLogic = new UpdateFaceLogic(holder);
+
+        this.getCloneCodeLogic = new GetCloneCodeLogic(holder);
+        this.getProjectByCloneCodeLogic = new GetProjectByClonedTokenLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -257,6 +262,12 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case UPDATE_FACE :
                 updateFaceLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case GET_CLONE_CODE :
+                getCloneCodeLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case GET_PROJECT_BY_CLONE_CODE :
+                getProjectByCloneCodeLogic.messageReceived(ctx, msg);
                 break;
         }
     }

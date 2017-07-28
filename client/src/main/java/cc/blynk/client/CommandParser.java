@@ -128,6 +128,10 @@ public class CommandParser {
                 return EMAIL_QR;
             case "updateface" :
                 return UPDATE_FACE;
+            case "getclonecode" :
+                return GET_CLONE_CODE;
+            case "getprojectbyclonecode" :
+                return GET_PROJECT_BY_CLONE_CODE;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

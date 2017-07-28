@@ -9,7 +9,8 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class GlobalStats {
 
-    private static final int LAST_COMMAND_INDEX = 72 + 2;
+    //right now we have less than 100 commands
+    private static final int LAST_COMMAND_INDEX = 100;
 
     private static final int APP_STAT_COUNTER_INDEX = LAST_COMMAND_INDEX - 1;
     private static final int MQTT_STAT_COUNTER_INDEX = LAST_COMMAND_INDEX - 2;

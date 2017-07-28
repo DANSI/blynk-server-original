@@ -39,6 +39,13 @@ CREATE TABLE flashed_tokens (
   PRIMARY KEY(token, app_name)
 );
 
+CREATE TABLE cloned_projects (
+  token character(32),
+  ts timestamp,
+  json text,
+  PRIMARY KEY(token)
+);
+
 CREATE TABLE purchase (
   email text,
   reward integer NOT NULL,

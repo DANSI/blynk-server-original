@@ -144,6 +144,10 @@ public class MessageFactory {
                 return new EmailQRsMessage(messageId, body);
             case UPDATE_FACE :
                 return new UpdateFaceMessage(messageId, body);
+            case GET_CLONE_CODE :
+                return new GetCloneCodeMessage(messageId, body);
+            case GET_PROJECT_BY_CLONE_CODE :
+                return new GetProjectByCloneCodeStringMessage(messageId, body);
 
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);
         }

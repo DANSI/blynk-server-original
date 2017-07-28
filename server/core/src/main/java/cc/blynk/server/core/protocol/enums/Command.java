@@ -96,18 +96,21 @@ public final class Command {
     public static final short GET_ENHANCED_GRAPH_DATA = 60;
     public static final short DELETE_ENHANCED_GRAPH_DATA = 61;
 
+    public static final short GET_CLONE_CODE = 62;
+    public static final short GET_PROJECT_BY_CLONE_CODE = 63;
+
 
     //http codes. Used only for stats
-    public static final short HTTP_IS_HARDWARE_CONNECTED = 62;
-    public static final short HTTP_IS_APP_CONNECTED = 63;
-    public static final short HTTP_GET_PIN_DATA = 64;
-    public static final short HTTP_UPDATE_PIN_DATA = 65;
-    public static final short HTTP_NOTIFY = 66;
-    public static final short HTTP_EMAIL = 67;
-    public static final short HTTP_GET_PROJECT = 68;
-    public static final short HTTP_QR = 69;
-    public static final short HTTP_GET_HISTORY_DATA = 70;
-    public static final short HTTP_TOTAL = 71;
+    public static final short HTTP_IS_HARDWARE_CONNECTED = 82;
+    public static final short HTTP_IS_APP_CONNECTED = 83;
+    public static final short HTTP_GET_PIN_DATA = 84;
+    public static final short HTTP_UPDATE_PIN_DATA = 85;
+    public static final short HTTP_NOTIFY = 86;
+    public static final short HTTP_EMAIL = 87;
+    public static final short HTTP_GET_PROJECT = 88;
+    public static final short HTTP_QR = 89;
+    public static final short HTTP_GET_HISTORY_DATA = 90;
+    public static final short HTTP_TOTAL = 91;
 
 
     //all this code just to make logging more user-friendly
@@ -174,6 +177,9 @@ public final class Command {
                 put(GET_PROJECT_BY_TOKEN, "GetProjectByToken");
                 put(EMAIL_QR, "MailQRs");
                 put(UPDATE_FACE, "UpdateFace");
+
+                put(GET_CLONE_CODE, "GetCloneCode");
+                put(GET_PROJECT_BY_CLONE_CODE, "GetProjectByCloneCode");
 
                 put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
                 put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");

@@ -38,11 +38,13 @@ public class DBManager implements Closeable {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final boolean cleanOldReporting;
+
     public UserDBDao userDBDao;
-    protected ReportingDBDao reportingDBDao;
-    protected RedeemDBDao redeemDBDao;
-    protected PurchaseDBDao purchaseDBDao;
-    protected FlashedTokensDBDao flashedTokensDBDao;
+    ReportingDBDao reportingDBDao;
+    RedeemDBDao redeemDBDao;
+    PurchaseDBDao purchaseDBDao;
+    FlashedTokensDBDao flashedTokensDBDao;
+    CloneProjectDBDao cloneProjectDBDao;
 
     public DBManager(BlockingIOProcessor blockingIOProcessor, boolean isEnabled) {
         this(DB_PROPERTIES_FILENAME, blockingIOProcessor, isEnabled);
@@ -93,6 +95,7 @@ public class DBManager implements Closeable {
         this.redeemDBDao = new RedeemDBDao(hikariDataSource);
         this.purchaseDBDao = new PurchaseDBDao(hikariDataSource);
         this.flashedTokensDBDao = new FlashedTokensDBDao(hikariDataSource);
+        this.cloneProjectDBDao = new CloneProjectDBDao(hikariDataSource);
         this.cleanOldReporting = serverProperties.getBoolProperty("clean.reporting");
 
         checkDBVersion();
@@ -197,11 +200,25 @@ public class DBManager implements Closeable {
         return false;
     }
 
-
     public void insertPurchase(Purchase purchase) {
         if (isDBEnabled()) {
             purchaseDBDao.insertPurchase(purchase);
         }
+    }
+
+    public boolean insertClonedProject(String token, String projectJson) throws Exception {
+        if (isDBEnabled()) {
+            cloneProjectDBDao.insertClonedProject(token, projectJson);
+            return true;
+        }
+        return false;
+    }
+
+    public String selectClonedProject(String token) throws Exception {
+        if (isDBEnabled()) {
+            return cloneProjectDBDao.selectClonedProjectByToken(token);
+        }
+        return null;
     }
 
     public boolean isDBEnabled() {

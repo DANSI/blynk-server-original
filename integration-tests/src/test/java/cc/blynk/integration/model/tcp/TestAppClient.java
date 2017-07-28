@@ -6,6 +6,7 @@ import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetProjectByCloneCodeBinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetProjectByTokenBinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -63,6 +64,8 @@ public class TestAppClient extends AppClient {
         } else if (messageBase instanceof LoadProfileGzippedBinaryMessage) {
             return new String(ByteUtils.decompress(messageBase.getBytes()));
         } else if (messageBase instanceof GetProjectByTokenBinaryMessage) {
+            return new String(ByteUtils.decompress(messageBase.getBytes()));
+        } else if (messageBase instanceof GetProjectByCloneCodeBinaryMessage) {
             return new String(ByteUtils.decompress(messageBase.getBytes()));
         }
 
