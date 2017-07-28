@@ -16,7 +16,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <argLine>-Dio.netty.leakDetection.level=paranoid</argLine>
+                    <argLine>-Dio.netty.leakDetection.level=advanced</argLine>
                 </configuration>
             </plugin>
         </plugins>
