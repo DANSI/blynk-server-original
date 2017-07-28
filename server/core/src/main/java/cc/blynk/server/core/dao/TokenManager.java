@@ -74,13 +74,13 @@ public class TokenManager {
     }
 
     public String refreshToken(User user, int dashId, int deviceId) {
-        final String newToken = TokenGeneratorUtil.generateNewToken();
+        String newToken = TokenGeneratorUtil.generateNewToken();
         assignToken(user, dashId, deviceId, newToken);
         return newToken;
     }
 
     public String refreshSharedToken(User user, DashBoard dash) {
-        final String newToken = TokenGeneratorUtil.generateNewToken();
+        String newToken = TokenGeneratorUtil.generateNewToken();
         sharedTokenManager.assignToken(user, dash, newToken);
         return newToken;
     }
