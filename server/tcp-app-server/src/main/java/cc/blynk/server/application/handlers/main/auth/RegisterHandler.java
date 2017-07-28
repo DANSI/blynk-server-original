@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static cc.blynk.server.core.protocol.enums.Response.USER_ALREADY_REGISTERED;
 import static cc.blynk.utils.BlynkByteBufUtil.*;
 
 /**
@@ -92,7 +91,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         if (userDao.isUserExists(email, appName)) {
             log.warn("User with email {} already exists.", email);
-            ctx.writeAndFlush(makeResponse(message.id, USER_ALREADY_REGISTERED), ctx.voidPromise());
+            ctx.writeAndFlush(alreadyRegistered(message.id), ctx.voidPromise());
             return;
         }
 
