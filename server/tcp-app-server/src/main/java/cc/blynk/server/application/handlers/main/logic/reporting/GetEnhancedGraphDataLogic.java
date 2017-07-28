@@ -20,10 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
-import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
-import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
-import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.*;
 import static cc.blynk.utils.ByteUtils.compress;
 
 /**
@@ -72,7 +69,7 @@ public class GetEnhancedGraphDataLogic {
         int numberOfStreams = enhancedHistoryGraph.dataStreams.length;
         if (numberOfStreams == 0) {
             log.debug("No data streams for enhanced graph with id {}.", widgetId);
-            ctx.writeAndFlush(makeResponse(message.id, NO_DATA), ctx.voidPromise());
+            ctx.writeAndFlush(noData(message.id), ctx.voidPromise());
             return;
         }
 
@@ -106,10 +103,10 @@ public class GetEnhancedGraphDataLogic {
                     channel.writeAndFlush(makeBinaryMessage(GET_ENHANCED_GRAPH_DATA, msgId, compressed), channel.voidPromise());
                 }
             } catch (NoDataException noDataException) {
-                channel.writeAndFlush(makeResponse(msgId, NO_DATA), channel.voidPromise());
+                channel.writeAndFlush(noData(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error reading reporting data. For user {}. Error: {}", user.email, e.getMessage());
-                channel.writeAndFlush(makeResponse(msgId, SERVER_ERROR), channel.voidPromise());
+                channel.writeAndFlush(serverError(msgId), channel.voidPromise());
             }
         });
     }

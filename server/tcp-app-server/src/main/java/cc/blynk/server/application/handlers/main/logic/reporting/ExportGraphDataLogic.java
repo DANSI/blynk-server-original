@@ -23,7 +23,6 @@ import org.apache.logging.log4j.Logger;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.utils.BlynkByteBufUtil.*;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 import static cc.blynk.utils.StringUtils.split2Device;
@@ -127,7 +126,7 @@ public class ExportGraphDataLogic {
                 }
 
                 if (pinsCSVFilePath.size() == 0) {
-                    ctx.writeAndFlush(makeResponse(msgId, NO_DATA), ctx.voidPromise());
+                    ctx.writeAndFlush(noData(msgId), ctx.voidPromise());
                 } else {
                     String title = "History graph data for project " + dashName;
                     mailWrapper.sendHtml(user.email, title, makeBody(pinsCSVFilePath));
@@ -186,7 +185,7 @@ public class ExportGraphDataLogic {
                 }
 
                 if (pinsCSVFilePath.size() == 0) {
-                    ctx.writeAndFlush(makeResponse(msgId, NO_DATA), ctx.voidPromise());
+                    ctx.writeAndFlush(noData(msgId), ctx.voidPromise());
                 } else {
                     String title = "History graph data for project " + dashName;
                     mailWrapper.sendHtml(user.email, title, makeBody(pinsCSVFilePath));

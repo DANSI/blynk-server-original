@@ -19,8 +19,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.Arrays;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA_RESPONSE;
-import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
-import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
 import static cc.blynk.utils.BlynkByteBufUtil.*;
 import static cc.blynk.utils.ByteUtils.compress;
 import static cc.blynk.utils.StringUtils.split2Device;
@@ -64,7 +62,7 @@ public class GetGraphDataLogic {
         Target target = dash.getTarget(targetId);
         if (target == null) {
             log.debug("No assigned target for received command.");
-            ctx.writeAndFlush(makeResponse(message.id, NO_DATA), ctx.voidPromise());
+            ctx.writeAndFlush(noData(message.id), ctx.voidPromise());
             return;
         }
 
@@ -102,10 +100,10 @@ public class GetGraphDataLogic {
                     channel.writeAndFlush(makeBinaryMessage(GET_GRAPH_DATA_RESPONSE, msgId, compressed), channel.voidPromise());
                 }
             } catch (NoDataException noDataException) {
-                channel.writeAndFlush(makeResponse(msgId, NO_DATA), channel.voidPromise());
+                channel.writeAndFlush(noData(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error reading reporting data. For user {}", user.email);
-                channel.writeAndFlush(makeResponse(msgId, SERVER_ERROR), channel.voidPromise());
+                channel.writeAndFlush(serverError(msgId), channel.voidPromise());
             }
         });
     }
