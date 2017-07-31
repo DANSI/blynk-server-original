@@ -99,6 +99,7 @@ public final class Command {
     public static final short GET_CLONE_CODE = 62;
     public static final short GET_PROJECT_BY_CLONE_CODE = 63;
 
+    public static final short HARDWARE_LOG_EVENT = 64;
 
     //http codes. Used only for stats
     public static final short HTTP_IS_HARDWARE_CONNECTED = 82;
