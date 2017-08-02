@@ -68,8 +68,15 @@ public class Handler {
         try {
             return (FullHttpResponse) classMethod.invoke(handler, params);
         } catch (Exception e) {
-            log.error("Error invoking handler. Reason : {}.", e.getMessage());
-            log.debug(e);
+            Throwable cause = e.getCause();
+            if (cause == null) {
+                log.error("Error invoking handler. Reason : {}.", e.getMessage());
+                log.debug(e);
+            } else {
+                log.error("Error invoking handler. Reason : {}.", cause.getMessage());
+                log.debug(cause);
+            }
+
             return Response.serverError(e.getMessage());
         }
     }
