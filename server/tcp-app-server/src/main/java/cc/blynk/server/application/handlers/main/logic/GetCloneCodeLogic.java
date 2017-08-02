@@ -51,7 +51,7 @@ public class GetCloneCodeLogic {
                 if (insertStatus) {
                     result = makeASCIIStringMessage(GET_CLONE_CODE, message.id, token);
                 } else {
-                    //todo finish
+                    log.error("Clone project insert in DB failed for {}", user.email);
                     result = serverError(message.id);
                 }
             } catch (Exception e) {
