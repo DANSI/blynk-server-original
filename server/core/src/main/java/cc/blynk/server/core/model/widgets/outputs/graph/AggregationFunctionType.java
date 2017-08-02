@@ -9,23 +9,24 @@ import cc.blynk.server.core.dao.functions.*;
  */
 public enum AggregationFunctionType {
 
-    MIN(MinFunction.class),
-    MAX(MaxFunction.class),
-    AVG(AverageFunction.class),
-    SUM(SumFunction.class),
-    MED(MedianFunction.class);
-
-    private Class<? extends Function> clazz;
-
-    AggregationFunctionType(Class<? extends Function> clazz) {
-        this.clazz = clazz;
-    }
+    MIN,
+    MAX,
+    AVG,
+    SUM,
+    MED;
 
     public Function produce() {
-        try {
-            return clazz.newInstance();
-        } catch (IllegalAccessException | InstantiationException e) {
-            throw new RuntimeException(e);
+        switch (this) {
+            case MIN :
+                return new MinFunction();
+            case MAX :
+                return new MaxFunction();
+            case SUM :
+                return new SumFunction();
+            case MED :
+                return new MedianFunction();
+            default:
+                return new AverageFunction();
         }
     }
 

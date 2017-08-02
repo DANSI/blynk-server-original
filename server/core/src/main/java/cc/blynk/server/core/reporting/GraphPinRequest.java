@@ -93,7 +93,7 @@ public class GraphPinRequest {
             this.pin = pin.pin;
         }
         this.graphPeriod = graphPeriod;
-        this.functionType = function;
+        this.functionType = (function == null ? AggregationFunctionType.AVG : function);
         this.count = graphPeriod.numberOfPoints;
         this.type = graphPeriod.granularityType;
         this.skipCount = skipCount;
