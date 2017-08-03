@@ -17,8 +17,8 @@ public class MedianFunction extends Function {
     }
 
     @Override
-    public void apply(double d) {
-        array.add(d);
+    public void apply(double newValue) {
+        array.add(newValue);
     }
 
     @Override

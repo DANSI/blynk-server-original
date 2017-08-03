@@ -16,9 +16,9 @@ public class AverageFunction extends Function {
     }
 
     @Override
-    public void apply(double value) {
+    public void apply(double newValue) {
         this.count++;
-        this.sum += value;
+        this.sum += newValue;
     }
 
     @Override

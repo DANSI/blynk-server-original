@@ -14,8 +14,8 @@ public class SumFunction extends Function {
     }
 
     @Override
-    public void apply(double value) {
-        this.sum += value;
+    public void apply(double newValue) {
+        this.sum += newValue;
     }
 
     @Override

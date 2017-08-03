@@ -10,8 +10,8 @@ public class MaxFunction extends Function {
     private double value = Double.MIN_VALUE;
 
     @Override
-    public void apply(double value) {
-        this.value = Math.max(value, value);
+    public void apply(double newValue) {
+        this.value = Math.max(value, newValue);
     }
 
     @Override
