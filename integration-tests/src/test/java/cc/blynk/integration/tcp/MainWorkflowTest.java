@@ -873,6 +873,107 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testTimeInputUpdateWorksAsExpectedFromHardSide() throws Exception {
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"TIME_INPUT\",\"orgId\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+                "\"x\":0,\"y\":0,\"width\":1,\"height\":1}"));
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.reset();
+
+        clientPair.hardwareClient.send("hardware vw " + b("99 82800 82860 Europe/Kiev 1"));
+        verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 99 82800 82860 Europe/Kiev 1"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = parseProfile(clientPair.appClient.getBody());
+        TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        assertNotNull(timeInput);
+        assertEquals(82800, timeInput.startAt);
+        assertEquals(82860, timeInput.stopAt);
+        assertEquals(ZoneId.of("Europe/Kiev"), timeInput.tzName);
+        assertArrayEquals(new int[] {1}, timeInput.days);
+
+
+        clientPair.hardwareClient.send("hardware vw " + b("99 82800 82860 Europe/Kiev "));
+        verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(2, HARDWARE, b("1 vw 99 82800 82860 Europe/Kiev "))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = parseProfile(clientPair.appClient.getBody());
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        assertNotNull(timeInput);
+        assertEquals(82800, timeInput.startAt);
+        assertEquals(82860, timeInput.stopAt);
+        assertEquals(ZoneId.of("Europe/Kiev"), timeInput.tzName);
+        assertNull(timeInput.days);
+
+        clientPair.hardwareClient.send("hardware vw " + b("99 82800  Europe/Kiev "));
+        verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(3, HARDWARE, b("1 vw 99 82800  Europe/Kiev "))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = parseProfile(clientPair.appClient.getBody());
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        assertNotNull(timeInput);
+        assertEquals(82800, timeInput.startAt);
+        assertEquals(-1, timeInput.stopAt);
+        assertEquals(ZoneId.of("Europe/Kiev"), timeInput.tzName);
+        assertNull(timeInput.days);
+
+        clientPair.hardwareClient.send("hardware vw " + b("99 82800  Europe/Kiev 1,2,3,4"));
+        verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(4, HARDWARE, b("1 vw 99 82800  Europe/Kiev 1,2,3,4"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = parseProfile(clientPair.appClient.getBody());
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        assertNotNull(timeInput);
+        assertEquals(82800, timeInput.startAt);
+        assertEquals(-1, timeInput.stopAt);
+        assertEquals(ZoneId.of("Europe/Kiev"), timeInput.tzName);
+        assertArrayEquals(new int[]{1,2,3,4}, timeInput.days);
+
+        clientPair.hardwareClient.send("hardware vw " + b("99   Europe/Kiev 1,2,3,4"));
+        verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(5, HARDWARE, b("1 vw 99   Europe/Kiev 1,2,3,4"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = parseProfile(clientPair.appClient.getBody());
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        assertNotNull(timeInput);
+        assertEquals(-1, timeInput.startAt);
+        assertEquals(-1, timeInput.stopAt);
+        assertEquals(ZoneId.of("Europe/Kiev"), timeInput.tzName);
+        assertArrayEquals(new int[]{1,2,3,4}, timeInput.days);
+
+        clientPair.hardwareClient.send("hardware vw " + b("99 82800 82800 Europe/Kiev  10800"));
+        verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(6, HARDWARE, b("1 vw 99 82800 82800 Europe/Kiev  10800"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = parseProfile(clientPair.appClient.getBody());
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        assertNotNull(timeInput);
+        assertEquals(82800, timeInput.startAt);
+        assertEquals(82800, timeInput.stopAt);
+        assertEquals(ZoneId.of("Europe/Kiev"), timeInput.tzName);
+        assertNull(timeInput.days);
+
+        clientPair.hardwareClient.send("hardware vw " + b("99 ss sr Europe/Kiev  10800"));
+        verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(7, HARDWARE, b("1 vw 99 ss sr Europe/Kiev  10800"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = parseProfile(clientPair.appClient.getBody());
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        assertNotNull(timeInput);
+        assertEquals(-2, timeInput.startAt);
+        assertEquals(-3, timeInput.stopAt);
+        assertEquals(ZoneId.of("Europe/Kiev"), timeInput.tzName);
+        assertNull(timeInput.days);
+    }
+
+    @Test
     public void testWrongCommandForAggregation() throws Exception {
         clientPair.hardwareClient.send("hardware vw 10 aaaa");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 10 aaaa"))));
