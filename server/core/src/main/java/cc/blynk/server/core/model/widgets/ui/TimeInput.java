@@ -51,17 +51,13 @@ public class TimeInput extends OnePinWidget {
                 startAt = calcTime(values[0]);
                 stopAt = calcTime(values[1]);
                 tzName = ZoneId.of(values[2]);
-                if (values.length == 3) {
+                if (values.length == 3 || values[3].isEmpty()) {
                     days = null;
                 } else {
-                    if (values[3].isEmpty()) {
-                        days = null;
-                    } else {
-                        String[] daysString = values[3].split(",");
-                        days = new int[daysString.length];
-                        for (int i = 0; i < daysString.length; i++) {
-                            days[i] = ParseUtil.parseInt(daysString[i]);
-                        }
+                    String[] daysString = values[3].split(",");
+                    days = new int[daysString.length];
+                    for (int i = 0; i < daysString.length; i++) {
+                        days[i] = ParseUtil.parseInt(daysString[i]);
                     }
                 }
             }
