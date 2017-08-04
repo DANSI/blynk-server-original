@@ -10,7 +10,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
 import static cc.blynk.utils.BlynkByteBufUtil.serverError;
 
@@ -40,7 +40,7 @@ public class GetProjectByClonedTokenLogic {
             try {
                 String json = dbManager.selectClonedProject(token);
                 byte[] data = ByteUtils.compress(json);
-                result = makeBinaryMessage(LOAD_PROFILE_GZIPPED, message.id, data);
+                result = makeBinaryMessage(GET_PROJECT_BY_CLONE_CODE, message.id, data);
             } catch (Exception e) {
                 log.error("Error cloning project.", e);
                 result = serverError(message.id);
