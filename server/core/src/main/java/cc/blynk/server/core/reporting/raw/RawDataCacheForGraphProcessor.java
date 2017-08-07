@@ -19,7 +19,7 @@ import static cc.blynk.utils.FileUtils.SIZE_OF_REPORT_ENTRY;
  */
 public class RawDataCacheForGraphProcessor {
 
-    private static final int GRAPH_CACHE_SIZE = 2 * 60;
+    private static final int GRAPH_CACHE_SIZE = 60;
 
     private final Map<BaseReportingKey, LimitedArrayDeque<GraphValue>> rawStorage;
 
