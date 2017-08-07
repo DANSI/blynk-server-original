@@ -22,6 +22,7 @@ import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -823,6 +824,78 @@ public class HistoryGraphTest extends IntegrationBase {
             assertEquals(i, bb.getDouble(), 0.1);
             assertEquals(System.currentTimeMillis(), bb.getLong(), 10000);
         }
+    }
+
+    @Test
+    @Ignore("enable when live will have more than 1 page")
+    public void testGetLIVEGraphDataForEnhancedGraphWithPaging() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+
+        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        Pin pin = new Pin((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, pin, null, 0, null, null, null, 0, 0, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 88 111"))));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
+
+        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(1, bb.getInt());
+        assertEquals(111D, bb.getDouble(), 0.1);
+        assertEquals(System.currentTimeMillis(), bb.getLong(), 2000);
+
+        for (int i = 1; i <= 60; i++) {
+            clientPair.hardwareClient.send("hardware vw 88 " + i);
+        }
+
+        verify(clientPair.appClient.responseMock, timeout(10000)).channelRead(any(), eq(new HardwareMessage(61, b("1 vw 88 60"))));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
+
+        objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        graphDataResponse = objectArgumentCaptor.getValue();
+
+        assertNotNull(graphDataResponse);
+        decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        bb = ByteBuffer.wrap(decompressedGraphData);
+
+        assertEquals(1, bb.getInt());
+        assertEquals(60, bb.getInt());
+        for (int i = 1; i <= 60; i++) {
+            assertEquals(i, bb.getDouble(), 0.1);
+            assertEquals(System.currentTimeMillis(), bb.getLong(), 10000);
+        }
 
         clientPair.appClient.reset();
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE 1"));
@@ -862,8 +935,6 @@ public class HistoryGraphTest extends IntegrationBase {
             assertEquals(i, bb.getDouble(), 0.1);
             assertEquals(System.currentTimeMillis(), bb.getLong(), 10000);
         }
-
-
     }
 
 
