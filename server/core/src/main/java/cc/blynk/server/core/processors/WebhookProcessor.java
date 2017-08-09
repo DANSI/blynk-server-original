@@ -174,6 +174,7 @@ public class WebhookProcessor extends NotificationBase {
 
     private void buildRequestBody(BoundRequestBuilder builder, String header, String body) {
         switch (header) {
+            case "application/x-www-form-urlencoded" :
             case "application/json" :
             case "text/plain" :
                 builder.setBody(body);
