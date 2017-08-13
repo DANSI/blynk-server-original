@@ -91,6 +91,12 @@
             <version>${httpclient.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>${httpclient.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

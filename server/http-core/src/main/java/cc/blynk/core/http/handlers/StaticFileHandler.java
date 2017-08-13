@@ -38,6 +38,14 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
     public static final int HTTP_CACHE_SECONDS = 60;
+    private static final String[] possibleLocalPaths =  new String[] {
+            "./server/http-dashboard/target/classes",
+            "./server/http-api/target/classes",
+            "../server/http-dashboard/target/classes",
+            "../server/http-core/target/classes",
+            "../server/core/target",
+            "/tmp/blynk"
+    };
 
     /**
      * Used for case when server started from IDE and static files wasn't unpacked from jar.
@@ -172,13 +180,8 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
             path = getPathForLocalRun(uri);
         }
 
-        if (Files.isHidden(path) || Files.notExists(path)) {
+        if (path == null || Files.notExists(path) || Files.isDirectory(path)) {
             sendError(ctx, NOT_FOUND);
-            return;
-        }
-
-        if (Files.isDirectory(path)) {
-            sendError(ctx, FORBIDDEN);
             return;
         }
 
@@ -247,32 +250,13 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
     }
 
     private Path getPathForLocalRun(String uri) {
-        Path path = Paths.get("./server/http-admin/target/classes", uri);
-
-        if (Files.exists(path)) {
-            return path;
+        for (String possiblePath : possibleLocalPaths) {
+            Path path = Paths.get(possiblePath, uri);
+            if (Files.exists(path)) {
+                return path;
+            }
         }
-
-        //path for integration tests
-        path = Paths.get("../server/http-admin/target/classes" , uri);
-
-        if (Files.exists(path)) {
-            return path;
-        }
-
-        //path for integration tests
-        path = Paths.get("../server/http-core/target/classes" , uri);
-
-        if (Files.exists(path)) {
-            return path;
-        }
-
-        if (uri.endsWith(".csv.gz")) {
-            return Paths.get("/tmp/blynk", uri);
-        }
-
-        //last hope
-        return Paths.get("./server/http-api/target/classes", uri);
+        return null;
     }
 
     @Override

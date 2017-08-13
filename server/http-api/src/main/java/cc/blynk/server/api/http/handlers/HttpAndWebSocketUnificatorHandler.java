@@ -159,7 +159,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast("HttpUrlMapper", new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"));
         pipeline.addLast("HttpStaticFile", new StaticFileHandler(isUnpacked, new StaticFile("/static"),
                                            new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")));
-
+        pipeline.addLast(new UploadHandler("/upload", "/static/ota"));
         pipeline.addLast(resetPasswordLogic);
         pipeline.addLast(httpAPILogic);
 
