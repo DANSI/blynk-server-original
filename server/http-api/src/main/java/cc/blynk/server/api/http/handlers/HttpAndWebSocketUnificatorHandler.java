@@ -63,7 +63,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final ConfigsLogic configsLogic;
     private final HardwareStatsLogic hardwareStatsLogic;
     private final AdminAuthHandler adminAuthHandler;
-    private final  CookieBasedUrlReWriterHandler cookieBasedUrlReWriterHandler;
+    private final CookieBasedUrlReWriterHandler cookieBasedUrlReWriterHandler;
 
     public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath, boolean isUnpacked) {
         this.region = holder.region;

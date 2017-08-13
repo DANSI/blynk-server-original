@@ -111,7 +111,8 @@ public final class Command {
     public static final short HTTP_GET_PROJECT = 88;
     public static final short HTTP_QR = 89;
     public static final short HTTP_GET_HISTORY_DATA = 90;
-    public static final short HTTP_TOTAL = 91;
+    public static final short HTTP_START_OTA = 91;
+    public static final short HTTP_TOTAL = 92;
 
 
     //all this code just to make logging more user-friendly
@@ -191,6 +192,7 @@ public final class Command {
                 put(HTTP_GET_PROJECT, "HttpGetProject");
                 put(HTTP_QR, "QR");
                 put(HTTP_GET_HISTORY_DATA, "HttpGetHistoryData");
+                put(HTTP_START_OTA, "HttpStartOTA");
                 put(HTTP_TOTAL, "HttpTotal");
 
                 put(WEB_SOCKETS, "WebSockets");
