@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.CodeSource;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public final class JarUtil {
      * @param staticFolder - path to resources
      * @throws Exception
      */
-    public static boolean unpackStaticFiles(String staticFolder) throws Exception {
+    public static boolean unpackStaticFiles(String jarPath, String staticFolder) throws Exception {
         ArrayList<String> staticResources = find(staticFolder);
 
         if (staticResources.size() == 0) {
@@ -41,7 +42,7 @@ public final class JarUtil {
 
         for (String staticFile : staticResources) {
             try (InputStream is = JarUtil.class.getResourceAsStream("/" + staticFile)) {
-                Path newStaticFile = ServerProperties.getFileInCurrentDir(staticFile);
+                Path newStaticFile = Paths.get(jarPath, staticFile);
 
                 Files.deleteIfExists(newStaticFile);
                 Files.createDirectories(newStaticFile);

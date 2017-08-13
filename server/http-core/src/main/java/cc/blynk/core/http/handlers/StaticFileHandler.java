@@ -44,10 +44,12 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
      */
     private final boolean isUnpacked;
     private final StaticFile[] staticPaths;
+    private final String jarPath;
 
     public StaticFileHandler(boolean isUnpacked, StaticFile... staticPaths) {
         this.staticPaths = staticPaths;
         this.isUnpacked = isUnpacked;
+        this.jarPath = ServerProperties.jarPath;
     }
 
     private static void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
@@ -163,7 +165,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
                 StaticFileEdsWith staticFileEdsWith = (StaticFileEdsWith) staticFile;
                 path = Paths.get(staticFileEdsWith.folderPathForStatic, uri);
             } else {
-                path = ServerProperties.getFileInCurrentDir(uri);
+                path = Paths.get(jarPath, uri);
             }
         } else {
             //for local mode / running from ide
