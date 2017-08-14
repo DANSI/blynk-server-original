@@ -3,9 +3,11 @@ package cc.blynk.core.http.rest;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.UriTemplate;
 import cc.blynk.core.http.annotation.DELETE;
+import cc.blynk.core.http.annotation.Metric;
 import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.PUT;
 import cc.blynk.core.http.rest.params.Param;
+import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
@@ -13,6 +15,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Method;
+
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_TOTAL;
 
 /**
  * Wrapper around Singleton Services.
@@ -36,7 +40,11 @@ public class HandlerWrapper {
 
     public final Param[] params;
 
-    public HandlerWrapper(UriTemplate uriTemplate, Method method, Object handler) {
+    public final short metricIndex;
+
+    public final GlobalStats globalStats;
+
+    public HandlerWrapper(UriTemplate uriTemplate, Method method, Object handler, GlobalStats globalStats) {
         this.uriTemplate = uriTemplate;
         this.classMethod = method;
         this.handler = handler;
@@ -51,7 +59,15 @@ public class HandlerWrapper {
             this.httpMethod = HttpMethod.GET;
         }
 
+        Metric metricAnnotation = method.getAnnotation(Metric.class);
+        if (metricAnnotation != null) {
+            metricIndex = metricAnnotation.value();
+        } else {
+            metricIndex = -1;
+        }
+
         this.params = new Param[method.getParameterCount()];
+        this.globalStats = globalStats;
     }
 
     public Object[] fetchParams(ChannelHandlerContext ctx, URIDecoder uriDecoder) {
@@ -65,6 +81,7 @@ public class HandlerWrapper {
 
     public FullHttpResponse invoke(Object[] params) {
         try {
+            mark();
             return (FullHttpResponse) classMethod.invoke(handler, params);
         } catch (Exception e) {
             Throwable cause = e.getCause();
@@ -77,6 +94,13 @@ public class HandlerWrapper {
             }
 
             return Response.serverError(e.getMessage());
+        }
+    }
+
+    private void mark() {
+        globalStats.mark(HTTP_TOTAL);
+        if (metricIndex > -1) {
+            globalStats.markSpecificCounterOnly(metricIndex);
         }
     }
 

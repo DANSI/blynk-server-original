@@ -16,6 +16,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.utils.JsonParser;
 import io.netty.channel.ChannelHandler;
@@ -40,12 +41,14 @@ public class StatsLogic extends CookiesBaseHttpHandler {
     private final UserDao userDao;
     private final FileManager fileManager;
     private final BlockingIOProcessor blockingIOProcessor;
+    private final GlobalStats globalStats;
 
     public StatsLogic(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.userDao = holder.userDao;
         this.fileManager = holder.fileManager;
         this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.globalStats = holder.stats;
     }
 
     @GET

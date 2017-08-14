@@ -6,7 +6,6 @@ import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
@@ -35,7 +34,6 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
 
     protected final TokenManager tokenManager;
     protected final SessionDao sessionDao;
-    protected final GlobalStats globalStats;
     protected final HandlerWrapper[] handlers;
     protected final String rootPath;
 
@@ -46,9 +44,8 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
     public BaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats, String rootPath) {
         this.tokenManager = tokenManager;
         this.sessionDao = sessionDao;
-        this.globalStats = globalStats;
         this.rootPath = rootPath;
-        this.handlers = AnnotationsUtil.register(rootPath, this);
+        this.handlers = AnnotationsUtil.register(rootPath, this, globalStats);
     }
 
     @Override
@@ -82,7 +79,6 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
 
     private void invokeHandler(ChannelHandlerContext ctx, HttpRequest req, HandlerWrapper handler, Map<String, String> extractedParams) {
         log.debug("{} : {}", req.method().name(), req.uri());
-        globalStats.mark(Command.HTTP_TOTAL);
         URIDecoder uriDecoder = new URIDecoder(req, extractedParams);
         Object[] params = handler.fetchParams(ctx, uriDecoder);
         finishHttp(ctx, uriDecoder, handler, params);

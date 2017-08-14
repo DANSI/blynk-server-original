@@ -94,11 +94,10 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
     @GET
     @Path("{token}/ota/start")
+    @Metric(HTTP_START_OTA)
     public Response startOTA(@PathParam("token") String token,
                              @QueryParam("fileName") String filename,
                              @QueryParam("version") String version) {
-        globalStats.mark(HTTP_START_OTA);
-
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
         if (tokenValue == null) {
@@ -131,9 +130,8 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
     @GET
     @Path("{token}/project")
+    @Metric(HTTP_GET_PROJECT)
     public Response getDashboard(@PathParam("token") String token) {
-        globalStats.mark(HTTP_GET_PROJECT);
-
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
         if (tokenValue == null) {
@@ -151,9 +149,8 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
     @GET
     @Path("{token}/isHardwareConnected")
+    @Metric(HTTP_IS_HARDWARE_CONNECTED)
     public Response isHardwareConnected(@PathParam("token") String token) {
-        globalStats.mark(HTTP_IS_HARDWARE_CONNECTED);
-
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
         if (tokenValue == null) {
@@ -172,9 +169,8 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
     @GET
     @Path("{token}/isAppConnected")
+    @Metric(HTTP_IS_APP_CONNECTED)
     public Response isAppConnected(@PathParam("token") String token) {
-        globalStats.mark(HTTP_IS_APP_CONNECTED);
-
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
         if (tokenValue == null) {
@@ -194,18 +190,18 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
     @GET
     @Path("{token}/get/{pin}")
+    @Metric(HTTP_GET_PIN_DATA)
     public Response getWidgetPinDataNew(@PathParam("token") String token,
-                                     @PathParam("pin") String pinString) {
+                                        @PathParam("pin") String pinString) {
         return getWidgetPinData(token, pinString);
     }
 
     //todo old API.
     @GET
     @Path("{token}/pin/{pin}")
+    @Metric(HTTP_GET_PIN_DATA)
     public Response getWidgetPinData(@PathParam("token") String token,
                                      @PathParam("pin") String pinString) {
-
-        globalStats.mark(HTTP_GET_PIN_DATA);
 
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
@@ -247,9 +243,8 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
     @GET
     @Path("{token}/rtc")
+    @Metric(HTTP_GET_PIN_DATA)
     public Response getWidgetPinData(@PathParam("token") String token) {
-        globalStats.mark(HTTP_GET_PIN_DATA);
-
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
         if (tokenValue == null) {
@@ -275,10 +270,8 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
     @GET
     @Path("{token}/qr")
-    //todo cover with test
+    @Metric(HTTP_QR)
     public Response getQR(@PathParam("token") String token) {
-        globalStats.mark(HTTP_QR);
-
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
         if (tokenValue == null) {
@@ -304,10 +297,9 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
     @GET
     @Path("{token}/data/{pin}")
+    @Metric(HTTP_GET_HISTORY_DATA)
     public Response getPinHistoryData(@PathParam("token") String token,
                                       @PathParam("pin") String pinString) {
-        globalStats.mark(HTTP_GET_HISTORY_DATA);
-
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
         if (tokenValue == null) {
@@ -350,8 +342,6 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
                                          String pinString,
                                          String property,
                                          String... values) {
-        globalStats.mark(HTTP_UPDATE_PIN_DATA);
-
         if (values.length == 0) {
             log.debug("No properties for update provided.");
             return Response.badRequest("No properties for update provided.");
@@ -410,6 +400,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     @GET
     @Path("{token}/update/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
+    @Metric(HTTP_UPDATE_PIN_DATA)
     public Response updateWidgetPinDataViaGet(@PathParam("token") String token,
                                               @PathParam("pin") String pinString,
                                               @QueryParam("value") String[] pinValues,
@@ -448,9 +439,10 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     @PUT
     @Path("{token}/update/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
+    @Metric(HTTP_UPDATE_PIN_DATA)
     public Response updateWidgetPinDataNew(@PathParam("token") String token,
-                                        @PathParam("pin") String pinString,
-                                        String[] pinValues) {
+                                           @PathParam("pin") String pinString,
+                                           String[] pinValues) {
         return updateWidgetPinData(token, pinString, pinValues);
     }
 
@@ -458,11 +450,10 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     @PUT
     @Path("{token}/pin/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
+    @Metric(HTTP_UPDATE_PIN_DATA)
     public Response updateWidgetPinData(@PathParam("token") String token,
                                         @PathParam("pin") String pinString,
                                         String[] pinValues) {
-
-        globalStats.mark(HTTP_UPDATE_PIN_DATA);
 
         if (pinValues.length == 0) {
             log.debug("No pin for update provided.");
@@ -523,11 +514,10 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     @PUT
     @Path("{token}/extra/pin/{pin}")
     @Consumes(value = MediaType.APPLICATION_JSON)
+    @Metric(HTTP_UPDATE_PIN_DATA)
     public Response updateWidgetPinData(@PathParam("token") String token,
                                         @PathParam("pin") String pinString,
                                         PinData[] pinsData) {
-
-        globalStats.mark(HTTP_UPDATE_PIN_DATA);
 
         if (pinsData.length == 0) {
             log.debug("No pin for update provided.");
@@ -586,10 +576,9 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     @POST
     @Path("{token}/notify")
     @Consumes(value = MediaType.APPLICATION_JSON)
+    @Metric(HTTP_NOTIFY)
     public Response notify(@PathParam("token") String token,
-                                        PushMessagePojo message) {
-
-        globalStats.mark(HTTP_NOTIFY);
+                           PushMessagePojo message) {
 
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
@@ -633,10 +622,9 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     @POST
     @Path("{token}/email")
     @Consumes(value = MediaType.APPLICATION_JSON)
+    @Metric(HTTP_EMAIL)
     public Response email(@PathParam("token") String token,
-                                        EmailPojo message) {
-
-        globalStats.mark(HTTP_EMAIL);
+                          EmailPojo message) {
 
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 

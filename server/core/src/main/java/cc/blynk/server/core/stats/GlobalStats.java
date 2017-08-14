@@ -31,8 +31,12 @@ public class GlobalStats {
         }
     }
 
-    public void mark(final short cmd) {
+    public void mark(short cmd) {
         totalMessages.mark(1);
+        specificCounters[cmd].increment();
+    }
+
+    public void markSpecificCounterOnly(short cmd) {
         specificCounters[cmd].increment();
     }
 
