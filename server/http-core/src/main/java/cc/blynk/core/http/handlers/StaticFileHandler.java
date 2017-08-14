@@ -171,6 +171,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
         String uri = request.uri();
         //running from jar
         if (isUnpacked) {
+            log.debug("Is unpacked.");
             if (staticFile instanceof StaticFileEdsWith) {
                 StaticFileEdsWith staticFileEdsWith = (StaticFileEdsWith) staticFile;
                 path = Paths.get(staticFileEdsWith.folderPathForStatic, uri);
@@ -181,6 +182,8 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
             //for local mode / running from ide
             path = getPathForLocalRun(uri);
         }
+
+        log.debug("Getting file from path {}", path);
 
         if (path == null || Files.notExists(path) || Files.isDirectory(path)) {
             sendError(ctx, NOT_FOUND);

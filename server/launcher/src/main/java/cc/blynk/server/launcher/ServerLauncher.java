@@ -84,7 +84,7 @@ public class ServerLauncher {
                 new HardwareServer(holder),
                 new HardwareSSLServer(holder),
                 new AppServer(holder),
-                new HttpAPIServer(holder),
+                new HttpAPIServer(holder, isUnpacked),
                 new HttpsAPIServer(holder, isUnpacked),
                 new MQTTHardwareServer(holder)
         };

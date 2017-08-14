@@ -65,7 +65,7 @@ public class WebhookTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder).start();
+        httpServer = new HttpAPIServer(holder, false).start();
         hardwareServer = new HardwareServer(holder).start();
         appServer = new AppServer(holder).start();
 

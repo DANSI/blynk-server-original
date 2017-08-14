@@ -26,8 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PIN_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
 import static org.junit.Assert.*;
 
 /**
@@ -59,7 +57,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
                 new GCMProperties(Collections.emptyMap()),
                 false
         );
-        httpServer = new HttpAPIServer(localHolder).start();
+        httpServer = new HttpAPIServer(localHolder, false).start();
         httpsServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()
@@ -108,24 +106,6 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         Response response = f.get();
         assertEquals(400, response.getStatusCode());
         assertEquals("Requested pin doesn't exist in the app.", response.getResponseBody());
-    }
-
-    @Test
-    public void testHttpAPICounters() throws Exception {
-        Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v11?value=11").execute();
-        Response response = f.get();
-        assertEquals(200, response.getStatusCode());
-        assertEquals(1, localHolder.stats.specificCounters[HTTP_UPDATE_PIN_DATA].intValue());
-        assertEquals(0, localHolder.stats.specificCounters[HTTP_GET_PIN_DATA].intValue());
-        assertEquals(1, localHolder.stats.totalMessages.getCount());
-
-        f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v11").execute();
-        response = f.get();
-        assertEquals(200, response.getStatusCode());
-
-        assertEquals(1, localHolder.stats.specificCounters[HTTP_UPDATE_PIN_DATA].intValue());
-        assertEquals(1, localHolder.stats.specificCounters[HTTP_GET_PIN_DATA].intValue());
-        assertEquals(2, localHolder.stats.totalMessages.getCount());
     }
 
     @Test

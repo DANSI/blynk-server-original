@@ -39,7 +39,7 @@ public class UploadAPITest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder).start();
+        httpServer = new HttpAPIServer(holder, false).start();
         httpclient = HttpClients.createDefault();
     }
 

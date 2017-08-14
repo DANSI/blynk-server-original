@@ -49,7 +49,7 @@ public class HttpResetPassTest extends BaseTest {
         // Allow TLSv1 protocol only
         this.httpclient = HttpClients.createDefault();
 
-        httpServer = new HttpAPIServer(holder).start();
+        httpServer = new HttpAPIServer(holder, false).start();
     }
 
     @Override

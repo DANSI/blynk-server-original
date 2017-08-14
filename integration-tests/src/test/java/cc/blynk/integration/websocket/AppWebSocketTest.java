@@ -62,7 +62,7 @@ public class AppWebSocketTest extends IntegrationBase {
                 false
         );
         tcpWebSocketPort = httpPort;
-        webSocketServer = new HttpAPIServer(localHolder).start();
+        webSocketServer = new HttpAPIServer(localHolder, false).start();
         appServer = new AppServer(localHolder).start();
         hardwareServer = new HardwareServer(localHolder).start();
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);

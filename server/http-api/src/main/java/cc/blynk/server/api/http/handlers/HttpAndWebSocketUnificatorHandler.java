@@ -88,10 +88,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.cookieBasedUrlReWriterHandler = new CookieBasedUrlReWriterHandler(rootPath, "/static/admin.html", "/static/login.html");
     }
 
-    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath) {
-        this(holder, port, rootPath, false);
-    }
-
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         final FullHttpRequest req = (FullHttpRequest) msg;
@@ -110,7 +106,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
             }
             return;
         } else if (uri.startsWith(rootPath) || uri.startsWith("/static")) {
-            initAdminPipeline(ctx, msg);
+            initAdminPipeline(ctx);
         } else if (req.uri().startsWith(HttpAPIServer.WEBSOCKET_PATH)) {
             initWebSocketPipeline(ctx, HttpAPIServer.WEBSOCKET_PATH);
         } else {
@@ -125,7 +121,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         return !ipFilterHandler.accept(ctx, remoteAddress);
     }
 
-    private void initAdminPipeline(ChannelHandlerContext ctx, Object msg) {
+    private void initAdminPipeline(ChannelHandlerContext ctx) {
         if (isIpNotAllowed(ctx)) {
             ctx.close();
             return;

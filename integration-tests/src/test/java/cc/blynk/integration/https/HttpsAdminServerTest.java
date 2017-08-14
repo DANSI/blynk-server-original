@@ -75,7 +75,7 @@ public class HttpsAdminServerTest extends BaseTest {
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
                 .build();
 
-        httpServer = new HttpAPIServer(holder).start();
+        httpServer = new HttpAPIServer(holder, false).start();
 
         String name = "admin@blynk.cc";
         String pass = "admin";

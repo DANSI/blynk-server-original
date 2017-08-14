@@ -52,7 +52,7 @@ public class WebSocketTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         tcpWebSocketPort = httpPort;
-        webSocketServer = new HttpAPIServer(holder).start();
+        webSocketServer = new HttpAPIServer(holder, false).start();
         appServer = new AppServer(holder).start();
         hardwareServer = new HardwareServer(holder).start();
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);

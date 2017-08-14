@@ -52,7 +52,7 @@ public class HttpAPIPinsTest extends BaseTest {
                 new GCMProperties(Collections.emptyMap()),
                 false
         );
-        httpServer = new HttpAPIServer(localHolder).start();
+        httpServer = new HttpAPIServer(localHolder, false).start();
         httpsServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = HttpClients.createDefault();
     }

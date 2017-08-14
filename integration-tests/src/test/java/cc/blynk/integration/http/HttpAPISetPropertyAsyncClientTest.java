@@ -58,7 +58,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
     @BeforeClass
     public static void init() throws Exception {
-        httpServer = new HttpAPIServer(staticHolder).start();
+        httpServer = new HttpAPIServer(staticHolder, false).start();
         httpsServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()
