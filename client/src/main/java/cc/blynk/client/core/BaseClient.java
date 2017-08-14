@@ -19,6 +19,7 @@ import java.nio.channels.UnresolvedAddressException;
 import java.util.Collections;
 import java.util.Random;
 
+import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 
 /**
@@ -70,7 +71,7 @@ public abstract class BaseClient {
         }
 
         String body = input.length == 1 ? "" : input[1];
-        if (command == Command.REGISTER || command == Command.LOGIN) {
+        if (command == REGISTER || command == LOGIN) {
             String[] userPass = body.split(" ", 3);
             if (userPass.length > 1) {
                 String email = userPass[0];
@@ -81,9 +82,9 @@ public abstract class BaseClient {
         if (command == Command.SHARE_LOGIN || command == Command.GET_GRAPH_DATA) {
             body = body.replaceAll(" ", "\0");
         }
-        if (command == Command.HARDWARE || command == Command.BRIDGE || command == Command.EMAIL ||
-                command == Command.SHARING || command == Command.EXPORT_GRAPH_DATA || command == Command.SET_WIDGET_PROPERTY
-                || command == Command.HARDWARE_SYNC) {
+        if (command == HARDWARE || command == HARDWARE_RESEND_FROM_BLUETOOTH || command == BRIDGE || command == EMAIL ||
+                command == SHARING || command == EXPORT_GRAPH_DATA || command == SET_WIDGET_PROPERTY
+                || command == HARDWARE_SYNC) {
             body = body.replaceAll(" ", "\0");
         }
         return produce(msgId, command, body);
