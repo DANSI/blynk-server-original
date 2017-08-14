@@ -41,6 +41,8 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
     private static final String[] possibleLocalPaths =  new String[] {
             "./server/http-dashboard/target/classes",
             "./server/http-api/target/classes",
+            "./server/http-admin/target/classes",
+            "../server/http-admin/target/classes",
             "../server/http-dashboard/target/classes",
             "../server/http-core/target/classes",
             "../server/core/target",
