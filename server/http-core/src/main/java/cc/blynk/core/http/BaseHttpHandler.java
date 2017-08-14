@@ -1,7 +1,7 @@
 package cc.blynk.core.http;
 
-import cc.blynk.core.http.rest.Handler;
 import cc.blynk.core.http.rest.HandlerHolder;
+import cc.blynk.core.http.rest.HandlerWrapper;
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
@@ -33,7 +33,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
     protected final TokenManager tokenManager;
     protected final SessionDao sessionDao;
     protected final GlobalStats globalStats;
-    protected final Handler[] handlers;
+    protected final HandlerWrapper[] handlers;
     protected final String rootPath;
 
     public BaseHttpHandler(Holder holder, String rootPath) {
@@ -80,7 +80,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
         }
     }
 
-    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, Handler handler, Object[] params) {
+    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, HandlerWrapper handler, Object[] params) {
         FullHttpResponse response = handler.invoke(params);
         if (response != Response.NO_RESPONSE) {
             ctx.writeAndFlush(response);
@@ -88,7 +88,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
     }
 
     private HandlerHolder lookupHandler(HttpRequest req) {
-        for (Handler handler : handlers) {
+        for (HandlerWrapper handler : handlers) {
             if (handler.httpMethod == req.method()) {
                 Matcher matcher = handler.uriTemplate.matcher(req.uri());
                 if (matcher.matches()) {

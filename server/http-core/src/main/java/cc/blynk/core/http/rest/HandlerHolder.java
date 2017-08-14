@@ -10,11 +10,11 @@ import java.util.regex.Matcher;
  */
 public class HandlerHolder {
 
-    public final Handler handler;
+    public final HandlerWrapper handler;
 
     private final Matcher matcher;
 
-    public HandlerHolder(Handler handler, Matcher matcher) {
+    public HandlerHolder(HandlerWrapper handler, Matcher matcher) {
         this.handler = handler;
         this.matcher = matcher;
     }

@@ -3,7 +3,6 @@ package cc.blynk.core.http.rest;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.UriTemplate;
 import cc.blynk.core.http.annotation.DELETE;
-import cc.blynk.core.http.annotation.GET;
 import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.PUT;
 import cc.blynk.core.http.rest.params.Param;
@@ -16,17 +15,20 @@ import org.apache.logging.log4j.Logger;
 import java.lang.reflect.Method;
 
 /**
+ * Wrapper around Singleton Services.
+ * Holds all info about annotations and service purpose.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-public class Handler {
+public class HandlerWrapper {
 
-    private static final Logger log = LogManager.getLogger(Handler.class);
+    private static final Logger log = LogManager.getLogger(HandlerWrapper.class);
 
     public final UriTemplate uriTemplate;
 
-    public HttpMethod httpMethod;
+    public final HttpMethod httpMethod;
 
     public final Method classMethod;
 
@@ -34,22 +36,19 @@ public class Handler {
 
     public final Param[] params;
 
-    public Handler(UriTemplate uriTemplate, Method method, Object handler) {
+    public HandlerWrapper(UriTemplate uriTemplate, Method method, Object handler) {
         this.uriTemplate = uriTemplate;
         this.classMethod = method;
         this.handler = handler;
 
-        if (method.isAnnotationPresent(GET.class)) {
-            this.httpMethod = HttpMethod.GET;
-        }
         if (method.isAnnotationPresent(POST.class)) {
             this.httpMethod = HttpMethod.POST;
-        }
-        if (method.isAnnotationPresent(PUT.class)) {
+        } else if (method.isAnnotationPresent(PUT.class)) {
             this.httpMethod = HttpMethod.PUT;
-        }
-        if (method.isAnnotationPresent(DELETE.class)) {
+        } else if (method.isAnnotationPresent(DELETE.class)) {
             this.httpMethod = HttpMethod.DELETE;
+        } else {
+            this.httpMethod = HttpMethod.GET;
         }
 
         this.params = new Param[method.getParameterCount()];
@@ -84,9 +83,9 @@ public class Handler {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Handler)) return false;
+        if (!(o instanceof HandlerWrapper)) return false;
 
-        Handler that = (Handler) o;
+        HandlerWrapper that = (HandlerWrapper) o;
 
         if (uriTemplate != null ? !uriTemplate.equals(that.uriTemplate) : that.uriTemplate != null) return false;
         return !(httpMethod != null ? !httpMethod.equals(that.httpMethod) : that.httpMethod != null);

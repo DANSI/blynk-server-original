@@ -1,6 +1,6 @@
 package cc.blynk.core.http;
 
-import cc.blynk.core.http.rest.Handler;
+import cc.blynk.core.http.rest.HandlerWrapper;
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
@@ -24,7 +24,7 @@ public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
     }
 
     @Override
-    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, Handler handler, Object[] params) {
+    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, HandlerWrapper handler, Object[] params) {
         String tokenPathParam = uriDecoder.pathData.get("token");
         if (tokenPathParam == null) {
             ctx.writeAndFlush(Response.badRequest("No token provided."));

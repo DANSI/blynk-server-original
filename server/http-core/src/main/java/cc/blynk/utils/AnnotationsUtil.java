@@ -5,7 +5,7 @@ import cc.blynk.core.http.UriTemplate;
 import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.Context;
 import cc.blynk.core.http.annotation.Path;
-import cc.blynk.core.http.rest.Handler;
+import cc.blynk.core.http.rest.HandlerWrapper;
 import cc.blynk.core.http.rest.params.*;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -22,20 +22,20 @@ import java.util.List;
  */
 public class AnnotationsUtil {
 
-    public static Handler[] register(String rootPath, Object o) {
+    public static HandlerWrapper[] register(String rootPath, Object o) {
         return registerHandler(rootPath, o);
     }
 
-    public static Handler[] register(Object o) {
+    public static HandlerWrapper[] register(Object o) {
         return registerHandler("", o);
     }
 
-    private static Handler[] registerHandler(String rootPath, Object handler) {
+    private static HandlerWrapper[] registerHandler(String rootPath, Object handler) {
         Class<?> handlerClass = handler.getClass();
         Annotation pathAnnotation = handlerClass.getAnnotation(Path.class);
         String handlerMainPath = ((Path) pathAnnotation).value();
 
-        List<Handler> processors = new ArrayList<>();
+        List<HandlerWrapper> processors = new ArrayList<>();
 
         for (Method method : handlerClass.getMethods()) {
             Annotation consumes = method.getAnnotation(Consumes.class);
@@ -49,7 +49,7 @@ public class AnnotationsUtil {
                 String fullPath = rootPath + handlerMainPath + ((Path) path).value();
                 UriTemplate uriTemplate = new UriTemplate(fullPath);
 
-                Handler handlerHolder = new Handler(uriTemplate, method, handler);
+                HandlerWrapper handlerHolder = new HandlerWrapper(uriTemplate, method, handler);
 
                 for (int i = 0; i < method.getParameterCount(); i++) {
                     Parameter parameter = method.getParameters()[i];
@@ -84,7 +84,7 @@ public class AnnotationsUtil {
             }
         }
 
-        return processors.toArray(new Handler[processors.size()]);
+        return processors.toArray(new HandlerWrapper[processors.size()]);
     }
 
 }
