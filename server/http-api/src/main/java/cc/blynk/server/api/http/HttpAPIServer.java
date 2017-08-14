@@ -34,7 +34,7 @@ public class HttpAPIServer extends BaseServer {
                 ch.pipeline()
                 .addLast("HttpServerCodec", new HttpServerCodec())
                 .addLast("HttpServerKeepAlive", new HttpServerKeepAliveHandler())
-                .addLast("HttpObjectAggregator", new HttpObjectAggregator(65536, true))
+                .addLast("HttpObjectAggregator", new HttpObjectAggregator(10 * 1024 * 1024, true))
                 .addLast(letsEncryptHandler)
                 .addLast("HttpWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }
