@@ -19,7 +19,7 @@ import java.util.Map;
 public class URIDecoder extends QueryStringDecoder {
 
     public final String[] paths;
-    public Map<String, String> pathData;
+    public final Map<String, String> pathData;
     public String contentType;
     public Map<String, String> headers;
     public final HttpRequest httpRequest;
@@ -27,7 +27,7 @@ public class URIDecoder extends QueryStringDecoder {
     private HttpPostRequestDecoder decoder;
     private ByteBuf bodyData;
 
-    public URIDecoder(HttpRequest httpRequest) {
+    public URIDecoder(HttpRequest httpRequest, Map<String, String> extractedParams) {
         super(httpRequest.uri());
         this.httpRequest = httpRequest;
         this.paths = path().split("/");
@@ -41,6 +41,7 @@ public class URIDecoder extends QueryStringDecoder {
                 }
             }
         }
+        this.pathData = extractedParams;
     }
 
     public List<InterfaceHttpData> getBodyHttpDatas() {
@@ -51,7 +52,4 @@ public class URIDecoder extends QueryStringDecoder {
         return bodyData.toString(StandardCharsets.UTF_8);
     }
 
-    public ByteBuf getBodyData() {
-        return bodyData;
-    }
 }
