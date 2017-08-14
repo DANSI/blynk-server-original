@@ -17,6 +17,8 @@ import io.netty.handler.codec.http.HttpServerKeepAliveHandler;
  */
 public class HttpAPIServer extends BaseServer {
 
+    public static final int HTTP_REQUEST_SIZE_MAX = 10 * 1024 * 1024;
+
     private final ChannelInitializer<SocketChannel> channelInitializer;
     public static final String WEBSOCKET_PATH = "/websocket";
 
@@ -34,7 +36,7 @@ public class HttpAPIServer extends BaseServer {
                 ch.pipeline()
                 .addLast("HttpServerCodec", new HttpServerCodec())
                 .addLast("HttpServerKeepAlive", new HttpServerKeepAliveHandler())
-                .addLast("HttpObjectAggregator", new HttpObjectAggregator(10 * 1024 * 1024, true))
+                .addLast("HttpObjectAggregator", new HttpObjectAggregator(HTTP_REQUEST_SIZE_MAX, true))
                 .addLast(letsEncryptHandler)
                 .addLast("HttpWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }

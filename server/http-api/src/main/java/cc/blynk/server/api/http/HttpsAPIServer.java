@@ -10,6 +10,8 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpServerKeepAliveHandler;
 
+import static cc.blynk.server.api.http.HttpAPIServer.HTTP_REQUEST_SIZE_MAX;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -35,7 +37,7 @@ public class HttpsAPIServer extends BaseServer {
                 .addLast("HttpsSslContext", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
                 .addLast("HttpsServerCodec", new HttpServerCodec())
                 .addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler())
-                .addLast("HttpsObjectAggregator", new HttpObjectAggregator(65536, true))
+                .addLast("HttpsObjectAggregator", new HttpObjectAggregator(HTTP_REQUEST_SIZE_MAX, true))
                 .addLast(letsEncryptHandler)
                 .addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }
