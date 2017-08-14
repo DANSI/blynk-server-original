@@ -57,6 +57,7 @@ public class UploadAPITest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals("application/octet-stream", response.getHeaders("Content-Type")[0].getValue());
         }
     }
 
