@@ -1,25 +1,20 @@
 package cc.blynk.core.http.rest;
 
 import java.util.Map;
-import java.util.regex.Matcher;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 12.03.17.
  */
-public class HandlerHolder {
+public final class HandlerHolder {
 
     public final HandlerWrapper handler;
 
-    private final Matcher matcher;
+    public final Map<String, String> extractedParams;
 
-    public HandlerHolder(HandlerWrapper handler, Matcher matcher) {
+    public HandlerHolder(HandlerWrapper handler, Map<String, String> extractedParams) {
         this.handler = handler;
-        this.matcher = matcher;
-    }
-
-    public Map<String, String> extractParameters() {
-        return handler.uriTemplate.extractParameters(matcher);
+        this.extractedParams = extractedParams;
     }
 }

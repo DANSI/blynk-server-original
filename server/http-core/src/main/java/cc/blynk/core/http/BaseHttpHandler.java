@@ -19,7 +19,10 @@ import io.netty.util.ReferenceCountUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Map;
 import java.util.regex.Matcher;
+
+import static cc.blynk.core.http.Response.serverError;
 
 /**
  * The Blynk Project.
@@ -53,31 +56,37 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
         if (msg instanceof HttpRequest) {
             HttpRequest req = (HttpRequest) msg;
 
-            process(ctx, req);
+            if (!process(ctx, req)) {
+                ctx.fireChannelRead(req);
+            }
         }
     }
 
-    public void process(ChannelHandlerContext ctx, HttpRequest req) {
+    public boolean process(ChannelHandlerContext ctx, HttpRequest req) {
         HandlerHolder handlerHolder = lookupHandler(req);
 
         if (handlerHolder != null) {
-            log.debug("{} : {}", req.method().name(), req.uri());
-            globalStats.mark(Command.HTTP_TOTAL);
-
             try {
-                URIDecoder uriDecoder = new URIDecoder(req);
-                uriDecoder.pathData = handlerHolder.extractParameters();
-                Object[] params = handlerHolder.handler.fetchParams(ctx, uriDecoder);
-                finishHttp(ctx, uriDecoder, handlerHolder.handler, params);
+                invokeHandler(ctx, req, handlerHolder.handler, handlerHolder.extractedParams);
             } catch (Exception e) {
-                ctx.writeAndFlush(Response.serverError(e.getMessage()), ctx.voidPromise());
+                log.debug("Error processing http request.", e);
+                ctx.writeAndFlush(serverError(e.getMessage()), ctx.voidPromise());
             } finally {
                 ReferenceCountUtil.release(req);
             }
-
-        } else {
-            ctx.fireChannelRead(req);
+            return true;
         }
+
+        return false;
+    }
+
+    private void invokeHandler(ChannelHandlerContext ctx, HttpRequest req, HandlerWrapper handler, Map<String, String> extractedParams) {
+        log.debug("{} : {}", req.method().name(), req.uri());
+        globalStats.mark(Command.HTTP_TOTAL);
+        URIDecoder uriDecoder = new URIDecoder(req);
+        uriDecoder.pathData = extractedParams;
+        Object[] params = handler.fetchParams(ctx, uriDecoder);
+        finishHttp(ctx, uriDecoder, handler, params);
     }
 
     public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, HandlerWrapper handler, Object[] params) {
@@ -92,7 +101,8 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
             if (handler.httpMethod == req.method()) {
                 Matcher matcher = handler.uriTemplate.matcher(req.uri());
                 if (matcher.matches()) {
-                    return new HandlerHolder(handler, matcher);
+                    Map<String, String> extractedParams = handler.uriTemplate.extractParameters(matcher);
+                    return new HandlerHolder(handler, extractedParams);
                 }
             }
         }

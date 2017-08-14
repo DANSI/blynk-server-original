@@ -25,11 +25,10 @@ public abstract class CookiesBaseHttpHandler extends BaseHttpHandler {
     }
 
     @Override
-    public void process(ChannelHandlerContext ctx, HttpRequest req) {
+    public boolean process(ChannelHandlerContext ctx, HttpRequest req) {
         if (req.headers().contains(COOKIE)) {
-            super.process(ctx, req);
-        } else {
-            ctx.fireChannelRead(req);
+            return super.process(ctx, req);
         }
+        return false;
     }
 }
