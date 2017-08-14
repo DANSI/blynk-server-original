@@ -15,6 +15,8 @@ public class CommandParser {
         switch (stringCommand.toLowerCase()) {
             case "hardware" :
                 return HARDWARE;
+            case "hardwarebt" :
+                return HARDWARE_RESEND_FROM_BLUETOOTH;
             case "ping" :
                 return PING;
             case "loadprofilegzipped" :

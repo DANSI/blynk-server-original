@@ -47,6 +47,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final GetTokenLogic token;
     private final AssignTokenLogic assignTokenLogic;
     private final HardwareAppLogic hardwareApp;
+    private final HardwareResendFromBTLogic hardwareResendFromBTLogic;
     private final RefreshTokenLogic refreshToken;
     private final GetGraphDataLogic graphData;
     private final GetEnhancedGraphDataLogic enhancedGraphDataLogic;
@@ -86,6 +87,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.token = new GetTokenLogic(holder);
         this.assignTokenLogic = new AssignTokenLogic(holder);
         this.hardwareApp = new HardwareAppLogic(holder, state.user.email);
+        this.hardwareResendFromBTLogic = new HardwareResendFromBTLogic(holder, state.user.email);
         this.refreshToken = new RefreshTokenLogic(holder);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.enhancedGraphDataLogic = new GetEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
@@ -134,8 +136,11 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
         this.stats.incrementAppStat();
         switch (msg.command) {
-            case HARDWARE:
+            case HARDWARE :
                 hardwareApp.messageReceived(ctx, state, msg);
+                break;
+            case HARDWARE_RESEND_FROM_BLUETOOTH :
+                hardwareResendFromBTLogic.messageReceived(ctx, state, msg);
                 break;
             case ACTIVATE_DASHBOARD :
                 activateDashboardLogic.messageReceived(ctx, state, msg);

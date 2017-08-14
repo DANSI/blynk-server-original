@@ -216,6 +216,23 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testForwardBluetoothFromAppWorks() throws Exception {
+        clientPair.appClient.send("createWidget 1\0{\"id\":743, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"STEP\", \"pwmMode\":true, \"pinType\":\"VIRTUAL\", \"pin\":24}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("hardware 1-0 vw 24 100");
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 vw 24 100"))));
+
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = parseProfile(clientPair.appClient.getBody(2));
+        assertNotNull(profile);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 24, PinType.DIGITAL);
+        assertNotNull(widget);
+        assertTrue(widget instanceof Step);
+        assertEquals("100", ((OnePinWidget) widget).value);
+    }
+
+    @Test
     public void testValueForPWMPinForStteperIsAccepted() throws Exception {
         clientPair.appClient.send("createWidget 1\0{\"id\":743, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"STEP\", \"pwmMode\":true, \"pinType\":\"DIGITAL\", \"pin\":24}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
