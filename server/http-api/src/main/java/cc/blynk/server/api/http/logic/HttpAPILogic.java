@@ -122,7 +122,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         String body = "ota" + BODY_SEPARATOR + otaServerUrl;
         if (session.sendMessageToHardware(dashId, BLYNK_INTERNAL, 7777, body, deviceId)) {
             log.debug("No device in session.");
-            badRequest("No device in session.");
+            return badRequest("No device in session.");
         }
 
         return ok();
