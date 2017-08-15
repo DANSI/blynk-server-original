@@ -96,8 +96,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     @Path("{token}/ota/start")
     @Metric(HTTP_START_OTA)
     public Response startOTA(@PathParam("token") String token,
-                             @QueryParam("fileName") String filename,
-                             @QueryParam("version") String version) {
+                             @QueryParam("fileName") String filename) {
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
         if (tokenValue == null) {
@@ -105,11 +104,9 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return badRequest("Invalid token.");
         }
 
-        final User user = tokenValue.user;
-        final int dashId = tokenValue.dashId;
-        final int deviceId = tokenValue.deviceId;
-
-        DashBoard dash = user.profile.getDashById(dashId);
+        User user = tokenValue.user;
+        int dashId = tokenValue.dashId;
+        int deviceId = tokenValue.deviceId;
 
         Session session = sessionDao.userSession.get(new UserKey(user));
         if (session == null) {

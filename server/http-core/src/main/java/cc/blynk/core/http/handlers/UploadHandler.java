@@ -15,14 +15,12 @@
  */
 package cc.blynk.core.http.handlers;
 
+import cc.blynk.core.http.Response;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.HttpContent;
-import io.netty.handler.codec.http.HttpObject;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.multipart.*;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.EndOfDataDecoderException;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.ErrorDataDecoderException;
@@ -37,15 +35,16 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
 
     private static final Logger log = LogManager.getLogger(UploadHandler.class);
 
-    private static final HttpDataFactory factory = new DefaultHttpDataFactory(true);
-    private final String uploadPath;
-    private HttpPostRequestDecoder decoder;
-    private final String baseDir;
-    private final String uploadFolder;
+    static final HttpDataFactory factory = new DefaultHttpDataFactory(true);
+    final String handlerUri;
+    HttpPostRequestDecoder decoder;
+    final String baseDir;
+    final String uploadFolder;
+    String uri;
 
-    public UploadHandler(String uploadPath, String uploadFolder) {
+    public UploadHandler(String handlerUri, String uploadFolder) {
         super(false);
-        this.uploadPath = uploadPath;
+        this.handlerUri = handlerUri;
         this.baseDir = ServerProperties.jarPath;
         this.uploadFolder = uploadFolder.endsWith("/") ? uploadFolder : uploadFolder + "/";
     }
@@ -57,12 +56,17 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
         }
     }
 
+    public boolean accept(HttpRequest req) {
+        return req.method() == HttpMethod.POST && req.uri().startsWith(handlerUri);
+    }
+
     @Override
     public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
         if (msg instanceof HttpRequest) {
             HttpRequest req = (HttpRequest) msg;
 
-            if (!req.uri().startsWith(uploadPath)) {
+            uri = req.uri();
+            if (!accept(req)) {
                 ctx.fireChannelRead(msg);
                 return;
             }
@@ -93,23 +97,28 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
 
             // example of reading only if at the end
             if (chunk instanceof LastHttpContent) {
+                Response response;
                 try {
                     String path = finishUpload();
                     if (path != null) {
-                        ctx.writeAndFlush(ok(path));
+                        response = afterUpload(path);
                     } else {
-                        ctx.writeAndFlush(serverError());
+                        response = serverError();
                     }
-
                 } catch (NoSuchFileException e) {
                     log.error("Unable to copy uploaded file to static folder. Reason : {}", e.getMessage());
-                    ctx.writeAndFlush(serverError());
+                    response = (serverError());
                 } catch (Exception e) {
                     log.error("Error during file upload.", e);
-                    ctx.writeAndFlush(serverError());
+                    response = (serverError());
                 }
+                ctx.writeAndFlush(response);
             }
         }
+    }
+
+    public Response afterUpload(String path) {
+        return ok(path);
     }
 
     private String finishUpload() throws Exception{
