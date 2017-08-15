@@ -15,7 +15,6 @@ import cc.blynk.server.api.http.logic.business.AuthCookieHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
 import cc.blynk.server.api.websockets.handlers.WebSocketsGenericLoginHandler;
-import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
@@ -90,9 +89,10 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        final FullHttpRequest req = (FullHttpRequest) msg;
+        FullHttpRequest req = (FullHttpRequest) msg;
         String uri = req.uri();
 
+        log.debug("In http and websocket unificator handler.");
         if (uri.equals("/")) {
             //for local server do redirect to admin page
             try {
@@ -105,7 +105,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
                 req.release();
             }
             return;
-        } else if (uri.startsWith(rootPath) || uri.startsWith("/static")) {
+        } else if (uri.startsWith(rootPath)) {
             initAdminPipeline(ctx);
         } else if (req.uri().startsWith(HttpAPIServer.WEBSOCKET_PATH)) {
             initWebSocketPipeline(ctx, HttpAPIServer.WEBSOCKET_PATH);
@@ -128,13 +128,12 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         }
 
         ChannelPipeline pipeline = ctx.pipeline();
-        pipeline.addLast(new ChunkedWriteHandler());
 
         pipeline.addLast(adminAuthHandler);
         pipeline.addLast(authCookieHandler);
         pipeline.addLast(cookieBasedUrlReWriterHandler);
 
-        pipeline.addLast(new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"));
+        pipeline.remove(StaticFileHandler.class);
         pipeline.addLast(new StaticFileHandler(isUnpacked, new StaticFile("/static", false)));
 
         pipeline.addLast(usersLogic);
@@ -151,10 +150,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
     private void initHttpPipeline(ChannelHandlerContext ctx) {
         ChannelPipeline pipeline = ctx.pipeline();
-        pipeline.addLast("HttpChunkedWrite", new ChunkedWriteHandler());
-        pipeline.addLast("HttpUrlMapper", new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"));
-        pipeline.addLast("HttpStaticFile", new StaticFileHandler(isUnpacked, new StaticFile("/static"),
-                                           new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")));
         pipeline.addLast(new UploadHandler("/upload", "/static/ota"));
         pipeline.addLast(resetPasswordLogic);
         pipeline.addLast(httpAPILogic);
@@ -174,6 +169,9 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast("WSMessageEncoder", new MessageEncoder(stats));
         pipeline.addLast("WSWebSocketGenericLoginHandler", genericLoginHandler);
         pipeline.remove(this);
+        pipeline.remove(ChunkedWriteHandler.class);
+        pipeline.remove(UrlReWriterHandler.class);
+        pipeline.remove(StaticFileHandler.class);
         pipeline.remove(LetsEncryptHandler.class);
     }
 
