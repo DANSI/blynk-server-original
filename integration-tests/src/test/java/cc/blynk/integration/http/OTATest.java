@@ -5,6 +5,7 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -130,14 +131,18 @@ public class OTATest extends BaseTest {
 
         post.setEntity(entity);
 
+        String path;
         try (CloseableHttpResponse response = httpclient.execute(post)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String path = consumeText(response);
+            path = consumeText(response);
 
             assertNotNull(path);
             assertTrue(path.startsWith("/static"));
             assertTrue(path.endsWith("bin"));
         }
+
+        String responseUrl = "http://127.0.0.1" + path;
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
     }
 
     @Test
