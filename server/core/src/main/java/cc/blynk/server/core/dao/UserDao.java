@@ -133,10 +133,12 @@ public class UserDao {
         Map<String, Integer> data = new HashMap<>();
         for (User user : users.values()) {
             for (DashBoard dashBoard : user.profile.dashBoards) {
-                if (dashBoard.hardwareInfo != null && dashBoard.hardwareInfo.version != null) {
-                    String key = dashBoard.hardwareInfo.version;
-                    Integer i = data.getOrDefault(key, 0);
-                    data.put(key, ++i);
+                for (Device device : dashBoard.devices) {
+                    if (device.hardwareInfo != null && device.hardwareInfo.version != null) {
+                        String key = device.hardwareInfo.version;
+                        Integer i = data.getOrDefault(key, 0);
+                        data.put(key, ++i);
+                    }
                 }
             }
         }
@@ -147,10 +149,12 @@ public class UserDao {
         Map<String, Integer> data = new HashMap<>();
         for (User user : users.values()) {
             for (DashBoard dashBoard : user.profile.dashBoards) {
-                if (dashBoard.hardwareInfo != null && dashBoard.hardwareInfo.cpuType != null) {
-                    String key = dashBoard.hardwareInfo.cpuType;
-                    Integer i = data.getOrDefault(key, 0);
-                    data.put(key, ++i);
+                for (Device device : dashBoard.devices) {
+                    if (device.hardwareInfo != null && device.hardwareInfo.cpuType != null) {
+                        String key = device.hardwareInfo.cpuType;
+                        Integer i = data.getOrDefault(key, 0);
+                        data.put(key, ++i);
+                    }
                 }
             }
         }
@@ -161,10 +165,12 @@ public class UserDao {
         Map<String, Integer> data = new HashMap<>();
         for (User user : users.values()) {
             for (DashBoard dashBoard : user.profile.dashBoards) {
-                if (dashBoard.hardwareInfo != null && dashBoard.hardwareInfo.connectionType != null) {
-                    String key = dashBoard.hardwareInfo.connectionType;
-                    Integer i = data.getOrDefault(key, 0);
-                    data.put(key, ++i);
+                for (Device device : dashBoard.devices) {
+                    if (device.hardwareInfo != null && device.hardwareInfo.connectionType != null) {
+                        String key = device.hardwareInfo.connectionType;
+                        Integer i = data.getOrDefault(key, 0);
+                        data.put(key, ++i);
+                    }
                 }
             }
         }
@@ -175,10 +181,12 @@ public class UserDao {
         Map<String, Integer> data = new HashMap<>();
         for (User user : users.values()) {
             for (DashBoard dashBoard : user.profile.dashBoards) {
-                if (dashBoard.hardwareInfo != null && dashBoard.hardwareInfo.boardType != null) {
-                    String key = dashBoard.hardwareInfo.boardType;
-                    Integer i = data.getOrDefault(key, 0);
-                    data.put(key, ++i);
+                for (Device device : dashBoard.devices) {
+                    if (device.hardwareInfo != null && device.hardwareInfo.boardType != null) {
+                        String key = device.hardwareInfo.boardType;
+                        Integer i = data.getOrDefault(key, 0);
+                        data.put(key, ++i);
+                    }
                 }
             }
         }

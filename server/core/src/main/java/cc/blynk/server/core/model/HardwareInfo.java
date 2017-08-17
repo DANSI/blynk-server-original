@@ -18,7 +18,7 @@ public class HardwareInfo {
 
     public String connectionType;
 
-    public String buildDate;
+    public String build;
 
     public int heartbeatInterval;
 
@@ -27,13 +27,13 @@ public class HardwareInfo {
                         @JsonProperty("boardType") String boardType,
                         @JsonProperty("cpuType") String cpuType,
                         @JsonProperty("connectionType") String connectionType,
-                        @JsonProperty("buildDate") String buildDate,
+                        @JsonProperty("build") String build,
                         @JsonProperty("heartbeatInterval") int heartbeatInterval) {
         this.version = version;
         this.boardType = boardType;
         this.cpuType = cpuType;
         this.connectionType = connectionType;
-        this.buildDate = buildDate;
+        this.build = build;
         this.heartbeatInterval = heartbeatInterval;
     }
 
@@ -67,7 +67,7 @@ public class HardwareInfo {
                 this.connectionType = value;
                 break;
             case "build" :
-                this.buildDate = value;
+                this.build = value;
                 break;
         }
     }

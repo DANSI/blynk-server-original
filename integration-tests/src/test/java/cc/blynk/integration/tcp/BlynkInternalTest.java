@@ -94,7 +94,7 @@ public class BlynkInternalTest extends IntegrationBase {
 
         Profile profile = parseProfile(clientPair.appClient.getBody());
 
-        assertEquals(JsonParser.toJson(hardwareInfo), JsonParser.toJson(profile.dashBoards[0].hardwareInfo));
+        assertEquals(JsonParser.toJson(hardwareInfo), JsonParser.toJson(profile.dashBoards[0].devices[0].hardwareInfo));
 
 
         hardClient2.stop().awaitUninterruptibly();

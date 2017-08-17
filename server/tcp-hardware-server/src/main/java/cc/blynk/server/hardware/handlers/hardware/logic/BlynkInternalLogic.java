@@ -2,6 +2,7 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.HardwareInfo;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -83,9 +84,15 @@ public class BlynkInternalLogic {
         }
 
         DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(state.dashId);
-        //this info is not important, so we don't mark dash as updated.
-        //this update will be stored only in case hardware sends real data to pins
-        dashBoard.hardwareInfo = hardwareInfo;
+        Device device = dashBoard.getDeviceById(state.deviceId);
+
+        long now = System.currentTimeMillis();
+        if (device.isHardwareInfoChangedForOTA(hardwareInfo) && device.otaInfo != null) {
+            device.otaInfo.OTAUpdateAt = now;
+        }
+
+        device.hardwareInfo = hardwareInfo;
+        dashBoard.updatedAt = now;
 
         ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
     }

@@ -21,8 +21,10 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
 import org.apache.logging.log4j.LogManager;
@@ -79,6 +81,11 @@ public class OTAHandler extends UploadHandler {
             log.debug("No device in session.");
             return badRequest("No device in session.");
         }
+
+        DashBoard dash = user.profile.getDashById(dashId);
+        Device device = dash.getDeviceById(deviceId);
+
+        device.updateOTAInfo(user.email);
 
         return ok(path);
     }

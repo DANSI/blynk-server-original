@@ -62,8 +62,6 @@ public class DashBoard {
 
     public volatile boolean isActive;
 
-    public volatile HardwareInfo hardwareInfo;
-
     public volatile String sharedToken;
 
     @JsonDeserialize(keyUsing = PinStorageKeyDeserializer.class)

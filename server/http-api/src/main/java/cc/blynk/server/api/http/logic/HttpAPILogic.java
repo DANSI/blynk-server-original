@@ -15,6 +15,7 @@ import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -121,6 +122,11 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             log.debug("No device in session.");
             return badRequest("No device in session.");
         }
+
+        DashBoard dash = user.profile.getDashById(dashId);
+        Device device = dash.getDeviceById(deviceId);
+
+        device.updateOTAInfo(user.email);
 
         return ok();
     }
