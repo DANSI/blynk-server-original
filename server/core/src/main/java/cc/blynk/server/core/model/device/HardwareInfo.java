@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model;
+package cc.blynk.server.core.model.device;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,8 +1,8 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.HardwareInfo;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;

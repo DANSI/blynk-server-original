@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.device;
 
-import cc.blynk.server.core.model.HardwareInfo;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.utils.JsonParser;
 
