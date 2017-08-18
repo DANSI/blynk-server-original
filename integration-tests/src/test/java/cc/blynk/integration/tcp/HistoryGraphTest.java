@@ -33,6 +33,7 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.zip.GZIPInputStream;
 
 import static cc.blynk.server.core.protocol.enums.Response.*;
@@ -100,6 +101,55 @@ public class HistoryGraphTest extends IntegrationBase {
         assertEquals(1111111, bb.getLong());
         assertEquals(1.22D, bb.getDouble(), 0.1);
         assertEquals(2222222, bb.getLong());
+    }
+
+    @Test
+    public void testTooManyDataForGraph() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        Pin pin1 = new Pin((byte) 8, PinType.DIGITAL);
+        Pin pin2 = new Pin((byte) 9, PinType.DIGITAL);
+        Pin pin3 = new Pin((byte) 10, PinType.DIGITAL);
+        Pin pin4 = new Pin((byte) 11, PinType.DIGITAL);
+        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, pin1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, pin2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, pin3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, null, false, false, false);
+        GraphDataStream graphDataStream4 = new GraphDataStream(null, GraphType.LINE, 0, 0, pin4, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream1,
+                graphDataStream2,
+                graphDataStream3,
+                graphDataStream4
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.reset();
+
+        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY));
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 9, GraphGranularityType.HOURLY));
+        Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 10, GraphGranularityType.HOURLY));
+        Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER, ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 11, GraphGranularityType.HOURLY));
+
+        for (int i = 0; i < GraphPeriod.THREE_MONTHS.numberOfPoints; i++) {
+            long now = System.currentTimeMillis();
+            FileUtils.write(pinReportingDataPath1, ThreadLocalRandom.current().nextDouble(), now);
+            FileUtils.write(pinReportingDataPath2, ThreadLocalRandom.current().nextDouble(), now);
+            FileUtils.write(pinReportingDataPath3, ThreadLocalRandom.current().nextDouble(), now);
+            FileUtils.write(pinReportingDataPath4, ThreadLocalRandom.current().nextDouble(), now);
+        }
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 THREE_MONTHS"));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(serverError(1)));
     }
 
     @Test

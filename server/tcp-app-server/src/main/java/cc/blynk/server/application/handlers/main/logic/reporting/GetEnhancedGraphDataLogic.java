@@ -99,8 +99,13 @@ public class GetEnhancedGraphDataLogic {
                 byte[][] data = reportingDao.getReportingData(user, requestedPins);
                 byte[] compressed = compress(requestedPins[0].dashId, data);
 
-                if (channel.isWritable()) {
-                    channel.writeAndFlush(makeBinaryMessage(GET_ENHANCED_GRAPH_DATA, msgId, compressed), channel.voidPromise());
+                if (compressed.length > Short.MAX_VALUE * 2) {
+                    log.error("Data set for history graph is too large {}, for {}.", compressed.length, user.email);
+                    channel.writeAndFlush(serverError(msgId), channel.voidPromise());
+                } else {
+                    if (channel.isWritable()) {
+                        channel.writeAndFlush(makeBinaryMessage(GET_ENHANCED_GRAPH_DATA, msgId, compressed), channel.voidPromise());
+                    }
                 }
             } catch (NoDataException noDataException) {
                 channel.writeAndFlush(noData(msgId), channel.voidPromise());
