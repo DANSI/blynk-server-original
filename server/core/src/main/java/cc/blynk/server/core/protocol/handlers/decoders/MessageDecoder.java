@@ -40,9 +40,9 @@ public class MessageDecoder extends ByteToMessageDecoder {
 
         in.markReaderIndex();
 
-        final short command = in.readUnsignedByte();
-        final int messageId = in.readUnsignedShort();
-        final int codeOrLength = in.readUnsignedShort();
+        short command = in.readUnsignedByte();
+        int messageId = in.readUnsignedShort();
+        int codeOrLength = in.readUnsignedShort();
 
         MessageBase message;
         if (command == Command.RESPONSE) {
@@ -53,7 +53,7 @@ public class MessageDecoder extends ByteToMessageDecoder {
                 return;
             }
 
-            message = produce(messageId, command, in.readSlice(codeOrLength).toString(CharsetUtil.UTF_8));
+            message = produce(messageId, command, (String) in.readCharSequence(codeOrLength, CharsetUtil.UTF_8));
         }
 
         log.trace("Incoming {}", message);
