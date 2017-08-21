@@ -1,9 +1,6 @@
 package cc.blynk.server.api.http;
 
-import cc.blynk.core.http.handlers.StaticFile;
-import cc.blynk.core.http.handlers.StaticFileEdsWith;
-import cc.blynk.core.http.handlers.StaticFileHandler;
-import cc.blynk.core.http.handlers.UrlReWriterHandler;
+import cc.blynk.core.http.handlers.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
@@ -49,7 +46,8 @@ public class HttpsAPIServer extends BaseServer {
                 .addLast("HttpUrlMapper", new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
                 .addLast("HttpStaticFile", new StaticFileHandler(isUnpacked, new StaticFile("/static"),
                                            new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
-                .addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler);
+                .addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler)
+                .addLast(new OTAHandler(holder, adminRootPath + "/ota/start", "/static/ota"));
             }
         };
     }

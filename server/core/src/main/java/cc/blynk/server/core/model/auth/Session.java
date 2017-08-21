@@ -116,6 +116,10 @@ public class Session {
         return hardwareChannels.size() == 0 || sendMessageToHardware(filter(activeDashId, deviceIds), cmd, msgId, body);
     }
 
+    public boolean sendMessageToHardware(short cmd, int msgId, String body) {
+        return sendMessageToHardware(hardwareChannels, cmd, msgId, body);
+    }
+
     private boolean sendMessageToHardware(Set<Channel> targetChannels, short cmd, int msgId, String body) {
         final int channelsNum = targetChannels.size();
         if (channelsNum == 0) {

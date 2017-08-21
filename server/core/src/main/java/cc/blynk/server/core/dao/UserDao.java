@@ -42,12 +42,17 @@ public class UserDao {
     }
 
     public boolean isSuperAdminExists() {
+        User user = getSuperAdmin();
+        return user != null;
+    }
+
+    public User getSuperAdmin() {
         for (User user : users.values()) {
             if (user.isSuperAdmin) {
-                return true;
+                return user;
             }
         }
-        return false;
+        return null;
     }
 
     public User getByName(String name, String appName) {

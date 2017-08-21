@@ -30,9 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.net.ssl.*;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
+import javax.net.ssl.SSLContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,30 +84,6 @@ public class HttpsAdminServerTest extends BaseTest {
     @Override
     public String getDataFolder() {
         return getRelativeDataFolder("/profiles");
-    }
-
-    private SSLContext initUnsecuredSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
-        X509TrustManager tm = new X509TrustManager() {
-            @Override
-            public void checkClientTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) throws java.security.cert.CertificateException {
-
-            }
-
-            @Override
-            public void checkServerTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) throws java.security.cert.CertificateException {
-
-            }
-
-            @Override
-            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                return null;
-            }
-        };
-
-        SSLContext context = SSLContext.getInstance("TLS");
-        context.init(null, new TrustManager[]{ tm }, null);
-
-        return context;
     }
 
     @Test
@@ -388,13 +362,6 @@ public class HttpsAdminServerTest extends BaseTest {
             List<String> values = consumeJsonPinValues(response);
             assertEquals(1, values.size());
             assertEquals("100", values.get(0));
-        }
-    }
-
-    private class MyHostVerifier implements HostnameVerifier {
-        @Override
-        public boolean verify(String s, SSLSession sslSession) {
-            return true;
         }
     }
 

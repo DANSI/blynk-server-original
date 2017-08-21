@@ -1,18 +1,26 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.https.HttpsAdminServerTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.api.http.HttpAPIServer;
+import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.JsonParser;
+import cc.blynk.utils.SHA256Util;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import org.apache.http.HttpEntity;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -26,7 +34,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.net.ssl.SSLContext;
 import java.io.InputStream;
+import java.util.Base64;
 
 import static cc.blynk.integration.IntegrationBase.*;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
@@ -46,18 +56,21 @@ import static org.mockito.Mockito.verify;
 public class OTATest extends BaseTest {
 
     private BaseServer httpServer;
+    private BaseServer httpsServer;
     private BaseServer hardwareServer;
     private BaseServer appServer;
 
     private CloseableHttpClient httpclient;
-    private String httpServerUrl;
+    private String httpsAdminServerUrl;
 
     private ClientPair clientPair;
+    private byte[] auth;
 
     @After
     public void shutdown() throws Exception {
         httpclient.close();
         httpServer.close();
+        httpsServer.close();
         hardwareServer.close();
         appServer.close();
         clientPair.stop();
@@ -66,10 +79,27 @@ public class OTATest extends BaseTest {
     @Before
     public void init() throws Exception {
         httpServer = new HttpAPIServer(holder, false).start();
+        httpsServer = new HttpsAPIServer(holder, false).start();
         hardwareServer = new HardwareServer(holder).start();
         appServer = new AppServer(holder).start();
-        httpServerUrl = String.format("http://localhost:%s/", httpPort);
-        httpclient = HttpClients.createDefault();
+        httpsAdminServerUrl = String.format("https://localhost:%s/admin", httpsPort);
+
+        String pass = "admin";
+        User user = new User();
+        user.isSuperAdmin = true;
+        user.email = "admin@blynk.cc";
+        user.pass = SHA256Util.makeHash(pass, user.email);
+        holder.userDao.add(user);
+
+        auth = (user.email + ":" + pass).getBytes();
+
+        // Allow TLSv1 protocol only
+        SSLContext sslcontext = initUnsecuredSSLContext();
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new HttpsAdminServerTest.MyHostVerifier());
+        this.httpclient = HttpClients.custom()
+                .setSSLSocketFactory(sslsf)
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                .build();
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
         clientPair.hardwareClient.reset();
         clientPair.appClient.reset();
@@ -80,7 +110,8 @@ public class OTATest extends BaseTest {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-        HttpGet request = new HttpGet(httpServerUrl + token + "/ota/start");
+        HttpGet request = new HttpGet(httpsAdminServerUrl + "/ota/start?token=" + token);
+        request.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -95,7 +126,8 @@ public class OTATest extends BaseTest {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-        HttpGet request = new HttpGet(httpServerUrl + token + "/ota/start?fileName=test.bin");
+        HttpGet request = new HttpGet(httpsAdminServerUrl + "/ota/start?fileName=test.bin" + "&token=" + token);
+        request.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -105,7 +137,8 @@ public class OTATest extends BaseTest {
         String expectedResult = "http://127.0.0.1/static/ota/test.bin";
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7777, BLYNK_INTERNAL, b("ota " + expectedResult))));
 
-        request = new HttpGet(httpServerUrl + token + "/ota/start?fileName=test.bin");
+        request = new HttpGet(httpsAdminServerUrl + "/ota/start?fileName=test.bin" + "&token=" + token);
+        request.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -118,7 +151,8 @@ public class OTATest extends BaseTest {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-        HttpPost post = new HttpPost(httpServerUrl + token + "/ota/start");
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?token=" + token);
+        post.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));
 
         String fileName = "test.bin";
 
@@ -144,6 +178,13 @@ public class OTATest extends BaseTest {
 
         String responseUrl = "http://127.0.0.1" + path;
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+
+        HttpGet index = new HttpGet("http://localhost:" + httpPort + path);
+
+        try (CloseableHttpResponse response = httpclient.execute(index)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals("application/octet-stream", response.getHeaders("Content-Type")[0].getValue());
+        }
     }
 
     @Test
@@ -153,7 +194,8 @@ public class OTATest extends BaseTest {
 
         clientPair.hardwareClient.stop();
 
-        HttpPost post = new HttpPost(httpServerUrl + token + "/ota/start");
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?token=" + token);
+        post.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));
 
         String fileName = "test.bin";
 
@@ -181,7 +223,8 @@ public class OTATest extends BaseTest {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-        HttpPost post = new HttpPost(httpServerUrl + token + "/ota/start");
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?token=" + token);
+        post.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));
 
         String fileName = "test.bin";
 
@@ -215,7 +258,7 @@ public class OTATest extends BaseTest {
         assertNotNull(devices);
         assertEquals(1, devices.length);
         Device device = devices[0];
-        assertEquals("dima@mail.ua", device.otaInfo.OTAInitiatedBy);
+        assertEquals("admin@blynk.cc", device.otaInfo.OTAInitiatedBy);
         assertEquals(System.currentTimeMillis(), device.otaInfo.OTAInitiatedAt, 5000);
         assertEquals(0, device.otaInfo.OTAUpdateAt);
         assertFalse(device.otaInfo.isLastOtaUpdateOk());
@@ -223,7 +266,7 @@ public class OTATest extends BaseTest {
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
 
         device = devices[0];
-        assertEquals("dima@mail.ua", device.otaInfo.OTAInitiatedBy);
+        assertEquals("admin@blynk.cc", device.otaInfo.OTAInitiatedBy);
         assertEquals(System.currentTimeMillis(), device.otaInfo.OTAInitiatedAt, 5000);
         assertEquals(0, device.otaInfo.OTAUpdateAt);
         assertFalse(device.otaInfo.isLastOtaUpdateOk());
@@ -237,7 +280,8 @@ public class OTATest extends BaseTest {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-        HttpPost post = new HttpPost(httpServerUrl + token + "/ota/start");
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?token=" + token);
+        post.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));
 
         String fileName = "test.bin";
 
@@ -275,7 +319,7 @@ public class OTATest extends BaseTest {
         assertEquals("0.3.1", device.hardwareInfo.version);
         assertEquals(10, device.hardwareInfo.heartbeatInterval);
         assertEquals("111", device.hardwareInfo.build);
-        assertEquals("dima@mail.ua", device.otaInfo.OTAInitiatedBy);
+        assertEquals("admin@blynk.cc", device.otaInfo.OTAInitiatedBy);
         assertEquals(System.currentTimeMillis(), device.otaInfo.OTAInitiatedAt, 5000);
         assertEquals(0, device.otaInfo.OTAUpdateAt);
         assertFalse(device.otaInfo.isLastOtaUpdateOk());
@@ -294,7 +338,7 @@ public class OTATest extends BaseTest {
         assertEquals("0.3.1", device.hardwareInfo.version);
         assertEquals(10, device.hardwareInfo.heartbeatInterval);
         assertEquals("112", device.hardwareInfo.build);
-        assertEquals("dima@mail.ua", device.otaInfo.OTAInitiatedBy);
+        assertEquals("admin@blynk.cc", device.otaInfo.OTAInitiatedBy);
         assertEquals(System.currentTimeMillis(), device.otaInfo.OTAInitiatedAt, 5000);
         assertEquals(System.currentTimeMillis(), device.otaInfo.OTAUpdateAt, 5000);
         assertTrue(device.otaInfo.isLastOtaUpdateOk());

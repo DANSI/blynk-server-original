@@ -15,7 +15,6 @@ import cc.blynk.server.core.model.Pin;
 import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -39,7 +38,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Base64;
 
-import static cc.blynk.core.http.Response.*;
+import static cc.blynk.core.http.Response.ok;
+import static cc.blynk.core.http.Response.redirect;
 import static cc.blynk.server.core.protocol.enums.Command.*;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
@@ -58,26 +58,23 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     private final GCMWrapper gcmWrapper;
     private final ReportingDao reportingDao;
     private final EventorProcessor eventorProcessor;
-    private final String serverHostUrl;
 
-    private static final String OTA_DIR = "/static/ota/";
 
     public HttpAPILogic(Holder holder) {
         this(holder.tokenManager, holder.sessionDao, holder.blockingIOProcessor,
                 holder.mailWrapper, holder.gcmWrapper, holder.reportingDao,
-                holder.stats, holder.eventorProcessor, holder.props.getServerHost());
+                holder.stats, holder.eventorProcessor);
     }
 
     private HttpAPILogic(TokenManager tokenManager, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor,
                          MailWrapper mailWrapper, GCMWrapper gcmWrapper, ReportingDao reportingDao,
-                         GlobalStats globalStats, EventorProcessor eventorProcessor, String host) {
+                         GlobalStats globalStats, EventorProcessor eventorProcessor) {
         super(tokenManager, sessionDao, globalStats, "");
         this.blockingIOProcessor = blockingIOProcessor;
         this.mailWrapper = mailWrapper;
         this.gcmWrapper = gcmWrapper;
         this.reportingDao = reportingDao;
         this.eventorProcessor = eventorProcessor;
-        this.serverHostUrl = "http://" + host;
     }
 
     private static String makeBody(DashBoard dash, int deviceId, byte pin, PinType pinType, String pinValue) {
@@ -91,44 +88,6 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
                 return ((MultiPinWidget) widget).makeHardwareBody(pin, pinType);
             }
         }
-    }
-
-    @GET
-    @Path("{token}/ota/start")
-    @Metric(HTTP_START_OTA)
-    public Response startOTA(@PathParam("token") String token,
-                             @QueryParam("fileName") String filename) {
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
-
-        if (tokenValue == null) {
-            log.debug("Requested token {} not found.", token);
-            return badRequest("Invalid token.");
-        }
-
-        User user = tokenValue.user;
-        int dashId = tokenValue.dashId;
-        int deviceId = tokenValue.deviceId;
-
-        Session session = sessionDao.userSession.get(new UserKey(user));
-        if (session == null) {
-            log.debug("No session for user {}.", user.email);
-            return badRequest("Device wasn't connected yet.");
-        }
-
-        String otaFile = OTA_DIR + (filename == null ? "firmware_ota.bin" : filename);
-        String otaServerUrl = serverHostUrl + otaFile;
-        String body = "ota" + BODY_SEPARATOR + otaServerUrl;
-        if (session.sendMessageToHardware(dashId, BLYNK_INTERNAL, 7777, body, deviceId)) {
-            log.debug("No device in session.");
-            return badRequest("No device in session.");
-        }
-
-        DashBoard dash = user.profile.getDashById(dashId);
-        Device device = dash.getDeviceById(deviceId);
-
-        device.updateOTAInfo(user.email);
-
-        return ok();
     }
 
     @GET

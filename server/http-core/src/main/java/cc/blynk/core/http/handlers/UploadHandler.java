@@ -56,7 +56,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
         }
     }
 
-    public boolean accept(HttpRequest req) {
+    public boolean accept(ChannelHandlerContext ctx, HttpRequest req) {
         return req.method() == HttpMethod.POST && req.uri().startsWith(handlerUri);
     }
 
@@ -66,7 +66,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
             HttpRequest req = (HttpRequest) msg;
 
             uri = req.uri();
-            if (!accept(req)) {
+            if (!accept(ctx, req)) {
                 ctx.fireChannelRead(msg);
                 return;
             }
@@ -101,7 +101,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
                 try {
                     String path = finishUpload();
                     if (path != null) {
-                        response = afterUpload(path);
+                        response = afterUpload(ctx, path);
                     } else {
                         response = serverError();
                     }
@@ -117,7 +117,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
         }
     }
 
-    public Response afterUpload(String path) {
+    public Response afterUpload(ChannelHandlerContext ctx, String path) {
         return ok(path);
     }
 

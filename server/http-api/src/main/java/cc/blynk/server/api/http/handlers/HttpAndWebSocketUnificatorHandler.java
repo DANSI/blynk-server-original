@@ -3,10 +3,7 @@ package cc.blynk.server.api.http.handlers;
 import cc.blynk.core.http.handlers.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.handlers.IpFilterHandler;
-import cc.blynk.server.admin.http.logic.ConfigsLogic;
-import cc.blynk.server.admin.http.logic.HardwareStatsLogic;
-import cc.blynk.server.admin.http.logic.StatsLogic;
-import cc.blynk.server.admin.http.logic.UsersLogic;
+import cc.blynk.server.admin.http.logic.*;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
@@ -57,6 +54,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final HttpAPILogic httpAPILogic;
     private final NoMatchHandler noMatchHandler;
 
+    private final OTALogic otaLogic;
     private final UsersLogic usersLogic;
     private final StatsLogic statsLogic;
     private final ConfigsLogic configsLogic;
@@ -78,6 +76,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.noMatchHandler = new NoMatchHandler();
 
         //admin API handlers
+        this.otaLogic = new OTALogic(holder, rootPath);
         this.usersLogic = new UsersLogic(holder, rootPath);
         this.statsLogic = new StatsLogic(holder, rootPath);
         this.configsLogic = new ConfigsLogic(holder, rootPath);
@@ -129,6 +128,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
         ChannelPipeline pipeline = ctx.pipeline();
 
+        pipeline.addLast(new UploadHandler("/upload", "/static/ota"));
         pipeline.addLast(adminAuthHandler);
         pipeline.addLast(authCookieHandler);
         pipeline.addLast(cookieBasedUrlReWriterHandler);
@@ -136,6 +136,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.remove(StaticFileHandler.class);
         pipeline.addLast(new StaticFileHandler(isUnpacked, new StaticFile("/static", false)));
 
+        pipeline.addLast(otaLogic);
         pipeline.addLast(usersLogic);
         pipeline.addLast(statsLogic);
         pipeline.addLast(configsLogic);
@@ -150,7 +151,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
     private void initHttpPipeline(ChannelHandlerContext ctx) {
         ChannelPipeline pipeline = ctx.pipeline();
-        pipeline.addLast(new UploadHandler("/upload", "/static/ota"));
         pipeline.addLast(resetPasswordLogic);
         pipeline.addLast(httpAPILogic);
 

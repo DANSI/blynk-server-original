@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.mockito.Mock;
 
+import javax.net.ssl.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -24,6 +25,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.util.Collections;
 import java.util.List;
@@ -72,6 +75,38 @@ public abstract class BaseTest {
         } catch (InterruptedException e) {
             //we can ignore it
         }
+    }
+
+    public class MyHostVerifier implements HostnameVerifier {
+        @Override
+        public boolean verify(String s, SSLSession sslSession) {
+            return true;
+        }
+    }
+
+
+    public SSLContext initUnsecuredSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
+        X509TrustManager tm = new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) throws java.security.cert.CertificateException {
+
+            }
+
+            @Override
+            public void checkServerTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) throws java.security.cert.CertificateException {
+
+            }
+
+            @Override
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+        };
+
+        SSLContext context = SSLContext.getInstance("TLS");
+        context.init(null, new TrustManager[]{ tm }, null);
+
+        return context;
     }
 
     @BeforeClass

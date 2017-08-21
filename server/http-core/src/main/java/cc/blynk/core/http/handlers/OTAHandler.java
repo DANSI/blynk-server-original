@@ -15,20 +15,22 @@
  */
 package cc.blynk.core.http.handlers;
 
+import cc.blynk.core.http.AuthHeadersBaseHttpHandler;
 import cc.blynk.core.http.Response;
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.dao.TokenValue;
-import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.dao.*;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.List;
 
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
@@ -41,23 +43,35 @@ public class OTAHandler extends UploadHandler {
 
     private final TokenManager tokenManager;
     private final SessionDao sessionDao;
+    private final UserDao userDao;
     private final String serverHostUrl;
+    private QueryStringDecoder queryStringDecoder;
 
     public OTAHandler(Holder holder, String handlerUri, String uploadFolder) {
         super(handlerUri, uploadFolder);
         this.tokenManager = holder.tokenManager;
         this.sessionDao = holder.sessionDao;
+        this.userDao = holder.userDao;
         this.serverHostUrl = "http://" + holder.props.getServerHost();
     }
 
     @Override
-    public boolean accept(HttpRequest req) {
-        return req.method() == HttpMethod.POST && req.uri().endsWith(handlerUri);
+    public boolean accept(ChannelHandlerContext ctx, HttpRequest req) {
+        if (req.method() == HttpMethod.POST && req.uri().startsWith(handlerUri)) {
+            User superAdmin = AuthHeadersBaseHttpHandler.validateAuth(userDao, req);
+            if (superAdmin != null) {
+                ctx.channel().attr(AuthHeadersBaseHttpHandler.USER).set(superAdmin);
+                queryStringDecoder = new QueryStringDecoder(req.uri());
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    public Response afterUpload(String path) {
-        String token = uri.substring(uri.indexOf("/") + 1, uri.indexOf("/", 2));
+    public Response afterUpload(ChannelHandlerContext ctx, String path) {
+        List<String> param = queryStringDecoder.parameters().get("token");
+        String token = path == null ? null : param.get(0);
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
         if (tokenValue == null) {
@@ -85,7 +99,10 @@ public class OTAHandler extends UploadHandler {
         DashBoard dash = user.profile.getDashById(dashId);
         Device device = dash.getDeviceById(deviceId);
 
-        device.updateOTAInfo(user.email);
+        User initiator = ctx.channel().attr(AuthHeadersBaseHttpHandler.USER).get();
+        if (initiator != null) {
+            device.updateOTAInfo(initiator.email);
+        }
 
         return ok(path);
     }
