@@ -19,6 +19,7 @@ import cc.blynk.core.http.AuthHeadersBaseHttpHandler;
 import cc.blynk.core.http.Response;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.*;
+import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -35,7 +36,6 @@ import java.util.List;
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 public class OTAHandler extends UploadHandler {
 
@@ -44,15 +44,15 @@ public class OTAHandler extends UploadHandler {
     private final TokenManager tokenManager;
     private final SessionDao sessionDao;
     private final UserDao userDao;
-    private final String serverHostUrl;
     private QueryStringDecoder queryStringDecoder;
+    private final OTAManager otaManager;
 
-    public OTAHandler(Holder holder, String handlerUri, String uploadFolder) {
+    public OTAHandler(Holder holder, String handlerUri, String uploadFolder, boolean isUnpacked) {
         super(handlerUri, uploadFolder);
         this.tokenManager = holder.tokenManager;
         this.sessionDao = holder.sessionDao;
         this.userDao = holder.userDao;
-        this.serverHostUrl = "http://" + holder.props.getServerHost();
+        this.otaManager = holder.otaManager;
     }
 
     @Override
@@ -69,9 +69,29 @@ public class OTAHandler extends UploadHandler {
     }
 
     @Override
-    public Response afterUpload(ChannelHandlerContext ctx, String path) {
+    public Response afterUpload(ChannelHandlerContext ctx, String pathToFirmware) {
         List<String> param = queryStringDecoder.parameters().get("token");
-        String token = path == null ? null : param.get(0);
+
+        if (param == null) {
+            log.info("Requested OTA for all devices...");
+            return allDevicesOTA(ctx, pathToFirmware);
+        } else {
+            String token = param.get(0);
+            log.info("Requested OTA for single device {}.", token);
+            return singleDeviceOTA(ctx, token, pathToFirmware);
+        }
+
+    }
+
+    private Response allDevicesOTA(ChannelHandlerContext ctx, String pathToFirmware) {
+
+        User initiator = ctx.channel().attr(AuthHeadersBaseHttpHandler.USER).get();
+        otaManager.initiate(initiator, pathToFirmware);
+
+        return ok(pathToFirmware);
+    }
+
+    private Response singleDeviceOTA(ChannelHandlerContext ctx, String token, String path) {
         TokenValue tokenValue = tokenManager.getUserByToken(token);
 
         if (tokenValue == null) {
@@ -89,8 +109,7 @@ public class OTAHandler extends UploadHandler {
             return badRequest("Device wasn't connected yet.");
         }
 
-        String otaServerUrl = serverHostUrl + path;
-        String body = "ota" + BODY_SEPARATOR + otaServerUrl;
+        String body = otaManager.buildOTAInitCommandBody(path);
         if (session.sendMessageToHardware(dashId, BLYNK_INTERNAL, 7777, body, deviceId)) {
             log.debug("No device in session.");
             return badRequest("No device in session.");

@@ -2,6 +2,7 @@ package cc.blynk.server;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.*;
+import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
@@ -60,6 +61,8 @@ public class Holder implements Closeable {
     public final EventorProcessor eventorProcessor;
     public final DefaultAsyncHttpClient asyncHttpClient;
 
+    public final OTAManager otaManager;
+
     public final Limits limits;
 
     public final String csvDownloadUrl;
@@ -116,6 +119,8 @@ public class Holder implements Closeable {
         this.gcmWrapper = new GCMWrapper(gcmProperties, asyncHttpClient);
         this.smsWrapper = new SMSWrapper(smsProperties, asyncHttpClient);
 
+        this.otaManager = new OTAManager(props);
+
         this.eventorProcessor = new EventorProcessor(gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
@@ -156,6 +161,8 @@ public class Holder implements Closeable {
         this.mailWrapper = mailWrapper;
         this.gcmWrapper = gcmWrapper;
         this.smsWrapper = smsWrapper;
+
+        this.otaManager = new OTAManager(props);
 
         this.eventorProcessor = new EventorProcessor(gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()

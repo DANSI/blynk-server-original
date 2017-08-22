@@ -1,5 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
@@ -32,9 +33,11 @@ public class BlynkInternalLogic {
 
     private static final Logger log = LogManager.getLogger(BlynkInternalLogic.class);
 
+    private final OTAManager otaManager;
     private final int hardwareIdleTimeout;
 
-    public BlynkInternalLogic(int hardwareIdleTimeout) {
+    public BlynkInternalLogic(OTAManager otaManager, int hardwareIdleTimeout) {
+        this.otaManager = otaManager;
         this.hardwareIdleTimeout = hardwareIdleTimeout;
     }
 
@@ -78,7 +81,7 @@ public class BlynkInternalLogic {
         log.trace("Info command. heartbeat interval {}", newHardwareInterval);
 
         if (hardwareIdleTimeout != 0 && newHardwareInterval > 0) {
-            final int newReadTimeout = (int) Math.ceil(newHardwareInterval * 2.3D);
+            int newReadTimeout = (int) Math.ceil(newHardwareInterval * 2.3D);
             log.debug("Changing read timeout interval to {}", newReadTimeout);
             ctx.pipeline().replace(ReadTimeoutHandler.class, "H_ReadTimeout", new ReadTimeoutHandler(newReadTimeout));
         }
@@ -86,13 +89,13 @@ public class BlynkInternalLogic {
         DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(state.dashId);
         Device device = dashBoard.getDeviceById(state.deviceId);
 
-        long now = System.currentTimeMillis();
-        if (device.isHardwareInfoChangedForOTA(hardwareInfo) && device.otaInfo != null) {
-            device.otaInfo.OTAUpdateAt = now;
+        if (otaManager.isUpdateRequired(hardwareInfo)) {
+            otaManager.sendOtaCommand(ctx, device);
+            log.debug("Ota command is sent for user {} and device {}:{}.", state.user.email, device.name, device.id);
         }
 
         device.hardwareInfo = hardwareInfo;
-        dashBoard.updatedAt = now;
+        dashBoard.updatedAt = System.currentTimeMillis();
 
         ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
     }

@@ -40,7 +40,6 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
     HttpPostRequestDecoder decoder;
     final String baseDir;
     final String uploadFolder;
-    String uri;
 
     public UploadHandler(String handlerUri, String uploadFolder) {
         super(false);
@@ -65,7 +64,6 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
         if (msg instanceof HttpRequest) {
             HttpRequest req = (HttpRequest) msg;
 
-            uri = req.uri();
             if (!accept(ctx, req)) {
                 ctx.fireChannelRead(msg);
                 return;

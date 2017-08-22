@@ -8,18 +8,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 17.08.17.
  */
-public class OtaInfo {
+public class DeviceOtaInfo {
 
-    public volatile String OTAInitiatedBy;
+    public final String OTAInitiatedBy;
 
-    public volatile long OTAInitiatedAt;
+    public final long OTAInitiatedAt;
 
-    public volatile long OTAUpdateAt;
+    public final long OTAUpdateAt;
 
     @JsonCreator
-    public OtaInfo(@JsonProperty("OTAInitiatedBy") String OTAInitiatedBy,
-                   @JsonProperty("OTAInitiatedAt") long OTAInitiatedAt,
-                   @JsonProperty("OTAUpdateAt") long OTAUpdateAt) {
+    public DeviceOtaInfo(@JsonProperty("OTAInitiatedBy") String OTAInitiatedBy,
+                         @JsonProperty("OTAInitiatedAt") long OTAInitiatedAt,
+                         @JsonProperty("OTAUpdateAt") long OTAUpdateAt) {
         this.OTAInitiatedBy = OTAInitiatedBy;
         this.OTAInitiatedAt = OTAInitiatedAt;
         this.OTAUpdateAt = OTAUpdateAt;

@@ -2,6 +2,7 @@ package cc.blynk.core.http.handlers;
 
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.utils.ContentTypeUtil;
+import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.ServerProperties;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -35,21 +36,9 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
 
     private static final Logger log = LogManager.getLogger(StaticFileHandler.class);
 
-    public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
-    public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
-    public static final int HTTP_CACHE_SECONDS = 60;
-    private static final String[] possibleLocalPaths =  new String[] {
-            "./server/http-dashboard/target/classes",
-            "./server/http-api/target/classes",
-            "./server/http-admin/target/classes",
-            "./server/http-core/target/classes",
-            "./server/core/target",
-            "../server/http-admin/target/classes",
-            "../server/http-dashboard/target/classes",
-            "../server/http-core/target/classes",
-            "../server/core/target",
-            "/tmp/blynk"
-    };
+    private static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
+    private static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
+    private static final int HTTP_CACHE_SECONDS = 60;
 
     /**
      * Used for case when server started from IDE and static files wasn't unpacked from jar.
@@ -182,7 +171,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
             }
         } else {
             //for local mode / running from ide
-            path = getPathForLocalRun(uri);
+            path = FileUtils.getPathForLocalRun(uri);
         }
 
         log.debug("Getting file from path {}", path);
@@ -254,16 +243,6 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
             // Close the connection when the whole content is written out.
             lastContentFuture.addListener(ChannelFutureListener.CLOSE);
         }
-    }
-
-    private Path getPathForLocalRun(String uri) {
-        for (String possiblePath : possibleLocalPaths) {
-            Path path = Paths.get(possiblePath, uri);
-            if (Files.exists(path)) {
-                return path;
-            }
-        }
-        return null;
     }
 
     @Override

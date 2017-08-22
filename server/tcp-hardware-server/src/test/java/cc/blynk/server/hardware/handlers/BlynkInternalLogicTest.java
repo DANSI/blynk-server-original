@@ -1,5 +1,6 @@
 package cc.blynk.server.hardware.handlers;
 
+import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
@@ -41,11 +42,14 @@ public class BlynkInternalLogicTest {
     private ByteBufAllocator allocator;
 
     @Mock
+    private OTAManager otaManager;
+
+    @Mock
     private ByteBuf byteBuf;
 
     @Test
     public void testCorrectBehavior() {
-        BlynkInternalLogic logic = new BlynkInternalLogic(props.getIntProperty("hard.socket.idle.timeout", 0));
+        BlynkInternalLogic logic = new BlynkInternalLogic(otaManager, props.getIntProperty("hard.socket.idle.timeout", 0));
 
         when(ctx.pipeline()).thenReturn(pipeline);
         when(ctx.alloc()).thenReturn(allocator);

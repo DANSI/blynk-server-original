@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.EnumSet;
 
 import static java.nio.file.StandardOpenOption.*;
@@ -135,5 +136,57 @@ public class FileUtils {
             }
         }
         return lastModifiedFile;
+    }
+
+    public static String getBuildPatternFromString(Path path) {
+        return getPatternFromString(path, "\0" + "build" + "\0");
+    }
+
+    private static String getPatternFromString(Path path, String pattern) {
+        try {
+            byte[] data = Files.readAllBytes(path);
+
+            int index = KMPMatch.indexOf(data, pattern.getBytes());
+
+            if (index != -1) {
+                int start = index + pattern.length();
+                int end = 0;
+                byte b = -1;
+
+                while (b != '\0') {
+                    end++;
+                    b = data[start + end];
+                }
+
+                byte[] copy = Arrays.copyOfRange(data, start, start + end);
+                return new String(copy);
+            }
+        } catch (Exception e) {
+            log.error("Error getting pattern from file. Reason : {}", e.getMessage());
+        }
+        throw new RuntimeException("Unable to read build number fro firmware.");
+    }
+
+    private static final String[] possibleLocalPaths =  new String[] {
+            "./server/http-dashboard/target/classes",
+            "./server/http-api/target/classes",
+            "./server/http-admin/target/classes",
+            "./server/http-core/target/classes",
+            "./server/core/target",
+            "../server/http-admin/target/classes",
+            "../server/http-dashboard/target/classes",
+            "../server/http-core/target/classes",
+            "../server/core/target",
+            "/tmp/blynk"
+    };
+
+    public static Path getPathForLocalRun(String uri) {
+        for (String possiblePath : possibleLocalPaths) {
+            Path path = Paths.get(possiblePath, uri);
+            if (Files.exists(path)) {
+                return path;
+            }
+        }
+        return null;
     }
 }

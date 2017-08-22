@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -35,7 +36,9 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.net.ssl.SSLContext;
+import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Base64;
 
 import static cc.blynk.integration.IntegrationBase.*;
@@ -44,8 +47,7 @@ import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produc
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -258,18 +260,18 @@ public class OTATest extends BaseTest {
         assertNotNull(devices);
         assertEquals(1, devices.length);
         Device device = devices[0];
-        assertEquals("admin@blynk.cc", device.otaInfo.OTAInitiatedBy);
-        assertEquals(System.currentTimeMillis(), device.otaInfo.OTAInitiatedAt, 5000);
-        assertEquals(0, device.otaInfo.OTAUpdateAt);
-        assertFalse(device.otaInfo.isLastOtaUpdateOk());
+        assertEquals("admin@blynk.cc", device.deviceOtaInfo.OTAInitiatedBy);
+        assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.OTAInitiatedAt, 5000);
+        assertEquals(0, device.deviceOtaInfo.OTAUpdateAt);
+        assertFalse(device.deviceOtaInfo.isLastOtaUpdateOk());
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
 
         device = devices[0];
-        assertEquals("admin@blynk.cc", device.otaInfo.OTAInitiatedBy);
-        assertEquals(System.currentTimeMillis(), device.otaInfo.OTAInitiatedAt, 5000);
-        assertEquals(0, device.otaInfo.OTAUpdateAt);
-        assertFalse(device.otaInfo.isLastOtaUpdateOk());
+        assertEquals("admin@blynk.cc", device.deviceOtaInfo.OTAInitiatedBy);
+        assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.OTAInitiatedAt, 5000);
+        assertEquals(0, device.deviceOtaInfo.OTAUpdateAt);
+        assertFalse(device.deviceOtaInfo.isLastOtaUpdateOk());
     }
 
     @Test
@@ -319,10 +321,10 @@ public class OTATest extends BaseTest {
         assertEquals("0.3.1", device.hardwareInfo.version);
         assertEquals(10, device.hardwareInfo.heartbeatInterval);
         assertEquals("111", device.hardwareInfo.build);
-        assertEquals("admin@blynk.cc", device.otaInfo.OTAInitiatedBy);
-        assertEquals(System.currentTimeMillis(), device.otaInfo.OTAInitiatedAt, 5000);
-        assertEquals(0, device.otaInfo.OTAUpdateAt);
-        assertFalse(device.otaInfo.isLastOtaUpdateOk());
+        assertEquals("admin@blynk.cc", device.deviceOtaInfo.OTAInitiatedBy);
+        assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.OTAInitiatedAt, 5000);
+        assertEquals(0, device.deviceOtaInfo.OTAUpdateAt);
+        assertFalse(device.deviceOtaInfo.isLastOtaUpdateOk());
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 112"));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
@@ -338,9 +340,106 @@ public class OTATest extends BaseTest {
         assertEquals("0.3.1", device.hardwareInfo.version);
         assertEquals(10, device.hardwareInfo.heartbeatInterval);
         assertEquals("112", device.hardwareInfo.build);
-        assertEquals("admin@blynk.cc", device.otaInfo.OTAInitiatedBy);
-        assertEquals(System.currentTimeMillis(), device.otaInfo.OTAInitiatedAt, 5000);
-        assertEquals(System.currentTimeMillis(), device.otaInfo.OTAUpdateAt, 5000);
-        assertTrue(device.otaInfo.isLastOtaUpdateOk());
+        assertEquals("admin@blynk.cc", device.deviceOtaInfo.OTAInitiatedBy);
+        assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.OTAInitiatedAt, 5000);
+        assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.OTAUpdateAt, 5000);
+        assertTrue(device.deviceOtaInfo.isLastOtaUpdateOk());
     }
+
+    @Test
+    public void takeBuildDateFromBinaryFile() throws Exception {
+        String fileName = "test.bin";
+        Path path = new File("src/test/resources/static/ota/" + fileName).toPath();
+
+        assertEquals("Aug 14 2017 20:31:49", FileUtils.getBuildPatternFromString(path));
+    }
+
+    @Test
+    public void basicOTAForAllDevices() throws Exception {
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
+        post.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));
+
+        String fileName = "test.bin";
+
+        InputStream binFile = OTATest.class.getResourceAsStream("/static/ota/" + fileName);
+        ContentBody fileBody = new InputStreamBody(binFile, ContentType.APPLICATION_OCTET_STREAM, fileName);
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        builder.addPart("upfile", fileBody);
+        HttpEntity entity = builder.build();
+
+        post.setEntity(entity);
+
+        String path;
+        try (CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            path = consumeText(response);
+
+            assertNotNull(path);
+            assertTrue(path.startsWith("/static"));
+            assertTrue(path.endsWith("bin"));
+        }
+
+        String responseUrl = "http://127.0.0.1" + path;
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+
+        HttpGet index = new HttpGet("http://localhost:" + httpPort + path);
+
+        try (CloseableHttpResponse response = httpclient.execute(index)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals("application/octet-stream", response.getHeaders("Content-Type")[0].getValue());
+        }
+    }
+
+    @Test
+    public void testConnectedDeviceGotOTACommand() throws Exception {
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
+        post.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));
+
+        String fileName = "test.bin";
+
+        InputStream binFile = OTATest.class.getResourceAsStream("/static/ota/" + fileName);
+        ContentBody fileBody = new InputStreamBody(binFile, ContentType.APPLICATION_OCTET_STREAM, fileName);
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        builder.addPart("upfile", fileBody);
+        HttpEntity entity = builder.build();
+
+        post.setEntity(entity);
+
+        String path;
+        try (CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            path = consumeText(response);
+        }
+
+        String responseUrl = "http://127.0.0.1" + path;
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+
+        clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 123"));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        clientPair.hardwareClient.reset();
+
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody();
+
+        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        assertNotNull(devices);
+        assertEquals(1, devices.length);
+        assertNotNull(devices[0].deviceOtaInfo);
+        assertEquals("admin@blynk.cc", devices[0].deviceOtaInfo.OTAInitiatedBy);
+        assertEquals(System.currentTimeMillis(), devices[0].deviceOtaInfo.OTAInitiatedAt, 5000);
+        assertEquals(System.currentTimeMillis(), devices[0].deviceOtaInfo.OTAInitiatedAt, 5000);
+        assertNotEquals(devices[0].deviceOtaInfo.OTAInitiatedAt, devices[0].deviceOtaInfo.OTAUpdateAt);
+        assertEquals("123", devices[0].hardwareInfo.build);
+
+        clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build ") + "Aug 14 2017 20:31:49");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+
+    }
+
 }
