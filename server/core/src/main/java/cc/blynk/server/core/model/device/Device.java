@@ -76,9 +76,10 @@ public class Device implements Target {
         this.deviceOtaInfo = null;
     }
 
+    //for single device update device always updated when ota is initiated.
     public void updateOTAInfo(String initiatedBy) {
-        long OTAUpdateAt = deviceOtaInfo == null ? 0 : deviceOtaInfo.OTAUpdateAt;
-        this.deviceOtaInfo = new DeviceOtaInfo(initiatedBy, System.currentTimeMillis(), OTAUpdateAt);
+        long now = System.currentTimeMillis();
+        this.deviceOtaInfo = new DeviceOtaInfo(initiatedBy, now, now);
     }
 
     public void connected() {

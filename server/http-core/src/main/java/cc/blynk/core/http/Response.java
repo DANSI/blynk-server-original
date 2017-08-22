@@ -70,6 +70,10 @@ public class Response extends DefaultFullHttpResponse {
         return new Response(HTTP_1_1, FORBIDDEN);
     }
 
+    public static Response forbidden(String error) {
+        return new Response(HTTP_1_1, FORBIDDEN, error, PLAIN_TEXT);
+    }
+
     public static Response badRequest() {
         return new Response(HTTP_1_1, BAD_REQUEST);
     }

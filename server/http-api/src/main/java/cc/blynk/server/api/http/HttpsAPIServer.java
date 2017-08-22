@@ -47,7 +47,7 @@ public class HttpsAPIServer extends BaseServer {
                 .addLast("HttpStaticFile", new StaticFileHandler(isUnpacked, new StaticFile("/static"),
                                            new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
                 .addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler)
-                .addLast(new OTAHandler(holder, adminRootPath + "/ota/start", "/static/ota", isUnpacked));
+                .addLast(new OTAHandler(holder, adminRootPath + "/ota/start", "/static/ota"));
             }
         };
     }

@@ -25,8 +25,4 @@ public class DeviceOtaInfo {
         this.OTAUpdateAt = OTAUpdateAt;
     }
 
-    public boolean isLastOtaUpdateOk() {
-        return OTAUpdateAt >= OTAInitiatedAt;
-    }
-
 }

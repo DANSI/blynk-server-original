@@ -27,15 +27,22 @@ public abstract class AuthHeadersBaseHttpHandler extends BaseHttpHandler {
 
     @Override
     public boolean process(ChannelHandlerContext ctx, HttpRequest req) {
-        User superAdmin = validateAuth(userDao, req);
-        if (superAdmin != null) {
-            ctx.channel().attr(USER).set(superAdmin);
-            return super.process(ctx, req);
+        try {
+            User superAdmin = validateAuth(userDao, req);
+            if (superAdmin != null) {
+                ctx.channel().attr(USER).set(superAdmin);
+                return super.process(ctx, req);
+            }
+        } catch (IllegalAccessException e) {
+            //return 403 and stop processing.
+            ctx.writeAndFlush(Response.forbidden(e.getMessage()));
+            return true;
         }
+
         return false;
     }
 
-    public static User validateAuth(UserDao userDao, HttpRequest req) {
+    public static User validateAuth(UserDao userDao, HttpRequest req) throws IllegalAccessException {
         String auth = req.headers().get(HttpHeaderNames.AUTHORIZATION);
         if (auth != null) {
             try {
@@ -51,10 +58,14 @@ public abstract class AuthHeadersBaseHttpHandler extends BaseHttpHandler {
                 log.info("Header auth attempt. User: {}, pass: {}", user, pass);
                 if (superUser != null && superUser.email.equals(user) && superUser.pass.equals(passHash)) {
                     return superUser;
+                } else {
+                    throw new IllegalAccessException("Authentication failed.");
                 }
+            } catch (IllegalAccessException iae) {
+                log.error("Error invoking OTA handler. {}", iae.getMessage());
+                throw iae;
             } catch (Exception e) {
                 log.error("Error invoking OTA handler.");
-                log.error(e);
             }
         }
         return null;

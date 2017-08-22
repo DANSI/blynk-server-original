@@ -221,6 +221,58 @@ public class OTATest extends BaseTest {
     }
 
     @Test
+    public void testOTAWrongToken() throws Exception {
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?token=" + 123);
+        post.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));
+
+        String fileName = "test.bin";
+
+        InputStream binFile = OTATest.class.getResourceAsStream("/static/ota/" + fileName);
+        ContentBody fileBody = new InputStreamBody(binFile, ContentType.APPLICATION_OCTET_STREAM, fileName);
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        builder.addPart("upfile", fileBody);
+        HttpEntity entity = builder.build();
+
+        post.setEntity(entity);
+
+        try (CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+            String error = consumeText(response);
+
+            assertNotNull(error);
+            assertEquals("Invalid token.", error);
+        }
+    }
+
+    @Test
+    public void testAuthorizationFailed() throws Exception {
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?token=" + 123);
+        post.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString("123:123".getBytes()));
+
+        String fileName = "test.bin";
+
+        InputStream binFile = OTATest.class.getResourceAsStream("/static/ota/" + fileName);
+        ContentBody fileBody = new InputStreamBody(binFile, ContentType.APPLICATION_OCTET_STREAM, fileName);
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        builder.addPart("upfile", fileBody);
+        HttpEntity entity = builder.build();
+
+        post.setEntity(entity);
+
+        try (CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(403, response.getStatusLine().getStatusCode());
+            String error = consumeText(response);
+
+            assertNotNull(error);
+            assertEquals("Authentication failed.", error);
+        }
+    }
+
+    @Test
     public void testImprovedUploadMethodAndCheckOTAStatusForDeviceThatNeverWasOnline() throws Exception {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
@@ -262,16 +314,14 @@ public class OTATest extends BaseTest {
         Device device = devices[0];
         assertEquals("admin@blynk.cc", device.deviceOtaInfo.OTAInitiatedBy);
         assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.OTAInitiatedAt, 5000);
-        assertEquals(0, device.deviceOtaInfo.OTAUpdateAt);
-        assertFalse(device.deviceOtaInfo.isLastOtaUpdateOk());
+        assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.OTAUpdateAt, 5000);
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
 
         device = devices[0];
         assertEquals("admin@blynk.cc", device.deviceOtaInfo.OTAInitiatedBy);
         assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.OTAInitiatedAt, 5000);
-        assertEquals(0, device.deviceOtaInfo.OTAUpdateAt);
-        assertFalse(device.deviceOtaInfo.isLastOtaUpdateOk());
+        assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.OTAUpdateAt, 5000);
     }
 
     @Test
@@ -323,8 +373,7 @@ public class OTATest extends BaseTest {
         assertEquals("111", device.hardwareInfo.build);
         assertEquals("admin@blynk.cc", device.deviceOtaInfo.OTAInitiatedBy);
         assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.OTAInitiatedAt, 5000);
-        assertEquals(0, device.deviceOtaInfo.OTAUpdateAt);
-        assertFalse(device.deviceOtaInfo.isLastOtaUpdateOk());
+        assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.OTAUpdateAt, 5000);
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 112"));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
@@ -343,7 +392,6 @@ public class OTATest extends BaseTest {
         assertEquals("admin@blynk.cc", device.deviceOtaInfo.OTAInitiatedBy);
         assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.OTAInitiatedAt, 5000);
         assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.OTAUpdateAt, 5000);
-        assertTrue(device.deviceOtaInfo.isLastOtaUpdateOk());
     }
 
     @Test

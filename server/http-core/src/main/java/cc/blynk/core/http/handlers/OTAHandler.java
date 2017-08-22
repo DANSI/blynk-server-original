@@ -47,7 +47,7 @@ public class OTAHandler extends UploadHandler {
     private QueryStringDecoder queryStringDecoder;
     private final OTAManager otaManager;
 
-    public OTAHandler(Holder holder, String handlerUri, String uploadFolder, boolean isUnpacked) {
+    public OTAHandler(Holder holder, String handlerUri, String uploadFolder) {
         super(handlerUri, uploadFolder);
         this.tokenManager = holder.tokenManager;
         this.sessionDao = holder.sessionDao;
@@ -58,10 +58,16 @@ public class OTAHandler extends UploadHandler {
     @Override
     public boolean accept(ChannelHandlerContext ctx, HttpRequest req) {
         if (req.method() == HttpMethod.POST && req.uri().startsWith(handlerUri)) {
-            User superAdmin = AuthHeadersBaseHttpHandler.validateAuth(userDao, req);
-            if (superAdmin != null) {
-                ctx.channel().attr(AuthHeadersBaseHttpHandler.USER).set(superAdmin);
-                queryStringDecoder = new QueryStringDecoder(req.uri());
+            try {
+                User superAdmin = AuthHeadersBaseHttpHandler.validateAuth(userDao, req);
+                if (superAdmin != null) {
+                    ctx.channel().attr(AuthHeadersBaseHttpHandler.USER).set(superAdmin);
+                    queryStringDecoder = new QueryStringDecoder(req.uri());
+                    return true;
+                }
+            } catch (IllegalAccessException e) {
+                //return 403 and stop processing.
+                ctx.writeAndFlush(Response.forbidden(e.getMessage()));
                 return true;
             }
         }
