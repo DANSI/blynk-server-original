@@ -16,8 +16,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
-import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
-import static cc.blynk.server.core.protocol.enums.Command.HTTP_START_OTA;
+import static cc.blynk.server.core.protocol.enums.Command.*;
 
 
 /**
@@ -40,7 +39,7 @@ public class OTALogic extends AuthHeadersBaseHttpHandler {
 
     @GET
     @Path("/start")
-    @Metric(HTTP_START_OTA)
+    @Metric(HTTP_STOP_OTA)
     public Response startOTA(@QueryParam("fileName") String filename,
                              @QueryParam("token") String token) {
         TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
