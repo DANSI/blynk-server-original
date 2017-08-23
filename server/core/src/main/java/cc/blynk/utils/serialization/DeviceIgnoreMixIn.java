@@ -1,5 +1,7 @@
 package cc.blynk.utils.serialization;
 
+import cc.blynk.server.core.model.device.DeviceOtaInfo;
+import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.device.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -23,5 +25,11 @@ public abstract class DeviceIgnoreMixIn {
 
     @JsonIgnore
     public String lastLoggedIP;
+
+    @JsonIgnore
+    public HardwareInfo hardwareInfo;
+
+    @JsonIgnore
+    public DeviceOtaInfo deviceOtaInfo;
 
 }

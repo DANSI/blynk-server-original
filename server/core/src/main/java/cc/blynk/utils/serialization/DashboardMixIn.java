@@ -1,6 +1,5 @@
 package cc.blynk.utils.serialization;
 
-import cc.blynk.server.core.model.device.HardwareInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -14,9 +13,6 @@ public abstract class DashboardMixIn {
 
     @JsonIgnore
     public String sharedToken;
-
-    @JsonIgnore
-    public HardwareInfo hardwareInfo;
 
     @JsonIgnore
     public int parentId;
