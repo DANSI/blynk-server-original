@@ -45,7 +45,7 @@ public class OTALogic extends AuthHeadersBaseHttpHandler {
     @Metric(HTTP_START_OTA)
     public Response startOTA(@QueryParam("fileName") String filename,
                              @QueryParam("token") String token) {
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);

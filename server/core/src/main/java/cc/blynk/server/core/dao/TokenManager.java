@@ -54,7 +54,7 @@ public class TokenManager {
 
     }
 
-    public TokenValue getUserByToken(String token) {
+    public TokenValue getTokenValueByToken(String token) {
         return regularTokenManager.getUserByToken(token);
     }
 

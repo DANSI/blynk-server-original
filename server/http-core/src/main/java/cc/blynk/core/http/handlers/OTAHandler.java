@@ -98,7 +98,7 @@ public class OTAHandler extends UploadHandler {
     }
 
     private Response singleDeviceOTA(ChannelHandlerContext ctx, String token, String path) {
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);

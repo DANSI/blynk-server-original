@@ -81,7 +81,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
         final String token = message.body.trim();
-        final TokenValue tokenValue = holder.tokenManager.getUserByToken(token);
+        final TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
 
         //no user on current server, trying to find server that user belongs to.
         if (tokenValue == null) {

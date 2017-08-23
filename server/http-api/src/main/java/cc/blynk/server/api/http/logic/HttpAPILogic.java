@@ -94,7 +94,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     @Path("{token}/project")
     @Metric(HTTP_GET_PROJECT)
     public Response getDashboard(@PathParam("token") String token) {
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -113,7 +113,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     @Path("{token}/isHardwareConnected")
     @Metric(HTTP_IS_HARDWARE_CONNECTED)
     public Response isHardwareConnected(@PathParam("token") String token) {
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -133,7 +133,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     @Path("{token}/isAppConnected")
     @Metric(HTTP_IS_APP_CONNECTED)
     public Response isAppConnected(@PathParam("token") String token) {
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -165,7 +165,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     public Response getWidgetPinData(@PathParam("token") String token,
                                      @PathParam("pin") String pinString) {
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -207,7 +207,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     @Path("{token}/rtc")
     @Metric(HTTP_GET_PIN_DATA)
     public Response getWidgetPinData(@PathParam("token") String token) {
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -234,7 +234,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     @Path("{token}/qr")
     @Metric(HTTP_QR)
     public Response getQR(@PathParam("token") String token) {
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -262,7 +262,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     @Metric(HTTP_GET_HISTORY_DATA)
     public Response getPinHistoryData(@PathParam("token") String token,
                                       @PathParam("pin") String pinString) {
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -309,7 +309,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("No properties for update provided.");
         }
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -422,7 +422,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("No pin for update provided.");
         }
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -486,7 +486,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("No pin for update provided.");
         }
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -542,7 +542,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     public Response notify(@PathParam("token") String token,
                            PushMessagePojo message) {
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
@@ -588,7 +588,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     public Response email(@PathParam("token") String token,
                           EmailPojo message) {
 
-        TokenValue tokenValue = tokenManager.getUserByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
