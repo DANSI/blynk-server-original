@@ -113,7 +113,8 @@ public final class Command {
     public static final short HTTP_QR = 89;
     public static final short HTTP_GET_HISTORY_DATA = 90;
     public static final short HTTP_START_OTA = 91;
-    public static final short HTTP_TOTAL = 92;
+    public static final short HTTP_STOP_OTA = 92;
+    public static final short HTTP_TOTAL = 93;
 
 
     //all this code just to make logging more user-friendly

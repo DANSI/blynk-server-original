@@ -66,6 +66,11 @@ public class OTAManager {
         log.info("Ota initiated. {}", info);
     }
 
+    public void stop(User user) {
+        this.info = null;
+        log.info("Ota stopped by {}.", user.email);
+    }
+
     public String buildOTAInitCommandBody(String pathToFirmware) {
         return "ota" + BODY_SEPARATOR + serverHostUrl + pathToFirmware;
     }

@@ -2,10 +2,7 @@ package cc.blynk.server.admin.http.logic;
 
 import cc.blynk.core.http.AuthHeadersBaseHttpHandler;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.GET;
-import cc.blynk.core.http.annotation.Metric;
-import cc.blynk.core.http.annotation.Path;
-import cc.blynk.core.http.annotation.QueryParam;
+import cc.blynk.core.http.annotation.*;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
@@ -15,6 +12,7 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
@@ -77,6 +75,16 @@ public class OTALogic extends AuthHeadersBaseHttpHandler {
         Device device = dash.getDeviceById(deviceId);
 
         device.updateOTAInfo(user.email);
+
+        return ok();
+    }
+
+    @GET
+    @Path("/stop")
+    @Metric(HTTP_START_OTA)
+    public Response stopOTA(@Context ChannelHandlerContext ctx) {
+        User initiator = ctx.channel().attr(AuthHeadersBaseHttpHandler.USER).get();
+        otaManager.stop(initiator);
 
         return ok();
     }

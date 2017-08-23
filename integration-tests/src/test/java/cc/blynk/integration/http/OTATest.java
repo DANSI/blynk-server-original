@@ -490,4 +490,44 @@ public class OTATest extends BaseTest {
 
     }
 
+    @Test
+    public void testStopOTA() throws Exception {
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start");
+        post.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));
+
+        String fileName = "test.bin";
+
+        InputStream binFile = OTATest.class.getResourceAsStream("/static/ota/" + fileName);
+        ContentBody fileBody = new InputStreamBody(binFile, ContentType.APPLICATION_OCTET_STREAM, fileName);
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        builder.addPart("upfile", fileBody);
+        HttpEntity entity = builder.build();
+
+        post.setEntity(entity);
+
+        String path;
+        try (CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            path = consumeText(response);
+
+            assertNotNull(path);
+            assertTrue(path.startsWith("/static"));
+            assertTrue(path.endsWith("bin"));
+        }
+        String responseUrl = "http://127.0.0.1" + path;
+
+        HttpGet stopOta = new HttpGet(httpsAdminServerUrl + "/ota/stop");
+        stopOta.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));
+
+        try (CloseableHttpResponse response = httpclient.execute(stopOta)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+    }
+
 }
