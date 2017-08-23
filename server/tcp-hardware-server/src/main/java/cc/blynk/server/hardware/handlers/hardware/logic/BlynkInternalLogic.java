@@ -89,13 +89,15 @@ public class BlynkInternalLogic {
         DashBoard dashBoard = state.user.profile.getDashByIdOrThrow(state.dashId);
         Device device = dashBoard.getDeviceById(state.deviceId);
 
-        if (otaManager.isUpdateRequired(hardwareInfo)) {
-            otaManager.sendOtaCommand(ctx, device);
-            log.info("Ota command is sent for user {} and device {}:{}.", state.user.email, device.name, device.id);
-        }
+        if (device != null) {
+            if (otaManager.isUpdateRequired(hardwareInfo)) {
+                otaManager.sendOtaCommand(ctx, device);
+                log.info("Ota command is sent for user {} and device {}:{}.", state.user.email, device.name, device.id);
+            }
 
-        device.hardwareInfo = hardwareInfo;
-        dashBoard.updatedAt = System.currentTimeMillis();
+            device.hardwareInfo = hardwareInfo;
+            dashBoard.updatedAt = System.currentTimeMillis();
+        }
 
         ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
     }
