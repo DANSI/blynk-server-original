@@ -375,8 +375,7 @@ public class DashBoard {
         for (Widget newWidget : widgetsToCopy) {
             Widget oldWidget = getWidgetById(newWidget.id);
 
-            String copyWidgetString = JsonParser.toJson(newWidget);
-            Widget copyWidget = JsonParser.parseWidget(copyWidgetString);
+            Widget copyWidget = newWidget.copy();
 
             if (oldWidget != null) {
                 if (oldWidget instanceof OnePinWidget) {

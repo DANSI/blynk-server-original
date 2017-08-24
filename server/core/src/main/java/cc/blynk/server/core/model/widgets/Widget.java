@@ -17,6 +17,7 @@ import cc.blynk.server.core.model.widgets.sensors.*;
 import cc.blynk.server.core.model.widgets.ui.*;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.utils.ByteUtils;
+import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -143,6 +144,12 @@ public abstract class Widget {
     public abstract int getPrice();
 
     public abstract void append(StringBuilder sb, int deviceId);
+
+    //todo this is ugly and not effective. refactor
+    public Widget copy() {
+        String copyWidgetString = JsonParser.toJson(this);
+        return JsonParser.parseWidget(copyWidgetString);
+    }
 
     public void setProperty(String property, String propertyValue) {
         switch (property) {
