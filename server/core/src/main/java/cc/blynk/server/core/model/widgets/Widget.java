@@ -97,7 +97,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = WebHook.class, name = "WEBHOOK")
 
 })
-public abstract class Widget {
+public abstract class Widget implements CopyObject<Widget> {
 
     public long id;
 
@@ -146,6 +146,7 @@ public abstract class Widget {
     public abstract void append(StringBuilder sb, int deviceId);
 
     //todo this is ugly and not effective. refactor
+    @Override
     public Widget copy() {
         String copyWidgetString = JsonParser.toJson(this);
         return JsonParser.parseWidget(copyWidgetString);
