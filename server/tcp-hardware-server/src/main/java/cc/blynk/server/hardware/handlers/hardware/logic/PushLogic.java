@@ -39,7 +39,7 @@ public class PushLogic extends NotificationBase {
             throw new NotificationBodyInvalidException();
         }
 
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(state.dashId);
+        DashBoard dash = state.dash;
 
         if (!dash.isActive) {
             log.debug("No active dashboard.");
@@ -59,7 +59,7 @@ public class PushLogic extends NotificationBase {
         checkIfNotificationQuotaLimitIsNotReached(now);
 
         log.trace("Sending push for user {}, with message : '{}'.", state.user.email, message.body);
-        widget.push(gcmWrapper, message.body, state.dashId);
+        widget.push(gcmWrapper, message.body, state.dash.id);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 

@@ -73,7 +73,7 @@ public class TwitHandlerTest {
 
     @Before
     public void setup() {
-        state = new HardwareStateHolder(1, 0, user, "x");
+        state = new HardwareStateHolder(dash, 0, user, "x");
     }
 
 	@Test(expected = NotificationBodyInvalidException.class)

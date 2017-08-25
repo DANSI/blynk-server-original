@@ -57,10 +57,10 @@ public class MqttHardwareLogic {
             return;
         }
 
-        final int dashId = state.dashId;
-        final int deviceId = state.deviceId;
+        int dashId = state.dash.id;
+        int deviceId = state.deviceId;
 
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = state.dash;
 
         if (isWriteOperation(body)) {
             //" |\0" - to simplify demonstration

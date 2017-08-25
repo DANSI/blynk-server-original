@@ -42,7 +42,7 @@ public class TwitLogic extends NotificationBase {
             throw new NotificationBodyInvalidException();
         }
 
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(state.dashId);
+        DashBoard dash = state.dash;
         Twitter twitterWidget = dash.getWidgetByType(Twitter.class);
 
         if (twitterWidget == null || !dash.isActive ||

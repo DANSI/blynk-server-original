@@ -41,7 +41,7 @@ public class SmsLogic extends NotificationBase {
             throw new NotificationBodyInvalidException();
         }
 
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(state.dashId);
+        DashBoard dash = state.dash;
         SMS smsWidget = dash.getWidgetByType(SMS.class);
 
         if (smsWidget == null || !dash.isActive ||

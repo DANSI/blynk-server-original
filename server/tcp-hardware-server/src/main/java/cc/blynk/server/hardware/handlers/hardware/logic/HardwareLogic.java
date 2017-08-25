@@ -66,9 +66,7 @@ public class HardwareLogic {
             return;
         }
 
-        int dashId = state.dashId;
-
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = state.dash;
 
         if (isWriteOperation(body)) {
             String[] splitBody = split3(body);
@@ -85,14 +83,14 @@ public class HardwareLogic {
             long now = System.currentTimeMillis();
             int deviceId = state.deviceId;
 
-            reportingDao.process(state.user, dashId, deviceId, pin, pinType, value, now);
+            reportingDao.process(state.user, dash.id, deviceId, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);
 
             Session session = sessionDao.userSession.get(state.userKey);
             process(state.user, dash, deviceId, session, pin, pinType, value, now);
 
             if (dash.isActive) {
-                session.sendToApps(HARDWARE, message.id, dashId, deviceId, body);
+                session.sendToApps(HARDWARE, message.id, dash.id, deviceId, body);
             } else {
                 log.debug("No active dashboard.");
             }

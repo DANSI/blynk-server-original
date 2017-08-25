@@ -80,8 +80,8 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
-        final String token = message.body.trim();
-        final TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
+        String token = message.body.trim();
+        TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
 
         //no user on current server, trying to find server that user belongs to.
         if (tokenValue == null) {
@@ -92,14 +92,13 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         }
 
         User user = tokenValue.user;
-        int dashId = tokenValue.dash.id;
         int deviceId = tokenValue.deviceId;
 
         DashBoard dash = tokenValue.dash;
 
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(HardwareNotLoggedHandler.class);
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(dashId, deviceId, user, token);
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(tokenValue.dash, deviceId, user, token);
         ctx.pipeline().addLast("HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionByUser(hardwareStateHolder.userKey, ctx.channel().eventLoop());

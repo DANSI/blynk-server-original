@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.auth;
 
 import cc.blynk.server.Limits;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
@@ -45,8 +46,9 @@ public class SessionPerfTest {
 
         // create handler with HardwareStateHolder
         User user = new User();
+        DashBoard dash = new DashBoard();
 
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(0, DASH_ID, user, "1");
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(dash, DASH_ID, user, "1");
 
         // create 1 hardware channel and a session
         session1 = new Session(null);

@@ -53,7 +53,7 @@ public class SetWidgetPropertyLogic {
             return;
         }
 
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(state.dashId);
+        DashBoard dash = state.dash;
 
         if (!dash.isActive) {
             return;

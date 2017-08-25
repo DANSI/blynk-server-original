@@ -30,9 +30,8 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
 public class HardwareSyncLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        final int dashId = state.dashId;
-        final int deviceId = state.deviceId;
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        int deviceId = state.deviceId;
+        DashBoard dash = state.dash;
 
         if (message.length == 0) {
             syncAll(ctx, message.id, dash, deviceId);

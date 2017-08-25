@@ -63,7 +63,7 @@ public class BlynkInternalLogicTest {
         DashBoard dashBoard = new DashBoard();
         dashBoard.id = 1;
         user.profile.dashBoards = new DashBoard[] {dashBoard};
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(1, 0, user, null);
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(dashBoard, 0, user, null);
 
         BlynkInternalMessage hardwareInfoLogic = new BlynkInternalMessage(1, "ver 0.3.2-beta h-beat 60 buff-in 256 dev ESP8266".replaceAll(" ", "\0"));
         logic.messageReceived(ctx, hardwareStateHolder, hardwareInfoLogic);

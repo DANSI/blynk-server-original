@@ -1,5 +1,6 @@
 package cc.blynk.server.core.session;
 
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 
 /**
@@ -9,13 +10,13 @@ import cc.blynk.server.core.model.auth.User;
  */
 public final class HardwareStateHolder extends StateHolderBase {
 
-    public final int dashId;
+    public final DashBoard dash;
     public final int deviceId;
     public final String token;
 
-    public HardwareStateHolder(int dashId, int deviceId, User user, String token) {
+    public HardwareStateHolder(DashBoard dash, int deviceId, User user, String token) {
         super(user);
-        this.dashId = dashId;
+        this.dash = dash;
         this.deviceId = deviceId;
         this.token = token;
     }
