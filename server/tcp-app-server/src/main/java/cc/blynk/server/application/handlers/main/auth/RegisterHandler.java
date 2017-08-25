@@ -161,7 +161,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             for (Device device : clonedDash.devices) {
                 device.erase();
                 String token = TokenGeneratorUtil.generateNewToken();
-                tokenManager.assignToken(newUser, clonedDash.id, device.id, token);
+                tokenManager.assignToken(newUser, clonedDash, device, token);
             }
         }
     }

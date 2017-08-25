@@ -62,8 +62,8 @@ public class TokenManager {
         return sharedTokenManager.getUserByToken(token);
     }
 
-    public void assignToken(User user, int dashId, int deviceId, String newToken) {
-        String oldToken = regularTokenManager.assignToken(user, dashId, deviceId, newToken);
+    public void assignToken(User user, DashBoard dash, Device device, String newToken) {
+        String oldToken = regularTokenManager.assignToken(user, dash, device, newToken);
 
         blockingIOProcessor.executeDB(() -> {
             dbManager.assignServerToToken(newToken, currentIp);
@@ -73,9 +73,9 @@ public class TokenManager {
         });
     }
 
-    public String refreshToken(User user, int dashId, int deviceId) {
+    public String refreshToken(User user, DashBoard dash, Device device) {
         String newToken = TokenGeneratorUtil.generateNewToken();
-        assignToken(user, dashId, deviceId, newToken);
+        assignToken(user, dash, device, newToken);
         return newToken;
     }
 

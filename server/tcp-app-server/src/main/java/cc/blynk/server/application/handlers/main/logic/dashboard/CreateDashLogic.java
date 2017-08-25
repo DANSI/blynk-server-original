@@ -91,7 +91,7 @@ public class CreateDashLogic {
                 device.erase();
                 if (generateTokensForDevices) {
                     String token = TokenGeneratorUtil.generateNewToken();
-                    tokenManager.assignToken(user, newDash.id, device.id, token);
+                    tokenManager.assignToken(user, newDash, device, token);
                 }
             }
         }

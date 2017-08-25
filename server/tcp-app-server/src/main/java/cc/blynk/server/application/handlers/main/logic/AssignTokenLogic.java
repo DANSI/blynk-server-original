@@ -76,7 +76,7 @@ public class AssignTokenLogic {
                 return;
             }
 
-            tokenManager.assignToken(user, dashId, device.id, token);
+            tokenManager.assignToken(user, dash, device, token);
 
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         });

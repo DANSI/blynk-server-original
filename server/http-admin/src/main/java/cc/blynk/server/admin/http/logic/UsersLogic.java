@@ -97,7 +97,7 @@ public class UsersLogic extends CookiesBaseHttpHandler {
             return badRequest("This token not exists.");
         }
 
-        tokenManager.assignToken(tokenValue.user, tokenValue.dash.id, tokenValue.device.id, newToken);
+        tokenManager.assignToken(tokenValue.user, tokenValue.dash, tokenValue.device, newToken);
         return ok();
     }
 
@@ -115,7 +115,10 @@ public class UsersLogic extends CookiesBaseHttpHandler {
             return badRequest("No user with such email.");
         }
 
-        tokenManager.assignToken(user, dashId, deviceId, newToken);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        Device device = dash.getDeviceById(deviceId);
+
+        tokenManager.assignToken(user, dash, device, newToken);
         return ok();
     }
 
@@ -144,7 +147,7 @@ public class UsersLogic extends CookiesBaseHttpHandler {
             deleteUserByName(id);
             for (DashBoard dashBoard : oldUser.profile.dashBoards) {
                 for (Device device : dashBoard.devices) {
-                    tokenManager.assignToken(updatedUser, dashBoard.id, device.id, device.token);
+                    tokenManager.assignToken(updatedUser, dashBoard, device, device.token);
                 }
             }
         }

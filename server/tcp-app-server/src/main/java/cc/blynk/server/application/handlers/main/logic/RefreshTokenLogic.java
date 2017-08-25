@@ -4,8 +4,10 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
@@ -41,10 +43,12 @@ public class RefreshTokenLogic {
             deviceId = ParseUtil.parseInt(split[1]);
         }
 
-        final User user = state.user;
-        user.profile.validateDashId(dashId);
+        User user = state.user;
 
-        String token = tokenManager.refreshToken(user, dashId, deviceId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        Device device = dash.getDeviceById(deviceId);
+
+        String token = tokenManager.refreshToken(user, dash, device);
 
         Session session = sessionDao.userSession.get(state.userKey);
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
