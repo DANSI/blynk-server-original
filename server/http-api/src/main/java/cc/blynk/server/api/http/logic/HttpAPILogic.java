@@ -101,12 +101,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        final User user = tokenValue.user;
-        final int dashId = tokenValue.dashId;
-
-        DashBoard dashBoard = user.profile.getDashById(dashId);
-
-        return ok(dashBoard.toString());
+        return ok(tokenValue.dash.toString());
     }
 
     @GET
@@ -120,11 +115,11 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        final User user = tokenValue.user;
-        final int dashId = tokenValue.dashId;
-        final int deviceId = tokenValue.deviceId;
+        User user = tokenValue.user;
+        int dashId = tokenValue.dash.id;
+        int deviceId = tokenValue.deviceId;
 
-        final Session session = sessionDao.userSession.get(new UserKey(user));
+        Session session = sessionDao.userSession.get(new UserKey(user));
 
         return ok(session.isHardwareConnected(dashId, deviceId));
     }
@@ -140,14 +135,10 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        final User user = tokenValue.user;
-        final int dashId = tokenValue.dashId;
+        User user = tokenValue.user;
+        Session session = sessionDao.userSession.get(new UserKey(user));
 
-        final DashBoard dashBoard = user.profile.getDashById(dashId);
-
-        final Session session = sessionDao.userSession.get(new UserKey(user));
-
-        return ok(dashBoard.isActive && session.isAppConnected());
+        return ok(tokenValue.dash.isActive && session.isAppConnected());
     }
 
     @GET
@@ -172,11 +163,10 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        final User user = tokenValue.user;
-        final int dashId = tokenValue.dashId;
-        final int deviceId = tokenValue.deviceId;
+        User user = tokenValue.user;
+        int deviceId = tokenValue.deviceId;
 
-        DashBoard dashBoard = user.profile.getDashById(dashId);
+        DashBoard dashBoard = tokenValue.dash;
 
         PinType pinType;
         byte pin;
@@ -214,13 +204,9 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        final User user = tokenValue.user;
-        final int dashId = tokenValue.dashId;
+        User user = tokenValue.user;
 
-        DashBoard dashBoard = user.profile.getDashById(dashId);
-
-        RTC rtc = dashBoard.getWidgetByType(RTC.class);
-
+        RTC rtc = tokenValue.dash.getWidgetByType(RTC.class);
 
         if (rtc == null) {
             log.debug("Requested rtc widget not found. User {}", user.email);
@@ -241,10 +227,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        final User user = tokenValue.user;
-        final int dashId = tokenValue.dashId;
-
-        DashBoard dashBoard = user.profile.getDashById(dashId);
+        DashBoard dashBoard = tokenValue.dash;
 
         try {
             byte[] compressed = JsonParser.gzipDashRestrictive(dashBoard);
@@ -269,9 +252,9 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        final User user = tokenValue.user;
-        final int dashId = tokenValue.dashId;
-        final int deviceId = tokenValue.deviceId;
+        User user = tokenValue.user;
+        int dashId = tokenValue.dash.id;
+        int deviceId = tokenValue.deviceId;
 
         PinType pinType;
         byte pin;
@@ -317,10 +300,9 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         }
 
         final User user = tokenValue.user;
-        final int dashId = tokenValue.dashId;
         final int deviceId = tokenValue.deviceId;
 
-        DashBoard dash = user.profile.getDashById(dashId);
+        DashBoard dash = tokenValue.dash;
 
         //todo add test for this use case
         if (!dash.isActive) {
@@ -429,11 +411,11 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        final User user = tokenValue.user;
-        final int dashId = tokenValue.dashId;
-        final int deviceId = tokenValue.deviceId;
+        User user = tokenValue.user;
+        int dashId = tokenValue.dash.id;
+        int deviceId = tokenValue.deviceId;
 
-        DashBoard dash = user.profile.getDashById(dashId);
+        DashBoard dash = tokenValue.dash;
 
         PinType pinType;
         byte pin;
@@ -493,9 +475,9 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        final User user = tokenValue.user;
-        final int dashId = tokenValue.dashId;
-        final int deviceId = tokenValue.deviceId;
+        User user = tokenValue.user;
+        int dashId = tokenValue.dash.id;
+        int deviceId = tokenValue.deviceId;
 
         DashBoard dash = user.profile.getDashById(dashId);
 
@@ -550,14 +532,13 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         }
 
         final User user = tokenValue.user;
-        final int dashId = tokenValue.dashId;
 
         if (message == null || Notification.isWrongBody(message.body)) {
             log.debug("Notification body is wrong. '{}'", message == null ? "" : message.body);
             return Response.badRequest("Body is empty or larger than 255 chars.");
         }
 
-        DashBoard dash = user.profile.getDashById(dashId);
+        DashBoard dash = tokenValue.dash;
 
         if (!dash.isActive) {
             log.debug("Project is not active.");
@@ -595,7 +576,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        DashBoard dash = tokenValue.user.profile.getDashById(tokenValue.dashId);
+        DashBoard dash = tokenValue.dash;
 
         if (dash == null || !dash.isActive) {
             log.debug("Project is not active.");

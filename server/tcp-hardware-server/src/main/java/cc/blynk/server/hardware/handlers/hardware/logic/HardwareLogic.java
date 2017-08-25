@@ -57,7 +57,7 @@ public class HardwareLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        final String body = message.body;
+        String body = message.body;
 
         //minimum command - "ar 1"
         if (body.length() < 4) {

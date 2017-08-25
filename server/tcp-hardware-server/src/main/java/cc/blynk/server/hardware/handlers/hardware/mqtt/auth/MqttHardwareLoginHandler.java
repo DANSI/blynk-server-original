@@ -65,7 +65,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
         String username = message.payload().userName().toLowerCase();
         String token = message.payload().password();
 
-        final TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
+        TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null || !tokenValue.user.email.equalsIgnoreCase(username)) {
             log.debug("MqttHardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
@@ -73,16 +73,11 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
             return;
         }
 
-        final User user = tokenValue.user;
-        final int dashId = tokenValue.dashId;
-        final int deviceId = tokenValue.deviceId;
+        User user = tokenValue.user;
+        int dashId = tokenValue.dash.id;
+        int deviceId = tokenValue.deviceId;
 
-        DashBoard dash = user.profile.getDashById(dashId);
-        if (dash == null) {
-            log.warn("User : {} requested token {} for non-existing {} dash id.", user.email, token, dashId);
-            ctx.writeAndFlush(createConnAckMessage(CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD), ctx.voidPromise());
-            return;
-        }
+        DashBoard dash = tokenValue.dash;
 
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(HardwareNotLoggedHandler.class);

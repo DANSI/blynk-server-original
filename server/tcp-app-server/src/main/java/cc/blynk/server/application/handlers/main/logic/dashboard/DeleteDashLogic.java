@@ -47,7 +47,7 @@ public class DeleteDashLogic {
     }
 
     private void deleteDash(AppStateHolder state, int dashId) {
-        final User user = state.user;
+        User user = state.user;
         int index = user.profile.getDashIndexOrThrow(dashId);
 
         log.debug("Deleting dashboard {}.", dashId);
