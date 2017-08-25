@@ -15,22 +15,22 @@ import io.netty.channel.Channel;
 public class StateHolderUtil {
 
     public static HardwareStateHolder getHardState(Channel channel) {
-        final BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
+        BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
         return handler == null ? null : (HardwareStateHolder) handler.getState();
     }
 
     public static boolean isSameDash(Channel channel, int dashId) {
-        final BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
+        BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
         return ((HardwareStateHolder) handler.getState()).dash.id == dashId;
     }
 
     public static boolean isSameDashAndDeviceId(Channel channel, int dashId, int deviceId) {
-        final BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
+        BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
         if (handler == null) {
             return false;
         }
-        final HardwareStateHolder hardwareStateHolder = (HardwareStateHolder) handler.getState();
-        return hardwareStateHolder.dash.id == dashId && hardwareStateHolder.deviceId == deviceId;
+        HardwareStateHolder hardwareStateHolder = (HardwareStateHolder) handler.getState();
+        return hardwareStateHolder.dash.id == dashId && hardwareStateHolder.device.id == deviceId;
     }
 
 }

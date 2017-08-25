@@ -9,7 +9,6 @@ import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -49,7 +48,6 @@ public class OTALogic extends AuthHeadersBaseHttpHandler {
         }
 
         User user = tokenValue.user;
-        int deviceId = tokenValue.deviceId;
 
         if (user == null) {
             return badRequest("Invalid auth credentials.");
@@ -68,9 +66,7 @@ public class OTALogic extends AuthHeadersBaseHttpHandler {
             return badRequest("No device in session.");
         }
 
-        Device device = tokenValue.dash.getDeviceById(deviceId);
-
-        device.updateOTAInfo(user.email);
+        tokenValue.device.updateOTAInfo(user.email);
 
         return ok();
     }

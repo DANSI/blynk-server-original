@@ -54,26 +54,23 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         this.listenPort = String.valueOf(listenPort);
     }
 
-    private static void completeLogin(Channel channel, Session session, User user, DashBoard dash, int deviceId, int msgId) {
+    private static void completeLogin(Channel channel, Session session, User user, DashBoard dash, Device device, int msgId) {
         log.debug("completeLogin. {}", channel);
 
         session.addHardChannel(channel);
         channel.write(ok(msgId));
 
-        final String body = dash.buildPMMessage(deviceId);
+        String body = dash.buildPMMessage(device.id);
         if (dash.isActive && body.length() > 2) {
             channel.write(makeASCIIStringMessage(HARDWARE, HARDWARE_PIN_MODE_MSG_ID, body));
         }
 
         channel.flush();
 
-        session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, deviceId);
-        Device device = dash.getDeviceById(deviceId);
-        if (device != null) {
-            log.trace("Connected device id {}, dash id {}", deviceId, dash.id);
-            device.connected();
-            device.lastLoggedIP = IPUtils.getIp(channel);
-        }
+        session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, device.id);
+        log.trace("Connected device id {}, dash id {}", device.id, dash.id);
+        device.connected();
+        device.lastLoggedIP = IPUtils.getIp(channel);
 
         log.info("{} hardware joined.", user.email);
     }
@@ -92,22 +89,21 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         }
 
         User user = tokenValue.user;
-        int deviceId = tokenValue.deviceId;
-
+        Device device = tokenValue.device;
         DashBoard dash = tokenValue.dash;
 
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(HardwareNotLoggedHandler.class);
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(tokenValue.dash, deviceId, user, token);
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(user, tokenValue.dash, device);
         ctx.pipeline().addLast("HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionByUser(hardwareStateHolder.userKey, ctx.channel().eventLoop());
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering hard channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, dash, deviceId, message.id));
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, dash, device, message.id));
         } else {
-            completeLogin(ctx.channel(), session, user, dash, deviceId, message.id);
+            completeLogin(ctx.channel(), session, user, dash, device, message.id);
         }
     }
 

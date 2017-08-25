@@ -22,7 +22,6 @@ import cc.blynk.server.core.dao.*;
 import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
@@ -106,7 +105,7 @@ public class OTAHandler extends UploadHandler {
 
         User user = tokenValue.user;
         int dashId = tokenValue.dash.id;
-        int deviceId = tokenValue.deviceId;
+        int deviceId = tokenValue.device.id;
 
         Session session = sessionDao.userSession.get(new UserKey(user));
         if (session == null) {
@@ -120,11 +119,9 @@ public class OTAHandler extends UploadHandler {
             return badRequest("No device in session.");
         }
 
-        Device device = tokenValue.dash.getDeviceById(deviceId);
-
         User initiator = ctx.channel().attr(AuthHeadersBaseHttpHandler.USER).get();
         if (initiator != null) {
-            device.updateOTAInfo(initiator.email);
+            tokenValue.device.updateOTAInfo(initiator.email);
         }
 
         return ok(path);

@@ -72,7 +72,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             byte pin = ParseUtil.parseByte(splitBody[1]);
             String value = splitBody[2];
             long now = System.currentTimeMillis();
-            int deviceId = state.deviceId;
+            int deviceId = state.device.id;
 
             reportingDao.process(state.user, dash.id, deviceId, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);

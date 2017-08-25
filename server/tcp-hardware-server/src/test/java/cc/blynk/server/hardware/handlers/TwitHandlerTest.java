@@ -6,6 +6,7 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.exceptions.NotificationBodyInvalidException;
@@ -68,12 +69,14 @@ public class TwitHandlerTest {
 	@Mock
 	private DashBoard dash;
 
+	@Mock
+	private Device device;
 
     private HardwareStateHolder state;
 
     @Before
     public void setup() {
-        state = new HardwareStateHolder(dash, 0, user, "x");
+		state = new HardwareStateHolder(user, dash, device);
     }
 
 	@Test(expected = NotificationBodyInvalidException.class)

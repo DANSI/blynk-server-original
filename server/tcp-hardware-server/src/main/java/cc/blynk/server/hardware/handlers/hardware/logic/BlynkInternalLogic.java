@@ -87,7 +87,7 @@ public class BlynkInternalLogic {
         }
 
         DashBoard dashBoard = state.dash;
-        Device device = dashBoard.getDeviceById(state.deviceId);
+        Device device = state.device;
 
         if (device != null) {
             if (otaManager.isUpdateRequired(hardwareInfo)) {

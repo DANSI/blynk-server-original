@@ -91,7 +91,7 @@ public class Session {
         for (Channel channel : hardwareChannels) {
             final HardwareStateHolder hardwareState = getHardState(channel);
             if (hardwareState != null && hardwareState.dash.id == activeDashId &&
-                    (deviceIds.length == 0 || ArrayUtil.contains(deviceIds, hardwareState.deviceId))) {
+                    (deviceIds.length == 0 || ArrayUtil.contains(deviceIds, hardwareState.device.id))) {
                 targetChannels.add(channel);
             }
         }

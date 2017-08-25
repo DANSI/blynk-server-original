@@ -97,7 +97,7 @@ public class UsersLogic extends CookiesBaseHttpHandler {
             return badRequest("This token not exists.");
         }
 
-        tokenManager.assignToken(tokenValue.user, tokenValue.dash.id, tokenValue.deviceId, newToken);
+        tokenManager.assignToken(tokenValue.user, tokenValue.dash.id, tokenValue.device.id, newToken);
         return ok();
     }
 

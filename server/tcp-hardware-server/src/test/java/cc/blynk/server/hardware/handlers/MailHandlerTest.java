@@ -4,6 +4,7 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -49,6 +50,9 @@ public class MailHandlerTest {
     @Mock
     private DashBoard dashBoard;
 
+    @Mock
+    private Device device;
+
     @Test(expected = NotAllowedException.class)
 	public void testNoEmailWidget() throws InterruptedException {
 		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body");
@@ -57,7 +61,7 @@ public class MailHandlerTest {
         when(profile.getDashByIdOrThrow(1)).thenReturn(dashBoard);
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(null);
 
-        HardwareStateHolder state = new HardwareStateHolder(dashBoard, 0, user, "x");
+        HardwareStateHolder state = new HardwareStateHolder(user, dashBoard, device);
         mailHandler.messageReceived(ctx, state, mailMessage);
     }
 
@@ -71,7 +75,7 @@ public class MailHandlerTest {
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(mail);
         dashBoard.isActive = true;
 
-        HardwareStateHolder state = new HardwareStateHolder(dashBoard, 0, user, "x");
+        HardwareStateHolder state = new HardwareStateHolder(user, dashBoard, device);
         mailHandler.messageReceived(ctx, state, mailMessage);
     }
 
@@ -84,7 +88,7 @@ public class MailHandlerTest {
         when(dashBoard.getWidgetByType(Mail.class)).thenReturn(new Mail());
         dashBoard.isActive = true;
 
-        HardwareStateHolder state = new HardwareStateHolder(dashBoard, 0, user, "x");
+        HardwareStateHolder state = new HardwareStateHolder(user, dashBoard, device);
         mailHandler.messageReceived(ctx, state, mailMessage);
     }
 

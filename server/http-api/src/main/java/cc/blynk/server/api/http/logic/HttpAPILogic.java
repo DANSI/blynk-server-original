@@ -117,7 +117,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         User user = tokenValue.user;
         int dashId = tokenValue.dash.id;
-        int deviceId = tokenValue.deviceId;
+        int deviceId = tokenValue.device.id;
 
         Session session = sessionDao.userSession.get(new UserKey(user));
 
@@ -164,8 +164,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         }
 
         User user = tokenValue.user;
-        int deviceId = tokenValue.deviceId;
-
+        int deviceId = tokenValue.device.id;
         DashBoard dashBoard = tokenValue.dash;
 
         PinType pinType;
@@ -254,7 +253,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         User user = tokenValue.user;
         int dashId = tokenValue.dash.id;
-        int deviceId = tokenValue.deviceId;
+        int deviceId = tokenValue.device.id;
 
         PinType pinType;
         byte pin;
@@ -299,9 +298,8 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        final User user = tokenValue.user;
-        final int deviceId = tokenValue.deviceId;
-
+        User user = tokenValue.user;
+        int deviceId = tokenValue.device.id;
         DashBoard dash = tokenValue.dash;
 
         //todo add test for this use case
@@ -337,7 +335,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         Session session = sessionDao.userSession.get(new UserKey(user));
         session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id, deviceId, "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + values[0]);
-        return Response.ok();
+        return ok();
     }
 
     //todo it is a bit ugly right now. could be simplified by passing map of query params.
@@ -413,7 +411,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         User user = tokenValue.user;
         int dashId = tokenValue.dash.id;
-        int deviceId = tokenValue.deviceId;
+        int deviceId = tokenValue.device.id;
 
         DashBoard dash = tokenValue.dash;
 
@@ -477,9 +475,9 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         User user = tokenValue.user;
         int dashId = tokenValue.dash.id;
-        int deviceId = tokenValue.deviceId;
+        int deviceId = tokenValue.device.id;
 
-        DashBoard dash = user.profile.getDashById(dashId);
+        DashBoard dash = tokenValue.dash;
 
         PinType pinType;
         byte pin;
@@ -496,7 +494,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             reportingDao.process(user, dashId, deviceId, pin, pinType, pinData.value, pinData.timestamp);
         }
 
-        final long now = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
         dash.update(deviceId, pin, pinType, pinsData[0].value, now);
 
         String body = makeBody(dash, deviceId, pin, pinType, pinsData[0].value);

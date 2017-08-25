@@ -4,6 +4,7 @@ import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.logic.BlynkInternalLogic;
@@ -63,7 +64,8 @@ public class BlynkInternalLogicTest {
         DashBoard dashBoard = new DashBoard();
         dashBoard.id = 1;
         user.profile.dashBoards = new DashBoard[] {dashBoard};
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(dashBoard, 0, user, null);
+        Device device = new Device();
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(user, dashBoard, device);
 
         BlynkInternalMessage hardwareInfoLogic = new BlynkInternalMessage(1, "ver 0.3.2-beta h-beat 60 buff-in 256 dev ESP8266".replaceAll(" ", "\0"));
         logic.messageReceived(ctx, hardwareStateHolder, hardwareInfoLogic);

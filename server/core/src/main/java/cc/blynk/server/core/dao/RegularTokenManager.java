@@ -28,7 +28,7 @@ class RegularTokenManager {
                     for (DashBoard dashBoard : user.profile.dashBoards) {
                         for (Device device : dashBoard.devices) {
                             if (device.token != null) {
-                                put(device.token, new TokenValue(user, dashBoard, device.id));
+                                put(device.token, new TokenValue(user, dashBoard, device));
                             }
                         }
                     }
@@ -46,7 +46,7 @@ class RegularTokenManager {
 
         //assign new token
         device.token = newToken;
-        cache.put(newToken, new TokenValue(user, dash, deviceId));
+        cache.put(newToken, new TokenValue(user, dash, device));
 
         user.lastModifiedTs = System.currentTimeMillis();
 

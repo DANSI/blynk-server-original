@@ -2,6 +2,7 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 
 /**
  * The Blynk Project.
@@ -14,11 +15,11 @@ public final class TokenValue {
 
     public final DashBoard dash;
 
-    public final int deviceId;
+    public final Device device;
 
-    public TokenValue(User user, DashBoard dash, int deviceId) {
+    public TokenValue(User user, DashBoard dash, Device device) {
         this.user = user;
         this.dash = dash;
-        this.deviceId = deviceId;
+        this.device = device;
     }
 }

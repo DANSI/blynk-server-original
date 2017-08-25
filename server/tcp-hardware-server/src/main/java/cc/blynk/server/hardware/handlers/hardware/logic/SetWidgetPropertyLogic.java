@@ -65,8 +65,8 @@ public class SetWidgetPropertyLogic {
             return;
         }
 
-        final int deviceId = state.deviceId;
-        final byte pin = ParseUtil.parseByte(bodyParts[0]);
+        int deviceId = state.device.id;
+        byte pin = ParseUtil.parseByte(bodyParts[0]);
 
         //for now supporting only virtual pins
         Widget widget = dash.findWidgetByPin(deviceId, pin, PinType.VIRTUAL);
