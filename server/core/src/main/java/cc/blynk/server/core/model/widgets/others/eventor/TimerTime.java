@@ -3,6 +3,8 @@ package cc.blynk.server.core.model.widgets.others.eventor;
 import cc.blynk.server.core.model.widgets.others.rtc.StringToZoneId;
 import cc.blynk.server.core.model.widgets.others.rtc.ZoneIdToString;
 import cc.blynk.utils.DateTimeUtils;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -18,22 +20,31 @@ public class TimerTime {
 
     public static final int[] ALL_DAYS = new int[] {1, 2, 3, 4, 5, 6, 7};
 
-    public int id;
+    public final int id;
 
-    public int[] days;
+    public final int[] days;
 
-    public int time = -1;
+    public final int time;
 
     @JsonSerialize(using = ZoneIdToString.class)
     @JsonDeserialize(using = StringToZoneId.class, as = ZoneId.class)
-    public ZoneId tzName;
+    public final ZoneId tzName;
 
-    public TimerTime() {
+    @JsonCreator
+    public TimerTime(@JsonProperty("id") int id,
+                     @JsonProperty("days") int[] days,
+                     @JsonProperty("time") int time,
+                     @JsonProperty("tzName") ZoneId tzName) {
+        this.id = id;
+        this.days = days;
+        this.time = time;
+        this.tzName = tzName;
     }
 
     //this is special constructor for Timer back compatibility.
     //todo remove in future versions.
     public TimerTime(int time) {
+        this.id = 0;
         this.time = time;
         this.days = ALL_DAYS;
         this.tzName = DateTimeUtils.UTC;

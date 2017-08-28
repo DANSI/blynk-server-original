@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.BaseCondition;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -14,25 +15,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Rule {
 
     @JsonProperty("triggerPin") //todo "triggerPin" for back compatibility
-    public DataStream triggerDataStream;
+    public final DataStream triggerDataStream;
 
-    public TimerTime triggerTime;
+    public final TimerTime triggerTime;
 
-    public BaseCondition condition;
+    public final BaseCondition condition;
 
-    public BaseAction[] actions;
+    public final BaseAction[] actions;
 
-    public boolean isActive;
+    public final boolean isActive;
 
     public transient boolean isProcessed;
 
-    public Rule() {
-    }
-
-    public Rule(DataStream triggerDataStream, BaseCondition condition, BaseAction[] actions) {
+    @JsonCreator
+    public Rule(@JsonProperty("triggerPin") DataStream triggerDataStream,
+                @JsonProperty("triggerTime") TimerTime triggerTime,
+                @JsonProperty("condition") BaseCondition condition,
+                @JsonProperty("actions") BaseAction[] actions,
+                @JsonProperty("isActive") boolean isActive) {
         this.triggerDataStream = triggerDataStream;
+        this.triggerTime = triggerTime;
         this.condition = condition;
         this.actions = actions;
+        this.isActive = isActive;
     }
 
     private boolean notEmpty() {

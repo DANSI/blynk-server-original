@@ -203,25 +203,19 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     public void testEventorTimerWidgeWorkerWorksAsExpectedWithHttp() throws Exception {
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
-        TimerTime timerTime = new TimerTime();
+        TimerTime timerTime = new TimerTime(
+                0,
+                new int[] {1,2,3,4,5,6,7},
+                //adding 2 seconds just to be sure we no gonna miss timer event
+                LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2,
+                DateTimeUtils.UTC
+        );
 
-        timerTime.days = new int[] {1,2,3,4,5,6,7};
-
-        //adding 2 seconds just to be sure we no gonna miss timer event
-        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2;
-        timerTime.tzName = DateTimeUtils.UTC;
-
-        Rule rule = new Rule();
-        rule.isActive = true;
-        rule.triggerTime = timerTime;
         DataStream dataStream = new DataStream((byte) 4, PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
-        rule.actions = new BaseAction[] {
-                setPinAction
-        };
 
         Eventor eventor = new Eventor(new Rule[] {
-                rule
+                new Rule(dataStream, timerTime, null, new BaseAction[] {setPinAction}, true)
         });
         eventor.id = 1000;
 

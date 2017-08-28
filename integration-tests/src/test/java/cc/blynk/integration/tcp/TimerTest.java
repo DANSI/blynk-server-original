@@ -80,25 +80,20 @@ public class TimerTest extends IntegrationBase {
     public void testTimerEvent() throws Exception {
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
-        TimerTime timerTime = new TimerTime();
+        TimerTime timerTime = new TimerTime(
+                0,
+                new int[] {1,2,3,4,5,6,7},
+                //adding 2 seconds just to be sure we no gonna miss timer event
+                LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2,
+                DateTimeUtils.UTC
+        );
 
-        timerTime.days = new int[] {1,2,3,4,5,6,7};
 
-        //adding 2 seconds just to be sure we no gonna miss timer event
-        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2;
-        timerTime.tzName = DateTimeUtils.UTC;
-
-        Rule rule = new Rule();
-        rule.isActive = true;
-        rule.triggerTime = timerTime;
         DataStream dataStream = new DataStream((byte)1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
-        rule.actions = new BaseAction[] {
-                setPinAction
-        };
 
         Eventor eventor = new Eventor(new Rule[] {
-                rule
+                new Rule(dataStream, timerTime, null, new BaseAction[] {setPinAction}, true)
         });
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
@@ -113,25 +108,20 @@ public class TimerTest extends IntegrationBase {
     public void testTimerEventNotActive() throws Exception {
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
-        TimerTime timerTime = new TimerTime();
+        TimerTime timerTime = new TimerTime(
+                0,
+                new int[] {1,2,3,4,5,6,7},
+                //adding 2 seconds just to be sure we no gonna miss timer event
+                LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2,
+                DateTimeUtils.UTC
+        );
 
-        timerTime.days = new int[] {1,2,3,4,5,6,7};
 
-        //adding 2 seconds just to be sure we no gonna miss timer event
-        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2;
-        timerTime.tzName = DateTimeUtils.UTC;
-
-        Rule rule = new Rule();
-        rule.isActive = true;
-        rule.triggerTime = timerTime;
         DataStream dataStream = new DataStream((byte)1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
-        rule.actions = new BaseAction[] {
-                setPinAction
-        };
 
         Eventor eventor = new Eventor(new Rule[] {
-                rule
+                new Rule(dataStream, timerTime, null, new BaseAction[] {setPinAction}, true)
         });
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
@@ -143,8 +133,17 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.hardwareClient.reset();
 
-        rule.isActive = false;
-        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 1;
+
+        eventor = new Eventor(new Rule[] {
+                new Rule(dataStream, new TimerTime(
+                        0,
+                        new int[] {1,2,3,4,5,6,7},
+                        //adding 2 seconds just to be sure we no gonna miss timer event
+                        LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 1,
+                        DateTimeUtils.UTC
+                ),
+                        null, new BaseAction[] {setPinAction}, false)
+        });
 
         clientPair.appClient.send("updateWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -155,17 +154,14 @@ public class TimerTest extends IntegrationBase {
 
     @Test
     public void testTimerEventWithMultiActions() throws Exception {
-        TimerTime timerTime = new TimerTime();
+        TimerTime timerTime = new TimerTime(
+                0,
+                new int[] {1,2,3,4,5,6,7},
+                //adding 2 seconds just to be sure we no gonna miss timer event
+                LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2,
+                DateTimeUtils.UTC
+        );
 
-        timerTime.days = new int[] {1,2,3,4,5,6,7};
-
-        //adding 2 seconds just to be sure we no gonna miss timer event
-        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2;
-        timerTime.tzName = DateTimeUtils.UTC;
-
-        Rule rule = new Rule();
-        rule.isActive = true;
-        rule.triggerTime = timerTime;
 
         DataStream dataStream = new DataStream((byte)1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
@@ -173,10 +169,7 @@ public class TimerTest extends IntegrationBase {
         DataStream dataStream2 = new DataStream((byte)2,PinType.VIRTUAL);
         SetPinAction setPinAction2 = new SetPinAction(dataStream2, "2", SetPinActionType.CUSTOM);
 
-        rule.actions = new BaseAction[] {
-                setPinAction,
-                setPinAction2
-        };
+        Rule rule = new Rule(null, timerTime, null, new BaseAction[] {setPinAction, setPinAction2}, true);
 
         Eventor eventor = new Eventor(new Rule[] {
                 rule
@@ -197,26 +190,18 @@ public class TimerTest extends IntegrationBase {
     public void testTimerEventWithMultiActions1() throws Exception {
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
-        TimerTime timerTime = new TimerTime();
+        TimerTime timerTime = new TimerTime(
+                0,
+                new int[] {1,2,3,4,5,6,7},
+                //adding 2 seconds just to be sure we no gonna miss timer event
+                LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2,
+                DateTimeUtils.UTC
+        );
 
-        timerTime.days = new int[] {1,2,3,4,5,6,7};
-
-        //adding 2 seconds just to be sure we no gonna miss timer event
-        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 2;
-        timerTime.tzName = DateTimeUtils.UTC;
-
-        Rule rule = new Rule();
-        rule.isActive = true;
-        rule.triggerTime = timerTime;
-
-        DataStream dataStream = new DataStream((byte)1,PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((byte) 1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
-
         NotifyAction notifyAction = new NotifyAction("Hello");
-        rule.actions = new BaseAction[] {
-                setPinAction,
-                notifyAction
-        };
+        Rule rule = new Rule(null, timerTime, null, new BaseAction[] {setPinAction, notifyAction}, true);
 
         Eventor eventor = new Eventor(new Rule[] {
                 rule
@@ -251,26 +236,21 @@ public class TimerTest extends IntegrationBase {
         ZonedDateTime now = ZonedDateTime.now(DateTimeUtils.UTC);
         int currentDayIndex = now.getDayOfWeek().ordinal();
 
-        TimerTime timerTime = new TimerTime();
-
-        timerTime.days = new int[] {1,2,3,4,5,6,7};
+        int[] days = new int[] {1,2,3,4,5,6,7};
         //removing today day from expected days so timer doesnt work.
-        timerTime.days[currentDayIndex] = -1;
+        days[currentDayIndex] = -1;
 
-        //adding 2 seconds just to be sure we no gonna miss timer event
-        timerTime.time = LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 1;
-        timerTime.tzName = DateTimeUtils.UTC;
-
-        Rule rule = new Rule();
-        rule.isActive = true;
-        rule.triggerTime = timerTime;
+        TimerTime timerTime = new TimerTime(
+                0,
+                days,
+                //adding 2 seconds just to be sure we no gonna miss timer event
+                LocalTime.now(DateTimeUtils.UTC).toSecondOfDay() + 1,
+                DateTimeUtils.UTC
+        );
 
         DataStream dataStream = new DataStream((byte)1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
-
-        rule.actions = new BaseAction[] {
-                setPinAction
-        };
+        Rule rule = new Rule(null, timerTime, null,  new BaseAction[] {setPinAction}, true);
 
         Eventor eventor = new Eventor(new Rule[] {
                 rule

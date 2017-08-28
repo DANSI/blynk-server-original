@@ -201,7 +201,7 @@ public class NotificationsLogicTest extends IntegrationBase {
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
 
-        verify(gcmWrapper, timeout(1500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(gcmWrapper, timeout(2000).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
         assertTrue(System.currentTimeMillis() - now > notification.notifyWhenOfflineIgnorePeriod );
 
