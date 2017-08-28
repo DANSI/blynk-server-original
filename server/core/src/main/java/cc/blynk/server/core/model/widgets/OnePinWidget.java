@@ -97,6 +97,7 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     }
 
     //todo cover with test
+    @Override
     public boolean isSame(int deviceId, byte pin, PinType type) {
         return this.deviceId == deviceId && this.pin == pin && (
                 (type == this.pinType) ||
