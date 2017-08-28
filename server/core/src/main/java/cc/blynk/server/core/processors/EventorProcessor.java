@@ -177,7 +177,7 @@ public class EventorProcessor {
         session.sendMessageToHardware(dash.id, HARDWARE, 888, body, deviceId);
         session.sendToApps(HARDWARE, 888, dash.id, deviceId, body);
 
-        dash.update(deviceId, action.pin.pin, action.pin.pinType, action.value, now);
+        dash.update(deviceId, action.dataStream.pin, action.dataStream.pinType, action.value, now);
 
         globalStats.mark(EVENTOR);
     }

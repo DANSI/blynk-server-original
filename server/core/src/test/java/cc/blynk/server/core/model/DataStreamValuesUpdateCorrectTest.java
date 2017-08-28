@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
  * Created by Dmitriy Dumanskiy.
  * Created on 02.11.15.
  */
-public class PinValuesUpdateCorrectTest {
+public class DataStreamValuesUpdateCorrectTest {
 
     private static final ObjectReader profileReader = JsonParser.init().readerFor(Profile.class);
 
@@ -55,10 +55,10 @@ public class PinValuesUpdateCorrectTest {
         assertEquals("1", button.value);
 
         RGB rgb = new RGB();
-        rgb.pins = new Pin[3];
-        rgb.pins[0] = new Pin((byte)0, false, false, PinType.VIRTUAL, null, 0, 255, null);
-        rgb.pins[1] = new Pin((byte)1, false, false, PinType.VIRTUAL, null, 0, 255, null);
-        rgb.pins[2] = new Pin((byte)2, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.dataStreams = new DataStream[3];
+        rgb.dataStreams[0] = new DataStream((byte)0, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.dataStreams[1] = new DataStream((byte)1, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.dataStreams[2] = new DataStream((byte)2, false, false, PinType.VIRTUAL, null, 0, 255, null);
 
 
         dash.widgets = ArrayUtils.add(dash.widgets, rgb);
@@ -67,21 +67,21 @@ public class PinValuesUpdateCorrectTest {
         update(dash, 0, "vw 1 101".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
         update(dash, 0, "vw 2 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
 
-        for (int i = 0; i < rgb.pins.length; i++) {
-            assertEquals("10" + i, rgb.pins[i].value);
+        for (int i = 0; i < rgb.dataStreams.length; i++) {
+            assertEquals("10" + i, rgb.dataStreams[i].value);
         }
 
         rgb = new RGB();
-        rgb.pins = new Pin[3];
-        rgb.pins[0] = new Pin((byte)4, false, false, PinType.VIRTUAL, null, 0, 255, null);
-        rgb.pins[1] = new Pin((byte)4, false, false, PinType.VIRTUAL, null, 0, 255, null);
-        rgb.pins[2] = new Pin((byte)4, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.dataStreams = new DataStream[3];
+        rgb.dataStreams[0] = new DataStream((byte)4, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.dataStreams[1] = new DataStream((byte)4, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.dataStreams[2] = new DataStream((byte)4, false, false, PinType.VIRTUAL, null, 0, 255, null);
 
         dash.widgets = ArrayUtils.add(dash.widgets, rgb);
 
         update(dash, 0, "vw 4 100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
 
-        assertEquals("100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), rgb.pins[0].value);
+        assertEquals("100 101 102".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING), rgb.dataStreams[0].value);
     }
 
     public static void update(DashBoard dash, int deviceId, String body) {

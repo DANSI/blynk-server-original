@@ -4,7 +4,7 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -124,15 +124,15 @@ public abstract class IntegrationBase extends BaseTest {
                 }
             } else if (widget instanceof MultiPinWidget) {
                 MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-                if (multiPinWidget.pins != null) {
+                if (multiPinWidget.dataStreams != null) {
                     if (multiPinWidget.isSplitMode()) {
-                        for (Pin pin : multiPinWidget.pins) {
-                            if (pin.notEmpty()) {
+                        for (DataStream dataStream : multiPinWidget.dataStreams) {
+                            if (dataStream.notEmpty()) {
                                 expectedSyncCommandsCount++;
                             }
                         }
                     } else {
-                        if (multiPinWidget.pins[0].notEmpty()) {
+                        if (multiPinWidget.dataStreams[0].notEmpty()) {
                             expectedSyncCommandsCount++;
                         }
                     }

@@ -6,7 +6,7 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
@@ -91,8 +91,8 @@ public class TimerTest extends IntegrationBase {
         Rule rule = new Rule();
         rule.isActive = true;
         rule.triggerTime = timerTime;
-        Pin pin = new Pin((byte)1,PinType.VIRTUAL);
-        SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
+        DataStream dataStream = new DataStream((byte)1,PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
         rule.actions = new BaseAction[] {
                 setPinAction
         };
@@ -124,8 +124,8 @@ public class TimerTest extends IntegrationBase {
         Rule rule = new Rule();
         rule.isActive = true;
         rule.triggerTime = timerTime;
-        Pin pin = new Pin((byte)1,PinType.VIRTUAL);
-        SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
+        DataStream dataStream = new DataStream((byte)1,PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
         rule.actions = new BaseAction[] {
                 setPinAction
         };
@@ -167,11 +167,11 @@ public class TimerTest extends IntegrationBase {
         rule.isActive = true;
         rule.triggerTime = timerTime;
 
-        Pin pin = new Pin((byte)1,PinType.VIRTUAL);
-        SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
+        DataStream dataStream = new DataStream((byte)1,PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
 
-        Pin pin2 = new Pin((byte)2,PinType.VIRTUAL);
-        SetPinAction setPinAction2 = new SetPinAction(pin2, "2", SetPinActionType.CUSTOM);
+        DataStream dataStream2 = new DataStream((byte)2,PinType.VIRTUAL);
+        SetPinAction setPinAction2 = new SetPinAction(dataStream2, "2", SetPinActionType.CUSTOM);
 
         rule.actions = new BaseAction[] {
                 setPinAction,
@@ -209,8 +209,8 @@ public class TimerTest extends IntegrationBase {
         rule.isActive = true;
         rule.triggerTime = timerTime;
 
-        Pin pin = new Pin((byte)1,PinType.VIRTUAL);
-        SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
+        DataStream dataStream = new DataStream((byte)1,PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
 
         NotifyAction notifyAction = new NotifyAction("Hello");
         rule.actions = new BaseAction[] {
@@ -265,8 +265,8 @@ public class TimerTest extends IntegrationBase {
         rule.isActive = true;
         rule.triggerTime = timerTime;
 
-        Pin pin = new Pin((byte)1,PinType.VIRTUAL);
-        SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
+        DataStream dataStream = new DataStream((byte)1,PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
 
         rule.actions = new BaseAction[] {
                 setPinAction

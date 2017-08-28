@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.widgets.others.eventor.model.action;
 
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -13,23 +13,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class SetPinAction extends BaseAction {
 
-    public final Pin pin;
+    @JsonProperty("pin") //todo "pin" for back compatibility
+    public final DataStream dataStream;
 
     public final String value;
 
     private final SetPinActionType setPinType;
 
     @JsonCreator
-    public SetPinAction(@JsonProperty("pin") Pin pin,
+    public SetPinAction(@JsonProperty("pin") DataStream dataStream,
                         @JsonProperty("value") String value,
                         @JsonProperty("setPinType") SetPinActionType setPinType) {
-        this.pin = pin;
+        this.dataStream = dataStream;
         this.value = value;
         this.setPinType = setPinType;
     }
 
     public SetPinAction(byte pin, PinType pinType, String value) {
-        this.pin = new Pin(pin, pinType);
+        this.dataStream = new DataStream(pin, pinType);
         //this is dirty hack for back compatibility.
         //this is mistakes of our youth. sorry for that :).
         //todo remove some day in future.
@@ -43,11 +44,11 @@ public class SetPinAction extends BaseAction {
     }
 
     public String makeHardwareBody() {
-        return Pin.makeHardwareBody(pin.pwmMode, pin.pinType, pin.pin, value);
+        return DataStream.makeHardwareBody(dataStream.pwmMode, dataStream.pinType, dataStream.pin, value);
     }
 
     @Override
     public boolean isValid() {
-        return pin != null && pin.pinType != null && pin.pin > -1 && value != null;
+        return dataStream != null && dataStream.pinType != null && dataStream.pin > -1 && value != null;
     }
 }

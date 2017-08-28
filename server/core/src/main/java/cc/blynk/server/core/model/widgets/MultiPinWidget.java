@@ -1,7 +1,8 @@
 package cc.blynk.server.core.model.widgets;
 
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.StringJoiner;
 
@@ -16,15 +17,16 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
 
     public int deviceId;
 
-    public Pin[] pins;
+    @JsonProperty("pins") //todo "pins" for back compatibility
+    public DataStream[] dataStreams;
 
     @Override
     public boolean updateIfSame(int deviceId, byte pinIn, PinType type, String value) {
         boolean isSame = false;
-        if (this.pins != null && this.deviceId == deviceId) {
-            for (Pin pin : this.pins) {
-                if (pin.isSame(pinIn, type)) {
-                    pin.value = value;
+        if (this.dataStreams != null && this.deviceId == deviceId) {
+            for (DataStream dataStream : this.dataStreams) {
+                if (dataStream.isSame(pinIn, type)) {
+                    dataStream.value = value;
                     isSame = true;
                 }
             }
@@ -36,9 +38,9 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
     public void updateIfSame(Widget widget) {
         if (widget instanceof MultiPinWidget) {
             MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-            if (multiPinWidget.pins != null && multiPinWidget.deviceId == this.deviceId) {
-                for (Pin pin : multiPinWidget.pins) {
-                    updateIfSame(multiPinWidget.deviceId, pin.pin, pin.pinType, pin.value);
+            if (multiPinWidget.dataStreams != null && multiPinWidget.deviceId == this.deviceId) {
+                for (DataStream dataStream : multiPinWidget.dataStreams) {
+                    updateIfSame(multiPinWidget.deviceId, dataStream.pin, dataStream.pinType, dataStream.value);
                 }
             }
         }
@@ -46,9 +48,9 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
 
     @Override
     public boolean isSame(int deviceId, byte pinIn, PinType pinType) {
-        if (pins != null && this.deviceId == deviceId) {
-            for (Pin pin : pins) {
-                if (pin.isSame(pinIn, pinType)) {
+        if (dataStreams != null && this.deviceId == deviceId) {
+            for (DataStream dataStream : dataStreams) {
+                if (dataStream.isSame(pinIn, pinType)) {
                     return true;
                 }
             }
@@ -59,20 +61,20 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
     public abstract boolean isSplitMode();
 
     public String makeHardwareBody(byte pinIn, PinType pinType) {
-        if (pins == null) {
+        if (dataStreams == null) {
             return null;
         }
         if (isSplitMode()) {
-            for (Pin pin : pins) {
-                if (pin.isSame(pinIn, pinType)) {
-                    return pin.makeHardwareBody();
+            for (DataStream dataStream : dataStreams) {
+                if (dataStream.isSame(pinIn, pinType)) {
+                    return dataStream.makeHardwareBody();
                 }
             }
         } else {
-            if (pins[0].notEmpty()) {
-                StringBuilder sb = new StringBuilder(pins[0].makeHardwareBody());
-                for (int i = 1; i < pins.length; i++) {
-                    sb.append(BODY_SEPARATOR).append(pins[i].value);
+            if (dataStreams[0].notEmpty()) {
+                StringBuilder sb = new StringBuilder(dataStreams[0].makeHardwareBody());
+                for (int i = 1; i < dataStreams.length; i++) {
+                    sb.append(BODY_SEPARATOR).append(dataStreams[i].value);
                 }
                 return sb.toString();
             }
@@ -82,10 +84,10 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
 
     @Override
     public String getValue(byte pinIn, PinType pinType) {
-        if (pins != null) {
-            for (Pin pin : pins) {
-                if (pin.isSame(pinIn, pinType)) {
-                    return pin.value;
+        if (dataStreams != null) {
+            for (DataStream dataStream : dataStreams) {
+                if (dataStream.isSame(pinIn, pinType)) {
+                    return dataStream.value;
                 }
             }
         }
@@ -94,24 +96,24 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
 
     @Override
     public void append(StringBuilder sb, int deviceId) {
-        if (pins != null && this.deviceId == deviceId) {
-            for (Pin pin : pins) {
-                append(sb, pin.pin, pin.pinType, getModeType());
+        if (dataStreams != null && this.deviceId == deviceId) {
+            for (DataStream dataStream : dataStreams) {
+                append(sb, dataStream.pin, dataStream.pinType, getModeType());
             }
         }
     }
 
     @Override
     public String getJsonValue() {
-        if (pins == null) {
+        if (dataStreams == null) {
             return "[]";
         }
         StringJoiner sj = new StringJoiner(",", "[", "]");
-        for (Pin pin : pins) {
-            if (pin.value == null) {
+        for (DataStream dataStream : dataStreams) {
+            if (dataStream.value == null) {
                 sj.add("\"\"");
             } else {
-                sj.add("\"" + pin.value + "\"");
+                sj.add("\"" + dataStream.value + "\"");
             }
         }
         return sj.toString();

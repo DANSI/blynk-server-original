@@ -1,7 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.PinPropertyStorageKey;
 import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.enums.PinType;
@@ -80,7 +80,7 @@ public class HardwareSyncLogic {
                     if (widget == null) {
                         String value = dash.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
                         if (value != null) {
-                            String body = Pin.makeHardwareBody(pinType, pin, value);
+                            String body = DataStream.makeHardwareBody(pinType, pin, value);
                             ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
                         }
                     } else if (widget instanceof HardwareSyncWidget) {

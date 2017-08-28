@@ -79,12 +79,12 @@ public class GetEnhancedGraphDataLogic {
         for (GraphDataStream graphDataStream : enhancedHistoryGraph.dataStreams) {
             Target target = dash.getTarget(graphDataStream.targetId);
             if (target == null) {
-                requestedPins[i] = new GraphPinRequest(dashId, -1, graphDataStream.pin, graphPeriod, skipCount, graphDataStream.functionType);
+                requestedPins[i] = new GraphPinRequest(dashId, -1, graphDataStream.dataStream, graphPeriod, skipCount, graphDataStream.functionType);
             } else {
                 if (target.isTag()) {
-                    requestedPins[i] = new GraphPinRequest(dashId, target.getDeviceIds(), graphDataStream.pin, graphPeriod, skipCount, graphDataStream.functionType);
+                    requestedPins[i] = new GraphPinRequest(dashId, target.getDeviceIds(), graphDataStream.dataStream, graphPeriod, skipCount, graphDataStream.functionType);
                 } else {
-                    requestedPins[i] = new GraphPinRequest(dashId, target.getDeviceId(), graphDataStream.pin, graphPeriod, skipCount, graphDataStream.functionType);
+                    requestedPins[i] = new GraphPinRequest(dashId, target.getDeviceId(), graphDataStream.dataStream, graphPeriod, skipCount, graphDataStream.functionType);
                 }
             }
             i++;

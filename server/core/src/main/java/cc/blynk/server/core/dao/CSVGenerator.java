@@ -1,6 +1,6 @@
 package cc.blynk.server.core.dao;
 
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
@@ -49,7 +49,7 @@ public class CSVGenerator {
     }
 
     public Path createCSV(User user, int dashId, int inDeviceId, PinType pinType, byte pin, int... deviceIds) throws Exception {
-        if (pinType == null || pin == Pin.NO_PIN) {
+        if (pinType == null || pin == DataStream.NO_PIN) {
             throw new IllegalCommandBodyException("Wrong pin format.");
         }
 

@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.widgets;
 
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.*;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
@@ -120,7 +120,7 @@ public abstract class Widget implements CopyObject<Widget> {
     public boolean isDefaultColor;
 
     protected static void append(StringBuilder sb, byte pin, PinType pinType, String pinMode) {
-        if (pin == Pin.NO_PIN || pinMode == null || pinType == PinType.VIRTUAL) {
+        if (pin == DataStream.NO_PIN || pinMode == null || pinType == PinType.VIRTUAL) {
             return;
         }
         sb.append(StringUtils.BODY_SEPARATOR)

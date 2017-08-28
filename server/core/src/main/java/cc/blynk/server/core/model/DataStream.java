@@ -11,7 +11,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  * Created by Dmitriy Dumanskiy.
  * Created on 03.07.15.
  */
-public class Pin {
+public class DataStream {
 
     public static final int NO_PIN = -1;
 
@@ -32,14 +32,14 @@ public class Pin {
     public final String label;
 
     @JsonCreator
-    public Pin(@JsonProperty("pin") byte pin,
-               @JsonProperty("pwmMode") boolean pwmMode,
-               @JsonProperty("rangeMappingOn") boolean rangeMappingOn,
-               @JsonProperty("pinType") PinType pinType,
-               @JsonProperty("value") String value,
-               @JsonProperty("min") int min,
-               @JsonProperty("max") int max,
-               @JsonProperty("label") String label) {
+    public DataStream(@JsonProperty("pin") byte pin,
+                      @JsonProperty("pwmMode") boolean pwmMode,
+                      @JsonProperty("rangeMappingOn") boolean rangeMappingOn,
+                      @JsonProperty("pinType") PinType pinType,
+                      @JsonProperty("value") String value,
+                      @JsonProperty("min") int min,
+                      @JsonProperty("max") int max,
+                      @JsonProperty("label") String label) {
         this.pin = pin;
         this.pwmMode = pwmMode;
         this.rangeMappingOn = rangeMappingOn;
@@ -50,7 +50,7 @@ public class Pin {
         this.label = label;
     }
 
-    public Pin(byte pin, PinType pinType) {
+    public DataStream(byte pin, PinType pinType) {
         this(pin, false, false, pinType, null, 0, 255, null);
     }
 

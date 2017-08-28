@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
  * Created by Dmitriy Dumanskiy.
  * Created on 19.11.16.
  */
-public class PinStorageSerializationTest {
+public class DataStreamStorageSerializationTest {
 
     @Test
     public void testSerialize() {

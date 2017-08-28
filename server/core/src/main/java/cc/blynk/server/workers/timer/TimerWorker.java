@@ -228,7 +228,7 @@ public class TimerWorker implements Runnable {
                 }
 
                 for (int deviceId : deviceIds) {
-                    dash.update(deviceId, setPinAction.pin.pin, setPinAction.pin.pinType, setPinAction.value, now);
+                    dash.update(deviceId, setPinAction.dataStream.pin, setPinAction.dataStream.pinType, setPinAction.value, now);
                 }
 
                 triggerTimer(sessionDao, key.userKey, setPinAction.makeHardwareBody(), key.dashId, deviceIds);

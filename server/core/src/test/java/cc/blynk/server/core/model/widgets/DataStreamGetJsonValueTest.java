@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.widgets;
 
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.RGB;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
@@ -14,10 +14,10 @@ import static org.junit.Assert.assertEquals;
  * Created by Dmitriy Dumanskiy.
  * Created on 25.12.15.
  */
-public class PinGetJsonValueTest {
+public class DataStreamGetJsonValueTest {
 
-    private static Pin createPinWithValue(String val) {
-        return new Pin((byte)1, false, false, PinType.VIRTUAL, val, 0, 255, null);
+    private static DataStream createPinWithValue(String val) {
+        return new DataStream((byte)1, false, false, PinType.VIRTUAL, val, 0, 255, null);
     }
 
     @Test
@@ -34,15 +34,15 @@ public class PinGetJsonValueTest {
     @Test
     public void testMultiPinSplit() {
         RGB multiPinWidget = new RGB();
-        multiPinWidget.pins = null;
+        multiPinWidget.dataStreams = null;
         multiPinWidget.splitMode = true;
 
         assertEquals("[]", multiPinWidget.getJsonValue());
 
-        multiPinWidget.pins = new Pin[3];
-        multiPinWidget.pins[0] = createPinWithValue("1");
-        multiPinWidget.pins[1] = createPinWithValue("2");
-        multiPinWidget.pins[2] = createPinWithValue("3");
+        multiPinWidget.dataStreams = new DataStream[3];
+        multiPinWidget.dataStreams[0] = createPinWithValue("1");
+        multiPinWidget.dataStreams[1] = createPinWithValue("2");
+        multiPinWidget.dataStreams[2] = createPinWithValue("3");
 
         assertEquals("[\"1\",\"2\",\"3\"]", multiPinWidget.getJsonValue());
     }
@@ -50,13 +50,13 @@ public class PinGetJsonValueTest {
     @Test
     public void testMultiPinMerge() {
         RGB multiPinWidget = new RGB();
-        multiPinWidget.pins = null;
+        multiPinWidget.dataStreams = null;
         multiPinWidget.splitMode = false;
 
         assertEquals("[]", multiPinWidget.getJsonValue());
 
-        multiPinWidget.pins = new Pin[3];
-        multiPinWidget.pins[0] = createPinWithValue("1 2 3".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
+        multiPinWidget.dataStreams = new DataStream[3];
+        multiPinWidget.dataStreams[0] = createPinWithValue("1 2 3".replaceAll(" ", StringUtils.BODY_SEPARATOR_STRING));
 
         assertEquals("[\"1\",\"2\",\"3\"]", multiPinWidget.getJsonValue());
     }

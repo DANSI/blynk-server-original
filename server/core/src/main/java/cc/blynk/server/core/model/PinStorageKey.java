@@ -29,7 +29,7 @@ public class PinStorageKey {
     }
 
     public String makeHardwareBody(String value) {
-        return Pin.makeHardwareBody(pinTypeChar, pin, value);
+        return DataStream.makeHardwareBody(pinTypeChar, pin, value);
     }
 
     public ByteBuf makeByteBuf(int dashId, String value) {

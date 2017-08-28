@@ -7,7 +7,7 @@ import cc.blynk.integration.tcp.EventorTest;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.Timer;
@@ -214,8 +214,8 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         Rule rule = new Rule();
         rule.isActive = true;
         rule.triggerTime = timerTime;
-        Pin pin = new Pin((byte) 4, PinType.VIRTUAL);
-        SetPinAction setPinAction = new SetPinAction(pin, "1", SetPinActionType.CUSTOM);
+        DataStream dataStream = new DataStream((byte) 4, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
         rule.actions = new BaseAction[] {
                 setPinAction
         };

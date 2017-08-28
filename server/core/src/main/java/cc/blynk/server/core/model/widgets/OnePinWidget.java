@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.widgets;
 
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.utils.JsonParser;
@@ -59,7 +59,7 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     }
 
     public boolean isNotValid() {
-        return pin == Pin.NO_PIN || pinType == null;
+        return pin == DataStream.NO_PIN || pinType == null;
     }
 
     public String makeHardwareBody() {

@@ -1,7 +1,7 @@
 package cc.blynk.server.core.processors;
 
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.others.webhook.Header;
@@ -111,7 +111,7 @@ public class WebhookProcessor extends NotificationBase {
                     webHook.failureCounter = 0;
                     if (response.hasResponseBody()) {
                         //todo could be optimized
-                        String body = Pin.makeHardwareBody(webHook.pinType, webHook.pin, response.getResponseBody(CharsetUtil.UTF_8));
+                        String body = DataStream.makeHardwareBody(webHook.pinType, webHook.pin, response.getResponseBody(CharsetUtil.UTF_8));
                         log.trace("Sending webhook to hardware. {}", body);
                         session.sendMessageToHardware(dashId, Command.HARDWARE, 888, body, deviceId);
                     }

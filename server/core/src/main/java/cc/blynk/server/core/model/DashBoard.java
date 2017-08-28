@@ -255,9 +255,9 @@ public class DashBoard {
                 ((OnePinWidget) widget).value = null;
             }
             if (widget instanceof MultiPinWidget) {
-                for (Pin pin : ((MultiPinWidget) widget).pins) {
-                    if (pin != null) {
-                        pin.value = null;
+                for (DataStream dataStream : ((MultiPinWidget) widget).dataStreams) {
+                    if (dataStream != null) {
+                        dataStream.value = null;
                     }
                 }
             }
@@ -293,10 +293,10 @@ public class DashBoard {
             }
         } else if (widget instanceof MultiPinWidget) {
             MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-            if (multiPinWidget.pins != null) {
-                for (Pin pin : multiPinWidget.pins) {
-                    if (pin != null && pin.pinType != null) {
-                        pinsStorage.remove(new PinStorageKey(multiPinWidget.deviceId, pin.pinType, pin.pin));
+            if (multiPinWidget.dataStreams != null) {
+                for (DataStream dataStream : multiPinWidget.dataStreams) {
+                    if (dataStream != null && dataStream.pinType != null) {
+                        pinsStorage.remove(new PinStorageKey(multiPinWidget.deviceId, dataStream.pinType, dataStream.pin));
                     }
                 }
             }

@@ -1,6 +1,6 @@
 package cc.blynk.server.core.reporting;
 
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
@@ -61,17 +61,17 @@ public class GraphPinRequest {
         }
     }
 
-    public GraphPinRequest(int dashId, int[] deviceIds, Pin pin, GraphPeriod graphPeriod, int skipCount, AggregationFunctionType function) {
+    public GraphPinRequest(int dashId, int[] deviceIds, DataStream dataStream, GraphPeriod graphPeriod, int skipCount, AggregationFunctionType function) {
         this.dashId = dashId;
         this.deviceId = -1;
         this.deviceIds = deviceIds;
         this.isTag = true;
-        if (pin == null) {
+        if (dataStream == null) {
             this.pinType = PinType.VIRTUAL;
-            this.pin = (byte) Pin.NO_PIN;
+            this.pin = (byte) DataStream.NO_PIN;
         } else {
-            this.pinType = (pin.pinType == null ? PinType.VIRTUAL : pin.pinType);
-            this.pin = pin.pin;
+            this.pinType = (dataStream.pinType == null ? PinType.VIRTUAL : dataStream.pinType);
+            this.pin = dataStream.pin;
         }
         this.graphPeriod = graphPeriod;
         this.functionType = function;
@@ -80,17 +80,17 @@ public class GraphPinRequest {
         this.skipCount = skipCount;
     }
 
-    public GraphPinRequest(int dashId, int deviceId, Pin pin, GraphPeriod graphPeriod, int skipCount, AggregationFunctionType function) {
+    public GraphPinRequest(int dashId, int deviceId, DataStream dataStream, GraphPeriod graphPeriod, int skipCount, AggregationFunctionType function) {
         this.dashId = dashId;
         this.deviceId = deviceId;
         this.deviceIds = null;
         this.isTag = false;
-        if (pin == null) {
+        if (dataStream == null) {
             this.pinType = PinType.VIRTUAL;
-            this.pin = (byte) Pin.NO_PIN;
+            this.pin = (byte) DataStream.NO_PIN;
         } else {
-            this.pinType = (pin.pinType == null ? PinType.VIRTUAL : pin.pinType);
-            this.pin = pin.pin;
+            this.pinType = (dataStream.pinType == null ? PinType.VIRTUAL : dataStream.pinType);
+            this.pin = dataStream.pin;
         }
         this.graphPeriod = graphPeriod;
         this.functionType = (function == null ? AggregationFunctionType.AVG : function);

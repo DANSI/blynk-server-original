@@ -4,7 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -106,8 +106,8 @@ public class ExportGraphDataLogic {
                 String dashName = dash.getNameOrEmpty();
                 ArrayList<FileLink> pinsCSVFilePath = new ArrayList<>();
                 int deviceId = historyGraph.deviceId;
-                for (Pin pin : historyGraph.pins) {
-                    if (pin != null) {
+                for (DataStream dataStream : historyGraph.dataStreams) {
+                    if (dataStream != null) {
                         try {
                             int[] deviceIds = new int[] {deviceId};
                             //special case, this is not actually a deviceId but device selector widget id
@@ -117,8 +117,8 @@ public class ExportGraphDataLogic {
                                     deviceIds = ((DeviceSelector) deviceSelector).deviceIds;
                                 }
                             }
-                            Path path = reportingDao.csvGenerator.createCSV(user, dash.id, deviceId, pin.pinType, pin.pin, deviceIds);
-                            pinsCSVFilePath.add(new FileLink(path.getFileName(), dashName, pin.pinType, pin.pin));
+                            Path path = reportingDao.csvGenerator.createCSV(user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
+                            pinsCSVFilePath.add(new FileLink(path.getFileName(), dashName, dataStream.pinType, dataStream.pin));
                         } catch (Exception e) {
                             //ignore eny exception.
                         }
@@ -163,9 +163,9 @@ public class ExportGraphDataLogic {
                 String dashName = dash.getNameOrEmpty();
                 ArrayList<FileLink> pinsCSVFilePath = new ArrayList<>();
                 for (GraphDataStream graphDataStream : enhancedHistoryGraph.dataStreams) {
-                    Pin pin = graphDataStream.pin;
+                    DataStream dataStream = graphDataStream.dataStream;
                     int deviceId = graphDataStream.targetId;
-                    if (pin != null) {
+                    if (dataStream != null) {
                         try {
                             int[] deviceIds = new int[] {deviceId};
                             //special case, this is not actually a deviceId but device selector widget id
@@ -176,8 +176,8 @@ public class ExportGraphDataLogic {
                                 }
                             }
 
-                            Path path = reportingDao.csvGenerator.createCSV(user, dash.id, deviceId, pin.pinType, pin.pin, deviceIds);
-                            pinsCSVFilePath.add(new FileLink(path.getFileName(), dashName, pin.pinType, pin.pin));
+                            Path path = reportingDao.csvGenerator.createCSV(user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
+                            pinsCSVFilePath.add(new FileLink(path.getFileName(), dashName, dataStream.pinType, dataStream.pin));
                         } catch (Exception e) {
                             //ignore eny exception.
                         }

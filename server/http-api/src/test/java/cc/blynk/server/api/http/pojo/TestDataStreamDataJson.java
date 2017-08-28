@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNotNull;
  * Created by Dmitriy Dumanskiy.
  * Created on 31.08.16.
  */
-public class TestPinDataJson {
+public class TestDataStreamDataJson {
 
     @Test
     public void testParseString() throws Exception {

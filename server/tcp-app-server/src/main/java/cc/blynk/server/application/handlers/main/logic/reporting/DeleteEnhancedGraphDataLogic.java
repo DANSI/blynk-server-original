@@ -3,7 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.reporting;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
@@ -65,10 +65,10 @@ public class DeleteEnhancedGraphDataLogic {
             try {
                 for (GraphDataStream graphDataStream : dataStreams) {
                     Target target = dash.getTarget(graphDataStream.targetId);
-                    Pin pin = graphDataStream.pin;
-                    if (target != null && pin != null) {
+                    DataStream dataStream = graphDataStream.dataStream;
+                    if (target != null && dataStream != null) {
                         int deviceId = target.getDeviceId();
-                        reportingDao.delete(user, dash.id, deviceId, pin.pinType, pin.pin);
+                        reportingDao.delete(user, dash.id, deviceId, dataStream.pinType, dataStream.pin);
                     }
                 }
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());

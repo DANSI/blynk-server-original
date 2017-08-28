@@ -1,7 +1,7 @@
 package cc.blynk.utils;
 
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -105,25 +105,25 @@ public class JsonParsingTest {
 
         RGB rgb = (RGB) profile.dashBoards[0].widgets[0];
 
-        assertNotNull(rgb.pins);
-        assertEquals(2, rgb.pins.length);
-        Pin pin1 = rgb.pins[0];
-        Pin pin2 = rgb.pins[1];
+        assertNotNull(rgb.dataStreams);
+        assertEquals(2, rgb.dataStreams.length);
+        DataStream dataStream1 = rgb.dataStreams[0];
+        DataStream dataStream2 = rgb.dataStreams[1];
 
-        assertNotNull(pin1);
-        assertNotNull(pin2);
+        assertNotNull(dataStream1);
+        assertNotNull(dataStream2);
 
-        assertEquals(1, pin1.pin);
-        assertEquals(2, pin2.pin);
+        assertEquals(1, dataStream1.pin);
+        assertEquals(2, dataStream2.pin);
 
-        assertEquals("1", pin1.value);
-        assertEquals("2", pin2.value);
+        assertEquals("1", dataStream1.value);
+        assertEquals("2", dataStream2.value);
 
-        assertEquals(PinType.DIGITAL, pin1.pinType);
-        assertEquals(PinType.DIGITAL, pin2.pinType);
+        assertEquals(PinType.DIGITAL, dataStream1.pinType);
+        assertEquals(PinType.DIGITAL, dataStream2.pinType);
 
-        assertFalse(pin1.pwmMode);
-        assertTrue(pin2.pwmMode);
+        assertFalse(dataStream1.pwmMode);
+        assertTrue(dataStream2.pwmMode);
 
     }
 

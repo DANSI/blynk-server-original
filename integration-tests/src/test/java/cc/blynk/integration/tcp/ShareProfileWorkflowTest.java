@@ -7,7 +7,7 @@ import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -54,7 +54,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         for (Widget widget : profile.dashBoards[0].widgets) {
             if (widget instanceof OnePinWidget) {
                 OnePinWidget onePinWidget = (OnePinWidget) widget;
-                if (onePinWidget.pin != Pin.NO_PIN && onePinWidget.pin == pin) {
+                if (onePinWidget.pin != DataStream.NO_PIN && onePinWidget.pin == pin) {
                     return onePinWidget;
                 }
             }

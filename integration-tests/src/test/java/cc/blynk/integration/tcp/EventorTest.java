@@ -5,7 +5,7 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -58,15 +58,15 @@ public class EventorTest extends IntegrationBase {
         String[] splitted = s.split(" ");
 
         //"V1"
-        Pin triggerPin = parsePin(splitted[1]);
+        DataStream triggerDataStream = parsePin(splitted[1]);
                                                        //>                               37
         BaseCondition ifCondition = resolveCondition(splitted[2], Double.parseDouble(splitted[3]));
 
-        Pin pin = null;
+        DataStream dataStream = null;
         String value;
         try {
             //V2
-            pin = parsePin(splitted[6]);
+            dataStream = parsePin(splitted[6]);
             //123
             value = splitted[7];
         } catch (IllegalCommandBodyException e) {
@@ -74,23 +74,23 @@ public class EventorTest extends IntegrationBase {
         }
 
                                             //setpin
-        BaseAction action = resolveAction(splitted[5], pin, value);
+        BaseAction action = resolveAction(splitted[5], dataStream, value);
 
-        Rule rule = new Rule(triggerPin, ifCondition, new BaseAction[] { action });
+        Rule rule = new Rule(triggerDataStream, ifCondition, new BaseAction[] { action });
         rule.isActive = true;
         return rule;
     }
 
-    private static Pin parsePin(String pinString) {
+    private static DataStream parsePin(String pinString) {
         PinType pinType = PinType.getPinType(pinString.charAt(0));
         byte pin = Byte.parseByte(pinString.substring(1));
-        return new Pin(pin, pinType);
+        return new DataStream(pin, pinType);
     }
 
-    private static BaseAction resolveAction(String action, Pin pin, String value) {
+    private static BaseAction resolveAction(String action, DataStream dataStream, String value) {
         switch (action) {
             case "setpin" :
-                return new SetPinAction(pin.pin, pin.pinType, value);
+                return new SetPinAction(dataStream.pin, dataStream.pinType, value);
             case "wait" :
                 return new WaitAction();
             case "notify" :
@@ -168,11 +168,11 @@ public class EventorTest extends IntegrationBase {
             System.out.println(JsonParser.mapper.writeValueAsString(eventor));
         }
 
-        Pin pin = new Pin((byte) 1, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
 
         BaseAction[] actions = new BaseAction[] {
-                new SetPinAction(pin.pin, pin.pinType, "pinValuetoSEt"),
-                new WaitAction(360, new SetPinAction(pin.pin, pin.pinType, "pinValueToSet")),
+                new SetPinAction(dataStream.pin, dataStream.pinType, "pinValuetoSEt"),
+                new WaitAction(360, new SetPinAction(dataStream.pin, dataStream.pinType, "pinValueToSet")),
                 new NotifyAction("Hello!!!"),
                 new MailAction("Subj", "Hello mail")
         };
@@ -527,9 +527,9 @@ public class EventorTest extends IntegrationBase {
         //here is special case. right now eventor for digital pins supports only LOW/HIGH values
         //that's why eventor doesn't work with PWM pins, as they handled as analog, where HIGH doesn't work.
         SetPinAction setPinAction = (SetPinAction) eventor.rules[0].actions[0];
-        Pin pin = setPinAction.pin;
+        DataStream dataStream = setPinAction.dataStream;
         eventor.rules[0].actions[0] = new SetPinAction(
-                new Pin(pin.pin, true, false, pin.pinType, null, 0, 255, null),
+                new DataStream(dataStream.pin, true, false, dataStream.pinType, null, 0, 255, null),
                 setPinAction.value,
                 SetPinActionType.CUSTOM
         );

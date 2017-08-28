@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.widgets.controls;
 
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
@@ -49,7 +49,7 @@ public class Timer extends OnePinWidget {
 
     @Override
     public String makeHardwareBody() {
-        if (pin == Pin.NO_PIN || value == null || pinType == null) {
+        if (pin == DataStream.NO_PIN || value == null || pinType == null) {
             return null;
         }
         return value;

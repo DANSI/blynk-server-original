@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.widgets.others.rtc;
 
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.utils.DateTimeUtils;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -45,7 +45,7 @@ public class RTC extends OnePinWidget {
     //todo remove after migration.
     public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
         if (this.deviceId == deviceId) {
-            final String body = Pin.makeHardwareBody(pinType, pin, getTime());
+            final String body = DataStream.makeHardwareBody(pinType, pin, getTime());
             ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
         }
     }

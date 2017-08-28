@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.widgets;
 
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
@@ -37,7 +37,7 @@ public abstract class OnePinReadingWidget extends OnePinWidget implements Freque
         if (isNotValid()) {
             return;
         }
-        ByteBuf msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID, Pin.makeReadingHardwareBody(pinType.pintTypeChar, pin));
+        ByteBuf msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID, DataStream.makeReadingHardwareBody(pinType.pintTypeChar, pin));
         channel.write(msg, channel.voidPromise());
     }
 

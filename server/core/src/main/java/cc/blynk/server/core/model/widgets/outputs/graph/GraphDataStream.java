@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.widgets.outputs.graph;
 
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -19,7 +19,8 @@ public class GraphDataStream {
 
     public final int targetId;
 
-    public final Pin pin;
+    @JsonProperty("pin") //todo "pin" for back compatibility
+    public final DataStream dataStream;
 
     public final AggregationFunctionType functionType;
 
@@ -48,7 +49,7 @@ public class GraphDataStream {
                            @JsonProperty("graphType") GraphType graphType,
                            @JsonProperty("color") int color,
                            @JsonProperty("targetId") int targetId,
-                           @JsonProperty("pin") Pin pin,
+                           @JsonProperty("pin") DataStream dataStream,
                            @JsonProperty("functionType") AggregationFunctionType functionType,
                            @JsonProperty("flip") int flip,
                            @JsonProperty("low") String low,
@@ -64,7 +65,7 @@ public class GraphDataStream {
         this.graphType = graphType;
         this.color = color;
         this.targetId = targetId;
-        this.pin = pin;
+        this.dataStream = dataStream;
         this.functionType = functionType;
         this.flip = flip;
         this.low = low;

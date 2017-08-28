@@ -6,7 +6,7 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.model.Pin;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -106,9 +106,9 @@ public class FacebookLoginTest extends IntegrationBase {
                 }
             } else if (widget instanceof MultiPinWidget) {
                 MultiPinWidget multiPinWidget = ((MultiPinWidget) widget);
-                if (multiPinWidget.pins != null) {
-                    for (Pin pin : multiPinWidget.pins) {
-                        if (pin.notEmpty()) {
+                if (multiPinWidget.dataStreams != null) {
+                    for (DataStream dataStream : multiPinWidget.dataStreams) {
+                        if (dataStream.notEmpty()) {
                             expectedSyncCommandsCount++;
                         }
                     }
