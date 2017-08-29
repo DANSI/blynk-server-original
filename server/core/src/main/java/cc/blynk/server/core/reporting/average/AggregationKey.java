@@ -1,5 +1,6 @@
 package cc.blynk.server.core.reporting.average;
 
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 
@@ -17,6 +18,10 @@ public final class AggregationKey implements Serializable {
 
     private final BaseReportingKey baseReportingKey;
     public final long ts;
+
+    public AggregationKey(String email, String appName, int dashId, int deviceId, PinType pinType, byte pin, long ts) {
+        this(new BaseReportingKey(email, appName, dashId, deviceId, pinType, pin), ts);
+    }
 
     public AggregationKey(BaseReportingKey baseReportingKey, long ts) {
         this.baseReportingKey = baseReportingKey;

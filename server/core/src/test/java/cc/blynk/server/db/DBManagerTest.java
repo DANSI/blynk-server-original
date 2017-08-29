@@ -11,7 +11,6 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
-import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.model.Purchase;
 import cc.blynk.server.db.model.Redeem;
@@ -206,7 +205,7 @@ public class DBManagerTest {
         value.update(1);
         long ts = System.currentTimeMillis();
         for (int i = 0; i < 60; i++) {
-            map.put(new AggregationKey(new BaseReportingKey(user.email, user.appName, i, 0, PinType.ANALOG, (byte) i), ts), value);
+            map.put(new AggregationKey(user.email, user.appName, i, 0, PinType.ANALOG, (byte) i, ts), value);
             dbManager.insertReporting(map, GraphGranularityType.MINUTE);
             dbManager.insertReporting(map, GraphGranularityType.HOURLY);
             dbManager.insertReporting(map, GraphGranularityType.DAILY);

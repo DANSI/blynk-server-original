@@ -61,8 +61,8 @@ public class AverageAggregatorTest {
         assertEquals(1, averageAggregator.getHourly().size());
         assertEquals(1, averageAggregator.getDaily().size());
 
-        assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(new BaseReportingKey(user.email, user.appName, dashId, 0, pinType, pin), ts / HOUR)).calcAverage(), 0);
-        assertEquals(expectedAverage, averageAggregator.getDaily().get(new AggregationKey(new BaseReportingKey(user.email, user.appName, dashId, 0, pinType, pin), ts / DAY)).calcAverage(), 0);
+        assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(user.email, user.appName, dashId, 0, pinType, pin, ts / HOUR)).calcAverage(), 0);
+        assertEquals(expectedAverage, averageAggregator.getDaily().get(new AggregationKey(user.email, user.appName, dashId, 0, pinType, pin, ts / DAY)).calcAverage(), 0);
     }
 
     @Test
@@ -92,13 +92,13 @@ public class AverageAggregatorTest {
 
             assertEquals(hour + 1, averageAggregator.getHourly().size());
 
-            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(new BaseReportingKey(user.email, user.appName, dashId, 0, pinType, pin), ts / HOUR)).calcAverage(), 0);
+            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(user.email, user.appName, dashId, 0, pinType, pin, ts / HOUR)).calcAverage(), 0);
         }
         expectedDailyAverage /= COUNT * 24;
 
         assertEquals(24, averageAggregator.getHourly().size());
         assertEquals(1, averageAggregator.getDaily().size());
-        assertEquals(expectedDailyAverage, averageAggregator.getDaily().get(new AggregationKey(new BaseReportingKey(user.email, user.appName, dashId, 0, pinType, pin), getMillis(2015, 8, 1, 0, 0) / DAY)).calcAverage(), 0);
+        assertEquals(expectedDailyAverage, averageAggregator.getDaily().get(new AggregationKey(user.email, user.appName, dashId, 0, pinType, pin, getMillis(2015, 8, 1, 0, 0) / DAY)).calcAverage(), 0);
     }
 
     @Test
@@ -134,7 +134,7 @@ public class AverageAggregatorTest {
 
             assertEquals(hour + 1, averageAggregator.getHourly().size());
 
-            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(new BaseReportingKey(user.email, user.appName, dashId, 0, pinType, pin), ts / HOUR)).calcAverage(), 0);
+            assertEquals(expectedAverage, averageAggregator.getHourly().get(new AggregationKey(user.email, user.appName, dashId, 0, pinType, pin, ts / HOUR)).calcAverage(), 0);
         }
         expectedDailyAverage /= COUNT * 24;
 
