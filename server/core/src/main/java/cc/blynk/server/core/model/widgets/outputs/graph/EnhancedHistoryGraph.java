@@ -4,7 +4,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
 
-import static cc.blynk.utils.ArrayUtil.EMPTY_DATA_STREAMS;
+import static cc.blynk.utils.ArrayUtil.EMPTY_GRAPH_DATA_STREAMS;
 
 /**
  * The Blynk Project.
@@ -13,7 +13,7 @@ import static cc.blynk.utils.ArrayUtil.EMPTY_DATA_STREAMS;
  */
 public class EnhancedHistoryGraph extends Widget {
 
-    public GraphDataStream[] dataStreams = EMPTY_DATA_STREAMS;
+    public GraphDataStream[] dataStreams = EMPTY_GRAPH_DATA_STREAMS;
 
     public GraphPeriod period;
 

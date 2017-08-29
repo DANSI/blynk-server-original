@@ -23,7 +23,7 @@ public class ArrayUtil {
     public static final Widget[] EMPTY_WIDGETS = {};
     public static final byte[] EMPTY_BYTES = {};
     public static final App[] EMPTY_APPS = {};
-    public static final GraphDataStream[] EMPTY_DATA_STREAMS = {};
+    public static final GraphDataStream[] EMPTY_GRAPH_DATA_STREAMS = {};
 
     public static <T> T[] add(T[] array, T element, Class<T> type) {
         T[] newArray = copyArrayGrow1(array, type);
