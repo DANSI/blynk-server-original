@@ -120,13 +120,12 @@ public abstract class Widget implements CopyObject<Widget> {
     public boolean isDefaultColor;
 
     protected static void append(StringBuilder sb, byte pin, PinType pinType, String pinMode) {
-        if (pin == DataStream.NO_PIN || pinMode == null || pinType == PinType.VIRTUAL) {
-            return;
+        if (pin != DataStream.NO_PIN && pinMode != null && pinType != PinType.VIRTUAL) {
+            sb.append(StringUtils.BODY_SEPARATOR)
+                    .append(pin)
+                    .append(StringUtils.BODY_SEPARATOR)
+                    .append(pinMode);
         }
-        sb.append(StringUtils.BODY_SEPARATOR)
-                .append(pin)
-                .append(StringUtils.BODY_SEPARATOR)
-                .append(pinMode);
     }
 
     public abstract boolean updateIfSame(int deviceId, byte pin, PinType type, String value);
