@@ -35,11 +35,6 @@ public abstract class NoPinWidget extends Widget {
     }
 
     @Override
-    public String getValue(byte pin, PinType type) {
-        return null;
-    }
-
-    @Override
     public void append(StringBuilder sb, int deviceId) {
     }
 

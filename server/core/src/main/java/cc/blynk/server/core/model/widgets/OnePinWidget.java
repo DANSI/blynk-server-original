@@ -107,11 +107,6 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     }
 
     @Override
-    public String getValue(byte pin, PinType type) {
-        return value;
-    }
-
-    @Override
     public String getJsonValue() {
         if (value == null) {
             return "[]";

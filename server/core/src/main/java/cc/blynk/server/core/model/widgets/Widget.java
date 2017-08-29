@@ -139,8 +139,6 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public abstract String getModeType();
 
-    public abstract String getValue(byte pin, PinType type);
-
     public abstract int getPrice();
 
     public abstract void append(StringBuilder sb, int deviceId);

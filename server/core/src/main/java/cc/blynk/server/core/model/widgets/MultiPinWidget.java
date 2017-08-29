@@ -83,18 +83,6 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
     }
 
     @Override
-    public String getValue(byte pinIn, PinType pinType) {
-        if (dataStreams != null) {
-            for (DataStream dataStream : dataStreams) {
-                if (dataStream.isSame(pinIn, pinType)) {
-                    return dataStream.value;
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
     public void append(StringBuilder sb, int deviceId) {
         if (dataStreams != null && this.deviceId == deviceId) {
             for (DataStream dataStream : dataStreams) {
