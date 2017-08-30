@@ -1,8 +1,5 @@
 package cc.blynk.utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
@@ -24,8 +21,6 @@ import java.util.zip.ZipInputStream;
  * Created on 11.12.15.
  */
 public final class JarUtil {
-
-    private static final Logger log = LogManager.getLogger(JarUtil.class);
 
     /**
      * Unpacks all files from staticFolder of jar and puts them to current folder within staticFolder path.
@@ -79,7 +74,8 @@ public final class JarUtil {
                 while ((ze = zip.getNextEntry()) != null) {
                     String entryName = ze.getName();
                     if (!ze.isDirectory() && entryName.startsWith(staticResourcesFolder)) {
-                        log.debug("Unpacking : {}", entryName);
+                        //logging is disabled as logger is created later
+                        //log.debug("Unpacking : {}", entryName);
                         staticResources.add(entryName);
                     }
                 }
