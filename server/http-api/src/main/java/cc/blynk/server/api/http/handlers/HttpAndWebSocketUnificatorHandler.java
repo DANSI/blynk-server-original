@@ -136,7 +136,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(cookieBasedUrlReWriterHandler);
 
         pipeline.remove(StaticFileHandler.class);
-        pipeline.addLast(new StaticFileHandler(props, new StaticFile("/static", false)));
+        pipeline.addLast(new StaticFileHandler(props, new StaticFile("/static")));
 
         pipeline.addLast(otaLogic);
         pipeline.addLast(usersLogic);
