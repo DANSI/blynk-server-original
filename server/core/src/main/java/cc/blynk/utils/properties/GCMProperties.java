@@ -1,7 +1,7 @@
 package cc.blynk.utils.properties;
 
 import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.BaseProperties;
 
 import java.util.Map;
 
@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by Dmitriy Dumanskiy.
  * Created on 03.01.17.
  */
-public class GCMProperties extends ServerProperties {
+public class GCMProperties extends BaseProperties {
 
     public GCMProperties(Map<String, String> cmdProperties) {
         super(cmdProperties, GCMWrapper.GCM_PROPERTIES_FILENAME);

@@ -13,6 +13,7 @@ import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.transport.TransportTypeHolder;
 import cc.blynk.server.workers.ReadingWidgetsWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
+import cc.blynk.utils.BaseProperties;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.ServerProperties;
 import io.netty.util.internal.SystemPropertyUtil;
@@ -71,8 +72,8 @@ public class Holder implements Closeable {
 
     public final SslContextHolder sslContextHolder;
 
-    public Holder(ServerProperties serverProperties, ServerProperties mailProperties,
-                  ServerProperties smsProperties, ServerProperties gcmProperties, boolean restore) {
+    public Holder(ServerProperties serverProperties, BaseProperties mailProperties,
+                  BaseProperties smsProperties, BaseProperties gcmProperties, boolean restore) {
         disableNettyLeakDetector();
         this.props = serverProperties;
 

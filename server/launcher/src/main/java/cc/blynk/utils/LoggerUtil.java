@@ -17,7 +17,7 @@ public final class LoggerUtil {
      * - Defines logging folder
      * - Sets logging level based on properties
      */
-    public static void configureLogging(ServerProperties serverProperties) {
+    public static void configureLogging(BaseProperties serverProperties) {
         //required to make all loggers async with LMAX disruptor
         System.setProperty("Log4jContextSelector", "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
         System.setProperty("AsyncLogger.RingBufferSize",
