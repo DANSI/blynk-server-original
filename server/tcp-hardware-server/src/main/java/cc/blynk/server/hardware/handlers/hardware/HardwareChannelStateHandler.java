@@ -123,7 +123,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         public void run() {
             final long now = System.currentTimeMillis();
             if (device.status == Status.OFFLINE &&
-                    now - device.disconnectTime > notification.notifyWhenOfflineIgnorePeriod) {
+                    now - device.disconnectTime >= notification.notifyWhenOfflineIgnorePeriod) {
                 notification.push(gcmWrapper,
                         message,
                         dashId
