@@ -16,6 +16,7 @@ import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -46,7 +47,6 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
     private final WebSocketsGenericLoginHandler genericLoginHandler;
     private final String rootPath;
-    private final boolean isUnpacked;
     private final IpFilterHandler ipFilterHandler;
     private final AuthCookieHandler authCookieHandler;
 
@@ -62,12 +62,14 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final AdminAuthHandler adminAuthHandler;
     private final CookieBasedUrlReWriterHandler cookieBasedUrlReWriterHandler;
 
-    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath, boolean isUnpacked) {
+    private final ServerProperties props;
+
+    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath) {
         this.region = holder.region;
         this.stats = holder.stats;
         this.genericLoginHandler = new WebSocketsGenericLoginHandler(holder, port);
         this.rootPath = rootPath;
-        this.isUnpacked = isUnpacked;
+        this.props = holder.props;
         this.ipFilterHandler = new IpFilterHandler(holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips"));
 
         //http API handlers
@@ -128,13 +130,13 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
         ChannelPipeline pipeline = ctx.pipeline();
 
-        pipeline.addLast(new UploadHandler("/upload", "/static/ota"));
+        pipeline.addLast(new UploadHandler(props.jarPath, "/upload", "/static/ota"));
         pipeline.addLast(adminAuthHandler);
         pipeline.addLast(authCookieHandler);
         pipeline.addLast(cookieBasedUrlReWriterHandler);
 
         pipeline.remove(StaticFileHandler.class);
-        pipeline.addLast(new StaticFileHandler(isUnpacked, new StaticFile("/static", false)));
+        pipeline.addLast(new StaticFileHandler(props, new StaticFile("/static", false)));
 
         pipeline.addLast(otaLogic);
         pipeline.addLast(usersLogic);

@@ -47,10 +47,10 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
     private final StaticFile[] staticPaths;
     private final String jarPath;
 
-    public StaticFileHandler(boolean isUnpacked, StaticFile... staticPaths) {
+    public StaticFileHandler(ServerProperties props, StaticFile... staticPaths) {
         this.staticPaths = staticPaths;
-        this.isUnpacked = isUnpacked;
-        this.jarPath = ServerProperties.jarPath;
+        this.isUnpacked = props.isUnpacked;
+        this.jarPath = props.jarPath;
     }
 
     private static void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {

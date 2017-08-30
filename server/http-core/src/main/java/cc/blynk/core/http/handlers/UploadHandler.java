@@ -17,7 +17,6 @@ package cc.blynk.core.http.handlers;
 
 import cc.blynk.core.http.Response;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
-import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
@@ -35,16 +34,16 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
 
     private static final Logger log = LogManager.getLogger(UploadHandler.class);
 
-    static final HttpDataFactory factory = new DefaultHttpDataFactory(true);
+    private static final HttpDataFactory factory = new DefaultHttpDataFactory(true);
     final String handlerUri;
-    HttpPostRequestDecoder decoder;
-    final String baseDir;
-    final String uploadFolder;
+    private HttpPostRequestDecoder decoder;
+    private final String staticFolderPath;
+    private final String uploadFolder;
 
-    public UploadHandler(String handlerUri, String uploadFolder) {
+    public UploadHandler(String staticFolderPath, String handlerUri, String uploadFolder) {
         super(false);
         this.handlerUri = handlerUri;
-        this.baseDir = ServerProperties.jarPath;
+        this.staticFolderPath = staticFolderPath;
         this.uploadFolder = uploadFolder.endsWith("/") ? uploadFolder : uploadFolder + "/";
     }
 
@@ -136,12 +135,12 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
                         String finalName = tmpFile.getFileName().toString() + extension;
 
                         //this is just to make it work on team city.
-                        Path staticPath = Paths.get(baseDir, uploadFolder);
+                        Path staticPath = Paths.get(staticFolderPath, uploadFolder);
                         if (!Files.exists(staticPath)) {
                             Files.createDirectories(staticPath);
                         }
 
-                        Files.move(tmpFile, Paths.get(baseDir, uploadFolder, finalName), StandardCopyOption.REPLACE_EXISTING);
+                        Files.move(tmpFile, Paths.get(staticFolderPath, uploadFolder, finalName), StandardCopyOption.REPLACE_EXISTING);
                         pathTo =  uploadFolder + finalName;
                     }
                     data.release();

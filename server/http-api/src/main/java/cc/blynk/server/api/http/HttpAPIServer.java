@@ -23,17 +23,17 @@ import io.netty.handler.stream.ChunkedWriteHandler;
  */
 public class HttpAPIServer extends BaseServer {
 
-    public static final int HTTP_REQUEST_SIZE_MAX = 10 * 1024 * 1024;
+    static final int HTTP_REQUEST_SIZE_MAX = 10 * 1024 * 1024;
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
     public static final String WEBSOCKET_PATH = "/websocket";
 
-    public HttpAPIServer(Holder holder, boolean isUnpacked) {
+    public HttpAPIServer(Holder holder) {
         super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
 
         String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
 
-        final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler = new HttpAndWebSocketUnificatorHandler(holder, port, adminRootPath, isUnpacked);
+        final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler = new HttpAndWebSocketUnificatorHandler(holder, port, adminRootPath);
         final LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
@@ -46,7 +46,7 @@ public class HttpAPIServer extends BaseServer {
                 .addLast(letsEncryptHandler)
                 .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
                 .addLast("HttpUrlMapper", new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
-                .addLast("HttpStaticFile", new StaticFileHandler(isUnpacked, new StaticFile("/static"),
+                .addLast("HttpStaticFile", new StaticFileHandler(holder.props, new StaticFile("/static"),
                         new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
                 .addLast("HttpWebSocketUnificator", httpAndWebSocketUnificatorHandler);
             }

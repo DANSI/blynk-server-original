@@ -43,7 +43,7 @@ public class HttpAPIProjectTest extends BaseTest {
     @Before
     public void init() throws Exception {
         if (httpServer == null) {
-            httpServer = new HttpAPIServer(holder, false).start();
+            httpServer = new HttpAPIServer(holder).start();
             httpsServerUrl = String.format("http://localhost:%s/", httpPort);
             httpclient = HttpClients.createDefault();
         }

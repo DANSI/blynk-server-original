@@ -80,8 +80,8 @@ public class OTATest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder, false).start();
-        httpsServer = new HttpsAPIServer(holder, false).start();
+        httpServer = new HttpAPIServer(holder).start();
+        httpsServer = new HttpsAPIServer(holder).start();
         hardwareServer = new HardwareServer(holder).start();
         appServer = new AppServer(holder).start();
         httpsAdminServerUrl = String.format("https://localhost:%s/admin", httpsPort);

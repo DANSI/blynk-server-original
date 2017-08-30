@@ -38,7 +38,7 @@ public class TableCommandsTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder, false).start();
+        httpServer = new HttpAPIServer(holder).start();
         hardwareServer = new HardwareServer(holder).start();
         appServer = new AppServer(holder).start();
 

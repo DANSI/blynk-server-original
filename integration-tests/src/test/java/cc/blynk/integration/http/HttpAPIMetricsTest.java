@@ -53,7 +53,7 @@ public class HttpAPIMetricsTest extends BaseTest {
                 new GCMProperties(Collections.emptyMap()),
                 false
         );
-        httpServer = new HttpAPIServer(localHolder, false).start();
+        httpServer = new HttpAPIServer(localHolder).start();
         httpsServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()

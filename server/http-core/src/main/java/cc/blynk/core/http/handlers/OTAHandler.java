@@ -46,7 +46,7 @@ public class OTAHandler extends UploadHandler {
     private final OTAManager otaManager;
 
     public OTAHandler(Holder holder, String handlerUri, String uploadFolder) {
-        super(handlerUri, uploadFolder);
+        super(holder.props.jarPath, handlerUri, uploadFolder);
         this.tokenManager = holder.tokenManager;
         this.sessionDao = holder.sessionDao;
         this.userDao = holder.userDao;

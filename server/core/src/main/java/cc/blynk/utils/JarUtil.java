@@ -31,27 +31,30 @@ public final class JarUtil {
      * Unpacks all files from staticFolder of jar and puts them to current folder within staticFolder path.
      *
      * @param staticFolder - path to resources
-     * @throws Exception
      */
-    public static boolean unpackStaticFiles(String jarPath, String staticFolder) throws Exception {
-        ArrayList<String> staticResources = find(staticFolder);
+    static boolean unpackStaticFiles(String jarPath, String staticFolder) {
+        try {
+            ArrayList<String> staticResources = find(staticFolder);
 
-        if (staticResources.size() == 0) {
-            return false;
-        }
-
-        for (String staticFile : staticResources) {
-            try (InputStream is = JarUtil.class.getResourceAsStream("/" + staticFile)) {
-                Path newStaticFile = Paths.get(jarPath, staticFile);
-
-                Files.deleteIfExists(newStaticFile);
-                Files.createDirectories(newStaticFile);
-
-                Files.copy(is, newStaticFile, StandardCopyOption.REPLACE_EXISTING);
+            if (staticResources.size() == 0) {
+                return false;
             }
-        }
 
-        return true;
+            for (String staticFile : staticResources) {
+                try (InputStream is = JarUtil.class.getResourceAsStream("/" + staticFile)) {
+                    Path newStaticFile = Paths.get(jarPath, staticFile);
+
+                    Files.deleteIfExists(newStaticFile);
+                    Files.createDirectories(newStaticFile);
+
+                    Files.copy(is, newStaticFile, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("Error unpacking static files.", e);
+        }
     }
 
     /**

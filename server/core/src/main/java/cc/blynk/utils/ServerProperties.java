@@ -21,13 +21,10 @@ import java.util.Properties;
 public class ServerProperties extends Properties {
 
     public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
-    public static final String jarPath;
-    public static final String staticFilesFolder;
 
-    static {
-        jarPath = getJarPath();
-        staticFilesFolder = Paths.get(jarPath, "static").toString();
-    }
+    public final String jarPath;
+    public final String staticFilesFolder;
+    public final boolean isUnpacked;
 
     public ServerProperties(Map<String, String> cmdProperties) {
         this(cmdProperties, SERVER_PROPERTIES_FILENAME);
@@ -41,10 +38,16 @@ public class ServerProperties extends Properties {
             initProperties(Paths.get(propertiesFileName));
         }
         putAll(cmdProperties);
+        this.jarPath = getJarPath();
+        this.staticFilesFolder = Paths.get(jarPath, "static").toString();
+        this.isUnpacked = JarUtil.unpackStaticFiles(jarPath, "static/");
     }
 
     public ServerProperties(String propertiesFileName) {
         initProperties(propertiesFileName);
+        this.jarPath = getJarPath();
+        this.staticFilesFolder = Paths.get(jarPath, "static").toString();
+        this.isUnpacked = JarUtil.unpackStaticFiles(jarPath, "static/");
     }
 
     private static String getJarPath() {
@@ -69,9 +72,7 @@ public class ServerProperties extends Properties {
         Path curDirPath = Paths.get(jarPath, filePropertiesName);
         if (Files.exists(curDirPath)) {
             try (InputStream curFolder = Files.newInputStream(curDirPath)) {
-                if (curFolder != null) {
-                    load(curFolder);
-                }
+                load(curFolder);
             } catch (Exception e) {
                 throw new RuntimeException("Error getting properties file : " + filePropertiesName, e);
             }
@@ -102,9 +103,7 @@ public class ServerProperties extends Properties {
         readFromClassPath(SERVER_PROPERTIES_FILENAME);
 
         try (InputStream curFolder = Files.newInputStream(path)) {
-            if (curFolder != null) {
-                load(curFolder);
-            }
+            load(curFolder);
         } catch (Exception e) {
             System.out.println("Error reading properties file : '" + path + "'. Reason : " + e.getMessage());
             System.exit(1);

@@ -59,7 +59,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        this.httpAdminServer = new HttpsAPIServer(holder, false).start();
+        this.httpAdminServer = new HttpsAPIServer(holder).start();
 
         httpsAdminServerUrl = String.format("https://localhost:%s/admin", httpsPort);
         httpServerUrl = String.format("http://localhost:%s/", httpPort);
@@ -73,7 +73,7 @@ public class HttpsAdminServerTest extends BaseTest {
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
                 .build();
 
-        httpServer = new HttpAPIServer(holder, false).start();
+        httpServer = new HttpAPIServer(holder).start();
 
         String name = "admin@blynk.cc";
         String pass = "admin";

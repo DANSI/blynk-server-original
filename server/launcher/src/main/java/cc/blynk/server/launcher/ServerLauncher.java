@@ -63,8 +63,6 @@ public class ServerLauncher {
         System.setProperty("terminal.strings.pool.size", serverProperties.getProperty("terminal.strings.pool.size", "25"));
         System.setProperty("initial.energy", serverProperties.getProperty("initial.energy", "2000"));
 
-        boolean isUnpacked = JarUtil.unpackStaticFiles(ServerProperties.jarPath, "static/");
-
         ServerProperties mailProperties = new MailProperties(cmdProperties);
         ServerProperties smsProperties = new SmsProperties(cmdProperties);
         ServerProperties gcmProperties = new GCMProperties(cmdProperties);
@@ -72,20 +70,20 @@ public class ServerLauncher {
         Security.addProvider(new BouncyCastleProvider());
 
         boolean restore = Boolean.parseBoolean(cmdProperties.get(ArgumentsParser.RESTORE_OPTION));
-        start(serverProperties, mailProperties, smsProperties, gcmProperties, isUnpacked, restore);
+        start(serverProperties, mailProperties, smsProperties, gcmProperties, restore);
     }
 
     private static void start(ServerProperties serverProperties, ServerProperties mailProperties,
                               ServerProperties smsProperties, ServerProperties gcmProperties,
-                              boolean isUnpacked, boolean restore) {
+                              boolean restore) {
         Holder holder = new Holder(serverProperties, mailProperties, smsProperties, gcmProperties, restore);
 
         BaseServer[] servers = new BaseServer[] {
                 new HardwareServer(holder),
                 new HardwareSSLServer(holder),
                 new AppServer(holder),
-                new HttpAPIServer(holder, isUnpacked),
-                new HttpsAPIServer(holder, isUnpacked),
+                new HttpAPIServer(holder),
+                new HttpsAPIServer(holder),
                 new MQTTHardwareServer(holder)
         };
 

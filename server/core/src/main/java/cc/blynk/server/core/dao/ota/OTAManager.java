@@ -36,7 +36,7 @@ public class OTAManager {
 
     public OTAManager(ServerProperties props) {
         this.serverHostUrl = "http://" + props.getServerHost();
-        this.staticFilesFolder = ServerProperties.jarPath;
+        this.staticFilesFolder = props.jarPath;
     }
 
     public boolean isUpdateRequired(HardwareInfo newHardwareInfo) {
