@@ -78,9 +78,9 @@ public class ServerLauncher {
     private static void start(ServerProperties serverProperties, ServerProperties mailProperties,
                               ServerProperties smsProperties, ServerProperties gcmProperties,
                               boolean isUnpacked, boolean restore) {
-        final Holder holder = new Holder(serverProperties, mailProperties, smsProperties, gcmProperties, restore);
+        Holder holder = new Holder(serverProperties, mailProperties, smsProperties, gcmProperties, restore);
 
-        final BaseServer[] servers = new BaseServer[] {
+        BaseServer[] servers = new BaseServer[] {
                 new HardwareServer(holder),
                 new HardwareSSLServer(holder),
                 new AppServer(holder),

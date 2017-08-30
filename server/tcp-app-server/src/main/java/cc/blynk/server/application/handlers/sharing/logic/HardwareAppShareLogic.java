@@ -75,14 +75,14 @@ public class HardwareAppShareLogic {
             return;
         }
 
-        final int[] deviceIds = target.getDeviceIds();
+        int[] deviceIds = target.getDeviceIds();
 
         if (deviceIds.length == 0) {
             log.debug("No devices assigned to target.");
             return;
         }
 
-        final char operation = split[1].charAt(1);
+        char operation = split[1].charAt(1);
         switch (operation) {
             case 'u' :
                 String[] splitBody = split3(split[1]);
@@ -97,10 +97,10 @@ public class HardwareAppShareLogic {
                     return;
                 }
 
-                final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
-                final byte pin = ParseUtil.parseByte(splitBody[1]);
-                final String value = splitBody[2];
-                final long now = System.currentTimeMillis();
+                PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
+                byte pin = ParseUtil.parseByte(splitBody[1]);
+                String value = splitBody[2];
+                long now = System.currentTimeMillis();
 
                 for (int deviceId : deviceIds) {
                     dash.update(deviceId, pin, pinType, value, now);

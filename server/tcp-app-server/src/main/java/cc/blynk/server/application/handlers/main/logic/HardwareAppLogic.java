@@ -5,13 +5,12 @@ import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
-import cc.blynk.server.core.processors.EventorProcessor;
+import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
@@ -35,23 +34,20 @@ import static cc.blynk.utils.StringUtils.*;
  * Created on 2/1/2015.
  *
  */
-public class HardwareAppLogic {
+public class HardwareAppLogic extends BaseProcessorHandler {
 
     private static final Logger log = LogManager.getLogger(HardwareAppLogic.class);
 
     private final SessionDao sessionDao;
-    private final WebhookProcessor webhookProcessor;
-    private final EventorProcessor eventorProcessor;
 
     public HardwareAppLogic(Holder holder, String email) {
-        this.sessionDao = holder.sessionDao;
-        this.webhookProcessor = new WebhookProcessor(holder.asyncHttpClient,
+        super(holder.eventorProcessor, new WebhookProcessor(holder.asyncHttpClient,
                 holder.limits.WEBHOOK_PERIOD_LIMITATION,
                 holder.limits.WEBHOOK_RESPONSE_SUZE_LIMIT_BYTES,
                 holder.limits.WEBHOOK_FAILURE_LIMIT,
                 holder.stats,
-                email);
-        this.eventorProcessor = holder.eventorProcessor;
+                email));
+        this.sessionDao = holder.sessionDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
@@ -86,14 +82,14 @@ public class HardwareAppLogic {
             return;
         }
 
-        final int[] deviceIds = target.getDeviceIds();
+        int[] deviceIds = target.getDeviceIds();
 
         if (deviceIds.length == 0) {
             log.debug("No devices assigned to target.");
             return;
         }
 
-        final char operation = split[1].charAt(1);
+        char operation = split[1].charAt(1);
         switch (operation) {
             case 'u' :
                 //splitting "vu 200000 1"
@@ -109,10 +105,10 @@ public class HardwareAppLogic {
                     return;
                 }
 
-                final PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
-                final byte pin = ParseUtil.parseByte(splitBody[1]);
-                final String value = splitBody[2];
-                final long now = System.currentTimeMillis();
+                PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
+                byte pin = ParseUtil.parseByte(splitBody[1]);
+                String value = splitBody[2];
+                long now = System.currentTimeMillis();
 
                 for (int deviceId : deviceIds) {
                     dash.update(deviceId, pin, pinType, value, now);
@@ -174,15 +170,6 @@ public class HardwareAppLogic {
                 }
                 channel.flush();
             }
-        }
-    }
-
-    private void process(User user, DashBoard dash, int deviceId, Session session, byte pin, PinType pinType, String value, long now) {
-        try {
-            eventorProcessor.process(user, session, dash, deviceId, pin, pinType, value, now);
-            webhookProcessor.process(session, dash, deviceId, pin, pinType, value, now);
-        } catch (Exception e) {
-            log.error("Error processing eventor/webhook.", e);
         }
     }
 
