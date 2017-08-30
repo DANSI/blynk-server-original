@@ -25,6 +25,7 @@ public class BaseProperties extends Properties {
     public final String jarPath;
 
     public BaseProperties(Map<String, String> cmdProperties, String serverConfig) {
+        this.jarPath = getJarPath();
         String propertiesFileName = cmdProperties.get(serverConfig);
         if (propertiesFileName == null) {
             initProperties(serverConfig);
@@ -32,12 +33,11 @@ public class BaseProperties extends Properties {
             initProperties(Paths.get(propertiesFileName));
         }
         putAll(cmdProperties);
-        this.jarPath = getJarPath();
     }
 
     BaseProperties(String propertiesFileName) {
-        initProperties(propertiesFileName);
         this.jarPath = getJarPath();
+        initProperties(propertiesFileName);
     }
 
     private static String getJarPath() {
@@ -60,7 +60,9 @@ public class BaseProperties extends Properties {
         readFromClassPath(filePropertiesName);
 
         Path curDirPath = Paths.get(jarPath, filePropertiesName);
+        System.out.println("Trying to read server.properties from " + curDirPath.toString());
         if (Files.exists(curDirPath)) {
+            System.out.println("Reading...");
             try (InputStream curFolder = Files.newInputStream(curDirPath)) {
                 load(curFolder);
             } catch (Exception e) {
