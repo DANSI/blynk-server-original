@@ -60,9 +60,7 @@ public class BaseProperties extends Properties {
         readFromClassPath(filePropertiesName);
 
         Path curDirPath = Paths.get(jarPath, filePropertiesName);
-        System.out.println("Trying to read server.properties from " + curDirPath.toString());
         if (Files.exists(curDirPath)) {
-            System.out.println("Reading...");
             try (InputStream curFolder = Files.newInputStream(curDirPath)) {
                 load(curFolder);
             } catch (Exception e) {
