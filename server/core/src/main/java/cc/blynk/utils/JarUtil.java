@@ -65,6 +65,9 @@ public final class JarUtil {
      * @throws Exception
      */
     private static ArrayList<String> find(String staticResourcesFolder) throws Exception {
+        if (!staticResourcesFolder.endsWith("/")) {
+            staticResourcesFolder = staticResourcesFolder + "/";
+        }
         CodeSource src = JarUtil.class.getProtectionDomain().getCodeSource();
         ArrayList<String> staticResources = new ArrayList<>();
 

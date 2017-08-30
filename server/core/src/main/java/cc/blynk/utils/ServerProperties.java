@@ -21,9 +21,9 @@ import java.util.Properties;
 public class ServerProperties extends Properties {
 
     public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
+    public static final String STATIC_FILES_FOLDER = "static";
 
     public final String jarPath;
-    public final String staticFilesFolder;
     public final boolean isUnpacked;
 
     public ServerProperties(Map<String, String> cmdProperties) {
@@ -39,15 +39,13 @@ public class ServerProperties extends Properties {
         }
         putAll(cmdProperties);
         this.jarPath = getJarPath();
-        this.staticFilesFolder = Paths.get(jarPath, "static").toString();
-        this.isUnpacked = JarUtil.unpackStaticFiles(jarPath, "static/");
+        this.isUnpacked = JarUtil.unpackStaticFiles(jarPath, STATIC_FILES_FOLDER);
     }
 
     public ServerProperties(String propertiesFileName) {
         initProperties(propertiesFileName);
         this.jarPath = getJarPath();
-        this.staticFilesFolder = Paths.get(jarPath, "static").toString();
-        this.isUnpacked = JarUtil.unpackStaticFiles(jarPath, "static/");
+        this.isUnpacked = JarUtil.unpackStaticFiles(jarPath, STATIC_FILES_FOLDER);
     }
 
     private static String getJarPath() {
