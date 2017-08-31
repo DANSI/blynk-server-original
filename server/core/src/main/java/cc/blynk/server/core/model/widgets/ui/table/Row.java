@@ -1,5 +1,8 @@
 package cc.blynk.server.core.model.widgets.ui.table;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -7,22 +10,23 @@ package cc.blynk.server.core.model.widgets.ui.table;
  */
 public class Row {
 
-    public int id;
+    public final int id;
 
     public volatile String name;
 
     public volatile String value;
 
-    public boolean isSelected;
+    public volatile boolean isSelected;
 
-    public Row() {
-    }
-
-    public Row(int id, String name, String value) {
+    @JsonCreator
+    public Row(@JsonProperty("id") int id,
+               @JsonProperty("name") String name,
+               @JsonProperty("value") String value,
+               @JsonProperty("isSelected") boolean isSelected) {
         this.id = id;
         this.name = name;
         this.value = value;
-        this.isSelected = true;
+        this.isSelected = isSelected;
     }
 
     public void update(String name, String value) {

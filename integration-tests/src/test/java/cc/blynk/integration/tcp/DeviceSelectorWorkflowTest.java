@@ -1,5 +1,6 @@
 package cc.blynk.integration.tcp;
 
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
@@ -19,7 +20,6 @@ import cc.blynk.server.core.protocol.model.messages.appllication.sharing.AppSync
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.JsonParser;
 import org.junit.After;
@@ -289,7 +289,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
@@ -312,7 +312,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         graphDataResponse = objectArgumentCaptor.getValue();
 
         assertNotNull(graphDataResponse);
-        decompressedGraphData = ByteUtils.decompress(graphDataResponse.getBytes());
+        decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());

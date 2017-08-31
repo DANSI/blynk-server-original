@@ -40,7 +40,7 @@ public class ReportingDao implements Closeable {
     private static final Logger log = LogManager.getLogger(ReportingDao.class);
 
     public final AverageAggregatorProcessor averageAggregator;
-    public final RawDataCacheForGraphProcessor rawDataCacheForGraphProcessor;
+    private final RawDataCacheForGraphProcessor rawDataCacheForGraphProcessor;
     public final RawDataProcessor rawDataProcessor;
     public final CSVGenerator csvGenerator;
 
@@ -146,7 +146,7 @@ public class ReportingDao implements Closeable {
         return result;
     }
 
-    public ByteBuffer getByteBufferFromDisk(User user, GraphPinRequest graphPinRequest) {
+    private ByteBuffer getByteBufferFromDisk(User user, GraphPinRequest graphPinRequest) {
         try {
             if (graphPinRequest.isTag) {
                 return getDataForTag(user, graphPinRequest);
@@ -164,7 +164,7 @@ public class ReportingDao implements Closeable {
         }
     }
 
-    public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphGranularityType type) {
+    ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphGranularityType type) {
         return getByteBufferFromDisk(user, dashId, deviceId, pinType, pin, count, type, 0);
     }
 
@@ -178,15 +178,15 @@ public class ReportingDao implements Closeable {
         FileUtils.deleteQuietly(userDataDailyFile);
     }
 
-    protected static String formatMinute(int dashId, int deviceId, char pinType, byte pin) {
+    static String formatMinute(int dashId, int deviceId, char pinType, byte pin) {
         return format("minute", dashId, deviceId, pinType, pin);
     }
 
-    protected static String formatHour(int dashId, int deviceId, char pinType, byte pin) {
+    static String formatHour(int dashId, int deviceId, char pinType, byte pin) {
         return format("hourly", dashId, deviceId, pinType, pin);
     }
 
-    protected static String formatDaily(int dashId, int deviceId, char pinType, byte pin) {
+    static String formatDaily(int dashId, int deviceId, char pinType, byte pin) {
         return format("daily", dashId, deviceId, pinType, pin);
     }
 

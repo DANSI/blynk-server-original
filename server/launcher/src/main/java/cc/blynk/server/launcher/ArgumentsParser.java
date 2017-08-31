@@ -30,7 +30,7 @@ class ArgumentsParser {
     private static final String SERVER_CONFIG_PATH_OPTION = "serverConfig";
     private static final String MAIL_CONFIG_PATH_OPTION = "mailConfig";
     private static final String SMS_CONFIG_PATH_OPTION = "smsConfig";
-    public static final String RESTORE_OPTION = "restore";
+    static final String RESTORE_OPTION = "restore";
 
     static  {
         options = new Options();

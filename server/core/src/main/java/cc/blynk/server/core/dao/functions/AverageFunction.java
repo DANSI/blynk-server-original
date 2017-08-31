@@ -5,7 +5,7 @@ package cc.blynk.server.core.dao.functions;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.07.17.
  */
-public class AverageFunction extends Function {
+public class AverageFunction implements Function {
 
     private int count;
     private double sum;

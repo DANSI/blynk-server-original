@@ -3,7 +3,7 @@ package cc.blynk.utils;
 /**
  * Knuth-Morris-Pratt Algorithm for Pattern Matching
  */
-public class KMPMatch {
+class KMPMatch {
 
     /**
      * Finds the first occurrence of the pattern in the text.

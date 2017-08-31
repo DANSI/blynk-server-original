@@ -2,6 +2,7 @@ package cc.blynk.integration.model.tcp;
 
 import cc.blynk.client.core.AppClient;
 import cc.blynk.client.handlers.decoders.ClientMessageDecoder;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
@@ -10,7 +11,6 @@ import cc.blynk.server.core.protocol.model.messages.appllication.GetProjectByClo
 import cc.blynk.server.core.protocol.model.messages.appllication.GetProjectByTokenBinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.utils.ByteUtils;
 import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 public class TestAppClient extends AppClient {
 
     public final SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
-    protected int msgId = 0;
+    private int msgId = 0;
 
     public TestAppClient(String host, int port) {
         super(host, port, Mockito.mock(Random.class), new ServerProperties(Collections.emptyMap()));
@@ -62,11 +62,11 @@ public class TestAppClient extends AppClient {
         if (messageBase instanceof StringMessage) {
             return ((StringMessage) messageBase).body;
         } else if (messageBase instanceof LoadProfileGzippedBinaryMessage) {
-            return new String(ByteUtils.decompress(messageBase.getBytes()));
+            return new String(BaseTest.decompress(messageBase.getBytes()));
         } else if (messageBase instanceof GetProjectByTokenBinaryMessage) {
-            return new String(ByteUtils.decompress(messageBase.getBytes()));
+            return new String(BaseTest.decompress(messageBase.getBytes()));
         } else if (messageBase instanceof GetProjectByCloneCodeBinaryMessage) {
-            return new String(ByteUtils.decompress(messageBase.getBytes()));
+            return new String(BaseTest.decompress(messageBase.getBytes()));
         }
 
         throw new RuntimeException("Unexpected message");

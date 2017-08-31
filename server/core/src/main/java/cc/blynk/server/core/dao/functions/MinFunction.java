@@ -5,7 +5,7 @@ package cc.blynk.server.core.dao.functions;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.07.17.
  */
-public class MinFunction extends Function {
+public class MinFunction implements Function {
 
     private double value = Double.MAX_VALUE;
 

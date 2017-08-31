@@ -3,10 +3,11 @@ package cc.blynk.utils;
 import cc.blynk.server.core.protocol.exceptions.GetGraphDataException;
 import io.netty.util.CharsetUtil;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.zip.DeflaterOutputStream;
-import java.util.zip.InflaterInputStream;
 
 /**
  * The Blynk Project.
@@ -62,21 +63,6 @@ public class ByteUtils {
         out.write((value >>> 16) & 0xFF);
         out.write((value >>>  8) & 0xFF);
         out.write((value) & 0xFF);
-    }
-
-    //for tests only
-    public static byte[] decompress(byte[] bytes) {
-        try (InputStream in = new InflaterInputStream(new ByteArrayInputStream(bytes))) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte[] buffer = new byte[4096];
-            int len;
-            while ((len = in.read(buffer)) > 0) {
-                baos.write(buffer, 0, len);
-            }
-            return baos.toByteArray();
-        } catch (IOException e) {
-            throw new AssertionError(e);
-        }
     }
 
     public static int parseColor(String fieldValue) {

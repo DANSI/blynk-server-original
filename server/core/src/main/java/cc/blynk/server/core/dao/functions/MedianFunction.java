@@ -8,7 +8,7 @@ import java.util.Collections;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.07.17.
  */
-public class MedianFunction extends Function {
+public class MedianFunction implements Function {
 
     private final ArrayList<Double> array;
 

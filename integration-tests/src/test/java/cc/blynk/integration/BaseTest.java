@@ -18,8 +18,7 @@ import org.junit.BeforeClass;
 import org.mockito.Mock;
 
 import javax.net.ssl.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
@@ -30,6 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.util.Collections;
 import java.util.List;
+import java.util.zip.InflaterInputStream;
 
 import static org.mockito.Mockito.mock;
 
@@ -194,6 +194,22 @@ public abstract class BaseTest {
         }
         return choice;
     }
+
+    //for tests only
+    public static byte[] decompress(byte[] bytes) {
+        try (InputStream in = new InflaterInputStream(new ByteArrayInputStream(bytes))) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[4096];
+            int len;
+            while ((len = in.read(buffer)) > 0) {
+                baos.write(buffer, 0, len);
+            }
+            return baos.toByteArray();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
 
 }
 

@@ -1,5 +1,8 @@
 package cc.blynk.server.core.model.widgets.others.eventor.model.condition;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -7,12 +10,10 @@ package cc.blynk.server.core.model.widgets.others.eventor.model.condition;
  */
 public class LessThanOrEqual extends BaseCondition {
 
-    public double value;
+    private final double value;
 
-    public LessThanOrEqual() {
-    }
-
-    public LessThanOrEqual(double value) {
+    @JsonCreator
+    public LessThanOrEqual(@JsonProperty("value") double value) {
         this.value = value;
     }
 

@@ -2,13 +2,13 @@ package cc.blynk.integration.model.tcp;
 
 import cc.blynk.client.core.BaseClient;
 import cc.blynk.client.handlers.decoders.ClientMessageDecoder;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.utils.ByteUtils;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -58,7 +58,7 @@ public class TestHardClient extends BaseClient {
         if (messageBase instanceof StringMessage) {
             return ((StringMessage) messageBase).body;
         } else if (messageBase instanceof LoadProfileGzippedBinaryMessage) {
-            return new String(ByteUtils.decompress(messageBase.getBytes()));
+            return new String(BaseTest.decompress(messageBase.getBytes()));
         }
 
         throw new RuntimeException("Unexpected message");

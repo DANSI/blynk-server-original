@@ -1,5 +1,8 @@
 package cc.blynk.server.core.model.widgets.others.webhook;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -7,14 +10,13 @@ package cc.blynk.server.core.model.widgets.others.webhook;
  */
 public class Header {
 
-    public String name;
+    public final String name;
 
-    public String value;
+    public final String value;
 
-    public Header() {
-    }
-
-    public Header(String name, String value) {
+    @JsonCreator
+    public Header(@JsonProperty("name") String name,
+                  @JsonProperty("value") String value) {
         this.name = name;
         this.value = value;
     }

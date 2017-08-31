@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Tag implements Target {
 
     public static final int START_TAG_ID = 100_000;
-    public static final int MAX_NUMBER_OF_DEVICE_PER_TAG = 25;
+    private static final int MAX_NUMBER_OF_DEVICE_PER_TAG = 25;
 
     public final int id;
 

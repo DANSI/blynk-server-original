@@ -169,10 +169,6 @@ public class UserStatisticsTest {
 
         System.out.println(res.length());
         System.out.println(res);
-
-        byte[] data = Base64.getDecoder().decode(res);
-        byte[] decompressedData = ByteUtils.decompress(data);
-        System.out.println(new String(decompressedData));
     }
 
 }

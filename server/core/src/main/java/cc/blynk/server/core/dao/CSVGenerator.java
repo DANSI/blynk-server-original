@@ -44,7 +44,7 @@ public class CSVGenerator {
     private final ReportingDao reportingDao;
     private final static int FETCH_COUNT = 60 * 24 * 30;
 
-    public CSVGenerator(ReportingDao reportingDao) {
+    CSVGenerator(ReportingDao reportingDao) {
         this.reportingDao = reportingDao;
     }
 

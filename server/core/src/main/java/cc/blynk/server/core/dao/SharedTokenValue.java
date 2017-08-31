@@ -13,7 +13,7 @@ public class SharedTokenValue {
 
     public final int dashId;
 
-    public SharedTokenValue(User user, int dashId) {
+    SharedTokenValue(User user, int dashId) {
         this.user = user;
         this.dashId = dashId;
     }

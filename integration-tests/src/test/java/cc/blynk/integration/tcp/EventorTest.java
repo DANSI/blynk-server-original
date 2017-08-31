@@ -14,7 +14,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.Rule;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
-import cc.blynk.server.core.model.widgets.others.eventor.model.action.WaitAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.MailAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.TwitAction;
@@ -90,8 +89,6 @@ public class EventorTest extends IntegrationBase {
         switch (action) {
             case "setpin" :
                 return new SetPinAction(dataStream.pin, dataStream.pinType, value);
-            case "wait" :
-                return new WaitAction();
             case "notify" :
                 return new NotifyAction(value);
             case "mail" :
@@ -177,7 +174,6 @@ public class EventorTest extends IntegrationBase {
 
         BaseAction[] actions = new BaseAction[] {
                 new SetPinAction(dataStream.pin, dataStream.pinType, "pinValuetoSEt"),
-                new WaitAction(360, new SetPinAction(dataStream.pin, dataStream.pinType, "pinValueToSet")),
                 new NotifyAction("Hello!!!"),
                 new MailAction("Subj", "Hello mail")
         };

@@ -18,7 +18,7 @@ import java.util.Arrays;
  */
 public class TimerTime {
 
-    public static final int[] ALL_DAYS = new int[] {1, 2, 3, 4, 5, 6, 7};
+    private static final int[] ALL_DAYS = new int[] {1, 2, 3, 4, 5, 6, 7};
 
     public final int id;
 

@@ -1,5 +1,8 @@
 package cc.blynk.server.core.model.widgets.others.eventor.model.condition;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -7,14 +10,13 @@ package cc.blynk.server.core.model.widgets.others.eventor.model.condition;
  */
 public class Between extends BaseCondition {
 
-    public double left;
+    private final double left;
 
-    public double right;
+    private final double right;
 
-    public Between() {
-    }
-
-    public Between(double left, double right) {
+    @JsonCreator
+    public Between(@JsonProperty("left") double left,
+                   @JsonProperty("right") double right) {
         this.left = left;
         this.right = right;
     }

@@ -24,11 +24,11 @@ public class GraphDataStream {
 
     public final AggregationFunctionType functionType;
 
-    public final int flip;
+    private final int flip;
 
-    public final String low;
+    private final String low;
 
-    public final String high;
+    private final String high;
 
     private final String mathFormula;
 

@@ -48,7 +48,7 @@ public class Table extends OnePinWidget {
                             int id = ParseUtil.parseInt(values[1]);
                             String rowName = values[2];
                             String rowValue = values[3];
-                            rows.add(new Row(id, rowName, rowValue));
+                            rows.add(new Row(id, rowName, rowValue, true));
                         }
                         break;
                     case "update" :

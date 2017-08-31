@@ -69,7 +69,7 @@ public final class JsonParser {
             .addMixIn(DashBoard.class, DashboardMixIn.class)
             .writerFor(DashBoard.class);
 
-    public static final ObjectWriter restrictiveWidgetWriter = init()
+    private static final ObjectWriter restrictiveWidgetWriter = init()
             .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
             .addMixIn(Notification.class, NotificationIgnoreMixIn.class)
             .writerFor(Widget.class);

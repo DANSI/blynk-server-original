@@ -20,19 +20,6 @@ public class Profile {
 
     public volatile App[] apps = EMPTY_APPS;
 
-    /**
-     * Check if dashboardId is real and exists in user profile.
-     */
-    public void validateDashId(int dashId) {
-        for (DashBoard dashBoard : dashBoards) {
-            if (dashBoard.id == dashId) {
-                return;
-            }
-        }
-
-        throw new IllegalCommandException("Requested token for non-existing '" + dashId + "' dash id.");
-    }
-
     public int getDashIndexOrThrow(int dashId) {
         for (int i = 0; i < dashBoards.length; i++) {
             if (dashBoards[i].id == dashId) {

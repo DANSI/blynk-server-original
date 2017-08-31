@@ -19,14 +19,6 @@ public class GraphKey {
 
     public final long ts;
 
-    public GraphKey(int dashId, byte pin, PinType pinType) {
-        this.dashId = dashId;
-        this.pin = pin;
-        this.pinType = pinType;
-        this.value = null;
-        this.ts = 0;
-    }
-
     public GraphKey(int dashId, String[] bodyParts, long ts) {
         this.dashId = dashId;
         this.pinType = PinType.getPinType(bodyParts[0].charAt(0));

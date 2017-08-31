@@ -92,7 +92,7 @@ public class FileManager {
                 new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
     }
 
-    public Path generateOldFileName(String userName) {
+    private Path generateOldFileName(String userName) {
         return Paths.get(dataDir.toString(), "u_" + userName + USER_FILE_EXTENSION);
     }
 

@@ -5,7 +5,7 @@ package cc.blynk.server.core.dao.functions;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.07.17.
  */
-public class SumFunction extends Function {
+public class SumFunction implements Function {
 
     private double sum;
 
