@@ -19,8 +19,8 @@ import static org.junit.Assert.assertEquals;
  */
 public class ReportingDataCleanerTest {
 
-    private static Path reportingPath = Paths.get("/tmp/test_reporting");
-    private static Path userPath = Paths.get("/tmp/test_reporting/test@test.gmail.com");
+    private static Path reportingPath = Paths.get(System.getProperty("java.io.tmpdir"), "test_reporting");
+    private static Path userPath = Paths.get(System.getProperty("java.io.tmpdir"), "test_reporting/test@test.gmail.com");
 
     @Before
     public void init() throws Exception {

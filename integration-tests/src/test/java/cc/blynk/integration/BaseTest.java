@@ -40,8 +40,11 @@ import static org.mockito.Mockito.mock;
  */
 public abstract class BaseTest {
 
+    public static final String blynkTempDir;
+
     static {
         Security.addProvider(new BouncyCastleProvider());
+        blynkTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk").toString();
     }
 
     public static ServerProperties properties;

@@ -1229,10 +1229,10 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.send("export 1 14");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        String csvFileName = getFileNameByMask("/tmp/blynk", "dima@mail.ua_1_0_a7_");
+        String csvFileName = getFileNameByMask(blynkTempDir, "dima@mail.ua_1_0_a7_");
         verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
 
-        try (InputStream fileStream = new FileInputStream(Paths.get("/tmp/blynk", csvFileName).toString());
+        try (InputStream fileStream = new FileInputStream(Paths.get(blynkTempDir, csvFileName).toString());
              InputStream gzipStream = new GZIPInputStream(fileStream);
              BufferedReader buffered = new BufferedReader(new InputStreamReader(gzipStream))) {
 
@@ -1295,10 +1295,10 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.send("export 1 432");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        String csvFileName = getFileNameByMask("/tmp/blynk", "dima@mail.ua_1_200000_d8_");
+        String csvFileName = getFileNameByMask(blynkTempDir, "dima@mail.ua_1_200000_d8_");
         verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
 
-        try (InputStream fileStream = new FileInputStream(Paths.get("/tmp/blynk", csvFileName).toString());
+        try (InputStream fileStream = new FileInputStream(Paths.get(blynkTempDir, csvFileName).toString());
              InputStream gzipStream = new GZIPInputStream(fileStream);
              BufferedReader buffered = new BufferedReader(new InputStreamReader(gzipStream))) {
 
@@ -1381,10 +1381,10 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.send("export 1 14");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        String csvFileName = getFileNameByMask("/tmp/blynk", "dima@mail.ua_1_200000_a7_");
+        String csvFileName = getFileNameByMask(blynkTempDir, "dima@mail.ua_1_200000_a7_");
         verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
 
-        try (InputStream fileStream = new FileInputStream(Paths.get("/tmp/blynk", csvFileName).toString());
+        try (InputStream fileStream = new FileInputStream(Paths.get(blynkTempDir, csvFileName).toString());
              InputStream gzipStream = new GZIPInputStream(fileStream);
              BufferedReader buffered = new BufferedReader(new InputStreamReader(gzipStream))) {
 
