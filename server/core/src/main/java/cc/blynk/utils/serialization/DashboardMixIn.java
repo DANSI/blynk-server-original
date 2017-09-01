@@ -14,10 +14,4 @@ public abstract class DashboardMixIn {
     @JsonIgnore
     public String sharedToken;
 
-    @JsonIgnore
-    public int parentId;
-
-    @JsonIgnore
-    public boolean isPreview;
-
 }
