@@ -120,7 +120,7 @@ public class OTATest extends BaseTest {
             assertEquals("", consumeText(response));
         }
 
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7777, BLYNK_INTERNAL, b("ota http://127.0.0.1/static/ota/firmware_ota.bin"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7777, BLYNK_INTERNAL, b("ota http://127.0.0.1:18080/static/ota/firmware_ota.bin"))));
     }
 
     @Test
@@ -136,7 +136,7 @@ public class OTATest extends BaseTest {
             assertEquals("", consumeText(response));
         }
 
-        String expectedResult = "http://127.0.0.1/static/ota/test.bin";
+        String expectedResult = "http://127.0.0.1:18080/static/ota/test.bin";
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7777, BLYNK_INTERNAL, b("ota " + expectedResult))));
 
         request = new HttpGet(httpsAdminServerUrl + "/ota/start?fileName=test.bin" + "&token=" + token);
@@ -178,7 +178,7 @@ public class OTATest extends BaseTest {
             assertTrue(path.endsWith("bin"));
         }
 
-        String responseUrl = "http://127.0.0.1" + path;
+        String responseUrl = "http://127.0.0.1:18080" + path;
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
 
         HttpGet index = new HttpGet("http://localhost:" + httpPort + path);
@@ -302,7 +302,7 @@ public class OTATest extends BaseTest {
             assertTrue(path.endsWith("bin"));
         }
 
-        String responseUrl = "http://127.0.0.1" + path;
+        String responseUrl = "http://127.0.0.1:18080" + path;
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
 
         clientPair.appClient.send("getDevices 1");
@@ -357,7 +357,7 @@ public class OTATest extends BaseTest {
             assertTrue(path.endsWith("bin"));
         }
 
-        String responseUrl = "http://127.0.0.1" + path;
+        String responseUrl = "http://127.0.0.1:18080" + path;
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
 
         clientPair.appClient.send("getDevices 1");
@@ -429,7 +429,7 @@ public class OTATest extends BaseTest {
             assertTrue(path.endsWith("bin"));
         }
 
-        String responseUrl = "http://127.0.0.1" + path;
+        String responseUrl = "http://127.0.0.1:18080" + path;
         verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
 
         HttpGet index = new HttpGet("http://localhost:" + httpPort + path);
@@ -463,7 +463,7 @@ public class OTATest extends BaseTest {
             path = consumeText(response);
         }
 
-        String responseUrl = "http://127.0.0.1" + path;
+        String responseUrl = "http://127.0.0.1:18080" + path;
         verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 123"));
@@ -516,7 +516,7 @@ public class OTATest extends BaseTest {
             assertTrue(path.startsWith("/static"));
             assertTrue(path.endsWith("bin"));
         }
-        String responseUrl = "http://127.0.0.1" + path;
+        String responseUrl = "http://127.0.0.1:18080" + path;
 
         HttpGet stopOta = new HttpGet(httpsAdminServerUrl + "/ota/stop");
         stopOta.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));

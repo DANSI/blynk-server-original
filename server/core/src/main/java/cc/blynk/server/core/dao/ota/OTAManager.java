@@ -35,7 +35,8 @@ public class OTAManager {
     private final String staticFilesFolder;
 
     public OTAManager(ServerProperties props) {
-        this.serverHostUrl = "http://" + props.getServerHost();
+        String port = props.getProperty("http.port", "8080");
+        this.serverHostUrl = "http://" + props.getServerHost() + (port.equals("80") ? "" : (":" + port));
         this.staticFilesFolder = props.jarPath;
     }
 
