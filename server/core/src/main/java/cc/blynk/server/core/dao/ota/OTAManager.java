@@ -80,7 +80,8 @@ public class OTAManager {
     private void sendOtaCommand(ChannelHandlerContext ctx, Device device, OTAInfo otaInfo) {
         ByteBuf msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, otaInfo.makeHardwareBody(serverHostUrl));
         if (ctx.channel().isWritable()) {
-            device.deviceOtaInfo = new DeviceOtaInfo(otaInfo.initiatedBy, otaInfo.initiatedAt, System.currentTimeMillis());
+            device.deviceOtaInfo = new DeviceOtaInfo(otaInfo.initiatedBy,
+                    otaInfo.initiatedAt, System.currentTimeMillis());
             ctx.write(msg, ctx.voidPromise());
         }
     }
