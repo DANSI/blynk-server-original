@@ -20,9 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by Dmitriy Dumanskiy.
  * Created on 04.09.15.
  */
-public class ReportingUtil {
+public final class ReportingUtil {
 
     private final static Logger log = LogManager.getLogger(ReportingUtil.class);
+
+    private ReportingUtil() {
+    }
 
     public static String getReportingFolder(String dataFolder) {
         return Paths.get(dataFolder, "data").toString();

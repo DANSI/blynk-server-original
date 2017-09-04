@@ -19,7 +19,9 @@ import java.util.Set;
 import static cc.blynk.server.core.protocol.enums.Command.RESPONSE;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_WENT_OFFLINE;
 import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.utils.StateHolderUtil.*;
+import static cc.blynk.utils.StateHolderUtil.getHardState;
+import static cc.blynk.utils.StateHolderUtil.isSameDash;
+import static cc.blynk.utils.StateHolderUtil.isSameDashAndDeviceId;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
@@ -90,8 +92,8 @@ public class Session {
         final Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
             final HardwareStateHolder hardwareState = getHardState(channel);
-            if (hardwareState != null && hardwareState.dash.id == activeDashId &&
-                    (deviceIds.length == 0 || ArrayUtil.contains(deviceIds, hardwareState.device.id))) {
+            if (hardwareState != null && hardwareState.dash.id == activeDashId
+                    && (deviceIds.length == 0 || ArrayUtil.contains(deviceIds, hardwareState.device.id))) {
                 targetChannels.add(channel);
             }
         }

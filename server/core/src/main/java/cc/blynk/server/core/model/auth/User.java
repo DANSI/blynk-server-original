@@ -20,13 +20,14 @@ public class User {
     public String name;
 
     //key fields
-	public String email;
+    public String email;
     public String appName;
     public String region;
 
     public volatile String pass;
 
-    //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
+    //used mostly to understand if user profile was changed,
+    // all other fields update ignored as it is not so important
     public volatile long lastModifiedTs;
 
     public String lastLoggedIP;
@@ -50,7 +51,8 @@ public class User {
         this.appName = AppName.BLYNK;
     }
 
-    public User(String email, String pass, String appName, String region, boolean isFacebookUser, boolean isSuperAdmin) {
+    public User(String email, String pass, String appName, String region,
+                boolean isFacebookUser, boolean isSuperAdmin) {
         this();
         this.email = email;
         this.name = email;
@@ -102,12 +104,18 @@ public class User {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof User)) {
+            return false;
+        }
 
         User user = (User) o;
 
-        if (email != null ? !email.equals(user.email) : user.email != null) return false;
+        if (email != null ? !email.equals(user.email) : user.email != null) {
+            return false;
+        }
         return !(appName != null ? !appName.equals(user.appName) : user.appName != null);
 
     }

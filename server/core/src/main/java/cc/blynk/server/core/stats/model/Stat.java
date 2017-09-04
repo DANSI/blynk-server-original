@@ -43,7 +43,8 @@ public class Stat {
     public final int totalOnlineHards;
     public final transient long ts;
 
-    public Stat(SessionDao sessionDao, UserDao userDao, BlockingIOProcessor blockingIOProcessor, GlobalStats globalStats, boolean reset) {
+    public Stat(SessionDao sessionDao, UserDao userDao, BlockingIOProcessor blockingIOProcessor,
+                GlobalStats globalStats, boolean reset) {
         //yeap, some stats updates may be lost (because of sumThenReset()),
         //but we don't care, cause this is just for general monitoring
         for (Short command : Command.valuesName.keySet()) {

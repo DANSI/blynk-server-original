@@ -52,7 +52,8 @@ public class FileManager {
 
     public FileManager(String dataFolder) {
         if (dataFolder == null || dataFolder.isEmpty() || dataFolder.equals("/path")) {
-            System.out.println("WARNING : '" + dataFolder + "' does not exists. Please specify correct -dataFolder parameter.");
+            System.out.println("WARNING : '" + dataFolder + "' does not exists. "
+                    + "Please specify correct -dataFolder parameter.");
             dataFolder = Paths.get(System.getProperty("java.io.tmpdir"), "blynk").toString();
             System.out.println("Your data may be lost during server restart. Using temp folder : " + dataFolder);
         }
@@ -64,8 +65,10 @@ public class FileManager {
         } catch (Exception e) {
             Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk");
 
-            System.out.println("WARNING : could not find folder '" + dataFolder + "'. Please specify correct -dataFolder parameter.");
-            System.out.println("Your data may be lost during server restart. Using temp folder : " + tempDir.toString());
+            System.out.println("WARNING : could not find folder '" + dataFolder + "'. "
+                    + "Please specify correct -dataFolder parameter.");
+            System.out.println("Your data may be lost during server restart. Using temp folder : "
+                    + tempDir.toString());
 
             try {
                 this.dataDir = createDirectories(tempDir);
@@ -88,8 +91,8 @@ public class FileManager {
     }
 
     public Path generateBackupFileName(String email, String appName) {
-        return Paths.get(backupDataDir.toString(), email + "." + appName + ".user." +
-                new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        return Paths.get(backupDataDir.toString(), email + "." + appName + ".user."
+                + new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
     }
 
     private Path generateOldFileName(String userName) {

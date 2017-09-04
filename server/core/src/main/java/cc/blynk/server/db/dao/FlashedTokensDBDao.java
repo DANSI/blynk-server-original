@@ -17,8 +17,10 @@ import java.sql.ResultSet;
 public class FlashedTokensDBDao {
 
     private static final String selectToken = "SELECT * from flashed_tokens where token = ?";
-    private static final String activateToken = "UPDATE flashed_tokens SET is_activated = true, ts = NOW() WHERE token = ?";
-    private static final String insertToken = "INSERT INTO flashed_tokens (token, app_name, email, project_id, device_id) values (?, ?, ?, ?, ?)";
+    private static final String activateToken =
+            "UPDATE flashed_tokens SET is_activated = true, ts = NOW() WHERE token = ?";
+    private static final String insertToken =
+            "INSERT INTO flashed_tokens (token, app_name, email, project_id, device_id) values (?, ?, ?, ?, ?)";
 
     private static final Logger log = LogManager.getLogger(FlashedTokensDBDao.class);
     private final HikariDataSource ds;

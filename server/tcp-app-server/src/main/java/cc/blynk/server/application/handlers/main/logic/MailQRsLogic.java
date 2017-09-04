@@ -72,7 +72,9 @@ public class MailQRsLogic {
         makePublishPreviewEmail(ctx, dash, app.provisionType, user.email, app.name, appId, message.id);
     }
 
-    private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash, ProvisionType provisionType, String to, String publishAppName, String publishAppId, int msgId) {
+    private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash,
+                                         ProvisionType provisionType, String to,
+                                         String publishAppName, String publishAppId, int msgId) {
         String subj = publishAppName + " - App details";
         if (provisionType == ProvisionType.DYNAMIC) {
             mailDynamic(ctx.channel(), to, subj, limits.DYNAMIC_MAIL_BODY, publishAppId, dash, msgId);
@@ -81,7 +83,8 @@ public class MailQRsLogic {
         }
     }
 
-    private void mailDynamic(Channel channel, String to, String subj, String body, String publishAppId, DashBoard dash, int msgId) {
+    private void mailDynamic(Channel channel, String to, String subj, String body,
+                             String publishAppId, DashBoard dash, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
                 QrHolder[] qrHolders = makeQRs(to, publishAppId, dash, true);
@@ -97,7 +100,8 @@ public class MailQRsLogic {
         });
     }
 
-    private void mailStatic(Channel channel, String to, String subj, String body, String publishAppId, DashBoard dash, int msgId) {
+    private void mailStatic(Channel channel, String to, String subj, String body,
+                            String publishAppId, DashBoard dash, int msgId) {
         blockingIOProcessor.execute(() -> {
             try {
                 QrHolder[] qrHolders = makeQRs(to, publishAppId, dash, false);
@@ -127,7 +131,8 @@ public class MailQRsLogic {
         int i = 0;
         for (Device device : dash.devices) {
             String newToken = TokenGeneratorUtil.generateNewToken();
-            qrHolders[i] = new QrHolder(dash.id, device.id, device.name, newToken, QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
+            qrHolders[i] = new QrHolder(dash.id, device.id, device.name, newToken,
+                    QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
             flashedTokens[i] = new FlashedToken(username, newToken, appId, dash.id, device.id);
             if (onlyFirst) {
                 break;

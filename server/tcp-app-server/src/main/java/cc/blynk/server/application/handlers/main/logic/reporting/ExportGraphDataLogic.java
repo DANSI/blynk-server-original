@@ -23,7 +23,9 @@ import org.apache.logging.log4j.Logger;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-import static cc.blynk.utils.BlynkByteBufUtil.*;
+import static cc.blynk.utils.BlynkByteBufUtil.noData;
+import static cc.blynk.utils.BlynkByteBufUtil.notificationError;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 import static cc.blynk.utils.StringUtils.split2Device;
 
@@ -117,8 +119,10 @@ public class ExportGraphDataLogic {
                                     deviceIds = ((DeviceSelector) deviceSelector).deviceIds;
                                 }
                             }
-                            Path path = reportingDao.csvGenerator.createCSV(user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
-                            pinsCSVFilePath.add(new FileLink(path.getFileName(), dashName, dataStream.pinType, dataStream.pin));
+                            Path path = reportingDao.csvGenerator.createCSV(
+                                    user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
+                            pinsCSVFilePath.add(
+                                    new FileLink(path.getFileName(), dashName, dataStream.pinType, dataStream.pin));
                         } catch (Exception e) {
                             //ignore eny exception.
                         }
@@ -176,8 +180,10 @@ public class ExportGraphDataLogic {
                                 }
                             }
 
-                            Path path = reportingDao.csvGenerator.createCSV(user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
-                            pinsCSVFilePath.add(new FileLink(path.getFileName(), dashName, dataStream.pinType, dataStream.pin));
+                            Path path = reportingDao.csvGenerator.createCSV(
+                                    user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
+                            pinsCSVFilePath.add(
+                                    new FileLink(path.getFileName(), dashName, dataStream.pinType, dataStream.pin));
                         } catch (Exception e) {
                             //ignore eny exception.
                         }

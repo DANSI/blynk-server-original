@@ -106,12 +106,18 @@ public class HandlerWrapper {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof HandlerWrapper)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof HandlerWrapper)) {
+            return false;
+        }
 
         HandlerWrapper that = (HandlerWrapper) o;
 
-        if (uriTemplate != null ? !uriTemplate.equals(that.uriTemplate) : that.uriTemplate != null) return false;
+        if (uriTemplate != null ? !uriTemplate.equals(that.uriTemplate) : that.uriTemplate != null) {
+            return false;
+        }
         return !(httpMethod != null ? !httpMethod.equals(that.httpMethod) : that.httpMethod != null);
 
     }

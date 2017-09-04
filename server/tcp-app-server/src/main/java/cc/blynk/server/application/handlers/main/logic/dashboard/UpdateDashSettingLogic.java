@@ -39,7 +39,7 @@ public class UpdateDashSettingLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]) ;
+        int dashId = ParseUtil.parseInt(split[0]);
         String dashSettingsString = split[1];
 
         if (dashSettingsString == null || dashSettingsString.isEmpty()) {

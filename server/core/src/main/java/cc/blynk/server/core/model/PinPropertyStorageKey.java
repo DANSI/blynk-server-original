@@ -32,9 +32,15 @@ public final class PinPropertyStorageKey extends PinStorageKey {
     }
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PinPropertyStorageKey)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PinPropertyStorageKey)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         PinPropertyStorageKey that = (PinPropertyStorageKey) o;
 

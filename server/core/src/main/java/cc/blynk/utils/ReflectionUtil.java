@@ -9,7 +9,10 @@ import java.util.Map;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/4/2015.
  */
-public class ReflectionUtil {
+public final class ReflectionUtil {
+
+    private ReflectionUtil() {
+    }
 
     /**
      * Used to generate map of class fields where key is field value and value is field name.

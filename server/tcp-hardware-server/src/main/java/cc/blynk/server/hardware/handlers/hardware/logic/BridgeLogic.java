@@ -13,7 +13,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 
-import static cc.blynk.utils.BlynkByteBufUtil.*;
+import static cc.blynk.utils.BlynkByteBufUtil.deviceNotInNetwork;
+import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StateHolderUtil.getHardState;
 import static cc.blynk.utils.StringUtils.split3;
 

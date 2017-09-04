@@ -20,8 +20,14 @@ import org.apache.logging.log4j.Logger;
 import static cc.blynk.server.application.handlers.main.logic.HardwareAppLogic.processDeviceSelectorCommand;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.BlynkByteBufUtil.*;
-import static cc.blynk.utils.StringUtils.*;
+import static cc.blynk.utils.BlynkByteBufUtil.deviceNotInNetwork;
+import static cc.blynk.utils.BlynkByteBufUtil.illegalCommandBody;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.noActiveDash;
+import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
+import static cc.blynk.utils.StringUtils.split2;
+import static cc.blynk.utils.StringUtils.split2Device;
+import static cc.blynk.utils.StringUtils.split3;
 
 /**
  * The Blynk Project.
@@ -44,7 +50,7 @@ public class HardwareAppShareLogic {
 
         String[] split = split2(message.body);
 
-        String[] dashIdAndTargetIdString = split2Device(split[0]);;
+        String[] dashIdAndTargetIdString = split2Device(split[0]);
         int dashId = ParseUtil.parseInt(dashIdAndTargetIdString[0]);
         //deviceId or tagId or device selector widget id
         int targetId = 0;
@@ -114,8 +120,11 @@ public class HardwareAppShareLogic {
                 final String sharedToken = state.token;
                 if (sharedToken != null) {
                     for (Channel appChannel : session.appChannels) {
-                        if (appChannel != ctx.channel() && appChannel.isWritable() && Session.needSync(appChannel, sharedToken)) {
-                            appChannel.writeAndFlush(makeUTF8StringMessage(APP_SYNC, message.id, message.body), appChannel.voidPromise());
+                        if (appChannel != ctx.channel() && appChannel.isWritable()
+                                && Session.needSync(appChannel, sharedToken)) {
+                            appChannel.writeAndFlush(
+                                    makeUTF8StringMessage(APP_SYNC, message.id, message.body),
+                                    appChannel.voidPromise());
                         }
                     }
                 }
@@ -135,7 +144,8 @@ public class HardwareAppShareLogic {
                 }
 
                 if (!(widget instanceof FrequencyWidget)) {
-                    //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
+                    //corner case for 3-d parties. sometimes users need to read pin state
+                    // even from non-frequency widgets
                     if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], targetId)) {
                         log.debug("No device in session.");
                         ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());

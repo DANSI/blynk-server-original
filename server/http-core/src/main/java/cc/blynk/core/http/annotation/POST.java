@@ -14,4 +14,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @HttpMethod("POST")
 @Documented
-public @interface POST {}
+public @interface POST {
+
+}

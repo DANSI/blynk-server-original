@@ -11,12 +11,15 @@ import java.util.Properties;
  * @version $Id: DefaultParser.java 1783175 2017-02-16 07:52:05Z britter $
  * @since 1.3
  */
-public class DefaultParser
-{
-    /** The command-line instance. */
+public class DefaultParser {
+    /**
+     * The command-line instance.
+     */
     protected CommandLine cmd;
 
-    /** The current options. */
+    /**
+     * The current options.
+     */
     protected Options options;
 
     /**
@@ -26,20 +29,27 @@ public class DefaultParser
      */
     protected boolean stopAtNonOption;
 
-    /** The token currently processed. */
+    /**
+     * The token currently processed.
+     */
     protected String currentToken;
 
-    /** The last option parsed. */
+    /**
+     * The last option parsed.
+     */
     protected Option currentOption;
 
-    /** Flag indicating if tokens should no longer be analyzed and simply added as arguments of the command line. */
+    /**
+     * Flag indicating if tokens should no longer be analyzed and simply added as arguments of the command line.
+     */
     protected boolean skipParsing;
 
-    /** The required options and groups expected to be found when parsing the command line. */
+    /**
+     * The required options and groups expected to be found when parsing the command line.
+     */
     protected List expectedOpts;
 
-    public CommandLine parse(Options options, String[] arguments) throws ParseException
-    {
+    public CommandLine parse(Options options, String[] arguments) throws ParseException {
         return parse(options, arguments, null);
     }
 
@@ -50,12 +60,10 @@ public class DefaultParser
      * @param arguments  the command line arguments
      * @param properties command line option name-value pairs
      * @return the list of atomic option and value tokens
-     *
      * @throws ParseException if there are any problems encountered
-     * while parsing the command line tokens.
+     *                        while parsing the command line tokens.
      */
-    public CommandLine parse(Options options, String[] arguments, Properties properties) throws ParseException
-    {
+    public CommandLine parse(Options options, String[] arguments, Properties properties) throws ParseException {
         return parse(options, arguments, properties, false);
     }
 
@@ -66,17 +74,15 @@ public class DefaultParser
      * @param arguments       the command line arguments
      * @param properties      command line option name-value pairs
      * @param stopAtNonOption if <tt>true</tt> an unrecognized argument stops
-     *     the parsing and the remaining arguments are added to the
-     *     {@link CommandLine}s args list. If <tt>false</tt> an unrecognized
-     *     argument triggers a ParseException.
-     *
+     *                        the parsing and the remaining arguments are added to the
+     *                        {@link CommandLine}s args list. If <tt>false</tt> an unrecognized
+     *                        argument triggers a ParseException.
      * @return the list of atomic option and value tokens
      * @throws ParseException if there are any problems encountered
-     * while parsing the command line tokens.
+     *                        while parsing the command line tokens.
      */
     public CommandLine parse(Options options, String[] arguments, Properties properties, boolean stopAtNonOption)
-            throws ParseException
-    {
+            throws ParseException {
         this.options = options;
         this.stopAtNonOption = stopAtNonOption;
         skipParsing = false;
@@ -84,17 +90,14 @@ public class DefaultParser
         expectedOpts = new ArrayList(options.getRequiredOptions());
 
         // clear the data from the groups
-        for (OptionGroup group : options.getOptionGroups())
-        {
+        for (OptionGroup group : options.getOptionGroups()) {
             group.setSelected(null);
         }
 
         cmd = new CommandLine();
 
-        if (arguments != null)
-        {
-            for (String argument : arguments)
-            {
+        if (arguments != null) {
+            for (String argument : arguments) {
                 handleToken(argument);
             }
         }
@@ -115,20 +118,16 @@ public class DefaultParser
      *
      * @param properties The value properties to be processed.
      */
-    private void handleProperties(Properties properties) throws ParseException
-    {
-        if (properties == null)
-        {
+    private void handleProperties(Properties properties) throws ParseException {
+        if (properties == null) {
             return;
         }
 
-        for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();)
-        {
+        for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
             String option = e.nextElement().toString();
 
             Option opt = options.getOption(option);
-            if (opt == null)
-            {
+            if (opt == null) {
                 throw new UnrecognizedOptionException("Default option wasn't defined", option);
             }
 
@@ -136,22 +135,17 @@ public class DefaultParser
             OptionGroup group = options.getOptionGroup(opt);
             boolean selected = group != null && group.getSelected() != null;
 
-            if (!cmd.hasOption(option) && !selected)
-            {
+            if (!cmd.hasOption(option) && !selected) {
                 // get the value from the properties
                 String value = properties.getProperty(option);
 
-                if (opt.hasArg())
-                {
-                    if (opt.getValues() == null || opt.getValues().length == 0)
-                    {
+                if (opt.hasArg()) {
+                    if (opt.getValues() == null || opt.getValues().length == 0) {
                         opt.addValueForProcessing(value);
                     }
-                }
-                else if (!("yes".equalsIgnoreCase(value)
+                } else if (!("yes".equalsIgnoreCase(value)
                         || "true".equalsIgnoreCase(value)
-                        || "1".equalsIgnoreCase(value)))
-                {
+                        || "1".equalsIgnoreCase(value))) {
                     // if the value is not yes, true or 1 then don't add the option to the CommandLine
                     continue;
                 }
@@ -167,13 +161,11 @@ public class DefaultParser
      * are not present.
      *
      * @throws MissingOptionException if any of the required Options
-     * are not present.
+     *                                are not present.
      */
-    private void checkRequiredOptions() throws MissingOptionException
-    {
+    private void checkRequiredOptions() throws MissingOptionException {
         // if there are required options that have not been processed
-        if (!expectedOpts.isEmpty())
-        {
+        if (!expectedOpts.isEmpty()) {
             throw new MissingOptionException(expectedOpts);
         }
     }
@@ -182,10 +174,8 @@ public class DefaultParser
      * Throw a {@link MissingArgumentException} if the current option
      * didn't receive the number of arguments expected.
      */
-    private void checkRequiredArgs() throws ParseException
-    {
-        if (currentOption != null && currentOption.requiresArg())
-        {
+    private void checkRequiredArgs() throws ParseException {
+        if (currentOption != null && currentOption.requiresArg()) {
             throw new MissingArgumentException(currentOption);
         }
     }
@@ -196,93 +186,67 @@ public class DefaultParser
      * @param token the command line token to handle
      * @throws ParseException
      */
-    private void handleToken(String token) throws ParseException
-    {
+    private void handleToken(String token) throws ParseException {
         currentToken = token;
 
-        if (skipParsing)
-        {
+        if (skipParsing) {
             cmd.addArg(token);
-        }
-        else if ("--".equals(token))
-        {
+        } else if ("--".equals(token)) {
             skipParsing = true;
-        }
-        else if (currentOption != null && currentOption.acceptsArg() && isArgument(token))
-        {
+        } else if (currentOption != null && currentOption.acceptsArg() && isArgument(token)) {
             currentOption.addValueForProcessing(Util.stripLeadingAndTrailingQuotes(token));
-        }
-        else if (token.startsWith("--"))
-        {
+        } else if (token.startsWith("--")) {
             handleLongOption(token);
-        }
-        else if (token.startsWith("-") && !"-".equals(token))
-        {
+        } else if (token.startsWith("-") && !"-".equals(token)) {
             handleShortAndLongOption(token);
-        }
-        else
-        {
+        } else {
             handleUnknownToken(token);
         }
 
-        if (currentOption != null && !currentOption.acceptsArg())
-        {
+        if (currentOption != null && !currentOption.acceptsArg()) {
             currentOption = null;
         }
     }
 
     /**
      * Returns true is the token is a valid argument.
-     *
      */
-    private boolean isArgument(String token)
-    {
+    private boolean isArgument(String token) {
         return !isOption(token) || isNegativeNumber(token);
     }
 
     /**
      * Check if the token is a negative number.
-     *
      */
-    private boolean isNegativeNumber(String token)
-    {
-        try
-        {
+    private boolean isNegativeNumber(String token) {
+        try {
             Double.parseDouble(token);
             return true;
-        }
-        catch (NumberFormatException e)
-        {
+        } catch (NumberFormatException e) {
             return false;
         }
     }
 
     /**
      * Tells if the token looks like an option.
-     *
      */
-    private boolean isOption(String token)
-    {
+    private boolean isOption(String token) {
         return isLongOption(token) || isShortOption(token);
     }
 
     /**
      * Tells if the token looks like a short option.
-     *
      */
-    private boolean isShortOption(String token)
-    {
+    private boolean isShortOption(String token) {
         // short options (-S, -SV, -S=V, -SV1=V2, -S1S2)
-        if (!token.startsWith("-") || token.length() == 1)
-        {
+        if (!token.startsWith("-") || token.length() == 1) {
             return false;
         }
 
         // remove leading "-" and "=value"
         int pos = token.indexOf("=");
         String optName = pos == -1 ? token.substring(1) : token.substring(1, pos);
-        if (options.hasShortOption(optName))
-        {
+        if (options.hasShortOption(optName)) {
             return true;
         }
         // check for several concatenated short options
@@ -291,25 +255,19 @@ public class DefaultParser
 
     /**
      * Tells if the token looks like a long option.
-     *
      */
-    private boolean isLongOption(String token)
-    {
-        if (!token.startsWith("-") || token.length() == 1)
-        {
+    private boolean isLongOption(String token) {
+        if (!token.startsWith("-") || token.length() == 1) {
             return false;
         }
 
         int pos = token.indexOf("=");
         String t = pos == -1 ? token : token.substring(0, pos);
 
-        if (!options.getMatchingOptions(t).isEmpty())
-        {
+        if (!options.getMatchingOptions(t).isEmpty()) {
             // long or partial long options (--L, -L, --L=V, -L=V, --l, --l=V)
             return true;
-        }
-        else if (getLongPrefix(token) != null && !token.startsWith("--"))
-        {
+        } else if (getLongPrefix(token) != null && !token.startsWith("--")) {
             // -LV
             return true;
         }
@@ -326,23 +284,20 @@ public class DefaultParser
      *
      * @param token the command line token to handle
      */
-    private void handleUnknownToken(String token) throws ParseException
-    {
-        if (token.startsWith("-") && token.length() > 1 && !stopAtNonOption)
-        {
+    private void handleUnknownToken(String token) throws ParseException {
+        if (token.startsWith("-") && token.length() > 1 && !stopAtNonOption) {
             throw new UnrecognizedOptionException("Unrecognized option: " + token, token);
         }
 
         cmd.addArg(token);
-        if (stopAtNonOption)
-        {
+        if (stopAtNonOption) {
             skipParsing = true;
         }
     }
 
     /**
      * Handles the following tokens:
-     *
+     * <p>
      * --L
      * --L=V
      * --L V
@@ -350,21 +305,17 @@ public class DefaultParser
      *
      * @param token the command line token to handle
      */
-    private void handleLongOption(String token) throws ParseException
-    {
-        if (token.indexOf('=') == -1)
-        {
+    private void handleLongOption(String token) throws ParseException {
+        if (token.indexOf('=') == -1) {
             handleLongOptionWithoutEqual(token);
-        }
-        else
-        {
+        } else {
             handleLongOptionWithEqual(token);
         }
     }
 
     /**
      * Handles the following tokens:
-     *
+     * <p>
      * --L
      * -L
      * --l
@@ -372,26 +323,20 @@ public class DefaultParser
      *
      * @param token the command line token to handle
      */
-    private void handleLongOptionWithoutEqual(String token) throws ParseException
-    {
+    private void handleLongOptionWithoutEqual(String token) throws ParseException {
         List<String> matchingOpts = options.getMatchingOptions(token);
-        if (matchingOpts.isEmpty())
-        {
+        if (matchingOpts.isEmpty()) {
             handleUnknownToken(currentToken);
-        }
-        else if (matchingOpts.size() > 1)
-        {
+        } else if (matchingOpts.size() > 1) {
             throw new AmbiguousOptionException(token, matchingOpts);
-        }
-        else
-        {
+        } else {
             handleOption(options.getOption(matchingOpts.get(0)));
         }
     }
 
     /**
      * Handles the following tokens:
-     *
+     * <p>
      * --L=V
      * -L=V
      * --l=V
@@ -399,8 +344,7 @@ public class DefaultParser
      *
      * @param token the command line token to handle
      */
-    private void handleLongOptionWithEqual(String token) throws ParseException
-    {
+    private void handleLongOptionWithEqual(String token) throws ParseException {
         int pos = token.indexOf('=');
 
         String value = token.substring(pos + 1);
@@ -408,26 +352,18 @@ public class DefaultParser
         String opt = token.substring(0, pos);
 
         List<String> matchingOpts = options.getMatchingOptions(opt);
-        if (matchingOpts.isEmpty())
-        {
+        if (matchingOpts.isEmpty()) {
             handleUnknownToken(currentToken);
-        }
-        else if (matchingOpts.size() > 1)
-        {
+        } else if (matchingOpts.size() > 1) {
             throw new AmbiguousOptionException(opt, matchingOpts);
-        }
-        else
-        {
+        } else {
             Option option = options.getOption(matchingOpts.get(0));
 
-            if (option.acceptsArg())
-            {
+            if (option.acceptsArg()) {
                 handleOption(option);
                 currentOption.addValueForProcessing(value);
                 currentOption = null;
-            }
-            else
-            {
+            } else {
                 handleUnknownToken(currentToken);
             }
         }
@@ -435,7 +371,7 @@ public class DefaultParser
 
     /**
      * Handles the following tokens:
-     *
+     * <p>
      * -S
      * -SV
      * -S V
@@ -443,7 +379,7 @@ public class DefaultParser
      * -S1S2
      * -S1S2 V
      * -SV1=V2
-     *
+     * <p>
      * -L
      * -LV
      * -L V
@@ -452,92 +388,65 @@ public class DefaultParser
      *
      * @param token the command line token to handle
      */
-    private void handleShortAndLongOption(String token) throws ParseException
-    {
+    private void handleShortAndLongOption(String token) throws ParseException {
         String t = Util.stripLeadingHyphens(token);
 
         int pos = t.indexOf('=');
 
-        if (t.length() == 1)
-        {
+        if (t.length() == 1) {
             // -S
-            if (options.hasShortOption(t))
-            {
+            if (options.hasShortOption(t)) {
                 handleOption(options.getOption(t));
-            }
-            else
-            {
+            } else {
                 handleUnknownToken(token);
             }
-        }
-        else if (pos == -1)
-        {
+        } else if (pos == -1) {
             // no equal sign found (-xxx)
-            if (options.hasShortOption(t))
-            {
+            if (options.hasShortOption(t)) {
                 handleOption(options.getOption(t));
-            }
-            else if (!options.getMatchingOptions(t).isEmpty())
-            {
+            } else if (!options.getMatchingOptions(t).isEmpty()) {
                 // -L or -l
                 handleLongOptionWithoutEqual(token);
-            }
-            else
-            {
+            } else {
                 // look for a long prefix (-Xmx512m)
                 String opt = getLongPrefix(t);
 
-                if (opt != null && options.getOption(opt).acceptsArg())
-                {
+                if (opt != null && options.getOption(opt).acceptsArg()) {
                     handleOption(options.getOption(opt));
                     currentOption.addValueForProcessing(t.substring(opt.length()));
                     currentOption = null;
-                }
-                else if (isJavaProperty(t))
-                {
+                } else if (isJavaProperty(t)) {
                     // -SV1 (-Dflag)
                     handleOption(options.getOption(t.substring(0, 1)));
                     currentOption.addValueForProcessing(t.substring(1));
                     currentOption = null;
-                }
-                else
-                {
+                } else {
                     // -S1S2S3 or -S1S2V
                     handleConcatenatedOptions(token);
                 }
             }
-        }
-        else
-        {
+        } else {
             // equal sign found (-xxx=yyy)
             String opt = t.substring(0, pos);
             String value = t.substring(pos + 1);
 
-            if (opt.length() == 1)
-            {
+            if (opt.length() == 1) {
                 // -S=V
                 Option option = options.getOption(opt);
-                if (option != null && option.acceptsArg())
-                {
+                if (option != null && option.acceptsArg()) {
                     handleOption(option);
                     currentOption.addValueForProcessing(value);
                     currentOption = null;
-                }
-                else
-                {
+                } else {
                     handleUnknownToken(token);
                 }
-            }
-            else if (isJavaProperty(opt))
-            {
+            } else if (isJavaProperty(opt)) {
                 // -SV1=V2 (-Dkey=value)
                 handleOption(options.getOption(opt.substring(0, 1)));
                 currentOption.addValueForProcessing(opt.substring(1));
                 currentOption.addValueForProcessing(value);
                 currentOption = null;
-            }
-            else
-            {
+            } else {
                 // -L=V or -l=V
                 handleLongOptionWithEqual(token);
             }
@@ -546,19 +455,15 @@ public class DefaultParser
 
     /**
      * Search for a prefix that is the long name of an option (-Xmx512m)
-     *
      */
-    private String getLongPrefix(String token)
-    {
+    private String getLongPrefix(String token) {
         String t = Util.stripLeadingHyphens(token);
 
         int i;
         String opt = null;
-        for (i = t.length() - 2; i > 1; i--)
-        {
+        for (i = t.length() - 2; i > 1; i--) {
             String prefix = t.substring(0, i);
-            if (options.hasLongOption(prefix))
-            {
+            if (options.hasLongOption(prefix)) {
                 opt = prefix;
                 break;
             }
@@ -570,16 +475,14 @@ public class DefaultParser
     /**
      * Check if the specified token is a Java-like property (-Dkey=value).
      */
-    private boolean isJavaProperty(String token)
-    {
+    private boolean isJavaProperty(String token) {
         String opt = token.substring(0, 1);
         Option option = options.getOption(opt);
 
         return option != null && (option.getArgs() >= 2 || option.getArgs() == Option.UNLIMITED_VALUES);
     }
 
-    private void handleOption(Option option) throws ParseException
-    {
+    private void handleOption(Option option) throws ParseException {
         // check the previous option before handling the next one
         checkRequiredArgs();
 
@@ -589,34 +492,26 @@ public class DefaultParser
 
         cmd.addOption(option);
 
-        if (option.hasArg())
-        {
+        if (option.hasArg()) {
             currentOption = option;
-        }
-        else
-        {
+        } else {
             currentOption = null;
         }
     }
 
     /**
      * Removes the option or its group from the list of expected elements.
-     *
      */
-    private void updateRequiredOptions(Option option) throws AlreadySelectedException
-    {
-        if (option.isRequired())
-        {
+    private void updateRequiredOptions(Option option) throws AlreadySelectedException {
+        if (option.isRequired()) {
             expectedOpts.remove(option.getKey());
         }
 
         // if the option is in an OptionGroup make that option the selected option of the group
-        if (options.getOptionGroup(option) != null)
-        {
+        if (options.getOptionGroup(option) != null) {
             OptionGroup group = options.getOptionGroup(option);
 
-            if (group.isRequired())
-            {
+            if (group.isRequired()) {
                 expectedOpts.remove(group);
             }
 
@@ -627,49 +522,43 @@ public class DefaultParser
     /**
      * Breaks <code>token</code> into its constituent parts
      * using the following algorithm.
-     *
+     * <p>
      * <ul>
-     *  <li>ignore the first character ("<b>-</b>")</li>
-     *  <li>for each remaining character check if an {@link Option}
-     *  exists with that id.</li>
-     *  <li>if an {@link Option} does exist then add that character
-     *  prepended with "<b>-</b>" to the list of processed tokens.</li>
-     *  <li>if the {@link Option} can have an argument value and there
-     *  are remaining characters in the token then add the remaining
-     *  characters as a token to the list of processed tokens.</li>
-     *  <li>if an {@link Option} does <b>NOT</b> exist <b>AND</b>
-     *  <code>stopAtNonOption</code> <b>IS</b> set then add the special token
-     *  "<b>--</b>" followed by the remaining characters and also
-     *  the remaining tokens directly to the processed tokens list.</li>
-     *  <li>if an {@link Option} does <b>NOT</b> exist <b>AND</b>
-     *  <code>stopAtNonOption</code> <b>IS NOT</b> set then add that
-     *  character prepended with "<b>-</b>".</li>
+     * <li>ignore the first character ("<b>-</b>")</li>
+     * <li>for each remaining character check if an {@link Option}
+     * exists with that id.</li>
+     * <li>if an {@link Option} does exist then add that character
+     * prepended with "<b>-</b>" to the list of processed tokens.</li>
+     * <li>if the {@link Option} can have an argument value and there
+     * are remaining characters in the token then add the remaining
+     * characters as a token to the list of processed tokens.</li>
+     * <li>if an {@link Option} does <b>NOT</b> exist <b>AND</b>
+     * <code>stopAtNonOption</code> <b>IS</b> set then add the special token
+     * "<b>--</b>" followed by the remaining characters and also
+     * the remaining tokens directly to the processed tokens list.</li>
+     * <li>if an {@link Option} does <b>NOT</b> exist <b>AND</b>
+     * <code>stopAtNonOption</code> <b>IS NOT</b> set then add that
+     * character prepended with "<b>-</b>".</li>
      * </ul>
      *
      * @param token The current token to be <b>burst</b>
-     * at the first non-Option encountered.
+     *              at the first non-Option encountered.
      * @throws ParseException if there are any problems encountered
      *                        while parsing the command line token.
      */
-    protected void handleConcatenatedOptions(String token) throws ParseException
-    {
-        for (int i = 1; i < token.length(); i++)
-        {
+    protected void handleConcatenatedOptions(String token) throws ParseException {
+        for (int i = 1; i < token.length(); i++) {
             String ch = String.valueOf(token.charAt(i));
 
-            if (options.hasOption(ch))
-            {
+            if (options.hasOption(ch)) {
                 handleOption(options.getOption(ch));
 
-                if (currentOption != null && token.length() != i + 1)
-                {
+                if (currentOption != null && token.length() != i + 1) {
                     // add the trail as an argument of the option
                     currentOption.addValueForProcessing(token.substring(i + 1));
                     break;
                 }
-            }
-            else
-            {
+            } else {
                 handleUnknownToken(stopAtNonOption && i > 1 ? token.substring(i) : token);
                 break;
             }

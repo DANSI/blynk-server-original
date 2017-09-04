@@ -3,7 +3,13 @@ package cc.blynk.server.api.http.logic;
 import cc.blynk.core.http.BaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.*;
+import cc.blynk.core.http.annotation.Consumes;
+import cc.blynk.core.http.annotation.Context;
+import cc.blynk.core.http.annotation.FormParam;
+import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.POST;
+import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.pojo.TokenUser;
 import cc.blynk.server.api.http.pojo.TokensPool;
@@ -21,7 +27,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.UUID;
 
-import static cc.blynk.core.http.Response.*;
+import static cc.blynk.core.http.Response.badRequest;
+import static cc.blynk.core.http.Response.noResponse;
+import static cc.blynk.core.http.Response.notFound;
+import static cc.blynk.core.http.Response.ok;
 
 /**
  * The Blynk project

@@ -55,10 +55,11 @@ public class EventorProcessor {
         this.globalStats = stats;
     }
 
-    public void process(User user, Session session, DashBoard dash, int deviceId, byte pin, PinType type, String triggerValue, long now) {
+    public void process(User user, Session session, DashBoard dash, int deviceId, byte pin,
+                        PinType type, String triggerValue, long now) {
         Eventor eventor = dash.getWidgetByType(Eventor.class);
-        if (eventor == null || eventor.rules == null ||
-            eventor.deviceId != deviceId || !dash.isActive) {
+        if (eventor == null || eventor.rules == null
+                || eventor.deviceId != deviceId || !dash.isActive) {
             return;
         }
 
@@ -123,7 +124,8 @@ public class EventorProcessor {
             try {
                 mailWrapper.sendText(to, subject, body);
             } catch (Exception e) {
-                log.warn("Error sending email from eventor. From user {}, to : {}. Reason : {}",  user.email, to, e.getMessage());
+                log.warn("Error sending email from eventor. From user {}, to : {}. Reason : {}",
+                        user.email, to, e.getMessage());
             }
         });
         user.emailMessages++;
@@ -137,9 +139,11 @@ public class EventorProcessor {
 
         Twitter twitterWidget = dash.getWidgetByType(Twitter.class);
 
-        if (twitterWidget == null ||
-                twitterWidget.token == null || twitterWidget.token.isEmpty() ||
-                twitterWidget.secret == null || twitterWidget.secret.isEmpty()) {
+        if (twitterWidget == null
+                || twitterWidget.token == null
+                || twitterWidget.token.isEmpty()
+                || twitterWidget.secret == null
+                || twitterWidget.secret.isEmpty()) {
             log.debug("User has no access token provided for eventor twit.");
             return;
         }

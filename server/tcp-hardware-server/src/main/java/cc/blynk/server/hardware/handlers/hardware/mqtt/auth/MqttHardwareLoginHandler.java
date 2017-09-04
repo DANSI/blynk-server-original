@@ -15,7 +15,13 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.mqtt.*;
+import io.netty.handler.codec.mqtt.MqttConnAckMessage;
+import io.netty.handler.codec.mqtt.MqttConnAckVariableHeader;
+import io.netty.handler.codec.mqtt.MqttConnectMessage;
+import io.netty.handler.codec.mqtt.MqttConnectReturnCode;
+import io.netty.handler.codec.mqtt.MqttFixedHeader;
+import io.netty.handler.codec.mqtt.MqttMessageType;
+import io.netty.handler.codec.mqtt.MqttQoS;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,7 +38,8 @@ import static io.netty.handler.codec.mqtt.MqttConnectReturnCode.CONNECTION_REFUS
  *
  */
 @ChannelHandler.Sharable
-public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttConnectMessage> implements DefaultReregisterHandler, DefaultExceptionHandler {
+public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttConnectMessage>
+        implements DefaultReregisterHandler, DefaultExceptionHandler {
 
     private static final Logger log = LogManager.getLogger(DefaultExceptionHandler.class);
 
@@ -44,7 +51,8 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
         this.holder = holder;
     }
 
-    private static void completeLogin(Channel channel, Session session, User user, DashBoard dash, Device device, int msgId) {
+    private static void completeLogin(Channel channel, Session session, User user,
+                                      DashBoard dash, Device device, int msgId) {
         log.debug("completeLogin. {}", channel);
 
         session.addHardChannel(channel);
@@ -56,7 +64,8 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
     }
 
     private static MqttConnAckMessage createConnAckMessage(MqttConnectReturnCode code) {
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.CONNACK, false, MqttQoS.AT_MOST_ONCE, false, 2);
+        MqttFixedHeader mqttFixedHeader =
+                new MqttFixedHeader(MqttMessageType.CONNACK, false, MqttQoS.AT_MOST_ONCE, false, 2);
         MqttConnAckVariableHeader mqttConnAckVariableHeader = new MqttConnAckVariableHeader(code, true);
         return new MqttConnAckMessage(mqttFixedHeader, mqttConnAckVariableHeader);
     }
@@ -83,11 +92,13 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
         HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(user, tokenValue.dash, device);
         ctx.pipeline().addLast("HHArdwareMqttHandler", new MqttHardwareHandler(holder, hardwareStateHolder));
 
-        Session session = holder.sessionDao.getOrCreateSessionByUser(hardwareStateHolder.userKey, ctx.channel().eventLoop());
+        Session session = holder.sessionDao.getOrCreateSessionByUser(
+                hardwareStateHolder.userKey, ctx.channel().eventLoop());
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering hard channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, dash, device, -1));
+            reRegisterChannel(ctx, session, channelFuture ->
+                    completeLogin(channelFuture.channel(), session, user, dash, device, -1));
         } else {
             completeLogin(ctx.channel(), session, user, dash, device, -1);
         }

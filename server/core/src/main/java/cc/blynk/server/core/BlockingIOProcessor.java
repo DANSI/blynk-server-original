@@ -33,11 +33,13 @@ public class BlockingIOProcessor implements Closeable {
                 new ArrayBlockingQueue<>(maxQueueSize)
         );
 
-        this.dbExecutor = new ThreadPoolExecutor(poolSize / 3, poolSize / 2, 2L, TimeUnit.MINUTES, new ArrayBlockingQueue<>(250));
+        this.dbExecutor = new ThreadPoolExecutor(poolSize / 3, poolSize / 2, 2L,
+                TimeUnit.MINUTES, new ArrayBlockingQueue<>(250));
         //local server doesn't use DB usually, so this thread may be not necessary
         this.dbExecutor.allowCoreThreadTimeOut(true);
 
-        this.historyExecutor = new ThreadPoolExecutor(poolSize / 2, poolSize, 2L, TimeUnit.MINUTES, new ArrayBlockingQueue<>(250));
+        this.historyExecutor = new ThreadPoolExecutor(poolSize / 2, poolSize, 2L,
+                TimeUnit.MINUTES, new ArrayBlockingQueue<>(250));
     }
 
     public void execute(Runnable task) {

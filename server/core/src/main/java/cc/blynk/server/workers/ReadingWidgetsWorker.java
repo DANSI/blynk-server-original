@@ -51,7 +51,8 @@ public class ReadingWidgetsWorker implements Runnable {
 
         counter++;
         if (counter == 60) {
-            log.info("Ticked widgets for 1 minute : {}. Per second : {}, total time : {}", tickedWidgets, tickedWidgets / 60, totalTime);
+            log.info("Ticked widgets for 1 minute : {}. Per second : {}, total time : {}",
+                    tickedWidgets, tickedWidgets / 60, totalTime);
             tickedWidgets = 0;
             counter = 0;
             totalTime = 0;
@@ -74,9 +75,10 @@ public class ReadingWidgetsWorker implements Runnable {
                                 for (Widget widget : dashBoard.widgets) {
                                     if (widget instanceof FrequencyWidget) {
                                         FrequencyWidget frequencyWidget = (FrequencyWidget) widget;
-                                        if (channel.isWritable() &&
-                                                sameDeviceId(dashBoard, frequencyWidget.getDeviceId(), stateHolder.device.id) &&
-                                                frequencyWidget.isTicked(now)) {
+                                        if (channel.isWritable()
+                                                && sameDeviceId(dashBoard, frequencyWidget.getDeviceId(),
+                                                        stateHolder.device.id)
+                                                && frequencyWidget.isTicked(now)) {
                                             tickedWidgets++;
                                             frequencyWidget.writeReadingCommand(channel);
                                         }

@@ -35,12 +35,14 @@ public class TwoAxisJoystick extends MultiPinWidget implements HardwareSyncWidge
         if (split) {
             for (DataStream dataStream : dataStreams) {
                 if (dataStream.notEmpty()) {
-                    ctx.write(makeUTF8StringMessage(HARDWARE, msgId, dataStream.makeHardwareBody()), ctx.voidPromise());
+                    ctx.write(makeUTF8StringMessage(HARDWARE, msgId,
+                            dataStream.makeHardwareBody()), ctx.voidPromise());
                 }
             }
         } else {
             if (dataStreams[0].notEmpty()) {
-                ctx.write(makeUTF8StringMessage(HARDWARE, msgId, dataStreams[0].makeHardwareBody()), ctx.voidPromise());
+                ctx.write(makeUTF8StringMessage(HARDWARE, msgId,
+                        dataStreams[0].makeHardwareBody()), ctx.voidPromise());
             }
         }
     }
@@ -55,13 +57,15 @@ public class TwoAxisJoystick extends MultiPinWidget implements HardwareSyncWidge
                 for (DataStream dataStream : dataStreams) {
                     if (dataStream.notEmpty()) {
                         String body = prependDashIdAndDeviceId(dashId, deviceId, dataStream.makeHardwareBody());
-                        appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body), appChannel.voidPromise());
+                        appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body),
+                                appChannel.voidPromise());
                     }
                 }
             } else {
                 if (dataStreams[0].notEmpty()) {
                     String body = prependDashIdAndDeviceId(dashId, deviceId, dataStreams[0].makeHardwareBody());
-                    appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body), appChannel.voidPromise());
+                    appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body),
+                            appChannel.voidPromise());
                 }
             }
         }

@@ -2,8 +2,12 @@ package cc.blynk.server.acme;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.shredzone.acme4j.*;
-import org.shredzone.acme4j.challenge.Challenge;
+import org.shredzone.acme4j.Authorization;
+import org.shredzone.acme4j.Certificate;
+import org.shredzone.acme4j.Registration;
+import org.shredzone.acme4j.RegistrationBuilder;
+import org.shredzone.acme4j.Session;
+import org.shredzone.acme4j.Status;
 import org.shredzone.acme4j.challenge.Http01Challenge;
 import org.shredzone.acme4j.exception.AcmeConflictException;
 import org.shredzone.acme4j.exception.AcmeException;
@@ -29,7 +33,7 @@ public class AcmeClient {
     private static final Logger log = LogManager.getLogger(AcmeClient.class);
 
     // File name of the User Key Pair
-    public static final File USER_KEY_FILE = new File("user.pem");
+    private static final File USER_KEY_FILE = new File("user.pem");
 
     // File name of the Domain Key Pair
     public static final File DOMAIN_KEY_FILE = new File("privkey.pem");
@@ -41,6 +45,8 @@ public class AcmeClient {
 
     // RSA key size of generated key pairs
     private static final int KEY_SIZE = 2048;
+    private static final int ATTEMPTS = 10;
+    private static final long WAIT_MILLIS = 3000L;
 
     private final String letsEncryptUrl;
     private final String email;
@@ -70,7 +76,7 @@ public class AcmeClient {
      * @param domain
      *            Domains to get a common certificate for
      */
-    public boolean fetchCertificate(String contact, String domain) throws IOException, AcmeException {
+    private boolean fetchCertificate(String contact, String domain) throws IOException, AcmeException {
         // Load the user key file. If there is no key file, create a new one.
         // Keep this key pair in a safe place! In a production environment, you will not be
         // able to access your account again if you should lose the key pair.
@@ -203,7 +209,7 @@ public class AcmeClient {
 
         // Poll for the challenge to complete.
         try {
-            int attempts = 10;
+            int attempts = ATTEMPTS;
             while (challenge.getStatus() != Status.VALID && attempts-- > 0) {
                 // Did the authorization fail?
                 if (challenge.getStatus() == Status.INVALID) {
@@ -211,7 +217,7 @@ public class AcmeClient {
                 }
 
                 // Wait for a few seconds
-                Thread.sleep(3000L);
+                Thread.sleep(WAIT_MILLIS);
 
                 // Then update the status
                 challenge.update();
@@ -241,9 +247,9 @@ public class AcmeClient {
      *            {@link Authorization} to find the challenge in
      * @param domain
      *            Domain name to be authorized
-     * @return {@link Challenge} to verify
+     * @return Challenge to verify
      */
-    public Http01Challenge httpChallenge(Authorization auth, String domain) throws AcmeException {
+    private Http01Challenge httpChallenge(Authorization auth, String domain) throws AcmeException {
         // Find a single http-01 challenge
         Http01Challenge challenge = auth.findChallenge(Http01Challenge.TYPE);
         if (challenge == null) {

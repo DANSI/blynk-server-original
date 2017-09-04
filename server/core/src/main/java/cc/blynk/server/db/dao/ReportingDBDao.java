@@ -13,7 +13,11 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
@@ -26,24 +30,56 @@ import java.util.Map;
  */
 public class ReportingDBDao {
 
-    public static final String insertMinute = "INSERT INTO reporting_average_minute (email, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private static final String insertHourly = "INSERT INTO reporting_average_hourly (email, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private static final String insertDaily = "INSERT INTO reporting_average_daily (email, project_id, device_id, pin, pinType, ts, value) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public static final String insertMinute =
+            "INSERT INTO reporting_average_minute (email, project_id, device_id, pin, pinType, ts, value) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final String insertHourly =
+            "INSERT INTO reporting_average_hourly (email, project_id, device_id, pin, pinType, ts, value) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final String insertDaily =
+            "INSERT INTO reporting_average_daily (email, project_id, device_id, pin, pinType, ts, value) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    private static final String insertRawData = "INSERT INTO reporting_raw_data (email, project_id, device_id, pin, pinType, ts, stringValue, doubleValue) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String insertRawData =
+            "INSERT INTO reporting_raw_data (email, project_id, device_id, pin, pinType, ts, "
+                    + "stringValue, doubleValue) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-    public static final String selectMinute = "SELECT ts, value FROM reporting_average_minute WHERE ts > ? ORDER BY ts DESC limit ?";
-    public static final String selectHourly = "SELECT ts, value FROM reporting_average_hourly WHERE ts > ? ORDER BY ts DESC limit ?";
-    public static final String selectDaily = "SELECT ts, value FROM reporting_average_daily WHERE ts > ? ORDER BY ts DESC limit ?";
+    public static final String selectMinute =
+            "SELECT ts, value FROM reporting_average_minute WHERE ts > ? ORDER BY ts DESC limit ?";
+    public static final String selectHourly =
+            "SELECT ts, value FROM reporting_average_hourly WHERE ts > ? ORDER BY ts DESC limit ?";
+    public static final String selectDaily =
+            "SELECT ts, value FROM reporting_average_daily WHERE ts > ? ORDER BY ts DESC limit ?";
 
     private static final String deleteMinute = "DELETE FROM reporting_average_minute WHERE ts < ?";
     private static final String deleteHour = "DELETE FROM reporting_average_hourly WHERE ts < ?";
     public static final String deleteDaily = "DELETE FROM reporting_average_daily WHERE ts < ?";
 
-    private static final String insertStatMinute = "INSERT INTO reporting_app_stat_minute (region, ts, active, active_week, active_month, minute_rate, connected, online_apps, online_hards, total_online_apps, total_online_hards, registrations) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
-    private static final String insertStatCommandsMinute = "INSERT INTO reporting_app_command_stat_minute (region, ts, response, register, login, load_profile, app_sync, sharing, get_token, ping, activate, deactivate, refresh_token, get_graph_data, export_graph_data, set_widget_property, bridge, hardware, get_share_dash, get_share_token, refresh_share_token, share_login, create_project, update_project, delete_project, hardware_sync, internal, sms, tweet, email, push, add_push_token, create_widget, update_widget, delete_widget, create_device, update_device, delete_device, get_devices, create_tag, update_tag, delete_tag, get_tags, add_energy, get_energy, get_server, connect_redirect, web_sockets, eventor, webhooks, appTotal, hardTotal) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    private static final String insertStatMinute =
+            "INSERT INTO reporting_app_stat_minute (region, ts, active, active_week, active_month, "
+                    + "minute_rate, connected, online_apps, online_hards, "
+                    + "total_online_apps, total_online_hards, registrations) "
+                    + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+    private static final String insertStatCommandsMinute =
+            "INSERT INTO reporting_app_command_stat_minute (region, ts, response, register, "
+                    + "login, load_profile, app_sync, sharing, get_token, ping, activate, "
+                    + "deactivate, refresh_token, get_graph_data, export_graph_data, "
+                    + "set_widget_property, bridge, hardware, get_share_dash, get_share_token, "
+                    + "refresh_share_token, share_login, create_project, update_project, "
+                    + "delete_project, hardware_sync, internal, sms, tweet, email, push, "
+                    + "add_push_token, create_widget, update_widget, delete_widget, create_device, "
+                    + "update_device, delete_device, get_devices, create_tag, update_tag, "
+                    + "delete_tag, get_tags, add_energy, get_energy, get_server, connect_redirect, "
+                    + "web_sockets, eventor, webhooks, appTotal, hardTotal) "
+                    + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?"
+                    + ",?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     //todo add one more column mqttTotal and replace hardTotal with mqtt total
-    private static final String insertStatHttpCommandMinute = "INSERT INTO reporting_http_command_stat_minute (region, ts, is_hardware_connected, is_app_connected, get_pin_data, update_pin, email, push, get_project, qr, get_history_pin_data, total) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+    private static final String insertStatHttpCommandMinute =
+            "INSERT INTO reporting_http_command_stat_minute (region, ts, is_hardware_connected, "
+                    + "is_app_connected, get_pin_data, update_pin, email, push, get_project, qr,"
+                    + " get_history_pin_data, total) "
+                    + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
     private static final Logger log = LogManager.getLogger(ReportingDBDao.class);
 
@@ -63,7 +99,8 @@ public class ReportingDBDao {
                                                GraphGranularityType type) throws SQLException {
         AggregationKey key = entry.getKey();
         AggregationValue value = entry.getValue();
-        prepareReportingInsert(ps, key.getEmail(), key.getDashId(), key.getDeviceId(), key.getPin(), key.getPinType(), key.getTs(type), value.calcAverage());
+        prepareReportingInsert(ps, key.getEmail(), key.getDashId(), key.getDeviceId(),
+                key.getPin(), key.getPinType(), key.getTs(type), value.calcAverage());
     }
 
     public static void prepareReportingInsert(PreparedStatement ps,
@@ -103,7 +140,7 @@ public class ReportingDBDao {
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(insertRawData)) {
 
-            for (Iterator<Map.Entry<AggregationKey, Object>> iter = rawData.entrySet().iterator(); iter.hasNext(); ) {
+            for (Iterator<Map.Entry<AggregationKey, Object>> iter = rawData.entrySet().iterator(); iter.hasNext();) {
                 Map.Entry<AggregationKey, Object> entry = iter.next();
 
                 final AggregationKey key = entry.getKey();
@@ -135,7 +172,8 @@ public class ReportingDBDao {
             log.error("Error inserting raw reporting data in DB.", e);
         }
 
-        log.info("Storing raw reporting finished. Time {}. Records saved {}", System.currentTimeMillis() - start, counter);
+        log.info("Storing raw reporting finished. Time {}. Records saved {}",
+                System.currentTimeMillis() - start, counter);
     }
 
     public void insertStat(String region, Stat stat) {
@@ -259,7 +297,8 @@ public class ReportingDBDao {
             log.error("Error inserting reporting data in DB.", e);
         }
 
-        log.info("Storing {} reporting finished. Time {}. Records saved {}", graphGranularityType.name(), System.currentTimeMillis() - start, map.size());
+        log.info("Storing {} reporting finished. Time {}. Records saved {}",
+                graphGranularityType.name(), System.currentTimeMillis() - start, map.size());
     }
 
     public void cleanOldReportingRecords(Instant now) {
@@ -272,8 +311,10 @@ public class ReportingDBDao {
              PreparedStatement psMinute = connection.prepareStatement(deleteMinute);
              PreparedStatement psHour = connection.prepareStatement(deleteHour)) {
 
-            psMinute.setTimestamp(1, new Timestamp(now.minus(360 + 1, ChronoUnit.MINUTES).toEpochMilli()), DateTimeUtils.UTC_CALENDAR);
-            psHour.setTimestamp(1, new Timestamp(now.minus(168 + 1, ChronoUnit.HOURS).toEpochMilli()), DateTimeUtils.UTC_CALENDAR);
+            psMinute.setTimestamp(1, new Timestamp(now.minus(360 + 1,
+                    ChronoUnit.MINUTES).toEpochMilli()), DateTimeUtils.UTC_CALENDAR);
+            psHour.setTimestamp(1, new Timestamp(now.minus(168 + 1,
+                    ChronoUnit.HOURS).toEpochMilli()), DateTimeUtils.UTC_CALENDAR);
 
             minuteRecordsRemoved = psMinute.executeUpdate();
             hourRecordsRemoved = psHour.executeUpdate();

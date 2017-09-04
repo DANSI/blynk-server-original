@@ -14,9 +14,12 @@ import java.util.zip.DeflaterOutputStream;
  * Created by Dmitriy Dumanskiy.
  * Created on 07.09.15.
  */
-public class ByteUtils {
+public final class ByteUtils {
 
     public static final int REPORTING_RECORD_SIZE_BYTES = 16;
+
+    private ByteUtils() {
+    }
 
     public static byte[] compress(String value) throws IOException {
         byte[] stringData = value.getBytes(CharsetUtil.UTF_8);

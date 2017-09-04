@@ -15,7 +15,8 @@ import java.sql.PreparedStatement;
  */
 public class PurchaseDBDao {
 
-    private static final String insertPurchase = "INSERT INTO purchase (email, reward, transactionId, price) values (?, ?, ?, ?)";
+    private static final String insertPurchase =
+            "INSERT INTO purchase (email, reward, transactionId, price) values (?, ?, ?, ?)";
 
     private static final Logger log = LogManager.getLogger(PurchaseDBDao.class);
     private final HikariDataSource ds;

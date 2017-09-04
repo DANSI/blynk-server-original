@@ -17,8 +17,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
-import static cc.blynk.utils.BlynkByteBufUtil.*;
-import static cc.blynk.utils.JsonParser.*;
+import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.noData;
+import static cc.blynk.utils.BlynkByteBufUtil.serverError;
+import static cc.blynk.utils.JsonParser.gzipDash;
+import static cc.blynk.utils.JsonParser.gzipDashRestrictive;
+import static cc.blynk.utils.JsonParser.gzipProfile;
 
 /**
  * The Blynk Project.

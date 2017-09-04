@@ -1,6 +1,11 @@
 package cc.blynk.server.core.model.widgets.outputs.graph;
 
-import cc.blynk.server.core.dao.functions.*;
+import cc.blynk.server.core.dao.functions.AverageFunction;
+import cc.blynk.server.core.dao.functions.Function;
+import cc.blynk.server.core.dao.functions.MaxFunction;
+import cc.blynk.server.core.dao.functions.MedianFunction;
+import cc.blynk.server.core.dao.functions.MinFunction;
+import cc.blynk.server.core.dao.functions.SumFunction;
 
 /**
  * The Blynk Project.

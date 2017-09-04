@@ -13,7 +13,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
-import static cc.blynk.utils.BlynkByteBufUtil.*;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.notificationError;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
  * Sends tweets from hardware.
@@ -44,8 +46,8 @@ public class SmsLogic extends NotificationBase {
         DashBoard dash = state.dash;
         SMS smsWidget = dash.getWidgetByType(SMS.class);
 
-        if (smsWidget == null || !dash.isActive ||
-                smsWidget.to == null || smsWidget.to.isEmpty()) {
+        if (smsWidget == null || !dash.isActive
+                || smsWidget.to == null || smsWidget.to.isEmpty()) {
             log.debug("User has no access phone number provided.");
             ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_NOT_AUTHORIZED), ctx.voidPromise());
             return;

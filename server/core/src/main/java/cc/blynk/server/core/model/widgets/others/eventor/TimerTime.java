@@ -52,14 +52,24 @@ public class TimerTime {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TimerTime)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TimerTime)) {
+            return false;
+        }
 
         TimerTime timerTime = (TimerTime) o;
 
-        if (id != timerTime.id) return false;
-        if (time != timerTime.time) return false;
-        if (!Arrays.equals(days, timerTime.days)) return false;
+        if (id != timerTime.id) {
+            return false;
+        }
+        if (time != timerTime.time) {
+            return false;
+        }
+        if (!Arrays.equals(days, timerTime.days)) {
+            return false;
+        }
         return !(tzName != null ? !tzName.equals(timerTime.tzName) : timerTime.tzName != null);
 
     }

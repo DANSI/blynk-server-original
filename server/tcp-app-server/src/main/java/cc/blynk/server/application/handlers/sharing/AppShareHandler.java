@@ -17,7 +17,15 @@ import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.PING;
 
 /**
  * The Blynk Project.
@@ -40,7 +48,8 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.hardwareApp = new HardwareAppShareLogic(holder.sessionDao);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.enhancedGraphDataLogic = new GetEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
-        this.deleteEnhancedGraphDataLogic = new DeleteEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
+        this.deleteEnhancedGraphDataLogic =
+                new DeleteEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.loadProfileGzippedLogic = new LoadProfileGzippedLogic(holder);
         this.state = state;
         this.stats = holder.stats;

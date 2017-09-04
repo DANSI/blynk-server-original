@@ -7,7 +7,12 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.stats.model.Stat;
-import cc.blynk.server.db.dao.*;
+import cc.blynk.server.db.dao.CloneProjectDBDao;
+import cc.blynk.server.db.dao.FlashedTokensDBDao;
+import cc.blynk.server.db.dao.PurchaseDBDao;
+import cc.blynk.server.db.dao.RedeemDBDao;
+import cc.blynk.server.db.dao.ReportingDBDao;
+import cc.blynk.server.db.dao.UserDBDao;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.db.model.Purchase;
 import cc.blynk.server.db.model.Redeem;
@@ -107,7 +112,8 @@ public class DBManager implements Closeable {
         try {
             int dbVersion = userDBDao.getDBVersion();
             if (dbVersion < 90500) {
-                log.error("Current Postgres version is lower than minimum required 9.5.0 version. PLEASE UPDATE YOUR DB.");
+                log.error("Current Postgres version is lower than minimum required 9.5.0 version. "
+                        + "PLEASE UPDATE YOUR DB.");
             }
         } catch (Exception e) {
             log.error("Error getting DB version.", e.getMessage());

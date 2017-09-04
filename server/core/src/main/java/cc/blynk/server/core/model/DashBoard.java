@@ -5,7 +5,11 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
-import cc.blynk.server.core.model.widgets.*;
+import cc.blynk.server.core.model.widgets.AppSyncWidget;
+import cc.blynk.server.core.model.widgets.MultiPinWidget;
+import cc.blynk.server.core.model.widgets.OnePinWidget;
+import cc.blynk.server.core.model.widgets.Target;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
@@ -19,10 +23,16 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
-import static cc.blynk.utils.ArrayUtil.*;
+import static cc.blynk.utils.ArrayUtil.EMPTY_DEVICES;
+import static cc.blynk.utils.ArrayUtil.EMPTY_TAGS;
+import static cc.blynk.utils.ArrayUtil.EMPTY_WIDGETS;
 
 /**
  * User: ddumanskiy
@@ -296,7 +306,8 @@ public class DashBoard {
             if (multiPinWidget.dataStreams != null) {
                 for (DataStream dataStream : multiPinWidget.dataStreams) {
                     if (dataStream != null && dataStream.pinType != null) {
-                        pinsStorage.remove(new PinStorageKey(multiPinWidget.deviceId, dataStream.pinType, dataStream.pin));
+                        pinsStorage.remove(new PinStorageKey(multiPinWidget.deviceId,
+                                dataStream.pinType, dataStream.pin));
                     }
                 }
             }
@@ -407,14 +418,24 @@ public class DashBoard {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         DashBoard dashBoard = (DashBoard) o;
 
-        if (id != dashBoard.id) return false;
-        if (name != null ? !name.equals(dashBoard.name) : dashBoard.name != null) return false;
-        if (!Arrays.equals(widgets, dashBoard.widgets)) return false;
+        if (id != dashBoard.id) {
+            return false;
+        }
+        if (name != null ? !name.equals(dashBoard.name) : dashBoard.name != null) {
+            return false;
+        }
+        if (!Arrays.equals(widgets, dashBoard.widgets)) {
+            return false;
+        }
 
         return true;
     }

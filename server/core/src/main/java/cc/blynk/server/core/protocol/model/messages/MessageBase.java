@@ -33,21 +33,31 @@ public abstract class MessageBase {
 
     @Override
     public String toString() {
-        return "id=" + id +
-                ", command=" + Command.getNameByValue(command) +
-                ", length=" + length;
+        return "id=" + id
+                + ", command=" + Command.getNameByValue(command)
+                + ", length=" + length;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         MessageBase that = (MessageBase) o;
 
-        if (command != that.command) return false;
-        if (id != that.id) return false;
-        if (length != that.length) return false;
+        if (command != that.command) {
+            return false;
+        }
+        if (id != that.id) {
+            return false;
+        }
+        if (length != that.length) {
+            return false;
+        }
 
         return true;
     }

@@ -19,16 +19,31 @@ import cc.blynk.core.http.Response;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.*;
-import io.netty.handler.codec.http.multipart.*;
+import io.netty.handler.codec.http.HttpContent;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpObject;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.handler.codec.http.multipart.DefaultHttpDataFactory;
+import io.netty.handler.codec.http.multipart.DiskFileUpload;
+import io.netty.handler.codec.http.multipart.HttpDataFactory;
+import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.EndOfDataDecoderException;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.ErrorDataDecoderException;
+import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
-import static cc.blynk.core.http.Response.*;
+import static cc.blynk.core.http.Response.badRequest;
+import static cc.blynk.core.http.Response.ok;
+import static cc.blynk.core.http.Response.serverError;
+
 
 public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> implements DefaultExceptionHandler {
 
@@ -118,7 +133,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
         return ok(path);
     }
 
-    private String finishUpload() throws Exception{
+    private String finishUpload() throws Exception {
         String pathTo = null;
         try {
             while (decoder.hasNext()) {
@@ -130,7 +145,8 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
                         String uploadedFilename = diskFileUpload.getFilename();
                         String extension = "";
                         if (uploadedFilename.contains(".")) {
-                            extension = uploadedFilename.substring(uploadedFilename.lastIndexOf("."), uploadedFilename.length());
+                            extension = uploadedFilename.substring(uploadedFilename.lastIndexOf("."),
+                                    uploadedFilename.length());
                         }
                         String finalName = tmpFile.getFileName().toString() + extension;
 
@@ -140,7 +156,8 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
                             Files.createDirectories(staticPath);
                         }
 
-                        Files.move(tmpFile, Paths.get(staticFolderPath, uploadFolder, finalName), StandardCopyOption.REPLACE_EXISTING);
+                        Files.move(tmpFile, Paths.get(staticFolderPath, uploadFolder, finalName),
+                                StandardCopyOption.REPLACE_EXISTING);
                         pathTo =  uploadFolder + finalName;
                     }
                     data.release();

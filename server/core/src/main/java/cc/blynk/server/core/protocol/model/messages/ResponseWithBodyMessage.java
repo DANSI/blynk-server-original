@@ -24,10 +24,9 @@ public class ResponseWithBodyMessage extends MessageBase {
 
     @Override
     public String toString() {
-        return "ResponseWithBodyMessage{id=" + id +
-                ", command=" + Command.getNameByValue(command) +
-                ", responseCode=" + Response.getNameByValue(length) +
-                ", dashId=" + dashId +
-                "}";
+        return "ResponseWithBodyMessage{id=" + id
+                + ", command=" + Command.getNameByValue(command)
+                + ", responseCode=" + Response.getNameByValue(length)
+                + ", dashId=" + dashId + "}";
     }
 }

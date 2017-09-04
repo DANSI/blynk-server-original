@@ -12,7 +12,8 @@ import org.apache.logging.log4j.Logger;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class HardwareNotLoggedHandler extends SimpleChannelInboundHandler<MessageBase> implements DefaultExceptionHandler {
+public class HardwareNotLoggedHandler extends SimpleChannelInboundHandler<MessageBase>
+        implements DefaultExceptionHandler {
 
     private static final Logger log = LogManager.getLogger(Logger.class);
     private long lastLoggedTs;

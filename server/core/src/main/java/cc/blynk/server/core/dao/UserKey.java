@@ -31,12 +31,18 @@ public final class UserKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UserKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof UserKey)) {
+            return false;
+        }
 
         UserKey userKey = (UserKey) o;
 
-        if (email != null ? !email.equals(userKey.email) : userKey.email != null) return false;
+        if (email != null ? !email.equals(userKey.email) : userKey.email != null) {
+            return false;
+        }
         return appName != null ? appName.equals(userKey.appName) : userKey.appName == null;
     }
 
@@ -49,9 +55,9 @@ public final class UserKey {
 
     @Override
     public String toString() {
-        return "UserKey{" +
-                "email='" + email + '\'' +
-                ", appName='" + appName + '\'' +
-                '}';
+        return "UserKey{"
+                + "email='" + email + '\''
+                + ", appName='" + appName + '\''
+                + '}';
     }
 }

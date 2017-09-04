@@ -3,7 +3,11 @@ package cc.blynk.server.launcher;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
-import cc.blynk.server.workers.*;
+import cc.blynk.server.workers.CertificateRenewalWorker;
+import cc.blynk.server.workers.ProfileSaverWorker;
+import cc.blynk.server.workers.ReportingWorker;
+import cc.blynk.server.workers.ShutdownHookWorker;
+import cc.blynk.server.workers.StatsWorker;
 import cc.blynk.utils.ReportingUtil;
 
 import java.util.concurrent.Executors;
@@ -31,10 +35,13 @@ class JobLauncher {
         );
 
         //to start at the beggining of an minute
-        startDelay = AverageAggregatorProcessor.MINUTE - (System.currentTimeMillis() % AverageAggregatorProcessor.MINUTE);
-        scheduler.scheduleAtFixedRate(reportingWorker, startDelay, AverageAggregatorProcessor.MINUTE, TimeUnit.MILLISECONDS);
+        startDelay = AverageAggregatorProcessor.MINUTE
+                - (System.currentTimeMillis() % AverageAggregatorProcessor.MINUTE);
+        scheduler.scheduleAtFixedRate(reportingWorker, startDelay,
+                AverageAggregatorProcessor.MINUTE, TimeUnit.MILLISECONDS);
 
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
+        ProfileSaverWorker profileSaverWorker =
+                new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
 
         //running 1 sec later after reporting
         scheduler.scheduleAtFixedRate(profileSaverWorker, startDelay + 1000,

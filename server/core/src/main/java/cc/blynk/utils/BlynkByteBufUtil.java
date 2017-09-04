@@ -5,7 +5,17 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufUtil;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
+import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_ERROR;
+import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
+import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
+import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
+import static cc.blynk.server.core.protocol.enums.Response.OK;
+import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
+import static cc.blynk.server.core.protocol.enums.Response.USER_ALREADY_REGISTERED;
 import static cc.blynk.server.core.protocol.model.messages.MessageBase.HEADER_LENGTH;
 
 /**
@@ -16,9 +26,12 @@ import static cc.blynk.server.core.protocol.model.messages.MessageBase.HEADER_LE
  * Created by Dmitriy Dumanskiy.
  * Created on 10.03.16.
  */
-public class BlynkByteBufUtil {
+public final class BlynkByteBufUtil {
 
     public static final ByteBufAllocator ALLOCATOR = ByteBufAllocator.DEFAULT;
+
+    private BlynkByteBufUtil() {
+    }
 
     public static ByteBuf notificationError(final int msgId) {
         return makeResponse(msgId, NOTIFICATION_ERROR);

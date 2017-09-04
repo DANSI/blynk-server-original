@@ -9,7 +9,10 @@ import java.util.TimeZone;
  * Created by Dmitriy Dumanskiy.
  * Created on 04.09.16.
  */
-public class DateTimeUtils {
+public final class DateTimeUtils {
+
+    private DateTimeUtils() {
+    }
 
     public static final ZoneId UTC = ZoneId.of("UTC");
     public static final Calendar UTC_CALENDAR = Calendar.getInstance(TimeZone.getTimeZone("UTC"));

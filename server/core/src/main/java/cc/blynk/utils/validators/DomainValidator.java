@@ -112,7 +112,7 @@ public class DomainValidator {
      */
     public static synchronized DomainValidator getInstance(boolean allowLocal) {
         inUse = true;
-        if(allowLocal) {
+        if (allowLocal) {
             return DOMAIN_VALIDATOR_WITH_LOCAL;
         }
         return DOMAIN_VALIDATOR;
@@ -158,7 +158,7 @@ public class DomainValidator {
      */
     public boolean isValidTld(String tld) {
         tld = unicodeToASCII(tld);
-        if(allowLocal && isValidLocalTld(tld)) {
+        if (allowLocal && isValidLocalTld(tld)) {
             return true;
         }
         return isValidInfrastructureTld(tld)
@@ -429,7 +429,7 @@ public class DomainValidator {
         "casino", // casino Binky Sky, LLC
         "cat", // cat Fundacio puntCAT
         "catering", // catering New Falls. LLC
-        "catholic", // catholic Pontificium Consilium de Comunicationibus Socialibus (PCCS) (Pontifical Council for Social Communication)
+        "catholic", // catholic Pontificium Consilium de Comunicationibus Socialibus (PCCS)
         "cba", // cba COMMONWEALTH BANK OF AUSTRALIA
         "cbn", // cbn The Christian Broadcasting Network, Inc.
         "cbre", // cbre CBRE, Inc.
@@ -901,7 +901,7 @@ public class DomainValidator {
         "med", // med Medistry LLC
         "media", // media Grand Glen, LLC
         "meet", // meet Afilias Limited
-        "melbourne", // melbourne The Crown in right of the State of Victoria, represented by its Department of State Development, Business and Innovation
+        "melbourne", // melbourne The Crown in right of the State of Victoria
         "meme", // meme Charleston Road Registry Inc.
         "memorial", // memorial Dog Beach, LLC
         "men", // men Exclusive Registry Limited
@@ -983,7 +983,7 @@ public class DomainValidator {
         "nra", // nra NRA Holdings Company, INC.
         "nrw", // nrw Minds + Machines GmbH
         "ntt", // ntt NIPPON TELEGRAPH AND TELEPHONE CORPORATION
-        "nyc", // nyc The City of New York by and through the New York City Department of Information Technology &amp; Telecommunications
+        "nyc", // nyc The City of New York by
         "obi", // obi OBI Group Holding SE &amp; Co. KGaA
         "observer", // observer Top Level Spectrum, Inc.
         "off", // off Johnson Shareholdings, Inc.
@@ -1239,7 +1239,7 @@ public class DomainValidator {
         "taobao", // taobao Alibaba Group Holding Limited
         "target", // target Target Domain Holdings, LLC
         "tatamotors", // tatamotors Tata Motors Ltd
-        "tatar", // tatar Limited Liability Company &quot;Coordination Center of Regional Domain of Tatarstan Republic&quot;
+        "tatar", // tatar Limited Liability Company &quot;
         "tattoo", // tattoo Uniregistry, Corp.
         "tax", // tax Storm Orchard, LLC
         "taxi", // taxi Pine Falls, LLC
@@ -1383,13 +1383,13 @@ public class DomainValidator {
         "xn--45q11c", // 八卦 Zodiac Scorpio Limited
         "xn--4gbrim", // موقع Suhub Electronic Establishment
         "xn--55qw42g", // 公益 China Organizational Name Administration Center
-        "xn--55qx5d", // 公司 Computer Network Information Center of Chinese Academy of Sciences （China Internet Network Information Center）
+        "xn--55qx5d", // 公司 Computer Network Information
         "xn--5su34j936bgsg", // 香格里拉 Shangri‐La International Hotel Management Limited
         "xn--5tzm5g", // 网站 Global Website TLD Asia Limited
         "xn--6frz82g", // 移动 Afilias Limited
         "xn--6qq986b3xl", // 我爱你 Tycoon Treasure Limited
-        "xn--80adxhks", // москва Foundation for Assistance for Internet Technologies and Infrastructure Development (FAITID)
-        "xn--80aqecdr1a", // католик Pontificium Consilium de Comunicationibus Socialibus (PCCS) (Pontifical Council for Social Communication)
+        "xn--80adxhks", // москва Foundation for Assistance
+        "xn--80aqecdr1a", // католик Pontificium Consilium
         "xn--80asehdb", // онлайн CORE Association
         "xn--80aswg", // сайт CORE Association
         "xn--8y0a063a", // 联通 China United Network Communications Corporation Limited
@@ -1423,7 +1423,7 @@ public class DomainValidator {
         "xn--hxt814e", // 网店 Zodiac Libra Limited
         "xn--i1b6b1a6a2e", // संगठन Public Interest Registry
         "xn--imr513n", // 餐厅 HU YI GLOBAL INFORMATION RESOURCES (HOLDING) COMPANY. HONGKONG LIMITED
-        "xn--io0a7i", // 网络 Computer Network Information Center of Chinese Academy of Sciences （China Internet Network Information Center）
+        "xn--io0a7i", // 网络 Computer Network Information Center of Chinese Academy of Sciences
         "xn--j1aef", // ком VeriSign Sarl
         "xn--jlq61u9w7b", // 诺基亚 Nokia Corporation
         "xn--jvr189m", // 食品 Amazon Registry Services, Inc.
@@ -1435,7 +1435,7 @@ public class DomainValidator {
         "xn--mgbab2bd", // بازار CORE Association
         "xn--mgbb9fbpob", // موبايلي GreenTech Consultancy Company W.L.L.
         "xn--mgbca7dzdo", // ابوظبي Abu Dhabi Systems and Information Centre
-        "xn--mgbi4ecexp", // كاثوليك Pontificium Consilium de Comunicationibus Socialibus (PCCS) (Pontifical Council for Social Communication)
+        "xn--mgbi4ecexp", // كاثوليك Pontificium Consilium de Comunicationibus Socialibus (PCCS)
         "xn--mgbt3dhd", // همراه Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
         "xn--mk1bu44c", // 닷컴 VeriSign Sarl
         "xn--mxtq1m", // 政府 Net-Chinese Co., Ltd.
@@ -1454,7 +1454,7 @@ public class DomainValidator {
         "xn--ses554g", // 网址 KNET Co., Ltd
         "xn--t60b56a", // 닷넷 VeriSign Sarl
         "xn--tckwe", // コム VeriSign Sarl
-        "xn--tiq49xqyj", // 天主教 Pontificium Consilium de Comunicationibus Socialibus (PCCS) (Pontifical Council for Social Communication)
+        "xn--tiq49xqyj", // 天主教 Pontificium Consilium
         "xn--unup4y", // 游戏 Spring Fields, LLC
         "xn--vermgensberater-ctb", // VERMöGENSBERATER Deutsche Vermögensberatung Aktiengesellschaft DVAG
         "xn--vermgensberatung-pwb", // VERMöGENSBERATUNG Deutsche Vermögensberatung Aktiengesellschaft DVAG
@@ -1798,7 +1798,7 @@ public class DomainValidator {
      * This field is used to detect whether the getInstance has been called.
      * After this, the method updateTLDOverride is not allowed to be called.
      * This field does not need to be volatile since it is only accessed from
-     * synchronized methods. 
+     * synchronized methods.
      */
     private static boolean inUse = false;
 
@@ -1822,7 +1822,7 @@ public class DomainValidator {
     /**
      * Converts potentially Unicode input to punycode.
      * If conversion fails, returns the original input.
-     * 
+     *
      * @param input the string to convert, not null
      * @return converted input, or original input if conversion fails
      */
@@ -1837,7 +1837,7 @@ public class DomainValidator {
                 return ascii;
             }
             final int length = input.length();
-            if (length == 0) {// check there is a last character
+            if (length == 0) { // check there is a last character
                 return input;
             }
             // RFC3490 3.1. 1)
@@ -1845,8 +1845,8 @@ public class DomainValidator {
             //            characters MUST be recognized as dots: U+002E (full stop), U+3002
             //            (ideographic full stop), U+FF0E (fullwidth full stop), U+FF61
             //            (halfwidth ideographic full stop).
-            char lastChar = input.charAt(length-1);// fetch original last char
-            switch(lastChar) {
+            char lastChar = input.charAt(length - 1); // fetch original last char
+            switch (lastChar) {
                 case '\u002E': // "." full stop
                 case '\u3002': // ideographic full stop
                 case '\uFF0E': // fullwidth full stop
@@ -1876,7 +1876,7 @@ public class DomainValidator {
         if (input == null) {
             return true;
         }
-        for(int i=0; i < input.length(); i++) {
+        for (int i = 0; i < input.length(); i++) {
             if (input.charAt(i) > 0x7F) { // CHECKSTYLE IGNORE MagicNumber
                 return false;
             }

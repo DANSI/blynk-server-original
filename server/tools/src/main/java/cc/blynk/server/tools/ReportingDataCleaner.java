@@ -67,7 +67,8 @@ public class ReportingDataCleaner {
                             ByteBuffer userReportingData = FileUtils.read(path, COUNT);
                             userReportingData.flip();
                             write(file, userReportingData);
-                            System.out.println("Successfully copied. Truncated : " + (fileSize - userReportingData.position()));
+                            System.out.println("Successfully copied. Truncated : "
+                                    + (fileSize - userReportingData.position()));
                             overrideCount++;
                         } catch (Exception e) {
                             System.out.println("Error reading file " + file.getAbsolutePath());

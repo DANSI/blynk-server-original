@@ -30,7 +30,7 @@ public class DeleteTagLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]) ;
+        int dashId = ParseUtil.parseInt(split[0]);
         int tagId = ParseUtil.parseInt(split[1]);
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);

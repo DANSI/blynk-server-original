@@ -22,10 +22,10 @@ public class EmailPojo {
 
     @Override
     public String toString() {
-        return "EmailPojo{" +
-                "to='" + to + '\'' +
-                ", title='" + title + '\'' +
-                ", subj='" + subj + '\'' +
-                '}';
+        return "EmailPojo{"
+                + "to='" + to + '\''
+                + ", title='" + title + '\''
+                + ", subj='" + subj + '\''
+                + '}';
     }
 }

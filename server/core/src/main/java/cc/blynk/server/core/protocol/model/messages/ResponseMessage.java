@@ -21,8 +21,8 @@ public class ResponseMessage extends MessageBase {
 
     @Override
     public String toString() {
-        return "ResponseMessage{id=" + id +
-                ", command=" + Command.getNameByValue(command) +
-                ", responseCode=" + Response.getNameByValue(length) + "}";
+        return "ResponseMessage{id=" + id
+                + ", command=" + Command.getNameByValue(command)
+                + ", responseCode=" + Response.getNameByValue(length) + "}";
     }
 }

@@ -49,7 +49,8 @@ public class ReportingDao implements Closeable {
     private final boolean ENABLE_RAW_DB_DATA_STORE;
 
     //for test only
-    public ReportingDao(String reportingFolder, AverageAggregatorProcessor averageAggregator, ServerProperties serverProperties) {
+    public ReportingDao(String reportingFolder, AverageAggregatorProcessor averageAggregator,
+                        ServerProperties serverProperties) {
         this.averageAggregator = averageAggregator;
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
@@ -58,7 +59,7 @@ public class ReportingDao implements Closeable {
         this.csvGenerator = new CSVGenerator(this);
     }
 
-    public ReportingDao(String reportingFolder , ServerProperties serverProperties) {
+    public ReportingDao(String reportingFolder, ServerProperties serverProperties) {
         this.averageAggregator = new AverageAggregatorProcessor(reportingFolder);
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
@@ -67,7 +68,8 @@ public class ReportingDao implements Closeable {
         this.csvGenerator = new CSVGenerator(this);
     }
 
-    public static String generateFilename(int dashId, int deviceId, char pinType, byte pin, GraphGranularityType type) {
+    public static String generateFilename(int dashId, int deviceId, char pinType, byte pin,
+                                          GraphGranularityType type) {
         switch (type) {
             case MINUTE :
                 return formatMinute(dashId, deviceId, pinType, pin);
@@ -121,7 +123,8 @@ public class ReportingDao implements Closeable {
         return toByteBuf(data);
     }
 
-    private void addBufferToResult(TreeMap<Long, Function> data, AggregationFunctionType functionType, ByteBuffer localByteBuf) {
+    private void addBufferToResult(TreeMap<Long, Function> data, AggregationFunctionType functionType,
+                                   ByteBuffer localByteBuf) {
         if (localByteBuf != null) {
             localByteBuf.flip();
             while (localByteBuf.hasRemaining()) {
@@ -164,15 +167,19 @@ public class ReportingDao implements Closeable {
         }
     }
 
-    ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId, PinType pinType, byte pin, int count, GraphGranularityType type) {
+    ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId, PinType pinType,
+                                     byte pin, int count, GraphGranularityType type) {
         return getByteBufferFromDisk(user, dashId, deviceId, pinType, pin, count, type, 0);
     }
 
     public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {
         log.debug("Removing {}{} pin data for dashId {}, deviceId {}.", pinType.pintTypeChar, pin, dashId, deviceId);
-        Path userDataMinuteFile = Paths.get(dataFolder, FileUtils.getUserReportingDir(user), formatMinute(dashId, deviceId, pinType.pintTypeChar, pin));
-        Path userDataHourlyFile = Paths.get(dataFolder, FileUtils.getUserReportingDir(user), formatHour(dashId, deviceId, pinType.pintTypeChar, pin));
-        Path userDataDailyFile = Paths.get(dataFolder, FileUtils.getUserReportingDir(user), formatDaily(dashId, deviceId, pinType.pintTypeChar, pin));
+        Path userDataMinuteFile = Paths.get(dataFolder,
+                FileUtils.getUserReportingDir(user), formatMinute(dashId, deviceId, pinType.pintTypeChar, pin));
+        Path userDataHourlyFile = Paths.get(dataFolder,
+                FileUtils.getUserReportingDir(user), formatHour(dashId, deviceId, pinType.pintTypeChar, pin));
+        Path userDataDailyFile = Paths.get(dataFolder,
+                FileUtils.getUserReportingDir(user), formatDaily(dashId, deviceId, pinType.pintTypeChar, pin));
         FileUtils.deleteQuietly(userDataMinuteFile);
         FileUtils.deleteQuietly(userDataHourlyFile);
         FileUtils.deleteQuietly(userDataDailyFile);
@@ -208,9 +215,12 @@ public class ReportingDao implements Closeable {
         }
     }
 
-    private void process(User user, int dashId, int deviceId, byte pin, PinType pinType, String value, long ts, double doubleVal) {
+    private void process(User user, int dashId, int deviceId, byte pin, PinType pinType,
+                         String value, long ts, double doubleVal) {
         if (ENABLE_RAW_DB_DATA_STORE) {
-            rawDataProcessor.collect(new BaseReportingKey(user.email, user.appName, dashId, deviceId, pinType, pin), ts, value, doubleVal);
+            rawDataProcessor.collect(
+                    new BaseReportingKey(user.email, user.appName, dashId, deviceId, pinType, pin),
+                    ts, value, doubleVal);
         }
 
         //not a number, nothing to aggregate
@@ -229,10 +239,10 @@ public class ReportingDao implements Closeable {
         for (int i = 0; i < requestedPins.length; i++) {
             GraphPinRequest graphPinRequest = requestedPins[i];
             if (graphPinRequest.isValid()) {
-                ByteBuffer byteBuffer = graphPinRequest.isLiveData() ?
+                ByteBuffer byteBuffer = graphPinRequest.isLiveData()
                         //live graph data is not on disk but in memory
-                        rawDataCacheForGraphProcessor.getLiveGraphData(user, graphPinRequest) :
-                        getByteBufferFromDisk(user, graphPinRequest);
+                        ? rawDataCacheForGraphProcessor.getLiveGraphData(user, graphPinRequest)
+                        : getByteBufferFromDisk(user, graphPinRequest);
                 values[i] = byteBuffer == null ? EMPTY_BYTES : byteBuffer.array();
             } else {
                 values[i] = EMPTY_BYTES;

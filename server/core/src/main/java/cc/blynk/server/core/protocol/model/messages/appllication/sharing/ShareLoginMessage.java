@@ -2,7 +2,7 @@ package cc.blynk.server.core.protocol.model.messages.appllication.sharing;
 
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
 
 /**
  * The Blynk Project.

@@ -19,12 +19,14 @@ import io.netty.handler.codec.http.FullHttpResponse;
  */
 public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
 
-    public TokenBaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats, String rootPath) {
+    public TokenBaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao,
+                                GlobalStats globalStats, String rootPath) {
         super(tokenManager, sessionDao, globalStats, rootPath);
     }
 
     @Override
-    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, HandlerWrapper handler, Object[] params) {
+    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder,
+                           HandlerWrapper handler, Object[] params) {
         String tokenPathParam = uriDecoder.pathData.get("token");
         if (tokenPathParam == null) {
             ctx.writeAndFlush(Response.badRequest("No token provided."));
@@ -42,7 +44,8 @@ public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
         Session session = sessionDao.getOrCreateSessionByUser(new UserKey(tokenValue.user), ctx.channel().eventLoop());
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering http channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), handler.invoke(params)));
+            reRegisterChannel(ctx, session, channelFuture -> completeLogin(
+                    channelFuture.channel(), handler.invoke(params)));
         } else {
             completeLogin(ctx.channel(), handler.invoke(params));
         }

@@ -5,8 +5,7 @@ package cc.blynk.cli;
  *
  * @version $Id: ParseException.java 1443102 2013-02-06 18:12:16Z tn $
  */
-public class ParseException extends Exception
-{
+public class ParseException extends Exception {
 
     /**
      * Construct a new <code>ParseException</code>
@@ -14,8 +13,7 @@ public class ParseException extends Exception
      *
      * @param message the detail message
      */
-    public ParseException(String message)
-    {
+    public ParseException(String message) {
         super(message);
     }
 }

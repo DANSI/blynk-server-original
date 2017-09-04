@@ -1,7 +1,11 @@
 package cc.blynk.server;
 
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.*;
+import cc.blynk.server.core.dao.FileManager;
+import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -122,19 +126,22 @@ public class Holder implements Closeable {
 
         this.otaManager = new OTAManager(props);
 
-        this.eventorProcessor = new EventorProcessor(gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
+        this.eventorProcessor = new EventorProcessor(
+                gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
         this.limits = new Limits(props);
 
         this.csvDownloadUrl = FileUtils.csvDownloadUrl(host, props.getProperty("http.port"));
 
-        String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getProperty("mail.smtp.username"));
+        String contactEmail = serverProperties.getProperty("contact.email",
+                mailProperties.getProperty("mail.smtp.username"));
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
     }
 
     //for tests only
-    public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper, MailWrapper mailWrapper, GCMWrapper gcmWrapper, SMSWrapper smsWrapper, String dbFileName) {
+    public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper,
+                  MailWrapper mailWrapper, GCMWrapper gcmWrapper, SMSWrapper smsWrapper, String dbFileName) {
         disableNettyLeakDetector();
         this.props = serverProperties;
 
@@ -165,7 +172,8 @@ public class Holder implements Closeable {
 
         this.otaManager = new OTAManager(props);
 
-        this.eventorProcessor = new EventorProcessor(gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
+        this.eventorProcessor = new EventorProcessor(
+                gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
                 .setUserAgent(null)
                 .setEventLoopGroup(transportTypeHolder.workerGroup)

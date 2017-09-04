@@ -33,16 +33,30 @@ public class TimerKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TimerKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TimerKey)) {
+            return false;
+        }
 
         TimerKey timerKey = (TimerKey) o;
 
-        if (dashId != timerKey.dashId) return false;
-        if (deviceId != timerKey.deviceId) return false;
-        if (widgetId != timerKey.widgetId) return false;
-        if (additionalId != timerKey.additionalId) return false;
-        if (userKey != null ? !userKey.equals(timerKey.userKey) : timerKey.userKey != null) return false;
+        if (dashId != timerKey.dashId) {
+            return false;
+        }
+        if (deviceId != timerKey.deviceId) {
+            return false;
+        }
+        if (widgetId != timerKey.widgetId) {
+            return false;
+        }
+        if (additionalId != timerKey.additionalId) {
+            return false;
+        }
+        if (userKey != null ? !userKey.equals(timerKey.userKey) : timerKey.userKey != null) {
+            return false;
+        }
         return !(time != null ? !time.equals(timerKey.time) : timerKey.time != null);
     }
 

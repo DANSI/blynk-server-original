@@ -14,7 +14,9 @@ import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.utils.StringUtils.*;
+import static cc.blynk.utils.StringUtils.split2;
+import static cc.blynk.utils.StringUtils.split2Device;
+import static cc.blynk.utils.StringUtils.split3;
 
 /**
  * Handler responsible for processing messages that are forwarded

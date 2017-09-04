@@ -43,13 +43,21 @@ public class PinStorageKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PinStorageKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PinStorageKey)) {
+            return false;
+        }
 
         PinStorageKey that = (PinStorageKey) o;
 
-        if (deviceId != that.deviceId) return false;
-        if (pin != that.pin) return false;
+        if (deviceId != that.deviceId) {
+            return false;
+        }
+        if (pin != that.pin) {
+            return false;
+        }
         return pinTypeChar == that.pinTypeChar;
     }
 

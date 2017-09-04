@@ -17,16 +17,21 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.EnumSet;
 
-import static java.nio.file.StandardOpenOption.*;
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.READ;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 04.01.16.
  */
-public class FileUtils {
+public final class FileUtils {
 
     private final static Logger log = LogManager.getLogger(FileUtils.class);
+
+    private FileUtils() {
+    }
 
     //reporting entry is long value (8 bytes) + timestamp (8 bytes)
     public static final int SIZE_OF_REPORT_ENTRY = 16;
@@ -44,7 +49,7 @@ public class FileUtils {
             Path targetFile = Paths.get(target.toString(), source.getFileName().toString());
             Files.move(source, targetFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            log.debug("Failed to move file. {}" , e.getMessage());
+            log.debug("Failed to move file. {}", e.getMessage());
             return false;
         }
         return true;
@@ -55,8 +60,8 @@ public class FileUtils {
      * Reporting entry is value (double) and timestamp (long)
      *
      * @param reportingPath - path to user specific reporting file
-     * @param value - sensor data
-     * @param ts - time when entry was created
+     * @param value         - sensor data
+     * @param ts            - time when entry was created
      * @throws IOException
      */
     public static void write(Path reportingPath, double value, long ts) throws IOException {
@@ -85,9 +90,8 @@ public class FileUtils {
      * Read bunch of last records from file.
      *
      * @param userDataFile - file to read
-     * @param count - number of records to read
-     * @param skip - number of entries to skip from the end
-     *
+     * @param count        - number of records to read
+     * @param skip         - number of entries to skip from the end
      * @return - byte buffer with data
      * @throws IOException
      */
@@ -105,7 +109,7 @@ public class FileUtils {
 
         try (SeekableByteChannel channel = Files.newByteChannel(userDataFile, EnumSet.of(READ))) {
             channel.position(startReadIndex)
-                   .read(buf);
+                    .read(buf);
             return buf;
         }
     }
@@ -126,7 +130,7 @@ public class FileUtils {
     }
 
     public static File getLatestFile(File[] files) {
-        if (files == null || files.length ==0) {
+        if (files == null || files.length == 0) {
             return null;
         }
         File lastModifiedFile = files[0];
@@ -167,7 +171,7 @@ public class FileUtils {
         throw new RuntimeException("Unable to read build number fro firmware.");
     }
 
-    private static final String[] possibleLocalPaths =  new String[] {
+    private static final String[] possibleLocalPaths = new String[]{
             "./server/http-dashboard/target/classes",
             "./server/http-api/target/classes",
             "./server/http-admin/target/classes",

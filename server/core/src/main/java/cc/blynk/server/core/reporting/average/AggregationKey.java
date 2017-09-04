@@ -62,18 +62,28 @@ public final class AggregationKey implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AggregationKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AggregationKey)) {
+            return false;
+        }
 
         AggregationKey that = (AggregationKey) o;
 
-        if (ts != that.ts) return false;
-        return baseReportingKey != null ? baseReportingKey.equals(that.baseReportingKey) : that.baseReportingKey == null;
+        if (ts != that.ts) {
+            return false;
+        }
+        return baseReportingKey != null
+                ? baseReportingKey.equals(that.baseReportingKey)
+                : that.baseReportingKey == null;
     }
 
     @Override
     public int hashCode() {
-        int result = baseReportingKey != null ? baseReportingKey.hashCode() : 0;
+        int result = baseReportingKey != null
+                ? baseReportingKey.hashCode()
+                : 0;
         result = 31 * result + (int) (ts ^ (ts >>> 32));
         return result;
     }

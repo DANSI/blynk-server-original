@@ -1,9 +1,18 @@
 package cc.blynk.server.api.http.handlers;
 
-import cc.blynk.core.http.handlers.*;
+import cc.blynk.core.http.handlers.CookieBasedUrlReWriterHandler;
+import cc.blynk.core.http.handlers.NoMatchHandler;
+import cc.blynk.core.http.handlers.StaticFile;
+import cc.blynk.core.http.handlers.StaticFileHandler;
+import cc.blynk.core.http.handlers.UploadHandler;
+import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.handlers.IpFilterHandler;
-import cc.blynk.server.admin.http.logic.*;
+import cc.blynk.server.admin.http.logic.ConfigsLogic;
+import cc.blynk.server.admin.http.logic.HardwareStatsLogic;
+import cc.blynk.server.admin.http.logic.OTALogic;
+import cc.blynk.server.admin.http.logic.StatsLogic;
+import cc.blynk.server.admin.http.logic.UsersLogic;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
@@ -38,7 +47,8 @@ import static cc.blynk.core.http.Response.redirect;
  * Created on 27.02.17.
  */
 @ChannelHandler.Sharable
-public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
+public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdapter
+        implements DefaultExceptionHandler {
 
     private final static String BLYNK_LANDING = "https://www.blynk.cc";
 
@@ -70,7 +80,8 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.genericLoginHandler = new WebSocketsGenericLoginHandler(holder, port);
         this.rootPath = rootPath;
         this.props = holder.props;
-        this.ipFilterHandler = new IpFilterHandler(holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips"));
+        this.ipFilterHandler = new IpFilterHandler(
+                holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips"));
 
         //http API handlers
         this.resetPasswordLogic = new ResetPasswordLogic(holder);
@@ -85,7 +96,8 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         this.hardwareStatsLogic = new HardwareStatsLogic(holder, rootPath);
         this.adminAuthHandler = new AdminAuthHandler(holder, rootPath);
         this.authCookieHandler = new AuthCookieHandler(holder.sessionDao);
-        this.cookieBasedUrlReWriterHandler = new CookieBasedUrlReWriterHandler(rootPath, "/static/admin.html", "/static/login.html");
+        this.cookieBasedUrlReWriterHandler =
+                new CookieBasedUrlReWriterHandler(rootPath, "/static/admin.html", "/static/login.html");
     }
 
     @Override

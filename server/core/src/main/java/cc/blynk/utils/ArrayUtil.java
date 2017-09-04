@@ -14,7 +14,7 @@ import java.lang.reflect.Array;
  * Created by Dmitriy Dumanskiy.
  * Created on 04.01.16.
  */
-public class ArrayUtil {
+public final class ArrayUtil {
 
     public static final int[] EMPTY_INTS = {};
     public static final DashBoard[] EMPTY_DASHBOARDS = {};
@@ -24,6 +24,9 @@ public class ArrayUtil {
     public static final byte[] EMPTY_BYTES = {};
     public static final App[] EMPTY_APPS = {};
     public static final GraphDataStream[] EMPTY_GRAPH_DATA_STREAMS = {};
+
+    private ArrayUtil() {
+    }
 
     public static <T> T[] add(T[] array, T element, Class<T> type) {
         T[] newArray = copyArrayGrow1(array, type);

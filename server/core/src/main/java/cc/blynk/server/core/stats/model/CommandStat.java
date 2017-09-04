@@ -1,6 +1,55 @@
 package cc.blynk.server.core.stats.model;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
+import static cc.blynk.server.core.protocol.enums.Command.ADD_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
+import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
+import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
+import static cc.blynk.server.core.protocol.enums.Command.EVENTOR;
+import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SHARED_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
+import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
+import static cc.blynk.server.core.protocol.enums.Command.PING;
+import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
+import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
+import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
+import static cc.blynk.server.core.protocol.enums.Command.RESPONSE;
+import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
+import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
+import static cc.blynk.server.core.protocol.enums.Command.SHARING;
+import static cc.blynk.server.core.protocol.enums.Command.SMS;
+import static cc.blynk.server.core.protocol.enums.Command.TWEET;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_HOOKS;
+import static cc.blynk.server.core.protocol.enums.Command.WEB_SOCKETS;
 
 /**
  * The Blynk Project.
@@ -71,7 +120,7 @@ public class CommandStat {
     public int appTotal;
     public int mqttTotal;
 
-    public void assign(short field, int val) {
+    void assign(short field, int val) {
         switch (field) {
             case RESPONSE :
                 this.response = val;

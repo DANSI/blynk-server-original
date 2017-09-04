@@ -9,6 +9,9 @@ import cc.blynk.server.core.protocol.exceptions.ParseException;
  */
 public final class ParseUtil {
 
+    private ParseUtil() {
+    }
+
     public static int parseInt(String intString) {
         try {
             return Integer.parseInt(intString);

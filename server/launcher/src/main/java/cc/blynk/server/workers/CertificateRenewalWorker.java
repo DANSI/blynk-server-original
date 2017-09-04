@@ -33,10 +33,12 @@ public class CertificateRenewalWorker implements Runnable {
         try {
             if (AcmeClient.DOMAIN_CHAIN_FILE.exists()) {
                 //stream closed inside utilities method
-                X509Certificate cert = CertificateUtils.readX509Certificate(new FileInputStream(AcmeClient.DOMAIN_CHAIN_FILE));
+                X509Certificate cert = CertificateUtils.readX509Certificate(
+                        new FileInputStream(AcmeClient.DOMAIN_CHAIN_FILE));
 
                 Date expirationDate = cert.getNotAfter();
-                log.info("Certificate expiration date is {}. Days left : {}", expirationDate, getDateDiff(expirationDate));
+                log.info("Certificate expiration date is {}. Days left : {}",
+                        expirationDate, getDateDiff(expirationDate));
 
                 //certificate will expire in 1 week
                 Date oneWeekAheadDate = getNowDatePlusDays(renewBeforeDays);

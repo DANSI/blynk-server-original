@@ -29,7 +29,7 @@ public class SslContextHolder {
 
     public final ContentHolder contentHolder;
 
-    public SslContextHolder(ServerProperties props, String email) {
+    SslContextHolder(ServerProperties props, String email) {
         this.contentHolder = new ContentHolder();
 
         String certPath = props.getProperty("server.ssl.cert");
@@ -55,10 +55,12 @@ public class SslContextHolder {
             this.acmeClient = new AcmeClient(email, host, contentHolder);
         } else {
             log.info("Didn't find Let's Encrypt certificates.");
-            if (host == null || host.isEmpty() || email == null || email.isEmpty() ||
-                    email.equals("example@gmail.com") || email.startsWith("SMTP")) {
-                log.warn("You didn't specified 'server.host' or 'contact.email' properties in server.properties file. " +
-                        "Automatic certificate generation is turned off. Please specify above properties for automatic certificates retrieval.");
+            if (host == null || host.isEmpty() || email == null || email.isEmpty()
+                    || email.equals("example@gmail.com") || email.startsWith("SMTP")) {
+                log.warn("You didn't specified 'server.host' or 'contact.email' "
+                        + "properties in server.properties file. "
+                        + "Automatic certificate generation is turned off. "
+                        + "Please specify above properties for automatic certificates retrieval.");
                 this.acmeClient = null;
                 this.isNeedInitializeOnStart = false;
             } else {
@@ -75,7 +77,7 @@ public class SslContextHolder {
         this.sslCtx = SslUtil.initSslContext(certPath, keyPath, keyPass, sslProvider, true);
     }
 
-    public void regenerate() {
+    private void regenerate() {
         String certPath = AcmeClient.DOMAIN_CHAIN_FILE.getAbsolutePath();
         String keyPath = AcmeClient.DOMAIN_KEY_FILE.getAbsolutePath();
 
@@ -88,7 +90,8 @@ public class SslContextHolder {
             System.out.println("Generating own initial certificates...");
             try {
                 if (this.acmeClient.requestCertificate()) {
-                    System.out.println("Success! The certificate for your domain " + props.getProperty("server.host") + " has been generated!");
+                    System.out.println("Success! The certificate for your domain "
+                            + props.getProperty("server.host") + " has been generated!");
                     regenerate();
                 }
             } catch (Exception e) {

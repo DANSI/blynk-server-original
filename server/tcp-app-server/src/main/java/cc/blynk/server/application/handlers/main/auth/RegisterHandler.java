@@ -26,7 +26,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static cc.blynk.utils.BlynkByteBufUtil.*;
+import static cc.blynk.utils.BlynkByteBufUtil.alreadyRegistered;
+import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
  * Process register message.
@@ -41,7 +44,8 @@ import static cc.blynk.utils.BlynkByteBufUtil.*;
  * Created on 2/1/2015.
  */
 @ChannelHandler.Sharable
-public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage> implements DefaultExceptionHandler {
+public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage>
+        implements DefaultExceptionHandler {
 
     private final UserDao userDao;
     private final TokenManager tokenManager;
@@ -49,17 +53,18 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
     private final Set<String> allowedUsers;
 
     public RegisterHandler(Holder holder) {
-        this(holder.userDao, holder.tokenManager, holder.timerWorker, holder.props.getCommaSeparatedValueAsArray("allowed.users.list"));
+        this(holder.userDao, holder.tokenManager, holder.timerWorker,
+                holder.props.getCommaSeparatedValueAsArray("allowed.users.list"));
     }
 
     //for tests only
-    public RegisterHandler(UserDao userDao, TokenManager tokenManager, TimerWorker timerWorker, String[] allowedUsersArray) {
+    RegisterHandler(UserDao userDao, TokenManager tokenManager, TimerWorker timerWorker, String[] allowedUsersArray) {
         this.userDao = userDao;
         this.tokenManager = tokenManager;
         this.timerWorker = timerWorker;
 
-        if (allowedUsersArray != null && allowedUsersArray.length > 0 &&
-                allowedUsersArray[0] != null && !allowedUsersArray[0].isEmpty()) {
+        if (allowedUsersArray != null && allowedUsersArray.length > 0
+                && allowedUsersArray[0] != null && !allowedUsersArray[0].isEmpty()) {
             allowedUsers = new HashSet<>(Arrays.asList(allowedUsersArray));
             log.debug("Created allowed user list : {}", (Object[]) allowedUsersArray);
         } else {

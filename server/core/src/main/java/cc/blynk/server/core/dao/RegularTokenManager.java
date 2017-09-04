@@ -22,19 +22,21 @@ class RegularTokenManager {
     private final ConcurrentMap<String, TokenValue> cache;
 
     RegularTokenManager(Iterable<User> users) {
-        this.cache = new ConcurrentHashMap<String, TokenValue>() {{
-            for (User user : users) {
-                if (user.profile != null) {
-                    for (DashBoard dashBoard : user.profile.dashBoards) {
-                        for (Device device : dashBoard.devices) {
-                            if (device.token != null) {
-                                put(device.token, new TokenValue(user, dashBoard, device));
+        this.cache = new ConcurrentHashMap<String, TokenValue>() {
+            {
+                for (User user : users) {
+                    if (user.profile != null) {
+                        for (DashBoard dashBoard : user.profile.dashBoards) {
+                            for (Device device : dashBoard.devices) {
+                                if (device.token != null) {
+                                    put(device.token, new TokenValue(user, dashBoard, device));
+                                }
                             }
                         }
                     }
                 }
             }
-        }};
+        };
     }
 
     String assignToken(User user, DashBoard dash, Device device, String newToken) {
@@ -47,7 +49,8 @@ class RegularTokenManager {
 
         user.lastModifiedTs = System.currentTimeMillis();
 
-        log.debug("Generated token for user {}, dashId {}, deviceId {} is {}.", user.email, dash.id, device.id, newToken);
+        log.debug("Generated token for user {}, dashId {}, deviceId {} is {}.",
+                user.email, dash.id, device.id, newToken);
 
         return oldToken;
     }

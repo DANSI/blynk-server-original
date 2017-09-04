@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/18/2015.
  */
-public class StringUtils {
+public final class StringUtils {
 
     public static final char BODY_SEPARATOR = '\0';
     public static final String BODY_SEPARATOR_STRING = String.valueOf(BODY_SEPARATOR);
@@ -28,6 +28,9 @@ public class StringUtils {
     public static final Pattern GENERIC_PLACEHOLDER = Pattern.compile("%s", Pattern.LITERAL);
 
     public static final Pattern DATETIME_PATTERN =  Pattern.compile("/datetime_iso/", Pattern.LITERAL);
+
+    private StringUtils() {
+    }
 
     /**
      * Parses string similar to this : "xw 1 xxxx"

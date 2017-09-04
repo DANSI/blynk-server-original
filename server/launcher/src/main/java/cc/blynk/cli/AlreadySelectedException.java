@@ -6,17 +6,20 @@ package cc.blynk.cli;
  *
  * @version $Id: AlreadySelectedException.java 1443102 2013-02-06 18:12:16Z tn $
  */
-public class AlreadySelectedException extends ParseException
-{
+public class AlreadySelectedException extends ParseException {
     /**
      * This exception {@code serialVersionUID}.
      */
     private static final long serialVersionUID = 3674381532418544760L;
 
-    /** The option group selected. */
+    /**
+     * The option group selected.
+     */
     private OptionGroup group;
 
-    /** The option that triggered the exception. */
+    /**
+     * The option that triggered the exception.
+     */
     private Option option;
 
     /**
@@ -25,8 +28,7 @@ public class AlreadySelectedException extends ParseException
      *
      * @param message the detail message
      */
-    public AlreadySelectedException(String message)
-    {
+    public AlreadySelectedException(String message) {
         super(message);
     }
 
@@ -38,8 +40,7 @@ public class AlreadySelectedException extends ParseException
      * @param option the option that triggered the exception
      * @since 1.2
      */
-    public AlreadySelectedException(OptionGroup group, Option option)
-    {
+    public AlreadySelectedException(OptionGroup group, Option option) {
         this("The option '" + option.getKey() + "' was specified but an option from this group "
                 + "has already been selected: '" + group.getSelected() + "'");
         this.group = group;
@@ -52,8 +53,7 @@ public class AlreadySelectedException extends ParseException
      * @return the related option group
      * @since 1.2
      */
-    public OptionGroup getOptionGroup()
-    {
+    public OptionGroup getOptionGroup() {
         return group;
     }
 
@@ -63,8 +63,7 @@ public class AlreadySelectedException extends ParseException
      * @return the related option
      * @since 1.2
      */
-    public Option getOption()
-    {
+    public Option getOption() {
         return option;
     }
 }

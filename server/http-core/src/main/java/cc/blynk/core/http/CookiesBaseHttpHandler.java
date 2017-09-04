@@ -20,7 +20,8 @@ public abstract class CookiesBaseHttpHandler extends BaseHttpHandler {
         super(holder, rootPath);
     }
 
-    public CookiesBaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats, String rootPath) {
+    public CookiesBaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao,
+                                  GlobalStats globalStats, String rootPath) {
         super(tokenManager, sessionDao, globalStats, rootPath);
     }
 

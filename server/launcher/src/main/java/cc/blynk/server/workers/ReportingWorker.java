@@ -44,9 +44,12 @@ public class ReportingWorker implements Runnable {
     @Override
     public void run() {
         try {
-            Map<AggregationKey, AggregationValue> removedKeysMinute = process(reportingDao.averageAggregator.getMinute(), GraphGranularityType.MINUTE);
-            Map<AggregationKey, AggregationValue> removedKeysHour = process(reportingDao.averageAggregator.getHourly(), GraphGranularityType.HOURLY);
-            Map<AggregationKey, AggregationValue> removedKeysDay = process(reportingDao.averageAggregator.getDaily(), GraphGranularityType.DAILY);
+            Map<AggregationKey, AggregationValue> removedKeysMinute =
+                    process(reportingDao.averageAggregator.getMinute(), GraphGranularityType.MINUTE);
+            Map<AggregationKey, AggregationValue> removedKeysHour =
+                    process(reportingDao.averageAggregator.getHourly(), GraphGranularityType.HOURLY);
+            Map<AggregationKey, AggregationValue> removedKeysDay =
+                    process(reportingDao.averageAggregator.getDaily(), GraphGranularityType.DAILY);
 
             dbManager.insertReporting(removedKeysMinute, GraphGranularityType.MINUTE);
             dbManager.insertReporting(removedKeysHour, GraphGranularityType.HOURLY);
@@ -68,7 +71,8 @@ public class ReportingWorker implements Runnable {
      * @param type - type of reporting. Could be minute, hourly, daily.
      * @return - returns list of reporting entries that were successfully flushed to disk.
      */
-    private Map<AggregationKey, AggregationValue>  process(Map<AggregationKey, AggregationValue> map, GraphGranularityType type) {
+    private Map<AggregationKey, AggregationValue>  process(Map<AggregationKey, AggregationValue> map,
+                                                           GraphGranularityType type) {
         long nowTruncatedToPeriod = System.currentTimeMillis() / type.period;
 
         ArrayList<AggregationKey> keys = new ArrayList<>(map.keySet());
@@ -82,12 +86,14 @@ public class ReportingWorker implements Runnable {
                 AggregationValue value = map.get(keyToRemove);
 
                 try {
-                    final Path userReportFolder = Paths.get(reportingPath, FileUtils.getUserReportingDir(keyToRemove.getEmail(), keyToRemove.getAppName()));
+                    final Path userReportFolder = Paths.get(reportingPath,
+                            FileUtils.getUserReportingDir(keyToRemove.getEmail(), keyToRemove.getAppName()));
                     if (Files.notExists(userReportFolder)) {
                         Files.createDirectories(userReportFolder);
                     }
 
-                    String fileName = generateFilename(keyToRemove.getDashId(), keyToRemove.getDeviceId(), keyToRemove.getPinType(), keyToRemove.getPin(), type);
+                    String fileName = generateFilename(keyToRemove.getDashId(),
+                            keyToRemove.getDeviceId(), keyToRemove.getPinType(), keyToRemove.getPin(), type);
                     Path filePath = Paths.get(userReportFolder.toString(), fileName);
 
                     FileUtils.write(filePath, value.calcAverage(), keyToRemove.getTs(type));

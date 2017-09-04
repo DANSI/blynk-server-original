@@ -41,7 +41,7 @@ public class DeleteDeviceLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]) ;
+        int dashId = ParseUtil.parseInt(split[0]);
         int deviceId = ParseUtil.parseInt(split[1]);
 
         if (deviceId == 0) {

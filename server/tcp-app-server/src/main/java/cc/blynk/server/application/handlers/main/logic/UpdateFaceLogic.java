@@ -62,14 +62,16 @@ public class UpdateFaceLogic {
         log.info("Updating face {} for user {}.", parentDashId, user.email);
         for (User existingUser : userDao.users.values()) {
             for (DashBoard existingDash : existingUser.profile.dashBoards) {
-                if (existingDash.parentId == parentDashId && (existingUser == user || appIds.contains(existingUser.appName))) {
+                if (existingDash.parentId == parentDashId && (existingUser == user
+                        || appIds.contains(existingUser.appName))) {
                     hasFaces = true;
                     //we found child project-face
                     try {
                         existingDash.updateFaceFields(dash);
                         count++;
                     } catch (Exception e) {
-                        log.error("Error updating face for user {}, dashId {}.", existingUser.email, existingDash.id, e);
+                        log.error("Error updating face for user {}, dashId {}.",
+                                existingUser.email, existingDash.id, e);
                         ctx.writeAndFlush(notAllowed(message.id));
                         return;
                     }

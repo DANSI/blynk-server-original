@@ -15,9 +15,12 @@ import java.util.Enumeration;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.03.16.
  */
-public class IPUtils {
+public final class IPUtils {
 
     private static final Logger log = LogManager.getLogger(IPUtils.class);
+
+    private IPUtils() {
+    }
 
     public static String resolveHostIP(String netInterface) {
         try {

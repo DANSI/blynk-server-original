@@ -17,12 +17,15 @@ import java.security.cert.CertificateException;
  * Created by Dmitriy Dumanskiy.
  * Created on 28.09.15.
  */
-public class SslUtil {
+public final class SslUtil {
 
     private final static Logger log = LogManager.getLogger(SslUtil.class);
 
+    private SslUtil() {
+    }
+
     public static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
-                                                  SslProvider sslProvider, boolean printWarn) {
+                                            SslProvider sslProvider, boolean printWarn) {
         try {
             File serverCert = new File(serverCertPath);
             File serverKey = new File(serverKeyPath);
@@ -30,7 +33,9 @@ public class SslUtil {
 
             if (!serverCert.exists() || !serverKey.exists()) {
                 if (printWarn) {
-                    log.warn("ATTENTION. Server certificate paths (cert : '{}', key : '{}') not valid. Using embedded server certs and one way ssl. This is not secure. Please replace it with your own certs.",
+                    log.warn("ATTENTION. Server certificate paths (cert : '{}', key : '{}') not valid."
+                                    + " Using embedded server certs and one way ssl. This is not secure."
+                                    + " Please replace it with your own certs.",
                             serverCert.getAbsolutePath(), serverKey.getAbsolutePath());
                 }
 
@@ -55,7 +60,8 @@ public class SslUtil {
                 .build();
     }
 
-    public static SslContext build(File serverCert, File serverKey, String serverPass, SslProvider sslProvider) throws SSLException {
+    public static SslContext build(File serverCert, File serverKey,
+                                   String serverPass, SslProvider sslProvider) throws SSLException {
         if (serverPass == null || serverPass.isEmpty()) {
             return SslContextBuilder.forServer(serverCert, serverKey)
                     .sslProvider(sslProvider)
@@ -67,7 +73,8 @@ public class SslUtil {
         }
     }
 
-    public static SslContext build(File serverCert, File serverKey, String serverPass, SslProvider sslProvider, File clientCert) throws SSLException {
+    public static SslContext build(File serverCert, File serverKey, String serverPass,
+                                   SslProvider sslProvider, File clientCert) throws SSLException {
         log.info("Creating SSL context for cert '{}', key '{}', key pass '{}'",
                 serverCert.getAbsolutePath(), serverKey.getAbsoluteFile(), serverPass);
         if (serverPass == null || serverPass.isEmpty()) {

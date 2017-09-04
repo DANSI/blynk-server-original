@@ -60,8 +60,8 @@ public class App {
     }
 
     public void validate() {
-        if (theme == null || provisionType == null || name == null ||
-                name.isEmpty() || projectIds == null) {
+        if (theme == null || provisionType == null || name == null
+                || name.isEmpty() || projectIds == null) {
             throw new NotAllowedException("App is not valid.");
         }
     }

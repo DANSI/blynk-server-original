@@ -86,7 +86,8 @@ public class AverageAggregatorProcessor implements Closeable {
     @Override
     public void close() {
         if (minute.size() > 100_000) {
-            log.info("Too many minute records ({}). This may cause performance issues on server start. Skipping.", minute.size());
+            log.info("Too many minute records ({}). "
+                    + "This may cause performance issues on server start. Skipping.", minute.size());
         } else {
             write(Paths.get(dataFolder, MINUTE_TEMP_FILENAME), minute);
         }

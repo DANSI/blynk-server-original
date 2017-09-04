@@ -14,7 +14,8 @@ import java.io.IOException;
 public class ZoneIdToString extends JsonSerializer<Object> {
 
     @Override
-    public void serialize(Object value, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException {
+    public void serialize(Object value, JsonGenerator jsonGenerator,
+                          SerializerProvider serializers) throws IOException {
         String result = value.toString();
         jsonGenerator.writeObject(result);
     }

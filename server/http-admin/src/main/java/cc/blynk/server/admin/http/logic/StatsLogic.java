@@ -27,7 +27,10 @@ import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.core.http.Response.ok;
-import static cc.blynk.utils.AdminHttpUtil.*;
+import static cc.blynk.utils.AdminHttpUtil.convertMapToPair;
+import static cc.blynk.utils.AdminHttpUtil.convertObjectToMap;
+import static cc.blynk.utils.AdminHttpUtil.sort;
+import static cc.blynk.utils.AdminHttpUtil.sortStringAsInt;
 
 /**
  * The Blynk Project.
@@ -79,7 +82,9 @@ public class StatsLogic extends CookiesBaseHttpHandler {
     @Path("/messages")
     public Response getMessages(@QueryParam("_sortField") String sortField,
                                     @QueryParam("_sortDir") String sortOrder) {
-        return ok(sort(convertObjectToMap(new Stat(sessionDao, userDao, blockingIOProcessor, globalStats, false).commands), sortField, sortOrder));
+        return ok(sort(convertObjectToMap(
+                new Stat(sessionDao, userDao, blockingIOProcessor, globalStats, false).commands),
+                sortField, sortOrder));
     }
 
     @GET
@@ -152,7 +157,7 @@ public class StatsLogic extends CookiesBaseHttpHandler {
         public String ip;
     }
 
-    public List<IpNameResponse> searchByIP(String ip) {
+    private List<IpNameResponse> searchByIP(String ip) {
         List<IpNameResponse> res = new ArrayList<>();
 
         for (User user : userDao.users.values()) {

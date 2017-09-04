@@ -19,7 +19,10 @@ import org.apache.logging.log4j.Logger;
 import java.util.Arrays;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA_RESPONSE;
-import static cc.blynk.utils.BlynkByteBufUtil.*;
+import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.noData;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.BlynkByteBufUtil.serverError;
 import static cc.blynk.utils.ByteUtils.compress;
 import static cc.blynk.utils.StringUtils.split2Device;
 
@@ -74,11 +77,13 @@ public class GetGraphDataLogic {
             deleteGraphData(messageParts, user, dashId, deviceId);
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
-            process(ctx.channel(), dashId, deviceId, Arrays.copyOfRange(messageParts, 1, messageParts.length), user, message.id, 4);
+            process(ctx.channel(), dashId, deviceId,
+                    Arrays.copyOfRange(messageParts, 1, messageParts.length), user, message.id, 4);
         }
     }
 
-    private void process(Channel channel, int dashId, int deviceId, String[] messageParts, User user, int msgId, int valuesPerPin) {
+    private void process(Channel channel, int dashId, int deviceId, String[] messageParts,
+                         User user, int msgId, int valuesPerPin) {
         int numberOfPins = messageParts.length / valuesPerPin;
 
         GraphPinRequest[] requestedPins = new GraphPinRequest[numberOfPins];
@@ -101,7 +106,10 @@ public class GetGraphDataLogic {
                     channel.writeAndFlush(serverError(msgId), channel.voidPromise());
                 } else {
                     if (channel.isWritable()) {
-                        channel.writeAndFlush(makeBinaryMessage(GET_GRAPH_DATA_RESPONSE, msgId, compressed), channel.voidPromise());
+                        channel.writeAndFlush(
+                                makeBinaryMessage(GET_GRAPH_DATA_RESPONSE, msgId, compressed),
+                                channel.voidPromise()
+                        );
                     }
                 }
             } catch (NoDataException noDataException) {

@@ -16,11 +16,14 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/12/2015.
  */
-public class FileLoaderUtil {
+public final class FileLoaderUtil {
 
     public static final String TOKEN_MAIL_BODY = "single_token_mail_body.txt";
 
     private static final String NEW_LINE = System.getProperty("line.separator");
+
+    private FileLoaderUtil() {
+    }
 
     private static Path getFileInCurrentDir(String filename) {
         return Paths.get(System.getProperty("user.dir"), filename);
@@ -76,7 +79,7 @@ public class FileLoaderUtil {
         return result;
     }
 
-    private static String load(InputStream is) throws IOException{
+    private static String load(InputStream is) throws IOException {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(is))) {
             String line;
             StringBuilder responseData = new StringBuilder();

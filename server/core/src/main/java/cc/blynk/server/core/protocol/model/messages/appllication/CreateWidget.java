@@ -2,7 +2,7 @@ package cc.blynk.server.core.protocol.model.messages.appllication;
 
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_WIDGET;
 
 /**
  * The Blynk Project.

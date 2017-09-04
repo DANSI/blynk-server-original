@@ -6,7 +6,11 @@ import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.ServerProperties;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ConnectTimeoutException;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -19,7 +23,16 @@ import java.nio.channels.UnresolvedAddressException;
 import java.util.Collections;
 import java.util.Random;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
+import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
+import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
+import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
+import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
+import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 
 /**
@@ -76,14 +89,20 @@ public abstract class BaseClient {
             if (userPass.length > 1) {
                 String email = userPass[0];
                 String pass = userPass[1];
-                body = email + "\0" + SHA256Util.makeHash(pass, email) + (userPass.length == 3 ? "\0" + userPass[2].replaceAll(" ", "\0") : "");
+                body = email + "\0" + SHA256Util.makeHash(pass, email)
+                        + (userPass.length == 3 ? "\0" + userPass[2].replaceAll(" ", "\0") : "");
             }
         }
         if (command == Command.SHARE_LOGIN || command == Command.GET_GRAPH_DATA) {
             body = body.replaceAll(" ", "\0");
         }
-        if (command == HARDWARE || command == HARDWARE_RESEND_FROM_BLUETOOTH || command == BRIDGE || command == EMAIL ||
-                command == SHARING || command == EXPORT_GRAPH_DATA || command == SET_WIDGET_PROPERTY
+        if (command == HARDWARE
+                || command == HARDWARE_RESEND_FROM_BLUETOOTH
+                || command == BRIDGE
+                || command == EMAIL
+                || command == SHARING
+                || command == EXPORT_GRAPH_DATA
+                || command == SET_WIDGET_PROPERTY
                 || command == HARDWARE_SYNC) {
             body = body.replaceAll(" ", "\0");
         }
@@ -105,7 +124,8 @@ public abstract class BaseClient {
         } catch (UnresolvedAddressException uae) {
             log.error("Host name '{}' is invalid. Please make sure it is correct name.", host);
         } catch (ConnectTimeoutException cte) {
-            log.error("Timeout exceeded when connecting to '{}:{}'. Please make sure host available and port is open on target host.", host, port);
+            log.error("Timeout exceeded when connecting to '{}:{}'. "
+                    + "Please make sure host available and port is open on target host.", host, port);
         } catch (IOException | InterruptedException e) {
             log.error("Error running client. Shutting down.", e);
         } catch (Exception e) {

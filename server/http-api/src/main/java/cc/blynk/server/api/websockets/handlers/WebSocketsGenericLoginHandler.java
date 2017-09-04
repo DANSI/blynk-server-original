@@ -25,7 +25,8 @@ import org.apache.logging.log4j.Logger;
  * Created on 01.03.17.
  */
 @ChannelHandler.Sharable
-public class WebSocketsGenericLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
+public class WebSocketsGenericLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
+        implements DefaultExceptionHandler {
 
     private static final Logger log = LogManager.getLogger(WebSocketsGenericLoginHandler.class);
 

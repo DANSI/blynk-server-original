@@ -16,20 +16,22 @@ import java.util.List;
  *
  * @version $Id: CommandLine.java 1786144 2017-03-09 11:34:57Z britter $
  */
-public class CommandLine
-{
+public class CommandLine {
 
-    /** the unrecognized options/arguments */
+    /**
+     * the unrecognized options/arguments
+     */
     private final List<String> args = new LinkedList<>();
 
-    /** the processed options */
+    /**
+     * the processed options
+     */
     private final List<Option> options = new ArrayList<>();
 
     /**
      * Creates a command line.
      */
-    protected CommandLine()
-    {
+    protected CommandLine() {
         // nothing to do
     }
 
@@ -39,8 +41,7 @@ public class CommandLine
      * @param opt Short name of the option
      * @return true if set, false if not
      */
-    public boolean hasOption(String opt)
-    {
+    public boolean hasOption(String opt) {
         return options.contains(resolveOption(opt));
     }
 
@@ -52,8 +53,7 @@ public class CommandLine
      * @return Value of the argument if option is set, and has an argument,
      * otherwise null.
      */
-    public String getOptionValue(String opt)
-    {
+    public String getOptionValue(String opt) {
         String[] values = getOptionValues(opt);
 
         return (values == null) ? null : values[0];
@@ -66,14 +66,11 @@ public class CommandLine
      * @return Values of the argument if option is set, and has an argument,
      * otherwise null.
      */
-    public String[] getOptionValues(String opt)
-    {
+    public String[] getOptionValues(String opt) {
         List<String> values = new ArrayList<>();
 
-        for (Option option : options)
-        {
-            if (opt.equals(option.getOpt()) || opt.equals(option.getLongOpt()))
-            {
+        for (Option option : options) {
+            if (opt.equals(option.getOpt()) || opt.equals(option.getLongOpt())) {
                 values.addAll(option.getValuesList());
             }
         }
@@ -87,18 +84,14 @@ public class CommandLine
      * @param opt short or long name of the option
      * @return Canonicalized option
      */
-    private Option resolveOption(String opt)
-    {
+    private Option resolveOption(String opt) {
         opt = Util.stripLeadingHyphens(opt);
-        for (Option option : options)
-        {
-            if (opt.equals(option.getOpt()))
-            {
+        for (Option option : options) {
+            if (opt.equals(option.getOpt())) {
                 return option;
             }
 
-            if (opt.equals(option.getLongOpt()))
-            {
+            if (opt.equals(option.getLongOpt())) {
                 return option;
             }
 
@@ -111,8 +104,7 @@ public class CommandLine
      *
      * @param arg the unrecognized option/argument.
      */
-    protected void addArg(String arg)
-    {
+    protected void addArg(String arg) {
         args.add(arg);
     }
 
@@ -121,8 +113,7 @@ public class CommandLine
      *
      * @param opt the processed option
      */
-    protected void addOption(Option opt)
-    {
+    protected void addOption(Option opt) {
         options.add(opt);
     }
 

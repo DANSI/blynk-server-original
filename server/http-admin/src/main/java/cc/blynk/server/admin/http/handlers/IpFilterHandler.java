@@ -54,8 +54,8 @@ public class IpFilterHandler extends AbstractRemoteAddressFilter<InetSocketAddre
         }
 
         if (remoteAddress.getAddress() instanceof Inet6Address) {
-            log.error("Look like you are trying to connect with IPv6 : {}.  While in 'allowed.administrator.ips' " +
-                    "you are using IPv4.",
+            log.error("Look like you are trying to connect with IPv6 : {}.  While in 'allowed.administrator.ips' "
+                            + "you are using IPv4.",
                     remoteAddress.getAddress().getHostAddress());
             return false;
         }

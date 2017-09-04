@@ -15,7 +15,6 @@ import java.lang.annotation.Target;
 @Target({java.lang.annotation.ElementType.TYPE, java.lang.annotation.ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Consumes
-{
+public @interface Consumes {
     String[] value() default {"*/*"};
 }

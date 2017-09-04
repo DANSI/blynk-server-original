@@ -39,7 +39,9 @@ public class ClientLauncher {
         ClientMode mode = ClientMode.parse(cmd.getOptionValue("mode", ClientMode.HARDWARE.name()));
         String host = cmd.getOptionValue("host", DEFAULT_HOST);
         int port = ParseUtil.parseInt(cmd.getOptionValue("port",
-                        (mode == ClientMode.APP ? String.valueOf(DEFAULT_APPLICATION_PORT) : String.valueOf(DEFAULT_HARDWARE_PORT)))
+                        (mode == ClientMode.APP
+                                ? String.valueOf(DEFAULT_APPLICATION_PORT)
+                                : String.valueOf(DEFAULT_HARDWARE_PORT)))
         );
 
         switch (mode) {

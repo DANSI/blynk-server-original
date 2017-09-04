@@ -14,4 +14,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @HttpMethod("PUT")
 @Documented
-public @interface PUT {}
+public @interface PUT {
+
+}

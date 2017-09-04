@@ -41,7 +41,8 @@ public interface DefaultExceptionHandler {
             //no need for stack trace for known exceptions
             log.debug(baseServerException.getMessage());
             if (ctx.channel().isWritable()) {
-                ctx.writeAndFlush(makeResponse(baseServerException.msgId, baseServerException.errorCode), ctx.voidPromise());
+                ctx.writeAndFlush(makeResponse(baseServerException.msgId, baseServerException.errorCode),
+                        ctx.voidPromise());
             }
         } else {
             handleUnexpectedException(ctx, cause);
@@ -54,15 +55,18 @@ public interface DefaultExceptionHandler {
             //channel is already closed here by ReadTimeoutHandler
         } else if (cause instanceof DecoderException) {
             if (cause.getCause() instanceof UnsupportedCommandException) {
-                log.debug("Input command is invalid. Closing socket. Reason {}. Address {}", cause.getMessage(), ctx.channel().remoteAddress());
+                log.debug("Input command is invalid. Closing socket. Reason {}. Address {}",
+                        cause.getMessage(), ctx.channel().remoteAddress());
             } else if (cause.getCause() instanceof SSLException) {
-                log.debug("Unsecured connection attempt. Channel : {}. Reason : {}", ctx.channel().remoteAddress(), cause.getMessage());
+                log.debug("Unsecured connection attempt. Channel : {}. Reason : {}",
+                        ctx.channel().remoteAddress(), cause.getMessage());
             } else {
                 log.error("DecoderException.", cause);
             }
             ctx.close();
         } else if (cause instanceof NotSslRecordException) {
-            log.debug("Not secure connection attempt detected. {}. IP {}", cause.getMessage(), ctx.channel().remoteAddress());
+            log.debug("Not secure connection attempt detected. {}. IP {}",
+                    cause.getMessage(), ctx.channel().remoteAddress());
             ctx.close();
         } else if (cause instanceof SSLException) {
             log.warn("SSL exception. {}.", cause.getMessage());

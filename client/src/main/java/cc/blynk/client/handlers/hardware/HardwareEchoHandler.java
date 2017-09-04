@@ -59,13 +59,15 @@ public class HardwareEchoHandler extends SimpleChannelInboundHandler<HardwareMes
                 value = String.valueOf(ThreadLocalRandom.current().nextDouble(-100, 100));
             }
             if (pin == 11) {
-                ctx.writeAndFlush(MessageFactory.produce(msgId, Command.PUSH_NOTIFICATION, "You pressed button on V11"));
+                ctx.writeAndFlush(MessageFactory.produce(msgId,
+                        Command.PUSH_NOTIFICATION, "You pressed button on V11"));
             }
             if (pin == 12) {
                 value = String.valueOf("1234567890" + ThreadLocalRandom.current().nextDouble(100));
             }
             if (pin == 13) {
-                value = String.valueOf("123456789012345678901234567890" + ThreadLocalRandom.current().nextDouble(100));
+                value = String.valueOf("123456789012345678901234567890"
+                        + ThreadLocalRandom.current().nextDouble(100));
             }
 
         }

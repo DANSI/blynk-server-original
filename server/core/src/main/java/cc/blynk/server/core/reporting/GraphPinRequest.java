@@ -61,7 +61,8 @@ public class GraphPinRequest {
         }
     }
 
-    public GraphPinRequest(int dashId, int[] deviceIds, DataStream dataStream, GraphPeriod graphPeriod, int skipCount, AggregationFunctionType function) {
+    public GraphPinRequest(int dashId, int[] deviceIds, DataStream dataStream,
+                           GraphPeriod graphPeriod, int skipCount, AggregationFunctionType function) {
         this.dashId = dashId;
         this.deviceId = -1;
         this.deviceIds = deviceIds;
@@ -80,7 +81,8 @@ public class GraphPinRequest {
         this.skipCount = skipCount;
     }
 
-    public GraphPinRequest(int dashId, int deviceId, DataStream dataStream, GraphPeriod graphPeriod, int skipCount, AggregationFunctionType function) {
+    public GraphPinRequest(int dashId, int deviceId, DataStream dataStream,
+                           GraphPeriod graphPeriod, int skipCount, AggregationFunctionType function) {
         this.dashId = dashId;
         this.deviceId = deviceId;
         this.deviceIds = null;

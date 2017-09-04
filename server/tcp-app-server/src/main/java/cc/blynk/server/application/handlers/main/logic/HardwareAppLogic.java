@@ -22,8 +22,12 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.BlynkByteBufUtil.*;
-import static cc.blynk.utils.StringUtils.*;
+import static cc.blynk.utils.BlynkByteBufUtil.deviceNotInNetwork;
+import static cc.blynk.utils.BlynkByteBufUtil.illegalCommandBody;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.StringUtils.split2;
+import static cc.blynk.utils.StringUtils.split2Device;
+import static cc.blynk.utils.StringUtils.split3;
 
 /**
  * Responsible for handling incoming hardware commands from applications and forwarding it to
@@ -151,7 +155,9 @@ public class HardwareAppLogic extends BaseProcessorHandler {
         }
     }
 
-    public static void processDeviceSelectorCommand(ChannelHandlerContext ctx, Session session, DashBoard dash, StringMessage message, String[] splitBody) {
+    public static void processDeviceSelectorCommand(ChannelHandlerContext ctx,
+                                                    Session session, DashBoard dash,
+                                                    StringMessage message, String[] splitBody) {
         //in format "vu 200000 1"
         long widgetId = ParseUtil.parseLong(splitBody[1]);
         Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);

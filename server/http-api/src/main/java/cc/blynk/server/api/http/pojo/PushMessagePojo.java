@@ -18,8 +18,8 @@ public class PushMessagePojo {
 
     @Override
     public String toString() {
-        return "PushMessagePojo{" +
-                "body='" + body + '\'' +
-                '}';
+        return "PushMessagePojo{"
+                + "body='" + body + '\''
+                + '}';
     }
 }

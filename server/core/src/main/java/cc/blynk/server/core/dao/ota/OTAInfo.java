@@ -23,11 +23,11 @@ class OTAInfo {
 
     @Override
     public String toString() {
-        return "OTAInfo{" +
-                "initiatedAt=" + new Date(initiatedAt) +
-                ", initiatedBy='" + initiatedBy + '\'' +
-                ", firmwareInitCommandBody='" + firmwareInitCommandBody + '\'' +
-                ", build='" + build + '\'' +
-                '}';
+        return "OTAInfo{"
+                + "initiatedAt=" + new Date(initiatedAt)
+                + ", initiatedBy='" + initiatedBy + '\''
+                + ", firmwareInitCommandBody='" + firmwareInitCommandBody + '\''
+                + ", build='" + build + '\''
+                + '}';
     }
 }

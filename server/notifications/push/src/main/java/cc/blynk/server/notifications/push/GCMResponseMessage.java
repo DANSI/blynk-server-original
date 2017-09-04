@@ -14,18 +14,19 @@ public class GCMResponseMessage {
 
     final int failure;
 
-    private final long multicast_id;
+    @JsonProperty("multicast_id")
+    private final long multicastId;
 
     public final GCMResult[] results;
 
     @JsonCreator
     public GCMResponseMessage(@JsonProperty("success") int success,
                               @JsonProperty("failure") int failure,
-                              @JsonProperty("multicast_id") long multicast_id,
+                              @JsonProperty("multicast_id") long multicastId,
                               @JsonProperty("results") GCMResult[] results) {
         this.success = success;
         this.failure = failure;
-        this.multicast_id = multicast_id;
+        this.multicastId = multicastId;
         this.results = results;
     }
 }

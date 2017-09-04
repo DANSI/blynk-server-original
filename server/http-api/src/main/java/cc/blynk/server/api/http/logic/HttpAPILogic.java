@@ -3,13 +3,24 @@ package cc.blynk.server.api.http.logic;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.TokenBaseHttpHandler;
-import cc.blynk.core.http.annotation.*;
+import cc.blynk.core.http.annotation.Consumes;
+import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.Metric;
+import cc.blynk.core.http.annotation.POST;
+import cc.blynk.core.http.annotation.PUT;
+import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.PathParam;
+import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PinData;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.*;
+import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.dao.TokenValue;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.PinStorageKey;
@@ -40,7 +51,17 @@ import java.util.Base64;
 
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.redirect;
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_EMAIL;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_HISTORY_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PIN_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_GET_PROJECT;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_IS_APP_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_IS_HARDWARE_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_NOTIFY;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_QR;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_UPDATE_PIN_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
@@ -268,7 +289,8 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         //todo may be optimized
         try {
-            java.nio.file.Path path = reportingDao.csvGenerator.createCSV(user, dashId, deviceId, pinType, pin, deviceId);
+            java.nio.file.Path path = reportingDao.csvGenerator.createCSV(
+                    user, dashId, deviceId, pinType, pin, deviceId);
             return redirect("/" + path.getFileName().toString());
         } catch (IllegalCommandBodyException e1) {
             log.debug(e1.getMessage());
@@ -334,7 +356,8 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         }
 
         Session session = sessionDao.userSession.get(new UserKey(user));
-        session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id, deviceId, "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + values[0]);
+        session.sendToApps(SET_WIDGET_PROPERTY, 111, dash.id,
+                deviceId, "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + values[0]);
         return ok();
     }
 
@@ -529,7 +552,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("Invalid token.");
         }
 
-        final User user = tokenValue.user;
+        User user = tokenValue.user;
 
         if (message == null || Notification.isWrongBody(message.body)) {
             log.debug("Notification body is wrong. '{}'", message == null ? "" : message.body);
@@ -588,9 +611,9 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return Response.badRequest("No email widget.");
         }
 
-        if (message == null ||
-                message.subj == null || message.subj.isEmpty() ||
-                message.to == null || message.to.isEmpty()) {
+        if (message == null
+                || message.subj == null || message.subj.isEmpty()
+                || message.to == null || message.to.isEmpty()) {
             log.debug("Email body empty. '{}'", message);
             return Response.badRequest("Email body is wrong. Missing or empty fields 'to', 'subj'.");
         }
@@ -606,7 +629,8 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             try {
                 mailWrapper.sendText(to, subj, body);
             } catch (Exception e) {
-                log.error("Error sending email from HTTP. From : '{}', to : '{}'. Reason : {}", email, to, e.getMessage());
+                log.error("Error sending email from HTTP. From : '{}', to : '{}'. Reason : {}",
+                        email, to, e.getMessage());
             }
         });
     }

@@ -20,7 +20,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
-import static cc.blynk.utils.BlynkByteBufUtil.*;
+import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.noData;
+import static cc.blynk.utils.BlynkByteBufUtil.serverError;
 import static cc.blynk.utils.ByteUtils.compress;
 
 /**
@@ -79,12 +81,15 @@ public class GetEnhancedGraphDataLogic {
         for (GraphDataStream graphDataStream : enhancedHistoryGraph.dataStreams) {
             Target target = dash.getTarget(graphDataStream.targetId);
             if (target == null) {
-                requestedPins[i] = new GraphPinRequest(dashId, -1, graphDataStream.dataStream, graphPeriod, skipCount, graphDataStream.functionType);
+                requestedPins[i] = new GraphPinRequest(dashId, -1,
+                        graphDataStream.dataStream, graphPeriod, skipCount, graphDataStream.functionType);
             } else {
                 if (target.isTag()) {
-                    requestedPins[i] = new GraphPinRequest(dashId, target.getDeviceIds(), graphDataStream.dataStream, graphPeriod, skipCount, graphDataStream.functionType);
+                    requestedPins[i] = new GraphPinRequest(dashId, target.getDeviceIds(),
+                            graphDataStream.dataStream, graphPeriod, skipCount, graphDataStream.functionType);
                 } else {
-                    requestedPins[i] = new GraphPinRequest(dashId, target.getDeviceId(), graphDataStream.dataStream, graphPeriod, skipCount, graphDataStream.functionType);
+                    requestedPins[i] = new GraphPinRequest(dashId, target.getDeviceId(),
+                            graphDataStream.dataStream, graphPeriod, skipCount, graphDataStream.functionType);
                 }
             }
             i++;
@@ -104,7 +109,10 @@ public class GetEnhancedGraphDataLogic {
                     channel.writeAndFlush(serverError(msgId), channel.voidPromise());
                 } else {
                     if (channel.isWritable()) {
-                        channel.writeAndFlush(makeBinaryMessage(GET_ENHANCED_GRAPH_DATA, msgId, compressed), channel.voidPromise());
+                        channel.writeAndFlush(
+                                makeBinaryMessage(GET_ENHANCED_GRAPH_DATA, msgId, compressed),
+                                channel.voidPromise()
+                        );
                     }
                 }
             } catch (NoDataException noDataException) {

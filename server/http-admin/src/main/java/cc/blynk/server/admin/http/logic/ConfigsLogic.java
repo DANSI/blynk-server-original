@@ -3,7 +3,12 @@ package cc.blynk.server.admin.http.logic;
 import cc.blynk.core.http.CookiesBaseHttpHandler;
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
-import cc.blynk.core.http.annotation.*;
+import cc.blynk.core.http.annotation.Consumes;
+import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.PUT;
+import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.PathParam;
+import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.Limits;
 import cc.blynk.server.db.DBManager;
@@ -20,7 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static cc.blynk.core.http.Response.*;
+import static cc.blynk.core.http.Response.appendTotalCountHeader;
+import static cc.blynk.core.http.Response.badRequest;
+import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.utils.AdminHttpUtil.sort;
 
 /**
@@ -118,19 +125,19 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
         String name;
         String body;
 
-        public Config() {
+        Config() {
         }
 
-        public Config(String name) {
+        Config(String name) {
             this.name = name;
         }
 
-        public Config(String name, String body) {
+        Config(String name, String body) {
             this.name = name;
             this.body = body;
         }
 
-        public Config(String name, ServerProperties serverProperties) {
+        Config(String name, ServerProperties serverProperties) {
             this.name = name;
             //return only editable options
             this.body = makeProperties(serverProperties,

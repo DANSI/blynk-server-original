@@ -42,7 +42,8 @@ public class OTAManager {
 
     public boolean isUpdateRequired(HardwareInfo newHardwareInfo) {
         if (info != null && newHardwareInfo.build != null && !newHardwareInfo.build.equals(info.build)) {
-            log.info("Device build : {}, firmware build : {}. Firmware update is required.", newHardwareInfo.build, info.build);
+            log.info("Device build : {}, firmware build : {}. Firmware update is required.",
+                    newHardwareInfo.build, info.build);
             return true;
         }
         return false;

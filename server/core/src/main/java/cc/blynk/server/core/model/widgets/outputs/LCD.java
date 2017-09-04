@@ -39,7 +39,8 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     private static void sendSyncOnActivate(DataStream dataStream, int dashId, int deviceId, Channel appChannel) {
         if (dataStream.notEmpty()) {
             String body = prependDashIdAndDeviceId(dashId, deviceId, dataStream.makeHardwareBody());
-            appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body), appChannel.voidPromise());
+            appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body),
+                    appChannel.voidPromise());
         }
     }
 
@@ -109,7 +110,8 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
             if (dataStream.isNotValid()) {
                 continue;
             }
-            ByteBuf msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID, DataStream.makeReadingHardwareBody(dataStream.pinType.pintTypeChar, dataStream.pin));
+            ByteBuf msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID,
+                    DataStream.makeReadingHardwareBody(dataStream.pinType.pintTypeChar, dataStream.pin));
             channel.write(msg, channel.voidPromise());
         }
     }

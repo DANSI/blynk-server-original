@@ -8,9 +8,10 @@ import java.util.List;
  *
  * @version $Id: MissingOptionException.java 1443102 2013-02-06 18:12:16Z tn $
  */
-public class MissingOptionException extends ParseException
-{
-    /** This exception {@code serialVersionUID}. */
+public class MissingOptionException extends ParseException {
+    /**
+     * This exception {@code serialVersionUID}.
+     */
     private static final long serialVersionUID = 8161889051578563249L;
 
     /**
@@ -19,8 +20,7 @@ public class MissingOptionException extends ParseException
      *
      * @param message the detail message
      */
-    public MissingOptionException(String message)
-    {
+    public MissingOptionException(String message) {
         super(message);
     }
 
@@ -31,8 +31,7 @@ public class MissingOptionException extends ParseException
      * @param missingOptions the list of missing options and groups
      * @since 1.2
      */
-    public MissingOptionException(List missingOptions)
-    {
+    public MissingOptionException(List missingOptions) {
         this(createMessage(missingOptions));
 
     }
@@ -43,18 +42,15 @@ public class MissingOptionException extends ParseException
      * @param missingOptions the list of missing options and groups
      * @since 1.2
      */
-    private static String createMessage(List<?> missingOptions)
-    {
+    private static String createMessage(List<?> missingOptions) {
         StringBuilder buf = new StringBuilder("Missing required option");
         buf.append(missingOptions.size() == 1 ? "" : "s");
         buf.append(": ");
 
         Iterator<?> it = missingOptions.iterator();
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             buf.append(it.next());
-            if (it.hasNext())
-            {
+            if (it.hasNext()) {
                 buf.append(", ");
             }
         }

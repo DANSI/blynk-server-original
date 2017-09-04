@@ -11,7 +11,9 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import static cc.blynk.utils.BlynkByteBufUtil.*;
+import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.utils.BlynkByteBufUtil.illegalCommandBody;
+import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
 
 
 /**

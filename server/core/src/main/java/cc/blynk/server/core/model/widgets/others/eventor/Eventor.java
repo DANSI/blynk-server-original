@@ -61,7 +61,8 @@ public class Eventor extends NoPinWidget {
                         if (action instanceof SetPinAction) {
                             SetPinAction setPinActionAction = (SetPinAction) action;
                             if (setPinActionAction.dataStream != null) {
-                                append(sb, setPinActionAction.dataStream.pin, setPinActionAction.dataStream.pinType, getModeType());
+                                append(sb, setPinActionAction.dataStream.pin,
+                                        setPinActionAction.dataStream.pinType, getModeType());
                             }
                         }
                     }

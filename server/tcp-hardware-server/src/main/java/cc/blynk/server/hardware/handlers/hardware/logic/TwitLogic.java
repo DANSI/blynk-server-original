@@ -14,7 +14,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
-import static cc.blynk.utils.BlynkByteBufUtil.*;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.notificationError;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
  * Sends tweets from hardware.
@@ -31,7 +33,8 @@ public class TwitLogic extends NotificationBase {
     private final BlockingIOProcessor blockingIOProcessor;
     private final TwitterWrapper twitterWrapper;
 
-    public TwitLogic(BlockingIOProcessor blockingIOProcessor, TwitterWrapper twitterWrapper, long notificationQuotaLimit) {
+    public TwitLogic(BlockingIOProcessor blockingIOProcessor, TwitterWrapper twitterWrapper,
+                     long notificationQuotaLimit) {
         super(notificationQuotaLimit);
         this.blockingIOProcessor = blockingIOProcessor;
         this.twitterWrapper = twitterWrapper;
@@ -45,9 +48,9 @@ public class TwitLogic extends NotificationBase {
         DashBoard dash = state.dash;
         Twitter twitterWidget = dash.getWidgetByType(Twitter.class);
 
-        if (twitterWidget == null || !dash.isActive ||
-                twitterWidget.token == null || twitterWidget.token.isEmpty() ||
-                twitterWidget.secret == null || twitterWidget.secret.isEmpty()) {
+        if (twitterWidget == null || !dash.isActive
+                || twitterWidget.token == null || twitterWidget.token.isEmpty()
+                || twitterWidget.secret == null || twitterWidget.secret.isEmpty()) {
             log.debug("User has no access token provided for twit widget.");
             ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_NOT_AUTHORIZED), ctx.voidPromise());
             return;

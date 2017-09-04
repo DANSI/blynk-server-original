@@ -31,7 +31,8 @@ public class FlashedToken {
         this.deviceId = deviceId;
     }
 
-    public FlashedToken(String token, String appId, String email, int dashId, int deviceId, boolean isActivated, Date ts) {
+    public FlashedToken(String token, String appId, String email, int dashId,
+                        int deviceId, boolean isActivated, Date ts) {
         this.token = token;
         this.appId = appId;
         this.email = email;
@@ -43,13 +44,21 @@ public class FlashedToken {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FlashedToken)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof FlashedToken)) {
+            return false;
+        }
 
         FlashedToken that = (FlashedToken) o;
 
-        if (deviceId != that.deviceId) return false;
-        if (token != null ? !token.equals(that.token) : that.token != null) return false;
+        if (deviceId != that.deviceId) {
+            return false;
+        }
+        if (token != null ? !token.equals(that.token) : that.token != null) {
+            return false;
+        }
         return !(appId != null ? !appId.equals(that.appId) : that.appId != null);
 
     }

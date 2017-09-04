@@ -14,12 +14,29 @@ import cc.blynk.utils.StringUtils;
 import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.asynchttpclient.*;
+import org.asynchttpclient.AsyncCompletionHandler;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.BoundRequestBuilder;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.HttpResponseBodyPart;
+import org.asynchttpclient.Response;
 
 import java.time.Instant;
 
 import static cc.blynk.server.core.protocol.enums.Command.WEB_HOOKS;
-import static cc.blynk.utils.StringUtils.*;
+import static cc.blynk.utils.StringUtils.DATETIME_PATTERN;
+import static cc.blynk.utils.StringUtils.GENERIC_PLACEHOLDER;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_0;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_1;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_2;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_3;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_4;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_5;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_6;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_7;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_8;
+import static cc.blynk.utils.StringUtils.PIN_PATTERN_9;
 
 /**
  * Handles all webhooks logic.
@@ -51,7 +68,8 @@ public class WebhookProcessor extends NotificationBase {
         this.WEBHOOK_FAILURE_LIMIT = failureLimit;
     }
 
-    public void process(Session session, DashBoard dash, int deviceId, byte pin, PinType pinType, String triggerValue, long now) {
+    public void process(Session session, DashBoard dash, int deviceId, byte pin,
+                        PinType pinType, String triggerValue, long now) {
         WebHook widget = dash.findWebhookByPin(deviceId, pin, pinType);
         if (widget == null) {
             return;
@@ -111,7 +129,8 @@ public class WebhookProcessor extends NotificationBase {
                     webHook.failureCounter = 0;
                     if (response.hasResponseBody()) {
                         //todo could be optimized
-                        String body = DataStream.makeHardwareBody(webHook.pinType, webHook.pin, response.getResponseBody(CharsetUtil.UTF_8));
+                        String body = DataStream.makeHardwareBody(webHook.pinType, webHook.pin,
+                                response.getResponseBody(CharsetUtil.UTF_8));
                         log.trace("Sending webhook to hardware. {}", body);
                         session.sendMessageToHardware(dashId, Command.HARDWARE, 888, body, deviceId);
                     }

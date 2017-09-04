@@ -2,7 +2,28 @@ package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.application.handlers.main.logic.*;
+import cc.blynk.server.application.handlers.main.logic.ActivateDashboardLogic;
+import cc.blynk.server.application.handlers.main.logic.AddEnergyLogic;
+import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
+import cc.blynk.server.application.handlers.main.logic.AppMailLogic;
+import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
+import cc.blynk.server.application.handlers.main.logic.AssignTokenLogic;
+import cc.blynk.server.application.handlers.main.logic.CreateAppLogic;
+import cc.blynk.server.application.handlers.main.logic.DeActivateDashboardLogic;
+import cc.blynk.server.application.handlers.main.logic.DeleteAppLogic;
+import cc.blynk.server.application.handlers.main.logic.GetCloneCodeLogic;
+import cc.blynk.server.application.handlers.main.logic.GetEnergyLogic;
+import cc.blynk.server.application.handlers.main.logic.GetProjectByClonedTokenLogic;
+import cc.blynk.server.application.handlers.main.logic.GetProjectByTokenLogic;
+import cc.blynk.server.application.handlers.main.logic.GetTokenLogic;
+import cc.blynk.server.application.handlers.main.logic.HardwareAppLogic;
+import cc.blynk.server.application.handlers.main.logic.HardwareResendFromBTLogic;
+import cc.blynk.server.application.handlers.main.logic.LoadProfileGzippedLogic;
+import cc.blynk.server.application.handlers.main.logic.MailQRsLogic;
+import cc.blynk.server.application.handlers.main.logic.RedeemLogic;
+import cc.blynk.server.application.handlers.main.logic.RefreshTokenLogic;
+import cc.blynk.server.application.handlers.main.logic.UpdateAppLogic;
+import cc.blynk.server.application.handlers.main.logic.UpdateFaceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.CreateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.DeleteDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.UpdateDashLogic;
@@ -33,7 +54,52 @@ import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.common.PingLogic;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
+import static cc.blynk.server.core.protocol.enums.Command.ADD_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.ASSIGN_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_APP;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_APP;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
+import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
+import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
+import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
+import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SHARED_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
+import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
+import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.PING;
+import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
+import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.SHARING;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_APP;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_FACE;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROJECT_SETTINGS;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
 
 /**
  * The Blynk Project.
@@ -91,14 +157,16 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.refreshToken = new RefreshTokenLogic(holder);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.enhancedGraphDataLogic = new GetEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
-        this.deleteEnhancedGraphDataLogic = new DeleteEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
+        this.deleteEnhancedGraphDataLogic = new DeleteEnhancedGraphDataLogic(
+                holder.reportingDao, holder.blockingIOProcessor);
         this.exportGraphData = new ExportGraphDataLogic(holder);
         this.appMailLogic = new AppMailLogic(holder);
         this.getShareTokenLogic = new GetShareTokenLogic(holder.tokenManager);
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(holder.tokenManager, holder.sessionDao);
         this.getSharedDashLogic = new GetSharedDashLogic(holder.tokenManager);
 
-        this.createDashLogic = new CreateDashLogic(holder.timerWorker, holder.tokenManager, holder.limits.DASHBOARDS_LIMIT, holder.limits.PROFILE_SIZE_LIMIT_BYTES);
+        this.createDashLogic = new CreateDashLogic(holder.timerWorker,
+                holder.tokenManager, holder.limits.DASHBOARDS_LIMIT, holder.limits.PROFILE_SIZE_LIMIT_BYTES);
         this.updateDashLogic = new UpdateDashLogic(holder.timerWorker, holder.limits.PROFILE_SIZE_LIMIT_BYTES);
 
         this.activateDashboardLogic = new ActivateDashboardLogic(holder.sessionDao);

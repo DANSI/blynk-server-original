@@ -6,7 +6,11 @@ import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.Context;
 import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.rest.HandlerWrapper;
-import cc.blynk.core.http.rest.params.*;
+import cc.blynk.core.http.rest.params.BodyParam;
+import cc.blynk.core.http.rest.params.ContextParam;
+import cc.blynk.core.http.rest.params.FormParam;
+import cc.blynk.core.http.rest.params.PathParam;
+import cc.blynk.core.http.rest.params.QueryParam;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -51,17 +55,20 @@ public class AnnotationsUtil {
                 for (int i = 0; i < method.getParameterCount(); i++) {
                     Parameter parameter = method.getParameters()[i];
 
-                    cc.blynk.core.http.annotation.QueryParam queryParamAnnotation = parameter.getAnnotation(cc.blynk.core.http.annotation.QueryParam.class);
+                    cc.blynk.core.http.annotation.QueryParam queryParamAnnotation =
+                            parameter.getAnnotation(cc.blynk.core.http.annotation.QueryParam.class);
                     if (queryParamAnnotation != null) {
                         handlerHolder.params[i] = new QueryParam(queryParamAnnotation.value(), parameter.getType());
                     }
 
-                    cc.blynk.core.http.annotation.PathParam pathParamAnnotation = parameter.getAnnotation(cc.blynk.core.http.annotation.PathParam.class);
+                    cc.blynk.core.http.annotation.PathParam pathParamAnnotation =
+                            parameter.getAnnotation(cc.blynk.core.http.annotation.PathParam.class);
                     if (pathParamAnnotation != null) {
                         handlerHolder.params[i] = new PathParam(pathParamAnnotation.value(), parameter.getType());
                     }
 
-                    cc.blynk.core.http.annotation.FormParam formParamAnnotation = parameter.getAnnotation(cc.blynk.core.http.annotation.FormParam.class);
+                    cc.blynk.core.http.annotation.FormParam formParamAnnotation =
+                            parameter.getAnnotation(cc.blynk.core.http.annotation.FormParam.class);
                     if (formParamAnnotation != null) {
                         handlerHolder.params[i] = new FormParam(formParamAnnotation.value(), parameter.getType());
                     }
@@ -71,9 +78,10 @@ public class AnnotationsUtil {
                         handlerHolder.params[i] = new ContextParam(ChannelHandlerContext.class);
                     }
 
-                    if (pathParamAnnotation == null && queryParamAnnotation == null && formParamAnnotation == null &&
-                            contextAnnotation == null) {
-                        handlerHolder.params[i] = new BodyParam(parameter.getName(), parameter.getType(), contentType);
+                    if (pathParamAnnotation == null && queryParamAnnotation == null && formParamAnnotation == null
+                            && contextAnnotation == null) {
+                        handlerHolder.params[i] =
+                                new BodyParam(parameter.getName(), parameter.getType(), contentType);
                     }
                 }
 

@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  */
 public class IOSGCMMessage implements GCMMessage {
 
-    private static final ObjectWriter writer = new ObjectMapper()
+    private static final ObjectWriter WRITER = new ObjectMapper()
             .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
             .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
             .writerFor(IOSGCMMessage.class);
@@ -36,7 +36,7 @@ public class IOSGCMMessage implements GCMMessage {
 
     @Override
     public String toJson() throws JsonProcessingException {
-        return writer.writeValueAsString(this);
+        return WRITER.writeValueAsString(this);
     }
 
     private static class IOSBody {
@@ -45,7 +45,7 @@ public class IOSGCMMessage implements GCMMessage {
         private final int dashId;
         private final String sound;
 
-        public IOSBody(String body, int dashId) {
+        IOSBody(String body, int dashId) {
             this.body = body;
             this.dashId = dashId;
             this.sound = "default";

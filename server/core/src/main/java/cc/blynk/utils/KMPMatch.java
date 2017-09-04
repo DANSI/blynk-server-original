@@ -3,7 +3,10 @@ package cc.blynk.utils;
 /**
  * Knuth-Morris-Pratt Algorithm for Pattern Matching
  */
-class KMPMatch {
+final class KMPMatch {
+
+    private KMPMatch() {
+    }
 
     /**
      * Finds the first occurrence of the pattern in the text.
@@ -12,13 +15,17 @@ class KMPMatch {
         int[] failure = computeFailure(pattern);
 
         int j = 0;
-        if (data.length == 0) return -1;
+        if (data.length == 0) {
+            return -1;
+        }
 
         for (int i = 0; i < data.length; i++) {
             while (j > 0 && pattern[j] != data[i]) {
                 j = failure[j - 1];
             }
-            if (pattern[j] == data[i]) { j++; }
+            if (pattern[j] == data[i]) {
+                j++;
+            }
             if (j == pattern.length) {
                 return i - pattern.length + 1;
             }

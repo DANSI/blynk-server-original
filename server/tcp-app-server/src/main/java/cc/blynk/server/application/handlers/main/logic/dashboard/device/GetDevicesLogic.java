@@ -22,7 +22,7 @@ public class GetDevicesLogic {
     private static final Logger log = LogManager.getLogger(GetDevicesLogic.class);
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        int dashId = ParseUtil.parseInt(message.body) ;
+        int dashId = ParseUtil.parseInt(message.body);
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 

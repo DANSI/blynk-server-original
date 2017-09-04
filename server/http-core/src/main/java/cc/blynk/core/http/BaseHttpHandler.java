@@ -28,7 +28,8 @@ import static cc.blynk.core.http.Response.serverError;
  * Created by Dmitriy Dumanskiy.
  * Created on 24.12.15.
  */
-public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter implements DefaultReregisterHandler, DefaultExceptionHandler {
+public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter
+        implements DefaultReregisterHandler, DefaultExceptionHandler {
 
     protected static final Logger log = LogManager.getLogger(BaseHttpHandler.class);
 
@@ -41,7 +42,8 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
         this(holder.tokenManager, holder.sessionDao, holder.stats, rootPath);
     }
 
-    public BaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao, GlobalStats globalStats, String rootPath) {
+    BaseHttpHandler(TokenManager tokenManager, SessionDao sessionDao,
+                           GlobalStats globalStats, String rootPath) {
         this.tokenManager = tokenManager;
         this.sessionDao = sessionDao;
         this.rootPath = rootPath;
@@ -77,14 +79,16 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter imple
         return false;
     }
 
-    private void invokeHandler(ChannelHandlerContext ctx, HttpRequest req, HandlerWrapper handler, Map<String, String> extractedParams) {
+    private void invokeHandler(ChannelHandlerContext ctx, HttpRequest req,
+                               HandlerWrapper handler, Map<String, String> extractedParams) {
         log.debug("{} : {}", req.method().name(), req.uri());
         URIDecoder uriDecoder = new URIDecoder(req, extractedParams);
         Object[] params = handler.fetchParams(ctx, uriDecoder);
         finishHttp(ctx, uriDecoder, handler, params);
     }
 
-    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder, HandlerWrapper handler, Object[] params) {
+    public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder,
+                           HandlerWrapper handler, Object[] params) {
         FullHttpResponse response = handler.invoke(params);
         if (response != Response.NO_RESPONSE) {
             ctx.writeAndFlush(response);

@@ -81,8 +81,12 @@ public class Timer extends OnePinWidget {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Timer)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Timer)) {
+            return false;
+        }
 
         Timer timer = (Timer) o;
 

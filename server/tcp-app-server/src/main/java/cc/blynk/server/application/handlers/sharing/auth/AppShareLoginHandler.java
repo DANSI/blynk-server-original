@@ -13,11 +13,17 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.utils.BlynkByteBufUtil.*;
+import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
  * Handler responsible for managing apps sharing login messages.
@@ -28,7 +34,8 @@ import static cc.blynk.utils.BlynkByteBufUtil.*;
  *
  */
 @ChannelHandler.Sharable
-public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLoginMessage> implements DefaultReregisterHandler {
+public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLoginMessage>
+        implements DefaultReregisterHandler {
 
     private static final Logger log = LogManager.getLogger(AppShareLoginHandler.class);
 
@@ -61,13 +68,15 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         }
     }
 
-    private void appLogin(ChannelHandlerContext ctx, int messageId, String email, String token, OsType osType, String version, String uid) {
+    private void appLogin(ChannelHandlerContext ctx, int messageId, String email,
+                          String token, OsType osType, String version, String uid) {
         String userName = email.toLowerCase();
 
         SharedTokenValue tokenValue = holder.tokenManager.getUserBySharedToken(token);
 
         if (tokenValue == null || !tokenValue.user.email.equals(userName)) {
-            log.debug("Share token is invalid. User : {}, token {}, {}", userName, token, ctx.channel().remoteAddress());
+            log.debug("Share token is invalid. User : {}, token {}, {}",
+                    userName, token, ctx.channel().remoteAddress());
             ctx.writeAndFlush(notAllowed(messageId), ctx.voidPromise());
             return;
         }
@@ -77,7 +86,8 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
         DashBoard dash = user.profile.getDashById(dashId);
         if (!dash.isShared) {
-            log.debug("Dashboard is not shared. User : {}, token {}, {}", userName, token, ctx.channel().remoteAddress());
+            log.debug("Dashboard is not shared. User : {}, token {}, {}",
+                    userName, token, ctx.channel().remoteAddress());
             ctx.writeAndFlush(notAllowed(messageId), ctx.voidPromise());
             return;
         }
@@ -86,11 +96,13 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         AppShareStateHolder appShareStateHolder = new AppShareStateHolder(user, osType, version, token, dashId);
         ctx.pipeline().addLast("AAppSHareHandler", new AppShareHandler(holder, appShareStateHolder));
 
-        Session session = holder.sessionDao.getOrCreateSessionByUser(appShareStateHolder.userKey, ctx.channel().eventLoop());
+        Session session = holder.sessionDao.getOrCreateSessionByUser(
+                appShareStateHolder.userKey, ctx.channel().eventLoop());
 
         if (session.initialEventLoop != ctx.channel().eventLoop()) {
             log.debug("Re registering app channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user.email, messageId));
+            reRegisterChannel(ctx, session, channelFuture ->
+                    completeLogin(channelFuture.channel(), session, user.email, messageId));
         } else {
             completeLogin(ctx.channel(), session, user.email, messageId);
         }

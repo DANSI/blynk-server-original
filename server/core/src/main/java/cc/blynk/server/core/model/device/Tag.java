@@ -23,7 +23,8 @@ public class Tag implements Target {
     public volatile int[] deviceIds;
 
     public boolean isNotValid() {
-        return name == null || name.isEmpty() || name.length() > 40 || id < START_TAG_ID || deviceIds.length > MAX_NUMBER_OF_DEVICE_PER_TAG;
+        return name == null || name.isEmpty() || name.length() > 40
+                || id < START_TAG_ID || deviceIds.length > MAX_NUMBER_OF_DEVICE_PER_TAG;
     }
 
     public Tag(int id, String name) {

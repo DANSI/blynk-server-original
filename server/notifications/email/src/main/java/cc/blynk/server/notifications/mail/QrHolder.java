@@ -39,13 +39,21 @@ public class QrHolder {
     //for tests only
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof QrHolder)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof QrHolder)) {
+            return false;
+        }
 
         QrHolder qrHolder = (QrHolder) o;
 
-        if (dashId != qrHolder.dashId) return false;
-        if (deviceId != qrHolder.deviceId) return false;
+        if (dashId != qrHolder.dashId) {
+            return false;
+        }
+        if (deviceId != qrHolder.deviceId) {
+            return false;
+        }
         return !(token != null ? !token.equals(qrHolder.token) : qrHolder.token != null);
 
     }

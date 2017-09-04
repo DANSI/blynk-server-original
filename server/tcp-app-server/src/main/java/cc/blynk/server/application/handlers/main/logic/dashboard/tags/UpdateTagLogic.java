@@ -30,7 +30,7 @@ public class UpdateTagLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]) ;
+        int dashId = ParseUtil.parseInt(split[0]);
         String tagString = split[1];
 
         if (tagString == null || tagString.isEmpty()) {

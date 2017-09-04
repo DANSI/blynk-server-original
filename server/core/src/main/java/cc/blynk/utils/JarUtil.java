@@ -22,6 +22,9 @@ import java.util.zip.ZipInputStream;
  */
 public final class JarUtil {
 
+    private JarUtil() {
+    }
+
     /**
      * Unpacks all files from staticFolder of jar and puts them to current folder within staticFolder path.
      *

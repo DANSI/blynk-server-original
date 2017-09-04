@@ -13,7 +13,8 @@ public class UriTemplate {
     private static final String URL_PARAM_REGEX = "\\{(\\w*?)\\}";
 
     // Replaces parameter names in the URL pattern string to match parameters in URLs.
-    private static final String URL_PARAM_MATCH_REGEX = "\\([%\\\\w-.\\\\~!\\$&'\\\\(\\\\)\\\\*\\\\+,;=:\\\\[\\\\]@]+?\\)";
+    private static final String URL_PARAM_MATCH_REGEX =
+            "\\([%\\\\w-.\\\\~!\\$&'\\\\(\\\\)\\\\*\\\\+,;=:\\\\[\\\\]@]+?\\)";
 
     // Pattern to match URL pattern parameter names.
     private static final Pattern URL_PARAM_PATTERN = Pattern.compile(URL_PARAM_REGEX);
@@ -21,11 +22,13 @@ public class UriTemplate {
     // Finds the 'format' portion of the URL pattern string.
     private static final String URL_FORMAT_REGEX = "(?:\\.\\{format\\})$";
 
-    // Replaces the format parameter name in the URL pattern string to match the format specifier in URLs. Appended to the end of the regex string
+    // Replaces the format parameter name in the URL pattern string to
+    // match the format specifier in URLs. Appended to the end of the regex string
     // when a URL pattern contains a format parameter.
     private static final String URL_FORMAT_MATCH_REGEX = "(?:\\\\.\\([\\\\w%]+?\\))?";
 
-    // Finds the query string portion withi    private Matcher matcher;n a URL. Appended to the end of the built-up regex string.
+    // Finds the query string portion withi    private Matcher matcher;n a URL.
+    // Appended to the end of the built-up regex string.
     private static final String URL_QUERY_STRING_REGEX = "(?:\\?.*?)?$";
 
     private String urlPattern;

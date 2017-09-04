@@ -7,7 +7,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 
 /**
  *
@@ -58,7 +65,8 @@ public class FileChangeWatcherWorker implements Runnable {
                 }
             }
         } catch (IOException | InterruptedException e) {
-            log.warn("Error monitoring '{}' file. Reloadable properties are not enabled.", ServerProperties.SERVER_PROPERTIES_FILENAME, e);
+            log.warn("Error monitoring '{}' file. Reloadable properties are not enabled.",
+                    ServerProperties.SERVER_PROPERTIES_FILENAME, e);
         }
     }
 

@@ -54,5 +54,4 @@ public class ShareLogic {
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
-
 }

@@ -15,7 +15,11 @@ import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.JsonParser;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asynchttpclient.AsyncCompletionHandler;
@@ -25,8 +29,13 @@ import org.asynchttpclient.netty.handler.WebSocketHandler;
 
 import java.util.NoSuchElementException;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static cc.blynk.utils.BlynkByteBufUtil.*;
+import static cc.blynk.server.core.protocol.enums.Response.FACEBOOK_USER_LOGIN_WITH_PASS;
+import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
+import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_REGISTERED;
+import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 
@@ -40,7 +49,8 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
  *
  */
 @ChannelHandler.Sharable
-public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultReregisterHandler, DefaultExceptionHandler {
+public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
+        implements DefaultReregisterHandler, DefaultExceptionHandler {
 
     private static final String URL = "https://graph.facebook.com/me?fields=email&access_token=";
     private static final Logger log = LogManager.getLogger(AppLoginHandler.class);
@@ -100,7 +110,8 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         }
     }
 
-    private void facebookLogin(ChannelHandlerContext ctx, int messageId, String email, String token, OsType osType, String version) {
+    private void facebookLogin(ChannelHandlerContext ctx, int messageId, String email,
+                               String token, OsType osType, String version) {
         asyncHttpClient.prepareGet(URL + token)
                 .execute(new AsyncCompletionHandler<Response>() {
                     @Override
@@ -118,7 +129,8 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
                         try {
                             String responseBody = response.getResponseBody();
-                            FacebookTokenResponse facebookTokenResponse = JsonParser.parseFacebookTokenResponse(responseBody);
+                            FacebookTokenResponse facebookTokenResponse =
+                                    JsonParser.parseFacebookTokenResponse(responseBody);
                             if (email.equalsIgnoreCase(facebookTokenResponse.email)) {
                                 User user = holder.userDao.getByName(email, AppName.BLYNK);
                                 if (user == null) {
@@ -128,7 +140,8 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
                                 login(ctx, messageId, user, osType, version);
                             }
                         } catch (Exception e) {
-                            log.error("Error during facebook response parsing for user {}. Reason : {}", email, response.getResponseBody());
+                            log.error("Error during facebook response parsing for user {}. Reason : {}",
+                                    email, response.getResponseBody());
                             ctx.writeAndFlush(notAllowed(messageId), ctx.voidPromise());
                         }
 
@@ -137,13 +150,15 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
 
                     @Override
                     public void onThrowable(Throwable t) {
-                        log.error("Error performing facebook request. Token {} for user {}. Reason : {}", token, email, t.getMessage());
+                        log.error("Error performing facebook request. Token {} for user {}. Reason : {}",
+                                token, email, t.getMessage());
                         ctx.writeAndFlush(notAllowed(messageId), ctx.voidPromise());
                     }
                 });
     }
 
-    private void blynkLogin(ChannelHandlerContext ctx, int msgId, String email, String pass, OsType osType, String version, String appName) {
+    private void blynkLogin(ChannelHandlerContext ctx, int msgId, String email, String pass,
+                            OsType osType, String version, String appName) {
         User user = holder.userDao.getByName(email, appName);
 
         if (user == null) {
@@ -174,7 +189,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         AppStateHolder appStateHolder = new AppStateHolder(user, osType, version);
         pipeline.addLast("AAppHandler", new AppHandler(holder, appStateHolder));
 
-        final Channel channel = ctx.channel();
+        Channel channel = ctx.channel();
 
         user.lastLoggedIP = IPUtils.getIp(channel);
         user.lastLoggedAt = System.currentTimeMillis();
@@ -187,7 +202,8 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> i
         Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, channel.eventLoop());
         if (session.initialEventLoop != channel.eventLoop()) {
             log.debug("Re registering app channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(channelFuture.channel(), session, user, messageId));
+            reRegisterChannel(ctx, session, channelFuture ->
+                    completeLogin(channelFuture.channel(), session, user, messageId));
         } else {
             completeLogin(channel, session, user, messageId);
         }

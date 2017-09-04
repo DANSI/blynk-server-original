@@ -21,7 +21,7 @@ public class EWMA {
      * @param interval     the expected tick interval
      * @param intervalUnit the time unit of the tick interval
      */
-    public EWMA(double alpha, long interval, TimeUnit intervalUnit) {
+    EWMA(double alpha, long interval, TimeUnit intervalUnit) {
         this.interval = intervalUnit.toNanos(interval);
         this.alpha = alpha;
     }
@@ -38,7 +38,7 @@ public class EWMA {
     /**
      * Mark the passage of time and decay the current rate accordingly.
      */
-    public void tick() {
+    void tick() {
         final long count = uncounted.sumThenReset();
         final double instantRate = count / interval;
         if (initialized) {
@@ -55,7 +55,7 @@ public class EWMA {
      * @param rateUnit the unit of time
      * @return the rate
      */
-    public double getRate(TimeUnit rateUnit) {
+    double getRate(TimeUnit rateUnit) {
         return rate * (double) rateUnit.toNanos(1);
     }
 }

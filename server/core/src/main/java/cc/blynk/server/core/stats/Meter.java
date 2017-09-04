@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
-import static java.lang.Math.*;
+import static java.lang.Math.exp;
 
 /**
  * copy paste from codahale metrics
@@ -26,7 +26,7 @@ public class Meter {
      * Creates a new {@link Meter}.
      *
      */
-    public Meter() {
+    Meter() {
         this.lastTick = new AtomicLong(System.nanoTime());
     }
 

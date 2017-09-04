@@ -37,16 +37,30 @@ public final class BaseReportingKey implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BaseReportingKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof BaseReportingKey)) {
+            return false;
+        }
 
         BaseReportingKey that = (BaseReportingKey) o;
 
-        if (dashId != that.dashId) return false;
-        if (deviceId != that.deviceId) return false;
-        if (pinType != that.pinType) return false;
-        if (pin != that.pin) return false;
-        if (email != null ? !email.equals(that.email) : that.email != null) return false;
+        if (dashId != that.dashId) {
+            return false;
+        }
+        if (deviceId != that.deviceId) {
+            return false;
+        }
+        if (pinType != that.pinType) {
+            return false;
+        }
+        if (pin != that.pin) {
+            return false;
+        }
+        if (email != null ? !email.equals(that.email) : that.email != null) {
+            return false;
+        }
         return appName != null ? appName.equals(that.appName) : that.appName == null;
     }
 

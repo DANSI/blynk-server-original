@@ -18,7 +18,8 @@ import java.util.List;
 public class RedeemDBDao {
 
     private static final String selectRedeemToken = "SELECT * from redeem where token = ?";
-    private static final String updateRedeemToken = "UPDATE redeem SET email = ?, version = 2, isRedeemed = true, ts = NOW() WHERE token = ? and version = 1";
+    private static final String updateRedeemToken =
+            "UPDATE redeem SET email = ?, version = 2, isRedeemed = true, ts = NOW() WHERE token = ? and version = 1";
     private static final String insertRedeemToken = "INSERT INTO redeem (token, company, reward) values (?, ?, ?)";
 
     private static final Logger log = LogManager.getLogger(RedeemDBDao.class);

@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  */
 public class AndroidGCMMessage implements GCMMessage {
 
-    private static final ObjectWriter writer = new ObjectMapper()
+    private static final ObjectWriter WRITER = new ObjectMapper()
             .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
             .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
             .writerFor(AndroidGCMMessage.class);
@@ -36,7 +36,7 @@ public class AndroidGCMMessage implements GCMMessage {
 
     @Override
     public String toJson() throws JsonProcessingException {
-        return writer.writeValueAsString(this);
+        return WRITER.writeValueAsString(this);
     }
 
 }

@@ -26,7 +26,8 @@ public class AppServer extends BaseServer {
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public AppServer(Holder holder) {
-        super(holder.props.getProperty("listen.address"), holder.props.getIntProperty("app.ssl.port"), holder.transportTypeHolder);
+        super(holder.props.getProperty("listen.address"),
+                holder.props.getIntProperty("app.ssl.port"), holder.transportTypeHolder);
 
         final String[] loadBalancingIPs = holder.props.getCommaSeparatedValueAsArray("load.balancing.ips");
 

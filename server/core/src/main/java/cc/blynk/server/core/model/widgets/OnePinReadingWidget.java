@@ -37,7 +37,8 @@ public abstract class OnePinReadingWidget extends OnePinWidget implements Freque
         if (isNotValid()) {
             return;
         }
-        ByteBuf msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID, DataStream.makeReadingHardwareBody(pinType.pintTypeChar, pin));
+        ByteBuf msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID,
+                DataStream.makeReadingHardwareBody(pinType.pintTypeChar, pin));
         channel.write(msg, channel.voidPromise());
     }
 

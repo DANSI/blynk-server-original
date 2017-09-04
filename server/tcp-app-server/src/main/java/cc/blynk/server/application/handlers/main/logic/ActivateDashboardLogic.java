@@ -16,7 +16,9 @@ import org.apache.logging.log4j.Logger;
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.utils.AppStateHolderUtil.getAppState;
-import static cc.blynk.utils.BlynkByteBufUtil.*;
+import static cc.blynk.utils.BlynkByteBufUtil.deviceNotInNetwork;
+import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.utils.BlynkByteBufUtil.ok;
 
 /**
  * The Blynk Project.
@@ -26,7 +28,7 @@ import static cc.blynk.utils.BlynkByteBufUtil.*;
  */
 public class ActivateDashboardLogic {
 
-    public static final int PIN_MODE_MSG_ID = 1;
+    private static final int PIN_MODE_MSG_ID = 1;
 
     private static final Logger log = LogManager.getLogger(ActivateDashboardLogic.class);
 
@@ -51,7 +53,8 @@ public class ActivateDashboardLogic {
 
         if (session.isHardwareConnected(dashId)) {
             for (Device device : dash.devices) {
-                if (session.sendMessageToHardware(dashId, HARDWARE, PIN_MODE_MSG_ID, dash.buildPMMessage(device.id), device.id)) {
+                if (session.sendMessageToHardware(dashId, HARDWARE, PIN_MODE_MSG_ID,
+                        dash.buildPMMessage(device.id), device.id)) {
                     log.debug("No device in session.");
                     if (ctx.channel().isWritable()) {
                         ctx.write(deviceNotInNetwork(PIN_MODE_MSG_ID), ctx.voidPromise());

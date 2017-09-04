@@ -110,14 +110,17 @@ public class TimerWorker implements Runnable {
 
     public void add(UserKey userKey, Timer timer, int dashId) {
         if (timer.isValidStart()) {
-            add(userKey, dashId, timer.deviceId, timer.id, 0, new TimerTime(timer.startTime), new SetPinAction(timer.pin, timer.pinType, timer.startValue));
+            add(userKey, dashId, timer.deviceId, timer.id, 0, new TimerTime(timer.startTime),
+                    new SetPinAction(timer.pin, timer.pinType, timer.startValue));
         }
         if (timer.isValidStop()) {
-            add(userKey, dashId, timer.deviceId, timer.id, 1, new TimerTime(timer.stopTime), new SetPinAction(timer.pin, timer.pinType, timer.stopValue));
+            add(userKey, dashId, timer.deviceId, timer.id, 1, new TimerTime(timer.stopTime),
+                    new SetPinAction(timer.pin, timer.pinType, timer.stopValue));
         }
     }
 
-    private void add(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, TimerTime time, BaseAction[] actions) {
+    private void add(UserKey userKey, int dashId, int deviceId, long widgetId,
+                     int additionalId, TimerTime time, BaseAction[] actions) {
         ArrayList<BaseAction> validActions = new ArrayList<>(actions.length);
         for (BaseAction action : actions) {
             if (action.isValid()) {
@@ -125,13 +128,18 @@ public class TimerWorker implements Runnable {
             }
         }
         if (!validActions.isEmpty()) {
-            timerExecutors[hash(time.time)].put(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time), validActions.toArray(new BaseAction[validActions.size()]));
+            timerExecutors[hash(time.time)].put(
+                    new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time),
+                    validActions.toArray(new BaseAction[validActions.size()]));
         }
     }
 
-    private void add(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, TimerTime time, BaseAction action) {
+    private void add(UserKey userKey, int dashId, int deviceId, long widgetId,
+                     int additionalId, TimerTime time, BaseAction action) {
         if (action.isValid()) {
-            timerExecutors[hash(time.time)].put(new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time), new BaseAction[]{action});
+            timerExecutors[hash(time.time)].put(
+                    new TimerKey(userKey, dashId, deviceId, widgetId, additionalId, time),
+                    new BaseAction[]{action});
         }
     }
 
@@ -189,7 +197,8 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    private int send(ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors, ZonedDateTime currentDateTime, int curSeconds, long now) {
+    private int send(ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors,
+                     ZonedDateTime currentDateTime, int curSeconds, long now) {
         int activeTimers = 0;
         actuallySendTimers = 0;
 
@@ -228,7 +237,8 @@ public class TimerWorker implements Runnable {
                 }
 
                 for (int deviceId : deviceIds) {
-                    dash.update(deviceId, setPinAction.dataStream.pin, setPinAction.dataStream.pinType, setPinAction.value, now);
+                    dash.update(deviceId, setPinAction.dataStream.pin,
+                            setPinAction.dataStream.pinType, setPinAction.value, now);
                 }
 
                 triggerTimer(sessionDao, key.userKey, setPinAction.makeHardwareBody(), key.dashId, deviceIds);

@@ -44,7 +44,7 @@ public class DeleteWidgetLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]) ;
+        int dashId = ParseUtil.parseInt(split[0]);
         long widgetId = ParseUtil.parseLong(split[1]);
 
         final User user = state.user;
@@ -73,7 +73,8 @@ public class DeleteWidgetLogic {
     /**
      * Removes all widgets with tabId greater than lastTabIndex
      */
-    public static void deleteTabs(TimerWorker timerWorker, User user, UserKey userKey, DashBoard dash, int lastTabIndex) {
+    static void deleteTabs(TimerWorker timerWorker, User user, UserKey userKey,
+                                  DashBoard dash, int lastTabIndex) {
         ArrayList<Widget> zeroTabWidgets = new ArrayList<>();
         int removedWidgetPrice = 0;
         for (Widget widgetToDelete : dash.widgets) {

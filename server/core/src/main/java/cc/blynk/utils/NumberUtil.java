@@ -7,9 +7,12 @@ package cc.blynk.utils;
  * Created by Dmitriy Dumanskiy.
  * Created on 23.01.17.
  */
-public class NumberUtil {
+public final class NumberUtil {
 
     public static final double NO_RESULT = Double.MIN_VALUE;
+
+    private NumberUtil() {
+    }
 
     // Precompute Math.pow(10, n) as table:
     private final static int POW_RANGE = 256;

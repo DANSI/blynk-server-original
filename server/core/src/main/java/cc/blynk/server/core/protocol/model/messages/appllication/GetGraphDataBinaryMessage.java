@@ -2,7 +2,7 @@ package cc.blynk.server.core.protocol.model.messages.appllication;
 
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
+import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA_RESPONSE;
 
 /**
  * The Blynk Project.

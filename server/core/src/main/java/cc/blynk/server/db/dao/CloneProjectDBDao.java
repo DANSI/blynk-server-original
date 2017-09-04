@@ -16,7 +16,8 @@ import java.sql.ResultSet;
 public class CloneProjectDBDao {
 
     public static final String selectClonedProjectByToken = "SELECT * from cloned_projects where token = ?";
-    public static final String insertClonedProject = "INSERT INTO cloned_projects (token, ts, json) values (?, NOW(), ?)";
+    public static final String insertClonedProject =
+            "INSERT INTO cloned_projects (token, ts, json) values (?, NOW(), ?)";
 
     private static final Logger log = LogManager.getLogger(CloneProjectDBDao.class);
     private final HikariDataSource ds;

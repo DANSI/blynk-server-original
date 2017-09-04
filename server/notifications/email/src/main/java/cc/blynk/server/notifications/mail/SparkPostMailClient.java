@@ -8,7 +8,11 @@ import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.*;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import java.util.Properties;
 
@@ -27,7 +31,7 @@ public class SparkPostMailClient implements MailClient {
     private final String username;
     private final String password;
 
-    public SparkPostMailClient(Properties mailProperties) {
+    SparkPostMailClient(Properties mailProperties) {
         this.username = mailProperties.getProperty("mail.smtp.username");
         this.password = mailProperties.getProperty("mail.smtp.password");
         this.host = mailProperties.getProperty("mail.smtp.host");

@@ -7,6 +7,6 @@ package cc.blynk.server.core.model.widgets;
  */
 public interface CopyObject<T> {
 
-    public T copy();
+    T copy();
 
 }

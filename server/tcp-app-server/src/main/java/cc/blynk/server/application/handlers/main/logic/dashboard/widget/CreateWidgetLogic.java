@@ -44,7 +44,7 @@ public class CreateWidgetLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]) ;
+        int dashId = ParseUtil.parseInt(split[0]);
         String widgetString = split[1];
 
         if (widgetString == null || widgetString.isEmpty()) {

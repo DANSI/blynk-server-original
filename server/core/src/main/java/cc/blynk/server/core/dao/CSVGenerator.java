@@ -48,7 +48,8 @@ public class CSVGenerator {
         this.reportingDao = reportingDao;
     }
 
-    public Path createCSV(User user, int dashId, int inDeviceId, PinType pinType, byte pin, int... deviceIds) throws Exception {
+    public Path createCSV(User user, int dashId, int inDeviceId, PinType pinType, byte pin, int... deviceIds)
+            throws Exception {
         if (pinType == null || pin == DataStream.NO_PIN) {
             throw new IllegalCommandBodyException("Wrong pin format.");
         }
@@ -56,11 +57,13 @@ public class CSVGenerator {
         Path path = generateExportCSVPath(user.email, dashId, inDeviceId, pinType, pin);
 
         try (OutputStream output = Files.newOutputStream(path);
-             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(output), CharsetUtil.US_ASCII))) {
+             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                     new GZIPOutputStream(output), CharsetUtil.US_ASCII))) {
 
             int emptyDataCounter = 0;
             for (int deviceId : deviceIds) {
-                ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(user, dashId, deviceId, pinType, pin, FETCH_COUNT, GraphGranularityType.MINUTE);
+                ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(user, dashId, deviceId,
+                        pinType, pin, FETCH_COUNT, GraphGranularityType.MINUTE);
                 if (onePinData != null) {
                     onePinData.flip();
                     writeBuf(writer, onePinData, deviceId);
@@ -76,7 +79,7 @@ public class CSVGenerator {
         return path;
     }
 
-    private static void writeBuf(BufferedWriter writer, ByteBuffer onePinData, int deviceId) throws Exception {;
+    private static void writeBuf(BufferedWriter writer, ByteBuffer onePinData, int deviceId) throws Exception {
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();

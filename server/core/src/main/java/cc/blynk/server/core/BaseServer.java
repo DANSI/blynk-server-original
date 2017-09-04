@@ -3,7 +3,11 @@ package cc.blynk.server.core;
 import cc.blynk.server.transport.TransportTypeHolder;
 import cc.blynk.utils.BlynkByteBufUtil;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.ServerChannel;
 import io.netty.channel.socket.SocketChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +49,7 @@ public abstract class BaseServer implements Closeable {
     }
 
     private void buildServerAndRun(EventLoopGroup bossGroup, EventLoopGroup workerGroup,
-                             Class<? extends ServerChannel> channelClass) throws Exception {
+                                   Class<? extends ServerChannel> channelClass) throws Exception {
 
         ServerBootstrap b = new ServerBootstrap();
         try {
@@ -56,7 +60,9 @@ public abstract class BaseServer implements Closeable {
                     .option(ChannelOption.ALLOCATOR, BlynkByteBufUtil.ALLOCATOR)
                     .childHandler(getChannelInitializer());
 
-            InetSocketAddress listenTo = (listenAddress == null || listenAddress.isEmpty()) ? new InetSocketAddress(port) : new InetSocketAddress(listenAddress, port);
+            InetSocketAddress listenTo = (listenAddress == null || listenAddress.isEmpty())
+                    ? new InetSocketAddress(port)
+                    : new InetSocketAddress(listenAddress, port);
             this.cf = b.bind(listenTo).sync();
         } catch (Exception e) {
             log.error("Error initializing {}, port {}", getServerName(), port, e);

@@ -12,7 +12,10 @@ import io.netty.channel.Channel;
  * Created by Dmitriy Dumanskiy.
  * Created on 13.09.15.
  */
-public class StateHolderUtil {
+public final class StateHolderUtil {
+
+    private StateHolderUtil() {
+    }
 
     public static HardwareStateHolder getHardState(Channel channel) {
         BaseSimpleChannelInboundHandler handler = channel.pipeline().get(BaseSimpleChannelInboundHandler.class);
