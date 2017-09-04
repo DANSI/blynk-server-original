@@ -38,8 +38,8 @@ public final class StringUtils {
      */
     private static final int START_INDEX = 3;
 
-    private static final String inData = "abcdefghijklmnopqrstuvwxyz";
-    private static final SecureRandom rnd = new SecureRandom();
+    private static final String IN_DATA = "abcdefghijklmnopqrstuvwxyz";
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     /**
      * Efficient split method (instead of String.split).
@@ -128,9 +128,9 @@ public final class StringUtils {
 
     public static String randomString(int len) {
         StringBuilder sb = new StringBuilder(len);
-        int inDataLen = inData.length();
+        int inDataLen = IN_DATA.length();
         for (int i = 0; i < len; i++) {
-            sb.append(inData.charAt(rnd.nextInt(inDataLen)));
+            sb.append(IN_DATA.charAt(SECURE_RANDOM.nextInt(inDataLen)));
         }
         return sb.toString();
     }

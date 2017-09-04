@@ -27,7 +27,10 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
  * Created on 2/1/2015.
  *
  */
-public class HardwareSyncLogic {
+public final class HardwareSyncLogic {
+
+    private HardwareSyncLogic() {
+    }
 
     public static void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         int deviceId = state.device.id;

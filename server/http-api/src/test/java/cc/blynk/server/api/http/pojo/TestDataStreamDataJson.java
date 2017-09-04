@@ -15,7 +15,7 @@ public class TestDataStreamDataJson {
     @Test
     public void testParseString() throws Exception {
         String pinDataString = "[{\"timestamp\" : 123, \"value\":\"100\"}]";
-        PinData[] pinData = JsonParser.mapper.readValue(pinDataString, PinData[].class);
+        PinData[] pinData = JsonParser.MAPPER.readValue(pinDataString, PinData[].class);
         assertNotNull(pinData);
     }
 

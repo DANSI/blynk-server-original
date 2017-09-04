@@ -171,7 +171,7 @@ public final class FileUtils {
         throw new RuntimeException("Unable to read build number fro firmware.");
     }
 
-    private static final String[] possibleLocalPaths = new String[]{
+    private static final String[] POSSIBLE_LOCAL_PATHS = new String[]{
             "./server/http-dashboard/target/classes",
             "./server/http-api/target/classes",
             "./server/http-admin/target/classes",
@@ -185,7 +185,7 @@ public final class FileUtils {
     };
 
     public static Path getPathForLocalRun(String uri) {
-        for (String possiblePath : possibleLocalPaths) {
+        for (String possiblePath : POSSIBLE_LOCAL_PATHS) {
             Path path = Paths.get(possiblePath, uri);
             if (Files.exists(path)) {
                 return path;

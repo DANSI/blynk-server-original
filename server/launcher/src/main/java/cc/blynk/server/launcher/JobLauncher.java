@@ -21,7 +21,10 @@ import java.util.concurrent.TimeUnit;
  * Created by Dmitriy Dumanskiy.
  * Created on 28.09.15.
  */
-class JobLauncher {
+final class JobLauncher {
+
+    private JobLauncher() {
+    }
 
     public static void start(Holder holder, BaseServer[] servers) {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);

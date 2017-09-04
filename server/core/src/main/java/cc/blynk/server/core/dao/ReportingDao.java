@@ -46,7 +46,7 @@ public class ReportingDao implements Closeable {
 
     public final String dataFolder;
 
-    private final boolean ENABLE_RAW_DB_DATA_STORE;
+    private final boolean enableRawDbDataStore;
 
     //for test only
     public ReportingDao(String reportingFolder, AverageAggregatorProcessor averageAggregator,
@@ -54,8 +54,8 @@ public class ReportingDao implements Closeable {
         this.averageAggregator = averageAggregator;
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
-        this.ENABLE_RAW_DB_DATA_STORE = serverProperties.getBoolProperty("enable.raw.db.data.store");
-        this.rawDataProcessor = new RawDataProcessor(ENABLE_RAW_DB_DATA_STORE);
+        this.enableRawDbDataStore = serverProperties.getBoolProperty("enable.raw.db.data.store");
+        this.rawDataProcessor = new RawDataProcessor(enableRawDbDataStore);
         this.csvGenerator = new CSVGenerator(this);
     }
 
@@ -63,8 +63,8 @@ public class ReportingDao implements Closeable {
         this.averageAggregator = new AverageAggregatorProcessor(reportingFolder);
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
-        this.ENABLE_RAW_DB_DATA_STORE = serverProperties.getBoolProperty("enable.raw.db.data.store");
-        this.rawDataProcessor = new RawDataProcessor(ENABLE_RAW_DB_DATA_STORE);
+        this.enableRawDbDataStore = serverProperties.getBoolProperty("enable.raw.db.data.store");
+        this.rawDataProcessor = new RawDataProcessor(enableRawDbDataStore);
         this.csvGenerator = new CSVGenerator(this);
     }
 
@@ -217,7 +217,7 @@ public class ReportingDao implements Closeable {
 
     private void process(User user, int dashId, int deviceId, byte pin, PinType pinType,
                          String value, long ts, double doubleVal) {
-        if (ENABLE_RAW_DB_DATA_STORE) {
+        if (enableRawDbDataStore) {
             rawDataProcessor.collect(
                     new BaseReportingKey(user.email, user.appName, dashId, deviceId, pinType, pin),
                     ts, value, doubleVal);

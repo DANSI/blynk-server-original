@@ -19,7 +19,7 @@ import java.util.Map;
  * Created by Dmitriy Dumanskiy.
  * Created on 25.03.15.
  */
-class ArgumentsParser {
+final class ArgumentsParser {
 
     private static final Options options;
 
@@ -42,6 +42,9 @@ class ArgumentsParser {
                .addOption(MAIL_CONFIG_PATH_OPTION, true, "Path to mail.properties config file.")
                .addOption(SMS_CONFIG_PATH_OPTION, true, "Path to sms.properties config file.")
                .addOption(RESTORE_OPTION, false, "Restore data from DB.");
+    }
+
+    private ArgumentsParser() {
     }
 
     /**

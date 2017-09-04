@@ -12,6 +12,9 @@ import org.apache.logging.log4j.core.config.Configuration;
  */
 public final class LoggerUtil {
 
+    private LoggerUtil() {
+    }
+
     /**
      * - Sets async logger for all logs
      * - Defines logging folder

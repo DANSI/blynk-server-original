@@ -18,14 +18,17 @@ import static cc.blynk.utils.BlynkByteBufUtil.ok;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class DeleteAppLogic {
+public final class DeleteAppLogic {
 
     private static final Logger log = LogManager.getLogger(DeleteAppLogic.class);
+
+    private DeleteAppLogic() {
+    }
 
     public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String id = message.body;
 
-        final User user = state.user;
+        User user = state.user;
 
         int existingAppIndex = user.profile.getAppIndexById(id);
 

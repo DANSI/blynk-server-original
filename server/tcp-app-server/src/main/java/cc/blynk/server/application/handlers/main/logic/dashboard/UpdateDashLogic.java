@@ -24,12 +24,12 @@ public class UpdateDashLogic {
 
     private static final Logger log = LogManager.getLogger(UpdateDashLogic.class);
 
-    private final int DASH_MAX_SIZE;
+    private final int dashMaxSize;
     private final TimerWorker timerWorker;
 
     public UpdateDashLogic(TimerWorker timerWorker, int maxDashSize) {
         this.timerWorker = timerWorker;
-        this.DASH_MAX_SIZE = maxDashSize;
+        this.dashMaxSize = maxDashSize;
     }
 
     //todo should accept only dash info and ignore widgets. should be fixed after migration
@@ -40,7 +40,7 @@ public class UpdateDashLogic {
             throw new IllegalCommandException("Income create dash message is empty.");
         }
 
-        if (dashString.length() > DASH_MAX_SIZE) {
+        if (dashString.length() > dashMaxSize) {
             throw new NotAllowedException("User dashboard is larger then limit.");
         }
 
@@ -53,7 +53,7 @@ public class UpdateDashLogic {
 
         log.debug("Saving dashboard.");
 
-        final User user = state.user;
+        User user = state.user;
 
         DashBoard existingDash = user.profile.getDashByIdOrThrow(updatedDash.id);
 

@@ -7,7 +7,10 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 06.12.15.
  */
-public class ListUtils {
+public final class ListUtils {
+
+    private ListUtils() {
+    }
 
     public static List<?> subList(List<?> list, int page, int size) {
         return list.subList(

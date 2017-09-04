@@ -30,15 +30,15 @@ public class CreateDashLogic {
 
     private static final Logger log = LogManager.getLogger(CreateDashLogic.class);
 
-    private final int DASH_MAX_LIMIT;
-    private final int DASH_MAX_SIZE;
+    private final int dashMaxLimit;
+    private final int dashMaxSize;
     private final TimerWorker timerWorker;
     private final TokenManager tokenManager;
 
     public CreateDashLogic(TimerWorker timerWorker, TokenManager tokenManager, int dashMaxLimit, int dashMaxSize) {
         this.tokenManager = tokenManager;
-        this.DASH_MAX_LIMIT = dashMaxLimit;
-        this.DASH_MAX_SIZE = dashMaxSize;
+        this.dashMaxLimit = dashMaxLimit;
+        this.dashMaxSize = dashMaxSize;
         this.timerWorker = timerWorker;
     }
 
@@ -56,7 +56,7 @@ public class CreateDashLogic {
             throw new IllegalCommandException("Income create dash message is empty.");
         }
 
-        if (dashString.length() > DASH_MAX_SIZE) {
+        if (dashString.length() > dashMaxSize) {
             throw new NotAllowedException("User dashboard is larger then limit.");
         }
 
@@ -65,8 +65,8 @@ public class CreateDashLogic {
 
         log.info("Creating new dashboard.");
 
-        final User user = state.user;
-        if (user.profile.dashBoards.length >= DASH_MAX_LIMIT) {
+        User user = state.user;
+        if (user.profile.dashBoards.length >= dashMaxLimit) {
             throw new QuotaLimitException("Dashboards limit reached.");
         }
 

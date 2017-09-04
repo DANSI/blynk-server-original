@@ -74,7 +74,7 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
     public Response getConfigByName(@PathParam("name") String name) {
         switch (name) {
             case FileLoaderUtil.TOKEN_MAIL_BODY:
-                return ok(new Config(name, limits.TOKEN_BODY).toString());
+                return ok(new Config(name, limits.tokenBody).toString());
             case ServerProperties.SERVER_PROPERTIES_FILENAME :
                 return ok(new Config(name, serverProperties).toString());
             default :
@@ -94,7 +94,7 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
 
         switch (name) {
             case FileLoaderUtil.TOKEN_MAIL_BODY:
-                limits.TOKEN_BODY = updatedConfig.body;
+                limits.tokenBody = updatedConfig.body;
                 break;
             case ServerProperties.SERVER_PROPERTIES_FILENAME :
                 Properties properties = readPropertiesFromString(updatedConfig.body);
@@ -157,7 +157,7 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
         @Override
         public String toString() {
             try {
-                return JsonParser.mapper.writeValueAsString(this);
+                return JsonParser.MAPPER.writeValueAsString(this);
             } catch (Exception e) {
                 return "{}";
             }

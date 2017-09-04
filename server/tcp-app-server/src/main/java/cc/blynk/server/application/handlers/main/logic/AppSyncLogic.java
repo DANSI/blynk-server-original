@@ -19,7 +19,10 @@ import static cc.blynk.utils.StringUtils.split2Device;
  * Created on 2/1/2015.
  *
  */
-public class AppSyncLogic {
+public final class AppSyncLogic {
+
+    private AppSyncLogic() {
+    }
 
     public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String[] dashIdAndTargetIdString = split2Device(message.body);

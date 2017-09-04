@@ -46,10 +46,15 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static cc.blynk.server.workers.timer.TimerWorker.TIMER_MSG_ID;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.after;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -156,7 +161,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         rtc.height = 1;
         rtc.width = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(rtc));
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(rtc));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         reset(clientPair.appClient.responseMock);
@@ -179,7 +184,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         eventor.height = 1;
         eventor.width = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         reset(clientPair.appClient.responseMock);
@@ -219,7 +224,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         });
         eventor.id = 1000;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(eventor));
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 4 1"))));
@@ -426,7 +431,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String deviceResponse = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(deviceResponse, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(deviceResponse, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 

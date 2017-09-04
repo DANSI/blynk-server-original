@@ -18,7 +18,7 @@ import java.io.InputStreamReader;
  * Created by Dmitriy Dumanskiy.
  * Created on 11.03.15.
  */
-public class ClientLauncher {
+public final class ClientLauncher {
 
     static final String DEFAULT_HOST = "localhost";
     static final int DEFAULT_HARDWARE_PORT = 8442;
@@ -31,6 +31,9 @@ public class ClientLauncher {
                .addOption("port", true, "Port client should connect to.")
                .addOption("mode", true, "Client mode. 'hardware' or 'app'.")
                .addOption("tokens", true, "Tokens");
+    }
+
+    private ClientLauncher() {
     }
 
     public static void main(String[] args) throws ParseException {

@@ -9,13 +9,13 @@ import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
  */
 public abstract class NotificationBase {
 
-    private final long NOTIFICATION_QUOTA_LIMIT;
+    private final long notificationQuotaLimit;
     private long lastSentTs;
     @SuppressWarnings("ThrowableInstanceNeverThrown")
     public final static QuotaLimitException EXCEPTION_CACHE = new QuotaLimitException("Notification limit reached.");
 
     public NotificationBase(long defaultNotificationQuotaLimit) {
-        this.NOTIFICATION_QUOTA_LIMIT = defaultNotificationQuotaLimit;
+        this.notificationQuotaLimit = defaultNotificationQuotaLimit;
     }
 
     protected void checkIfNotificationQuotaLimitIsNotReached() {
@@ -24,7 +24,7 @@ public abstract class NotificationBase {
 
     protected void checkIfNotificationQuotaLimitIsNotReached(final long currentTs) {
         final long timePassedSinceLastMessage = (currentTs - lastSentTs);
-        if (timePassedSinceLastMessage < NOTIFICATION_QUOTA_LIMIT) {
+        if (timePassedSinceLastMessage < notificationQuotaLimit) {
             throw EXCEPTION_CACHE;
         }
         this.lastSentTs = currentTs;

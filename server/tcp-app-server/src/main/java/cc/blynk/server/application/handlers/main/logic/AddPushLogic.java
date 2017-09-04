@@ -17,7 +17,10 @@ import static cc.blynk.utils.BlynkByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class AddPushLogic {
+public final class AddPushLogic {
+
+    private AddPushLogic() {
+    }
 
     public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String[] data = StringUtils.split3(message.body);

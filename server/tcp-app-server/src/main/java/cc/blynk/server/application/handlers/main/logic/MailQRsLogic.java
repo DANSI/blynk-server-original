@@ -77,9 +77,9 @@ public class MailQRsLogic {
                                          String publishAppName, String publishAppId, int msgId) {
         String subj = publishAppName + " - App details";
         if (provisionType == ProvisionType.DYNAMIC) {
-            mailDynamic(ctx.channel(), to, subj, limits.DYNAMIC_MAIL_BODY, publishAppId, dash, msgId);
+            mailDynamic(ctx.channel(), to, subj, limits.dynamicMailBody, publishAppId, dash, msgId);
         } else {
-            mailStatic(ctx.channel(), to, subj, limits.STATIC_MAIL_BODY, publishAppId, dash, msgId);
+            mailStatic(ctx.channel(), to, subj, limits.staticMailBody, publishAppId, dash, msgId);
         }
     }
 

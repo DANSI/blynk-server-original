@@ -29,14 +29,14 @@ import static cc.blynk.utils.BlynkByteBufUtil.ok;
 public class AppMailLogic {
 
     private static final Logger log = LogManager.getLogger(AppMailLogic.class);
-    private final String TOKEN_MAIL_BODY;
+    private final String tokenMailBody;
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final MailWrapper mailWrapper;
 
     public AppMailLogic(Holder holder) {
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.TOKEN_MAIL_BODY = holder.limits.TOKEN_BODY;
+        this.tokenMailBody = holder.limits.tokenBody;
         this.mailWrapper =  holder.mailWrapper;
     }
 
@@ -74,7 +74,7 @@ public class AppMailLogic {
         String body = "Auth Token : " + device.token + "\n";
 
         log.trace("Sending single token mail for user {}, with token : '{}'.", to, device.token);
-        mail(ctx.channel(), to, subj, body + TOKEN_MAIL_BODY, msgId);
+        mail(ctx.channel(), to, subj, body + tokenMailBody, msgId);
     }
 
     private void sendMultiTokenEmail(ChannelHandlerContext ctx, DashBoard dash, String to, int msgId) {
@@ -91,7 +91,7 @@ public class AppMailLogic {
                 .append("\n");
         }
 
-        body.append(TOKEN_MAIL_BODY);
+        body.append(tokenMailBody);
 
         log.trace("Sending multi tokens mail for user {}, with {} tokens.", to, dash.devices.length);
         mail(ctx.channel(), to, subj, body.toString(), msgId);

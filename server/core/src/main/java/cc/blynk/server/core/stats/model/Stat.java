@@ -47,7 +47,7 @@ public class Stat {
                 GlobalStats globalStats, boolean reset) {
         //yeap, some stats updates may be lost (because of sumThenReset()),
         //but we don't care, cause this is just for general monitoring
-        for (Short command : Command.valuesName.keySet()) {
+        for (Short command : Command.VALUES_NAME.keySet()) {
             LongAdder longAdder = globalStats.specificCounters[command];
             int val = (int) (reset ? longAdder.sumThenReset() : longAdder.sum());
 

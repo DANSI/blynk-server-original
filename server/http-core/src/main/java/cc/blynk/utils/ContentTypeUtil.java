@@ -5,7 +5,10 @@ package cc.blynk.utils;
  * Created by Dmitriy Dumanskiy.
  * Created on 07.07.16.
  */
-public class ContentTypeUtil {
+public final class ContentTypeUtil {
+
+    private ContentTypeUtil() {
+    }
 
     public static String getContentType(String fileName) {
         if (fileName.endsWith(".ico")) {

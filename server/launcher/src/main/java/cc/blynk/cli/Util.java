@@ -6,6 +6,10 @@ package cc.blynk.cli;
  * @version $Id: Util.java 1443102 2013-02-06 18:12:16Z tn $
  */
 final class Util {
+
+    private Util() {
+    }
+
     /**
      * Remove the hyphens from the beginning of <code>str</code> and
      * return the new String.

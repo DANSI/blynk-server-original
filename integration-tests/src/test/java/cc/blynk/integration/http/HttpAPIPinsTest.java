@@ -423,7 +423,7 @@ public class HttpAPIPinsTest extends BaseTest {
     @Test
     public void testPostNotifyWithBody() throws Exception {
         HttpPost request = new HttpPost(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/notify");
-        String message = JsonParser.mapper.writeValueAsString(new PushMessagePojo("This is Push Message"));
+        String message = JsonParser.MAPPER.writeValueAsString(new PushMessagePojo("This is Push Message"));
         request.setEntity(new StringEntity(message, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -457,7 +457,7 @@ public class HttpAPIPinsTest extends BaseTest {
     @Test
     public void testPostEmailWithBody() throws Exception {
         HttpPost request = new HttpPost(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/email");
-        String message = JsonParser.mapper.writeValueAsString(new EmailPojo("pupkin@gmail.com", "Title", "Subject"));
+        String message = JsonParser.MAPPER.writeValueAsString(new EmailPojo("pupkin@gmail.com", "Title", "Subject"));
         request.setEntity(new StringEntity(message, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {

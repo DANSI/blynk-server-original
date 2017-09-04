@@ -39,7 +39,7 @@ public class ActivateDashboardLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        final User user = state.user;
+        User user = state.user;
         String dashBoardIdString = message.body;
 
         int dashId = ParseUtil.parseInt(dashBoardIdString);

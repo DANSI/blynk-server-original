@@ -25,7 +25,7 @@ public class MQTTHardwareServer extends BaseServer {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("hardware.mqtt.port"), holder.transportTypeHolder);
 
-        int hardTimeoutSecs = holder.limits.HARDWARE_IDLE_TIMEOUT;
+        int hardTimeoutSecs = holder.limits.hardwareIdleTimeout;
         MqttHardwareLoginHandler mqttHardwareLoginHandler = new MqttHardwareLoginHandler(holder);
         HardwareChannelStateHandler hardwareChannelStateHandler =
                 new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);

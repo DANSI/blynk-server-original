@@ -12,7 +12,10 @@ import io.netty.channel.ChannelPipeline;
  * Created by Dmitriy Dumanskiy.
  * Created on 05.01.16.
  */
-public class AppStateHolderUtil {
+public final class AppStateHolderUtil {
+
+    private AppStateHolderUtil() {
+    }
 
     public static AppStateHolder getAppState(Channel channel) {
         return getAppState(channel.pipeline());

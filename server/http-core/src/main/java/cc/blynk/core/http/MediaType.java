@@ -5,7 +5,10 @@ package cc.blynk.core.http;
  * Created by Dmitriy Dumanskiy.
  * Created on 23.09.16.
  */
-public class MediaType {
+public final class MediaType {
+
+    private MediaType() {
+    }
 
     public final static String APPLICATION_JSON = "application/json";
 

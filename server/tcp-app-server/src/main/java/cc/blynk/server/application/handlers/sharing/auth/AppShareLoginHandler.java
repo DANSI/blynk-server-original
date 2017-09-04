@@ -81,8 +81,8 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
             return;
         }
 
-        final User user = tokenValue.user;
-        final int dashId = tokenValue.dashId;
+        User user = tokenValue.user;
+        int dashId = tokenValue.dashId;
 
         DashBoard dash = user.profile.getDashById(dashId);
         if (!dash.isShared) {

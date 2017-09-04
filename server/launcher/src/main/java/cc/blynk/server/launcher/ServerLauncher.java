@@ -44,11 +44,14 @@ import java.util.Map;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/16/2015.
  */
-public class ServerLauncher {
+public final class ServerLauncher {
 
     //required for QR generation
     static {
         System.setProperty("java.awt.headless", "true");
+    }
+
+    private ServerLauncher() {
     }
 
     public static void main(String[] args) throws Exception {

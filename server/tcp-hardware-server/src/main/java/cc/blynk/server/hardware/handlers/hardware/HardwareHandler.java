@@ -52,13 +52,13 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.bridge = new BridgeLogic(holder.sessionDao, hardware);
 
         this.email = new MailLogic(holder.blockingIOProcessor,
-                holder.mailWrapper, holder.limits.NOTIFICATION_PERIOD_LIMIT_SEC);
-        this.push = new PushLogic(holder.gcmWrapper, holder.limits.NOTIFICATION_PERIOD_LIMIT_SEC);
+                holder.mailWrapper, holder.limits.notificationPeriodLimitSec);
+        this.push = new PushLogic(holder.gcmWrapper, holder.limits.notificationPeriodLimitSec);
         this.tweet = new TwitLogic(holder.blockingIOProcessor,
-                holder.twitterWrapper, holder.limits.NOTIFICATION_PERIOD_LIMIT_SEC);
-        this.smsLogic = new SmsLogic(holder.smsWrapper, holder.limits.NOTIFICATION_PERIOD_LIMIT_SEC);
+                holder.twitterWrapper, holder.limits.notificationPeriodLimitSec);
+        this.smsLogic = new SmsLogic(holder.smsWrapper, holder.limits.notificationPeriodLimitSec);
         this.propertyLogic = new SetWidgetPropertyLogic(holder.sessionDao);
-        this.info = new BlynkInternalLogic(holder.otaManager, holder.limits.HARDWARE_IDLE_TIMEOUT);
+        this.info = new BlynkInternalLogic(holder.otaManager, holder.limits.hardwareIdleTimeout);
 
         this.state = stateHolder;
     }

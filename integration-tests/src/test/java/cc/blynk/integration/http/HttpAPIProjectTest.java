@@ -62,7 +62,7 @@ public class HttpAPIProjectTest extends BaseTest {
         HttpGet request = new HttpGet(httpsServerUrl + token + "/project");
 
         InputStream is = getClass().getResourceAsStream("/profiles/u_dmitriy@blynk.cc.user");
-        User user = JsonParser.mapper.readValue(is, User.class);
+        User user = JsonParser.MAPPER.readValue(is, User.class);
         FileManager.makeProfileChanges(user);
 
         Integer dashId = 125564119;

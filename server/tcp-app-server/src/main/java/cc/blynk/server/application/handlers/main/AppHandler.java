@@ -166,17 +166,17 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.getSharedDashLogic = new GetSharedDashLogic(holder.tokenManager);
 
         this.createDashLogic = new CreateDashLogic(holder.timerWorker,
-                holder.tokenManager, holder.limits.DASHBOARDS_LIMIT, holder.limits.PROFILE_SIZE_LIMIT_BYTES);
-        this.updateDashLogic = new UpdateDashLogic(holder.timerWorker, holder.limits.PROFILE_SIZE_LIMIT_BYTES);
+                holder.tokenManager, holder.limits.dashboardsLimit, holder.limits.profileSizeLimitBytes);
+        this.updateDashLogic = new UpdateDashLogic(holder.timerWorker, holder.limits.profileSizeLimitBytes);
 
         this.activateDashboardLogic = new ActivateDashboardLogic(holder.sessionDao);
         this.deActivateDashboardLogic = new DeActivateDashboardLogic(holder.sessionDao);
 
-        this.createWidgetLogic = new CreateWidgetLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES, holder.timerWorker);
-        this.updateWidgetLogic = new UpdateWidgetLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES, holder.timerWorker);
+        this.createWidgetLogic = new CreateWidgetLogic(holder.limits.widgetSizeLimitBytes, holder.timerWorker);
+        this.updateWidgetLogic = new UpdateWidgetLogic(holder.limits.widgetSizeLimitBytes, holder.timerWorker);
         this.deleteWidgetLogic = new DeleteWidgetLogic(holder.timerWorker);
         this.deleteDashLogic = new DeleteDashLogic(holder);
-        this.updateDashSettingLogic = new UpdateDashSettingLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES);
+        this.updateDashSettingLogic = new UpdateDashSettingLogic(holder.limits.widgetSizeLimitBytes);
 
         this.createDeviceLogic = new CreateDeviceLogic(holder);
         this.deleteDeviceLogic = new DeleteDeviceLogic(holder.tokenManager, holder.sessionDao);
@@ -185,8 +185,8 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.redeemLogic = new RedeemLogic(holder.dbManager, holder.blockingIOProcessor);
         this.addEnergyLogic = new AddEnergyLogic(holder.dbManager, holder.blockingIOProcessor);
 
-        this.createAppLogic = new CreateAppLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES);
-        this.updateAppLogic = new UpdateAppLogic(holder.limits.WIDGET_SIZE_LIMIT_BYTES);
+        this.createAppLogic = new CreateAppLogic(holder.limits.widgetSizeLimitBytes);
+        this.updateAppLogic = new UpdateAppLogic(holder.limits.widgetSizeLimitBytes);
 
         this.loadProfileGzippedLogic = new LoadProfileGzippedLogic(holder);
         this.getProjectByTokenLogic = new GetProjectByTokenLogic(holder);

@@ -26,10 +26,10 @@ public class UpdateDashSettingLogic {
 
     private static final Logger log = LogManager.getLogger(UpdateDashSettingLogic.class);
 
-    private final int SETTINGS_SIZE_LIMIT;
+    private final int settingsSizeLimit;
 
     public UpdateDashSettingLogic(int settingSizeLimit) {
-        this.SETTINGS_SIZE_LIMIT = settingSizeLimit;
+        this.settingsSizeLimit = settingSizeLimit;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
@@ -46,14 +46,14 @@ public class UpdateDashSettingLogic {
             throw new IllegalCommandException("Income dash settings message is empty.");
         }
 
-        if (dashSettingsString.length() > SETTINGS_SIZE_LIMIT) {
+        if (dashSettingsString.length() > settingsSizeLimit) {
             throw new NotAllowedException("User dashboard setting message is larger then limit.");
         }
 
         log.debug("Trying to parse project settings : {}", dashSettingsString);
         DashboardSettings settings = JsonParser.parseDashboardSettings(dashSettingsString);
 
-        final User user = state.user;
+        User user = state.user;
 
         DashBoard existingDash = user.profile.getDashByIdOrThrow(dashId);
 

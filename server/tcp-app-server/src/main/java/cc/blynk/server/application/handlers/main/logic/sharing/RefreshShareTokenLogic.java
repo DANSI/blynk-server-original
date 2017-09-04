@@ -44,7 +44,7 @@ public class RefreshShareTokenLogic {
             throw new NotAllowedException("Dash board id not valid. Id : " + dashBoardIdString);
         }
 
-        final User user = state.user;
+        User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         String token = tokenManager.refreshSharedToken(user, dash);

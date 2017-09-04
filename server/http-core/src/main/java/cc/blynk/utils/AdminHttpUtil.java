@@ -15,7 +15,10 @@ import java.util.stream.Collectors;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-public class AdminHttpUtil {
+public final class AdminHttpUtil {
+
+    private AdminHttpUtil() {
+    }
 
     public static List<?> sortStringAsInt(List<?> list, String field, String order) {
         if (list.size() == 0) {
@@ -45,7 +48,7 @@ public class AdminHttpUtil {
 
     @SuppressWarnings("unchecked")
     public static List<NameCountResponse> convertObjectToMap(CommandStat commandStat) {
-        return convertMapToPair(JsonParser.mapper.convertValue(commandStat, Map.class));
+        return convertMapToPair(JsonParser.MAPPER.convertValue(commandStat, Map.class));
     }
 
     /**

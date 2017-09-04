@@ -39,7 +39,12 @@ import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.after;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -101,7 +106,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -170,7 +175,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -259,7 +264,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -349,7 +354,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -396,7 +401,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -447,7 +452,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -517,7 +522,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -616,7 +621,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 

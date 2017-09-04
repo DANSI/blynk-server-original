@@ -7,6 +7,10 @@ package cc.blynk.cli;
  * @since 1.1
  */
 final class OptionValidator {
+
+    private OptionValidator() {
+    }
+
     /**
      * Validates whether <code>opt</code> is a permissible Option
      * shortOpt.  The rules that specify if the <code>opt</code>

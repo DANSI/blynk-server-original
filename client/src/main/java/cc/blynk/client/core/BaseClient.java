@@ -1,6 +1,6 @@
 package cc.blynk.client.core;
 
-import cc.blynk.client.CommandParser;
+import cc.blynk.client.CommandParserUtil;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.utils.SHA256Util;
@@ -77,7 +77,7 @@ public abstract class BaseClient {
         short command;
 
         try {
-            command = CommandParser.parseCommand(input[0]);
+            command = CommandParserUtil.parseCommand(input[0]);
         } catch (IllegalArgumentException e) {
             log.error("Command not supported {}", input[0]);
             return null;

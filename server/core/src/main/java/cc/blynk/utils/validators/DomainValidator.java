@@ -44,7 +44,7 @@ import java.util.Locale;
  * @version $Revision: 1781829 $
  * @since Validator 1.4
  */
-public class DomainValidator {
+public final class DomainValidator {
 
     private static final int MAX_DOMAIN_LENGTH = 253;
 

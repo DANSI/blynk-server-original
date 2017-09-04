@@ -19,8 +19,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -54,7 +60,7 @@ public class AppWorkflowTest extends IntegrationBase {
     @Test
     public void testPrintApp() throws Exception {
         App app = new App("1", Theme.Blynk, ProvisionType.STATIC, 0, false, "My App", "myIcon", new int[] {1});
-        System.out.println(JsonParser.mapper.writeValueAsString(app));
+        System.out.println(JsonParser.MAPPER.writeValueAsString(app));
     }
 
     @Test

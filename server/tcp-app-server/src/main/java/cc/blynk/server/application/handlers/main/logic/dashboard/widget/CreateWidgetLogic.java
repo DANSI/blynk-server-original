@@ -29,11 +29,11 @@ public class CreateWidgetLogic {
 
     private static final Logger log = LogManager.getLogger(CreateWidgetLogic.class);
 
-    private final int MAX_WIDGET_SIZE;
+    private final int maxWidgetSize;
     private final TimerWorker timerWorker;
 
     public CreateWidgetLogic(int maxWidgetSize, TimerWorker timerWorker) {
-        this.MAX_WIDGET_SIZE = maxWidgetSize;
+        this.maxWidgetSize = maxWidgetSize;
         this.timerWorker = timerWorker;
     }
 
@@ -51,11 +51,11 @@ public class CreateWidgetLogic {
             throw new IllegalCommandException("Income widget message is empty.");
         }
 
-        if (widgetString.length() > MAX_WIDGET_SIZE) {
+        if (widgetString.length() > maxWidgetSize) {
             throw new NotAllowedException("Widget is larger then limit.");
         }
 
-        final User user = state.user;
+        User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         Widget newWidget = JsonParser.parseWidget(widgetString);

@@ -25,7 +25,7 @@ public class QrHolder {
         this.data = data;
     }
 
-    public String makeQRFilename() {
+    String makeQRFilename() {
         return token + "_" + dashId + "_" + deviceId + ".jpg";
     }
 

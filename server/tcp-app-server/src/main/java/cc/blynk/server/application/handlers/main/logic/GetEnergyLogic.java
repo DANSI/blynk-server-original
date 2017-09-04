@@ -12,7 +12,10 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 14.03.16.
  */
-public class GetEnergyLogic {
+public final class GetEnergyLogic {
+
+    private GetEnergyLogic() {
+    }
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         if (ctx.channel().isWritable()) {

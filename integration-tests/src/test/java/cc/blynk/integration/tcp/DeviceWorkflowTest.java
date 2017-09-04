@@ -29,8 +29,16 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -86,7 +94,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -156,7 +164,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -364,7 +372,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -378,7 +386,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         response = clientPair.appClient.getBody();
 
-        devices = JsonParser.mapper.readValue(response, Device[].class);
+        devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -394,7 +402,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -406,7 +414,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         response = clientPair.appClient.getBody(2);
 
-        devices = JsonParser.mapper.readValue(response, Device[].class);
+        devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -421,7 +429,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -440,7 +448,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         response = clientPair.appClient.getBody();
 
-        devices = JsonParser.mapper.readValue(response, Device[].class);
+        devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 

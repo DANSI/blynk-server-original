@@ -19,8 +19,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -67,7 +73,7 @@ public class TableCommandsTest extends IntegrationBase {
         table.height = 2;
         table.width = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(table));
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(table));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 clr");
@@ -169,7 +175,7 @@ public class TableCommandsTest extends IntegrationBase {
         table.height = 2;
         table.width = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(table));
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(table));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 clr");
@@ -220,7 +226,7 @@ public class TableCommandsTest extends IntegrationBase {
         table.width = 2;
         table.height = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.mapper.writeValueAsString(table));
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(table));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 clr");

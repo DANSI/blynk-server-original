@@ -8,7 +8,9 @@ import org.junit.Test;
 
 import java.time.ZoneId;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * The Blynk Project.
@@ -45,7 +47,7 @@ public class RTCSerializationTest {
         RTC rtc = new RTC();
         rtc.tzName = ZoneId.of("Australia/Sydney");
 
-        String widgetString = JsonParser.mapper.writeValueAsString(rtc);
+        String widgetString = JsonParser.MAPPER.writeValueAsString(rtc);
 
         assertNotNull(widgetString);
         assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"isEnabled\":true,\"isDefaultColor\":false,\"deviceId\":0,\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"tzName\":\"Australia/Sydney\"}", widgetString);
@@ -56,7 +58,7 @@ public class RTCSerializationTest {
         RTC rtc = new RTC();
         rtc.tzName = DateTimeUtils.UTC;
 
-        String widgetString = JsonParser.mapper.writeValueAsString(rtc);
+        String widgetString = JsonParser.MAPPER.writeValueAsString(rtc);
 
         assertNotNull(widgetString);
         assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"isEnabled\":true,\"isDefaultColor\":false,\"deviceId\":0,\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"tzName\":\"UTC\"}", widgetString);
@@ -67,7 +69,7 @@ public class RTCSerializationTest {
         RTC rtc = new RTC();
         rtc.tzName = null;
 
-        String widgetString = JsonParser.mapper.writeValueAsString(rtc);
+        String widgetString = JsonParser.MAPPER.writeValueAsString(rtc);
 
         assertNotNull(widgetString);
         assertEquals("{\"type\":\"RTC\",\"id\":0,\"x\":0,\"y\":0,\"color\":0,\"width\":0,\"height\":0,\"tabId\":0,\"isEnabled\":true,\"isDefaultColor\":false,\"deviceId\":0,\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0}", widgetString);

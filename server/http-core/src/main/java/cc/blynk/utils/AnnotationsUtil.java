@@ -25,7 +25,10 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-public class AnnotationsUtil {
+public final class AnnotationsUtil {
+
+    private AnnotationsUtil() {
+    }
 
     public static HandlerWrapper[] register(String rootPath, Object o, GlobalStats globalStats) {
         return registerHandler(rootPath, o, globalStats);

@@ -55,7 +55,7 @@ public class FileChangeWatcherWorker implements Runnable {
                     Path changedFile = propsFileFolder.resolve(changed.toString());
                     if (changed.getFileName().toString().endsWith(fileName) && Files.exists(changedFile)) {
                         log.info("File '{}' changed. Updating values.", changedFile);
-                        limits.TOKEN_BODY = FileLoaderUtil.readFileAsString(fileName);
+                        limits.tokenBody = FileLoaderUtil.readFileAsString(fileName);
                     }
                 }
                 // reset the key

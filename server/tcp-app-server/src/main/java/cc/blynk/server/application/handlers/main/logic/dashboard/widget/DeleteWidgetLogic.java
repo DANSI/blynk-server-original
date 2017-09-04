@@ -47,7 +47,7 @@ public class DeleteWidgetLogic {
         int dashId = ParseUtil.parseInt(split[0]);
         long widgetId = ParseUtil.parseLong(split[1]);
 
-        final User user = state.user;
+        User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         log.debug("Removing widget with id {}.", widgetId);

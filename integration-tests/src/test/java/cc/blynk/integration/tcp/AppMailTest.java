@@ -16,10 +16,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
+import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
+import static cc.blynk.server.core.protocol.enums.Response.OK;
+import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.after;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.startsWith;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -81,7 +90,7 @@ public class AppMailTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertEquals(1, devices.length);
 
         appClient.send("email 1");
@@ -123,7 +132,7 @@ public class AppMailTest extends IntegrationBase {
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody(2);
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
 
         appClient.send("email 1");
 

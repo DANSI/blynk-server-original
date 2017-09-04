@@ -25,7 +25,10 @@ import java.util.UUID;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -103,7 +106,7 @@ public class AssignTokenTest extends IntegrationBase {
 
         String response = clientPair.appClient.getBody(3);
 
-        Device[] devices = JsonParser.mapper.readValue(response, Device[].class);
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
         assertEquals(flashedToken.token, devices[0].token);

@@ -29,7 +29,7 @@ public class HttpStat {
     public int getHistoryPinData;
     public int total;
 
-    public void assign(short field, int val) {
+    void assign(short field, int val) {
         switch (field) {
             case HTTP_IS_HARDWARE_CONNECTED :
                 this.isHardwareConnected = val;

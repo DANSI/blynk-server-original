@@ -17,9 +17,12 @@ import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class GetDevicesLogic {
+public final class GetDevicesLogic {
 
     private static final Logger log = LogManager.getLogger(GetDevicesLogic.class);
+
+    private GetDevicesLogic() {
+    }
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         int dashId = ParseUtil.parseInt(message.body);

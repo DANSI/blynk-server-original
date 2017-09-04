@@ -10,7 +10,7 @@ import static cc.blynk.utils.BlynkByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class PingLogic {
+public final class PingLogic {
 
     private PingLogic() {
     }

@@ -64,7 +64,10 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
  *
  * Convertor between user-friendly command and protocol command code
  */
-public class CommandParser {
+public final class CommandParserUtil {
+
+    private CommandParserUtil() {
+    }
 
     public static Short parseCommand(String stringCommand) {
         switch (stringCommand.toLowerCase()) {

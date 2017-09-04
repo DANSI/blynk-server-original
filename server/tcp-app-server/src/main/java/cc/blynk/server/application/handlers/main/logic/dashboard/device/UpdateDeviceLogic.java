@@ -20,9 +20,12 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class UpdateDeviceLogic {
+public final class UpdateDeviceLogic {
 
     private static final Logger log = LogManager.getLogger(UpdateDeviceLogic.class);
+
+    private UpdateDeviceLogic() {
+    }
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] split = split2(message.body);

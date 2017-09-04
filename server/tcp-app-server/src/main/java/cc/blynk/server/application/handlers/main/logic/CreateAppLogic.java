@@ -26,10 +26,10 @@ public class CreateAppLogic {
 
     private static final Logger log = LogManager.getLogger(CreateAppLogic.class);
 
-    private final int MAX_WIDGET_SIZE;
+    private final int maxWidgetSize;
 
     public CreateAppLogic(int maxWidgetSize) {
-        this.MAX_WIDGET_SIZE = maxWidgetSize;
+        this.maxWidgetSize = maxWidgetSize;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
@@ -39,7 +39,7 @@ public class CreateAppLogic {
             throw new IllegalCommandException("Income app message is empty.");
         }
 
-        if (appString.length() > MAX_WIDGET_SIZE) {
+        if (appString.length() > maxWidgetSize) {
             throw new NotAllowedException("App is larger then limit.");
         }
 
@@ -51,7 +51,7 @@ public class CreateAppLogic {
 
         log.debug("Creating new app {}.", newApp);
 
-        final User user = state.user;
+        User user = state.user;
 
         if (user.profile.apps.length > 25) {
             throw new NotAllowedException("App with same id already exists.");
