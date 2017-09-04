@@ -1,5 +1,7 @@
 package cc.blynk.server.core.dao.ota;
 
+import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.DeviceOtaInfo;
@@ -13,10 +15,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
  * Very basic OTA manager implementation.
@@ -30,8 +32,9 @@ public class OTAManager {
 
     private static final Logger log = LogManager.getLogger(OTAManager.class);
 
-    private volatile OTAInfo info;
-    private final String serverHostUrl;
+    public final String serverHostUrl;
+    private volatile OTAInfo allInfo;
+    private final ConcurrentHashMap<UserKey, OTAInfo> otaInfos = new ConcurrentHashMap<>();
     private final String staticFilesFolder;
 
     public OTAManager(ServerProperties props) {
@@ -40,41 +43,69 @@ public class OTAManager {
         this.staticFilesFolder = props.jarPath;
     }
 
-    public boolean isUpdateRequired(HardwareInfo newHardwareInfo) {
-        if (info != null && newHardwareInfo.build != null && !newHardwareInfo.build.equals(info.build)) {
-            log.info("Device build : {}, firmware build : {}. Firmware update is required.",
-                    newHardwareInfo.build, info.build);
-            return true;
+    public void initiateHardwareUpdate(ChannelHandlerContext ctx, UserKey userKey,
+                                       HardwareInfo newHardwareInfo, DashBoard dash, Device device) {
+        OTAInfo otaInfo = getOtaInfoForHardware(userKey, newHardwareInfo, dash.name);
+        if (otaInfo != null) {
+            sendOtaCommand(ctx, device, otaInfo);
+            log.info("Ota command is sent for user {} and device {}:{}.",
+                    userKey.email, device.name, device.id);
         }
-        return false;
     }
 
-    public void sendOtaCommand(ChannelHandlerContext ctx, Device device) {
-        ByteBuf msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, info.firmwareInitCommandBody);
+    private OTAInfo getOtaInfoForHardware(UserKey userKey, HardwareInfo newHardwareInfo, String dashName) {
+        if (isFirmwareVersionChanged(allInfo, newHardwareInfo)) {
+            log.info("Device build : {}, firmware build : {}. Firmware update is required.",
+                    newHardwareInfo.build, allInfo.build);
+            return allInfo;
+        }
+
+        OTAInfo otaInfo = otaInfos.get(userKey);
+        if (isValidOtaInfo(otaInfo, newHardwareInfo, dashName)) {
+            return otaInfo;
+        }
+
+        return null;
+    }
+
+    private static boolean isValidOtaInfo(OTAInfo otaInfo, HardwareInfo hardwareInfo, String dashName) {
+        return isFirmwareVersionChanged(otaInfo, hardwareInfo) && otaInfo.matches(dashName);
+    }
+
+    private static boolean isFirmwareVersionChanged(OTAInfo otaInfo, HardwareInfo newHardwareInfo) {
+        return otaInfo != null && newHardwareInfo.build != null
+                && !newHardwareInfo.build.equals(otaInfo.build);
+    }
+
+    private void sendOtaCommand(ChannelHandlerContext ctx, Device device, OTAInfo otaInfo) {
+        ByteBuf msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, otaInfo.makeHardwareBody(serverHostUrl));
         if (ctx.channel().isWritable()) {
-            device.deviceOtaInfo = new DeviceOtaInfo(info.initiatedBy, info.initiatedAt, System.currentTimeMillis());
+            device.deviceOtaInfo = new DeviceOtaInfo(otaInfo.initiatedBy, otaInfo.initiatedAt, System.currentTimeMillis());
             ctx.write(msg, ctx.voidPromise());
         }
     }
 
-    public void initiate(User user, String pathToFirmware) {
-        String otaInitCommandBody = buildOTAInitCommandBody(pathToFirmware);
+    public void initiate(User initiator, UserKey userKey, String projectName, String pathToFirmware) {
+        String build = fetchBuildNumber(pathToFirmware);
+        this.otaInfos.put(userKey, new OTAInfo(initiator.email, pathToFirmware, build, projectName));
+    }
 
-        //todo this is ugly. but for now is ok.
+    public void initiateForAll(User initiator, String pathToFirmware) {
+        String build = fetchBuildNumber(pathToFirmware);
+        this.allInfo = new OTAInfo(initiator.email, pathToFirmware, build, null);
+        log.info("Ota initiated. {}", allInfo);
+    }
+
+    //todo this is ugly. but for now is ok.
+    private String fetchBuildNumber(String pathToFirmware) {
         Path path = Paths.get(staticFilesFolder, pathToFirmware);
-        String build = FileUtils.getBuildPatternFromString(path);
-
-        this.info = new OTAInfo(System.currentTimeMillis(), user.email, otaInitCommandBody, build);
-        log.info("Ota initiated. {}", info);
+        return FileUtils.getBuildPatternFromString(path);
     }
 
     public void stop(User user) {
-        this.info = null;
+        this.allInfo = null;
+        otaInfos.clear();
         log.info("Ota stopped by {}.", user.email);
-    }
-
-    public String buildOTAInitCommandBody(String pathToFirmware) {
-        return "ota" + BODY_SEPARATOR + serverHostUrl + pathToFirmware;
     }
 
 }

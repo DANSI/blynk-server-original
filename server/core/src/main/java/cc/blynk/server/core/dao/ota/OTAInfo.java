@@ -1,33 +1,48 @@
 package cc.blynk.server.core.dao.ota;
 
-import java.util.Date;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 22.08.17.
  */
-class OTAInfo {
+public class OTAInfo {
 
     final long initiatedAt;
     final String initiatedBy;
-    final String firmwareInitCommandBody;
+    final String pathToFirmware;
     final String build;
+    final String projectName;
 
-    OTAInfo(long initiatedAt, String initiatedBy, String firmwareInitCommandBody, String build) {
-        this.initiatedAt = initiatedAt;
+    OTAInfo(String initiatedBy, String pathToFirmware, String build, String projectName) {
+        this.initiatedAt = System.currentTimeMillis();
         this.initiatedBy = initiatedBy;
-        this.firmwareInitCommandBody = firmwareInitCommandBody;
+        this.pathToFirmware = pathToFirmware;
         this.build = build;
+        this.projectName = projectName;
+    }
+
+    public String makeHardwareBody(String serverHostUrl) {
+        return makeHardwareBody(serverHostUrl, pathToFirmware);
+    }
+
+    public static String makeHardwareBody(String serverHostUrl, String pathToFirmware) {
+        return "ota" + BODY_SEPARATOR + serverHostUrl + pathToFirmware;
+    }
+
+    public boolean matches(String dashName) {
+        return projectName == null || projectName.equalsIgnoreCase(dashName);
     }
 
     @Override
     public String toString() {
         return "OTAInfo{"
-                + "initiatedAt=" + new Date(initiatedAt)
+                + "initiatedAt=" + initiatedAt
                 + ", initiatedBy='" + initiatedBy + '\''
-                + ", firmwareInitCommandBody='" + firmwareInitCommandBody + '\''
+                + ", pathToFirmware='" + pathToFirmware + '\''
                 + ", build='" + build + '\''
+                + ", projectName='" + projectName + '\''
                 + '}';
     }
 }

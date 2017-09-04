@@ -94,12 +94,7 @@ public class BlynkInternalLogic {
         Device device = state.device;
 
         if (device != null) {
-            if (otaManager.isUpdateRequired(hardwareInfo)) {
-                otaManager.sendOtaCommand(ctx, device);
-                log.info("Ota command is sent for user {} and device {}:{}.",
-                        state.user.email, device.name, device.id);
-            }
-
+            otaManager.initiateHardwareUpdate(ctx, state.userKey, hardwareInfo, dashBoard, device);
             device.hardwareInfo = hardwareInfo;
             dashBoard.updatedAt = System.currentTimeMillis();
         }

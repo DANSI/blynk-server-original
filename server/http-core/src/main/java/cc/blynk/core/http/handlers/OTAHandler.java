@@ -23,6 +23,7 @@ import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.dao.ota.OTAInfo;
 import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -78,28 +79,56 @@ public class OTAHandler extends UploadHandler {
 
     @Override
     public Response afterUpload(ChannelHandlerContext ctx, String pathToFirmware) {
-        List<String> param = queryStringDecoder.parameters().get("token");
-
-        if (param == null) {
-            log.info("Requested OTA for all devices...");
-            return allDevicesOTA(ctx, pathToFirmware);
-        } else {
-            String token = param.get(0);
+        String token = getParam("token");
+        if (token != null) {
             log.info("Requested OTA for single device {}.", token);
             return singleDeviceOTA(ctx, token, pathToFirmware);
         }
 
+        String user = getParam("user");
+        if (user != null) {
+            String appName = getParam("appName");
+            UserKey userKey = new UserKey(user, appName);
+            String project = getParam("project");
+            log.info("Requested OTA for single user {}. Project {}.", user, project);
+            return singleUserOTA(ctx, userKey, project, pathToFirmware);
+        }
+
+        log.info("Requested OTA for all devices...");
+        return allDevicesOTA(ctx, pathToFirmware);
+    }
+
+    private String getParam(String paramString) {
+        List<String> param = queryStringDecoder.parameters().get(paramString);
+        if (param == null) {
+            return null;
+        }
+        return param.get(0);
     }
 
     private Response allDevicesOTA(ChannelHandlerContext ctx, String pathToFirmware) {
-
         User initiator = ctx.channel().attr(AuthHeadersBaseHttpHandler.USER).get();
-        otaManager.initiate(initiator, pathToFirmware);
+        otaManager.initiateForAll(initiator, pathToFirmware);
 
         return ok(pathToFirmware);
     }
 
-    private Response singleDeviceOTA(ChannelHandlerContext ctx, String token, String path) {
+    private Response singleUserOTA(ChannelHandlerContext ctx, UserKey userKey,
+                                   String projectName, String pathToFirmware) {
+        User initiator = ctx.channel().attr(AuthHeadersBaseHttpHandler.USER).get();
+        User user = userDao.users.get(userKey);
+
+        if (user == null) {
+            log.info("Requested user {} not found.", userKey);
+            return badRequest("Requested user not found.");
+        }
+
+        otaManager.initiate(initiator, userKey, projectName, pathToFirmware);
+
+        return ok(pathToFirmware);
+    }
+
+    private Response singleDeviceOTA(ChannelHandlerContext ctx, String token, String pathToFirmware) {
         TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
@@ -117,7 +146,7 @@ public class OTAHandler extends UploadHandler {
             return badRequest("Device wasn't connected yet.");
         }
 
-        String body = otaManager.buildOTAInitCommandBody(path);
+        String body = OTAInfo.makeHardwareBody(otaManager.serverHostUrl, pathToFirmware);
         if (session.sendMessageToHardware(dashId, BLYNK_INTERNAL, 7777, body, deviceId)) {
             log.debug("No device in session.");
             return badRequest("No device in session.");
@@ -128,7 +157,7 @@ public class OTAHandler extends UploadHandler {
             tokenValue.device.updateOTAInfo(initiator.email);
         }
 
-        return ok(path);
+        return ok(pathToFirmware);
     }
 
 }

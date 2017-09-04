@@ -10,6 +10,7 @@ import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.dao.ota.OTAInfo;
 import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -66,7 +67,7 @@ public class OTALogic extends AuthHeadersBaseHttpHandler {
         }
 
         String otaFile = OTA_DIR + (filename == null ? "firmware_ota.bin" : filename);
-        String body = otaManager.buildOTAInitCommandBody(otaFile);
+        String body = OTAInfo.makeHardwareBody(otaManager.serverHostUrl, otaFile);
         if (session.sendMessageToHardware(BLYNK_INTERNAL, 7777, body)) {
             log.debug("No device in session.");
             return badRequest("No device in session.");
