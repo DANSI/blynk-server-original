@@ -17,6 +17,7 @@ import java.util.Map;
 import static cc.blynk.utils.ListUtils.subList;
 import static io.netty.handler.codec.http.HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderNames.LOCATION;
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
@@ -26,7 +27,6 @@ import static io.netty.handler.codec.http.HttpResponseStatus.MOVED_PERMANENTLY;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-import static io.netty.handler.codec.rtsp.RtspHeaders.Names.CONTENT_LENGTH;
 
 /**
  * The Blynk Project.
