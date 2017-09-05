@@ -65,7 +65,7 @@ public final class AdminHttpUtil {
             try {
                 this.field = type.getField(sortField);
             } catch (NoSuchFieldException nsfe) {
-                throw new RuntimeException("Can't find field.");
+                throw new RuntimeException("Can't find field " + sortField + " for " + type.getName());
             }
             this.fieldType = field.getType();
         }

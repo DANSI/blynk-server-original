@@ -115,7 +115,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
                     if (path != null) {
                         response = afterUpload(ctx, path);
                     } else {
-                        response = serverError();
+                        response = serverError("Can't find binary data in request.");
                     }
                 } catch (NoSuchFileException e) {
                     log.error("Unable to copy uploaded file to static folder. Reason : {}", e.getMessage());
