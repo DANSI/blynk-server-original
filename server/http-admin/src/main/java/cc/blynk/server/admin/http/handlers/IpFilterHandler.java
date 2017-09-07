@@ -9,7 +9,6 @@ import io.netty.handler.ipfilter.IpSubnetFilterRule;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.net.Inet6Address;
 import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.Set;
@@ -51,13 +50,6 @@ public class IpFilterHandler extends AbstractRemoteAddressFilter<InetSocketAddre
 
         if (allowedIPs.contains(remoteAddress.getAddress().getHostAddress())) {
             return true;
-        }
-
-        if (remoteAddress.getAddress() instanceof Inet6Address) {
-            log.error("Look like you are trying to connect with IPv6 : {}.  While in 'allowed.administrator.ips' "
-                            + "you are using IPv4.",
-                    remoteAddress.getAddress().getHostAddress());
-            return false;
         }
 
         for (IpSubnetFilterRule rule : rules) {
