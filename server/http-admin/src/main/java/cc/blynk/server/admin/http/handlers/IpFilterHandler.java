@@ -45,10 +45,12 @@ public class IpFilterHandler extends AbstractRemoteAddressFilter<InetSocketAddre
     @Override
     public boolean accept(ChannelHandlerContext ctx, InetSocketAddress remoteAddress) {
         if (allowedIPs.size() == 0 && rules.size() == 0) {
+            log.error("allowed.administrator.ips property is empty. Access restricted.");
             return false;
         }
 
-        if (allowedIPs.contains(remoteAddress.getAddress().getHostAddress())) {
+        String remoteHost = remoteAddress.getAddress().getHostAddress();
+        if (allowedIPs.contains(remoteHost)) {
             return true;
         }
 
@@ -58,6 +60,7 @@ public class IpFilterHandler extends AbstractRemoteAddressFilter<InetSocketAddre
             }
         }
 
+        log.error("Access restricted for {}.", remoteHost);
         return false;
     }
 }
