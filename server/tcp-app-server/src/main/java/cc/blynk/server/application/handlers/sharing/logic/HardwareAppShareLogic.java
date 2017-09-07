@@ -68,7 +68,7 @@ public class HardwareAppShareLogic extends BaseProcessorHandler {
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         if (!dash.isActive) {
-            log.debug("No active dashboard.");
+            log.trace("No active dashboard.");
             ctx.writeAndFlush(noActiveDash(message.id), ctx.voidPromise());
             return;
         }

@@ -83,7 +83,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             if (dash.isActive) {
                 session.sendToApps(HARDWARE, message.id, dash.id, deviceId, body);
             } else {
-                log.debug("No active dashboard.");
+                log.trace("No active dashboard.");
             }
         }
     }
