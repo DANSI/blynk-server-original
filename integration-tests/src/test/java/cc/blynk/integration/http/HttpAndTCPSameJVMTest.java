@@ -18,6 +18,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
+import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.hardware.HardwareServer;
@@ -46,15 +47,10 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static cc.blynk.server.workers.timer.TimerWorker.TIMER_MSG_ID;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -555,7 +551,6 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1 vw 100 100"))));
     }
 
-
     @Test
     public void testChangePinValueViaHttpAPIAndNoWidgetMultiPinValue() throws Exception {
         clientPair.appClient.send("getToken 1");
@@ -571,4 +566,24 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 31 100 101 102"))));
     }
 
+    @Test
+    public void tableSetValueViaHttpApi() throws Exception {
+        Table table = new Table();
+        table.pin = 123;
+        table.pinType = PinType.VIRTUAL;
+        table.isClickableRows = true;
+        table.isReoderingAllowed = true;
+        table.height = 2;
+        table.width = 2;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(table));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody(2);
+        HttpGet updateTableRow = new HttpGet(httpServerUrl + token + "/update/v123?value=add&value=2&value=Martes&value=120Kwh");
+        try (CloseableHttpResponse response = httpclient.execute(updateTableRow)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+    }
 }

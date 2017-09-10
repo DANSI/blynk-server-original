@@ -90,6 +90,7 @@ public class Table extends OnePinWidget {
                         }
                         break;
                 }
+                this.value = value;
             }
             return true;
         }
