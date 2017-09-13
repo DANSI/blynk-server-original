@@ -1,17 +1,16 @@
 package cc.blynk.server.application.handlers.sharing.logic;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.Target;
-import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
+import cc.blynk.server.core.processors.BaseProcessorHandler;
+import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ParseUtil;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -35,14 +34,20 @@ import static cc.blynk.utils.StringUtils.split3;
  * Created on 2/1/2015.
  *
  */
-public class HardwareAppShareLogic {
+public class HardwareAppShareLogic extends BaseProcessorHandler {
 
     private static final Logger log = LogManager.getLogger(HardwareAppShareLogic.class);
 
     private final SessionDao sessionDao;
 
-    public HardwareAppShareLogic(SessionDao sessionDao) {
-        this.sessionDao = sessionDao;
+    public HardwareAppShareLogic(Holder holder, String email) {
+        super(holder.eventorProcessor, new WebhookProcessor(holder.asyncHttpClient,
+                holder.limits.webhookPeriodLimitation,
+                holder.limits.webhookResponseSuzeLimitBytes,
+                holder.limits.webhookFailureLimit,
+                holder.stats,
+                email));
+        this.sessionDao = holder.sessionDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppShareStateHolder state, StringMessage message) {
@@ -117,7 +122,7 @@ public class HardwareAppShareLogic {
                     dash.update(targetId, pin, pinType, value, now);
                 }
 
-                final String sharedToken = state.token;
+                String sharedToken = state.token;
                 if (sharedToken != null) {
                     for (Channel appChannel : session.appChannels) {
                         if (appChannel != ctx.channel() && appChannel.isWritable()
@@ -133,24 +138,8 @@ public class HardwareAppShareLogic {
                     log.debug("No device in session.");
                     ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
                 }
-                break;
 
-
-            //todo fully remove this section???
-            case 'r':
-                Widget widget = dash.findWidgetByPin(targetId, split[1].split(StringUtils.BODY_SEPARATOR_STRING));
-                if (widget == null) {
-                    throw new IllegalCommandBodyException("No frequency widget for read command.");
-                }
-
-                if (!(widget instanceof FrequencyWidget)) {
-                    //corner case for 3-d parties. sometimes users need to read pin state
-                    // even from non-frequency widgets
-                    if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], targetId)) {
-                        log.debug("No device in session.");
-                        ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
-                    }
-                }
+                process(state.user, dash, targetId, session, pin, pinType, value, now);
                 break;
         }
     }
