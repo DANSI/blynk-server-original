@@ -1,5 +1,6 @@
 package cc.blynk.utils;
 
+import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import org.apache.logging.log4j.LogManager;
@@ -181,7 +182,7 @@ public final class FileUtils {
             "../server/http-dashboard/target/classes",
             "../server/http-core/target/classes",
             "../server/core/target",
-            "/tmp/blynk"
+            Paths.get(System.getProperty("java.io.tmpdir"), CSVGenerator.BLYNK_FOLDER).toString()
     };
 
     public static Path getPathForLocalRun(String uri) {

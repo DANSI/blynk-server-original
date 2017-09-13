@@ -31,7 +31,9 @@ public class CSVGenerator {
 
     private static final Logger log = LogManager.getLogger(CSVGenerator.class);
 
-    public static final String CSV_DIR = Paths.get(System.getProperty("java.io.tmpdir"), "blynk").toString();
+    public static final String BLYNK_FOLDER = "blynk";
+
+    public static final String CSV_DIR = Paths.get(System.getProperty("java.io.tmpdir"), BLYNK_FOLDER).toString();
 
     static {
         try {
