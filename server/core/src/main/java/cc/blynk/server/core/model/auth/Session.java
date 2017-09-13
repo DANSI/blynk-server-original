@@ -89,9 +89,9 @@ public class Session {
     }
 
     private Set<Channel> filter(int activeDashId, int[] deviceIds) {
-        final Set<Channel> targetChannels = new HashSet<>();
+        Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
-            final HardwareStateHolder hardwareState = getHardState(channel);
+            HardwareStateHolder hardwareState = getHardState(channel);
             if (hardwareState != null && hardwareState.dash.id == activeDashId
                     && (deviceIds.length == 0 || ArrayUtil.contains(deviceIds, hardwareState.device.id))) {
                 targetChannels.add(channel);
@@ -101,7 +101,7 @@ public class Session {
     }
 
     private Set<Channel> filter(int activeDashId, int deviceId) {
-        final Set<Channel> targetChannels = new HashSet<>();
+        Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
             if (isSameDashAndDeviceId(channel, activeDashId, deviceId)) {
                 targetChannels.add(channel);
@@ -123,7 +123,7 @@ public class Session {
     }
 
     private boolean sendMessageToHardware(Set<Channel> targetChannels, short cmd, int msgId, String body) {
-        final int channelsNum = targetChannels.size();
+        int channelsNum = targetChannels.size();
         if (channelsNum == 0) {
             return true; // -> no active hardware
         }
@@ -168,21 +168,17 @@ public class Session {
     }
 
     public void sendToApps(short cmd, int msgId, int dashId, int deviceId) {
-        final int targetsNum = appChannels.size();
-        if (targetsNum == 0) {
-            return;
+        int targetsNum = appChannels.size();
+        if (targetsNum > 0) {
+            send(appChannels, targetsNum, cmd, msgId, "" + dashId + DEVICE_SEPARATOR + deviceId);
         }
-
-        send(appChannels, targetsNum, cmd, msgId, "" + dashId + DEVICE_SEPARATOR + deviceId);
     }
 
     public void sendToApps(short cmd, int msgId, int dashId, int deviceId, String body) {
-        final int targetsNum = appChannels.size();
-        if (targetsNum == 0) {
-            return;
+        int targetsNum = appChannels.size();
+        if (targetsNum > 0) {
+            send(appChannels, targetsNum, cmd, msgId, prependDashIdAndDeviceId(dashId, deviceId, body));
         }
-
-        send(appChannels, targetsNum, cmd, msgId, prependDashIdAndDeviceId(dashId, deviceId, body));
     }
 
     private void send(Set<Channel> targets, int targetsNum, short cmd, int msgId, String body) {
@@ -211,11 +207,9 @@ public class Session {
         }
 
         int channelsNum = targetChannels.size();
-        if (channelsNum == 0) {
-            return;
+        if (channelsNum > 0) {
+            send(targetChannels, channelsNum, cmd, msgId, body);
         }
-
-        send(targetChannels, channelsNum, cmd, msgId, body);
     }
 
     public boolean isAppConnected() {
