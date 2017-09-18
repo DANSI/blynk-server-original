@@ -79,6 +79,7 @@ public class EventorProcessor {
                                 } else if (action instanceof NotificationAction) {
                                     execute(user, dash, triggerValue, (NotificationAction) action);
                                 }
+                                globalStats.mark(EVENTOR);
                             }
                         }
                         rule.isProcessed = true;
@@ -100,7 +101,6 @@ public class EventorProcessor {
             MailAction mailAction = (MailAction) notificationAction;
             email(user, dash, mailAction.subject, body);
         }
-        globalStats.mark(EVENTOR);
     }
 
     private void email(User user, DashBoard dash, String subject, String body) {
@@ -177,12 +177,10 @@ public class EventorProcessor {
     }
 
     private void execute(Session session, DashBoard dash, int deviceId, SetPinAction action, long now) {
-        final String body = action.makeHardwareBody();
+        String body = action.makeHardwareBody();
         session.sendMessageToHardware(dash.id, HARDWARE, 888, body, deviceId);
         session.sendToApps(HARDWARE, 888, dash.id, deviceId, body);
 
         dash.update(deviceId, action.dataStream.pin, action.dataStream.pinType, action.value, now);
-
-        globalStats.mark(EVENTOR);
     }
 }

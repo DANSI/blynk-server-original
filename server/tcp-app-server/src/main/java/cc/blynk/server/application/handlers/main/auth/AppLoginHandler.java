@@ -84,7 +84,6 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
-        //warn: split may be optimized
         String[] messageParts = message.body.split(BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 2) {
@@ -93,9 +92,9 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
             return;
         }
 
-        final String email = messageParts[0].toLowerCase();
-        final OsType osType = messageParts.length > 3 ? OsType.parse(messageParts[2]) : OsType.OTHER;
-        final String version = messageParts.length > 3 ? messageParts[3] : null;
+        String email = messageParts[0].toLowerCase();
+        OsType osType = messageParts.length > 3 ? OsType.parse(messageParts[2]) : OsType.OTHER;
+        String version = messageParts.length > 3 ? messageParts[3] : null;
 
         if (messageParts.length == 5) {
             if (AppName.FACEBOOK.equals(messageParts[4])) {
@@ -183,7 +182,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
     }
 
     private void login(ChannelHandlerContext ctx, int messageId, User user, OsType osType, String version) {
-        final ChannelPipeline pipeline = ctx.pipeline();
+        ChannelPipeline pipeline = ctx.pipeline();
         cleanPipeline(pipeline);
 
         AppStateHolder appStateHolder = new AppStateHolder(user, osType, version);

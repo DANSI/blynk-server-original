@@ -39,15 +39,15 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, GetServerMessage msg) throws Exception {
-        final String[] parts = StringUtils.split2(msg.body);
+        String[] parts = StringUtils.split2(msg.body);
 
         if (parts.length < 2) {
             ctx.writeAndFlush(illegalCommand(msg.id), ctx.voidPromise());
             return;
         }
 
-        final String email = parts[0];
-        final String appName = parts[1];
+        String email = parts[0];
+        String appName = parts[1];
 
         if (appName == null || appName.isEmpty() || appName.length() > 100) {
             ctx.writeAndFlush(illegalCommand(msg.id), ctx.voidPromise());
