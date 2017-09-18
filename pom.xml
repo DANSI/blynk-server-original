@@ -109,6 +109,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <linkXRef>false</linkXRef>
+                </configuration>
             </plugin>
 
         </plugins>
