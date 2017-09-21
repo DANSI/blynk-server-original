@@ -521,16 +521,19 @@ Raw data may consume your disk space very quickly!
 
 Data format is:
 
-        value,timestamp
+        value,timestamp,deviceId
         
 For example:
 
-        10,1438022081332
+        10,1438022081332,0
         
-Where 10 - value of pin, and 1438022081332 - the difference, measured in milliseconds, between the current time and midnight, January 1, 1970 UTC.
+Where ```10``` - value of pin.
+```1438022081332``` - the difference, measured in milliseconds, between the current time and midnight, January 1, 1970 UTC.
 To display the date/time in excel you may use formula:
 
         =((COLUMN/(60*60*24)/1000+25569))
+        
+```0``` - device id
         
 ### Automatic Let's Encrypt certificates generation
 
