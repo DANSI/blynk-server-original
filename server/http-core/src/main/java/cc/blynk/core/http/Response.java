@@ -56,15 +56,15 @@ public final class Response extends DefaultFullHttpResponse {
 
     private Response(HttpVersion version, HttpResponseStatus status) {
         super(version, status);
-        headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-        headers().set(CONTENT_LENGTH, 0);
+        headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE)
+                 .set(CONTENT_LENGTH, 0);
     }
 
     private void fillHeaders(String contentType) {
-        headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-        headers().set(CONTENT_TYPE, contentType);
-        headers().set(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        headers().set(CONTENT_LENGTH, content().readableBytes());
+        headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE)
+                 .set(CONTENT_TYPE, contentType)
+                 .set(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+                 .set(CONTENT_LENGTH, content().readableBytes());
     }
 
     public static Response noResponse() {
@@ -91,17 +91,11 @@ public final class Response extends DefaultFullHttpResponse {
         return new Response(HTTP_1_1, BAD_REQUEST);
     }
 
-    public static Response forward(String url) {
-        Response response = new Response(HTTP_1_1, MOVED_PERMANENTLY);
-        response.headers().set(LOCATION, url);
-        response.headers().set(CONTENT_LENGTH, response.content().readableBytes());
-        return response;
-    }
-
     public static Response redirect(String url) {
         Response response = new Response(HTTP_1_1, MOVED_PERMANENTLY);
-        response.headers().set(LOCATION, url);
-        response.headers().set(CONTENT_LENGTH, response.content().readableBytes());
+        response.headers()
+                .set(LOCATION, url)
+                .set(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         return response;
     }
 

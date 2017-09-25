@@ -8,6 +8,7 @@ import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.SmsProperties;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -210,9 +211,11 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/data/v10").execute();
         Response response = f.get();
         assertEquals(301, response.getStatusCode());
-        String redirectLocation = response.getHeader("location");
+        String redirectLocation = response.getHeader(HttpHeaderNames.LOCATION);
         assertNotNull(redirectLocation);
         assertTrue(redirectLocation.contains("/dmitriy@blynk.cc_125564119_0_v10_"));
+        assertEquals("*", response.getHeader(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN));
+        assertEquals("0", response.getHeader(HttpHeaderNames.CONTENT_LENGTH));
 
         f = httpclient.prepareGet(httpsServerUrl + redirectLocation.replaceFirst("/", "")).execute();
         response = f.get();
