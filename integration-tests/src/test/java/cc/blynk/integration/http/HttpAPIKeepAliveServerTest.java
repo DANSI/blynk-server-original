@@ -17,7 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.net.SocketException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -85,7 +84,7 @@ public class HttpAPIKeepAliveServerTest extends BaseTest {
         }
     }
 
-    @Test(expected = SocketException.class)
+    @Test(expected = Exception.class)
     public void keepAliveIsSupported()  throws Exception{
         String url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14";
 
