@@ -3,7 +3,6 @@ package cc.blynk.integration.http;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
-import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -18,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.net.SocketException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -85,7 +85,7 @@ public class HttpAPIKeepAliveServerTest extends BaseTest {
         }
     }
 
-    @Test(expected = NoHttpResponseException.class)
+    @Test(expected = SocketException.class)
     public void keepAliveIsSupported()  throws Exception{
         String url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14";
 

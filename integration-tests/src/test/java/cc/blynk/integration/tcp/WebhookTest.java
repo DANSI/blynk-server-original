@@ -378,7 +378,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 123 " + b("10 11 12"));
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Future<Response> f = httpclient.prepareGet(webHook.url).execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
