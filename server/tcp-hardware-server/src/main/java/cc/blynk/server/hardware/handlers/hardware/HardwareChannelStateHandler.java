@@ -79,9 +79,9 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        final Notification notification = dashBoard.getWidgetByType(Notification.class);
+        Notification notification = dashBoard.getWidgetByType(Notification.class);
 
-        if (notification != null && notification.notifyWhenOffline) {
+        if (notification != null && notification.notifyWhenOffline && !state.user.isLoggedOut) {
             sendPushNotification(ctx, dashBoard, notification, state.dash.id, device);
         } else {
             session.sendOfflineMessageToApps(state.dash.id);
@@ -90,8 +90,8 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     private void sendPushNotification(ChannelHandlerContext ctx, DashBoard dashBoard,
                                       Notification notification, int dashId, Device device) {
-        final String dashName = dashBoard.name == null ? "" : dashBoard.name;
-        final String deviceName = ((device == null || device.name == null) ? "device" : device.name);
+        String dashName = dashBoard.name == null ? "" : dashBoard.name;
+        String deviceName = ((device == null || device.name == null) ? "device" : device.name);
         String message = "Your " + deviceName + " went offline. \"" + dashName + "\" project is disconnected.";
         if (notification.notifyWhenOfflineIgnorePeriod == 0 || device == null) {
             notification.push(gcmWrapper,

@@ -43,6 +43,8 @@ public class User {
     public transient int emailMessages;
     private transient long emailSentTs;
 
+    public volatile boolean isLoggedOut;
+
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
         this.profile = new Profile();

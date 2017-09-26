@@ -32,6 +32,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage
 import cc.blynk.server.core.protocol.model.messages.appllication.HardwareResendFromBluetoothMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedStringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.LogoutMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RedeemMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RefreshTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
@@ -104,6 +105,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_B
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
+import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
@@ -139,6 +141,8 @@ public final class MessageFactory {
                 return new RegisterMessage(messageId, body);
             case LOGIN :
                 return new LoginMessage(messageId, body);
+            case LOGOUT :
+                return new LogoutMessage(messageId);
             case LOAD_PROFILE_GZIPPED :
                 return new LoadProfileGzippedStringMessage(messageId, body);
             case APP_SYNC:

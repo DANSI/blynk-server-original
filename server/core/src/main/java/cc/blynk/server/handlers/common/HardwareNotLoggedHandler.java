@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 public class HardwareNotLoggedHandler extends SimpleChannelInboundHandler<MessageBase>
         implements DefaultExceptionHandler {
 
-    private static final Logger log = LogManager.getLogger(Logger.class);
+    private static final Logger log = LogManager.getLogger(HardwareNotLoggedHandler.class);
     private long lastLoggedTs;
 
     @Override

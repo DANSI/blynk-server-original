@@ -39,6 +39,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_B
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
+import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
@@ -91,6 +92,8 @@ public final class CommandParserUtil {
                 return REFRESH_TOKEN;
             case "login" :
                 return LOGIN;
+            case "logout" :
+                return LOGOUT;
             case "getgraphdata" :
                 return GET_GRAPH_DATA;
             case "getenhanceddata" :

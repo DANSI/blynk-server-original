@@ -51,6 +51,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.common.LogoutLogic;
 import cc.blynk.server.handlers.common.PingLogic;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -88,6 +89,7 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
@@ -341,6 +343,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case GET_PROJECT_BY_CLONE_CODE :
                 getProjectByCloneCodeLogic.messageReceived(ctx, msg);
+                break;
+            case LOGOUT :
+                LogoutLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }

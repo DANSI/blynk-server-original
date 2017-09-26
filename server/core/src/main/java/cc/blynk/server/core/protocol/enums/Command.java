@@ -101,6 +101,7 @@ public final class Command {
 
     public static final short HARDWARE_LOG_EVENT = 64;
     public static final short HARDWARE_RESEND_FROM_BLUETOOTH = 65;
+    public static final short LOGOUT = 66;
 
     //http codes. Used only for stats
     public static final short HTTP_IS_HARDWARE_CONNECTED = 82;
@@ -127,6 +128,7 @@ public final class Command {
                 put(HARDWARE_CONNECTED, "HardwareConnected");
                 put(REGISTER, "Register");
                 put(LOGIN, "Login");
+                put(LOGOUT, "Logout");
                 put(LOAD_PROFILE_GZIPPED, "LoadProfile");
                 put(APP_SYNC, "AppSync");
                 put(SHARING, "Sharing");

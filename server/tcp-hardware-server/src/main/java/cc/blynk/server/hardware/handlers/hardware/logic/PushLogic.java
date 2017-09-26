@@ -49,6 +49,12 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
+        if (state.user.isLoggedOut) {
+            log.debug("User is logged out.");
+            ctx.writeAndFlush(noActiveDash(message.id), ctx.voidPromise());
+            return;
+        }
+
         Notification widget = dash.getWidgetByType(Notification.class);
 
         if (widget == null || widget.hasNoToken()) {
@@ -57,7 +63,7 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        final long now = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
         checkIfNotificationQuotaLimitIsNotReached(now);
 
         log.trace("Sending push for user {}, with message : '{}'.", state.user.email, message.body);

@@ -567,6 +567,11 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return badRequest("Project is not active.");
         }
 
+        if (user.isLoggedOut) {
+            log.debug("User is logged out.");
+            return badRequest("User is logged out.");
+        }
+
         Notification notification = dash.getWidgetByType(Notification.class);
 
         if (notification == null || notification.hasNoToken()) {
