@@ -300,7 +300,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             log.debug("No data for pin.");
             return badRequest("No data for pin.");
         } catch (Exception e) {
-            log.debug("Error getting pin data.");
+            log.debug("Error getting pin data.", e);
             return badRequest("Error getting pin data.");
         }
     }
