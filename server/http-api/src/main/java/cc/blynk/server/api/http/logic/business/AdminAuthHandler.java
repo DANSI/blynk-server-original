@@ -61,6 +61,8 @@ public class AdminAuthHandler extends BaseHttpHandler {
 
         Response response = redirect(rootPath);
 
+        log.debug("Admin login is successful. Redirecting to {}", rootPath);
+
         Cookie cookie = makeDefaultSessionCookie(sessionDao.generateNewSession(user), COOKIE_EXPIRE_TIME);
         response.headers().add(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
 

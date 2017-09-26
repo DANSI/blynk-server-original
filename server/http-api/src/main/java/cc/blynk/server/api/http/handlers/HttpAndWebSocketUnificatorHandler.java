@@ -1,8 +1,8 @@
 package cc.blynk.server.api.http.handlers;
 
 import cc.blynk.core.http.handlers.CookieBasedUrlReWriterHandler;
+import cc.blynk.core.http.handlers.NoCacheStaticFile;
 import cc.blynk.core.http.handlers.NoMatchHandler;
-import cc.blynk.core.http.handlers.StaticFile;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UploadHandler;
 import cc.blynk.core.http.handlers.UrlReWriterHandler;
@@ -148,7 +148,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(cookieBasedUrlReWriterHandler);
 
         pipeline.remove(StaticFileHandler.class);
-        pipeline.addLast(new StaticFileHandler(props, new StaticFile("/static")));
+        pipeline.addLast(new StaticFileHandler(props, new NoCacheStaticFile("/static")));
 
         pipeline.addLast(otaLogic);
         pipeline.addLast(usersLogic);
