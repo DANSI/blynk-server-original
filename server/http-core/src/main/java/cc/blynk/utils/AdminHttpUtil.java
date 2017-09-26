@@ -20,6 +20,7 @@ public final class AdminHttpUtil {
     private AdminHttpUtil() {
     }
 
+    @SuppressWarnings("unchecked")
     public static List<?> sortStringAsInt(List<?> list, String field, String order) {
         if (list.size() == 0) {
             return list;
@@ -31,6 +32,7 @@ public final class AdminHttpUtil {
         return list;
     }
 
+    @SuppressWarnings("unchecked")
     public static List<?> sort(List<?> list, String field, String order) {
         if (list.size() == 0) {
             return list;

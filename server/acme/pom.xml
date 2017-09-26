@@ -15,16 +15,15 @@
         <dependency>
             <groupId>org.shredzone.acme4j</groupId>
             <artifactId>acme4j-client</artifactId>
-            <version>0.10</version>
+            <version>${acme4j-client.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.shredzone.acme4j</groupId>
             <artifactId>acme4j-utils</artifactId>
-            <version>0.10</version>
+            <version>${acme4j-client.version}</version>
         </dependency>
 
     </dependencies>
-
 
 </project>
