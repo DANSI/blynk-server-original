@@ -167,12 +167,12 @@
         <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
 
         <!-- dependencies -->
-        <netty.version>4.1.15.Final</netty.version>
+        <netty.version>4.1.16.Final</netty.version>
         <netty.boring.ssl.version>2.0.6.Final</netty.boring.ssl.version>
         <log4j2.version>2.9.1</log4j2.version>
         <jackson-databind.version>2.9.1</jackson-databind.version>
         <disruptor.version>3.3.6</disruptor.version>
-        <async-http-client.version>2.1.0-alpha24</async-http-client.version>
+        <async-http-client.version>2.1.0-alpha25</async-http-client.version>
         <twitter4j-core.version>4.0.2</twitter4j-core.version>
         <javax.mail.version>1.6.0</javax.mail.version>
         <postgresql.version>42.1.4</postgresql.version>
