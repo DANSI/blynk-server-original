@@ -85,7 +85,7 @@ public class Options {
      * @param description Self-documenting description
      * @return the resulting Options instance
      */
-    public Options addOption(String opt, String longOpt, boolean hasArg, String description) {
+    private Options addOption(String opt, String longOpt, boolean hasArg, String description) {
         addOption(new Option(opt, longOpt, hasArg, description));
         return this;
     }
@@ -96,7 +96,7 @@ public class Options {
      * @param opt the option that is to be added
      * @return the resulting Options instance
      */
-    public Options addOption(Option opt) {
+    private Options addOption(Option opt) {
         String key = opt.getKey();
 
         // add it to the long option list
@@ -122,7 +122,7 @@ public class Options {
      *
      * @return read-only List of required options
      */
-    public List getRequiredOptions() {
+    List getRequiredOptions() {
         return Collections.unmodifiableList(requiredOpts);
     }
 
@@ -136,7 +136,7 @@ public class Options {
      * @param opt short or long name of the {@link Option}
      * @return the option represented by opt
      */
-    public Option getOption(String opt) {
+    Option getOption(String opt) {
         opt = Util.stripLeadingHyphens(opt);
 
         if (shortOpts.containsKey(opt)) {
@@ -153,7 +153,7 @@ public class Options {
      * @return the options matching the partial name specified, or an empty list if none matches
      * @since 1.3
      */
-    public List<String> getMatchingOptions(String opt) {
+    List<String> getMatchingOptions(String opt) {
         opt = Util.stripLeadingHyphens(opt);
 
         List<String> matchingOpts = new ArrayList<>();
@@ -178,7 +178,7 @@ public class Options {
      * @param opt short or long name of the {@link Option}
      * @return true if the named {@link Option} is a member of this {@link Options}
      */
-    public boolean hasOption(String opt) {
+    boolean hasOption(String opt) {
         opt = Util.stripLeadingHyphens(opt);
 
         return shortOpts.containsKey(opt) || longOpts.containsKey(opt);
@@ -191,7 +191,7 @@ public class Options {
      * @return true if the named {@link Option} is a member of this {@link Options}
      * @since 1.3
      */
-    public boolean hasLongOption(String opt) {
+    boolean hasLongOption(String opt) {
         opt = Util.stripLeadingHyphens(opt);
 
         return longOpts.containsKey(opt);
@@ -204,7 +204,7 @@ public class Options {
      * @return true if the named {@link Option} is a member of this {@link Options}
      * @since 1.3
      */
-    public boolean hasShortOption(String opt) {
+    boolean hasShortOption(String opt) {
         opt = Util.stripLeadingHyphens(opt);
 
         return shortOpts.containsKey(opt);
@@ -216,7 +216,7 @@ public class Options {
      * @param opt the option whose OptionGroup is being queried.
      * @return the OptionGroup if <code>opt</code> is part of an OptionGroup, otherwise return null
      */
-    public OptionGroup getOptionGroup(Option opt) {
+    OptionGroup getOptionGroup(Option opt) {
         return optionGroups.get(opt.getKey());
     }
 

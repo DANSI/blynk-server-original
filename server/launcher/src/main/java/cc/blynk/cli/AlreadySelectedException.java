@@ -13,11 +13,6 @@ public class AlreadySelectedException extends ParseException {
     private static final long serialVersionUID = 3674381532418544760L;
 
     /**
-     * The option group selected.
-     */
-    private OptionGroup group;
-
-    /**
      * The option that triggered the exception.
      */
     private Option option;
@@ -28,7 +23,7 @@ public class AlreadySelectedException extends ParseException {
      *
      * @param message the detail message
      */
-    public AlreadySelectedException(String message) {
+    private AlreadySelectedException(String message) {
         super(message);
     }
 
@@ -40,21 +35,10 @@ public class AlreadySelectedException extends ParseException {
      * @param option the option that triggered the exception
      * @since 1.2
      */
-    public AlreadySelectedException(OptionGroup group, Option option) {
+    AlreadySelectedException(OptionGroup group, Option option) {
         this("The option '" + option.getKey() + "' was specified but an option from this group "
                 + "has already been selected: '" + group.getSelected() + "'");
-        this.group = group;
         this.option = option;
-    }
-
-    /**
-     * Returns the option group where another option has been selected.
-     *
-     * @return the related option group
-     * @since 1.2
-     */
-    public OptionGroup getOptionGroup() {
-        return group;
     }
 
     /**

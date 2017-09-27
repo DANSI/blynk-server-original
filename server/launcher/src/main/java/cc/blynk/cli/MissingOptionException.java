@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @version $Id: MissingOptionException.java 1443102 2013-02-06 18:12:16Z tn $
  */
-public class MissingOptionException extends ParseException {
+class MissingOptionException extends ParseException {
     /**
      * This exception {@code serialVersionUID}.
      */
@@ -20,7 +20,7 @@ public class MissingOptionException extends ParseException {
      *
      * @param message the detail message
      */
-    public MissingOptionException(String message) {
+    private MissingOptionException(String message) {
         super(message);
     }
 
@@ -31,7 +31,7 @@ public class MissingOptionException extends ParseException {
      * @param missingOptions the list of missing options and groups
      * @since 1.2
      */
-    public MissingOptionException(List missingOptions) {
+    MissingOptionException(List missingOptions) {
         this(createMessage(missingOptions));
 
     }

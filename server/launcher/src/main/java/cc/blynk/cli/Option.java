@@ -22,12 +22,12 @@ public class Option implements Cloneable {
     /**
      * constant that specifies the number of argument values has not been specified
      */
-    public static final int UNINITIALIZED = -1;
+    private static final int UNINITIALIZED = -1;
 
     /**
      * constant that specifies the number of argument values is infinite
      */
-    public static final int UNLIMITED_VALUES = -2;
+    static final int UNLIMITED_VALUES = -2;
 
     /**
      * the name of the option
@@ -38,11 +38,6 @@ public class Option implements Cloneable {
      * the long representation of the option
      */
     private String longOpt;
-
-    /**
-     * the name of the argument for this option
-     */
-    private String argName;
 
     /**
      * description of the option
@@ -80,23 +75,6 @@ public class Option implements Cloneable {
     private char valuesep;
 
     /**
-     * Private constructor used by the nested Builder class.
-     *
-     * @param builder builder used to create this option
-     */
-    private Option(final Builder builder) {
-        this.argName = builder.argName;
-        this.description = builder.description;
-        this.longOpt = builder.longOpt;
-        this.numberOfArgs = builder.numberOfArgs;
-        this.opt = builder.opt;
-        this.optionalArg = builder.optionalArg;
-        this.required = builder.required;
-        this.type = builder.type;
-        this.valuesep = builder.valuesep;
-    }
-
-    /**
      * Creates an Option using the specified parameters.
      *
      * @param opt         short representation of the option
@@ -106,7 +84,7 @@ public class Option implements Cloneable {
      * @throws IllegalArgumentException if there are any non valid
      *                                  Option characters in <code>opt</code>.
      */
-    public Option(String opt, String longOpt, boolean hasArg, String description)
+    Option(String opt, String longOpt, boolean hasArg, String description)
             throws IllegalArgumentException {
         // ensure that the option is valid
         OptionValidator.validateOption(opt);
@@ -153,7 +131,7 @@ public class Option implements Cloneable {
      *
      * @return The name of this option
      */
-    public String getOpt() {
+    String getOpt() {
         return opt;
     }
 
@@ -164,20 +142,6 @@ public class Option implements Cloneable {
      */
     public Object getType() {
         return type;
-    }
-
-    /**
-     * Sets the type of this Option.
-     * <p>
-     * <b>Note:</b> this method is kept for binary compatibility and the
-     * input type is supposed to be a {@link Class} object.
-     *
-     * @param type the type of this Option
-     * @deprecated since 1.3, use {@link #setType(Class)} instead
-     */
-    @Deprecated
-    public void setType(Object type) {
-        setType((Class<?>) type);
     }
 
     /**
@@ -195,14 +159,14 @@ public class Option implements Cloneable {
      *
      * @return Long name of this option, or null, if there is no long name
      */
-    public String getLongOpt() {
+    String getLongOpt() {
         return longOpt;
     }
 
     /**
      * @return whether this Option can have an optional argument
      */
-    public boolean hasOptionalArg() {
+    private boolean hasOptionalArg() {
         return optionalArg;
     }
 
@@ -211,7 +175,7 @@ public class Option implements Cloneable {
      *
      * @return boolean flag indicating existence of a long name
      */
-    public boolean hasLongOpt() {
+    boolean hasLongOpt() {
         return longOpt != null;
     }
 
@@ -220,7 +184,7 @@ public class Option implements Cloneable {
      *
      * @return boolean flag indicating if an argument is required
      */
-    public boolean hasArg() {
+    boolean hasArg() {
         return numberOfArgs > 0 || numberOfArgs == UNLIMITED_VALUES;
     }
 
@@ -229,7 +193,7 @@ public class Option implements Cloneable {
      *
      * @return The string description of this option
      */
-    public String getDescription() {
+    String getDescription() {
         return description;
     }
 
@@ -247,7 +211,7 @@ public class Option implements Cloneable {
      *
      * @return boolean flag indicating if multiple values are allowed
      */
-    public boolean hasArgs() {
+    private boolean hasArgs() {
         return numberOfArgs > 1 || numberOfArgs == UNLIMITED_VALUES;
     }
 
@@ -257,7 +221,7 @@ public class Option implements Cloneable {
      *
      * @return the value separator character.
      */
-    public char getValueSeparator() {
+    private char getValueSeparator() {
         return valuesep;
     }
 
@@ -267,7 +231,7 @@ public class Option implements Cloneable {
      * @return whether this Option has specified a value separator.
      * @since 1.1
      */
-    public boolean hasValueSeparator() {
+    private boolean hasValueSeparator() {
         return valuesep > 0;
     }
 
@@ -285,7 +249,7 @@ public class Option implements Cloneable {
      * @see #UNINITIALIZED
      * @see #UNLIMITED_VALUES
      */
-    public int getArgs() {
+    int getArgs() {
         return numberOfArgs;
     }
 
@@ -385,7 +349,7 @@ public class Option implements Cloneable {
      * @return the values of this Option as a List
      * or null if there are no values
      */
-    public List<String> getValuesList() {
+    List<String> getValuesList() {
         return values;
     }
 
@@ -509,102 +473,5 @@ public class Option implements Cloneable {
             return values.isEmpty();
         }
         return acceptsArg();
-    }
-
-    /**
-     * A nested builder class to create <code>Option</code> instances
-     * using descriptive methods.
-     * <p>
-     * Example usage:
-     * <pre>
-     * Option option = Option.builder("a")
-     *     .required(true)
-     *     .longOpt("arg-name")
-     *     .build();
-     * </pre>
-     *
-     * @since 1.3
-     */
-    public static final class Builder {
-        /**
-         * the name of the option
-         */
-        private final String opt;
-
-        /**
-         * description of the option
-         */
-        private String description;
-
-        /**
-         * the long representation of the option
-         */
-        private String longOpt;
-
-        /**
-         * the name of the argument for this option
-         */
-        private String argName;
-
-        /**
-         * specifies whether this option is required to be present
-         */
-        private boolean required;
-
-        /**
-         * specifies whether the argument value of this Option is optional
-         */
-        private boolean optionalArg;
-
-        /**
-         * the number of argument values this option can have
-         */
-        private int numberOfArgs = UNINITIALIZED;
-
-        /**
-         * the type of this Option
-         */
-        private Class<?> type = String.class;
-
-        /**
-         * the character that is the value separator
-         */
-        private char valuesep;
-
-        /**
-         * Constructs a new <code>Builder</code> with the minimum
-         * required parameters for an <code>Option</code> instance.
-         *
-         * @param opt short representation of the option
-         * @throws IllegalArgumentException if there are any non valid Option characters in {@code opt}
-         */
-        private Builder(final String opt) throws IllegalArgumentException {
-            OptionValidator.validateOption(opt);
-            this.opt = opt;
-        }
-
-        /**
-         * Sets the type of the Option.
-         *
-         * @param type the type of the Option
-         * @return this builder, to allow method chaining
-         */
-        public Builder type(final Class<?> type) {
-            this.type = type;
-            return this;
-        }
-
-        /**
-         * Constructs an Option with the values declared by this {@link Builder}.
-         *
-         * @return the new {@link Option}
-         * @throws IllegalArgumentException if neither {@code opt} or {@code longOpt} has been set
-         */
-        public Option build() {
-            if (opt == null && longOpt == null) {
-                throw new IllegalArgumentException("Either opt or longOpt must be specified");
-            }
-            return new Option(this);
-        }
     }
 }

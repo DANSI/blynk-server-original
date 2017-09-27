@@ -15,39 +15,39 @@ public class DefaultParser {
     /**
      * The command-line instance.
      */
-    protected CommandLine cmd;
+    private CommandLine cmd;
 
     /**
      * The current options.
      */
-    protected Options options;
+    private Options options;
 
     /**
      * Flag indicating how unrecognized tokens are handled. <tt>true</tt> to stop
      * the parsing and add the remaining tokens to the args list.
      * <tt>false</tt> to throw an exception.
      */
-    protected boolean stopAtNonOption;
+    private boolean stopAtNonOption;
 
     /**
      * The token currently processed.
      */
-    protected String currentToken;
+    private String currentToken;
 
     /**
      * The last option parsed.
      */
-    protected Option currentOption;
+    private Option currentOption;
 
     /**
      * Flag indicating if tokens should no longer be analyzed and simply added as arguments of the command line.
      */
-    protected boolean skipParsing;
+    private boolean skipParsing;
 
     /**
      * The required options and groups expected to be found when parsing the command line.
      */
-    protected List expectedOpts;
+    private List expectedOpts;
 
     public CommandLine parse(Options options, String[] arguments) throws ParseException {
         return parse(options, arguments, null);
@@ -63,7 +63,7 @@ public class DefaultParser {
      * @throws ParseException if there are any problems encountered
      *                        while parsing the command line tokens.
      */
-    public CommandLine parse(Options options, String[] arguments, Properties properties) throws ParseException {
+    private CommandLine parse(Options options, String[] arguments, Properties properties) throws ParseException {
         return parse(options, arguments, properties, false);
     }
 
@@ -81,7 +81,8 @@ public class DefaultParser {
      * @throws ParseException if there are any problems encountered
      *                        while parsing the command line tokens.
      */
-    public CommandLine parse(Options options, String[] arguments, Properties properties, boolean stopAtNonOption)
+    @SuppressWarnings("unchecked")
+    private CommandLine parse(Options options, String[] arguments, Properties properties, boolean stopAtNonOption)
             throws ParseException {
         this.options = options;
         this.stopAtNonOption = stopAtNonOption;
@@ -184,7 +185,6 @@ public class DefaultParser {
      * Handle any command line token.
      *
      * @param token the command line token to handle
-     * @throws ParseException
      */
     private void handleToken(String token) throws ParseException {
         currentToken = token;
@@ -546,7 +546,7 @@ public class DefaultParser {
      * @throws ParseException if there are any problems encountered
      *                        while parsing the command line token.
      */
-    protected void handleConcatenatedOptions(String token) throws ParseException {
+    private void handleConcatenatedOptions(String token) throws ParseException {
         for (int i = 1; i < token.length(); i++) {
             String ch = String.valueOf(token.charAt(i));
 

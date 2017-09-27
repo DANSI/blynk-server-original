@@ -31,7 +31,7 @@ public class CommandLine {
     /**
      * Creates a command line.
      */
-    protected CommandLine() {
+    CommandLine() {
         // nothing to do
     }
 
@@ -66,7 +66,7 @@ public class CommandLine {
      * @return Values of the argument if option is set, and has an argument,
      * otherwise null.
      */
-    public String[] getOptionValues(String opt) {
+    private String[] getOptionValues(String opt) {
         List<String> values = new ArrayList<>();
 
         for (Option option : options) {
@@ -104,7 +104,7 @@ public class CommandLine {
      *
      * @param arg the unrecognized option/argument.
      */
-    protected void addArg(String arg) {
+    void addArg(String arg) {
         args.add(arg);
     }
 
@@ -113,7 +113,7 @@ public class CommandLine {
      *
      * @param opt the processed option
      */
-    protected void addOption(Option opt) {
+    void addOption(Option opt) {
         options.add(opt);
     }
 

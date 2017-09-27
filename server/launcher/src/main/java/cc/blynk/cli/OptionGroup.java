@@ -31,7 +31,7 @@ public class OptionGroup {
     /**
      * @return the options in this group as a <code>Collection</code>
      */
-    public Collection<Option> getOptions() {
+    private Collection<Option> getOptions() {
         // the values are the collection of options
         return optionMap.values();
     }
@@ -43,7 +43,7 @@ public class OptionGroup {
      * @throws AlreadySelectedException if an option from this group has
      *                                  already been selected.
      */
-    public void setSelected(Option option) throws AlreadySelectedException {
+    void setSelected(Option option) throws AlreadySelectedException {
         if (option == null) {
             // reset the option previously selected
             selected = null;
@@ -63,7 +63,7 @@ public class OptionGroup {
     /**
      * @return the selected option name
      */
-    public String getSelected() {
+    String getSelected() {
         return selected;
     }
 
