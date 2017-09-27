@@ -55,21 +55,21 @@ messages between Blynk mobile application and various microcontroller boards and
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
 
 ## Requirements
-- Java 8 required (OpenJDK, Oracle) 
+- Java 9 required (OpenJDK, Oracle) 
 - Any OS that can run java 
 - At least 30 MB of RAM (could be less with tuning)
 - Open ports 8443 (for app), 8442 (for hardware without ssl), 8441 (for hardware with ssl)
 
 [Ubuntu java installation instruction](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu).
 
-For Windows download Java [here](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) and install. 
+For Windows download Java [here](http://download.oracle.com/otn-pub/java/jdk/9+181/jre-9_windows-x64_bin.exe) and install. 
 
 ## Quick local server setup
 
-+ Make sure you are using Java 8
++ Make sure you are using Java 9
 
         java -version
-        Output: java version "1.8.0_40"
+        Output: java version "9"
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
@@ -87,14 +87,14 @@ That's it!
 ## Quick local server setup on Raspberry PI
 
 + Login to Raspberry Pi via ssh;
-+ Install java 8: 
++ Install java 9: 
         
-        sudo apt-get install oracle-java8-jdk
+        sudo apt-get install oracle-java9-jdk
         
-+ Make sure you are using Java 8
++ Make sure you are using Java 9
 
         java -version
-        Output: java version "1.8.0_40"
+        Output: java version "9"
         
 + Download Blynk server jar file (or manually copy it to Raspberry Pi via ssh and scp command): 
    
@@ -594,7 +594,7 @@ As an output you'll retrieve server.crt and server.pem files that you need to pr
 
         sudo apt-add-repository ppa:webupd8team/java
         sudo apt-get update
-        sudo apt-get install oracle-java8-installer
+        sudo apt-get install oracle-java9-installer
         
 ### Port forwarding for HTTP/S API
 
