@@ -18,8 +18,10 @@ import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.SmsProperties;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import sun.misc.Unsafe;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.BindException;
 import java.security.Security;
 import java.util.Map;
@@ -54,7 +56,26 @@ public final class ServerLauncher {
     private ServerLauncher() {
     }
 
+    private static void disableWarning() {
+        try {
+            Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
+            theUnsafe.setAccessible(true);
+            Unsafe u = (Unsafe) theUnsafe.get(null);
+
+            Class cls = Class.forName("jdk.internal.module.IllegalAccessLogger");
+            Field logger = cls.getDeclaredField("logger");
+            u.putObjectVolatile(cls, u.staticFieldOffset(logger), null);
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
     public static void main(String[] args) throws Exception {
+        //https://stackoverflow.com/questions/46454995/
+        //how-to-hide-warning-illegal-reflective-access-in-java-9-without-jvm-argument
+        //just temporary workaround to avoid warnings in early versions of java 9
+        disableWarning();
+
         Map<String, String> cmdProperties = ArgumentsParser.parse(args);
 
         ServerProperties serverProperties = new ServerProperties(cmdProperties);
