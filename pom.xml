@@ -94,24 +94,22 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${maven-checkstyle-plugin.version}</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <encoding>UTF-8</encoding>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                    <linkXRef>false</linkXRef>
+                </configuration>
                 <executions>
                     <execution>
                         <id>validate</id>
                         <phase>validate</phase>
-                        <configuration>
-                            <configLocation>checkstyle.xml</configLocation>
-                            <encoding>UTF-8</encoding>
-                            <consoleOutput>true</consoleOutput>
-                            <failsOnError>true</failsOnError>
-                        </configuration>
                         <goals>
                             <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <linkXRef>false</linkXRef>
-                </configuration>
             </plugin>
 
         </plugins>
@@ -174,13 +172,14 @@
         <disruptor.version>3.3.6</disruptor.version>
         <async-http-client.version>2.1.0-alpha25</async-http-client.version>
         <twitter4j-core.version>4.0.2</twitter4j-core.version>
-        <javax.mail.version>1.6.0</javax.mail.version>
         <postgresql.version>42.1.4</postgresql.version>
         <HikariCP.version>2.7.1</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>
         <bcpg-jdk15on.version>1.57</bcpg-jdk15on.version>
         <acme4j-client.version>0.12</acme4j-client.version>
         <javaee-api.version>8.0</javaee-api.version>
+        <javax.mail.version>1.6.0</javax.mail.version>
+        <activation.version>1.1</activation.version>
 
         <!-- test dependencies -->
         <httpclient.version>4.5.2</httpclient.version>
