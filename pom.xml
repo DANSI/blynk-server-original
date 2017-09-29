@@ -180,6 +180,7 @@
         <qrgen.version>2.2.0</qrgen.version>
         <bcpg-jdk15on.version>1.57</bcpg-jdk15on.version>
         <acme4j-client.version>0.12</acme4j-client.version>
+        <javaee-api.version>8.0</javaee-api.version>
 
         <!-- test dependencies -->
         <httpclient.version>4.5.2</httpclient.version>
