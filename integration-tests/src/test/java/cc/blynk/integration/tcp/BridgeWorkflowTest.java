@@ -14,14 +14,23 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.enums.Command.*;
-import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
+import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
+import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.

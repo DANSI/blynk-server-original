@@ -11,7 +11,12 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.outputs.graph.*;
+import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
+import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
@@ -26,9 +31,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,12 +45,18 @@ import java.nio.file.Paths;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.zip.GZIPInputStream;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
+import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
+import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.contains;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.

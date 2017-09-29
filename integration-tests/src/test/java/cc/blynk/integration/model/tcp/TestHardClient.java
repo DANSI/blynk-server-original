@@ -39,7 +39,6 @@ public class TestHardClient extends BaseClient {
 
     public TestHardClient(String host, int port, NioEventLoopGroup nioEventLoopGroup) {
         super(host, port, Mockito.mock(Random.class));
-        Mockito.when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
         this.nioEventLoopGroup = nioEventLoopGroup;
 
         this.responseMock = Mockito.mock(SimpleClientHandler.class);
@@ -66,7 +65,7 @@ public class TestHardClient extends BaseClient {
 
     @Override
     public ChannelInitializer<SocketChannel> getChannelInitializer() {
-        return new ChannelInitializer<SocketChannel>() {
+        return new ChannelInitializer<>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(

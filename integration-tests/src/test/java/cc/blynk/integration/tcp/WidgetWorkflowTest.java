@@ -10,13 +10,18 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static cc.blynk.server.core.protocol.enums.Response.*;
-import static org.mockito.Mockito.*;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
+import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.

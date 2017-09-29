@@ -4,7 +4,7 @@ import cc.blynk.server.core.model.graph.GraphKey;
 import cc.blynk.utils.ByteUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,8 +13,9 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.zip.InflaterInputStream;
 
-import static cc.blynk.utils.ByteUtils.*;
-import static org.junit.Assert.*;
+import static cc.blynk.utils.ByteUtils.REPORTING_RECORD_SIZE_BYTES;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * The Blynk Project.

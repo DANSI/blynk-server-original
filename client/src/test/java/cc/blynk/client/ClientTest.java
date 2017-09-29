@@ -6,11 +6,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.BufferedReader;
 
-import static cc.blynk.client.ClientLauncher.*;
+import static cc.blynk.client.ClientLauncher.DEFAULT_APPLICATION_PORT;
+import static cc.blynk.client.ClientLauncher.DEFAULT_HARDWARE_PORT;
+import static cc.blynk.client.ClientLauncher.DEFAULT_HOST;
 import static org.mockito.Mockito.when;
 
 /**
