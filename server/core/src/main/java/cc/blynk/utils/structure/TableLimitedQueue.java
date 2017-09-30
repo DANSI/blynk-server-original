@@ -1,7 +1,5 @@
 package cc.blynk.utils.structure;
 
-import cc.blynk.utils.ParseUtil;
-
 import java.util.LinkedList;
 
 /**
@@ -14,7 +12,7 @@ import java.util.LinkedList;
  */
 public class TableLimitedQueue<T> extends LinkedList<T> {
 
-    private static final int POOL_SIZE = ParseUtil.parseInt(System.getProperty("table.rows.pool.size", "100"));
+    private static final int POOL_SIZE = Integer.parseInt(System.getProperty("table.rows.pool.size", "100"));
 
     private final int limit;
 
