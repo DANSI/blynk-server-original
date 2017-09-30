@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.08.15.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class RegisterHandlerTest {
 
     @Mock

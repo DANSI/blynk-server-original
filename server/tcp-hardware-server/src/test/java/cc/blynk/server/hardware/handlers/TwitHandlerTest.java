@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
  * Created by Andrew Zakordonets.
  * Created on 26.04.15.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class TwitHandlerTest {
 
 	@Mock

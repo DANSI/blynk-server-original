@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
  * Created by Dmitriy Dumanskiy.
  * Created on 11.08.15.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class ReportingWorkerTest {
 
     private final String reportingFolder = getReportingFolder(System.getProperty("java.io.tmpdir"));

@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
  * Created by Dmitriy Dumanskiy.
  * Created on 04.12.15.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class BlynkInternalLogicTest {
 
     ServerProperties props = new ServerProperties(Collections.emptyMap());

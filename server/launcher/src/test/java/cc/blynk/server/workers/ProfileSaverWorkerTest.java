@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
  * Created by Dmitriy Dumanskiy.
  * Created on 3/3/2015.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class ProfileSaverWorkerTest {
 
     @Mock
