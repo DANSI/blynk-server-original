@@ -1,7 +1,7 @@
 package cc.blynk.server;
 
 import cc.blynk.utils.FileLoaderUtil;
-import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.properties.ServerProperties;
 
 /**
  * This is helper class for holding all user limits.

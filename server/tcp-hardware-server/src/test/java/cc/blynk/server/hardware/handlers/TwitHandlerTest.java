@@ -16,7 +16,7 @@ import cc.blynk.server.core.protocol.model.messages.hardware.TwitMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.logic.TwitLogic;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
-import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;

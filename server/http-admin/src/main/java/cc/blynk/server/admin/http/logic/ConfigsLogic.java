@@ -12,7 +12,7 @@ import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.Limits;
 import cc.blynk.utils.JsonParser;
-import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelHandler;
 
 import java.io.IOException;
@@ -27,9 +27,9 @@ import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.server.db.DBManager.DB_PROPERTIES_FILENAME;
 import static cc.blynk.utils.AdminHttpUtil.sort;
 import static cc.blynk.utils.FileLoaderUtil.TOKEN_MAIL_BODY;
-import static cc.blynk.utils.ServerProperties.SERVER_PROPERTIES_FILENAME;
 import static cc.blynk.utils.properties.GCMProperties.GCM_PROPERTIES_FILENAME;
 import static cc.blynk.utils.properties.MailProperties.MAIL_PROPERTIES_FILENAME;
+import static cc.blynk.utils.properties.ServerProperties.SERVER_PROPERTIES_FILENAME;
 
 /**
  * The Blynk Project.

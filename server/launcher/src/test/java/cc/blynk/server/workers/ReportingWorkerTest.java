@@ -11,7 +11,7 @@ import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.AppNameUtil;
-import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.properties.ServerProperties;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;

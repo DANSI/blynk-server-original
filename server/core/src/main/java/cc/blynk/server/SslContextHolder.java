@@ -2,8 +2,8 @@ package cc.blynk.server;
 
 import cc.blynk.server.acme.AcmeClient;
 import cc.blynk.server.acme.ContentHolder;
-import cc.blynk.utils.ServerProperties;
 import cc.blynk.utils.SslUtil;
+import cc.blynk.utils.properties.ServerProperties;
 import io.netty.handler.ssl.OpenSsl;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslProvider;

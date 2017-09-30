@@ -15,7 +15,7 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 
-import static cc.blynk.utils.ServerProperties.SERVER_PROPERTIES_FILENAME;
+import static cc.blynk.utils.properties.ServerProperties.SERVER_PROPERTIES_FILENAME;
 
 /**
  *

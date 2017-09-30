@@ -11,7 +11,7 @@ import java.security.CodeSource;
 import java.util.Map;
 import java.util.Properties;
 
-import static cc.blynk.utils.ServerProperties.SERVER_PROPERTIES_FILENAME;
+import static cc.blynk.utils.properties.ServerProperties.SERVER_PROPERTIES_FILENAME;
 
 /**
  * Java properties class wrapper.
@@ -26,7 +26,7 @@ public abstract class BaseProperties extends Properties {
 
     public final String jarPath;
 
-    public BaseProperties(Map<String, String> cmdProperties, String serverConfig) {
+    BaseProperties(Map<String, String> cmdProperties, String serverConfig) {
         this.jarPath = getJarPath();
         String propertiesFileName = cmdProperties.get(serverConfig);
         if (propertiesFileName == null) {
@@ -37,7 +37,7 @@ public abstract class BaseProperties extends Properties {
         putAll(cmdProperties);
     }
 
-    public BaseProperties(String propertiesFileName) {
+    BaseProperties(String propertiesFileName) {
         this.jarPath = getJarPath();
         initProperties(propertiesFileName);
     }

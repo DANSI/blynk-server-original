@@ -8,7 +8,7 @@ import cc.blynk.server.acme.ContentHolder;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.workers.CertificateRenewalWorker;
-import cc.blynk.utils.ServerProperties;
+import cc.blynk.utils.properties.ServerProperties;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;

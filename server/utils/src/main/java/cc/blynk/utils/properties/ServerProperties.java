@@ -1,6 +1,6 @@
-package cc.blynk.utils;
+package cc.blynk.utils.properties;
 
-import cc.blynk.utils.properties.BaseProperties;
+import cc.blynk.utils.JarUtil;
 
 import java.util.Map;
 

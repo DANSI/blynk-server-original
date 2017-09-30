@@ -30,7 +30,7 @@ public final class JarUtil {
      *
      * @param staticFolder - path to resources
      */
-    static boolean unpackStaticFiles(String jarPath, String staticFolder) {
+    public static boolean unpackStaticFiles(String jarPath, String staticFolder) {
         try {
             ArrayList<String> staticResources = find(staticFolder);
 
@@ -60,7 +60,6 @@ public final class JarUtil {
      *
      * @param staticResourcesFolder - resource folder
      * @return - absolute path to resources within staticResourcesFolder
-     * @throws Exception
      */
     private static ArrayList<String> find(String staticResourcesFolder) throws Exception {
         if (!staticResourcesFolder.endsWith("/")) {

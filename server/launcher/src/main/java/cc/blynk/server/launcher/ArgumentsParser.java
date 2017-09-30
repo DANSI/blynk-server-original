@@ -9,8 +9,8 @@ import cc.blynk.utils.ParseUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cc.blynk.utils.ServerProperties.SERVER_PROPERTIES_FILENAME;
 import static cc.blynk.utils.properties.MailProperties.MAIL_PROPERTIES_FILENAME;
+import static cc.blynk.utils.properties.ServerProperties.SERVER_PROPERTIES_FILENAME;
 import static cc.blynk.utils.properties.SmsProperties.SMS_PROPERTIES_FILENAME;
 
 /**
