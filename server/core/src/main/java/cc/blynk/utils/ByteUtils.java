@@ -1,6 +1,5 @@
 package cc.blynk.utils;
 
-import cc.blynk.server.core.protocol.exceptions.GetGraphDataException;
 import io.netty.util.CharsetUtil;
 
 import java.io.ByteArrayOutputStream;
@@ -32,7 +31,7 @@ public final class ByteUtils {
         return baos.toByteArray();
     }
 
-    public static byte[] compress(byte[][] values) {
+    public static byte[] compress(byte[][] values) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
 
         try (OutputStream out = new DeflaterOutputStream(baos)) {
@@ -42,9 +41,8 @@ public final class ByteUtils {
                 out.write(bb.array());
                 out.write(data);
             }
-        } catch (IOException ioe) {
-            throw new GetGraphDataException();
         }
+
         return baos.toByteArray();
     }
 
