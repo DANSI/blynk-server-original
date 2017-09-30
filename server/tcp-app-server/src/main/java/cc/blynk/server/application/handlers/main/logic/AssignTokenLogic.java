@@ -9,13 +9,13 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
-import cc.blynk.utils.ParseUtil;
+import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.BlynkByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**

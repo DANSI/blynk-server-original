@@ -7,14 +7,14 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.utils.ParseUtil;
+import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
-import static cc.blynk.utils.BlynkByteBufUtil.illegalCommandBody;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommandBody;
+import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split3;
 
 /**

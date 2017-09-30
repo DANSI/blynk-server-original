@@ -2,7 +2,7 @@ package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.exceptions.ParseException;
-import cc.blynk.utils.ParseUtil;
+import cc.blynk.server.internal.ParseUtil;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.KeyDeserializer;
 

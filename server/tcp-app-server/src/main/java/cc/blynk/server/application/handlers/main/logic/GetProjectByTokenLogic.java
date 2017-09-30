@@ -16,8 +16,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
-import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
-import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeBinaryMessage;
+import static cc.blynk.server.internal.BlynkByteBufUtil.notAllowed;
 
 /**
  * The Blynk Project.

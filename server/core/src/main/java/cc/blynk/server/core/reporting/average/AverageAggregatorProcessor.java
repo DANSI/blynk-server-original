@@ -11,8 +11,8 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cc.blynk.utils.ReportingUtil.read;
-import static cc.blynk.utils.ReportingUtil.write;
+import static cc.blynk.server.internal.ReportingUtil.read;
+import static cc.blynk.server.internal.ReportingUtil.write;
 
 /**
  * The Blynk Project.

@@ -6,8 +6,8 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 
 import java.util.Arrays;
 
-import static cc.blynk.utils.EmptyArraysUtil.EMPTY_APPS;
-import static cc.blynk.utils.EmptyArraysUtil.EMPTY_DASHBOARDS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_APPS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DASHBOARDS;
 
 /**
  * User: ddumanskiy

@@ -10,7 +10,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
-import cc.blynk.utils.ParseUtil;
+import cc.blynk.server.internal.ParseUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -20,10 +20,10 @@ import static cc.blynk.server.core.model.serialization.JsonParser.gzipDash;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipDashRestrictive;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipProfile;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
-import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
-import static cc.blynk.utils.BlynkByteBufUtil.noData;
-import static cc.blynk.utils.BlynkByteBufUtil.serverError;
+import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeBinaryMessage;
+import static cc.blynk.server.internal.BlynkByteBufUtil.noData;
+import static cc.blynk.server.internal.BlynkByteBufUtil.serverError;
 
 /**
  * The Blynk Project.

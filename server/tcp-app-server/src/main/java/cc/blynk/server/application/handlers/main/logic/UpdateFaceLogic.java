@@ -6,16 +6,16 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.ArrayUtil;
-import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 
-import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.BlynkByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 
 /**
  * Update faces of related project.

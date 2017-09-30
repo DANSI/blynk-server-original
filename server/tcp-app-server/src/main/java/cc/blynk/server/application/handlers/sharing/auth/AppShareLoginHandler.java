@@ -21,9 +21,9 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.BlynkByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 
 /**
  * Handler responsible for managing apps sharing login messages.

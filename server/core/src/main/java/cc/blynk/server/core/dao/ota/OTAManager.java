@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
-import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
 
 /**
  * Very basic OTA manager implementation.

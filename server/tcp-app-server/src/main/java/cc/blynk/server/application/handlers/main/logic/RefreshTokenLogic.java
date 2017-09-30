@@ -9,12 +9,12 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.utils.ParseUtil;
+import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
-import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.

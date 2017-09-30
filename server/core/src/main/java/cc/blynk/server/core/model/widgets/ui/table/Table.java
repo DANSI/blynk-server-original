@@ -2,7 +2,7 @@ package cc.blynk.server.core.model.widgets.ui.table;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.utils.ParseUtil;
+import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.structure.TableLimitedQueue;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.netty.channel.ChannelHandlerContext;

@@ -18,10 +18,10 @@ import java.util.Set;
 
 import static cc.blynk.server.core.protocol.enums.Command.RESPONSE;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_WENT_OFFLINE;
-import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.utils.StateHolderUtil.getHardState;
-import static cc.blynk.utils.StateHolderUtil.isSameDash;
-import static cc.blynk.utils.StateHolderUtil.isSameDashAndDeviceId;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.StateHolderUtil.getHardState;
+import static cc.blynk.server.internal.StateHolderUtil.isSameDash;
+import static cc.blynk.server.internal.StateHolderUtil.isSameDashAndDeviceId;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 

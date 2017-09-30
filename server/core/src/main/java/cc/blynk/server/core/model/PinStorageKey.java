@@ -6,7 +6,7 @@ import io.netty.buffer.ByteBuf;
 
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.SYNC_DEFAULT_MESSAGE_ID;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
-import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 /**

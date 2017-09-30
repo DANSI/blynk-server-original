@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.TimeUnit;
 
-import static cc.blynk.utils.StateHolderUtil.getHardState;
+import static cc.blynk.server.internal.StateHolderUtil.getHardState;
 
 /**
  * The Blynk Project.

@@ -4,10 +4,10 @@ import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.utils.ParseUtil;
+import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2Device;
 
 /**

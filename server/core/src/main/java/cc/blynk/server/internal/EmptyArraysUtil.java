@@ -1,4 +1,4 @@
-package cc.blynk.utils;
+package cc.blynk.server.internal;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;

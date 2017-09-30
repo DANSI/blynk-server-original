@@ -6,7 +6,7 @@ import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.utils.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.

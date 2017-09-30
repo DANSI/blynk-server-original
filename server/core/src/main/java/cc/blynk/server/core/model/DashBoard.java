@@ -17,8 +17,8 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.workers.timer.TimerWorker;
-import cc.blynk.utils.ParseUtil;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -30,9 +30,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
-import static cc.blynk.utils.EmptyArraysUtil.EMPTY_DEVICES;
-import static cc.blynk.utils.EmptyArraysUtil.EMPTY_TAGS;
-import static cc.blynk.utils.EmptyArraysUtil.EMPTY_WIDGETS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TAGS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
 
 /**
  * User: ddumanskiy

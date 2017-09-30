@@ -19,10 +19,10 @@ import org.apache.logging.log4j.Logger;
 import java.util.Arrays;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA_RESPONSE;
-import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
-import static cc.blynk.utils.BlynkByteBufUtil.noData;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
-import static cc.blynk.utils.BlynkByteBufUtil.serverError;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeBinaryMessage;
+import static cc.blynk.server.internal.BlynkByteBufUtil.noData;
+import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.BlynkByteBufUtil.serverError;
 import static cc.blynk.utils.ByteUtils.compress;
 import static cc.blynk.utils.StringUtils.split2Device;
 

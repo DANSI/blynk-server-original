@@ -6,12 +6,12 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.utils.ParseUtil;
+import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
-import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
 
 /**
  * The Blynk Project.

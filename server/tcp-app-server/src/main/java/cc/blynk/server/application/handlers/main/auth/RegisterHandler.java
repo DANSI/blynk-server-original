@@ -26,10 +26,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static cc.blynk.utils.BlynkByteBufUtil.alreadyRegistered;
-import static cc.blynk.utils.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.utils.BlynkByteBufUtil.notAllowed;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.BlynkByteBufUtil.alreadyRegistered;
+import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.BlynkByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 
 /**
  * Process register message.

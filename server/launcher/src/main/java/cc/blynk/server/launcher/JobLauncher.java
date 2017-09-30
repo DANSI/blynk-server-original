@@ -3,12 +3,12 @@ package cc.blynk.server.launcher;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
+import cc.blynk.server.internal.ReportingUtil;
 import cc.blynk.server.workers.CertificateRenewalWorker;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.server.workers.ReportingWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
 import cc.blynk.server.workers.StatsWorker;
-import cc.blynk.utils.ReportingUtil;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

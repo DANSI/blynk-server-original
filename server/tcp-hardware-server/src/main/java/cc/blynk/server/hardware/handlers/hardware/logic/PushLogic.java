@@ -12,9 +12,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.noActiveDash;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.server.internal.BlynkByteBufUtil.noActiveDash;
+import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 
 /**
  * Handler sends push notifications to Applications. Initiation is on hardware side.

@@ -14,8 +14,8 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.utils.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,9 +23,9 @@ import org.apache.logging.log4j.Logger;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-import static cc.blynk.utils.BlynkByteBufUtil.noData;
-import static cc.blynk.utils.BlynkByteBufUtil.notificationError;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.BlynkByteBufUtil.noData;
+import static cc.blynk.server.internal.BlynkByteBufUtil.notificationError;
+import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 import static cc.blynk.utils.StringUtils.split2Device;
 

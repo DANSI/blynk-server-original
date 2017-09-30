@@ -12,9 +12,9 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
+import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.mail.QrHolder;
-import cc.blynk.utils.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.Channel;
@@ -24,8 +24,8 @@ import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.utils.BlynkByteBufUtil.notificationError;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.BlynkByteBufUtil.notificationError;
+import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 
 /**
  * Sends email from application.

@@ -7,7 +7,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.utils.ParseUtil;
+import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -15,8 +15,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
-import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
-import static cc.blynk.utils.BlynkByteBufUtil.serverError;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.BlynkByteBufUtil.serverError;
 
 /**
  * The Blynk Project.

@@ -28,7 +28,7 @@ import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
 import java.io.Closeable;
 
-import static cc.blynk.utils.ReportingUtil.getReportingFolder;
+import static cc.blynk.server.internal.ReportingUtil.getReportingFolder;
 
 /**
  * Just a holder for all necessary objects for server instance creation.

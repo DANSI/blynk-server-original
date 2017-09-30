@@ -4,8 +4,8 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
+import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.AppNameUtil;
-import cc.blynk.utils.ParseUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**

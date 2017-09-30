@@ -5,7 +5,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
-import static cc.blynk.utils.BlynkByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
 
 /**
  * The Blynk Project.

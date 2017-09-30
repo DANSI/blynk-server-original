@@ -13,9 +13,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
-import static cc.blynk.utils.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.utils.BlynkByteBufUtil.notificationError;
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.server.internal.BlynkByteBufUtil.notificationError;
+import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 
 /**
  * Sends tweets from hardware.

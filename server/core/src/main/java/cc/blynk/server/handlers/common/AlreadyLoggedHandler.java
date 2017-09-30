@@ -6,7 +6,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import static cc.blynk.utils.BlynkByteBufUtil.alreadyRegistered;
+import static cc.blynk.server.internal.BlynkByteBufUtil.alreadyRegistered;
 
 /**
  * The Blynk Project.

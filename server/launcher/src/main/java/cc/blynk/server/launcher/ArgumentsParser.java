@@ -4,7 +4,7 @@ import cc.blynk.cli.CommandLine;
 import cc.blynk.cli.DefaultParser;
 import cc.blynk.cli.Options;
 import cc.blynk.cli.ParseException;
-import cc.blynk.utils.ParseUtil;
+import cc.blynk.server.internal.ParseUtil;
 
 import java.util.HashMap;
 import java.util.Map;

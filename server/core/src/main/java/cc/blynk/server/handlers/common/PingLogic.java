@@ -2,7 +2,7 @@ package cc.blynk.server.handlers.common;
 
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.utils.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 
 /**
  * The Blynk Project.

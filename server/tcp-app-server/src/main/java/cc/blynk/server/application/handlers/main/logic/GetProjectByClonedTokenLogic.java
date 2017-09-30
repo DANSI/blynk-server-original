@@ -11,8 +11,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
-import static cc.blynk.utils.BlynkByteBufUtil.makeBinaryMessage;
-import static cc.blynk.utils.BlynkByteBufUtil.serverError;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeBinaryMessage;
+import static cc.blynk.server.internal.BlynkByteBufUtil.serverError;
 
 /**
  * The Blynk Project.
