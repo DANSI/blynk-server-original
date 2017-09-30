@@ -2,8 +2,8 @@ package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
-import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;

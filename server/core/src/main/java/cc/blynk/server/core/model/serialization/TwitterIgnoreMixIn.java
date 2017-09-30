@@ -1,4 +1,4 @@
-package cc.blynk.utils.serialization;
+package cc.blynk.server.core.model.serialization;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -9,9 +9,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * Created by Dmitriy Dumanskiy.
  * Created on 08.12.16.
  */
-public abstract class DashboardMixIn {
+public class TwitterIgnoreMixIn {
 
     @JsonIgnore
-    public String sharedToken;
+    public String token;
+
+    @JsonIgnore
+    public String secret;
+
+    @JsonIgnore
+    public String username;
 
 }

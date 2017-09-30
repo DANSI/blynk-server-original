@@ -1,8 +1,8 @@
 package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.auth.App;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.utils.JsonParser;
 
 import java.util.Arrays;
 

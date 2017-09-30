@@ -2,7 +2,7 @@ package cc.blynk.core.http.rest.params;
 
 import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.rest.URIDecoder;
-import cc.blynk.utils.JsonParser;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import io.netty.channel.ChannelHandlerContext;

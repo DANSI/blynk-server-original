@@ -7,9 +7,9 @@ import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.utils.JsonParser;
 import io.netty.buffer.ByteBufAllocator;
 
 import java.util.Map;

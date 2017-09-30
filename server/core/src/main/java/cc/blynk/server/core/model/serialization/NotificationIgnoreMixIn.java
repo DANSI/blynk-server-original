@@ -1,4 +1,4 @@
-package cc.blynk.utils.serialization;
+package cc.blynk.server.core.model.serialization;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

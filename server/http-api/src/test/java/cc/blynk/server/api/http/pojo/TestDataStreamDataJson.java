@@ -1,6 +1,6 @@
 package cc.blynk.server.api.http.pojo;
 
-import cc.blynk.utils.JsonParser;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;

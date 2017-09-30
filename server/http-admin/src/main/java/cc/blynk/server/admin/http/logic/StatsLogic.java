@@ -16,9 +16,9 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.model.Stat;
-import cc.blynk.utils.JsonParser;
 import io.netty.channel.ChannelHandler;
 
 import java.util.ArrayList;

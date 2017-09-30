@@ -2,7 +2,7 @@ package cc.blynk.core.http;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.utils.JsonParser;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderValues;

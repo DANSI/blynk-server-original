@@ -2,12 +2,14 @@ package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.utils.JsonParser;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import org.junit.Test;
 
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.

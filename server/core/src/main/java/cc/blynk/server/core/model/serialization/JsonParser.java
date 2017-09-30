@@ -1,4 +1,4 @@
-package cc.blynk.utils;
+package cc.blynk.server.core.model.serialization;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
@@ -13,10 +13,6 @@ import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.stats.model.Stat;
-import cc.blynk.utils.serialization.DashboardMixIn;
-import cc.blynk.utils.serialization.DeviceIgnoreMixIn;
-import cc.blynk.utils.serialization.NotificationIgnoreMixIn;
-import cc.blynk.utils.serialization.TwitterIgnoreMixIn;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;

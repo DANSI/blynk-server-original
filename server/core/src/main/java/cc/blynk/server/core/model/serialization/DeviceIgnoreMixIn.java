@@ -1,4 +1,4 @@
-package cc.blynk.utils.serialization;
+package cc.blynk.server.core.model.serialization;
 
 import cc.blynk.server.core.model.device.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.HardwareInfo;

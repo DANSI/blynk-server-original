@@ -1,9 +1,9 @@
 package cc.blynk.server.core.model.widgets.others;
 
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.utils.DateTimeUtils;
-import cc.blynk.utils.JsonParser;
 import org.junit.Test;
 
 import java.time.ZoneId;

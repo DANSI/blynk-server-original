@@ -1,10 +1,10 @@
 package cc.blynk.server.api.http.logic;
 
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
-import cc.blynk.utils.JsonParser;
 import org.junit.Test;
 
 import java.util.concurrent.ConcurrentHashMap;

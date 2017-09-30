@@ -22,8 +22,8 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
 import io.netty.channel.ChannelHandler;
 

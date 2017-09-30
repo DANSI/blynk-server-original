@@ -1,9 +1,9 @@
 package cc.blynk.server.core.model.widgets.ui;
 
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.table.Column;
 import cc.blynk.server.core.model.widgets.ui.table.Row;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
-import cc.blynk.utils.JsonParser;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
