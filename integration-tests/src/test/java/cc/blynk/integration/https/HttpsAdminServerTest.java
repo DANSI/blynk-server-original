@@ -5,8 +5,8 @@ import cc.blynk.integration.model.http.ResponseUserEntity;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;
@@ -80,7 +80,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
         String name = "admin@blynk.cc";
         String pass = "admin";
-        admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, true);
+        admin = new User(name, SHA256Util.makeHash(pass, name), AppNameUtil.BLYNK, "local", false, true);
         holder.userDao.add(admin);
     }
 
@@ -138,7 +138,7 @@ public class HttpsAdminServerTest extends BaseTest {
         String name = "admin@blynk.cc";
         String pass = "admin";
 
-        User admin = new User(name, SHA256Util.makeHash(pass, name), AppName.BLYNK, "local", false, false);
+        User admin = new User(name, SHA256Util.makeHash(pass, name), AppNameUtil.BLYNK, "local", false, false);
         holder.userDao.add(admin);
 
         HttpPost loginRequest = new HttpPost(httpsAdminServerUrl + "/login");

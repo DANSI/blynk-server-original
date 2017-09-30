@@ -3,7 +3,7 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.model.AppName;
+import cc.blynk.utils.AppNameUtil;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -65,7 +65,7 @@ public class HttpResetPassTest extends BaseTest {
         HttpPost resetPassRequest = new HttpPost(httpServerUrl + "/resetPassword");
         List <NameValuePair> nvps = new ArrayList<>();
         nvps.add(new BasicNameValuePair("email", email));
-        nvps.add(new BasicNameValuePair("appName", AppName.BLYNK));
+        nvps.add(new BasicNameValuePair("appName", AppNameUtil.BLYNK));
         resetPassRequest.setEntity(new UrlEncodedFormEntity(nvps));
 
         try (CloseableHttpResponse response = httpclient.execute(resetPassRequest)) {

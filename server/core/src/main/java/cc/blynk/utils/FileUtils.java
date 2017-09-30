@@ -1,8 +1,5 @@
 package cc.blynk.utils;
 
-import cc.blynk.server.core.dao.CSVGenerator;
-import cc.blynk.server.core.model.AppName;
-import cc.blynk.server.core.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,6 +31,21 @@ public final class FileUtils {
     private FileUtils() {
     }
 
+    public static final String BLYNK_FOLDER = "blynk";
+
+    private static final String[] POSSIBLE_LOCAL_PATHS = new String[]{
+            "./server/http-dashboard/target/classes",
+            "./server/http-api/target/classes",
+            "./server/http-admin/target/classes",
+            "./server/http-core/target/classes",
+            "./server/core/target",
+            "../server/http-admin/target/classes",
+            "../server/http-dashboard/target/classes",
+            "../server/http-core/target/classes",
+            "../server/core/target",
+            Paths.get(System.getProperty("java.io.tmpdir"), BLYNK_FOLDER).toString()
+    };
+
     //reporting entry is long value (8 bytes) + timestamp (8 bytes)
     public static final int SIZE_OF_REPORT_ENTRY = 16;
 
@@ -63,7 +75,6 @@ public final class FileUtils {
      * @param reportingPath - path to user specific reporting file
      * @param value         - sensor data
      * @param ts            - time when entry was created
-     * @throws IOException
      */
     public static void write(Path reportingPath, double value, long ts) throws IOException {
         try (DataOutputStream dos = new DataOutputStream(
@@ -81,7 +92,6 @@ public final class FileUtils {
      * @param count = number of records to read
      *
      * @return - byte buffer with data
-     * @throws IOException
      */
     public static ByteBuffer read(Path userDataFile, int count) throws IOException {
         return read(userDataFile, count, 0);
@@ -94,7 +104,6 @@ public final class FileUtils {
      * @param count        - number of records to read
      * @param skip         - number of entries to skip from the end
      * @return - byte buffer with data
-     * @throws IOException
      */
     public static ByteBuffer read(Path userDataFile, int count, int skip) throws IOException {
         int size = (int) Files.size(userDataFile);
@@ -115,12 +124,8 @@ public final class FileUtils {
         }
     }
 
-    public static String getUserReportingDir(User user) {
-        return getUserReportingDir(user.email, user.appName);
-    }
-
     public static String getUserReportingDir(String email, String appName) {
-        if (AppName.BLYNK.equals(appName)) {
+        if (AppNameUtil.BLYNK.equals(appName)) {
             return email;
         }
         return email + "_" + appName;
@@ -171,19 +176,6 @@ public final class FileUtils {
         }
         throw new RuntimeException("Unable to read build number fro firmware.");
     }
-
-    private static final String[] POSSIBLE_LOCAL_PATHS = new String[]{
-            "./server/http-dashboard/target/classes",
-            "./server/http-api/target/classes",
-            "./server/http-admin/target/classes",
-            "./server/http-core/target/classes",
-            "./server/core/target",
-            "../server/http-admin/target/classes",
-            "../server/http-dashboard/target/classes",
-            "../server/http-core/target/classes",
-            "../server/core/target",
-            Paths.get(System.getProperty("java.io.tmpdir"), CSVGenerator.BLYNK_FOLDER).toString()
-    };
 
     public static Path getPathForLocalRun(String uri) {
         for (String possiblePath : POSSIBLE_LOCAL_PATHS) {

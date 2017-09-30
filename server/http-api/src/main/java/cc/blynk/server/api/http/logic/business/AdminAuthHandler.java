@@ -10,8 +10,8 @@ import cc.blynk.core.http.annotation.Path;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.utils.AppNameUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.DefaultCookie;
@@ -49,7 +49,7 @@ public class AdminAuthHandler extends BaseHttpHandler {
             return redirect(rootPath);
         }
 
-        User user = userDao.getByName(email, AppName.BLYNK);
+        User user = userDao.getByName(email, AppNameUtil.BLYNK);
 
         if (user == null || !user.isSuperAdmin) {
             return redirect(rootPath);

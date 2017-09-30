@@ -3,7 +3,6 @@ package cc.blynk.server.application.handlers.main.auth;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.AppHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.Session;
@@ -13,6 +12,7 @@ import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.JsonParser;
 import io.netty.channel.Channel;
@@ -97,7 +97,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
         String version = messageParts.length > 3 ? messageParts[3] : null;
 
         if (messageParts.length == 5) {
-            if (AppName.FACEBOOK.equals(messageParts[4])) {
+            if (AppNameUtil.FACEBOOK.equals(messageParts[4])) {
                 facebookLogin(ctx, message.id, email, messageParts[1], osType, version);
             } else {
                 String appName = messageParts[4];
@@ -105,7 +105,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
             }
         } else {
             //todo this is for back compatibility
-            blynkLogin(ctx, message.id, email, messageParts[1], osType, version, AppName.BLYNK);
+            blynkLogin(ctx, message.id, email, messageParts[1], osType, version, AppNameUtil.BLYNK);
         }
     }
 
@@ -131,9 +131,9 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
                             FacebookTokenResponse facebookTokenResponse =
                                     JsonParser.parseFacebookTokenResponse(responseBody);
                             if (email.equalsIgnoreCase(facebookTokenResponse.email)) {
-                                User user = holder.userDao.getByName(email, AppName.BLYNK);
+                                User user = holder.userDao.getByName(email, AppNameUtil.BLYNK);
                                 if (user == null) {
-                                    user = holder.userDao.addFacebookUser(email, AppName.BLYNK);
+                                    user = holder.userDao.addFacebookUser(email, AppNameUtil.BLYNK);
                                 }
 
                                 login(ctx, messageId, user, osType, version);

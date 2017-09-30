@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
+import cc.blynk.utils.FileUtils;
 import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,9 +32,9 @@ public class CSVGenerator {
 
     private static final Logger log = LogManager.getLogger(CSVGenerator.class);
 
-    public static final String BLYNK_FOLDER = "blynk";
-
-    public static final String CSV_DIR = Paths.get(System.getProperty("java.io.tmpdir"), BLYNK_FOLDER).toString();
+    public static final String CSV_DIR = Paths.get(
+            System.getProperty("java.io.tmpdir"), FileUtils.BLYNK_FOLDER)
+            .toString();
 
     static {
         try {

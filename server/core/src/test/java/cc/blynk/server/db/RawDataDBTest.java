@@ -1,11 +1,11 @@
 package cc.blynk.server.db;
 
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.NumberUtil;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -18,7 +18,9 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * The Blynk Project.
@@ -39,7 +41,7 @@ public class RawDataDBTest {
         assertNotNull(dbManager.getConnection());
         user = new User();
         user.email = "test@test.com";
-        user.appName = AppName.BLYNK;
+        user.appName = AppNameUtil.BLYNK;
     }
 
     @AfterClass

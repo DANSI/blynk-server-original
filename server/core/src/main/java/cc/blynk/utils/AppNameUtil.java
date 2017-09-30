@@ -1,16 +1,15 @@
-package cc.blynk.server.core.model;
+package cc.blynk.utils;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 5/17/16.
  */
-public final class AppName {
+public final class AppNameUtil {
 
-    private AppName() {
+    private AppNameUtil() {
     }
 
-    public static final String ALL = "*";
     public static final String BLYNK = "Blynk";
     public static final String BLYNK_LOWERCASE = "blynk";
     public static final String FACEBOOK = "facebook";

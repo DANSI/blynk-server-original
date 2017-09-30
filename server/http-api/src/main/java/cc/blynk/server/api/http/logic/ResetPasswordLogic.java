@@ -15,9 +15,9 @@ import cc.blynk.server.api.http.pojo.TokenUser;
 import cc.blynk.server.api.http.pojo.TokensPool;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
@@ -82,7 +82,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
         }
 
         final String trimmedEmail = email.trim().toLowerCase();
-        appName = (appName == null ? AppName.BLYNK : appName);
+        appName = (appName == null ? AppNameUtil.BLYNK : appName);
 
         User user = userDao.getByName(trimmedEmail, appName);
 

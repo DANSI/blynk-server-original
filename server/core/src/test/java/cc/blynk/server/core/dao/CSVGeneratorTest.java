@@ -1,7 +1,7 @@
 package cc.blynk.server.core.dao;
 
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.ServerProperties;
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ public class CSVGeneratorTest {
     public void generateCSV() throws Exception {
         User user  = new User();
         user.email = "test@blynk.cc";
-        user.appName = AppName.BLYNK;
+        user.appName = AppNameUtil.BLYNK;
 
         Path path = Paths.get("/home/doom369/hourly_data.csv.gz");
 

@@ -2,9 +2,9 @@ package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
+import cc.blynk.utils.AppNameUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
@@ -59,10 +59,10 @@ public class RegisterHandlerTest {
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
 
-        when(userDao.isUserExists(userName, AppName.BLYNK)).thenReturn(false);
+        when(userDao.isUserExists(userName, AppNameUtil.BLYNK)).thenReturn(false);
         registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + "\0" + "1"));
 
-        verify(userDao).add(eq(userName), eq("1"), eq(AppName.BLYNK));
+        verify(userDao).add(eq(userName), eq("1"), eq(AppNameUtil.BLYNK));
     }
 
     @Test
@@ -77,10 +77,10 @@ public class RegisterHandlerTest {
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
 
-        when(userDao.isUserExists(userName, AppName.BLYNK)).thenReturn(false);
+        when(userDao.isUserExists(userName, AppNameUtil.BLYNK)).thenReturn(false);
         registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + "\0" + "1"));
 
-        verify(userDao).add(eq(userName), eq("1"), eq(AppName.BLYNK));
+        verify(userDao).add(eq(userName), eq("1"), eq(AppNameUtil.BLYNK));
     }
 
     @Test
@@ -95,10 +95,10 @@ public class RegisterHandlerTest {
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
 
-        when(userDao.isUserExists(userName, AppName.BLYNK)).thenReturn(false);
+        when(userDao.isUserExists(userName, AppNameUtil.BLYNK)).thenReturn(false);
         registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + "\0" + "1"));
 
-        verify(userDao).add(eq(userName), eq("1"), eq(AppName.BLYNK));
+        verify(userDao).add(eq(userName), eq("1"), eq(AppNameUtil.BLYNK));
     }
 
     @Test
@@ -113,10 +113,10 @@ public class RegisterHandlerTest {
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
 
-        when(userDao.isUserExists(email, AppName.BLYNK)).thenReturn(false);
+        when(userDao.isUserExists(email, AppNameUtil.BLYNK)).thenReturn(false);
         registerHandler.channelRead0(ctx, new RegisterMessage(1, email + "\0" + "1"));
 
-        verify(userDao, times(0)).add(eq(email), eq("1"), eq(AppName.BLYNK));
+        verify(userDao, times(0)).add(eq(email), eq("1"), eq(AppNameUtil.BLYNK));
         //verify(ctx).writeAndFlush(eq(new ResponseMessage(1, NOT_ALLOWED)), any());
     }
 
@@ -132,10 +132,10 @@ public class RegisterHandlerTest {
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
         when(byteBuf.writeShort(anyShort())).thenReturn(byteBuf);
 
-        when(userDao.isUserExists(userName, AppName.BLYNK)).thenReturn(false);
+        when(userDao.isUserExists(userName, AppNameUtil.BLYNK)).thenReturn(false);
         registerHandler.channelRead0(ctx, new RegisterMessage(1, userName + "\0" + "1"));
 
-        verify(userDao).add(eq(userName), eq("1"), eq(AppName.BLYNK));
+        verify(userDao).add(eq(userName), eq("1"), eq(AppNameUtil.BLYNK));
     }
 
 }

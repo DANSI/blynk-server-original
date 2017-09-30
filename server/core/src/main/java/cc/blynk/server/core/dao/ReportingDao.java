@@ -85,7 +85,7 @@ public class ReportingDao implements Closeable {
                                             GraphGranularityType type, int skipCount) {
         Path userDataFile = Paths.get(
                 dataFolder,
-                FileUtils.getUserReportingDir(user),
+                FileUtils.getUserReportingDir(user.email, user.appName),
                 generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type)
         );
         if (Files.exists(userDataFile)) {
@@ -175,11 +175,14 @@ public class ReportingDao implements Closeable {
     public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {
         log.debug("Removing {}{} pin data for dashId {}, deviceId {}.", pinType.pintTypeChar, pin, dashId, deviceId);
         Path userDataMinuteFile = Paths.get(dataFolder,
-                FileUtils.getUserReportingDir(user), formatMinute(dashId, deviceId, pinType.pintTypeChar, pin));
+                FileUtils.getUserReportingDir(user.email, user.appName),
+                formatMinute(dashId, deviceId, pinType.pintTypeChar, pin));
         Path userDataHourlyFile = Paths.get(dataFolder,
-                FileUtils.getUserReportingDir(user), formatHour(dashId, deviceId, pinType.pintTypeChar, pin));
+                FileUtils.getUserReportingDir(user.email, user.appName),
+                formatHour(dashId, deviceId, pinType.pintTypeChar, pin));
         Path userDataDailyFile = Paths.get(dataFolder,
-                FileUtils.getUserReportingDir(user), formatDaily(dashId, deviceId, pinType.pintTypeChar, pin));
+                FileUtils.getUserReportingDir(user.email, user.appName),
+                formatDaily(dashId, deviceId, pinType.pintTypeChar, pin));
         FileUtils.deleteQuietly(userDataMinuteFile);
         FileUtils.deleteQuietly(userDataHourlyFile);
         FileUtils.deleteQuietly(userDataDailyFile);

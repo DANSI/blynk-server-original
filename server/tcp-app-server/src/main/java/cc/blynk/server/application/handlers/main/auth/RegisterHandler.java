@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
@@ -13,6 +12,7 @@ import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
@@ -85,7 +85,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         String email = messageParts[0].trim().toLowerCase();
         String pass = messageParts[1];
-        String appName = messageParts.length == 3 ? messageParts[2] : AppName.BLYNK;
+        String appName = messageParts.length == 3 ? messageParts[2] : AppNameUtil.BLYNK;
         log.info("Trying register user : {}, app : {}", email, appName);
 
         if (BlynkEmailValidator.isNotValidEmail(email)) {
@@ -116,7 +116,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
     }
 
     private void createProjectForExportedApp(User newUser, String appName) {
-        if (appName.equals(AppName.BLYNK)) {
+        if (appName.equals(AppNameUtil.BLYNK)) {
             return;
         }
 

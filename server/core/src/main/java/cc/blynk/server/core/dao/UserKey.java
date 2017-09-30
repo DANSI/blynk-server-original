@@ -1,7 +1,7 @@
 package cc.blynk.server.core.dao;
 
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.utils.AppNameUtil;
 
 /**
  * User key for session. Holds user email and app user belongs to.
@@ -23,7 +23,7 @@ public final class UserKey {
     public UserKey(String email, String appName) {
         this.email = email;
         if (appName == null) {
-            this.appName = AppName.BLYNK;
+            this.appName = AppNameUtil.BLYNK;
         } else {
             this.appName = appName;
         }

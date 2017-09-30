@@ -6,13 +6,13 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.JsonParser;
 import org.junit.After;
 import org.junit.Before;
@@ -74,7 +74,7 @@ public class AssignTokenTest extends IntegrationBase {
     public void testTokenActivate() throws Exception {
         FlashedToken[] list = new FlashedToken[1];
         String token = UUID.randomUUID().toString().replace("-", "");
-        FlashedToken flashedToken = new FlashedToken("test@blynk.cc", token, AppName.BLYNK, 1, 0);
+        FlashedToken flashedToken = new FlashedToken("test@blynk.cc", token, AppNameUtil.BLYNK, 1, 0);
         list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
 
@@ -89,7 +89,7 @@ public class AssignTokenTest extends IntegrationBase {
     public void testCorrectToken() throws Exception {
         FlashedToken[] list = new FlashedToken[1];
         String token = UUID.randomUUID().toString().replace("-", "");
-        FlashedToken flashedToken = new FlashedToken("test@blynk.cc", token, AppName.BLYNK, 1, 0);
+        FlashedToken flashedToken = new FlashedToken("test@blynk.cc", token, AppNameUtil.BLYNK, 1, 0);
         list[0] = flashedToken;
         dbManager.insertFlashedTokens(list);
 

@@ -5,10 +5,10 @@ import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.hardware.HardwareSSLServer;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.hardware.MQTTHardwareServer;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
 import cc.blynk.utils.SHA256Util;
@@ -138,7 +138,7 @@ public final class ServerLauncher {
             System.out.println("Your Admin password is " + pass);
 
             String hash = SHA256Util.makeHash(pass, email);
-            holder.userDao.add(email, hash, AppName.BLYNK, true);
+            holder.userDao.add(email, hash, AppNameUtil.BLYNK, true);
         }
     }
 

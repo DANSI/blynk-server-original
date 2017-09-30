@@ -1,10 +1,10 @@
 package cc.blynk.integration.tools;
 
 import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.Theme;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.SHA256Util;
 
@@ -29,7 +29,7 @@ public class ProjectTokenGenerator {
         TokenManager tokenManager = new TokenManager(new ConcurrentHashMap<>(), null, null, "");
         String email = "dmitriy@blynk.cc";
         String pass = "b";
-        String appName = AppName.BLYNK;
+        String appName = AppNameUtil.BLYNK;
         User user = new User(email, SHA256Util.makeHash(pass, email), appName, "local", false, false);
         user.purchaseEnergy(98000);
 

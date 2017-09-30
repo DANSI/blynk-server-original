@@ -1,9 +1,9 @@
 package cc.blynk.server.core.model.auth;
 
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ParseUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -50,7 +50,7 @@ public class User {
         this.profile = new Profile();
         this.energy = INITIAL_ENERGY_AMOUNT;
         this.isFacebookUser = false;
-        this.appName = AppName.BLYNK;
+        this.appName = AppNameUtil.BLYNK;
     }
 
     public User(String email, String pass, String appName, String region,
@@ -71,7 +71,7 @@ public class User {
     }
 
     public void subtractEnergy(int price) {
-        if (AppName.BLYNK.equals(appName) && price > energy) {
+        if (AppNameUtil.BLYNK.equals(appName) && price > energy) {
             throw new EnergyLimitException("Not enough energy.");
         }
         //non-atomic. we are fine with that

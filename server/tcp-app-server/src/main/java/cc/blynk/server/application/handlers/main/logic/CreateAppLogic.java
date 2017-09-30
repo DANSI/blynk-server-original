@@ -1,12 +1,12 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
@@ -45,7 +45,7 @@ public class CreateAppLogic {
 
         App newApp = JsonParser.parseApp(appString);
 
-        newApp.id = AppName.BLYNK_LOWERCASE + StringUtils.randomString(8);
+        newApp.id = AppNameUtil.BLYNK_LOWERCASE + StringUtils.randomString(8);
 
         newApp.validate();
 

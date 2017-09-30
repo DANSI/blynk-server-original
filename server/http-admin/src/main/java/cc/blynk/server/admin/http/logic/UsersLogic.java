@@ -18,7 +18,6 @@ import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
-import cc.blynk.server.core.model.AppName;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -78,7 +77,7 @@ public class UsersLogic extends CookiesBaseHttpHandler {
             filterParam = filter == null ? null : filter.name;
         }
 
-        List<User> users = userDao.searchByUsername(filterParam, AppName.ALL);
+        List<User> users = userDao.searchByUsername(filterParam, null);
         return appendTotalCountHeader(
                 ok(sort(users, sortField, sortOrder), page, size), users.size()
         );
