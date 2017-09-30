@@ -33,7 +33,16 @@ public final class FileUtils {
 
     public static final String BLYNK_FOLDER = "blynk";
 
-    private static final String[] POSSIBLE_LOCAL_PATHS = new String[]{
+    private static final String[] POSSIBLE_LOCAL_PATHS = new String[] {
+            "./server/http-dashboard/target/classes",
+            "./server/http-api/target/classes",
+            "./server/http-admin/target/classes",
+            "./server/http-core/target/classes",
+            "./server/core/target",
+            "../server/http-admin/target/classes",
+            "../server/http-dashboard/target/classes",
+            "../server/http-core/target/classes",
+            "../server/core/target",
             "./server/utils/target",
             "../server/utils/target",
             Paths.get(System.getProperty("java.io.tmpdir"), BLYNK_FOLDER).toString()
