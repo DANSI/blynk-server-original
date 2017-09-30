@@ -26,7 +26,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static cc.blynk.utils.ArrayUtil.EMPTY_BYTES;
+import static cc.blynk.utils.EmptyArraysUtil.EMPTY_BYTES;
 import static cc.blynk.utils.FileUtils.SIZE_OF_REPORT_ENTRY;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 

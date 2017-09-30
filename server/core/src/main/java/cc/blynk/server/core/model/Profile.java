@@ -6,8 +6,8 @@ import cc.blynk.utils.JsonParser;
 
 import java.util.Arrays;
 
-import static cc.blynk.utils.ArrayUtil.EMPTY_APPS;
-import static cc.blynk.utils.ArrayUtil.EMPTY_DASHBOARDS;
+import static cc.blynk.utils.EmptyArraysUtil.EMPTY_APPS;
+import static cc.blynk.utils.EmptyArraysUtil.EMPTY_DASHBOARDS;
 
 /**
  * User: ddumanskiy

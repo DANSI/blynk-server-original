@@ -30,9 +30,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
-import static cc.blynk.utils.ArrayUtil.EMPTY_DEVICES;
-import static cc.blynk.utils.ArrayUtil.EMPTY_TAGS;
-import static cc.blynk.utils.ArrayUtil.EMPTY_WIDGETS;
+import static cc.blynk.utils.EmptyArraysUtil.EMPTY_DEVICES;
+import static cc.blynk.utils.EmptyArraysUtil.EMPTY_TAGS;
+import static cc.blynk.utils.EmptyArraysUtil.EMPTY_WIDGETS;
 
 /**
  * User: ddumanskiy

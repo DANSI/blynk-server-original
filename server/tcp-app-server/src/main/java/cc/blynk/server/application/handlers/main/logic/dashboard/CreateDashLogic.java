@@ -11,6 +11,7 @@ import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
+import cc.blynk.utils.EmptyArraysUtil;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
@@ -84,7 +85,7 @@ public class CreateDashLogic {
         user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newDash, DashBoard.class);
 
         if (newDash.devices == null) {
-            newDash.devices = ArrayUtil.EMPTY_DEVICES;
+            newDash.devices = EmptyArraysUtil.EMPTY_DEVICES;
         } else {
             for (Device device : newDash.devices) {
                 //this case only possible for clone,
