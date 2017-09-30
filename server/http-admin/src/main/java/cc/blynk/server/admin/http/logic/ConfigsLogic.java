@@ -11,10 +11,6 @@ import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.Limits;
-import cc.blynk.server.db.DBManager;
-import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.JsonParser;
 import cc.blynk.utils.ServerProperties;
 import io.netty.channel.ChannelHandler;
@@ -28,7 +24,12 @@ import java.util.Properties;
 import static cc.blynk.core.http.Response.appendTotalCountHeader;
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
+import static cc.blynk.server.db.DBManager.DB_PROPERTIES_FILENAME;
 import static cc.blynk.utils.AdminHttpUtil.sort;
+import static cc.blynk.utils.FileLoaderUtil.TOKEN_MAIL_BODY;
+import static cc.blynk.utils.ServerProperties.SERVER_PROPERTIES_FILENAME;
+import static cc.blynk.utils.properties.GCMProperties.GCM_PROPERTIES_FILENAME;
+import static cc.blynk.utils.properties.MailProperties.MAIL_PROPERTIES_FILENAME;
 
 /**
  * The Blynk Project.
@@ -57,12 +58,12 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
                              @QueryParam("_sortDir") String sortOrder) {
 
         List<Config> configs = new ArrayList<>();
-        configs.add(new Config(ServerProperties.SERVER_PROPERTIES_FILENAME));
-        configs.add(new Config(MailWrapper.MAIL_PROPERTIES_FILENAME));
-        configs.add(new Config(GCMWrapper.GCM_PROPERTIES_FILENAME));
-        configs.add(new Config(DBManager.DB_PROPERTIES_FILENAME));
+        configs.add(new Config(SERVER_PROPERTIES_FILENAME));
+        configs.add(new Config(MAIL_PROPERTIES_FILENAME));
+        configs.add(new Config(GCM_PROPERTIES_FILENAME));
+        configs.add(new Config(DB_PROPERTIES_FILENAME));
         configs.add(new Config("twitter4j.properties"));
-        configs.add(new Config(FileLoaderUtil.TOKEN_MAIL_BODY));
+        configs.add(new Config(TOKEN_MAIL_BODY));
 
         return appendTotalCountHeader(
                                 ok(sort(configs, sortField, sortOrder), page, size), configs.size()
@@ -73,9 +74,9 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
     @Path("/{name}")
     public Response getConfigByName(@PathParam("name") String name) {
         switch (name) {
-            case FileLoaderUtil.TOKEN_MAIL_BODY:
+            case TOKEN_MAIL_BODY:
                 return ok(new Config(name, limits.tokenBody).toString());
-            case ServerProperties.SERVER_PROPERTIES_FILENAME :
+            case SERVER_PROPERTIES_FILENAME :
                 return ok(new Config(name, serverProperties).toString());
             default :
                 return badRequest();
@@ -93,10 +94,10 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
         log.info("{}", updatedConfig.body);
 
         switch (name) {
-            case FileLoaderUtil.TOKEN_MAIL_BODY:
+            case TOKEN_MAIL_BODY:
                 limits.tokenBody = updatedConfig.body;
                 break;
-            case ServerProperties.SERVER_PROPERTIES_FILENAME :
+            case SERVER_PROPERTIES_FILENAME :
                 Properties properties = readPropertiesFromString(updatedConfig.body);
                 serverProperties.putAll(properties);
                 break;

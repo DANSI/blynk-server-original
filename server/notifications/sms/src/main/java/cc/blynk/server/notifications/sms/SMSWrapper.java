@@ -1,6 +1,5 @@
 package cc.blynk.server.notifications.sms;
 
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -21,8 +20,6 @@ import java.util.Properties;
  * Created on 19.03.16.
  */
 public class SMSWrapper {
-
-    public static final String SMS_PROPERTIES_FILENAME = "sms.properties";
 
     private static final Logger log = LogManager.getLogger(SMSWrapper.class);
 

@@ -1,7 +1,5 @@
 package cc.blynk.utils.properties;
 
-import cc.blynk.server.notifications.mail.MailWrapper;
-
 import java.util.Map;
 
 /**
@@ -11,7 +9,9 @@ import java.util.Map;
  */
 public class MailProperties extends BaseProperties {
 
+    public static final String MAIL_PROPERTIES_FILENAME = "mail.properties";
+
     public MailProperties(Map<String, String> cmdProperties) {
-        super(cmdProperties, MailWrapper.MAIL_PROPERTIES_FILENAME);
+        super(cmdProperties, MAIL_PROPERTIES_FILENAME);
     }
 }

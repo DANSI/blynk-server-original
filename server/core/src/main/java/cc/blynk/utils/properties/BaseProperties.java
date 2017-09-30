@@ -11,6 +11,8 @@ import java.security.CodeSource;
 import java.util.Map;
 import java.util.Properties;
 
+import static cc.blynk.utils.ServerProperties.SERVER_PROPERTIES_FILENAME;
+
 /**
  * Java properties class wrapper.
  * Loads properties file from class path. After that loads properties
@@ -21,8 +23,6 @@ import java.util.Properties;
  * Created on 2/12/2015.
  */
 public abstract class BaseProperties extends Properties {
-
-    public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
 
     public final String jarPath;
 

@@ -22,7 +22,6 @@ import java.util.Properties;
  */
 public class GCMWrapper {
 
-    public static final String GCM_PROPERTIES_FILENAME = "gcm.properties";
     private static final Logger log = LogManager.getLogger(GCMWrapper.class);
 
     private final String apiKey;

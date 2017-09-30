@@ -1,7 +1,5 @@
 package cc.blynk.utils.properties;
 
-import cc.blynk.server.notifications.sms.SMSWrapper;
-
 import java.util.Map;
 
 /**
@@ -11,7 +9,9 @@ import java.util.Map;
  */
 public class SmsProperties extends BaseProperties {
 
+    public static final String SMS_PROPERTIES_FILENAME = "sms.properties";
+
     public SmsProperties(Map<String, String> cmdProperties) {
-        super(cmdProperties, SMSWrapper.SMS_PROPERTIES_FILENAME);
+        super(cmdProperties, SMS_PROPERTIES_FILENAME);
     }
 }

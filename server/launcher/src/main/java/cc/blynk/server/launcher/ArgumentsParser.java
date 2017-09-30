@@ -4,13 +4,14 @@ import cc.blynk.cli.CommandLine;
 import cc.blynk.cli.DefaultParser;
 import cc.blynk.cli.Options;
 import cc.blynk.cli.ParseException;
-import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.utils.ParseUtil;
-import cc.blynk.utils.ServerProperties;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static cc.blynk.utils.ServerProperties.SERVER_PROPERTIES_FILENAME;
+import static cc.blynk.utils.properties.MailProperties.MAIL_PROPERTIES_FILENAME;
+import static cc.blynk.utils.properties.SmsProperties.SMS_PROPERTIES_FILENAME;
 
 /**
  * Simple class for command line arguments parsing.
@@ -51,7 +52,6 @@ final class ArgumentsParser {
      * Simply parsers command line arguments and sets it to server properties for future use.
      *
      * @param args - command line arguments
-     * @throws ParseException
      */
     static Map<String, String> parse(String[] args) throws ParseException {
         CommandLine cmd = new DefaultParser().parse(options, args);
@@ -83,13 +83,13 @@ final class ArgumentsParser {
             properties.put("data.folder", dataFolder);
         }
         if (serverConfigPath != null) {
-            properties.put(ServerProperties.SERVER_PROPERTIES_FILENAME, serverConfigPath);
+            properties.put(SERVER_PROPERTIES_FILENAME, serverConfigPath);
         }
         if (mailConfigPath != null) {
-            properties.put(MailWrapper.MAIL_PROPERTIES_FILENAME, mailConfigPath);
+            properties.put(MAIL_PROPERTIES_FILENAME, mailConfigPath);
         }
         if (smsConfigPath != null) {
-            properties.put(SMSWrapper.SMS_PROPERTIES_FILENAME, smsConfigPath);
+            properties.put(SMS_PROPERTIES_FILENAME, smsConfigPath);
         }
 
         properties.put(RESTORE_OPTION, Boolean.toString(restore));

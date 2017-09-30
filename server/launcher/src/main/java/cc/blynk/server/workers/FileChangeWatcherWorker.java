@@ -2,7 +2,6 @@ package cc.blynk.server.workers;
 
 import cc.blynk.server.Limits;
 import cc.blynk.utils.FileLoaderUtil;
-import cc.blynk.utils.ServerProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,6 +14,8 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+
+import static cc.blynk.utils.ServerProperties.SERVER_PROPERTIES_FILENAME;
 
 /**
  *
@@ -66,7 +67,7 @@ public class FileChangeWatcherWorker implements Runnable {
             }
         } catch (IOException | InterruptedException e) {
             log.warn("Error monitoring '{}' file. Reloadable properties are not enabled.",
-                    ServerProperties.SERVER_PROPERTIES_FILENAME, e);
+                    SERVER_PROPERTIES_FILENAME, e);
         }
     }
 

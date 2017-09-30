@@ -15,7 +15,8 @@ import java.util.Map;
  */
 public class ServerProperties extends BaseProperties {
 
-    public static final String STATIC_FILES_FOLDER = "static";
+    public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
+    private static final String STATIC_FILES_FOLDER = "static";
 
     public final boolean isUnpacked;
 

@@ -9,8 +9,6 @@ import java.util.Properties;
  */
 public class MailWrapper {
 
-    public static final String MAIL_PROPERTIES_FILENAME = "mail.properties";
-
     private final MailClient client;
 
     public MailWrapper(Properties mailProperties) {
