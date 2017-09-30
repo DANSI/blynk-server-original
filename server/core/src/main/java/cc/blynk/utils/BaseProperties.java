@@ -101,7 +101,7 @@ public class BaseProperties extends Properties {
     }
 
     public int getIntProperty(String propertyName) {
-        return ParseUtil.parseInt(getProperty(propertyName));
+        return Integer.parseInt(getProperty(propertyName));
     }
 
     public int getIntProperty(String propertyName, int defaultValue) {
@@ -109,7 +109,7 @@ public class BaseProperties extends Properties {
         if (prop == null || prop.isEmpty()) {
             return defaultValue;
         }
-        return ParseUtil.parseInt(getProperty(propertyName));
+        return Integer.parseInt(getProperty(propertyName));
     }
 
     public boolean getBoolProperty(String propertyName) {
@@ -117,7 +117,7 @@ public class BaseProperties extends Properties {
     }
 
     public long getLongProperty(String propertyName) {
-        return ParseUtil.parseLong(getProperty(propertyName));
+        return Long.parseLong(getProperty(propertyName));
     }
 
     public String getServerHost() {
@@ -135,7 +135,7 @@ public class BaseProperties extends Properties {
         if (prop == null || prop.isEmpty()) {
             return defaultValue;
         }
-        return ParseUtil.parseLong(prop);
+        return Long.parseLong(prop);
     }
 
     public String[] getCommaSeparatedValueAsArray(String propertyName) {
