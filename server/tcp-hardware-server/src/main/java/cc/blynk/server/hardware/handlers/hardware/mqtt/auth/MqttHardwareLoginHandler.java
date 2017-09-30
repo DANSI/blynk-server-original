@@ -22,6 +22,7 @@ import io.netty.handler.codec.mqtt.MqttConnectReturnCode;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttQoS;
+import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -73,7 +74,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MqttConnectMessage message) throws Exception {
         String username = message.payload().userName().toLowerCase();
-        String token = message.payload().password();
+        String token = new String(message.payload().passwordInBytes(), CharsetUtil.UTF_8);
 
         TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
 

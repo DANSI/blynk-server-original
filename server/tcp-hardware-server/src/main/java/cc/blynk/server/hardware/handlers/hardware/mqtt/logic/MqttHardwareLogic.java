@@ -88,7 +88,7 @@ public class MqttHardwareLogic {
         }
 
         if (dash.isActive) {
-            session.sendToApps(HARDWARE, msg.variableHeader().messageId(), dashId, deviceId, body);
+            session.sendToApps(HARDWARE, msg.variableHeader().packetId(), dashId, deviceId, body);
         } else {
             log.debug("No active dashboard.");
         }
