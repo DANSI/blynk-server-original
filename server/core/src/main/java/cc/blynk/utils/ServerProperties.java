@@ -1,5 +1,7 @@
 package cc.blynk.utils;
 
+import cc.blynk.utils.properties.BaseProperties;
+
 import java.util.Map;
 
 /**

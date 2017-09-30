@@ -47,6 +47,11 @@
 
         <!-- notification modules -->
         <dependency>
+            <groupId>cc.blynk.utils</groupId>
+            <artifactId>utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>cc.blynk.server.notifications</groupId>
             <artifactId>email</artifactId>
             <version>${project.version}</version>

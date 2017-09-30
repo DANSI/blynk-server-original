@@ -1,7 +1,6 @@
 package cc.blynk.utils.properties;
 
 import cc.blynk.server.notifications.sms.SMSWrapper;
-import cc.blynk.utils.BaseProperties;
 
 import java.util.Map;
 

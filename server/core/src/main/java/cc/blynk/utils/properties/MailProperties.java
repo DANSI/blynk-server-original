@@ -1,7 +1,6 @@
 package cc.blynk.utils.properties;
 
 import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.utils.BaseProperties;
 
 import java.util.Map;
 

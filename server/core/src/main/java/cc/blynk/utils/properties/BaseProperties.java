@@ -1,4 +1,6 @@
-package cc.blynk.utils;
+package cc.blynk.utils.properties;
+
+import cc.blynk.utils.IPUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -18,7 +20,7 @@ import java.util.Properties;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/12/2015.
  */
-public class BaseProperties extends Properties {
+public abstract class BaseProperties extends Properties {
 
     public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
 
@@ -35,7 +37,7 @@ public class BaseProperties extends Properties {
         putAll(cmdProperties);
     }
 
-    BaseProperties(String propertiesFileName) {
+    public BaseProperties(String propertiesFileName) {
         this.jarPath = getJarPath();
         initProperties(propertiesFileName);
     }

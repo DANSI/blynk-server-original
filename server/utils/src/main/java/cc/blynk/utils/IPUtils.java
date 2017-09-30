@@ -1,6 +1,5 @@
 package cc.blynk.utils;
 
-import io.netty.channel.Channel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,6 +7,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
+import java.net.SocketAddress;
 import java.util.Enumeration;
 
 /**
@@ -45,12 +45,12 @@ public final class IPUtils {
         }
     }
 
-    public static String getIp(Channel channel) {
+    public static String getIp(SocketAddress remoteSocketAddress) {
         try {
-            InetSocketAddress socketAddress = (InetSocketAddress) channel.remoteAddress();
+            InetSocketAddress socketAddress = (InetSocketAddress) remoteSocketAddress;
             return socketAddress.getAddress().getHostAddress();
         } catch (Exception e) {
-            log.warn("Error getting IP. {}", channel.remoteAddress());
+            log.warn("Error getting IP. {}", remoteSocketAddress);
         }
         return null;
     }

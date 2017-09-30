@@ -15,6 +15,7 @@
     <modules>
         <module>notifications</module>
 
+        <module>utils</module>
         <module>acme</module>
         <module>core</module>
 
