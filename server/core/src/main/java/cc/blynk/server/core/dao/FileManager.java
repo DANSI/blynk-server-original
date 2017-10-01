@@ -145,7 +145,7 @@ public class FileManager {
                         } catch (IOException ioe) {
                             String errorMessage = ioe.getMessage();
                             log.error("Error parsing file '{}'. Error : {}", file, errorMessage);
-                            if (errorMessage != null && errorMessage.contains("Unexpected end-of-input")) {
+                            if (errorMessage != null && errorMessage.contains("end-of-input")) {
                                 return restoreFromBackup(file.getName());
                             }
                         }
