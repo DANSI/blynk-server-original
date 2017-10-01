@@ -59,6 +59,65 @@
         </repository>
     </repositories>
 
+    <profiles>
+
+        <profile>
+            <id>java9</id>
+            <activation>
+                <jdk>9</jdk>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jarClassifier>java9</jarClassifier>
+                <source>9</source>
+                <target>9</target>
+                <!-- just fake property. means do not exclude anything -->
+                <version.specific.exclusions>**/ccxxyy.java</version.specific.exclusions>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>java8</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <properties>
+                <jarClassifier>java8</jarClassifier>
+                <source>1.8</source>
+                <target>1.8</target>
+                <version.specific.exclusions>**/module-info.java</version.specific.exclusions>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>win</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <script.extension>.bat</script.extension>
+                <!--Just to enable build under windows. EPOLL CODE SHOULD NOT BE USED UNDER WINDOWS-->
+                <epoll.os>linux-x86_64</epoll.os>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>unix</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <properties>
+                <script.extension>.sh</script.extension>
+                <epoll.os>linux-x86_64</epoll.os>
+            </properties>
+        </profile>
+
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -66,8 +125,11 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>9</source>
-                    <target>9</target>
+                    <source>${source}</source>
+                    <target>${target}</target>
+                    <excludes>
+                        <exclude>${version.specific.exclusions}</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 
@@ -125,37 +187,6 @@
             </resource>
         </resources>
     </build>
-
-    <profiles>
-
-        <profile>
-            <id>win</id>
-            <activation>
-                <os>
-                    <family>Windows</family>
-                </os>
-            </activation>
-            <properties>
-                <script.extension>.bat</script.extension>
-                <!--Just to enable build under windows. EPOLL CODE SHOULD NOT BE USED UNDER WINDOWS-->
-                <epoll.os>linux-x86_64</epoll.os>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>unix</id>
-            <activation>
-                <os>
-                    <family>unix</family>
-                </os>
-            </activation>
-            <properties>
-                <script.extension>.sh</script.extension>
-                <epoll.os>linux-x86_64</epoll.os>
-            </properties>
-        </profile>
-
-    </profiles>
 
     <properties>
         <!-- maven plugins -->
