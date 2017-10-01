@@ -55,7 +55,7 @@ messages between Blynk mobile application and various microcontroller boards and
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
 
 ## Requirements
-- Java 9 required (OpenJDK, Oracle) 
+- Java 8/9 required (OpenJDK, Oracle) 
 - Any OS that can run java 
 - At least 30 MB of RAM (could be less with tuning)
 - Open ports 8443 (for app), 8442 (for hardware without ssl), 8441 (for hardware with ssl)
@@ -87,22 +87,22 @@ That's it!
 ## Quick local server setup on Raspberry PI
 
 + Login to Raspberry Pi via ssh;
-+ Install java 9: 
++ Install java 8: 
         
-        sudo apt-get install oracle-java9-jdk
+        sudo apt-get install oracle-java8-jdk
         
-+ Make sure you are using Java 9
++ Make sure you are using Java 8
 
         java -version
-        Output: java version "9"
+        Output: java version "1.8"
         
 + Download Blynk server jar file (or manually copy it to Raspberry Pi via ssh and scp command): 
    
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.28.0/server-0.28.0.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.28.0/server-0.28.0-java8.jar"
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-0.28.0.jar -dataFolder /home/pi/Blynk        
+        java -jar server-0.28.0-java8.jar -dataFolder /home/pi/Blynk        
         
 That's it! 
 
@@ -595,6 +595,12 @@ As an output you'll retrieve server.crt and server.pem files that you need to pr
         sudo apt-add-repository ppa:webupd8team/java
         sudo apt-get update
         sudo apt-get install oracle-java9-installer
+        
+or 
+
+        sudo apt-get install oracle-java8-installer
+        
+in case your system doesn't have Java 9 yet.
         
 ### Port forwarding for HTTP/S API
 
