@@ -2,7 +2,6 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
@@ -37,14 +36,12 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class TableCommandsTest extends IntegrationBase {
 
-    private BaseServer httpServer;
     private BaseServer appServer;
     private BaseServer hardwareServer;
     private ClientPair clientPair;
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder).start();
         hardwareServer = new HardwareServer(holder).start();
         appServer = new AppServer(holder).start();
 
@@ -57,7 +54,6 @@ public class TableCommandsTest extends IntegrationBase {
 
     @After
     public void shutdown() {
-        httpServer.close();
         appServer.close();
         hardwareServer.close();
         clientPair.stop();
