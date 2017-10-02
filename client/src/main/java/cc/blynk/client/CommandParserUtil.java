@@ -11,6 +11,7 @@ import static cc.blynk.server.core.protocol.enums.Command.CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_APP;
@@ -18,6 +19,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
@@ -34,6 +36,7 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_SHARED_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.GET_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
@@ -56,6 +59,7 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_FACE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
 
 /**
@@ -124,6 +128,7 @@ public final class CommandParserUtil {
 
             case "bridge" :
                 return BRIDGE;
+
             case "createdash" :
                 return CREATE_DASH;
             case "updatedash" :
@@ -132,16 +137,27 @@ public final class CommandParserUtil {
                 return DELETE_DASH;
             case "updatesettings" :
                 return UPDATE_PROJECT_SETTINGS;
+
             case "createwidget" :
                 return CREATE_WIDGET;
             case "updatewidget" :
                 return UPDATE_WIDGET;
             case "deletewidget" :
                 return DELETE_WIDGET;
+            case "getwidget" :
+                return GET_WIDGET;
+
             case "hardsync" :
                 return HARDWARE_SYNC;
             case "internal" :
                 return BLYNK_INTERNAL;
+
+            case "createtemplate" :
+                return CREATE_TILE_TEMPLATE;
+            case "updatetemplate" :
+                return UPDATE_TILE_TEMPLATE;
+            case "deletetemplate" :
+                return DELETE_TILE_TEMPLATE;
 
             case "createdevice" :
                 return CREATE_DEVICE;

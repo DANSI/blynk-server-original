@@ -9,6 +9,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.CreateAppMessag
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDashMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateTag;
+import cc.blynk.server.core.protocol.model.messages.appllication.CreateTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateWidget;
 import cc.blynk.server.core.protocol.model.messages.appllication.DeActivateDashboardMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.DeleteAppMessage;
@@ -16,6 +17,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.DeleteDashMessa
 import cc.blynk.server.core.protocol.model.messages.appllication.DeleteDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.DeleteEnhancedGraphDataStringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.DeleteTag;
+import cc.blynk.server.core.protocol.model.messages.appllication.DeleteTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.appllication.DeleteWidget;
 import cc.blynk.server.core.protocol.model.messages.appllication.EmailQRsMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.ExportDataMessage;
@@ -29,6 +31,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.GetProjectByTok
 import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTags;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetWidget;
 import cc.blynk.server.core.protocol.model.messages.appllication.HardwareResendFromBluetoothMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedStringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
@@ -43,6 +46,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.UpdateDashSetti
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateFaceMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateTag;
+import cc.blynk.server.core.protocol.model.messages.appllication.UpdateTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateWidget;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.AppSyncMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.GetShareTokenMessage;
@@ -76,6 +80,7 @@ import static cc.blynk.server.core.protocol.enums.Command.CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_APP;
@@ -83,6 +88,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
@@ -99,6 +105,7 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_SHARED_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.GET_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
@@ -123,6 +130,7 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_FACE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
 
 /**
@@ -222,6 +230,15 @@ public final class MessageFactory {
                 return new UpdateWidget(messageId, body);
             case DELETE_WIDGET :
                 return new DeleteWidget(messageId, body);
+            case GET_WIDGET :
+                return new GetWidget(messageId, body);
+
+            case CREATE_TILE_TEMPLATE :
+                return new CreateTileTemplate(messageId, body);
+            case UPDATE_TILE_TEMPLATE :
+                return new UpdateTileTemplate(messageId, body);
+            case DELETE_TILE_TEMPLATE :
+                return new DeleteTileTemplate(messageId, body);
 
             case CREATE_DEVICE :
                 return new CreateDevice(messageId, body);

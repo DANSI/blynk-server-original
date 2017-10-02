@@ -3,6 +3,7 @@ package cc.blynk.server.core.model.widgets.ui.tiles;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
+import cc.blynk.server.internal.EmptyArraysUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -53,7 +54,7 @@ public class TileTemplate {
                         @JsonProperty("showDeviceName") boolean showDeviceName) {
         this.id = id;
         this.widgets = widgets;
-        this.deviceIds = deviceIds;
+        this.deviceIds = deviceIds == null ? EmptyArraysUtil.EMPTY_INTS : deviceIds;
         this.name = name;
         this.mode = mode;
         this.dataStream = dataStream;

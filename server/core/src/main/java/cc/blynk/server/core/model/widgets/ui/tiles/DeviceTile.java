@@ -10,19 +10,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 02.10.17.
  */
-public class Tile {
+public class DeviceTile {
 
     public final int deviceId;
 
-    public final int templateId;
+    public final long templateId;
 
     @JsonProperty("pin")
     public final DataStream dataStream;
 
     @JsonCreator
-    public Tile(@JsonProperty("deviceId") int deviceId,
-                @JsonProperty("templateId") int templateId,
-                @JsonProperty("pin") DataStream dataStream) {
+    public DeviceTile(@JsonProperty("deviceId") int deviceId,
+                      @JsonProperty("templateId") long templateId,
+                      @JsonProperty("pin") DataStream dataStream) {
         this.deviceId = deviceId;
         this.templateId = templateId;
         this.dataStream = dataStream;

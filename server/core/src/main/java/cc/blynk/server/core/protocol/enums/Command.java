@@ -103,6 +103,11 @@ public final class Command {
     public static final short HARDWARE_RESEND_FROM_BLUETOOTH = 65;
     public static final short LOGOUT = 66;
 
+    public static final short CREATE_TILE_TEMPLATE = 67;
+    public static final short UPDATE_TILE_TEMPLATE = 68;
+    public static final short DELETE_TILE_TEMPLATE = 69;
+    public static final short GET_WIDGET = 70;
+
     //http codes. Used only for stats
     public static final short HTTP_IS_HARDWARE_CONNECTED = 82;
     public static final short HTTP_IS_APP_CONNECTED = 83;
@@ -165,6 +170,11 @@ public final class Command {
                 put(CREATE_WIDGET, "CreateWidget");
                 put(UPDATE_WIDGET, "UpdateWidget");
                 put(DELETE_WIDGET, "DeleteWidget");
+                put(GET_WIDGET, "GetWidget");
+
+                put(CREATE_TILE_TEMPLATE, "CreateTileTemplate");
+                put(UPDATE_TILE_TEMPLATE, "UpdateTileTemplate");
+                put(DELETE_TILE_TEMPLATE, "DeleteTileTemplate");
 
                 put(CREATE_DEVICE, "CreateDevice");
                 put(UPDATE_DEVICE, "UpdateDevice");

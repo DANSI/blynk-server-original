@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.stats.model.Stat;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -50,6 +51,7 @@ public final class JsonParser {
     private static final ObjectReader dashboardReader = MAPPER.readerFor(DashBoard.class);
     private static final ObjectReader dashboardSettingsReader = MAPPER.readerFor(DashboardSettings.class);
     private static final ObjectReader widgetReader = MAPPER.readerFor(Widget.class);
+    private static final ObjectReader tileTemplateReader = MAPPER.readerFor(TileTemplate.class);
     private static final ObjectReader appReader = MAPPER.readerFor(App.class);
     private static final ObjectReader deviceReader = MAPPER.readerFor(Device.class);
     private static final ObjectReader tagReader = MAPPER.readerFor(Tag.class);
@@ -206,6 +208,15 @@ public final class JsonParser {
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new IllegalCommandBodyException("Error parsing dashboard.");
+        }
+    }
+
+    public static TileTemplate parseTileTemplate(String reader) {
+        try {
+            return tileTemplateReader.readValue(reader);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new IllegalCommandBodyException("Error parsing tile template.");
         }
     }
 

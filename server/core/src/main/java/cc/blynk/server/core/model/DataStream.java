@@ -50,6 +50,12 @@ public class DataStream {
         this.label = label;
     }
 
+    public DataStream(DataStream dataStream) {
+        this(dataStream.pin, dataStream.pwmMode, dataStream.rangeMappingOn,
+                dataStream.pinType, dataStream.value,
+                dataStream.min, dataStream.max, dataStream.label);
+    }
+
     public DataStream(byte pin, PinType pinType) {
         this(pin, false, false, pinType, null, 0, 255, null);
     }

@@ -38,7 +38,11 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.tags.GetTagsLog
 import cc.blynk.server.application.handlers.main.logic.dashboard.tags.UpdateTagLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.CreateWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.DeleteWidgetLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.GetWidgetLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.UpdateWidgetLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.CreateTileTemplateLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.DeleteTileTemplateLogic;
+import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.UpdateTileTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.DeleteEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.ExportGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.GetEnhancedGraphDataLogic;
@@ -64,6 +68,7 @@ import static cc.blynk.server.core.protocol.enums.Command.CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_APP;
@@ -71,6 +76,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
@@ -86,6 +92,7 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_SHARED_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.GET_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
@@ -101,6 +108,7 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_FACE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROJECT_SETTINGS;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
 
 /**
@@ -224,6 +232,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case SHARING :
                 shareLogic.messageReceived(ctx, state, msg);
                 break;
+
             case GET_TOKEN :
                 token.messageReceived(ctx, state.user, msg);
                 break;
@@ -236,6 +245,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case REFRESH_TOKEN :
                 refreshToken.messageReceived(ctx, state, msg);
                 break;
+
             case GET_GRAPH_DATA :
                 graphData.messageReceived(ctx, state.user, msg);
                 break;
@@ -251,6 +261,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case PING :
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
+
             case GET_SHARE_TOKEN :
                 getShareTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
@@ -260,9 +271,11 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case GET_SHARED_DASH :
                 getSharedDashLogic.messageReceived(ctx, msg);
                 break;
+
             case EMAIL :
                 appMailLogic.messageReceived(ctx, state.user, msg);
                 break;
+
             case CREATE_DASH :
                 createDashLogic.messageReceived(ctx, state, msg);
                 break;
@@ -272,6 +285,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case DELETE_DASH :
                 deleteDashLogic.messageReceived(ctx, state, msg);
                 break;
+
             case CREATE_WIDGET :
                 createWidgetLogic.messageReceived(ctx, state, msg);
                 break;
@@ -281,18 +295,35 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case DELETE_WIDGET :
                 deleteWidgetLogic.messageReceived(ctx, state, msg);
                 break;
+            case GET_WIDGET :
+                GetWidgetLogic.messageReceived(ctx, state, msg);
+                break;
+
+            case CREATE_TILE_TEMPLATE :
+                CreateTileTemplateLogic.messageReceived(ctx, state, msg);
+                break;
+            case UPDATE_TILE_TEMPLATE :
+                UpdateTileTemplateLogic.messageReceived(ctx, state, msg);
+                break;
+            case DELETE_TILE_TEMPLATE :
+                DeleteTileTemplateLogic.messageReceived(ctx, state, msg);
+                break;
+
             case REDEEM :
                 redeemLogic.messageReceived(ctx, state.user, msg);
                 break;
+
             case GET_ENERGY :
                 GetEnergyLogic.messageReceived(ctx, state.user, msg);
                 break;
             case ADD_ENERGY :
                 addEnergyLogic.messageReceived(ctx, state.user, msg);
                 break;
+
             case UPDATE_PROJECT_SETTINGS :
                 updateDashSettingLogic.messageReceived(ctx, state, msg);
                 break;
+
             case CREATE_DEVICE :
                 createDeviceLogic.messageReceived(ctx, state.user, msg);
                 break;
@@ -305,6 +336,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case GET_DEVICES :
                 GetDevicesLogic.messageReceived(ctx, state.user, msg);
                 break;
+
             case CREATE_TAG :
                 CreateTagLogic.messageReceived(ctx, state.user, msg);
                 break;
@@ -317,9 +349,11 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case GET_TAGS :
                 GetTagsLogic.messageReceived(ctx, state.user, msg);
                 break;
+
             case APP_SYNC :
                 AppSyncLogic.messageReceived(ctx, state, msg);
                 break;
+
             case CREATE_APP :
                 createAppLogic.messageReceived(ctx, state, msg);
                 break;
@@ -329,6 +363,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case DELETE_APP :
                 DeleteAppLogic.messageReceived(ctx, state, msg);
                 break;
+
             case GET_PROJECT_BY_TOKEN :
                 getProjectByTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
