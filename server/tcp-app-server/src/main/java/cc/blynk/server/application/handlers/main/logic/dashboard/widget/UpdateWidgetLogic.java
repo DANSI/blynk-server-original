@@ -18,6 +18,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
+
 import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
@@ -83,9 +85,10 @@ public class UpdateWidgetLogic {
             newNotif.androidTokens.putAll(prevNotif.androidTokens);
         }
 
-        //non atomic update. changes could not be visible in saving thread.
-        //ignoring for now
-        dash.widgets[existingWidgetIndex] = newWidget;
+        Widget[] newArray = Arrays.copyOf(dash.widgets, dash.widgets.length);
+        newArray[existingWidgetIndex] = newWidget;
+
+        dash.widgets = newArray;
         dash.cleanPinStorage(newWidget);
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
