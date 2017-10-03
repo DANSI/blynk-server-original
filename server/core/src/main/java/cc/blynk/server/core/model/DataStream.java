@@ -95,4 +95,44 @@ public class DataStream {
     public boolean notEmpty() {
         return value != null && !isNotValid();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DataStream)) {
+            return false;
+        }
+
+        DataStream that = (DataStream) o;
+
+        if (pin != that.pin) {
+            return false;
+        }
+        if (pwmMode != that.pwmMode) {
+            return false;
+        }
+        if (rangeMappingOn != that.rangeMappingOn) {
+            return false;
+        }
+        if (min != that.min) {
+            return false;
+        }
+        if (max != that.max) {
+            return false;
+        }
+        return pinType == that.pinType;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) pin;
+        result = 31 * result + (pwmMode ? 1 : 0);
+        result = 31 * result + (rangeMappingOn ? 1 : 0);
+        result = 31 * result + (pinType != null ? pinType.hashCode() : 0);
+        result = 31 * result + min;
+        result = 31 * result + max;
+        return result;
+    }
 }

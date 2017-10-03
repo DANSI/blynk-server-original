@@ -41,7 +41,9 @@ public class DeviceTiles extends Widget {
     public void recreateTilesIfNecessary(TileTemplate newTileTemplate, TileTemplate existingTileTemplate) {
         //no changes. do nothing.
         if (existingTileTemplate != null
-                && Arrays.equals(newTileTemplate.deviceIds, existingTileTemplate.deviceIds)) {
+                && Arrays.equals(newTileTemplate.deviceIds, existingTileTemplate.deviceIds)
+                && newTileTemplate.dataStream != null
+                && newTileTemplate.dataStream.equals(existingTileTemplate.dataStream)) {
             return;
         }
 
@@ -54,9 +56,9 @@ public class DeviceTiles extends Widget {
                             new DeviceTile(
                                     deviceId,
                                     tileTemplate.id,
-                                    tileTemplate.dataStream == null
+                                    newTileTemplate.dataStream == null
                                             ? null
-                                            : new DataStream(tileTemplate.dataStream)
+                                            : new DataStream(newTileTemplate.dataStream)
                             )
                     );
                 }
