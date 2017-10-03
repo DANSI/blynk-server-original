@@ -64,12 +64,9 @@ public class SparkPostMailClient implements MailClient {
         message.setSubject(subj, "UTF-8");
         message.setContent(body, contentType);
 
-        Transport transport = session.getTransport();
-        try {
+        try (Transport transport = session.getTransport()) {
             transport.connect(host, username, password);
             transport.sendMessage(message, message.getAllRecipients());
-        } finally {
-            transport.close();
         }
 
         log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
@@ -97,12 +94,9 @@ public class SparkPostMailClient implements MailClient {
 
         message.setContent(multipart);
 
-        Transport transport = session.getTransport();
-        try {
+        try (Transport transport = session.getTransport()) {
             transport.connect(host, username, password);
             transport.sendMessage(message, message.getAllRecipients());
-        } finally {
-            transport.close();
         }
 
         log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
