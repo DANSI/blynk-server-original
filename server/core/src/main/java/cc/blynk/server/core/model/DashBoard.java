@@ -315,16 +315,21 @@ public class DashBoard {
     }
 
     public void sendSyncs(Channel appChannel, int targetId) {
+        sendSyncs(appChannel, targetId, id, widgets, pinsStorage);
+    }
+
+    public static void sendSyncs(Channel appChannel, int targetId, int dashId,
+                                 Widget[] widgets, Map<PinStorageKey, String> pinsStorage) {
         for (Widget widget : widgets) {
             if (widget instanceof AppSyncWidget && appChannel.isWritable()) {
-                ((AppSyncWidget) widget).sendAppSync(appChannel, id, targetId);
+                ((AppSyncWidget) widget).sendAppSync(appChannel, dashId, targetId);
             }
         }
 
         for (Map.Entry<PinStorageKey, String> entry : pinsStorage.entrySet()) {
             PinStorageKey key = entry.getKey();
             if ((targetId == ANY_TARGET || targetId == key.deviceId) && appChannel.isWritable()) {
-                ByteBuf byteBuf = key.makeByteBuf(id, entry.getValue());
+                ByteBuf byteBuf = key.makeByteBuf(dashId, entry.getValue());
                 appChannel.write(byteBuf, appChannel.voidPromise());
             }
         }

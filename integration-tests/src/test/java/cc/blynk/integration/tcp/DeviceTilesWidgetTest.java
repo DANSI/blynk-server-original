@@ -9,11 +9,16 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
+import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTile;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileMode;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.protocol.model.messages.appllication.sharing.AppSyncMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
 import org.junit.Before;
@@ -291,6 +296,113 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
             assertEquals(2, deviceTile.dataStream.pin);
             assertEquals(PinType.VIRTUAL, deviceTile.dataStream.pinType);
         }
+    }
+
+    @Test
+    public void syncForSpecificDeviceTile() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device)));
+
+        clientPair.appClient.reset();
+
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
+                TileMode.PAGE, null, null, null, 0, TextAlignment.LEFT, false, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
+
+        Button button = new Button();
+        button.width = 2;
+        button.height = 2;
+        button.pin = 2;
+        button.pinType = PinType.VIRTUAL;
+
+        ValueDisplay valueDisplay = new ValueDisplay();
+        button.width = 2;
+        button.height = 2;
+        button.pin = 1;
+        button.pinType = PinType.VIRTUAL;
+
+
+        tileTemplate = new TileTemplate(1, new Widget[]{button, valueDisplay}, new int[] {0, 1}, "123",
+                TileMode.PAGE, dataStream, null, null, 0, TextAlignment.LEFT, false, false);
+
+        clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+
+        clientPair.appClient.send("getWidget 1\0" + widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4));
+        assertNotNull(deviceTiles);
+        assertEquals(widgetId, deviceTiles.id);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(1, deviceTiles.templates.length);
+        assertEquals(2, deviceTiles.templates[0].widgets.length);
+        assertArrayEquals(new int[] {0, 1}, deviceTiles.templates[0].deviceIds);
+        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals(2, deviceTiles.tiles.length);
+
+        int deviceIdIndex = 0;
+        for (DeviceTile deviceTile : deviceTiles.tiles) {
+            assertEquals(deviceIdIndex++, deviceTile.deviceId);
+            assertEquals(tileTemplate.id, deviceTile.templateId);
+            assertNotNull(deviceTile.dataStream);
+            assertEquals(1, deviceTile.dataStream.pin);
+            assertEquals(PinType.VIRTUAL, deviceTile.dataStream.pinType);
+        }
+
+
+        clientPair.hardwareClient.send("hardware vw 1 101");
+        clientPair.hardwareClient.send("hardware vw 2 102");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 1 101"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1 vw 2 102"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("getWidget 1\0" + widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody());
+        assertNotNull(deviceTiles);
+
+        DeviceTile deviceTile = deviceTiles.tiles[0];
+        assertEquals(0, deviceTile.deviceId);
+        assertNotNull(deviceTile.dataStream);
+        assertEquals(1, deviceTile.dataStream.pin);
+        assertEquals(PinType.VIRTUAL, deviceTile.dataStream.pinType);
+        assertEquals("101", deviceTile.dataStream.value);
+
+        DeviceTile deviceTile2 = deviceTiles.tiles[1];
+        assertEquals(1, deviceTile2.deviceId);
+        assertNotNull(deviceTile2.dataStream);
+        assertEquals(1, deviceTile2.dataStream.pin);
+        assertEquals(PinType.VIRTUAL, deviceTile2.dataStream.pinType);
+        assertNull(deviceTile2.dataStream.value);
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("appSync 1-0-" + widgetId);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(1111, b("1 vw 1 101"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(1111, b("1 vw 2 102"))));
     }
 
     @Test
