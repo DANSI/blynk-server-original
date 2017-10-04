@@ -315,10 +315,10 @@ public class DashBoard {
     }
 
     public void sendSyncs(Channel appChannel, int targetId) {
-        sendSyncs(appChannel, targetId, id, widgets, pinsStorage);
+        sendSyncs(appChannel, id, targetId, widgets, pinsStorage);
     }
 
-    public static void sendSyncs(Channel appChannel, int targetId, int dashId,
+    private static void sendSyncs(Channel appChannel, int dashId, int targetId,
                                  Widget[] widgets, Map<PinStorageKey, String> pinsStorage) {
         for (Widget widget : widgets) {
             if (widget instanceof AppSyncWidget && appChannel.isWritable()) {

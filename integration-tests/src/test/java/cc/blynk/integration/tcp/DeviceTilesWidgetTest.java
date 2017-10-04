@@ -331,7 +331,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 + MAPPER.writeValueAsString(tileTemplate));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
 
         Button button = new Button();
         button.width = 2;
@@ -369,15 +369,15 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
             assertEquals(deviceIdIndex++, deviceTile.deviceId);
             assertEquals(tileTemplate.id, deviceTile.templateId);
             assertNotNull(deviceTile.dataStream);
-            assertEquals(1, deviceTile.dataStream.pin);
+            assertEquals(5, deviceTile.dataStream.pin);
             assertEquals(PinType.VIRTUAL, deviceTile.dataStream.pinType);
         }
 
 
-        clientPair.hardwareClient.send("hardware vw 1 101");
-        clientPair.hardwareClient.send("hardware vw 2 102");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 1 101"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1 vw 2 102"))));
+        clientPair.hardwareClient.send("hardware vw 5 101");
+        clientPair.hardwareClient.send("hardware vw 6 102");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 5 101"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1 vw 6 102"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("getWidget 1\0" + widgetId);
@@ -387,22 +387,37 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         DeviceTile deviceTile = deviceTiles.tiles[0];
         assertEquals(0, deviceTile.deviceId);
         assertNotNull(deviceTile.dataStream);
-        assertEquals(1, deviceTile.dataStream.pin);
+        assertEquals(5, deviceTile.dataStream.pin);
         assertEquals(PinType.VIRTUAL, deviceTile.dataStream.pinType);
         assertEquals("101", deviceTile.dataStream.value);
 
         DeviceTile deviceTile2 = deviceTiles.tiles[1];
         assertEquals(1, deviceTile2.deviceId);
         assertNotNull(deviceTile2.dataStream);
-        assertEquals(1, deviceTile2.dataStream.pin);
+        assertEquals(5, deviceTile2.dataStream.pin);
         assertEquals(PinType.VIRTUAL, deviceTile2.dataStream.pinType);
         assertNull(deviceTile2.dataStream.value);
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("appSync 1-0-" + widgetId);
+        clientPair.appClient.send("appSync 1-0");
+
+        verify(clientPair.appClient.responseMock, timeout(500).times(13)).channelRead(any(), any());
+
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(1111, b("1 vw 1 101"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(1111, b("1 vw 2 102"))));
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1 dw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1 dw 2 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1 aw 3 0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1 dw 5 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1 vw 4 244"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1 aw 7 3"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1 aw 30 3"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1 vw 0 89.888037459418"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1 vw 1 -58.74774244674501"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1 vw 13 60 143 158"))));
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(1111, b("1 vw 5 101"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(1111, b("1 vw 6 102"))));
     }
 
     @Test

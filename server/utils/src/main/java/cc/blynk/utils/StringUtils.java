@@ -109,10 +109,6 @@ public final class StringUtils {
         return split2(DEVICE_SEPARATOR, body);
     }
 
-    public static String[] split3Device(String body) {
-        return split3(DEVICE_SEPARATOR, body);
-    }
-
     private static String[] split2(char separator, String body) {
         final int i1 = body.indexOf(separator, 1);
         if (i1 == -1) {

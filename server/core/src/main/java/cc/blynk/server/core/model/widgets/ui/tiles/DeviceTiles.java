@@ -2,21 +2,26 @@ package cc.blynk.server.core.model.widgets.ui.tiles;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import io.netty.channel.Channel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICE_TILES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TEMPLATES;
+import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 02.10.17.
  */
-public class DeviceTiles extends Widget {
+public class DeviceTiles extends Widget implements AppSyncWidget {
 
     public volatile TileTemplate[] templates = EMPTY_TEMPLATES;
 
@@ -91,6 +96,19 @@ public class DeviceTiles extends Widget {
             }
         }
         return false;
+    }
+
+    @Override
+    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
+        for (DeviceTile tile : tiles) {
+            if (tile.deviceId == targetId && tile.dataStream != null) {
+                String hardBody = tile.dataStream.makeHardwareBody();
+                if (hardBody != null) {
+                    String body = prependDashIdAndDeviceId(dashId, targetId, hardBody);
+                    appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
+                }
+            }
+        }
     }
 
     @Override
