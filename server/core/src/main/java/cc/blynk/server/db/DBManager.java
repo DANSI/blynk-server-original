@@ -228,7 +228,7 @@ public class DBManager implements Closeable {
     }
 
     public boolean isDBEnabled() {
-        return ds != null;
+        return !(ds == null || ds.isClosed());
     }
 
     public void executeSQL(String sql) throws Exception {

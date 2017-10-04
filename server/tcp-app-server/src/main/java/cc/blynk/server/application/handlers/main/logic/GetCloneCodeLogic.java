@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -30,10 +31,12 @@ public class GetCloneCodeLogic {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
+    private final FileManager fileManager;
 
     public GetCloneCodeLogic(Holder holder) {
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.dbManager = holder.dbManager;
+        this.fileManager = holder.fileManager;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -48,10 +51,10 @@ public class GetCloneCodeLogic {
             ByteBuf result;
             try {
                 boolean insertStatus = dbManager.insertClonedProject(token, json);
-                if (insertStatus) {
+                if (insertStatus || fileManager.writeCloneProjectToDisk(token, json)) {
                     result = makeASCIIStringMessage(GET_CLONE_CODE, message.id, token);
                 } else {
-                    log.error("Clone project insert in DB failed for {}", user.email);
+                    log.error("Creating clone project failed for {}", user.email);
                     result = serverError(message.id);
                 }
             } catch (Exception e) {

@@ -51,6 +51,22 @@ public class CloneWorkFlowTest extends IntegrationBase {
     }
 
     @Test
+    public void testCloneForLocalServerWithNoDB() throws Exception  {
+        holder.dbManager.close();
+
+        clientPair.appClient.send("getCloneCode 1");
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        clientPair.appClient.send("getProjectByCloneCode " + token);
+        String dashJson = clientPair.appClient.getBody(2);
+        assertNotNull(dashJson);
+        DashBoard dashBoard = JsonParser.parseDashboard(dashJson);
+        assertEquals("My Dashboard", dashBoard.name);
+    }
+
+    @Test
     public void getCloneCode() throws Exception {
         clientPair.appClient.send("getCloneCode 1");
         String token = clientPair.appClient.getBody();

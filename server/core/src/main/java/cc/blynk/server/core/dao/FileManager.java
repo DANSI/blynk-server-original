@@ -11,9 +11,11 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -47,8 +49,10 @@ public class FileManager {
 
     private static final String DELETED_DATA_DIR_NAME = "deleted";
     private static final String BACKUP_DATA_DIR_NAME = "backup";
+    private static final String CLONE_DATA_DIR_NAME = "clone";
     private Path deletedDataDir;
     private Path backupDataDir;
+    private String cloneDataDir;
 
     public FileManager(String dataFolder) {
         if (dataFolder == null || dataFolder.isEmpty() || dataFolder.equals("/path")) {
@@ -62,6 +66,7 @@ public class FileManager {
             this.dataDir = createDirectories(dataFolderPath);
             this.deletedDataDir = createDirectories(Paths.get(dataFolder, DELETED_DATA_DIR_NAME));
             this.backupDataDir = createDirectories(Paths.get(dataFolder, BACKUP_DATA_DIR_NAME));
+            this.cloneDataDir = createDirectories(Paths.get(dataFolder, CLONE_DATA_DIR_NAME)).toString();
         } catch (Exception e) {
             Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk");
 
@@ -72,8 +77,12 @@ public class FileManager {
 
             try {
                 this.dataDir = createDirectories(tempDir);
-                this.deletedDataDir = createDirectories(Paths.get(this.dataDir.toString(), DELETED_DATA_DIR_NAME));
-                this.backupDataDir = createDirectories(Paths.get(this.dataDir.toString(), BACKUP_DATA_DIR_NAME));
+                this.deletedDataDir = createDirectories(
+                        Paths.get(this.dataDir.toString(), DELETED_DATA_DIR_NAME));
+                this.backupDataDir = createDirectories(
+                        Paths.get(this.dataDir.toString(), BACKUP_DATA_DIR_NAME));
+                this.cloneDataDir = createDirectories(
+                        Paths.get(this.dataDir.toString(), CLONE_DATA_DIR_NAME)).toString();
             } catch (Exception ioe) {
                 throw new RuntimeException(ioe);
             }
@@ -219,4 +228,24 @@ public class FileManager {
         return userProfileSize;
     }
 
+    public boolean writeCloneProjectToDisk(String token, String json) {
+        try {
+            Path path = Paths.get(cloneDataDir, token);
+            Files.write(path, json.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE);
+            return true;
+        } catch (Exception e) {
+            log.error("Error saving cloned project to disk.", e);
+        }
+        return false;
+    }
+
+    public String readClonedProjectFromDisk(String token) {
+        try {
+            Path path = Paths.get(cloneDataDir, token);
+            return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            log.error("Error saving cloned project to disk.", e);
+        }
+        return null;
+    }
 }

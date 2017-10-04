@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.ByteUtils;
@@ -26,10 +27,12 @@ public class GetProjectByClonedTokenLogic {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
+    private final FileManager fileManager;
 
     public GetProjectByClonedTokenLogic(Holder holder) {
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.dbManager = holder.dbManager;
+        this.fileManager = holder.fileManager;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, StringMessage message) {
@@ -39,6 +42,10 @@ public class GetProjectByClonedTokenLogic {
             ByteBuf result;
             try {
                 String json = dbManager.selectClonedProject(token);
+                //no cloned project in DB, checking local storage on disk
+                if (json == null) {
+                    json = fileManager.readClonedProjectFromDisk(token);
+                }
                 byte[] data = ByteUtils.compress(json);
                 result = makeBinaryMessage(GET_PROJECT_BY_CLONE_CODE, message.id, data);
             } catch (Exception e) {
