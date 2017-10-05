@@ -3,7 +3,7 @@
  * Created by Dmitriy Dumanskiy.
  * Created on 29.09.17.
  */
-module push {
+module cc.blynk.server.notifications.push {
     requires log4j.api;
     requires jackson.annotations;
     requires com.fasterxml.jackson.core;

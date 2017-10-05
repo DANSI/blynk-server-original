@@ -3,7 +3,7 @@
  * Created by Dmitriy Dumanskiy.
  * Created on 29.09.17.
  */
-module sms {
+module cc.blynk.server.notifications.sms {
     requires com.fasterxml.jackson.databind;
     requires netty.codec.http;
     requires log4j.api;

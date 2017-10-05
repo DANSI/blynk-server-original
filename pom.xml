@@ -205,10 +205,10 @@
         <async-http-client.version>2.1.0-alpha25</async-http-client.version>
         <twitter4j-core.version>4.0.2</twitter4j-core.version>
         <postgresql.version>42.1.4</postgresql.version>
-        <HikariCP.version>2.7.1</HikariCP.version>
+        <HikariCP.version>2.7.2</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>
-        <bcpg-jdk15on.version>1.57</bcpg-jdk15on.version>
-        <acme4j-client.version>0.12</acme4j-client.version>
+        <bcpg-jdk15on.version>1.58</bcpg-jdk15on.version>
+        <acme4j-client.version>0.13</acme4j-client.version>
         <javaee-api.version>8.0</javaee-api.version>
         <javax.mail.version>1.6.0</javax.mail.version>
         <javax.activation.version>1.2.0</javax.activation.version>
