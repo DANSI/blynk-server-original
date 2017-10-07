@@ -7,6 +7,8 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 
+import java.util.Arrays;
+
 import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.LIVE;
 
 /**
@@ -107,5 +109,22 @@ public class GraphPinRequest {
 
     public boolean isValid() {
         return deviceId != -1 || (deviceIds != null && deviceIds.length > 0);
+    }
+
+    @Override
+    public String toString() {
+        return "GraphPinRequest{"
+                + "dashId=" + dashId
+                + ", deviceId=" + deviceId
+                + ", deviceIds=" + Arrays.toString(deviceIds)
+                + ", isTag=" + isTag
+                + ", pinType=" + pinType
+                + ", pin=" + pin
+                + ", graphPeriod=" + graphPeriod
+                + ", functionType=" + functionType
+                + ", count=" + count
+                + ", type=" + type
+                + ", skipCount=" + skipCount
+                + '}';
     }
 }

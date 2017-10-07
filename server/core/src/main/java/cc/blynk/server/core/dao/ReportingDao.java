@@ -241,6 +241,7 @@ public class ReportingDao implements Closeable {
 
         for (int i = 0; i < requestedPins.length; i++) {
             GraphPinRequest graphPinRequest = requestedPins[i];
+            log.debug("Getting data for graph pin : {}.", graphPinRequest);
             if (graphPinRequest.isValid()) {
                 ByteBuffer byteBuffer = graphPinRequest.isLiveData()
                         //live graph data is not on disk but in memory
