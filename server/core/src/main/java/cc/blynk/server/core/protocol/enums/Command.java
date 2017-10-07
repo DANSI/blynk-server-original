@@ -120,7 +120,8 @@ public final class Command {
     public static final short HTTP_GET_HISTORY_DATA = 90;
     public static final short HTTP_START_OTA = 91;
     public static final short HTTP_STOP_OTA = 92;
-    public static final short HTTP_TOTAL = 93;
+    public static final short HTTP_CLONE = 93;
+    public static final short HTTP_TOTAL = 94;
 
     private Command() {
     }
@@ -210,6 +211,7 @@ public final class Command {
                 put(HTTP_EMAIL, "HttpEmail");
                 put(HTTP_GET_PROJECT, "HttpGetProject");
                 put(HTTP_QR, "QR");
+                put(HTTP_CLONE, "Clone");
                 put(HTTP_GET_HISTORY_DATA, "HttpGetHistoryData");
                 put(HTTP_START_OTA, "HttpStartOTA");
                 put(HTTP_TOTAL, "HttpTotal");

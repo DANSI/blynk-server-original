@@ -7,15 +7,19 @@ import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.Context;
 import cc.blynk.core.http.annotation.FormParam;
 import cc.blynk.core.http.annotation.GET;
+import cc.blynk.core.http.annotation.Metric;
 import cc.blynk.core.http.annotation.POST;
 import cc.blynk.core.http.annotation.Path;
+import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.pojo.TokenUser;
 import cc.blynk.server.api.http.pojo.TokensPool;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileLoaderUtil;
@@ -31,6 +35,8 @@ import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.noResponse;
 import static cc.blynk.core.http.Response.notFound;
 import static cc.blynk.core.http.Response.ok;
+import static cc.blynk.core.http.Response.serverError;
+import static cc.blynk.server.core.protocol.enums.Command.HTTP_CLONE;
 
 /**
  * The Blynk project
@@ -50,6 +56,8 @@ public class ResetPasswordLogic extends BaseHttpHandler {
     private final String resetPassUrl;
     private final String pageContent;
     private final BlockingIOProcessor blockingIOProcessor;
+    private final DBManager dbManager;
+    private final FileManager fileManager;
 
     private static final String RESET_PASS_STATIC_PATH = "static/reset/";
 
@@ -64,6 +72,8 @@ public class ResetPasswordLogic extends BaseHttpHandler {
         this.resetPassUrl = "http://" + host + "/landing?token=";
         this.pageContent = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "enterNewPassword.html");
         this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.dbManager = holder.dbManager;
+        this.fileManager = holder.fileManager;
     }
 
     private static String generateToken() {
@@ -151,6 +161,29 @@ public class ResetPasswordLogic extends BaseHttpHandler {
         log.info("{} password was reset.", user.email);
         tokensPool.removeToken(token);
         return ok("Password was successfully reset.");
+    }
+
+    @GET
+    @Path("{token}/clone")
+    @Metric(HTTP_CLONE)
+    public Response getClone(@Context ChannelHandlerContext ctx,
+                             @PathParam("token") String token) {
+
+        blockingIOProcessor.executeDB(() -> {
+            try {
+                String json = dbManager.selectClonedProject(token);
+                //no cloned project in DB, checking local storage on disk
+                if (json == null) {
+                    json = fileManager.readClonedProjectFromDisk(token);
+                }
+                ctx.writeAndFlush(ok(json), ctx.voidPromise());
+            } catch (Exception e) {
+                log.error("Error cloning project.", e);
+                ctx.writeAndFlush(serverError("Error getting cloned project."), ctx.voidPromise());
+            }
+        });
+
+        return null;
     }
 
 }

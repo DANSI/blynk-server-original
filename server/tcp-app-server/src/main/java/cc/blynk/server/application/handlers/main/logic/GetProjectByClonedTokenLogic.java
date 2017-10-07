@@ -49,7 +49,7 @@ public class GetProjectByClonedTokenLogic {
                 byte[] data = ByteUtils.compress(json);
                 result = makeBinaryMessage(GET_PROJECT_BY_CLONE_CODE, message.id, data);
             } catch (Exception e) {
-                log.error("Error cloning project.", e);
+                log.error("Error getting cloned project.", e);
                 result = serverError(message.id);
             }
             ctx.writeAndFlush(result, ctx.voidPromise());
