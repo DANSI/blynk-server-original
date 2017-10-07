@@ -336,6 +336,8 @@ public class DashBoard {
             if (target != null) {
                 for (int deviceId : target.getDeviceIds()) {
                     pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, "label"));
+                    pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, "onLabel"));
+                    pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, "offLabel"));
                 }
             }
         } catch (IllegalCommandException e) {
