@@ -89,7 +89,7 @@ public class UpdateWidgetLogic {
         newArray[existingWidgetIndex] = newWidget;
 
         dash.widgets = newArray;
-        dash.cleanPinStorage(newWidget);
+        dash.cleanPinStorage(newWidget, true);
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
 

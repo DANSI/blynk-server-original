@@ -15,6 +15,7 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.android.GCMData;
@@ -94,6 +95,10 @@ public abstract class IntegrationBase extends BaseTest {
 
     public static ResponseMessage ok(int msgId) {
         return new ResponseMessage(msgId, OK);
+    }
+
+    public static SetWidgetPropertyMessage setProperty(int msgId, String body) {
+        return new SetWidgetPropertyMessage(msgId, b(body));
     }
 
     public static StringMessage createDevice(int msgId, Device device) {

@@ -296,10 +296,17 @@ public class DashBoard {
     }
 
     public void cleanPinStorage(Widget widget) {
+        cleanPinStorage(widget, false);
+    }
+
+    public void cleanPinStorage(Widget widget, boolean removePropertiesToo) {
         if (widget instanceof OnePinWidget) {
             OnePinWidget onePinWidget = (OnePinWidget) widget;
             if (onePinWidget.pinType != null) {
                 pinsStorage.remove(new PinStorageKey(onePinWidget.deviceId, onePinWidget.pinType, onePinWidget.pin));
+                if (removePropertiesToo && onePinWidget.deviceId >= Tag.START_TAG_ID) {
+                    cleanPropertyStorageForTarget(onePinWidget.deviceId, onePinWidget.pinType, onePinWidget.pin);
+                }
             }
         } else if (widget instanceof MultiPinWidget) {
             MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
@@ -308,8 +315,20 @@ public class DashBoard {
                     if (dataStream != null && dataStream.pinType != null) {
                         pinsStorage.remove(new PinStorageKey(multiPinWidget.deviceId,
                                 dataStream.pinType, dataStream.pin));
+                        if (removePropertiesToo && multiPinWidget.deviceId >= Tag.START_TAG_ID) {
+                            cleanPropertyStorageForTarget(multiPinWidget.deviceId, dataStream.pinType, dataStream.pin);
+                        }
                     }
                 }
+            }
+        }
+    }
+
+    private void cleanPropertyStorageForTarget(int widgetDeviceId, PinType pinType, byte pin) {
+        Target target = getTarget(widgetDeviceId);
+        if (target instanceof Tag || target instanceof DeviceSelector) {
+            for (int deviceId : target.getDeviceIds()) {
+                pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, "label"));
             }
         }
     }

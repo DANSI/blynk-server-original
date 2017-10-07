@@ -5,13 +5,17 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Button;
+import cc.blynk.server.core.model.widgets.controls.Slider;
 import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.CreateTag;
 import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
@@ -71,15 +75,57 @@ public class SetPropertyTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("setProperty 4 label MyNewLabel");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 4 label MyNewLabel"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1 4 label MyNewLabel")));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = parseProfile(clientPair.appClient.getBody());
 
-        widget = profile.dashBoards[0].findWidgetByPin(0, (byte)4, PinType.VIRTUAL);
+        widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals("MyNewLabel", widget.label);
+    }
+
+    @Test
+    //https://github.com/blynkkk/blynk-server/issues/756
+    public void testSetWidgetPropertyIsNotRestoredForTagWidgetAfterOverriding() throws Exception {
+        Tag tag0 = new Tag(100_000, "Tag1", new int[] {0});
+
+        clientPair.appClient.send("createTag 1\0" + tag0.toString());
+        String createdTag = clientPair.appClient.getBody();
+        Tag tag = JsonParser.parseTag(createdTag);
+        assertNotNull(tag);
+        assertEquals(100_000, tag.id);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(1, tag.toString())));
+
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = parseProfile(clientPair.appClient.getBody(2));
+
+        Slider slider = (Slider) profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        assertNotNull(slider);
+        slider.width = 2;
+        slider.height = 2;
+        assertEquals("Some Text", slider.label);
+        slider.deviceId = tag0.id;
+
+        clientPair.appClient.send("updateWidget 1\0" + JsonParser.toJson(slider));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+
+        clientPair.hardwareClient.send("setProperty 4 label MyNewLabel");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1 4 label MyNewLabel")));
+
+        clientPair.appClient.send("deactivate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+
+        slider.label = "Some Text2";
+        clientPair.appClient.send("updateWidget 1\0" + JsonParser.toJson(slider));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(6)));
+        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(setProperty(1111, "1 4 label MyNewLabel")));
+
     }
 
     @Test
