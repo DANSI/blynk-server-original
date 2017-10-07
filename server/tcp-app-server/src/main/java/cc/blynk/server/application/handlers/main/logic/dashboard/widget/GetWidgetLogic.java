@@ -9,6 +9,8 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_WIDGET;
 import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
@@ -20,6 +22,8 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created on 01.02.16.
  */
 public final class GetWidgetLogic {
+
+    private static final Logger log = LogManager.getLogger(GetWidgetLogic.class);
 
     private GetWidgetLogic() {
     }
@@ -40,10 +44,12 @@ public final class GetWidgetLogic {
         Widget widget = dash.getWidgetByIdOrThrow(widgetId);
 
         if (ctx.channel().isWritable()) {
+            String widgetString = JsonParser.toJson(widget);
             ctx.writeAndFlush(
-                    makeUTF8StringMessage(GET_WIDGET, message.id, JsonParser.toJson(widget)),
+                    makeUTF8StringMessage(GET_WIDGET, message.id, widgetString),
                     ctx.voidPromise()
             );
+            log.debug("Get widget {}.", widgetString);
         }
     }
 
