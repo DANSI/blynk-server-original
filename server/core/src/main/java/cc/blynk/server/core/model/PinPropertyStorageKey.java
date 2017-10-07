@@ -16,7 +16,7 @@ public final class PinPropertyStorageKey extends PinStorageKey {
 
     private final String property;
 
-    public PinPropertyStorageKey(int deviceId, PinType pinType, byte pin, String property) {
+    PinPropertyStorageKey(int deviceId, PinType pinType, byte pin, String property) {
         super(deviceId, pinType, pin);
         this.property = property;
     }
@@ -30,6 +30,7 @@ public final class PinPropertyStorageKey extends PinStorageKey {
     public ByteBuf makeByteBuf(int dashId, String value) {
         return makeByteBuf(dashId, value, SET_WIDGET_PROPERTY);
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

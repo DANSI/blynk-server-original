@@ -44,8 +44,8 @@ public class SetWidgetPropertyLogic {
             return;
         }
 
-        final String property = bodyParts[1];
-        final String propertyValue = bodyParts[2];
+        String property = bodyParts[1];
+        String propertyValue = bodyParts[2];
 
         if (property.length() == 0 || propertyValue.length() == 0) {
             log.debug("SetWidgetProperty command body has wrong format. {}", message.body);

@@ -47,7 +47,7 @@ public class ActivateDashboardLogic {
         log.debug("Activating dash {} for user {}", dashBoardIdString, user.email);
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         dash.activate();
-        user.lastModifiedTs = System.currentTimeMillis();
+        user.lastModifiedTs = dash.updatedAt;
 
         Session session = sessionDao.userSession.get(state.userKey);
 
