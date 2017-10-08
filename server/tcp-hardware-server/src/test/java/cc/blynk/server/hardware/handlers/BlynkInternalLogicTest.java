@@ -74,7 +74,7 @@ public class BlynkInternalLogicTest {
         BlynkInternalMessage hardwareInfoLogic = new BlynkInternalMessage(1, "ver 0.3.2-beta h-beat 60 buff-in 256 dev ESP8266".replaceAll(" ", "\0"));
         logic.messageReceived(ctx, hardwareStateHolder, hardwareInfoLogic);
 
-        verify(pipeline).replace(eq(ReadTimeoutHandler.class), eq("H_ReadTimeout"), any());
+        verify(pipeline).replace(eq(ReadTimeoutHandler.class), eq("H_ReadTimeout_Replaced"), any());
         verify(ctx).writeAndFlush(any(), any());
     }
 
