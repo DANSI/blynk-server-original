@@ -87,7 +87,8 @@ public class BlynkInternalLogic {
         if (hardwareIdleTimeout != 0 && newHardwareInterval > 0) {
             int newReadTimeout = (int) Math.ceil(newHardwareInterval * 2.3D);
             log.debug("Changing read timeout interval to {}", newReadTimeout);
-            ctx.pipeline().replace(ReadTimeoutHandler.class, "H_ReadTimeout", new ReadTimeoutHandler(newReadTimeout));
+            ctx.pipeline().replace(ReadTimeoutHandler.class,
+                    "H_ReadTimeout_Replaced", new ReadTimeoutHandler(newReadTimeout));
         }
 
         DashBoard dashBoard = state.dash;
