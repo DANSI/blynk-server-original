@@ -80,6 +80,7 @@ public interface DefaultExceptionHandler {
             } else {
                 log.error("Unexpected error! Handler class : {}. Name : {}. Reason : {}",
                         ctx.handler().getClass(), ctx.name(), message);
+                log.debug(cause);
             }
         }
 
