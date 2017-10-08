@@ -176,7 +176,12 @@ public class ResetPasswordLogic extends BaseHttpHandler {
                 if (json == null) {
                     json = fileManager.readClonedProjectFromDisk(token);
                 }
-                ctx.writeAndFlush(ok(json), ctx.voidPromise());
+                if (json == null) {
+                    log.debug("Requested QR not found. {}", token);
+                    ctx.writeAndFlush(serverError("Requested QR not found."), ctx.voidPromise());
+                } else {
+                    ctx.writeAndFlush(ok(json), ctx.voidPromise());
+                }
             } catch (Exception e) {
                 log.error("Error cloning project.", e);
                 ctx.writeAndFlush(serverError("Error getting cloned project."), ctx.voidPromise());

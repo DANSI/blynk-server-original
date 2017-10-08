@@ -46,8 +46,13 @@ public class GetProjectByClonedTokenLogic {
                 if (json == null) {
                     json = fileManager.readClonedProjectFromDisk(token);
                 }
-                byte[] data = ByteUtils.compress(json);
-                result = makeBinaryMessage(GET_PROJECT_BY_CLONE_CODE, message.id, data);
+                if (json == null) {
+                    log.debug("Cannot find request clone QR. {}", token);
+                    result = serverError(message.id);
+                } else {
+                    byte[] data = ByteUtils.compress(json);
+                    result = makeBinaryMessage(GET_PROJECT_BY_CLONE_CODE, message.id, data);
+                }
             } catch (Exception e) {
                 log.error("Error getting cloned project.", e);
                 result = serverError(message.id);

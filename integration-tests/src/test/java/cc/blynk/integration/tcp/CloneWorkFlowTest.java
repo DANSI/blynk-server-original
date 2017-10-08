@@ -23,6 +23,10 @@ import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -58,6 +62,12 @@ public class CloneWorkFlowTest extends IntegrationBase {
         this.hardwareServer.close();
         this.httpServer.close();
         this.clientPair.stop();
+    }
+
+    @Test
+    public void testGetNonExistingQR() throws Exception  {
+        clientPair.appClient.send("getProjectByCloneCode " + 123);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(serverError(1)));
     }
 
     @Test
@@ -119,6 +129,22 @@ public class CloneWorkFlowTest extends IntegrationBase {
         assertNotNull(responseBody);
         DashBoard dashBoard = JsonParser.parseDashboard(responseBody);
         assertEquals("My Dashboard", dashBoard.name);
+    }
+
+    @Test
+    public void getProjectByNonExistingCloneCodeViaHttp() throws Exception {
+        AsyncHttpClient httpclient = new DefaultAsyncHttpClient(
+                new DefaultAsyncHttpClientConfig.Builder()
+                        .setUserAgent(null)
+                        .setKeepAlive(true)
+                        .build()
+        );
+
+        Future<Response> f = httpclient.prepareGet("http://localhost:" + httpPort + "/" + 123 + "/clone").execute();
+        Response response = f.get();
+        assertEquals(500, response.getStatusCode());
+        String responseBody = response.getResponseBody();
+        assertEquals("Requested QR not found.", responseBody);
     }
 
 }
