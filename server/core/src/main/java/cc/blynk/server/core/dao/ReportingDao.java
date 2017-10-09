@@ -19,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.Closeable;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -126,7 +127,7 @@ public class ReportingDao implements Closeable {
     private void addBufferToResult(TreeMap<Long, Function> data, AggregationFunctionType functionType,
                                    ByteBuffer localByteBuf) {
         if (localByteBuf != null) {
-            localByteBuf.flip();
+            ((Buffer) localByteBuf).flip();
             while (localByteBuf.hasRemaining()) {
                 double newVal = localByteBuf.getDouble();
                 Long ts = localByteBuf.getLong();
