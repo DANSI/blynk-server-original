@@ -506,6 +506,67 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
     }
 
     @Test
+    public void checkDeviceTilesWidgetSettingsUpdatedWithoutTemplateAndTilefields() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        int[] deviceIds = new int[] {0};
+        DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
+
+        TileTemplate tileTemplate = new TileTemplate(1, null, deviceIds, "123",
+                TileMode.PAGE, dataStream, null, null, 0, TextAlignment.LEFT, false, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        clientPair.appClient.send("getWidget 1\0" + widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3));
+        assertNotNull(deviceTiles);
+        assertEquals(widgetId, deviceTiles.id);
+        assertNotNull(deviceTiles.templates);
+        assertArrayEquals(new int[] {0}, deviceTiles.templates[0].deviceIds);
+        assertEquals(1, deviceTiles.templates[0].deviceIds.length);
+        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals(1, deviceTiles.tiles.length);
+        assertEquals(0, deviceTiles.tiles[0].deviceId);
+        assertEquals(tileTemplate.id, deviceTiles.tiles[0].templateId);
+        assertNotNull(deviceTiles.tiles[0].dataStream);
+        assertEquals(1, deviceTiles.tiles[0].dataStream.pin);
+        assertEquals(PinType.VIRTUAL, deviceTiles.tiles[0].dataStream.pinType);
+
+        deviceTiles.templates = null;
+        deviceTiles.tiles = null;
+
+        clientPair.appClient.send("updateWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+
+        clientPair.appClient.send("getWidget 1\0" + widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(5));
+        assertNotNull(deviceTiles);
+        assertEquals(widgetId, deviceTiles.id);
+        assertNotNull(deviceTiles.templates);
+        assertArrayEquals(new int[] {0}, deviceTiles.templates[0].deviceIds);
+        assertEquals(1, deviceTiles.templates[0].deviceIds.length);
+        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals(1, deviceTiles.tiles.length);
+        assertEquals(0, deviceTiles.tiles[0].deviceId);
+        assertEquals(tileTemplate.id, deviceTiles.tiles[0].templateId);
+        assertNotNull(deviceTiles.tiles[0].dataStream);
+        assertEquals(1, deviceTiles.tiles[0].dataStream.pin);
+        assertEquals(PinType.VIRTUAL, deviceTiles.tiles[0].dataStream.pinType);
+    }
+
+    @Test
     public void createTemplateWithTilesAndDelete() throws Exception {
         long widgetId = 21321;
         int templateId = 1;

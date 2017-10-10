@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -83,6 +84,14 @@ public class UpdateWidgetLogic {
             Notification newNotif = (Notification) newWidget;
             newNotif.iOSTokens.putAll(prevNotif.iOSTokens);
             newNotif.androidTokens.putAll(prevNotif.androidTokens);
+        }
+
+        //do not update template, tile fields for DeviceTiles.
+        if (newWidget instanceof DeviceTiles && prevWidget instanceof DeviceTiles) {
+            DeviceTiles prevDeviceTiles = (DeviceTiles) prevWidget;
+            DeviceTiles newDeviceTiles = (DeviceTiles) newWidget;
+            newDeviceTiles.tiles = prevDeviceTiles.tiles;
+            newDeviceTiles.templates = prevDeviceTiles.templates;
         }
 
         Widget[] newArray = Arrays.copyOf(dash.widgets, dash.widgets.length);
