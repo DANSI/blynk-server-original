@@ -8,6 +8,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+import io.netty.util.internal.PlatformDependent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -75,11 +76,15 @@ public class SslContextHolder {
             }
         }
 
-        if (OpenSsl.isAvailable()) {
+        if (isOpenSslAvailable()) {
             log.info("Using native openSSL provider.");
         }
         SslProvider sslProvider = fetchSslProvider();
         this.sslCtx = initSslContext(certPath, keyPath, keyPass, sslProvider, true);
+    }
+
+    static boolean isOpenSslAvailable() {
+        return PlatformDependent.bitMode() != 32 && OpenSsl.isAvailable();
     }
 
     private void regenerate() {
@@ -132,7 +137,7 @@ public class SslContextHolder {
     }
 
     private static SslProvider fetchSslProvider() {
-        return OpenSsl.isAvailable() ? SslProvider.OPENSSL : SslProvider.JDK;
+        return isOpenSslAvailable() ? SslProvider.OPENSSL : SslProvider.JDK;
     }
 
     public static SslContext build(SslProvider sslProvider) throws CertificateException, SSLException {
