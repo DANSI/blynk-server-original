@@ -29,14 +29,12 @@ public class AppServer extends BaseServer {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("app.ssl.port"), holder.transportTypeHolder);
 
-        final String[] loadBalancingIPs = holder.props.getCommaSeparatedValueAsArray("load.balancing.ips");
-
         final AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
         final RegisterHandler registerHandler = new RegisterHandler(holder);
         final AppLoginHandler appLoginHandler = new AppLoginHandler(holder);
         final AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder);
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
-        final GetServerHandler getServerHandler = new GetServerHandler(holder, loadBalancingIPs);
+        final GetServerHandler getServerHandler = new GetServerHandler(holder);
 
         log.debug("app.socket.idle.timeout = 600");
 

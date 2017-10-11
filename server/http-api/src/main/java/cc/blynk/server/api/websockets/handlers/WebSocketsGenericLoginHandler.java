@@ -44,11 +44,10 @@ public class WebSocketsGenericLoginHandler extends SimpleChannelInboundHandler<L
         this.hardwareLoginHandler = new HardwareLoginHandler(holder, port);
         this.hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);
 
-        final String[] loadBalancingIPs = holder.props.getCommaSeparatedValueAsArray("load.balancing.ips");
         this.appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
         this.appLoginHandler = new AppLoginHandler(holder);
         this.userNotLoggedHandler = new UserNotLoggedHandler();
-        this.getServerHandler = new GetServerHandler(holder, loadBalancingIPs);
+        this.getServerHandler = new GetServerHandler(holder);
     }
 
     @Override

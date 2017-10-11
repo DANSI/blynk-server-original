@@ -29,7 +29,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
     private final UserDao userDao;
     private final String currentIp;
 
-    public GetServerHandler(Holder holder, String[] ips) {
+    public GetServerHandler(Holder holder) {
         super();
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.dbManager = holder.dbManager;
