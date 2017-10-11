@@ -90,7 +90,7 @@ public class Holder implements Closeable {
         this.sessionDao = new SessionDao();
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 6),
-                serverProperties.getIntProperty("notifications.queue.limit", 5000)
+                serverProperties.getIntProperty("notifications.queue.limit", 2000)
         );
         this.dbManager = new DBManager(blockingIOProcessor, serverProperties.getBoolProperty("enable.db"));
 
@@ -156,7 +156,7 @@ public class Holder implements Closeable {
         this.userDao = new UserDao(fileManager.deserializeUsers(), this.region);
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
-                serverProperties.getIntProperty("notifications.queue.limit", 10000)
+                serverProperties.getIntProperty("notifications.queue.limit", 2000)
         );
 
         this.dbManager = new DBManager(dbFileName, blockingIOProcessor, serverProperties.getBoolProperty("enable.db"));
