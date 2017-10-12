@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -61,6 +62,15 @@ public class GetEnhancedGraphDataLogic {
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         Widget widget = dash.getWidgetById(widgetId);
+
+        //special case for device tiles widget.
+        if (widget == null) {
+            DeviceTiles deviceTiles = dash.getWidgetByType(DeviceTiles.class);
+            if (deviceTiles != null) {
+                widget = deviceTiles.getWidgetById(widgetId);
+            }
+        }
+
 
         if (!(widget instanceof EnhancedHistoryGraph)) {
             throw new IllegalCommandException("Passed wrong widget id.");

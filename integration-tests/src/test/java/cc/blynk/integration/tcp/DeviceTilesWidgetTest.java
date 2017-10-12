@@ -13,10 +13,15 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
+import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
+import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTile;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileMode;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.AppSyncMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
@@ -27,6 +32,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
+import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -666,5 +672,47 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertNotNull(deviceTiles.tiles[0].dataStream);
         assertEquals(1, deviceTiles.tiles[0].dataStream.pin);
         assertEquals(PinType.VIRTUAL, deviceTiles.tiles[0].dataStream.pinType);
+    }
+
+    @Test
+    public void getEnhancedHistoryGraphWorksForTiles() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        int[] deviceIds = new int[] {0};
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        GraphDataStream graphDataStream = new GraphDataStream(
+                null, GraphType.LINE, 0, 100_000,
+                new DataStream((byte) 88, PinType.VIRTUAL),
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        TileTemplate tileTemplate = new TileTemplate(1,
+                new Widget[] {
+                        enhancedHistoryGraph
+                },
+                deviceIds, "123", TileMode.PAGE, new DataStream((byte) 1, PinType.VIRTUAL), null, null, 0, TextAlignment.LEFT, false, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, NO_DATA)));
     }
 }

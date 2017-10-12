@@ -88,6 +88,19 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
         throw new IllegalCommandException("Tile template with passed id not found.");
     }
 
+    public Widget getWidgetById(long widgetId) {
+        for (TileTemplate tileTemplate : templates) {
+            if (tileTemplate.widgets != null) {
+                for (Widget widget : tileTemplate.widgets) {
+                    if (widget.id == widgetId) {
+                        return widget;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType pinType, String value) {
         for (DeviceTile deviceTile : tiles) {
