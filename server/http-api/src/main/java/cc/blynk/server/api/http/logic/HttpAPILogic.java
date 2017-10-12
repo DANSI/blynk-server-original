@@ -1,6 +1,5 @@
 package cc.blynk.server.api.http.logic;
 
-import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.TokenBaseHttpHandler;
 import cc.blynk.core.http.annotation.Consumes;
@@ -41,6 +40,7 @@ import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.StringUtils;
+import cc.blynk.utils.http.MediaType;
 import io.netty.channel.ChannelHandler;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;

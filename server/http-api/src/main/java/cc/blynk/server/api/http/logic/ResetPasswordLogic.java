@@ -1,7 +1,6 @@
 package cc.blynk.server.api.http.logic;
 
 import cc.blynk.core.http.BaseHttpHandler;
-import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.Context;
@@ -23,6 +22,7 @@ import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileLoaderUtil;
+import cc.blynk.utils.http.MediaType;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

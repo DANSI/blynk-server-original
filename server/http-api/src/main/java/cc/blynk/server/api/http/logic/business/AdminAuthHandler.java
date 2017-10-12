@@ -1,7 +1,6 @@
 package cc.blynk.server.api.http.logic.business;
 
 import cc.blynk.core.http.BaseHttpHandler;
-import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.FormParam;
@@ -12,6 +11,7 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.AppNameUtil;
+import cc.blynk.utils.http.MediaType;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.DefaultCookie;

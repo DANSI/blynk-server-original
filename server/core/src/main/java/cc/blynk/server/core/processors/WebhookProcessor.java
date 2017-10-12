@@ -37,6 +37,10 @@ import static cc.blynk.utils.StringUtils.PIN_PATTERN_6;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN_7;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN_8;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN_9;
+import static cc.blynk.utils.http.MediaType.APPLICATION_FORM_URLENCODED;
+import static cc.blynk.utils.http.MediaType.APPLICATION_JSON;
+import static cc.blynk.utils.http.MediaType.TEXT_HTML;
+import static cc.blynk.utils.http.MediaType.TEXT_PLAIN;
 
 /**
  * Handles all webhooks logic.
@@ -194,9 +198,10 @@ public class WebhookProcessor extends NotificationBase {
 
     private void buildRequestBody(BoundRequestBuilder builder, String header, String body) {
         switch (header) {
-            case "application/x-www-form-urlencoded" :
-            case "application/json" :
-            case "text/plain" :
+            case APPLICATION_FORM_URLENCODED :
+            case APPLICATION_JSON :
+            case TEXT_PLAIN :
+            case TEXT_HTML :
                 builder.setBody(body);
                 break;
             default :

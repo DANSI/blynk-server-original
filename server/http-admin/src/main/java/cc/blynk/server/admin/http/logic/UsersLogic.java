@@ -1,7 +1,6 @@
 package cc.blynk.server.admin.http.logic;
 
 import cc.blynk.core.http.CookiesBaseHttpHandler;
-import cc.blynk.core.http.MediaType;
 import cc.blynk.core.http.Response;
 import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.DELETE;
@@ -25,6 +24,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.SHA256Util;
+import cc.blynk.utils.http.MediaType;
 import io.netty.channel.ChannelHandler;
 
 import java.util.List;
