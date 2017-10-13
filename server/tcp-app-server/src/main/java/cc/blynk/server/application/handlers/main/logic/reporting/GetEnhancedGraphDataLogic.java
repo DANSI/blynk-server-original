@@ -14,6 +14,7 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
+import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -25,6 +26,7 @@ import static cc.blynk.server.internal.BlynkByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.BlynkByteBufUtil.noData;
 import static cc.blynk.server.internal.BlynkByteBufUtil.serverError;
 import static cc.blynk.utils.ByteUtils.compress;
+import static cc.blynk.utils.StringUtils.split2Device;
 
 /**
  * The Blynk Project.
@@ -51,7 +53,13 @@ public class GetEnhancedGraphDataLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = Integer.parseInt(messageParts[0]);
+        int targetId = -1;
+        String[] dashIdAndTargetIdString = split2Device(messageParts[0]);
+        if (dashIdAndTargetIdString.length == 2) {
+            targetId = ParseUtil.parseInt(dashIdAndTargetIdString[1]);
+        }
+        int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
+
         long widgetId = Long.parseLong(messageParts[1]);
         GraphPeriod graphPeriod = GraphPeriod.valueOf(messageParts[2]);
         int page = 0;
@@ -89,7 +97,8 @@ public class GetEnhancedGraphDataLogic {
 
         int i = 0;
         for (GraphDataStream graphDataStream : enhancedHistoryGraph.dataStreams) {
-            Target target = dash.getTarget(graphDataStream.targetId);
+            //special case, for device tiles widget targetID may be overrided
+            Target target = dash.getTarget(targetId == -1 ? graphDataStream.targetId : targetId);
             if (target == null) {
                 requestedPins[i] = new GraphPinRequest(dashId, -1,
                         graphDataStream.dataStream, graphPeriod, skipCount, graphDataStream.functionType);
