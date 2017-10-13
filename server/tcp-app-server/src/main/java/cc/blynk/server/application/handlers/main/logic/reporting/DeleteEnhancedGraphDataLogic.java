@@ -13,10 +13,9 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.StringUtils.split2Device;
 
 /**
  * The Blynk Project.
@@ -25,8 +24,6 @@ import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
  *
  */
 public class DeleteEnhancedGraphDataLogic {
-
-    private static final Logger log = LogManager.getLogger(DeleteEnhancedGraphDataLogic.class);
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final ReportingDao reportingDao;
@@ -43,28 +40,34 @@ public class DeleteEnhancedGraphDataLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = Integer.parseInt(messageParts[0]);
+        String[] dashIdAndDeviceId = split2Device(messageParts[0]);
+        int dashId = Integer.parseInt(dashIdAndDeviceId[0]);
         long widgetId = Long.parseLong(messageParts[1]);
         int streamIndex = -1;
         if (message.length == 3) {
             streamIndex = Integer.parseInt(messageParts[2]);
+        }
+        int targetId = -1;
+        if (dashIdAndDeviceId.length == 2) {
+            targetId = Integer.parseInt(dashIdAndDeviceId[1]);
         }
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         EnhancedHistoryGraph enhancedHistoryGraph = (EnhancedHistoryGraph) dash.getWidgetById(widgetId);
 
         if (streamIndex == -1 || streamIndex > enhancedHistoryGraph.dataStreams.length - 1) {
-            delete(ctx.channel(), message.id, user, dash, enhancedHistoryGraph.dataStreams);
+            delete(ctx.channel(), message.id, user, dash, targetId, enhancedHistoryGraph.dataStreams);
         } else {
-            delete(ctx.channel(), message.id, user, dash, enhancedHistoryGraph.dataStreams[streamIndex]);
+            delete(ctx.channel(), message.id, user, dash, targetId, enhancedHistoryGraph.dataStreams[streamIndex]);
         }
     }
 
-    private void delete(Channel channel, int msgId, User user, DashBoard dash, GraphDataStream... dataStreams) {
+    private void delete(Channel channel, int msgId, User user, DashBoard dash, int targetId,
+                        GraphDataStream... dataStreams) {
         blockingIOProcessor.executeHistory(() -> {
             try {
                 for (GraphDataStream graphDataStream : dataStreams) {
-                    Target target = dash.getTarget(graphDataStream.targetId);
+                    Target target = dash.getTarget(graphDataStream.getTargetId(targetId));
                     DataStream dataStream = graphDataStream.dataStream;
                     if (target != null && dataStream != null) {
                         int deviceId = target.getDeviceId();

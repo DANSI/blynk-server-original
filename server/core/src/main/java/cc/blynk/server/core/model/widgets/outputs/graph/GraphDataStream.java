@@ -17,7 +17,7 @@ public class GraphDataStream {
 
     private final int color;
 
-    public final int targetId;
+    private final int targetId;
 
     @JsonProperty("pin") //todo "pin" for back compatibility
     public final DataStream dataStream;
@@ -77,5 +77,9 @@ public class GraphDataStream {
         this.cubicSmoothingEnabled = cubicSmoothingEnabled;
         this.connectMissingPointsEnabled = connectMissingPointsEnabled;
         this.isPercentMaxMin = isPercentMaxMin;
+    }
+
+    public int getTargetId(int targetIdOverride) {
+        return targetIdOverride == -1 ? this.targetId : targetIdOverride;
     }
 }

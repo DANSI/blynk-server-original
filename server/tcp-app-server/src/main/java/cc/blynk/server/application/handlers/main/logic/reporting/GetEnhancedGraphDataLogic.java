@@ -98,7 +98,7 @@ public class GetEnhancedGraphDataLogic {
         int i = 0;
         for (GraphDataStream graphDataStream : enhancedHistoryGraph.dataStreams) {
             //special case, for device tiles widget targetID may be overrided
-            Target target = dash.getTarget(targetId == -1 ? graphDataStream.targetId : targetId);
+            Target target = dash.getTarget(graphDataStream.getTargetId(targetId));
             if (target == null) {
                 requestedPins[i] = new GraphPinRequest(dashId, -1,
                         graphDataStream.dataStream, graphPeriod, skipCount, graphDataStream.functionType);

@@ -62,6 +62,11 @@ public class ExportGraphDataLogic {
 
         String[] dashIdAndDeviceId = split2Device(messageParts[0]);
         int dashId = ParseUtil.parseInt(dashIdAndDeviceId[0]);
+        int targetId = -1;
+
+        if (dashIdAndDeviceId.length == 2) {
+            targetId = ParseUtil.parseInt(dashIdAndDeviceId[1]);
+        }
 
         DashBoard dashBoard = user.profile.getDashByIdOrThrow(dashId);
 
@@ -78,7 +83,7 @@ public class ExportGraphDataLogic {
             EnhancedHistoryGraph enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
 
             blockingIOProcessor.executeHistory(
-                    new ExportEnhancedHistoryGraphJob(ctx, dashBoard, enhancedHistoryGraph, message.id, user)
+                    new ExportEnhancedHistoryGraphJob(ctx, dashBoard, targetId, enhancedHistoryGraph, message.id, user)
             );
         } else {
             throw new IllegalCommandException("Passed wrong widget id.");
@@ -148,14 +153,16 @@ public class ExportGraphDataLogic {
 
         private final ChannelHandlerContext ctx;
         private final DashBoard dash;
+        private final int targetId;
         private final EnhancedHistoryGraph enhancedHistoryGraph;
         private final int msgId;
         private final User user;
 
-        ExportEnhancedHistoryGraphJob(ChannelHandlerContext ctx, DashBoard dash,
+        ExportEnhancedHistoryGraphJob(ChannelHandlerContext ctx, DashBoard dash, int targetId,
                               EnhancedHistoryGraph enhancedHistoryGraph, int msgId, User user) {
             this.ctx = ctx;
             this.dash = dash;
+            this.targetId = targetId;
             this.enhancedHistoryGraph = enhancedHistoryGraph;
             this.msgId = msgId;
             this.user = user;
@@ -168,7 +175,8 @@ public class ExportGraphDataLogic {
                 ArrayList<FileLink> pinsCSVFilePath = new ArrayList<>();
                 for (GraphDataStream graphDataStream : enhancedHistoryGraph.dataStreams) {
                     DataStream dataStream = graphDataStream.dataStream;
-                    int deviceId = graphDataStream.targetId;
+                    //special case, for device tiles widget targetID may be overrided
+                    int deviceId = graphDataStream.getTargetId(targetId);
                     if (dataStream != null) {
                         try {
                             int[] deviceIds = new int[] {deviceId};
@@ -185,7 +193,8 @@ public class ExportGraphDataLogic {
                             pinsCSVFilePath.add(
                                     new FileLink(path.getFileName(), dashName, dataStream.pinType, dataStream.pin));
                         } catch (Exception e) {
-                            //ignore eny exception.
+                            log.debug("Error generating csv file.", e);
+                            //ignore any exception.
                         }
                     }
                 }
