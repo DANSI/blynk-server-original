@@ -16,7 +16,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -51,7 +50,6 @@ public class ReportingWorkerTest {
     @Mock
     public AverageAggregatorProcessor averageAggregator;
 
-    @InjectMocks
     public ReportingDao reportingDaoMock;
 
     @Mock
@@ -70,7 +68,7 @@ public class ReportingWorkerTest {
         FileUtils.deleteDirectory(dataFolder2.toFile());
         createReportingFolder(reportingFolder, "test2");
 
-        reportingDaoMock = new ReportingDao(reportingFolder, averageAggregator, properties);
+        reportingDaoMock = new ReportingDao(reportingFolder, averageAggregator, true);
     }
 
     private static void createReportingFolder(String reportingFolder, String email) {
@@ -264,7 +262,7 @@ public class ReportingWorkerTest {
         user.email = "test";
         user.appName = AppNameUtil.BLYNK;
 
-        new ReportingDao(reportingFolder, properties).delete(user, 1, 0, PinType.ANALOG, (byte) 1);
+        new ReportingDao(reportingFolder, true).delete(user, 1, 0, PinType.ANALOG, (byte) 1);
         assertFalse(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphGranularityType.HOURLY))));
     }
 

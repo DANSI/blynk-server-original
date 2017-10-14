@@ -109,7 +109,8 @@ public class Holder implements Closeable {
         this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, dbManager, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
-        this.reportingDao = new ReportingDao(reportingFolder, serverProperties);
+        this.reportingDao = new ReportingDao(reportingFolder,
+                serverProperties.isRawDBEnabled() && dbManager.isDBEnabled());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
@@ -163,7 +164,8 @@ public class Holder implements Closeable {
         this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, dbManager, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
-        this.reportingDao = new ReportingDao(reportingFolder, serverProperties);
+        this.reportingDao = new ReportingDao(reportingFolder,
+                serverProperties.isRawDBEnabled() && dbManager.isDBEnabled());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 

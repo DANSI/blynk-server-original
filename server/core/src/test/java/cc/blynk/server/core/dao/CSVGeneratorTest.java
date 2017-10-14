@@ -2,7 +2,6 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.AppNameUtil;
-import cc.blynk.utils.properties.ServerProperties;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
@@ -16,7 +15,7 @@ import java.nio.file.Paths;
  */
 public class CSVGeneratorTest {
 
-    private CSVGenerator csvGenerator = new CSVGenerator(new ReportingDao("/tmp", new ServerProperties("/server.properties")));
+    private CSVGenerator csvGenerator = new CSVGenerator(new ReportingDao("/tmp", true));
 
     @Test
     public void generateCSV() throws Exception {

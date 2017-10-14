@@ -14,7 +14,6 @@ import cc.blynk.server.core.reporting.raw.RawDataCacheForGraphProcessor;
 import cc.blynk.server.core.reporting.raw.RawDataProcessor;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.NumberUtil;
-import cc.blynk.utils.properties.ServerProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,20 +50,20 @@ public class ReportingDao implements Closeable {
 
     //for test only
     public ReportingDao(String reportingFolder, AverageAggregatorProcessor averageAggregator,
-                        ServerProperties serverProperties) {
+                        boolean isEnabled) {
         this.averageAggregator = averageAggregator;
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
-        this.enableRawDbDataStore = serverProperties.getBoolProperty("enable.raw.db.data.store");
+        this.enableRawDbDataStore = isEnabled;
         this.rawDataProcessor = new RawDataProcessor(enableRawDbDataStore);
         this.csvGenerator = new CSVGenerator(this);
     }
 
-    public ReportingDao(String reportingFolder, ServerProperties serverProperties) {
+    public ReportingDao(String reportingFolder, boolean isEnabled) {
         this.averageAggregator = new AverageAggregatorProcessor(reportingFolder);
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
-        this.enableRawDbDataStore = serverProperties.getBoolProperty("enable.raw.db.data.store");
+        this.enableRawDbDataStore = isEnabled;
         this.rawDataProcessor = new RawDataProcessor(enableRawDbDataStore);
         this.csvGenerator = new CSVGenerator(this);
     }

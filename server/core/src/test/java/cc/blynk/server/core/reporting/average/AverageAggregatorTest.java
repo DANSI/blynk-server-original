@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
 import cc.blynk.utils.AppNameUtil;
-import cc.blynk.utils.properties.ServerProperties;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -14,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Collections;
 
 import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.DAY;
 import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.HOUR;
@@ -157,7 +155,7 @@ public class AverageAggregatorTest {
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.HOURLY_TEMP_FILENAME)));
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.DAILY_TEMP_FILENAME)));
 
-        ReportingDao reportingDao = new ReportingDao(reportingFolder, new ServerProperties(Collections.emptyMap()));
+        ReportingDao reportingDao = new ReportingDao(reportingFolder, true);
 
         reportingDao.delete(user, dashId, 0, PinType.VIRTUAL, pin);
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.HOURLY_TEMP_FILENAME)));
