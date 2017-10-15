@@ -114,12 +114,10 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
     @Override
     public void sendAppSync(Channel appChannel, int dashId, int targetId) {
         for (DeviceTile tile : tiles) {
-            if (tile.deviceId == targetId && tile.dataStream != null) {
+            if (tile.deviceId == targetId && tile.dataStream != null && tile.dataStream.notEmpty()) {
                 String hardBody = tile.dataStream.makeHardwareBody();
-                if (hardBody != null) {
-                    String body = prependDashIdAndDeviceId(dashId, targetId, hardBody);
-                    appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
-                }
+                String body = prependDashIdAndDeviceId(dashId, targetId, hardBody);
+                appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
             }
         }
     }
