@@ -18,7 +18,6 @@ import cc.blynk.utils.DateTimeUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
@@ -87,7 +86,6 @@ public class DBManagerTest {
     }
 
     @Test
-    @Ignore("Ignoring because of travis CI")
     public void testDbVersion() throws Exception {
         int dbVersion = dbManager.userDBDao.getDBVersion();
         assertTrue(dbVersion >= 90500);
@@ -141,7 +139,6 @@ public class DBManagerTest {
     }
 
     @Test
-    @Ignore
     public void testCopy100RecordsIntoFile() throws Exception {
         System.out.println("Starting");
 
@@ -232,7 +229,6 @@ public class DBManagerTest {
     }
 
     @Test
-    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertForDifferentApps() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         users.add(new User("test1@gmail.com", "pass", "testapp2", "local", "127.0.0.1", false, false));
@@ -243,7 +239,6 @@ public class DBManagerTest {
     }
 
     @Test
-    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertAndSelect() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         for (int i = 0; i < 10000; i++) {
@@ -257,7 +252,6 @@ public class DBManagerTest {
     }
 
     @Test
-    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
@@ -304,7 +298,6 @@ public class DBManagerTest {
     }
 
     @Test
-    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testUpsertUserFieldUpdated() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
@@ -348,14 +341,13 @@ public class DBManagerTest {
                 assertTrue(rs.getBoolean("is_super_admin"));
                 assertEquals(1000, rs.getInt("energy"));
 
-                assertEquals("{\"dashBoards\":[{\"id\":1,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", rs.getString("json"));
+                assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", rs.getString("json"));
             }
             connection.commit();
         }
     }
 
     @Test
-    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testInsertAndGetUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", true, true);
@@ -393,7 +385,6 @@ public class DBManagerTest {
     }
 
     @Test
-    @Ignore("Ignored cause travis postgres is old and doesn't support upserts")
     public void testInsertGetDeleteUser() throws Exception {
         ArrayList<User> users = new ArrayList<>();
         User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", true, true);
