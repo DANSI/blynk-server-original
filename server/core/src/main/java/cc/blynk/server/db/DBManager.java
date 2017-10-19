@@ -239,7 +239,7 @@ public class DBManager implements Closeable {
         }
     }
 
-    public String getUserServerIp(String email, String appName) throws Exception {
+    public String getUserServerIp(String email, String appName) {
         if (isDBEnabled()) {
             return userDBDao.getUserServerIp(email, appName);
         }

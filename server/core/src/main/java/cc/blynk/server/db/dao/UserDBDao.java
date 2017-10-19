@@ -60,7 +60,7 @@ public class UserDBDao {
         return dbVersion;
     }
 
-    public String getUserServerIp(String email, String appName) throws Exception {
+    public String getUserServerIp(String email, String appName) {
         String ip = null;
 
         try (Connection connection = ds.getConnection();
@@ -71,10 +71,12 @@ public class UserDBDao {
 
             try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {
-                     ip = rs.getString("ip");
+                    ip = rs.getString("ip");
                 }
                 connection.commit();
             }
+        } catch (Exception e) {
+            log.error("Error getting user server ip. {}-{}. Reason : {}", email, appName, e.getMessage());
         }
 
         return ip;

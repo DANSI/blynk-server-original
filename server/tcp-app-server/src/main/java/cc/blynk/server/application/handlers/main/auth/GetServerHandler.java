@@ -70,16 +70,12 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
             log.warn("Searching user {}-{} on another server.", email, appName);
             //user is on other server
             blockingIOProcessor.executeDB(() -> {
-                String userServer = currentIp;
-                try {
-                    userServer = dbManager.getUserServerIp(email, appName);
-                    if (userServer == null || userServer.isEmpty()) {
-                        log.warn("Could not find user ip for {}-{}. Returning current ip.", email, appName);
-                    } else {
-                        log.info("Redirecting user {}-{} to server {}.", email, appName, userServer);
-                    }
-                } catch (Exception e) {
-                    log.error("Error getting user server ip. {}-{}", email, appName);
+                String userServer = dbManager.getUserServerIp(email, appName);
+                if (userServer == null || userServer.isEmpty()) {
+                    log.warn("Could not find user ip for {}-{}. Returning current ip.", email, appName);
+                    userServer = currentIp;
+                } else {
+                    log.info("Redirecting user {}-{} to server {}.", email, appName, userServer);
                 }
                 ctx.writeAndFlush(makeASCIIStringMessage(msg.command, msg.id, userServer), ctx.voidPromise());
             });
