@@ -86,7 +86,7 @@ public class Holder implements Closeable {
         this.host = serverProperties.getServerHost();
 
         String dataFolder = serverProperties.getProperty("data.folder");
-        this.fileManager = new FileManager(dataFolder);
+        this.fileManager = new FileManager(dataFolder, host);
         this.sessionDao = new SessionDao();
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 6),
@@ -96,14 +96,14 @@ public class Holder implements Closeable {
 
         if (restore) {
             try {
-                this.userDao = new UserDao(dbManager.userDBDao.getAllUsers(this.region), this.region);
+                this.userDao = new UserDao(dbManager.userDBDao.getAllUsers(this.region), this.region, host);
             } catch (Exception e) {
                 System.out.println("Error restoring data from DB!");
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
         } else {
-            this.userDao = new UserDao(fileManager.deserializeUsers(), this.region);
+            this.userDao = new UserDao(fileManager.deserializeUsers(), this.region, host);
         }
 
         this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, dbManager, host);
@@ -152,9 +152,9 @@ public class Holder implements Closeable {
         this.host = serverProperties.getServerHost();
 
         String dataFolder = serverProperties.getProperty("data.folder");
-        this.fileManager = new FileManager(dataFolder);
+        this.fileManager = new FileManager(dataFolder, host);
         this.sessionDao = new SessionDao();
-        this.userDao = new UserDao(fileManager.deserializeUsers(), this.region);
+        this.userDao = new UserDao(fileManager.deserializeUsers(), this.region, host);
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
                 serverProperties.getIntProperty("notifications.queue.limit", 2000)

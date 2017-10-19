@@ -34,7 +34,7 @@ public class UserStatisticsTest {
 
     @BeforeClass
     public static void init() {
-        fileManager = new FileManager("/home/doom369/test/root/data");
+        fileManager = new FileManager("/home/doom369/test/root/data", null);
         users = fileManager.deserializeUsers();
     }
 

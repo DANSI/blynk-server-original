@@ -48,10 +48,10 @@ public class ProfileSaverWorkerTest {
     public void testCorrectProfilesAreSaved() throws IOException {
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userDao, fileManager, new DBManager(blockingIOProcessor, true));
 
-        User user1 = new User("1", "", AppNameUtil.BLYNK, "local", false, false);
-        User user2 = new User("2", "", AppNameUtil.BLYNK, "local", false, false);
-        User user3 = new User("3", "", AppNameUtil.BLYNK, "local", false, false);
-        User user4 = new User("4", "", AppNameUtil.BLYNK, "local", false, false);
+        User user1 = new User("1", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
+        User user2 = new User("2", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
+        User user3 = new User("3", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
+        User user4 = new User("4", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
 
         ConcurrentMap<UserKey, User> userMap = new ConcurrentHashMap<>();
         userMap.put(new UserKey(user1), user1);
@@ -71,10 +71,10 @@ public class ProfileSaverWorkerTest {
 
     @Test
     public void testNoProfileChanges() throws Exception {
-        User user1 = new User("1", "", AppNameUtil.BLYNK, "local", false, false);
-        User user2 = new User("2", "", AppNameUtil.BLYNK, "local", false, false);
-        User user3 = new User("3", "", AppNameUtil.BLYNK, "local", false, false);
-        User user4 = new User("4", "", AppNameUtil.BLYNK, "local", false, false);
+        User user1 = new User("1", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
+        User user2 = new User("2", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
+        User user3 = new User("3", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
+        User user4 = new User("4", "", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
 
         Map<UserKey, User> userMap = new HashMap<>();
         userMap.put(new UserKey("1", AppNameUtil.BLYNK), user1);

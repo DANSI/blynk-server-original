@@ -26,14 +26,16 @@ import static cc.blynk.utils.DateTimeUtils.UTC_CALENDAR;
 public class UserDBDao {
 
     private static final String upsertUser =
-            "INSERT INTO users (email, appName, region, name, pass, last_modified, last_logged,"
+            "INSERT INTO users (email, appName, region, ip, name, pass, last_modified, last_logged,"
                     + " last_logged_ip, is_facebook_user, is_super_admin, energy, json) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email, appName) DO UPDATE "
-                    + "SET pass = EXCLUDED.pass, name = EXCLUDED.name, last_modified = EXCLUDED.last_modified, "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (email, appName) DO UPDATE "
+                    + "SET ip = EXCLUDED.ip, pass = EXCLUDED.pass, name = EXCLUDED.name, "
+                    + "last_modified = EXCLUDED.last_modified, "
                     + "last_logged = EXCLUDED.last_logged, last_logged_ip = EXCLUDED.last_logged_ip, "
                     + "is_facebook_user = EXCLUDED.is_facebook_user, is_super_admin = EXCLUDED.is_super_admin, "
                     + "energy = EXCLUDED.energy, json = EXCLUDED.json, region = EXCLUDED.region";
     private static final String selectAllUsers = "SELECT * from users where region = ?";
+    private static final String selectIpForUser = "SELECT ip FROM users WHERE email = ? AND appName = ?";
     private static final String deleteUser = "DELETE FROM users WHERE email = ? AND appName = ?";
 
     private static final Logger log = LogManager.getLogger(UserDBDao.class);
@@ -57,6 +59,26 @@ public class UserDBDao {
         return dbVersion;
     }
 
+    public String getUserServerIp(String email, String appName) throws Exception {
+        String ip = null;
+
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(selectIpForUser)) {
+
+            statement.setString(1, email);
+            statement.setString(2, appName);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                     ip = rs.getString("ip");
+                }
+                connection.commit();
+            }
+        }
+
+        return ip;
+    }
+
     public ConcurrentMap<UserKey, User> getAllUsers(String region) throws Exception {
         ConcurrentMap<UserKey, User> users = new ConcurrentHashMap<>();
 
@@ -72,6 +94,7 @@ public class UserDBDao {
                     user.email = rs.getString("email");
                     user.appName = rs.getString("appName");
                     user.region = rs.getString("region");
+                    user.ip = rs.getString("ip");
                     user.name = rs.getString("name");
                     user.pass = rs.getString("pass");
 
@@ -109,15 +132,16 @@ public class UserDBDao {
                 ps.setString(1, user.email);
                 ps.setString(2, user.appName);
                 ps.setString(3, user.region);
-                ps.setString(4, user.name);
-                ps.setString(5, user.pass);
-                ps.setTimestamp(6, new Timestamp(user.lastModifiedTs), UTC_CALENDAR);
-                ps.setTimestamp(7, new Timestamp(user.lastLoggedAt), UTC_CALENDAR);
-                ps.setString(8, user.lastLoggedIP); //finish
-                ps.setBoolean(9, user.isFacebookUser);
-                ps.setBoolean(10, user.isSuperAdmin);
-                ps.setInt(11, user.energy);
-                ps.setString(12, user.profile.toString());
+                ps.setString(4, user.ip);
+                ps.setString(5, user.name);
+                ps.setString(6, user.pass);
+                ps.setTimestamp(7, new Timestamp(user.lastModifiedTs), UTC_CALENDAR);
+                ps.setTimestamp(8, new Timestamp(user.lastLoggedAt), UTC_CALENDAR);
+                ps.setString(9, user.lastLoggedIP); //finish
+                ps.setBoolean(10, user.isFacebookUser);
+                ps.setBoolean(11, user.isSuperAdmin);
+                ps.setInt(12, user.energy);
+                ps.setString(13, user.profile.toString());
                 ps.addBatch();
             }
 

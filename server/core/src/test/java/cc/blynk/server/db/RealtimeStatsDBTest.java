@@ -61,7 +61,7 @@ public class RealtimeStatsDBTest {
         long now = System.currentTimeMillis();
 
         SessionDao sessionDao = new SessionDao();
-        UserDao userDao = new UserDao(new ConcurrentHashMap<>(), "test");
+        UserDao userDao = new UserDao(new ConcurrentHashMap<>(), "test", "127.0.0.1");
         BlockingIOProcessor blockingIOProcessor = mock(BlockingIOProcessor.class);
 
         Stat stat = new Stat(sessionDao, userDao, blockingIOProcessor, new GlobalStats(), false);

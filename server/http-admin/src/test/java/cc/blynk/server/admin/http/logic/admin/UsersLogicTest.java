@@ -54,10 +54,10 @@ public class UsersLogicTest {
 
     @Before
     public void setUp() throws Exception {
-        user = new User(TEST_USER, "123", AppNameUtil.BLYNK, "local", false, false);
+        user = new User(TEST_USER, "123", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
         when(userDao.delete(any())).thenReturn(user);
         sessionDao.getOrCreateSessionByUser(new UserKey(user), mock(EventLoop.class));
-        FileManager fileManager = new FileManager(null);
+        FileManager fileManager = new FileManager(null, null);
         usersLogic = new UsersLogic(userDao, sessionDao, dbManager, fileManager, null, "admin");
 
         userFile = Paths.get(System.getProperty("java.io.tmpdir"), "blynk", TEST_USER + ".Blynk.user");

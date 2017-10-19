@@ -6,6 +6,7 @@ CREATE TABLE users (
   email text NOT NULL,
   appName text NOT NULL,
   region text,
+  ip text,
   name text,
   pass text,
   last_modified timestamp,

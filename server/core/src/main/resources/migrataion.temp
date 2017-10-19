@@ -1,9 +1,1 @@
-alter table users add column name text;
-alter table users rename column username to email;
-alter table redeem rename column username to email;
-alter table flashed_tokens rename column username to email;
-alter table purchase rename column username to email;
-alter table reporting_raw_data rename column username to email;
-alter table reporting_average_minute rename column username to email;
-alter table reporting_average_hourly rename column username to email;
-alter table reporting_average_daily rename column username to email;
+alter table users add column ip text;

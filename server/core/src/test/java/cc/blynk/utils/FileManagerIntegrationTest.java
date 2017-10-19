@@ -22,8 +22,8 @@ import static org.junit.Assert.assertNotNull;
  */
 public class FileManagerIntegrationTest {
 
-    private final User user1 = new User("name1", "pass1", AppNameUtil.BLYNK, "local", false, false);
-    private final User user2 = new User("name2", "pass2", AppNameUtil.BLYNK, "local", false, false);
+    private final User user1 = new User("name1", "pass1", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
+    private final User user2 = new User("name2", "pass2", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
 
     private FileManager fileManager;
 
@@ -31,7 +31,7 @@ public class FileManagerIntegrationTest {
     public void cleanup() throws IOException {
         String dataFolder = Paths.get(System.getProperty("java.io.tmpdir"), "blynk").toString();
         org.apache.commons.io.FileUtils.deleteDirectory(Paths.get(dataFolder).toFile());
-        fileManager = new FileManager(dataFolder);
+        fileManager = new FileManager(dataFolder, null);
     }
 
     @Test

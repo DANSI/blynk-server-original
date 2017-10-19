@@ -239,14 +239,15 @@ public class DBManager implements Closeable {
         }
     }
 
-    //todo
-    //not implemented methods section. not used for now. for GEO DNS fix
-    public String getServerByUser(String email) {
+    public String getUserServerIp(String email, String appName) throws Exception {
+        if (isDBEnabled()) {
+            return userDBDao.getUserServerIp(email, appName);
+        }
         return null;
     }
-    public void assignServerToUser(String email, String ip) {
-        //do nothing
-    }
+
+    //todo
+    //not implemented methods section. not used for now. for GEO DNS fix
     public String getServerByToken(String token) {
         return null;
     }

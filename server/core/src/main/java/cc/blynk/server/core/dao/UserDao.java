@@ -29,12 +29,14 @@ public class UserDao {
 
     public final ConcurrentMap<UserKey, User> users;
     private final String region;
+    private final String host;
 
-    public UserDao(ConcurrentMap<UserKey, User> users, String region) {
+    public UserDao(ConcurrentMap<UserKey, User> users, String region, String host) {
         //reading DB to RAM.
         this.users = users;
         this.region = region;
-        log.info("Region : {}", region);
+        this.host = host;
+        log.info("Region : {}. Host : {}.", region, host);
     }
 
     public boolean isUserExists(String name, String appName) {
@@ -273,21 +275,21 @@ public class UserDao {
 
     public User addFacebookUser(String email, String appName) {
         log.debug("Adding new facebook user {}. App : {}", email, appName);
-        User newUser = new User(email, null, appName, region, true, false);
+        User newUser = new User(email, null, appName, region, host, true, false);
         users.put(new UserKey(email, appName), newUser);
         return newUser;
     }
 
     public User add(String email, String pass, String appName) {
         log.debug("Adding new user {}. App : {}", email, appName);
-        User newUser = new User(email, pass, appName, region, false, false);
+        User newUser = new User(email, pass, appName, region, host, false, false);
         users.put(new UserKey(email, appName), newUser);
         return newUser;
     }
 
     public void add(String email, String pass, String appName, boolean isSuperAdmin) {
         log.debug("Adding new user {}. App : {}", email, appName);
-        User newUser = new User(email, pass, appName, region, false, isSuperAdmin);
+        User newUser = new User(email, pass, appName, region, host, false, isSuperAdmin);
         users.put(new UserKey(email, appName), newUser);
     }
 

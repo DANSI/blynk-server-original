@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.AppNameUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class User {
 
-    private static final int INITIAL_ENERGY_AMOUNT = ParseUtil.parseInt(System.getProperty("initial.energy", "2000"));
+    private static final int INITIAL_ENERGY_AMOUNT = Integer.parseInt(System.getProperty("initial.energy", "2000"));
 
     public String name;
 
@@ -23,6 +22,7 @@ public class User {
     public String email;
     public String appName;
     public String region;
+    public String ip;
 
     public volatile String pass;
 
@@ -53,7 +53,7 @@ public class User {
         this.appName = AppNameUtil.BLYNK;
     }
 
-    public User(String email, String pass, String appName, String region,
+    public User(String email, String pass, String appName, String region, String host,
                 boolean isFacebookUser, boolean isSuperAdmin) {
         this();
         this.email = email;
@@ -61,6 +61,7 @@ public class User {
         this.pass = pass;
         this.appName = appName;
         this.region = region;
+        this.ip = host;
         this.isFacebookUser = isFacebookUser;
         this.isSuperAdmin = isSuperAdmin;
     }

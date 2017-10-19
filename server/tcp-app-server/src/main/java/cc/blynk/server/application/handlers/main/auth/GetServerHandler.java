@@ -10,6 +10,8 @@ import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommandBody;
@@ -23,6 +25,8 @@ import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
  */
 @ChannelHandler.Sharable
 public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessage> {
+
+    private static final Logger log = LogManager.getLogger(GetServerHandler.class);
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
@@ -63,15 +67,20 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
             //user exists on current server. so returning ip of current server
             ctx.writeAndFlush(makeASCIIStringMessage(msg.command, msg.id, currentIp), ctx.voidPromise());
         } else {
+            log.warn("Searching user {}-{} on another server.", email, appName);
             //user is on other server
             blockingIOProcessor.executeDB(() -> {
-                String userServer = dbManager.getServerByUser(email);
-                if (userServer == null) {
-                    //user not registered yet anywhere
-                    dbManager.assignServerToUser(email, currentIp);
-                    userServer = currentIp;
+                String userServer = currentIp;
+                try {
+                    userServer = dbManager.getUserServerIp(email, appName);
+                    if (userServer == null || userServer.isEmpty()) {
+                        log.warn("Could not find user ip for {}-{}. Returning current ip.", email, appName);
+                    } else {
+                        log.info("Redirecting user {}-{} to server {}.", email, appName, userServer);
+                    }
+                } catch (Exception e) {
+                    log.error("Error getting user server ip. {}-{}", email, appName);
                 }
-
                 ctx.writeAndFlush(makeASCIIStringMessage(msg.command, msg.id, userServer), ctx.voidPromise());
             });
         }
