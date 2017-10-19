@@ -36,7 +36,7 @@ public class Limits {
     public final String staticMailBody;
 
     Limits(ServerProperties props) {
-        this.webRequestMaxSize = props.getIntProperty("web.request.max.size", 256 * 1024);
+        this.webRequestMaxSize = props.getIntProperty("web.request.max.size", 512 * 1024);
 
         this.deviceLimit = props.getIntProperty("user.devices.limit", 25);
         this.tagsLimit = props.getIntProperty("user.tags.limit", 100);
