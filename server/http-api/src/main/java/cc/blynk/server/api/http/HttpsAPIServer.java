@@ -17,8 +17,6 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpServerKeepAliveHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
-import static cc.blynk.server.api.http.HttpAPIServer.HTTP_REQUEST_SIZE_MAX;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -45,7 +43,7 @@ public class HttpsAPIServer extends BaseServer {
                 .addLast("HttpsSslContext", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
                 .addLast("HttpsServerCodec", new HttpServerCodec())
                 .addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler())
-                .addLast("HttpsObjectAggregator", new HttpObjectAggregator(HTTP_REQUEST_SIZE_MAX, true))
+                .addLast("HttpsObjectAggregator", new HttpObjectAggregator(holder.limits.webRequestMaxSize, true))
                 .addLast(letsEncryptHandler)
                 .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
                 .addLast("HttpUrlMapper", new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))

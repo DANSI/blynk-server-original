@@ -330,6 +330,24 @@ public class HttpAPIPinsTest extends BaseTest {
     }
 
     @Test
+    public void testPutWithLargeValueNotAccepted() throws Exception {
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
+        request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
+
+        StringBuilder val = new StringBuilder(256 * 1024);
+        for (int i = 0; i < val.capacity() / 10; i++) {
+            val.append("1234567890");
+        }
+        val.append("1234567890");
+
+        request.setEntity(new StringEntity("[\"" + val.toString() + "\"]", ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(413, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
     public void testPutExtraWithNoWidget() throws Exception {
         HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/extra/pin/v10");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());

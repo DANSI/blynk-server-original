@@ -13,6 +13,8 @@ import cc.blynk.utils.properties.ServerProperties;
  */
 public class Limits {
 
+    public final int webRequestMaxSize;
+
     //user limits
     public final int deviceLimit;
     public final int tagsLimit;
@@ -34,6 +36,8 @@ public class Limits {
     public final String staticMailBody;
 
     Limits(ServerProperties props) {
+        this.webRequestMaxSize = props.getIntProperty("web.request.max.size", 256 * 1024);
+
         this.deviceLimit = props.getIntProperty("user.devices.limit", 25);
         this.tagsLimit = props.getIntProperty("user.tags.limit", 100);
         this.dashboardsLimit = props.getIntProperty("user.dashboard.max.limit", 100);
