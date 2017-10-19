@@ -45,7 +45,7 @@ public class CreateAppLogic {
 
         App newApp = JsonParser.parseApp(appString);
 
-        newApp.id = AppNameUtil.BLYNK_LOWERCASE + StringUtils.randomString(8);
+        newApp.id = AppNameUtil.BLYNK.toLowerCase() + StringUtils.randomString(8);
 
         newApp.validate();
 

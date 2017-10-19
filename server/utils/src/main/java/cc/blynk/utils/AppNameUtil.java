@@ -11,7 +11,6 @@ public final class AppNameUtil {
     }
 
     public static final String BLYNK = "Blynk";
-    public static final String BLYNK_LOWERCASE = "blynk";
     public static final String FACEBOOK = "facebook";
 
 }
