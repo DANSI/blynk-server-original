@@ -334,7 +334,7 @@ public class HttpAPIPinsTest extends BaseTest {
         HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
 
-        StringBuilder val = new StringBuilder(256 * 1024);
+        StringBuilder val = new StringBuilder(512 * 1024);
         for (int i = 0; i < val.capacity() / 10; i++) {
             val.append("1234567890");
         }
