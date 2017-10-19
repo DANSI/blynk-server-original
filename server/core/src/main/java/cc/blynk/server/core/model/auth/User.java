@@ -45,6 +45,7 @@ public class User {
 
     public volatile boolean isLoggedOut;
 
+    //used just for tests and serialization
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
         this.profile = new Profile();
@@ -53,7 +54,7 @@ public class User {
         this.appName = AppNameUtil.BLYNK;
     }
 
-    public User(String email, String pass, String appName, String region, String host,
+    public User(String email, String pass, String appName, String region, String ip,
                 boolean isFacebookUser, boolean isSuperAdmin) {
         this();
         this.email = email;
@@ -61,9 +62,30 @@ public class User {
         this.pass = pass;
         this.appName = appName;
         this.region = region;
-        this.ip = host;
+        this.ip = ip;
         this.isFacebookUser = isFacebookUser;
         this.isSuperAdmin = isSuperAdmin;
+    }
+
+    //used when user is fully read from DB
+    public User(String email, String pass, String appName, String region, String ip,
+                boolean isFacebookUser, boolean isSuperAdmin, String name,
+                long lastModifiedTs, long lastLoggedAt, String lastLoggedIP,
+                Profile profile, int energy) {
+        this.email = email;
+        this.name = email;
+        this.pass = pass;
+        this.appName = appName;
+        this.region = region;
+        this.ip = ip;
+        this.isFacebookUser = isFacebookUser;
+        this.isSuperAdmin = isSuperAdmin;
+        this.name = name;
+        this.lastModifiedTs = lastModifiedTs;
+        this.lastLoggedAt = lastLoggedAt;
+        this.lastLoggedIP = lastLoggedIP;
+        this.profile = profile;
+        this.energy = energy;
     }
 
     @JsonProperty("id")
