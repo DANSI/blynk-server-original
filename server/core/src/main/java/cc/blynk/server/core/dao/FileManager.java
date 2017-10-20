@@ -243,11 +243,11 @@ public class FileManager {
     }
 
     public String readClonedProjectFromDisk(String token) {
+        Path path = Paths.get(cloneDataDir, token);
         try {
-            Path path = Paths.get(cloneDataDir, token);
             return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            log.warn("Didn't find cloned project on disk. {}", e.getMessage());
+            log.warn("Didn't find cloned project on disk. Path {}. Reason {}", path.toString(), e.getMessage());
         }
         return null;
     }
