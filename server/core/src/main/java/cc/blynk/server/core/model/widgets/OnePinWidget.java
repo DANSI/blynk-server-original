@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
-import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -129,10 +128,12 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     public void setProperty(String property, String propertyValue) {
         switch (property) {
             case "min" :
-                this.min = ParseUtil.parseInt(propertyValue);
+                //accepting floats as valid, but using int for min/max due to back compatibility
+                this.min = (int) Float.parseFloat(propertyValue);
                 break;
             case "max" :
-                this.max = ParseUtil.parseInt(propertyValue);
+                //accepting floats as valid, but using int for min/max due to back compatibility
+                this.max = (int) Float.parseFloat(propertyValue);
                 break;
             default:
                 super.setProperty(property, propertyValue);

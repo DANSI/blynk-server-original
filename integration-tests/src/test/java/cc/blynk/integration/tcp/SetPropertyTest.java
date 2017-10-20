@@ -269,6 +269,25 @@ public class SetPropertyTest extends IntegrationBase {
     }
 
     @Test
+    public void setMinMaxPropertyFloat() throws Exception {
+        clientPair.hardwareClient.send("setProperty 4 min 10.1");
+        clientPair.hardwareClient.send("setProperty 4 max 20.2");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 4 min 10.1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(2, b("1 4 max 20.2"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = parseProfile(clientPair.appClient.getBody());
+        profile.dashBoards[0].updatedAt = 0;
+
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        assertEquals(10, ((OnePinWidget) widget).min);
+        assertEquals(20, ((OnePinWidget) widget).max);
+    }
+
+    @Test
     public void testSetColorShouldNotWorkForNonActiveProject() throws Exception {
         clientPair.appClient.send("deactivate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
