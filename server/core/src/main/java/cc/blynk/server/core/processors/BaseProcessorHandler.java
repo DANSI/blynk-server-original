@@ -33,7 +33,7 @@ public abstract class BaseProcessorHandler {
             eventorProcessor.process(user, session, dash, deviceId, pin, pinType, value, now);
             webhookProcessor.process(session, dash, deviceId, pin, pinType, value, now);
         } catch (QuotaLimitException qle) {
-            log.error("User {} reached notification limit for eventor/webhook.", user.name);
+            log.debug("User {} reached notification limit for eventor/webhook.", user.name);
         } catch (Exception e) {
             log.error("Error processing eventor/webhook.", e);
         }
