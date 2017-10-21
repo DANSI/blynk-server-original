@@ -325,26 +325,24 @@ public class DBManagerTest {
 
         dbManager.userDBDao.save(users);
 
-        try (Connection connection = dbManager.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet rs = statement.executeQuery("select * from users where email = 'test@gmail.com'")) {
-            while (rs.next()) {
-                assertEquals("test@gmail.com", rs.getString("email"));
-                assertEquals(AppNameUtil.BLYNK, rs.getString("appName"));
-                assertEquals("local2", rs.getString("region"));
-                assertEquals("pass2", rs.getString("pass"));
-                assertEquals("1234", rs.getString("name"));
-                assertEquals(1, rs.getTimestamp("last_modified", DateTimeUtils.UTC_CALENDAR).getTime());
-                assertEquals(2, rs.getTimestamp("last_logged", DateTimeUtils.UTC_CALENDAR).getTime());
-                assertEquals("127.0.0.2", rs.getString("last_logged_ip"));
-                assertTrue(rs.getBoolean("is_facebook_user"));
-                assertTrue(rs.getBoolean("is_super_admin"));
-                assertEquals(1000, rs.getInt("energy"));
+        ConcurrentMap<UserKey, User>  persistent = dbManager.userDBDao.getAllUsers("local2");
 
-                assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", rs.getString("json"));
-            }
-            connection.commit();
-        }
+        user = persistent.get(new UserKey("test@gmail.com", AppNameUtil.BLYNK));
+
+        assertEquals("test@gmail.com", user.email);
+        assertEquals(AppNameUtil.BLYNK, user.appName);
+        assertEquals("local2", user.region);
+        assertEquals("pass2", user.pass);
+        assertEquals("1234", user.name);
+        assertEquals("127.0.0.1", user.ip);
+        assertEquals(1, user.lastModifiedTs);
+        assertEquals(2, user.lastLoggedAt);
+        assertEquals("127.0.0.2", user.lastLoggedIP);
+        assertTrue(user.isFacebookUser);
+        assertTrue(user.isSuperAdmin);
+        assertEquals(1000, user.energy);
+
+        assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"123\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isShared\":false,\"isActive\":false}]}", user.profile.toString());
     }
 
     @Test
