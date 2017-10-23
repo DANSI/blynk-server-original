@@ -31,6 +31,8 @@ public class EnhancedHistoryGraph extends Widget {
 
     public boolean xAxisValues;
 
+    public boolean showYAxis;
+
     public boolean allowFullScreen;
 
     public String goalText;
