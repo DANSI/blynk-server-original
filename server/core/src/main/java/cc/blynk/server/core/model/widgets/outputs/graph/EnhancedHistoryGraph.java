@@ -31,7 +31,7 @@ public class EnhancedHistoryGraph extends Widget {
 
     public boolean xAxisValues;
 
-    public boolean showYAxis;
+    public boolean showXAxis;
 
     public boolean allowFullScreen;
 
