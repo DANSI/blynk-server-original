@@ -36,6 +36,8 @@ public class GraphDataStream {
 
     private final int yAxisMax;
 
+    private final boolean showYAxis;
+
     private final String suffix;
 
     private final boolean cubicSmoothingEnabled;
@@ -57,6 +59,7 @@ public class GraphDataStream {
                            @JsonProperty("mathFormula") String mathFormula,
                            @JsonProperty("yAxisMin") int yAxisMin,
                            @JsonProperty("yAxisMax") int yAxisMax,
+                           @JsonProperty("showYAxis") boolean showYAxis,
                            @JsonProperty("suffix") String suffix,
                            @JsonProperty("cubicSmoothingEnabled") boolean cubicSmoothingEnabled,
                            @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled,
@@ -73,6 +76,7 @@ public class GraphDataStream {
         this.mathFormula = mathFormula;
         this.yAxisMin = yAxisMin;
         this.yAxisMax = yAxisMax;
+        this.showYAxis = showYAxis;
         this.suffix = suffix;
         this.cubicSmoothingEnabled = cubicSmoothingEnabled;
         this.connectMissingPointsEnabled = connectMissingPointsEnabled;
