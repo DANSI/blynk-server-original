@@ -697,7 +697,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 100_000,
                 new DataStream((byte) 88, PinType.VIRTUAL),
-                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, null, false, false, false);
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -739,7 +739,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 100_000,
                 new DataStream((byte) 88, PinType.VIRTUAL),
-                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, null, false, false, false);
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
