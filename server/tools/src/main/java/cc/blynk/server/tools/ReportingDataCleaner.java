@@ -41,7 +41,7 @@ public final class ReportingDataCleaner {
 
         System.out.println("Directories number : " + allReporting.length);
 
-        int count = 360;
+        int count = 24 * 60 * 7; //1 storing minute points only for 1 week
         int filesCount = 0;
         int overrideCount = 0;
 
