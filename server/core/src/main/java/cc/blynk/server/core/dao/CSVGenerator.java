@@ -46,7 +46,7 @@ public class CSVGenerator {
     }
 
     private final ReportingDao reportingDao;
-    private final static int FETCH_COUNT = 60 * 24 * 30;
+    private final static int FETCH_COUNT = Integer.parseInt(System.getProperty("csv.export.data.points.max", "43200"));
 
     CSVGenerator(ReportingDao reportingDao) {
         this.reportingDao = reportingDao;

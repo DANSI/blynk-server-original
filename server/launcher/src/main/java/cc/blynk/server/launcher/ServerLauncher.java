@@ -24,6 +24,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.net.BindException;
 import java.security.Security;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -84,11 +85,9 @@ public final class ServerLauncher {
 
         //required for logging dynamic context
         System.setProperty("data.folder", serverProperties.getProperty("data.folder"));
+
         //required to avoid dependencies within model to server.properties
-        System.setProperty("terminal.strings.pool.size",
-                serverProperties.getProperty("terminal.strings.pool.size", "25"));
-        System.setProperty("initial.energy",
-                serverProperties.getProperty("initial.energy", "2000"));
+        setGlobalProperties(serverProperties);
 
         BaseProperties mailProperties = new MailProperties(cmdProperties);
         BaseProperties smsProperties = new SmsProperties(cmdProperties);
@@ -98,6 +97,22 @@ public final class ServerLauncher {
 
         boolean restore = Boolean.parseBoolean(cmdProperties.get(ArgumentsParser.RESTORE_OPTION));
         start(serverProperties, mailProperties, smsProperties, gcmProperties, restore);
+    }
+
+    private static void setGlobalProperties(ServerProperties serverProperties) {
+        Map<String, String> globalProps = new HashMap<>(4) {
+            {
+                put("terminal.strings.pool.size", "25");
+                put("initial.energy", "2000");
+                put("table.rows.pool.size", "100");
+                put("csv.export.data.points.max", "43200");
+            }
+        };
+
+        for (Map.Entry<String, String> entry : globalProps.entrySet()) {
+            String name = entry.getKey();
+            System.setProperty(name, serverProperties.getProperty(name, entry.getValue()));
+        }
     }
 
     private static void start(ServerProperties serverProperties, BaseProperties mailProperties,
