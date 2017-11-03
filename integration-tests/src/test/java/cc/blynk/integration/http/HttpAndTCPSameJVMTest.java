@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.widgets.controls.RGB;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.eventor.Rule;
@@ -602,5 +603,71 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         try (CloseableHttpResponse response = httpclient.execute(updateTableRow)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
+    }
+
+    @Test
+    public void sendMultiValueToAppViaHttpApi() throws Exception {
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+
+        HttpGet updateTableRow = new HttpGet(httpServerUrl + token + "/update/V1?value=110&value=230&value=330");
+        try (CloseableHttpResponse response = httpclient.execute(updateTableRow)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(),
+                eq(produce(111, HARDWARE, b("vw 1 110 230 330"))));
+    }
+
+    @Test
+    public void sendMultiValueToAppViaHttpApi2() throws Exception {
+        RGB rgb = new RGB();
+        rgb.dataStreams = new DataStream[] {
+                new DataStream((byte) 101, PinType.VIRTUAL)
+        };
+        rgb.splitMode = false;
+        rgb.height = 2;
+        rgb.width = 2;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(rgb));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody(2);
+
+        HttpGet updateTableRow = new HttpGet(httpServerUrl + token + "/update/V101?value=110&value=230&value=330");
+        try (CloseableHttpResponse response = httpclient.execute(updateTableRow)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(),
+                eq(produce(111, HARDWARE, b("vw 101 110 230 330"))));
+    }
+
+    @Test
+    public void sendMultiValueToAppViaHttpApi3() throws Exception {
+        RGB rgb = new RGB();
+        rgb.dataStreams = new DataStream[] {
+                new DataStream((byte) 101, PinType.VIRTUAL),
+                new DataStream((byte) 102, PinType.VIRTUAL),
+                new DataStream((byte) 103, PinType.VIRTUAL)
+        };
+        rgb.splitMode = false;
+        rgb.height = 2;
+        rgb.width = 2;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(rgb));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody(2);
+
+        HttpGet updateTableRow = new HttpGet(httpServerUrl + token + "/update/V101?value=110&value=230&value=330");
+        try (CloseableHttpResponse response = httpclient.execute(updateTableRow)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(),
+                eq(produce(111, HARDWARE, b("vw 101 110 230 330"))));
     }
 }

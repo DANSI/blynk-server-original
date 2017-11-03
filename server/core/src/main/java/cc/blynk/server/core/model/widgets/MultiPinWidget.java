@@ -74,7 +74,9 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
             if (dataStreams[0].notEmpty()) {
                 StringBuilder sb = new StringBuilder(dataStreams[0].makeHardwareBody());
                 for (int i = 1; i < dataStreams.length; i++) {
-                    sb.append(BODY_SEPARATOR).append(dataStreams[i].value);
+                    if (dataStreams[i].notEmpty()) {
+                        sb.append(BODY_SEPARATOR).append(dataStreams[i].value);
+                    }
                 }
                 return sb.toString();
             }
