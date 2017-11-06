@@ -232,10 +232,11 @@ public class DashBoard {
         return null;
     }
 
-    public  <T> T getWidgetByType(Class<T> clazz) {
+    @SuppressWarnings("unchecked")
+    public <T> T getWidgetByType(Class<T> clazz) {
         for (Widget widget : widgets) {
             if (clazz.isInstance(widget)) {
-                return clazz.cast(widget);
+                return (T) widget;
             }
         }
         return null;
