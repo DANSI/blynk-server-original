@@ -30,6 +30,8 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
     private final Class<?> type;
     private final InstanceLoadMeter quotaMeter;
     private long lastQuotaExceededTime;
+    private static final QuotaLimitException quotaLimitExceptionCached =
+            new QuotaLimitException("User has exceeded message quota limit.");
 
     protected BaseSimpleChannelInboundHandler(Class<?> type, Limits limits) {
         this.type = type;
@@ -68,7 +70,7 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
         //once a minute sending user response message in case limit is exceeded constantly
         if (lastQuotaExceededTime + USER_QUOTA_LIMIT_WARN_PERIOD < now) {
             lastQuotaExceededTime = now;
-            throw new QuotaLimitException("User has exceeded message quota limit.");
+            throw quotaLimitExceptionCached;
         }
     }
 

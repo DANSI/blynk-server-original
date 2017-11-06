@@ -11,7 +11,6 @@ public abstract class NotificationBase {
 
     private final long notificationQuotaLimit;
     private long lastSentTs;
-    @SuppressWarnings("ThrowableInstanceNeverThrown")
     public final static QuotaLimitException EXCEPTION_CACHE = new QuotaLimitException("Notification limit reached.");
 
     public NotificationBase(long defaultNotificationQuotaLimit) {
