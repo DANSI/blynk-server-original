@@ -100,7 +100,7 @@ public final class ServerLauncher {
     }
 
     private static void setGlobalProperties(ServerProperties serverProperties) {
-        Map<String, String> globalProps = new HashMap<>(4) {
+        Map<String, String> globalProps = new HashMap<String, String>(4) {
             {
                 put("terminal.strings.pool.size", "25");
                 put("initial.energy", "2000");
