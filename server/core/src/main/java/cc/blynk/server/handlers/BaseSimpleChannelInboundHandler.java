@@ -1,6 +1,7 @@
 package cc.blynk.server.handlers;
 
 import cc.blynk.server.Limits;
+import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
@@ -27,13 +28,13 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
     private final static int USER_QUOTA_LIMIT_WARN_PERIOD = 60_000;
 
     private final int userQuotaLimit;
-    private final Class<?> type;
+    private final Class<I> type;
     private final InstanceLoadMeter quotaMeter;
     private long lastQuotaExceededTime;
     private static final QuotaLimitException quotaLimitExceptionCached =
             new QuotaLimitException("User has exceeded message quota limit.");
 
-    protected BaseSimpleChannelInboundHandler(Class<?> type, Limits limits) {
+    protected BaseSimpleChannelInboundHandler(Class<I> type, Limits limits) {
         this.type = type;
         this.userQuotaLimit = limits.userQuotaLimit;
         this.quotaMeter = new InstanceLoadMeter();
@@ -57,8 +58,10 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
                 }
                 quotaMeter.mark();
                 messageReceived(ctx, (I) msg);
+            } catch (BaseServerException bse) {
+                handleBaseServerException(ctx, bse, getMsgId(msg));
             } catch (Exception e) {
-                handleGeneralException(ctx, e, getMsgId(msg));
+                handleGeneralException(ctx, e);
             } finally {
                 ReferenceCountUtil.release(msg);
             }
