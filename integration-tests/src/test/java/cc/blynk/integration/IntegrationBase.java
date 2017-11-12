@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
+import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
@@ -91,6 +92,10 @@ public abstract class IntegrationBase extends BaseTest {
 
     public static ResponseMessage illegalCommand(int msgId) {
         return new ResponseMessage(msgId, ILLEGAL_COMMAND);
+    }
+
+    public static ResponseMessage illegalCommandBody(int msgId) {
+        return new ResponseMessage(msgId, ILLEGAL_COMMAND_BODY);
     }
 
     public static ResponseMessage ok(int msgId) {

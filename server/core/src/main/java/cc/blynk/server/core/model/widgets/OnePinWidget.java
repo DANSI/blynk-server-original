@@ -130,11 +130,11 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
         switch (property) {
             case "min" :
                 //accepting floats as valid, but using int for min/max due to back compatibility
-                this.min = (int) NumberUtil.parseDouble(propertyValue);
+                this.min = (int) NumberUtil.parseDoubleOrThrow(propertyValue);
                 break;
             case "max" :
                 //accepting floats as valid, but using int for min/max due to back compatibility
-                this.max = (int) NumberUtil.parseDouble(propertyValue);
+                this.max = (int) NumberUtil.parseDoubleOrThrow(propertyValue);
                 break;
             default:
                 super.setProperty(property, propertyValue);

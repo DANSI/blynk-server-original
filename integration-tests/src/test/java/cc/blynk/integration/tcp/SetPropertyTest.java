@@ -288,6 +288,16 @@ public class SetPropertyTest extends IntegrationBase {
     }
 
     @Test
+    public void setMinMaxWrongPropertyFloat() throws Exception {
+        clientPair.hardwareClient.send("setProperty 4 min 10.11-1");
+        clientPair.hardwareClient.send("setProperty 4 max 20.22-2");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommandBody(1)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommandBody(2)));
+        verify(clientPair.appClient.responseMock, after(50).never()).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, after(50).never()).channelRead(any(), any());
+    }
+
+    @Test
     public void testSetColorShouldNotWorkForNonActiveProject() throws Exception {
         clientPair.appClient.send("deactivate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
