@@ -50,7 +50,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
             return;
         }
 
-        String email = parts[0];
+        String email = parts[0] == null ? null : parts[0].toLowerCase();
         String appName = parts[1];
 
         if (appName == null || appName.isEmpty() || appName.length() > 100) {
