@@ -74,7 +74,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             long now = System.currentTimeMillis();
             int deviceId = state.device.id;
 
-            reportingDao.process(state.user, dash.id, deviceId, pin, pinType, value, now);
+            reportingDao.process(state.user, dash, deviceId, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);
 
             Session session = sessionDao.userSession.get(state.userKey);

@@ -17,7 +17,7 @@ public class GraphDataStream {
 
     private final int color;
 
-    private final int targetId;
+    public final int targetId;
 
     @JsonProperty("pin") //todo "pin" for back compatibility
     public final DataStream dataStream;

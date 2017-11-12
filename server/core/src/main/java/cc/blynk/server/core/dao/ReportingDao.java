@@ -1,6 +1,7 @@
 package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.dao.functions.Function;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
@@ -208,21 +209,21 @@ public class ReportingDao implements Closeable {
         return "history_" + dashId + DEVICE_SEPARATOR + deviceId + "_" + pinType + pin + "_" + type + ".bin";
     }
 
-    public void process(User user, int dashId, int deviceId, byte pin, PinType pinType, String value, long ts) {
+    public void process(User user, DashBoard dash, int deviceId, byte pin, PinType pinType, String value, long ts) {
         try {
             double doubleVal = NumberUtil.parseDouble(value);
-            process(user, dashId, deviceId, pin, pinType, value, ts, doubleVal);
+            process(user, dash, deviceId, pin, pinType, value, ts, doubleVal);
         } catch (Exception e) {
             //just in case
             log.trace("Error collecting reporting entry.");
         }
     }
 
-    private void process(User user, int dashId, int deviceId, byte pin, PinType pinType,
+    private void process(User user, DashBoard dash, int deviceId, byte pin, PinType pinType,
                          String value, long ts, double doubleVal) {
         if (enableRawDbDataStore) {
             rawDataProcessor.collect(
-                    new BaseReportingKey(user.email, user.appName, dashId, deviceId, pinType, pin),
+                    new BaseReportingKey(user.email, user.appName, dash.id, deviceId, pinType, pin),
                     ts, value, doubleVal);
         }
 
@@ -231,9 +232,11 @@ public class ReportingDao implements Closeable {
             return;
         }
 
-        BaseReportingKey key = new BaseReportingKey(user.email, user.appName, dashId, deviceId, pinType, pin);
+        BaseReportingKey key = new BaseReportingKey(user.email, user.appName, dash.id, deviceId, pinType, pin);
         averageAggregator.collect(key, ts, doubleVal);
-        rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
+        if (dash.needRawDataForGraph(deviceId, pin, pinType)) {
+            rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
+        }
     }
 
     public byte[][] getReportingData(User user, GraphPinRequest[] requestedPins) {

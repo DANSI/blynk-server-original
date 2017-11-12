@@ -454,7 +454,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         String pinValue = String.join(StringUtils.BODY_SEPARATOR_STRING, pinValues);
 
-        reportingDao.process(user, dashId, deviceId, pin, pinType, pinValue, now);
+        reportingDao.process(user, dash, deviceId, pin, pinType, pinValue, now);
 
         dash.update(deviceId, pin, pinType, pinValue, now);
 
@@ -515,7 +515,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         }
 
         for (PinData pinData : pinsData) {
-            reportingDao.process(user, dashId, deviceId, pin, pinType, pinData.value, pinData.timestamp);
+            reportingDao.process(user, dash, deviceId, pin, pinType, pinData.value, pinData.timestamp);
         }
 
         long now = System.currentTimeMillis();

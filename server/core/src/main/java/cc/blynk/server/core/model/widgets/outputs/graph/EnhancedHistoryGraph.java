@@ -54,6 +54,18 @@ public class EnhancedHistoryGraph extends Widget {
         return false;
     }
 
+    //actually it is duplicated logic of isSame method, but isSame is used in other places
+    public boolean hasPin(int deviceId, byte pin, PinType pinType) {
+        for (GraphDataStream graphDataStream : dataStreams) {
+            if (graphDataStream.targetId == deviceId
+                    && graphDataStream.dataStream != null
+                    && graphDataStream.dataStream.isSame(pin, pinType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String getJsonValue() {
         return null;

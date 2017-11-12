@@ -15,6 +15,7 @@ import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
+import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.internal.ParseUtil;
@@ -122,8 +123,8 @@ public class DashBoard {
     }
 
     public Widget findWidgetByPin(int deviceId, String[] splitted) {
-        final PinType type = PinType.getPinType(splitted[0].charAt(0));
-        final byte pin = ParseUtil.parseByte(splitted[1]);
+        PinType type = PinType.getPinType(splitted[0].charAt(0));
+        byte pin = ParseUtil.parseByte(splitted[1]);
         return findWidgetByPin(deviceId, pin, type);
     }
 
@@ -146,6 +147,17 @@ public class DashBoard {
             }
         }
         return null;
+    }
+
+    public boolean needRawDataForGraph(int deviceId, byte pin, PinType pinType) {
+        for (Widget widget : widgets) {
+            if (widget instanceof EnhancedHistoryGraph) {
+                if (((EnhancedHistoryGraph) widget).hasPin(deviceId, pin, pinType)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public int getWidgetIndexByIdOrThrow(long id) {
