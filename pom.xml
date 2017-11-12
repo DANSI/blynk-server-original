@@ -197,15 +197,15 @@
         <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
 
         <!-- dependencies -->
-        <netty.version>4.1.16.Final</netty.version>
-        <netty.boring.ssl.version>2.0.6.Final</netty.boring.ssl.version>
+        <netty.version>4.1.17.Final</netty.version>
+        <netty.boring.ssl.version>2.0.7.Final</netty.boring.ssl.version>
         <log4j2.version>2.9.1</log4j2.version>
-        <jackson-databind.version>2.9.1</jackson-databind.version>
-        <disruptor.version>3.3.6</disruptor.version>
-        <async-http-client.version>2.1.0-alpha25</async-http-client.version>
+        <jackson-databind.version>2.9.2</jackson-databind.version>
+        <disruptor.version>3.3.7</disruptor.version>
+        <async-http-client.version>2.1.0-alpha26</async-http-client.version>
         <twitter4j-core.version>4.0.2</twitter4j-core.version>
         <postgresql.version>42.1.4</postgresql.version>
-        <HikariCP.version>2.7.2</HikariCP.version>
+        <HikariCP.version>2.7.3</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>
         <bcpg-jdk15on.version>1.58</bcpg-jdk15on.version>
         <acme4j-client.version>0.13</acme4j-client.version>
