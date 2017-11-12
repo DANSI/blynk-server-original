@@ -38,15 +38,10 @@ public final class NumberUtil {
         return Math.pow(10., exp);
     }
 
-    public static double parseDouble(final String s) throws NumberFormatException {
-        return parseDouble(s, 0, s.length());
-    }
+    public static double parseDouble(final String s) {
 
-    private static double parseDouble(final String s,
-                                      final int offset, final int end) throws NumberFormatException {
-
-        int off = offset;
-        int len = end - offset;
+        int off = 0;
+        int len = s.length();
 
         if (len == 0) {
             return NO_RESULT;
