@@ -11,23 +11,23 @@
 
 server.properties
 
-        data.folder=./data
-        logs.folder=./logs
-        log.level=info
-        enable.db=true
-        admin.rootPath=/admin
-        allowed.administrator.ips=
-        server.host=xxx.blynk.cc
-        contact.email=xxx@blynk.cc
-        region=xxx
+data.folder=./data
+logs.folder=./logs
+log.level=info
+enable.db=true
+admin.rootPath=/admin
+allowed.administrator.ips=
+server.host=xxx.blynk.cc
+contact.email=xxx@blynk.cc
+region=xxx
         
 db.properties
 
-        jdbc.url=jdbc:postgresql://xxx:5432/blynk?tcpKeepAlive=true&socketTimeout=150
-        user=test
-        password=test
-        connection.timeout.millis=30000
-        clean.reporting=false
+jdbc.url=jdbc:postgresql://xxx:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+user=test
+password=test
+connection.timeout.millis=30000
+clean.reporting=false
 
 gcm.properties
 
