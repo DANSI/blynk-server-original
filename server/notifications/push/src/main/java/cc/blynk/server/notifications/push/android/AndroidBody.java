@@ -5,12 +5,12 @@ package cc.blynk.server.notifications.push.android;
  * Created by Dmitriy Dumanskiy.
  * Created on 06.05.17.
  */
-public class GCMData {
+class AndroidBody {
 
     private final String message;
     private final int dashId;
 
-    public GCMData(String message, int dashId) {
+    AndroidBody(String message, int dashId) {
         this.message = message;
         this.dashId = dashId;
     }

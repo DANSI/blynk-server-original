@@ -13,4 +13,7 @@ public interface GCMMessage {
 
     String toJson() throws JsonProcessingException;
 
+    default void setTitle(String title) {
+    }
+
 }

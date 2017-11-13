@@ -17,15 +17,12 @@ import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
-import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
-import cc.blynk.server.notifications.push.android.GCMData;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.mockito.ArgumentCaptor;
 
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -205,21 +202,4 @@ public abstract class IntegrationBase extends BaseTest {
     public static ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
         return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER + " 1", jsonProfile, properties, 10000);
     }
-
-    private static Object getPrivateField(Object o, Class<?> clazz, String fieldName) throws Exception {
-        Field field = clazz.getDeclaredField(fieldName);
-        field.setAccessible(true);
-        return field.get(o);
-    }
-
-    public static long getPrivateAndroidTSField(Object o) {
-        try {
-            GCMData gcmData = (GCMData) getPrivateField(o, AndroidGCMMessage.class, "data");
-            return (long) getPrivateField(gcmData, GCMData.class, "ts");
-        } catch (Exception e) {
-            //ignore
-            return 0;
-        }
-    }
-
 }

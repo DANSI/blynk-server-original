@@ -35,22 +35,12 @@ public class IOSGCMMessage implements GCMMessage {
     }
 
     @Override
+    public void setTitle(String title) {
+        this.notification.setTitle(title);
+    }
+
+    @Override
     public String toJson() throws JsonProcessingException {
         return WRITER.writeValueAsString(this);
     }
-
-    private static class IOSBody {
-        private final String title;
-        private final String body;
-        private final int dashId;
-        private final String sound;
-
-        IOSBody(String body, int dashId) {
-            this.body = body;
-            this.dashId = dashId;
-            this.sound = "default";
-            this.title = "Blynk Notification";
-        }
-    }
-
 }

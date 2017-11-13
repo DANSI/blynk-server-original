@@ -27,6 +27,7 @@ public class GCMWrapper {
     private final String apiKey;
     private final AsyncHttpClient httpclient;
     private final String gcmURI;
+    private final String title;
     private final ObjectReader gcmResponseReader = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .readerFor(GCMResponseMessage.class);
@@ -35,6 +36,7 @@ public class GCMWrapper {
         this.apiKey = "key=" + props.getProperty("gcm.api.key");
         this.httpclient = httpclient;
         this.gcmURI = props.getProperty("gcm.server");
+        this.title = props.getProperty("notification.title", "Blynk Notification");
     }
 
     private static void processError(String errorMessage, Map<String, String> tokens, String uid) {
@@ -57,6 +59,7 @@ public class GCMWrapper {
 
         String message;
         try {
+            messageBase.setTitle(title);
             message = messageBase.toJson();
         } catch (JsonProcessingException e) {
             log.error("Error sending push. Wrong message format.");
