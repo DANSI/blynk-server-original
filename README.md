@@ -83,6 +83,24 @@ That's it!
 
         Blynk Server successfully started.
         All server output is stored in current folder in 'logs/blynk.log' file.
+        
+### Enabling mail on Local server
+To enable mail notifications on Local server you need to provide your own mail credentials. Create file ```mail.properties``` within same folder where ```server.jar``` is.
+Mail properties:
+
+        mail.smtp.auth=true
+        mail.smtp.starttls.enable=true
+        mail.smtp.host=smtp.gmail.com
+        mail.smtp.port=587
+        mail.smtp.username=YOUR_EMAIL_HERE
+        mail.smtp.password=YOUR_EMAIL_PASS_HERE
+        
+Find example [here](https://github.com/blynkkk/blynk-server/blob/master/server/notifications/email/src/main/resources/mail.properties).
+
+WARNING : only gmail accounts are allowed.
+
+NOTE : you'll need to setup Gmail to allow less secured applications.
+Go [here](https://www.google.com/settings/security/lesssecureapps) and then click "Allow less secure apps".
 
 ## Quick local server setup on Raspberry PI
 
@@ -402,24 +420,6 @@ administration page available from any other computer. Please restrict access to
 ## HTTP/S RESTful
 Blynk HTTP/S RESTful API allows to easily read and write values to/from Pins in Blynk apps and Hardware. 
 Http API description could be found [here](http://docs.blynkapi.apiary.io).
-        
-### Enabling mail on Local server
-To enable mail notifications on Local server you need to provide your own mail credentials. Create file ```mail.properties``` within same folder where server.jar is.
-Mail properties:
-
-        mail.smtp.auth=true
-        mail.smtp.starttls.enable=true
-        mail.smtp.host=smtp.gmail.com
-        mail.smtp.port=587
-        mail.smtp.username=YOUR_EMAIL_HERE
-        mail.smtp.password=YOUR_EMAIL_PASS_HERE
-        
-Find example [here](https://github.com/blynkkk/blynk-server/blob/master/server/notifications/email/src/main/resources/mail.properties).
-
-WARNING : only gmail accounts are allowed.
-
-NOTE : you'll need to setup Gmail to allow less secured applications. Go [here](https://www.google.com/settings/security/lesssecureapps) and then click "Allow less secure apps".
-
 
 ### Enabling sms on local server
 To enable SMS notifications on Local Server you need to provide credentials for SMS gateway (currently Blynk server
