@@ -11,8 +11,8 @@ import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
  */
 public class LogoutMessage extends StringMessage {
 
-    public LogoutMessage(int messageId) {
-        super(messageId, LOGOUT, 0, "");
+    public LogoutMessage(int messageId, String body) {
+        super(messageId, LOGOUT, body.length(), body);
     }
 
     @Override

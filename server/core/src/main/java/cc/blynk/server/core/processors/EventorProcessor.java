@@ -59,7 +59,7 @@ public class EventorProcessor {
                         PinType type, String triggerValue, long now) {
         Eventor eventor = dash.getWidgetByType(Eventor.class);
         if (eventor == null || eventor.rules == null
-                || eventor.deviceId != deviceId || !dash.isActive || user.isLoggedOut) {
+                || eventor.deviceId != deviceId || !dash.isActive) {
             return;
         }
 

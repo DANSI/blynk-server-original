@@ -208,7 +208,6 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
     private void completeLogin(Channel channel, Session session, User user, int msgId) {
         user.lastLoggedIP = IPUtils.getIp(channel.remoteAddress());
         user.lastLoggedAt = System.currentTimeMillis();
-        user.isLoggedOut = false;
 
         session.addAppChannel(channel);
         channel.writeAndFlush(ok(msgId), channel.voidPromise());

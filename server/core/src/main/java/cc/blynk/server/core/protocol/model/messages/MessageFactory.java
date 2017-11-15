@@ -150,7 +150,7 @@ public final class MessageFactory {
             case LOGIN :
                 return new LoginMessage(messageId, body);
             case LOGOUT :
-                return new LogoutMessage(messageId);
+                return new LogoutMessage(messageId, body);
             case LOAD_PROFILE_GZIPPED :
                 return new LoadProfileGzippedStringMessage(messageId, body);
             case APP_SYNC:

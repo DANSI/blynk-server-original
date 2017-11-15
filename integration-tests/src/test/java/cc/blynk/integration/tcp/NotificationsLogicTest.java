@@ -210,6 +210,43 @@ public class NotificationsLogicTest extends IntegrationBase {
     }
 
     @Test
+    public void testHardwareDeviceWentOfflineAndPushNotWorksForLogoutUserWithUID() throws Exception {
+        Profile profile = parseProfile(readTestUserProfile());
+        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        notification.notifyWhenOffline = true;
+
+        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.send("logout uid");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
+        channelFuture.await();
+
+        verify(gcmWrapper, after(500).never()).send(any(), any(), any());
+
+        clientPair.appClient.send("logout");
+        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(ok(3)));
+    }
+
+    @Test
+    public void testHardwareDeviceWentOfflineAndPushNotWorksForLogoutUserWithWrongUID() throws Exception {
+        Profile profile = parseProfile(readTestUserProfile());
+        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        notification.notifyWhenOffline = true;
+
+        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.send("logout uidxxx");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
+        channelFuture.await();
+
+        verify(gcmWrapper, timeout(500)).send(any(), any(), eq("uid"));
+    }
+
+    @Test
     public void testHardwareDeviceWentOfflineAndPushNotWorksForLogoutUser2() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
@@ -228,12 +265,9 @@ public class NotificationsLogicTest extends IntegrationBase {
 
         verify(gcmWrapper, after(500).never()).send(any(), any(), any());
 
-        clientPair.appClient.send("logout");
-        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(ok(4)));
-
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
-        appClient.send("login dima@mail.ua 1");
+        appClient.send("login dima@mail.ua 1 Android" + "\0" + "1.10.4");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
@@ -242,14 +276,79 @@ public class NotificationsLogicTest extends IntegrationBase {
         hardClient.send("login " + token);
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
+        appClient.send("addPushToken 1\0uid\0token");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
         hardClient.stop().await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), eq("uid"));
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your My Device went offline. \"My Dashboard\" project is disconnected.", 1).toJson();
         assertEquals(expectedJson, message.toJson());
+    }
+
+    @Test
+    public void testLoginWith2AppsAndLogoutFrom1() throws Exception {
+        Profile profile = parseProfile(readTestUserProfile());
+        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        notification.notifyWhenOffline = true;
+
+        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody(2);
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+        appClient.send("login dima@mail.ua 1 Android" + "\0" + "1.10.4");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        appClient.send("addPushToken 1\0uid2\0token2");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        clientPair.appClient.send("logout uid");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+
+        clientPair.hardwareClient.stop().await();
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), eq("uid2"));
+        AndroidGCMMessage message = objectArgumentCaptor.getValue();
+
+        String expectedJson = new AndroidGCMMessage("token2", Priority.normal, "Your My Device went offline. \"My Dashboard\" project is disconnected.", 1).toJson();
+        assertEquals(expectedJson, message.toJson());
+    }
+
+    @Test
+    public void testLoginWith2AppsAndLogoutFrom2() throws Exception {
+        Profile profile = parseProfile(readTestUserProfile());
+        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        notification.notifyWhenOffline = true;
+
+        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody(2);
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+        appClient.send("login dima@mail.ua 1 Android" + "\0" + "1.10.4");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        appClient.send("addPushToken 1\0uid2\0token2");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        clientPair.appClient.send("logout");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+
+        clientPair.hardwareClient.stop().await();
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(gcmWrapper, after(500).never()).send(objectArgumentCaptor.capture(), any(), eq("uid2"));
     }
 
     @Test

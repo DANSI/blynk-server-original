@@ -81,7 +81,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
         Notification notification = dashBoard.getWidgetByType(Notification.class);
 
-        if (notification != null && notification.notifyWhenOffline && !state.user.isLoggedOut) {
+        if (notification != null && notification.notifyWhenOffline) {
             sendPushNotification(ctx, dashBoard, notification, state.dash.id, device);
         } else {
             session.sendOfflineMessageToApps(state.dash.id);
