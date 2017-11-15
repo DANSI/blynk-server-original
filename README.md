@@ -20,27 +20,27 @@ If you need more information, please follow these links:
 
 # Content 
 
-- [Download](https://github.com/blynkkk/blynk-server#blynk-server)
-- [Requirements](https://github.com/blynkkk/blynk-server#requirements)
-- [Quick Local Server setup](https://github.com/blynkkk/blynk-server#quick-local-server-setup)
-- [Quick local server setup on Raspberry PI](https://github.com/blynkkk/blynk-server#quick-local-server-setup-on-raspberry-pi)
-- [Enabling server auto restart on unix-like systems](https://github.com/blynkkk/blynk-server#enabling-server-auto-restart-on-unix-like-systems)
-- [Enabling server auto restart on Windows](https://github.com/blynkkk/blynk-server#enabling-server-auto-restart-on-windows)
-- [Update instruction for unix-like systems](https://github.com/blynkkk/blynk-server#update-instruction-for-unix-like-systems)
-- [Update instruction for Windows](https://github.com/blynkkk/blynk-server#update-instruction-for-windows)
-- [App and sketch changes for Local Server](https://github.com/blynkkk/blynk-server#app-and-sketch-changes)
-- [Advanced local server setup](https://github.com/blynkkk/blynk-server#advanced-local-server-setup)
-- [Administration UI](https://github.com/blynkkk/blynk-server#administration-ui)
-- [HTTP/S RESTful API](https://github.com/blynkkk/blynk-server#https-restful)
-- [Enabling mail on Local server](https://github.com/blynkkk/blynk-server#enabling-mail-on-local-server)
-- [Enabling sms on local server](https://github.com/blynkkk/blynk-server#enabling-sms-on-local-server)
-- [Enabling raw data storage](https://github.com/blynkkk/blynk-server#enabling-raw-data-storage)
-- [Automatic Let's Encrypt Certificates](https://github.com/blynkkk/blynk-server#automatic-lets-encrypt-certificates-generation)
-- [Manual Let's Encrypt SSL/TLS Certificates](https://github.com/blynkkk/blynk-server#manual-lets-encrypt-ssltls-certificates)
-- [Generate own SSL certificates](https://github.com/blynkkk/blynk-server#generate-own-ssl-certificates)
-- [Install java for Ubuntu](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu)
-- [How Blynk Works?](https://github.com/blynkkk/blynk-server#how-blynk-works)
-- [Blynk Protocol](https://github.com/blynkkk/blynk-server#blynk-protocol)
+- [Download](#blynk-server)
+- [Requirements](#requirements)
+- [Quick Local Server setup](#quick-local-server-setup)
+- [Quick local server setup on Raspberry PI](#quick-local-server-setup-on-raspberry-pi)
+- [Enabling server auto restart on unix-like systems](#enabling-server-auto-restart-on-unix-like-systems)
+- [Enabling server auto restart on Windows](#enabling-server-auto-restart-on-windows)
+- [Update instruction for unix-like systems](#update-instruction-for-unix-like-systems)
+- [Update instruction for Windows](#update-instruction-for-windows)
+- [App and sketch changes for Local Server](#app-and-sketch-changes)
+- [Advanced local server setup](#advanced-local-server-setup)
+- [Administration UI](#administration-ui)
+- [HTTP/S RESTful API](#https-restful)
+- [Enabling mail on Local server](#enabling-mail-on-local-server)
+- [Enabling sms on local server](#enabling-sms-on-local-server)
+- [Enabling raw data storage](#enabling-raw-data-storage)
+- [Automatic Let's Encrypt Certificates](#automatic-lets-encrypt-certificates-generation)
+- [Manual Let's Encrypt SSL/TLS Certificates](#manual-lets-encrypt-ssltls-certificates)
+- [Generate own SSL certificates](#generate-own-ssl-certificates)
+- [Install java for Ubuntu](#install-java-for-ubuntu)
+- [How Blynk Works?](#how-blynk-works)
+- [Blynk Protocol](#blynk-protocol)
 
 # GETTING STARTED
 
@@ -60,7 +60,7 @@ messages between Blynk mobile application and various microcontroller boards and
 - At least 30 MB of RAM (could be less with tuning)
 - Open ports 8443 (for app), 8442 (for hardware without ssl), 8441 (for hardware with ssl)
 
-[Ubuntu java installation instruction](https://github.com/blynkkk/blynk-server#install-java-for-ubuntu).
+[Ubuntu java installation instruction](#install-java-for-ubuntu).
 
 For Windows download Java [here](http://download.oracle.com/otn-pub/java/jdk/9+181/jre-9_windows-x64_bin.exe) and install. 
 
@@ -178,7 +178,7 @@ Server should be always updated before you update Blynk App. To update your serv
         
 10539 - blynk server process id from command output above.
  
-+ Start new server [as usual](https://github.com/blynkkk/blynk-server#quick-local-server-setup)
++ Start new server [as usual](#quick-local-server-setup)
 
 After this steps you can update Blynk app. Server version downgrade is not supported. 
 
@@ -193,7 +193,7 @@ Please **do not** revert your server to lower versions. You may loose all of you
 
 + Stop process;
 
-+ Start new server [as usual](https://github.com/blynkkk/blynk-server#quick-local-server-setup)
++ Start new server [as usual](#quick-local-server-setup)
                 
 ## App and sketch changes
 
@@ -288,7 +288,7 @@ Available server options:
         hardware.ssl.port=8441
         
         
-+ For simplicity Blynk already provides server jar with built in SSL certificates, so you have working server out of the box via SSL/TLS sockets. But as certificate and it's private key are in public this is totally not secure. So in order to fix that you need to provide your own certificates. And change below properties with path to your cert. and private key and it's password. See how to generate self-signed certificates [here](https://github.com/blynkkk/blynk-server#generate-ssl-certificates)
++ For simplicity Blynk already provides server jar with built in SSL certificates, so you have working server out of the box via SSL/TLS sockets. But as certificate and it's private key are in public this is totally not secure. So in order to fix that you need to provide your own certificates. And change below properties with path to your cert. and private key and it's password. See how to generate self-signed certificates [here](#generate-ssl-certificates)
 
         #points to cert and key that placed in same folder as running jar.
         
@@ -365,7 +365,7 @@ Available server options:
 
         hard.socket.idle.timeout=15
         
-+ Mostly required for local servers setup in case user want to log raw data in CSV format. See [raw data] (https://github.com/blynkkk/blynk-server#raw-data-storage) section for more info.
++ Mostly required for local servers setup in case user want to log raw data in CSV format. See [raw data] (#raw-data-storage) section for more info.
         
         enable.raw.data.store=true
         
@@ -549,7 +549,7 @@ However, it has few requirements:
         contact.email=test@gmail.com
         
 + You need to start server on port 80 (requires root or admin rights) or 
-make [port forwarding](https://github.com/blynkkk/blynk-server#port-forwarding-for-https-api) to default Blynk HTTP port - 8080.
+make [port forwarding](#port-forwarding-for-https-api) to default Blynk HTTP port - 8080.
 
 That's it! Run server as regular and certificates will be generated automatically.
 
