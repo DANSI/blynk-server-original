@@ -13,7 +13,10 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2Device;
 
@@ -24,6 +27,8 @@ import static cc.blynk.utils.StringUtils.split2Device;
  *
  */
 public class DeleteEnhancedGraphDataLogic {
+
+    private static final Logger log = LogManager.getLogger(DeleteEnhancedGraphDataLogic.class);
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final ReportingDao reportingDao;
@@ -75,8 +80,9 @@ public class DeleteEnhancedGraphDataLogic {
                     }
                 }
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
-            } catch (NumberFormatException e) {
-                throw new IllegalCommandException("HardwareLogic command body incorrect.");
+            } catch (Exception e) {
+                log.debug("Error removing enhanced graph data. Reason : {}.", e.getMessage());
+                channel.writeAndFlush(illegalCommand(msgId), channel.voidPromise());
             }
         });
     }
