@@ -69,7 +69,7 @@ public class DeleteEnhancedGraphDataLogic {
                 for (GraphDataStream graphDataStream : dataStreams) {
                     Target target = dash.getTarget(graphDataStream.getTargetId(targetId));
                     DataStream dataStream = graphDataStream.dataStream;
-                    if (target != null && dataStream != null) {
+                    if (target != null && dataStream != null && dataStream.pinType != null) {
                         int deviceId = target.getDeviceId();
                         reportingDao.delete(user, dash.id, deviceId, dataStream.pinType, dataStream.pin);
                     }
