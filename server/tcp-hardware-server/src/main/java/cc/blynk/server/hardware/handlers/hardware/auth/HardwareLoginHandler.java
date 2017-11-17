@@ -89,7 +89,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         if (tokenValue == null) {
             //token should always be 32 chars. otherwise it is not valid
-            if (token.length() != 32 ) {
+            if (token.length() != 32) {
                 log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
                 ctx.writeAndFlush(invalidToken(message.id), ctx.voidPromise());
             } else {
