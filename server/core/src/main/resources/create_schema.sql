@@ -191,6 +191,16 @@ CREATE TABLE reporting_http_command_stat_minute (
   PRIMARY KEY (region, ts)
 );
 
+CREATE TABLE forwarding_tokens (
+  token character(32),
+  host text,
+  email text,
+  project_id int4,
+  device_id int4,
+  ts timestamp DEFAULT NOW(),
+  PRIMARY KEY(token, host)
+);
+
 create user test with password 'test';
 GRANT CONNECT ON DATABASE blynk TO test;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO test;

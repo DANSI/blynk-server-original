@@ -106,7 +106,7 @@ public class Holder implements Closeable {
             this.userDao = new UserDao(fileManager.deserializeUsers(), this.region, host);
         }
 
-        this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, dbManager, host);
+        this.tokenManager = new TokenManager(this.userDao.users, dbManager, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.reportingDao = new ReportingDao(reportingFolder,
@@ -161,7 +161,7 @@ public class Holder implements Closeable {
         );
 
         this.dbManager = new DBManager(dbFileName, blockingIOProcessor, serverProperties.getBoolProperty("enable.db"));
-        this.tokenManager = new TokenManager(this.userDao.users, blockingIOProcessor, dbManager, host);
+        this.tokenManager = new TokenManager(this.userDao.users, dbManager, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.reportingDao = new ReportingDao(reportingFolder,

@@ -9,6 +9,7 @@ import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.CloneProjectDBDao;
 import cc.blynk.server.db.dao.FlashedTokensDBDao;
+import cc.blynk.server.db.dao.ForwardingTokenDBDao;
 import cc.blynk.server.db.dao.PurchaseDBDao;
 import cc.blynk.server.db.dao.RedeemDBDao;
 import cc.blynk.server.db.dao.ReportingDBDao;
@@ -50,6 +51,7 @@ public class DBManager implements Closeable {
     PurchaseDBDao purchaseDBDao;
     FlashedTokensDBDao flashedTokensDBDao;
     CloneProjectDBDao cloneProjectDBDao;
+    ForwardingTokenDBDao forwardingTokenDBDao;
 
     public DBManager(BlockingIOProcessor blockingIOProcessor, boolean isEnabled) {
         this(DB_PROPERTIES_FILENAME, blockingIOProcessor, isEnabled);
@@ -101,6 +103,7 @@ public class DBManager implements Closeable {
         this.purchaseDBDao = new PurchaseDBDao(hikariDataSource);
         this.flashedTokensDBDao = new FlashedTokensDBDao(hikariDataSource);
         this.cloneProjectDBDao = new CloneProjectDBDao(hikariDataSource);
+        this.forwardingTokenDBDao = new ForwardingTokenDBDao(hikariDataSource);
         this.cleanOldReporting = serverProperties.getBoolProperty("clean.reporting");
 
         checkDBVersion();
@@ -246,16 +249,24 @@ public class DBManager implements Closeable {
         return null;
     }
 
-    //todo
-    //not implemented methods section. not used for now. for GEO DNS fix
     public String getServerByToken(String token) {
+        if (isDBEnabled()) {
+            return forwardingTokenDBDao.selectHostByToken(token);
+        }
         return null;
     }
-    public void assignServerToToken(String token, String serverIp) {
-        //do nothing
+
+    public void assignServerToToken(String token, String serverIp, String email, int dashId, int deviceId) {
+        if (isDBEnabled()) {
+            blockingIOProcessor.executeDB(() ->
+                    forwardingTokenDBDao.insertTokenHost(token, serverIp, email, dashId, deviceId));
+        }
     }
-    public void removeToken(String... token) {
-        //do nothing
+
+    public void removeToken(String... tokens) {
+        if (isDBEnabled() && tokens.length > 0) {
+            blockingIOProcessor.executeDB(() -> forwardingTokenDBDao.deleteToken(tokens));
+        }
     }
 
     public Connection getConnection() throws Exception {
