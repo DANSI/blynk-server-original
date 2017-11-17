@@ -9,7 +9,7 @@ import java.util.Map;
  * Created by Dmitriy Dumanskiy.
  * Created on 17.11.17.
  */
-public class LRUCache <K, V> extends LinkedHashMap<K, V> {
+public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 
     private final int maxSize;
 
