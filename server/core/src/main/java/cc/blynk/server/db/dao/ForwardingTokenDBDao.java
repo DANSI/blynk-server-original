@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.StringJoiner;
 
 /**
@@ -26,6 +27,28 @@ public class ForwardingTokenDBDao {
 
     public ForwardingTokenDBDao(HikariDataSource ds) {
         this.ds = ds;
+    }
+
+    public boolean insertTokenHostBatch(List<ForwardingTokenEntry> entries) {
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(insertTokenHostProject)) {
+
+            for (ForwardingTokenEntry entry : entries) {
+                ps.setString(1, entry.token);
+                ps.setString(2, entry.host);
+                ps.setString(3, entry.email);
+                ps.setInt(4, entry.dashId);
+                ps.setInt(5, entry.deviceId);
+                ps.addBatch();
+            }
+
+            ps.executeBatch();
+            connection.commit();
+            return true;
+        } catch (Exception e) {
+            log.error("Error insert token host. Reason : {}", e.getMessage());
+        }
+        return false;
     }
 
     public boolean insertTokenHost(String token, String host, String email, int dashId, int deviceId) {
