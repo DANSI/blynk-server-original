@@ -51,7 +51,7 @@ public class DBManager implements Closeable {
     PurchaseDBDao purchaseDBDao;
     FlashedTokensDBDao flashedTokensDBDao;
     CloneProjectDBDao cloneProjectDBDao;
-    ForwardingTokenDBDao forwardingTokenDBDao;
+    public ForwardingTokenDBDao forwardingTokenDBDao;
 
     public DBManager(BlockingIOProcessor blockingIOProcessor, boolean isEnabled) {
         this(DB_PROPERTIES_FILENAME, blockingIOProcessor, isEnabled);

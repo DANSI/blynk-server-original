@@ -28,6 +28,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
+import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
@@ -113,6 +114,10 @@ public abstract class IntegrationBase extends BaseTest {
 
     public static ResponseMessage notAllowed(int msgId) {
         return new ResponseMessage(msgId, NOT_ALLOWED);
+    }
+
+    public static ResponseMessage invalidToken(int msgId) {
+        return new ResponseMessage(msgId, INVALID_TOKEN);
     }
 
     public static ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,

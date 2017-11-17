@@ -15,7 +15,7 @@ import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
 import cc.blynk.utils.IPUtils;
-import cc.blynk.utils.StringUtils;
+import cc.blynk.utils.structure.LRUCache;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -29,6 +29,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.internal.BlynkByteBufUtil.invalidToken;
 import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
 import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
  * Handler responsible for managing hardware and apps login messages.
@@ -86,11 +87,15 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         String token = message.body.trim();
         TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
 
-        //no user on current server, trying to find server that user belongs to.
         if (tokenValue == null) {
-            //checkUserOnOtherServer(ctx, token, message.id);
-            log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(invalidToken(message.id), ctx.voidPromise());
+            //token should always be 32 chars. otherwise it is not valid
+            if (token.length() != 32 ) {
+                log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
+                ctx.writeAndFlush(invalidToken(message.id), ctx.voidPromise());
+            } else {
+                //no user on current server, trying to find server that user belongs to.
+                checkTokenOnOtherServer(ctx, token, message.id);
+            }
             return;
         }
 
@@ -115,17 +120,29 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         }
     }
 
-    private void checkUserOnOtherServer(ChannelHandlerContext ctx, String token, int msgId) {
+    private void checkTokenOnOtherServer(ChannelHandlerContext ctx, String token, int msgId) {
         blockingIOProcessor.executeDB(() -> {
-            String server = dbManager.getServerByToken(token);
+            //check cache first
+            LRUCache.CacheEntry cacheEntry = LRUCache.LOGIN_TOKENS_CACHE.get(token);
+
+            String server;
+            if (cacheEntry == null) {
+                log.debug("Checking invalid token in DB.");
+                server = dbManager.getServerByToken(token);
+                LRUCache.LOGIN_TOKENS_CACHE.put(token, new LRUCache.CacheEntry(server));
+            } else {
+                log.debug("Taking invalid token from cache.");
+                server = cacheEntry.value;
+            }
+
             // no server found, that's means token is wrong.
             if (server == null || server.equals(holder.host)) {
                 log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
                 ctx.writeAndFlush(invalidToken(msgId), ctx.voidPromise());
             } else {
-                log.info("Redirecting token '{}', '{}' to {}", token, ctx.channel().remoteAddress(), server);
+                log.info("Redirecting token '{}' to {}", token, server);
                 ctx.writeAndFlush(makeASCIIStringMessage(
-                        CONNECT_REDIRECT, msgId, server + StringUtils.BODY_SEPARATOR + listenPort),
+                        CONNECT_REDIRECT, msgId, server + BODY_SEPARATOR + listenPort),
                         ctx.voidPromise());
             }
         });
