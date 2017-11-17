@@ -280,7 +280,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
     @Test
     public void redirectForHardwareWorksFromCache() throws Exception {
-        String token = "12345678901234567890123456789012";
+        String token = "12345678901234567890123456789013";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
                 token, "test_host", DEFAULT_TEST_USER, 0, 0));
