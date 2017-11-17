@@ -61,7 +61,9 @@ public class GCMWrapperTest {
 
     @Test
     public void testValidIOSJson() throws JsonProcessingException {
-        assertEquals("{\"to\":\"to\",\"priority\":\"normal\",\"notification\":{\"title\":\"Blynk Notification\",\"body\":\"yo!!!\",\"dashId\":1,\"sound\":\"default\"}}", new IOSGCMMessage("to", Priority.normal, "yo!!!", 1).toJson());
+        IOSGCMMessage iosgcmMessage = new IOSGCMMessage("to", Priority.normal, "yo!!!", 1);
+        iosgcmMessage.setTitle("Blynk Notification");
+        assertEquals("{\"to\":\"to\",\"priority\":\"normal\",\"notification\":{\"body\":\"yo!!!\",\"dashId\":1,\"sound\":\"default\",\"title\":\"Blynk Notification\"}}", iosgcmMessage.toJson());
     }
 
 }
