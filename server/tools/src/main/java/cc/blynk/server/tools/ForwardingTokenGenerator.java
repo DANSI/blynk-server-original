@@ -19,6 +19,10 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class ForwardingTokenGenerator {
 
+    private ForwardingTokenGenerator() {
+
+    }
+
     public static void main(String[] args) throws Exception {
         BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(6, 100);
         DBManager dbManager = new DBManager(blockingIOProcessor, true);
