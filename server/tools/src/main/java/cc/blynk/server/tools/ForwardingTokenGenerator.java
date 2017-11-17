@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentMap;
  * Created by Dmitriy Dumanskiy.
  * Created on 17.11.17.
  */
-public class ForwardingTokenGenerator {
+public final class ForwardingTokenGenerator {
 
     private ForwardingTokenGenerator() {
 
