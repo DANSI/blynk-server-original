@@ -1,8 +1,6 @@
 package cc.blynk.server.core.model.widgets.others.eventor;
 
-import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.NoPinWidget;
-import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 
@@ -25,26 +23,6 @@ public class Eventor extends NoPinWidget {
     public Eventor(Rule[] rules) {
         this();
         this.rules = rules;
-    }
-
-    @Override
-    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
-        return false;
-    }
-
-    @Override
-    public void updateIfSame(Widget widget) {
-        //do nothing
-    }
-
-    @Override
-    public boolean isSame(int deviceId, byte pin, PinType type) {
-        return false;
-    }
-
-    @Override
-    public String getJsonValue() {
-        return null;
     }
 
     @Override
