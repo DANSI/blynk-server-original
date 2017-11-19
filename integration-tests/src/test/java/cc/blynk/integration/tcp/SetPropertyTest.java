@@ -234,6 +234,18 @@ public class SetPropertyTest extends IntegrationBase {
     }
 
     @Test
+    public void testSetWrongWidgetProperty3() throws Exception {
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = parseProfile(clientPair.appClient.getBody());
+
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        assertEquals(widget.x, 1);
+
+        clientPair.hardwareClient.send("setProperty 4 url 0");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
+    }
+
+    @Test
     public void testSetColorForWidget() throws Exception {
         clientPair.hardwareClient.send("setProperty 4 color #23C48E");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));

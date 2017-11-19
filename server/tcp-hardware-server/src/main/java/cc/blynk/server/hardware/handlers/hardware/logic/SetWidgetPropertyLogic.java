@@ -4,6 +4,7 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -59,7 +60,9 @@ public class SetWidgetPropertyLogic {
             return;
         }
 
-        if (Widget.isNotValidProperty(property)) {
+        WidgetProperty widgetProperty = WidgetProperty.getProperty(property);
+
+        if (widgetProperty == null) {
             log.debug("Unsupported set property {}.", property);
             ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
             return;
@@ -73,7 +76,7 @@ public class SetWidgetPropertyLogic {
 
         if (widget != null) {
             try {
-                widget.setProperty(property, propertyValue);
+                widget.setProperty(widgetProperty, propertyValue);
                 dash.updatedAt = System.currentTimeMillis();
             } catch (Exception e) {
                 log.debug("Error setting widget property. Reason : {}", e.getMessage());
@@ -82,7 +85,7 @@ public class SetWidgetPropertyLogic {
             }
         } else {
             //this is possible case for device selector
-            dash.putPinPropertyStorageValue(deviceId, PinType.VIRTUAL, pin, property, propertyValue);
+            dash.putPinPropertyStorageValue(deviceId, PinType.VIRTUAL, pin, widgetProperty.label, propertyValue);
         }
 
         Session session = sessionDao.userSession.get(state.userKey);

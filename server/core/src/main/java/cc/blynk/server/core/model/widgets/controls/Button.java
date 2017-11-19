@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.controls;
 
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 
 /**
@@ -26,7 +27,7 @@ public class Button extends OnePinWidget {
     }
 
     @Override
-    public void setProperty(String property, String propertyValue) {
+    public void setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case ON_LABEL :
                 this.onLabel = propertyValue;

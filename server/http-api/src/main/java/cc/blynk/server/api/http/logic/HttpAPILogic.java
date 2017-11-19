@@ -26,6 +26,7 @@ import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -348,9 +349,15 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return badRequest("No widget for SetWidgetProperty command.");
         }
 
+        WidgetProperty widgetProperty = WidgetProperty.getProperty(property);
+        if (widgetProperty == null) {
+            log.debug("Property not exists. Property : {}", property);
+            return badRequest("Property not exists.");
+        }
+
         try {
             //todo for now supporting only single property
-            widget.setProperty(property, values[0]);
+            widget.setProperty(widgetProperty, values[0]);
         } catch (Exception e) {
             log.debug("Error setting widget property. Reason : {}", e.getMessage());
             return badRequest("Error setting widget property.");

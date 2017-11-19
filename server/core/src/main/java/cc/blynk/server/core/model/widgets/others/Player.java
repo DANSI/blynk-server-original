@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.others;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 
 /**
@@ -40,7 +41,7 @@ public class Player extends OnePinWidget {
     }
 
     @Override
-    public void setProperty(String property, String propertyValue) {
+    public void setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case IS_ON_PLAY :
                 this.isOnPlay = Boolean.parseBoolean(propertyValue);

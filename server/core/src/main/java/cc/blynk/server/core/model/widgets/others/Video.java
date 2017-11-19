@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.others;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import io.netty.channel.Channel;
@@ -33,7 +34,7 @@ public class Video extends OnePinWidget {
     }
 
     @Override
-    public void setProperty(String property, String propertyValue) {
+    public void setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case URL :
                 this.url = propertyValue;

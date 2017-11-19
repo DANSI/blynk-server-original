@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui;
 
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.utils.StringUtils;
 
@@ -25,7 +26,7 @@ public class Menu extends OnePinWidget {
     }
 
     @Override
-    public void setProperty(String property, String propertyValue) {
+    public void setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case LABELS :
                 this.labels = propertyValue.split(StringUtils.BODY_SEPARATOR_STRING);
