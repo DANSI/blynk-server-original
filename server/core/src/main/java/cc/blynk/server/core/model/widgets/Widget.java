@@ -158,12 +158,15 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public boolean isDefaultColor;
 
-    protected static void append(StringBuilder sb, byte pin, PinType pinType, String pinMode) {
-        if (pin != DataStream.NO_PIN && pinMode != null && pinType != PinType.VIRTUAL) {
-            sb.append(StringUtils.BODY_SEPARATOR)
-                    .append(pin)
-                    .append(StringUtils.BODY_SEPARATOR)
-                    .append(pinMode);
+    protected void append(StringBuilder sb, byte pin, PinType pinType) {
+        if (pin != DataStream.NO_PIN && pinType != PinType.VIRTUAL) {
+            String pinMode = getModeType();
+            if (pinMode != null) {
+                sb.append(StringUtils.BODY_SEPARATOR)
+                        .append(pin)
+                        .append(StringUtils.BODY_SEPARATOR)
+                        .append(pinMode);
+            }
         }
     }
 

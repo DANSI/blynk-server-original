@@ -88,7 +88,7 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
     public void append(StringBuilder sb, int deviceId) {
         if (dataStreams != null && this.deviceId == deviceId) {
             for (DataStream dataStream : dataStreams) {
-                append(sb, dataStream.pin, dataStream.pinType, getModeType());
+                append(sb, dataStream.pin, dataStream.pinType);
             }
         }
     }

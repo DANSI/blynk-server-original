@@ -117,7 +117,7 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     @Override
     public void append(StringBuilder sb, int deviceId) {
         if (this.deviceId == deviceId) {
-            append(sb, pin, pinType, getModeType());
+            append(sb, pin, pinType);
         }
     }
 
