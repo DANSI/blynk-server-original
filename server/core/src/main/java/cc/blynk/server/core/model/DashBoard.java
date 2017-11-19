@@ -98,14 +98,14 @@ public class DashBoard {
     }
 
     public void putPinPropertyStorageValue(int deviceId, PinType type, byte pin, String property, String value) {
-        puntPinStorageValue(new PinPropertyStorageKey(deviceId, type, pin, property), value);
+        putPinStorageValue(new PinPropertyStorageKey(deviceId, type, pin, property), value);
     }
 
     private void putPinStorageValue(int deviceId, PinType type, byte pin, String value) {
-        puntPinStorageValue(new PinStorageKey(deviceId, type, pin), value);
+        putPinStorageValue(new PinStorageKey(deviceId, type, pin), value);
     }
 
-    private void puntPinStorageValue(PinStorageKey key, String value) {
+    private void putPinStorageValue(PinStorageKey key, String value) {
         if (pinsStorage == Collections.EMPTY_MAP) {
             pinsStorage = new HashMap<>();
         }
