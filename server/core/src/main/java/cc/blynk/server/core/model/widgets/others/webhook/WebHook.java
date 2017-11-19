@@ -66,10 +66,6 @@ public class WebHook extends OnePinWidget {
     }
 
     @Override
-    protected void append(StringBuilder sb, byte pin, PinType pinType) {
-    }
-
-    @Override
     public int getPrice() {
         return 500;
     }

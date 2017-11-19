@@ -34,10 +34,6 @@ public class Video extends OnePinWidget {
     }
 
     @Override
-    protected void append(StringBuilder sb, byte pin, PinType pinType) {
-    }
-
-    @Override
     public void setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case URL :
