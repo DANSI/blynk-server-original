@@ -182,7 +182,8 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public abstract int getPrice();
 
-    public abstract void append(StringBuilder sb, int deviceId);
+    public void append(StringBuilder sb, int deviceId) {
+    }
 
     //todo this is ugly and not effective. refactor
     @Override

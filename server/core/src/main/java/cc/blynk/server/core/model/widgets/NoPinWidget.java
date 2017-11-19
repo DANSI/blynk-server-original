@@ -33,9 +33,4 @@ public abstract class NoPinWidget extends Widget {
     public String getModeType() {
         return null;
     }
-
-    @Override
-    public void append(StringBuilder sb, int deviceId) {
-    }
-
 }

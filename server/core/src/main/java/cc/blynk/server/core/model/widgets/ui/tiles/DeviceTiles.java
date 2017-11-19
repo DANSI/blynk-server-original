@@ -141,12 +141,7 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
 
     @Override
     public String getModeType() {
-        return "in";
-    }
-
-    @Override
-    public void append(StringBuilder sb, int deviceId) {
-
+        return null;
     }
 
     @Override

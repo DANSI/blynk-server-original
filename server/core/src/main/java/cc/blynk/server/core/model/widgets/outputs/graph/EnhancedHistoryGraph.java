@@ -77,11 +77,6 @@ public class EnhancedHistoryGraph extends Widget {
     }
 
     @Override
-    public void append(StringBuilder sb, int deviceId) {
-
-    }
-
-    @Override
     public int getPrice() {
         return 900;
     }
