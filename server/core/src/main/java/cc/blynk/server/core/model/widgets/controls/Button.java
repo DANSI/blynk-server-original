@@ -28,10 +28,10 @@ public class Button extends OnePinWidget {
     @Override
     public void setProperty(String property, String propertyValue) {
         switch (property) {
-            case "onLabel" :
+            case ON_LABEL :
                 this.onLabel = propertyValue;
                 break;
-            case "offLabel" :
+            case OFF_LABEL :
                 this.offLabel = propertyValue;
                 break;
             default:

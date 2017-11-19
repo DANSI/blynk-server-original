@@ -42,7 +42,7 @@ public class Player extends OnePinWidget {
     @Override
     public void setProperty(String property, String propertyValue) {
         switch (property) {
-            case "isOnPlay" :
+            case IS_ON_PLAY :
                 this.isOnPlay = Boolean.parseBoolean(propertyValue);
                 break;
             default:

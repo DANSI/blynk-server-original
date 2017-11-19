@@ -1,15 +1,53 @@
 package cc.blynk.server.core.model.widgets.others;
 
-import cc.blynk.server.core.model.widgets.NoPinWidget;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.OnePinWidget;
+import cc.blynk.server.core.model.widgets.Widget;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-public class Video extends NoPinWidget {
+public class Video extends OnePinWidget {
 
     public String url;
+
+    @Override
+    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
+    }
+
+    @Override
+    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
+        return false;
+    }
+
+    @Override
+    public void updateIfSame(Widget widget) {
+    }
+
+    @Override
+    public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
+    }
+
+    @Override
+    public void setProperty(String property, String propertyValue) {
+        switch (property) {
+            case URL :
+                this.url = propertyValue;
+                break;
+            default:
+                super.setProperty(property, propertyValue);
+                break;
+        }
+    }
+
+    @Override
+    public String getModeType() {
+        return "out";
+    }
 
     @Override
     public int getPrice() {

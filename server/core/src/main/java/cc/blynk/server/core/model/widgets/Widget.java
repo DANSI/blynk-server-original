@@ -137,6 +137,17 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public abstract class Widget implements CopyObject<Widget> {
 
+    private static final String LABEL = "label";
+    private static final String COLOR = "color";
+    private static final String IS_ENABLED = "isEnabled";
+    protected static final String ON_LABEL = "onLabel";
+    protected static final String OFF_LABEL = "offLabel";
+    protected static final String LABELS = "labels";
+    static final String MIN = "min";
+    static final String MAX = "max";
+    protected static final String IS_ON_PLAY = "isOnPlay";
+    protected static final String URL = "url";
+
     public long id;
 
     public int x;
@@ -189,14 +200,14 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public void setProperty(String property, String propertyValue) {
         switch (property) {
-            case "label" :
+            case LABEL :
                 this.label = propertyValue;
                 break;
-            case "color" :
+            case COLOR :
                 this.color = ByteUtils.parseColor(propertyValue);
                 this.isDefaultColor = false;
                 break;
-            case "isEnabled" :
+            case IS_ENABLED :
                 this.isEnabled = Boolean.parseBoolean(propertyValue);
                 break;
             default:
@@ -206,15 +217,16 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public static boolean isNotValidProperty(String property) {
         switch (property) {
-            case "label":
-            case "color":
-            case "isEnabled":
-            case "onLabel":
-            case "offLabel":
-            case "labels":
-            case "min":
-            case "max":
-            case "isOnPlay":
+            case LABEL:
+            case COLOR:
+            case IS_ENABLED:
+            case ON_LABEL:
+            case OFF_LABEL:
+            case LABELS:
+            case MIN:
+            case MAX:
+            case IS_ON_PLAY:
+            case URL:
                 return false;
             default:
                 return true;

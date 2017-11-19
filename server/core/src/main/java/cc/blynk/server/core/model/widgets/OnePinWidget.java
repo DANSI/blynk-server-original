@@ -96,7 +96,6 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
         }
     }
 
-    //todo cover with test
     @Override
     public boolean isSame(int deviceId, byte pin, PinType type) {
         return this.deviceId == deviceId && this.pin == pin && (
@@ -128,11 +127,11 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     @Override
     public void setProperty(String property, String propertyValue) {
         switch (property) {
-            case "min" :
+            case MIN :
                 //accepting floats as valid, but using int for min/max due to back compatibility
                 this.min = (int) NumberUtil.parseDoubleOrThrow(propertyValue);
                 break;
-            case "max" :
+            case MAX :
                 //accepting floats as valid, but using int for min/max due to back compatibility
                 this.max = (int) NumberUtil.parseDoubleOrThrow(propertyValue);
                 break;

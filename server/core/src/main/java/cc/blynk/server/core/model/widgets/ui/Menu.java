@@ -27,7 +27,7 @@ public class Menu extends OnePinWidget {
     @Override
     public void setProperty(String property, String propertyValue) {
         switch (property) {
-            case "labels" :
+            case LABELS :
                 this.labels = propertyValue.split(StringUtils.BODY_SEPARATOR_STRING);
                 break;
             default:
