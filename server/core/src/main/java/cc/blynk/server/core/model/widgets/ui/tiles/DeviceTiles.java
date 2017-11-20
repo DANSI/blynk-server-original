@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.ui.tiles;
 
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -134,7 +135,7 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
     }
 
     @Override
-    public String getModeType() {
+    public PinMode getModeType() {
         return null;
     }
 

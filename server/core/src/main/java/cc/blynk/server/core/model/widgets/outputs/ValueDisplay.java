@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.outputs;
 
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.OnePinReadingWidget;
 
 /**
@@ -10,8 +11,8 @@ import cc.blynk.server.core.model.widgets.OnePinReadingWidget;
 public class ValueDisplay extends OnePinReadingWidget {
 
     @Override
-    public String getModeType() {
-        return "in";
+    public PinMode getModeType() {
+        return PinMode.in;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.outputs;
 
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -78,8 +79,8 @@ public class Map extends OnePinWidget {
     }
 
     @Override
-    public String getModeType() {
-        return "in";
+    public PinMode getModeType() {
+        return PinMode.in;
     }
 
     @Override

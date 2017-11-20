@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.controls;
 
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 
 /**
@@ -7,6 +8,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
+//todo remove in future versions. no longer supported.
 public class OneAxisJoystick extends OnePinWidget {
 
     public boolean autoReturnOn;
@@ -16,8 +18,8 @@ public class OneAxisJoystick extends OnePinWidget {
     public int frequency;
 
     @Override
-    public String getModeType() {
-        return "out";
+    public PinMode getModeType() {
+        return PinMode.out;
     }
 
     @Override

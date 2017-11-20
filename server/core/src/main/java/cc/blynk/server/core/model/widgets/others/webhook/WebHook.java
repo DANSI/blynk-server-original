@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.others.webhook;
 
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -61,7 +62,8 @@ public class WebHook extends OnePinWidget {
     }
 
     @Override
-    public String getModeType() {
+    //supports only virtual pins
+    public PinMode getModeType() {
         return null;
     }
 

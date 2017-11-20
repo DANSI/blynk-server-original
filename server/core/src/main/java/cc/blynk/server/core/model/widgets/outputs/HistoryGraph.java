@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.outputs;
 
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -48,7 +49,8 @@ public class HistoryGraph extends MultiPinWidget {
     }
 
     @Override
-    public String getModeType() {
+    //do not performs any direct pin operations
+    public PinMode getModeType() {
         return null;
     }
 

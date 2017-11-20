@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -56,9 +57,10 @@ import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.utils.ByteUtils;
-import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
  * User: ddumanskiy
@@ -160,11 +162,11 @@ public abstract class Widget implements CopyObject<Widget> {
 
     protected void append(StringBuilder sb, byte pin, PinType pinType) {
         if (pin != DataStream.NO_PIN && pinType != PinType.VIRTUAL) {
-            String pinMode = getModeType();
+            PinMode pinMode = getModeType();
             if (pinMode != null) {
-                sb.append(StringUtils.BODY_SEPARATOR)
+                sb.append(BODY_SEPARATOR)
                         .append(pin)
-                        .append(StringUtils.BODY_SEPARATOR)
+                        .append(BODY_SEPARATOR)
                         .append(pinMode);
             }
         }
@@ -176,7 +178,7 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public abstract boolean isSame(int deviceId, byte pin, PinType type);
 
-    public abstract String getModeType();
+    public abstract PinMode getModeType();
 
     public abstract int getPrice();
 

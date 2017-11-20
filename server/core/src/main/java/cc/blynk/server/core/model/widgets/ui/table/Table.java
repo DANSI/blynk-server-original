@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui.table;
 
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.internal.ParseUtil;
@@ -115,8 +116,8 @@ public class Table extends OnePinWidget {
     }
 
     @Override
-    public String getModeType() {
-        return "out";
+    public PinMode getModeType() {
+        return PinMode.out;
     }
 
     @Override

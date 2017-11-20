@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.others.rtc;
 
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.utils.DateTimeUtils;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -27,7 +28,8 @@ public class RTC extends OnePinWidget {
     public ZoneId tzName;
 
     @Override
-    public String getModeType() {
+    //supports only virtual pins
+    public PinMode getModeType() {
         return null;
     }
 

@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.others.eventor;
 
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.NoPinWidget;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
@@ -26,8 +27,8 @@ public class Eventor extends NoPinWidget {
     }
 
     @Override
-    public String getModeType() {
-        return "out";
+    public PinMode getModeType() {
+        return PinMode.out;
     }
 
     @Override

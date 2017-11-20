@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.outputs;
 
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
@@ -122,8 +123,8 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     }
 
     @Override
-    public String getModeType() {
-        return "in";
+    public PinMode getModeType() {
+        return PinMode.in;
     }
 
     @Override

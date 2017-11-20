@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets;
 
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 
 /**
@@ -25,7 +26,7 @@ public abstract class NoPinWidget extends Widget {
     }
 
     @Override
-    public String getModeType() {
+    public PinMode getModeType() {
         return null;
     }
 }

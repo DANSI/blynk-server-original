@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.outputs.graph;
 
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
@@ -67,7 +68,8 @@ public class EnhancedHistoryGraph extends Widget {
     }
 
     @Override
-    public String getModeType() {
+    //do not performs any direct pin operations
+    public PinMode getModeType() {
         return null;
     }
 

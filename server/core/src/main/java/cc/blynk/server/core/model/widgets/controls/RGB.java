@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.controls;
 
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.HardwareSyncWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import io.netty.channel.Channel;
@@ -73,8 +74,8 @@ public class RGB extends MultiPinWidget implements HardwareSyncWidget {
     }
 
     @Override
-    public String getModeType() {
-        return "out";
+    public PinMode getModeType() {
+        return PinMode.out;
     }
 
     @Override

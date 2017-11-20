@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.outputs;
 
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 
 /**
@@ -10,8 +11,8 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 public class LED extends OnePinWidget {
 
     @Override
-    public String getModeType() {
-        return "in";
+    public PinMode getModeType() {
+        return PinMode.in;
     }
 
     @Override

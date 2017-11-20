@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.others;
 
+import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -46,7 +47,8 @@ public class Video extends OnePinWidget {
     }
 
     @Override
-    public String getModeType() {
+    //supports only virtual pins
+    public PinMode getModeType() {
         return null;
     }
 
