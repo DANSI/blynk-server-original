@@ -3,7 +3,6 @@ package cc.blynk.server.core.model.widgets.others.webhook;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.server.core.model.widgets.Widget;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -36,16 +35,6 @@ public class WebHook extends OnePinWidget {
     //a bit ugly but as quick fix ok
     public boolean isSameWebHook(int deviceId, byte pin, PinType type) {
         return super.isSame(deviceId, pin, type);
-    }
-
-    @Override
-    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
-        return false;
-    }
-
-    @Override
-    public void updateIfSame(Widget widget) {
-        //do nothing
     }
 
     @Override

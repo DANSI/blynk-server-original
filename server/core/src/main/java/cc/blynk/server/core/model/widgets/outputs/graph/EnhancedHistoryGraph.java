@@ -40,16 +40,6 @@ public class EnhancedHistoryGraph extends Widget {
 
     public GoalLine goalLine;
 
-    @Override
-    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
-        return false;
-    }
-
-    @Override
-    public void updateIfSame(Widget widget) {
-
-    }
-
     //actually it is duplicated logic of isSame method, but isSame is used in other places
     public boolean hasPin(int deviceId, byte pin, PinType pinType) {
         for (GraphDataStream graphDataStream : dataStreams) {

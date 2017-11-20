@@ -160,6 +160,10 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public boolean isDefaultColor;
 
+    public abstract PinMode getModeType();
+
+    public abstract int getPrice();
+
     protected void append(StringBuilder sb, byte pin, PinType pinType) {
         if (pin != DataStream.NO_PIN && pinType != PinType.VIRTUAL) {
             PinMode pinMode = getModeType();
@@ -172,22 +176,27 @@ public abstract class Widget implements CopyObject<Widget> {
         }
     }
 
-    public abstract boolean updateIfSame(int deviceId, byte pin, PinType type, String value);
+    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
+        return false;
+    }
 
-    public abstract void updateIfSame(Widget widget);
+    public void updateIfSame(Widget widget) {
+    }
 
     public boolean isSame(int deviceId, byte pin, PinType type) {
         return false;
     }
 
-    public abstract PinMode getModeType();
-
-    public abstract int getPrice();
-
     public String getJsonValue() {
         return null;
     }
 
+    /**
+     * This method should be overridden by every widget that supports direct pins (analog, digital) control
+     *
+     * @param sb
+     * @param deviceId
+     */
     public void append(StringBuilder sb, int deviceId) {
     }
 

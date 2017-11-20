@@ -124,11 +124,6 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
     }
 
     @Override
-    public void updateIfSame(Widget widget) {
-        //todo finish
-    }
-
-    @Override
     public PinMode getModeType() {
         return null;
     }
