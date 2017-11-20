@@ -1,5 +1,8 @@
 package cc.blynk.server.core.model.widgets.ui;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -7,6 +10,10 @@ package cc.blynk.server.core.model.widgets.ui;
  */
 public class Tab {
 
-    public String label;
+    public final String label;
 
+    @JsonCreator
+    public Tab(@JsonProperty("label") String label) {
+        this.label = label;
+    }
 }
