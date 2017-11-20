@@ -25,7 +25,7 @@ public class WebHook extends OnePinWidget {
 
     public transient volatile int failureCounter = 0;
 
-    public boolean isValidUrl() {
+    private boolean isValidUrl() {
         return url != null && !url.isEmpty() && url.regionMatches(true, 0, "http", 0, 4);
     }
 
@@ -36,11 +36,6 @@ public class WebHook extends OnePinWidget {
     //a bit ugly but as quick fix ok
     public boolean isSameWebHook(int deviceId, byte pin, PinType type) {
         return super.isSame(deviceId, pin, type);
-    }
-
-    @Override
-    public boolean isSame(int deviceId, byte pin, PinType type) {
-        return false;
     }
 
     @Override

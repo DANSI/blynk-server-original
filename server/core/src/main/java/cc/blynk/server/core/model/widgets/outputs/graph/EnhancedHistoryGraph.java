@@ -50,11 +50,6 @@ public class EnhancedHistoryGraph extends Widget {
 
     }
 
-    @Override
-    public boolean isSame(int deviceId, byte pin, PinType type) {
-        return false;
-    }
-
     //actually it is duplicated logic of isSame method, but isSame is used in other places
     public boolean hasPin(int deviceId, byte pin, PinType pinType) {
         for (GraphDataStream graphDataStream : dataStreams) {

@@ -176,7 +176,9 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public abstract void updateIfSame(Widget widget);
 
-    public abstract boolean isSame(int deviceId, byte pin, PinType type);
+    public boolean isSame(int deviceId, byte pin, PinType type) {
+        return false;
+    }
 
     public abstract PinMode getModeType();
 

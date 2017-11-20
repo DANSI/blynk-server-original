@@ -21,11 +21,6 @@ public abstract class NoPinWidget extends Widget {
     }
 
     @Override
-    public boolean isSame(int deviceId, byte pin, PinType type) {
-        return false;
-    }
-
-    @Override
     public PinMode getModeType() {
         return null;
     }

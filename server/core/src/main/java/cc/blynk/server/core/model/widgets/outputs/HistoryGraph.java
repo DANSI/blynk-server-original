@@ -25,11 +25,6 @@ public class HistoryGraph extends MultiPinWidget {
     public boolean showLegends;
 
     @Override
-    public boolean isSame(int deviceId, byte pinIn, PinType pinType) {
-        return false;
-    }
-
-    @Override
     public boolean isSplitMode() {
         return false;
     }
