@@ -134,12 +134,6 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
     }
 
     @Override
-    public String getJsonValue() {
-        //todo finish
-        return null;
-    }
-
-    @Override
     public String getModeType() {
         return null;
     }

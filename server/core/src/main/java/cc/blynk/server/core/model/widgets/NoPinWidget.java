@@ -25,11 +25,6 @@ public abstract class NoPinWidget extends Widget {
     }
 
     @Override
-    public String getJsonValue() {
-        return null;
-    }
-
-    @Override
     public String getModeType() {
         return null;
     }

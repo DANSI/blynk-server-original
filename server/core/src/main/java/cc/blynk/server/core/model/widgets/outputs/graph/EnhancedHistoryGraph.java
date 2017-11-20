@@ -67,11 +67,6 @@ public class EnhancedHistoryGraph extends Widget {
     }
 
     @Override
-    public String getJsonValue() {
-        return null;
-    }
-
-    @Override
     public String getModeType() {
         return null;
     }

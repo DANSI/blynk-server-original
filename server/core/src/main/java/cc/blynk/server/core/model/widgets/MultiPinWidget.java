@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.StringJoiner;
 
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**
  * The Blynk Project.
@@ -98,12 +99,21 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
         if (dataStreams == null) {
             return "[]";
         }
+
         StringJoiner sj = new StringJoiner(",", "[", "]");
-        for (DataStream dataStream : dataStreams) {
-            if (dataStream.value == null) {
-                sj.add("\"\"");
-            } else {
-                sj.add("\"" + dataStream.value + "\"");
+        if (isSplitMode()) {
+            for (DataStream dataStream : dataStreams) {
+                if (dataStream.value == null) {
+                    sj.add("\"\"");
+                } else {
+                    sj.add("\"" + dataStream.value + "\"");
+                }
+            }
+        } else {
+            if (dataStreams[0].notEmpty()) {
+                for (String pinValue : dataStreams[0].value.split(BODY_SEPARATOR_STRING)) {
+                    sj.add("\"" + pinValue + "\"");
+                }
             }
         }
         return sj.toString();

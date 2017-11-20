@@ -176,11 +176,13 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public abstract boolean isSame(int deviceId, byte pin, PinType type);
 
-    public abstract String getJsonValue();
-
     public abstract String getModeType();
 
     public abstract int getPrice();
+
+    public String getJsonValue() {
+        return null;
+    }
 
     public void append(StringBuilder sb, int deviceId) {
     }
