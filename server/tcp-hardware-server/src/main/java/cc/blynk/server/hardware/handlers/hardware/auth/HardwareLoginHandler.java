@@ -130,6 +130,9 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
                 log.debug("Checking invalid token in DB.");
                 server = dbManager.getServerByToken(token);
                 LRUCache.LOGIN_TOKENS_CACHE.put(token, new LRUCache.CacheEntry(server));
+                if (server != null) {
+                    log.info("Redirecting token '{}' to {}", token, server);
+                }
             } else {
                 log.debug("Taking invalid token from cache.");
                 server = cacheEntry.value;
@@ -140,7 +143,6 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
                 log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
                 ctx.writeAndFlush(invalidToken(msgId), ctx.voidPromise());
             } else {
-                log.info("Redirecting token '{}' to {}", token, server);
                 ctx.writeAndFlush(makeASCIIStringMessage(
                         CONNECT_REDIRECT, msgId, server + BODY_SEPARATOR + listenPort),
                         ctx.voidPromise());
