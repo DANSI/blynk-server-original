@@ -36,18 +36,6 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
     }
 
     @Override
-    public void updateIfSame(Widget widget) {
-        if (widget instanceof MultiPinWidget) {
-            MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-            if (multiPinWidget.dataStreams != null && multiPinWidget.deviceId == this.deviceId) {
-                for (DataStream dataStream : multiPinWidget.dataStreams) {
-                    updateIfSame(multiPinWidget.deviceId, dataStream.pin, dataStream.pinType, dataStream.value);
-                }
-            }
-        }
-    }
-
-    @Override
     public boolean isSame(int deviceId, byte pinIn, PinType pinType) {
         if (dataStreams != null && this.deviceId == deviceId) {
             for (DataStream dataStream : dataStreams) {

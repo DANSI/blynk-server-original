@@ -441,10 +441,17 @@ public class DashBoard {
                 if (oldWidget instanceof OnePinWidget) {
                     OnePinWidget onePinWidget = (OnePinWidget) oldWidget;
                     if (onePinWidget.value != null) {
-                        copyWidget.updateIfSame(oldWidget);
+                        copyWidget.updateIfSame(onePinWidget.deviceId,
+                                onePinWidget.pin, onePinWidget.pinType, onePinWidget.value);
                     }
-                } else {
-                    copyWidget.updateIfSame(oldWidget);
+                } else if (oldWidget instanceof MultiPinWidget) {
+                    MultiPinWidget multiPinWidget = (MultiPinWidget) oldWidget;
+                    if (multiPinWidget.dataStreams != null) {
+                        for (DataStream dataStream : multiPinWidget.dataStreams) {
+                            copyWidget.updateIfSame(multiPinWidget.deviceId,
+                                    dataStream.pin, dataStream.pinType, dataStream.value);
+                        }
+                    }
                 }
             }
             copyWidget.isDefaultColor = false;

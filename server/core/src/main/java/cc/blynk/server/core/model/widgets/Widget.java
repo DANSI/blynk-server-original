@@ -180,9 +180,6 @@ public abstract class Widget implements CopyObject<Widget> {
         return false;
     }
 
-    public void updateIfSame(Widget widget) {
-    }
-
     public boolean isSame(int deviceId, byte pin, PinType type) {
         return false;
     }
