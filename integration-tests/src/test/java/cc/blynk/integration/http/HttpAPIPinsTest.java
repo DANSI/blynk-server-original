@@ -176,7 +176,6 @@ public class HttpAPIPinsTest extends BaseTest {
             assertEquals(1, values.size());
             assertEquals("1", values.get(0));
         }
-
     }
 
     @Test
