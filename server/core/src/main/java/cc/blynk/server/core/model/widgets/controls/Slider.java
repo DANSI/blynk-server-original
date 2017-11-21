@@ -20,11 +20,6 @@ public class Slider extends OnePinWidget {
     }
 
     @Override
-    public boolean isPWMSupported() {
-        return pwmMode;
-    }
-
-    @Override
     public int getPrice() {
         return 200;
     }

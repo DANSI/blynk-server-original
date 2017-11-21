@@ -19,11 +19,6 @@ public class Step extends OnePinWidget {
     public boolean isSendStep;
 
     @Override
-    public boolean isPWMSupported() {
-        return pwmMode;
-    }
-
-    @Override
     public PinMode getModeType() {
         return PinMode.out;
     }

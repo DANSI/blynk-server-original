@@ -67,7 +67,7 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
         if (isNotValid() || value == null) {
             return null;
         }
-        return isPWMSupported() ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
+        return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
     @Override
@@ -93,7 +93,7 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     public boolean isSame(int deviceId, byte pin, PinType type) {
         return this.deviceId == deviceId && this.pin == pin && (
                 (type == this.pinType)
-                        || (this.isPWMSupported() && type == PinType.ANALOG)
+                        || (this.pwmMode && type == PinType.ANALOG)
                         || (type == PinType.DIGITAL && this.pinType == PinType.ANALOG)
         );
     }
@@ -111,10 +111,6 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
         if (this.deviceId == deviceId) {
             append(sb, pin, pinType);
         }
-    }
-
-    public boolean isPWMSupported() {
-        return false;
     }
 
     @Override
