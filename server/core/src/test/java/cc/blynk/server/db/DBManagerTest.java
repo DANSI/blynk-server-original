@@ -18,6 +18,7 @@ import cc.blynk.utils.DateTimeUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
@@ -139,6 +140,7 @@ public class DBManagerTest {
     }
 
     @Test
+    @Ignore("not used right now in read code")
     public void testCopy100RecordsIntoFile() throws Exception {
         System.out.println("Starting");
 
