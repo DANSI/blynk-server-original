@@ -443,7 +443,7 @@ public class WebhookTest extends IntegrationBase {
         assertEquals("10", values.get(0));
 
         clientPair.hardwareClient.send("hardware vw 123 11");
-        verify(clientPair.hardwareClient.responseMock, after(500).times(0)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, after(600).times(0)).channelRead(any(), any());
 
         f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
         response = f.get();
