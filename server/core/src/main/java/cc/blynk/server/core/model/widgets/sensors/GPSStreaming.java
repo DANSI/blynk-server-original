@@ -15,6 +15,8 @@ public class GPSStreaming extends OnePinWidget {
 
     private int frequency;
 
+    private long interval;
+
     @Override
     public PinMode getModeType() {
         return PinMode.out;
