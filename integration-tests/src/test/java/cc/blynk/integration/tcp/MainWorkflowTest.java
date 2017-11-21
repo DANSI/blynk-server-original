@@ -1254,4 +1254,18 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals("1032", ((Button) widget).value);
     }
 
+    @Test
+    public void testButtonStateInPWMModeIsStoredWithUIHack() throws Exception {
+        clientPair.appClient.send("createWidget 1\0{\"type\":\"BUTTON\",\"id\":1000,\"x\":0,\"y\":0,\"color\":616861439,\"width\":2,\"height\":2,\"label\":\"Relay\",\"pinType\":\"DIGITAL\",\"pin\":18,\"pwmMode\":true,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"pushMode\":false}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("hardware 1 dw 18 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("dw 18 1"))));
+
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = parseProfile(clientPair.appClient.getBody(2));
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 18, PinType.DIGITAL);
+        assertNotNull(widget);
+        assertEquals("1", ((Button) widget).value);
+    }
 }
