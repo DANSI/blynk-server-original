@@ -20,6 +20,9 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
+import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
+import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
+import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
@@ -673,5 +676,93 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(),
                 eq(produce(111, HARDWARE, b("vw 101 110 230 330"))));
+    }
+
+    @Test
+    public void historyGraphPinsOverlapsWithOtherWidgets() throws Exception {
+        HistoryGraph historyGraph = new HistoryGraph();
+        historyGraph.id = 100;
+        historyGraph.width = 2;
+        historyGraph.height = 2;
+        historyGraph.dataStreams = new DataStream[] {
+                new DataStream((byte) 44, PinType.VIRTUAL),
+                new DataStream((byte) 45, PinType.VIRTUAL)
+        };
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(historyGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        ValueDisplay valueDisplay = new ValueDisplay();
+        valueDisplay.id = 101;
+        valueDisplay.height = 2;
+        valueDisplay.width = 2;
+        valueDisplay.pin = 44;
+        valueDisplay.pinType = PinType.VIRTUAL;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(valueDisplay));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        ValueDisplay valueDisplay2 = new ValueDisplay();
+        valueDisplay2.id = 102;
+        valueDisplay2.height = 2;
+        valueDisplay2.width = 2;
+        valueDisplay2.pin = 45;
+        valueDisplay2.pinType = PinType.VIRTUAL;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(valueDisplay2));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody(4);
+
+        clientPair.hardwareClient.send("hardware vw 44 123");
+        clientPair.hardwareClient.send("hardware vw 45 124");
+
+
+        HttpGet request = new HttpGet(httpServerUrl + token + "/get/v45");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("124", values.get(0));
+        }
+    }
+
+    @Test
+    public void webhookPinsOverlapsWithOtherWidgets() throws Exception {
+        WebHook webHook = new WebHook();
+        webHook.id = 100;
+        webHook.width = 2;
+        webHook.height = 2;
+        webHook.pin = 44;
+        webHook.pinType = PinType.VIRTUAL;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        ValueDisplay valueDisplay = new ValueDisplay();
+        valueDisplay.id = 101;
+        valueDisplay.height = 2;
+        valueDisplay.width = 2;
+        valueDisplay.pin = 44;
+        valueDisplay.pinType = PinType.VIRTUAL;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(valueDisplay));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody(3);
+
+        clientPair.hardwareClient.send("hardware vw 44 123");
+
+        HttpGet request = new HttpGet(httpServerUrl + token + "/get/v44");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            List<String> values = consumeJsonPinValues(response);
+            assertEquals(1, values.size());
+            assertEquals("123", values.get(0));
+        }
     }
 }

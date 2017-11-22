@@ -44,6 +44,16 @@ public class HistoryGraph extends MultiPinWidget {
     }
 
     @Override
+    public boolean updateIfSame(int deviceId, byte pinIn, PinType type, String value) {
+        return false;
+    }
+
+    @Override
+    public boolean isSame(int deviceId, byte pinIn, PinType pinType) {
+        return false;
+    }
+
+    @Override
     public int getPrice() {
         return 900;
     }

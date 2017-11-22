@@ -46,6 +46,16 @@ public class WebHook extends OnePinWidget {
     }
 
     @Override
+    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
+        return false;
+    }
+
+    @Override
+    public boolean isSame(int deviceId, byte pin, PinType type) {
+        return false;
+    }
+
+    @Override
     //supports only virtual pins
     public PinMode getModeType() {
         return null;
