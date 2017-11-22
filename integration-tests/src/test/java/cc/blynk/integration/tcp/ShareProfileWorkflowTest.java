@@ -211,10 +211,8 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("createDash " + dash.toString());
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
-        DashboardSettings settings = new DashboardSettings();
-        settings.name = dash.name;
-        settings.theme = Theme.Blynk;
-        settings.isShared = true;
+        DashboardSettings settings = new DashboardSettings(dash.name, true, Theme.Blynk, false, false);
+
         clientPair.appClient.send("updateSettings 2\0" + JsonParser.toJson(settings));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 

@@ -571,12 +571,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void settingsUpdateCommand() throws Exception{
-        DashboardSettings settings = new DashboardSettings();
-        settings.name = "New Name";
-        settings.isAppConnectedOn = true;
-        settings.isShared = true;
-        settings.keepScreenOn = true;
-        settings.theme = Theme.BlynkLight;
+        DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true);
 
         clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
