@@ -18,6 +18,14 @@ public class Button extends OnePinWidget {
     public volatile String offLabel;
 
     @Override
+    public String makeHardwareBody() {
+        if (isNotValid() || value == null) {
+            return null;
+        }
+        return makeHardwareBody(pinType, pin, value);
+    }
+
+    @Override
     public PinMode getModeType() {
         return PinMode.out;
     }

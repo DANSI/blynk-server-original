@@ -333,8 +333,8 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("aw 18 0"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1 aw 18 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("dw 18 0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1 dw 18 0"))));
     }
 
     @Test
