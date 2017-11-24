@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.notifications.push.GCMWrapper;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -41,11 +42,12 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        HardwareStateHolder state = getHardState(ctx.channel());
+        Channel hardwareChannel = ctx.channel();
+        HardwareStateHolder state = getHardState(hardwareChannel);
         if (state != null) {
             Session session = sessionDao.userSession.get(state.userKey);
             if (session != null) {
-                session.removeHardChannel(ctx.channel());
+                session.removeHardChannel(hardwareChannel);
                 log.trace("Hardware channel disconnect.");
                 sentOfflineMessage(ctx, session, state);
             }
@@ -69,9 +71,9 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         //in case hardware quickly reconnects we do not mark it as disconnected
         //as it is already online after quick disconnect.
         //https://github.com/blynkkk/blynk-server/issues/403
-        boolean isHardwareConnected = session.isHardwareConnected(state.dash.id, device.id);
+        boolean isHardwareConnected = session.isHardwareConnected(dashBoard.id, device.id);
         if (!isHardwareConnected) {
-            log.trace("Disconnected device id {}, dash id {}", device.id, state.dash.id);
+            log.trace("Disconnected device id {}, dash id {}", device.id, dashBoard.id);
             device.disconnected();
         }
 
@@ -82,9 +84,9 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         Notification notification = dashBoard.getWidgetByType(Notification.class);
 
         if (notification != null && notification.notifyWhenOffline) {
-            sendPushNotification(ctx, dashBoard, notification, state.dash.id, device);
+            sendPushNotification(ctx, dashBoard, notification, dashBoard.id, device);
         } else {
-            session.sendOfflineMessageToApps(state.dash.id);
+            session.sendOfflineMessageToApps(dashBoard.id);
         }
     }
 
