@@ -14,6 +14,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.handlers.common.LogoutLogic;
 import cc.blynk.server.handlers.common.PingLogic;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -25,6 +26,7 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DAT
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 
 /**
@@ -85,6 +87,9 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 break;
             case APP_SYNC :
                 AppSyncLogic.messageReceived(ctx, state, msg);
+                break;
+            case LOGOUT :
+                LogoutLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }
