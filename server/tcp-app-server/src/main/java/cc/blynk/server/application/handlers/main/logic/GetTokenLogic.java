@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.internal.ParseUtil;
+import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -31,8 +32,17 @@ public class GetTokenLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String dashBoardIdString = message.body;
 
-        int dashId = ParseUtil.parseInt(dashBoardIdString);
-        int deviceId = 0;
+        String[] parts;
+        if (dashBoardIdString.contains(StringUtils.BODY_SEPARATOR_STRING)) {
+            parts = StringUtils.split2(dashBoardIdString);
+        } else if (dashBoardIdString.contains("-")) {
+            parts = StringUtils.split2Device(dashBoardIdString);
+        } else {
+            parts = new String[] {dashBoardIdString};
+        }
+
+        int dashId = ParseUtil.parseInt(parts[0]);
+        int deviceId = parts.length == 1 ? 0 : ParseUtil.parseInt(parts[1]);
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 

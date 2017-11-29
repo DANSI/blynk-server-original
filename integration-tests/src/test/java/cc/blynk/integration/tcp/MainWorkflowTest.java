@@ -522,6 +522,34 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testGetTokenWorksWithNewFormats() throws Exception {
+        clientPair.appClient.send("createDash {\"id\":10, \"name\":\"test board\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("getToken 10");
+        String token = clientPair.appClient.getBody(2);
+        assertNotNull(token);
+
+        clientPair.appClient.send("getToken 10-0");
+        String token2 = clientPair.appClient.getBody(3);
+        assertNotNull(token2);
+        assertEquals(token, token2);
+
+        clientPair.appClient.send("getToken " + b("10 0"));
+        token2 = clientPair.appClient.getBody(4);
+        assertNotNull(token2);
+        assertEquals(token, token2);
+
+        clientPair.appClient.send("createDash {\"id\":11, \"name\":\"test board\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+
+        clientPair.appClient.send("getToken " + b("11 0"));
+        token2 = clientPair.appClient.getBody(6);
+        assertNotNull(token2);
+        assertNotEquals(token, token2);
+    }
+
+    @Test
     public void deleteDashDeletesTokensAlso() throws Exception {
         clientPair.appClient.send("createDash {\"id\":10, \"name\":\"test board\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
