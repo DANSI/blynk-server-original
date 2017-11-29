@@ -419,6 +419,19 @@ public class DeviceWorkflowTest extends IntegrationBase {
         assertEquals(1, devices.length);
 
         assertEqualDevice(device0, devices[0]);
+        assertEquals(System.currentTimeMillis(), devices[0].disconnectTime, 5000);
+    }
+
+    @Test
+    public void testCorrectConnectTime() throws Exception {
+        long now = System.currentTimeMillis();
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody();
+
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        assertNotNull(devices);
+        assertEquals(1, devices.length);
+        assertEquals(now, devices[0].connectTime, 10000);
     }
 
     @Test

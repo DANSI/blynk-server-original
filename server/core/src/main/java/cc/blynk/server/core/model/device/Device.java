@@ -24,6 +24,8 @@ public class Device implements Target {
 
     public volatile long disconnectTime;
 
+    public volatile long connectTime;
+
     public volatile String lastLoggedIP;
 
     public volatile HardwareInfo hardwareInfo;
@@ -68,9 +70,15 @@ public class Device implements Target {
         this.disconnectTime = System.currentTimeMillis();
     }
 
+    public void connected() {
+        this.status = Status.ONLINE;
+        this.connectTime = System.currentTimeMillis();
+    }
+
     public void erase() {
         this.token = null;
         this.disconnectTime = 0;
+        this.connectTime = 0;
         this.lastLoggedIP = null;
         this.status = Status.OFFLINE;
         this.hardwareInfo = null;
@@ -81,10 +89,6 @@ public class Device implements Target {
     public void updateOTAInfo(String initiatedBy) {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(initiatedBy, now, now);
-    }
-
-    public void connected() {
-        this.status = Status.ONLINE;
     }
 
     @Override
