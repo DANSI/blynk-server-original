@@ -49,7 +49,12 @@ public class Table extends OnePinWidget {
                             int id = ParseUtil.parseInt(values[1]);
                             String rowName = values[2];
                             String rowValue = values[3];
-                            rows.add(new Row(id, rowName, rowValue, true));
+                            Row existingRow = get(id);
+                            if (existingRow == null) {
+                                rows.add(new Row(id, rowName, rowValue, true));
+                            } else {
+                                existingRow.update(rowName, rowValue);
+                            }
                         }
                         break;
                     case "update" :
@@ -60,6 +65,7 @@ public class Table extends OnePinWidget {
                             for (Row row : rows) {
                                 if (row.id == id) {
                                     row.update(rowName, rowValue);
+                                    break;
                                 }
                             }
                         }

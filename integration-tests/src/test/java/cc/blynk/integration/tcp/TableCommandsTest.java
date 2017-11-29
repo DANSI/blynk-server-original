@@ -249,6 +249,36 @@ public class TableCommandsTest extends IntegrationBase {
         }
     }
 
+    @Test
+    public void testTableAcceptsOnlyUniqueIds() throws Exception {
+        Table table = new Table();
+        table.pin = 123;
+        table.pinType = PinType.VIRTUAL;
+        table.isClickableRows = true;
+        table.isReoderingAllowed = true;
+        table.width = 2;
+        table.height = 2;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(table));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("hardware vw 123 clr");
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 123 clr"))));
+
+        clientPair.hardwareClient.send("hardware vw 123 add 0 row0 val0");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1 vw 123 add 0 row0 val0"))));
+
+        clientPair.hardwareClient.send("hardware vw 123 add 0 row1 val1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1 vw 123 add 0 row1 val1"))));
+
+        table = loadTable();
+
+        assertEquals(1, table.rows.size());
+        assertEquals("row1", table.rows.get(0).name);
+        assertEquals("val1", table.rows.get(0).value);
+    }
+
     private Table loadTable() throws Exception {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
