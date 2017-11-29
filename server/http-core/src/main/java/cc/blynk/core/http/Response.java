@@ -59,6 +59,7 @@ public final class Response extends DefaultFullHttpResponse {
     private Response(HttpVersion version, HttpResponseStatus status) {
         super(version, status);
         headers().set(CONNECTION, HttpHeaderValues.KEEP_ALIVE)
+                 .set(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
                  .set(CONTENT_LENGTH, 0);
     }
 

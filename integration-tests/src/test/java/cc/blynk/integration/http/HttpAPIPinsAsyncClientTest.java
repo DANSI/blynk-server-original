@@ -90,6 +90,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         Response response = f.get();
         assertEquals(400, response.getStatusCode());
         assertEquals("Invalid token.", response.getResponseBody());
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
     }
 
     @Test
@@ -104,6 +105,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         Response response = f.get();
         assertEquals(400, response.getStatusCode());
         assertEquals("Wrong pin format.", response.getResponseBody());
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
     }
 
     @Test
@@ -112,6 +114,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         Response response = f.get();
         assertEquals(400, response.getStatusCode());
         assertEquals("Requested pin doesn't exist in the app.", response.getResponseBody());
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
     }
 
     @Test
@@ -119,6 +122,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v11?value=10").execute();
         Response response = f.get();
         assertEquals(200, response.getStatusCode());
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
 
 
         f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v11").execute();
@@ -128,6 +132,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         List<String> values = consumeJsonPinValues(response.getResponseBody());
         assertEquals(1, values.size());
         assertEquals("10", values.get(0));
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
     }
 
     @Test
@@ -135,6 +140,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v11?value=10&value=11").execute();
         Response response = f.get();
         assertEquals(200, response.getStatusCode());
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
 
 
         f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v11").execute();
@@ -145,6 +151,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         assertEquals(2, values.size());
         assertEquals("10", values.get(0));
         assertEquals("11", values.get(1));
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
     }
 
     @Test
@@ -156,6 +163,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
 
         f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v10").execute();
         response = f.get();
@@ -164,7 +172,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         List<String> values = consumeJsonPinValues(response.getResponseBody());
         assertEquals(1, values.size());
         assertEquals("100", values.get(0));
-
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
     }
 
     @Test
@@ -176,6 +184,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
 
         f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v10").execute();
         response = f.get();
@@ -186,6 +195,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         assertEquals("100", values.get(0));
         assertEquals("101", values.get(1));
         assertEquals("102", values.get(2));
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
     }
 
     @Test
@@ -193,16 +203,19 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v111?value=10").execute();
         Response response = f.get();
         assertEquals(200, response.getStatusCode());
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
 
         f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/data/v111").execute();
         response = f.get();
         assertEquals(400, response.getStatusCode());
         assertEquals("No data for pin.", response.getResponseBody());
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
 
         f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/data/z111").execute();
         response = f.get();
         assertEquals(400, response.getStatusCode());
         assertEquals("Wrong pin format.", response.getResponseBody());
+        assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
     }
 
     @Test
