@@ -9,7 +9,6 @@ public enum WidgetProperty {
 
     LABEL("label"),
     COLOR("color"),
-    IS_ENABLED("isEnabled"),
     ON_LABEL("onLabel"),
     OFF_LABEL("offLabel"),
     LABELS("labels"),
@@ -30,8 +29,6 @@ public enum WidgetProperty {
                 return LABEL;
             case "color" :
                 return COLOR;
-            case "isEnabled" :
-                return IS_ENABLED;
             case "onLabel" :
                 return ON_LABEL;
             case "offLabel" :

@@ -156,8 +156,6 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public volatile String label;
 
-    public volatile boolean isEnabled = true;
-
     public boolean isDefaultColor;
 
     public abstract PinMode getModeType();
@@ -190,9 +188,6 @@ public abstract class Widget implements CopyObject<Widget> {
 
     /**
      * This method should be overridden by every widget that supports direct pins (analog, digital) control
-     *
-     * @param sb
-     * @param deviceId
      */
     public void append(StringBuilder sb, int deviceId) {
     }
@@ -212,9 +207,6 @@ public abstract class Widget implements CopyObject<Widget> {
             case COLOR :
                 this.color = ByteUtils.parseColor(propertyValue);
                 this.isDefaultColor = false;
-                break;
-            case IS_ENABLED :
-                this.isEnabled = Boolean.parseBoolean(propertyValue);
                 break;
             default:
                 throw new RuntimeException("Error setting widget property.");
