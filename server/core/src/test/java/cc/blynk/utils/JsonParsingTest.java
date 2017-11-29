@@ -215,6 +215,6 @@ public class JsonParsingTest {
 
         String result = JsonParser.MAPPER.writeValueAsString(button);
 
-        assertEquals("{\"type\":\"BUTTON\",\"id\":1,\"x\":2,\"y\":2,\"color\":0,\"width\":2,\"height\":2,\"tabId\":0,\"label\":\"MyButton\",\"isEnabled\":true,\"isDefaultColor\":false,\"deviceId\":0,\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false}", result);
+        assertEquals("{\"type\":\"BUTTON\",\"id\":1,\"x\":2,\"y\":2,\"color\":0,\"width\":2,\"height\":2,\"tabId\":0,\"label\":\"MyButton\",\"isDefaultColor\":false,\"deviceId\":0,\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false}", result);
     }
 }
