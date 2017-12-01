@@ -10,10 +10,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Tab {
 
+    public final int id;
+
     public final String label;
 
     @JsonCreator
-    public Tab(@JsonProperty("label") String label) {
+    public Tab(@JsonProperty("id") int id,
+            @JsonProperty("label") String label) {
+        this.id = id;
         this.label = label;
     }
 }
