@@ -124,7 +124,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return badRequest("Invalid token.");
         }
 
-        return ok(tokenValue.dash.toString());
+        return ok(tokenValue.dash.toStringRestrictive());
     }
 
     @GET
