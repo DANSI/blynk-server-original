@@ -204,7 +204,7 @@ public final class Command {
                 put(GET_CLONE_CODE, "GetCloneCode");
                 put(GET_PROJECT_BY_CLONE_CODE, "GetProjectByCloneCode");
 
-                put (DEVICE_OFFLINE, "deviceOffline");
+                put(DEVICE_OFFLINE, "deviceOffline");
 
                 put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
                 put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");
