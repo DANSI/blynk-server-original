@@ -69,6 +69,8 @@ public class DashBoard {
 
     public volatile boolean isAppConnectedOn;
 
+    public volatile boolean isNotificationsOff;
+
     public volatile boolean isShared;
 
     public volatile boolean isActive;
@@ -386,6 +388,7 @@ public class DashBoard {
         this.theme = settings.theme;
         this.keepScreenOn = settings.keepScreenOn;
         this.isAppConnectedOn = settings.isAppConnectedOn;
+        this.isNotificationsOff = settings.isNotificationsOff;
         this.updatedAt = System.currentTimeMillis();
     }
 
@@ -395,6 +398,7 @@ public class DashBoard {
         this.theme = updatedDashboard.theme;
         this.keepScreenOn = updatedDashboard.keepScreenOn;
         this.isAppConnectedOn = updatedDashboard.isAppConnectedOn;
+        this.isNotificationsOff = updatedDashboard.isNotificationsOff;
 
         Notification newNotification = updatedDashboard.getWidgetByType(Notification.class);
         if (newNotification != null) {
@@ -421,6 +425,7 @@ public class DashBoard {
         //this.theme = parent.theme;
         this.keepScreenOn = parent.keepScreenOn;
         this.isAppConnectedOn = parent.isAppConnectedOn;
+        this.isNotificationsOff = parent.isNotificationsOff;
         this.tags = copyTags(parent.tags);
         //do not update devices by purpose
         //this.devices = parent.devices;

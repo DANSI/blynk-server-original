@@ -21,16 +21,20 @@ public final class DashboardSettings {
 
     public final boolean isAppConnectedOn;
 
+    public final boolean isNotificationsOff;
+
     @JsonCreator
     public DashboardSettings(@JsonProperty("name") String name,
                              @JsonProperty("isShared") boolean isShared,
                              @JsonProperty("theme") Theme theme,
                              @JsonProperty("keepScreenOn") boolean keepScreenOn,
-                             @JsonProperty("isAppConnectedOn") boolean isAppConnectedOn) {
+                             @JsonProperty("isAppConnectedOn") boolean isAppConnectedOn,
+                             @JsonProperty("isNotificationsOff") boolean isNotificationsOff) {
         this.name = name;
         this.isShared = isShared;
         this.theme = theme == null ? Theme.Blynk : theme;
         this.keepScreenOn = keepScreenOn;
         this.isAppConnectedOn = isAppConnectedOn;
+        this.isNotificationsOff = isNotificationsOff;
     }
 }
