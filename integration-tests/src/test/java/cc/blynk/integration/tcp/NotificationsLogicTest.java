@@ -7,9 +7,12 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.protocol.enums.Command;
-import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
+import cc.blynk.server.core.protocol.model.messages.appllication.DeviceOfflineMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
@@ -23,7 +26,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Map;
 
-import static cc.blynk.server.core.protocol.enums.Response.DEVICE_WENT_OFFLINE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -163,10 +165,60 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
-        channelFuture.await();
+        clientPair.hardwareClient.stop();
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new DeviceOfflineMessage(0, "1-0")));
+    }
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseWithBodyMessage(0, Command.RESPONSE, DEVICE_WENT_OFFLINE, 1)));
+    @Test
+    public void testHardwareDeviceWentOfflineForSecondDeviceSameToken() throws Exception {
+        Profile profile = parseProfile(readTestUserProfile());
+        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        notification.notifyWhenOffline = false;
+        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getToken 1");
+        String token = clientPair.appClient.getBody();
+
+        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        newHardClient.stop();
+        verify(clientPair.appClient.responseMock, timeout(1500)).channelRead(any(), eq(new DeviceOfflineMessage(0, "1-0")));
+    }
+
+    @Test
+    public void testHardwareDeviceWentOfflineForSecondDeviceNewToken() throws Exception {
+        Profile profile = parseProfile(readTestUserProfile());
+        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        notification.notifyWhenOffline = false;
+        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.reset();
+
+        Device device1 = new Device(1, "Name", "ESP8266");
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        clientPair.appClient.send("getToken 1-1");
+        String token = clientPair.appClient.getBody(2);
+
+        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        newHardClient.start();
+        newHardClient.send("login " + token);
+        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-1")));
+
+        newHardClient.stop();
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new DeviceOfflineMessage(0, "1-1")));
     }
 
     @Test

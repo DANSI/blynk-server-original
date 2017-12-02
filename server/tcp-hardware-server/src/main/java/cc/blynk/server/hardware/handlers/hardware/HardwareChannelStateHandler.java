@@ -86,7 +86,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         if (notification != null && notification.notifyWhenOffline) {
             sendPushNotification(ctx, dashBoard, notification, dashBoard.id, device);
         } else {
-            session.sendOfflineMessageToApps(dashBoard.id);
+            session.sendOfflineMessageToApps(dashBoard.id, device.id);
         }
     }
 

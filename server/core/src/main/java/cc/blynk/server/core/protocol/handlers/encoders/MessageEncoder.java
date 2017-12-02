@@ -1,9 +1,7 @@
 package cc.blynk.server.core.protocol.handlers.encoders;
 
 import cc.blynk.server.core.protocol.enums.Command;
-import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
-import cc.blynk.server.core.protocol.model.messages.ResponseWithBodyMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -31,9 +29,6 @@ public class MessageEncoder extends MessageToByteEncoder<MessageBase> {
 
         if (message.command == Command.RESPONSE) {
             out.writeShort(message.length);
-            if (message.length == Response.DEVICE_WENT_OFFLINE) {
-                out.writeInt(((ResponseWithBodyMessage) message).dashId);
-            }
         } else {
             stats.mark(message.command);
 

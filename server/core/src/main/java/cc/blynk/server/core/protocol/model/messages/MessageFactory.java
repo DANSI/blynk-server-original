@@ -19,6 +19,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.DeleteEnhancedG
 import cc.blynk.server.core.protocol.model.messages.appllication.DeleteTag;
 import cc.blynk.server.core.protocol.model.messages.appllication.DeleteTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.appllication.DeleteWidget;
+import cc.blynk.server.core.protocol.model.messages.appllication.DeviceOfflineMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.EmailQRsMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.ExportDataMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetCloneCodeMessage;
@@ -90,6 +91,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DELETE_ENHANCED_GRAPH_
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_OFFLINE;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
@@ -287,6 +289,8 @@ public final class MessageFactory {
                 return new GetCloneCodeMessage(messageId, body);
             case GET_PROJECT_BY_CLONE_CODE :
                 return new GetProjectByCloneCodeStringMessage(messageId, body);
+            case DEVICE_OFFLINE :
+                return new DeviceOfflineMessage(messageId, body);
 
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);
         }

@@ -29,7 +29,6 @@ public final class Response {
     //reserved
     public static final int BLYNK_TIMEOUT = 16;
     public static final int NO_DATA = 17;
-    public static final int DEVICE_WENT_OFFLINE = 18;
     public static final int SERVER_ERROR = 19;
     public static final int NOT_SUPPORTED_VERSION = 20;
     public static final int ENERGY_LIMIT = 21;
