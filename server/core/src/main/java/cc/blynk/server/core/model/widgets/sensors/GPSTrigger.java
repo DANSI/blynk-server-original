@@ -19,6 +19,8 @@ public class GPSTrigger extends OnePinWidget {
 
     public int triggerRadius;
 
+    public int accuracy;
+
     @Override
     public PinMode getModeType() {
         return PinMode.out;
