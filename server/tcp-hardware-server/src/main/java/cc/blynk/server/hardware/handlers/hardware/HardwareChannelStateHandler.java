@@ -77,7 +77,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             device.disconnected();
         }
 
-        if (!dashBoard.isActive) {
+        if (!dashBoard.isActive || dashBoard.isNotificationsOff) {
             return;
         }
 

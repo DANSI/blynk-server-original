@@ -126,7 +126,8 @@ public class HardwareAppLogic extends BaseProcessorHandler {
                 //sending to shared dashes and master-master apps
                 session.sendToSharedApps(ctx.channel(), dash.sharedToken, APP_SYNC, message.id, message.body);
 
-                if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], deviceIds)) {
+                if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], deviceIds)
+                        && !dash.isNotificationsOff) {
                     log.debug("No device in session.");
                     ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
                 }
@@ -146,7 +147,8 @@ public class HardwareAppLogic extends BaseProcessorHandler {
                 }
                 //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
                 if (!(widget instanceof FrequencyWidget)) {
-                    if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], targetId)) {
+                    if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], targetId)
+                            && !dash.isNotificationsOff) {
                         log.debug("No device in session.");
                         ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
                     }

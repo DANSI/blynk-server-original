@@ -56,7 +56,7 @@ public class ActivateDashboardLogic {
                 if (session.sendMessageToHardware(dashId, HARDWARE, PIN_MODE_MSG_ID,
                         dash.buildPMMessage(device.id), device.id)) {
                     log.debug("No device in session.");
-                    if (ctx.channel().isWritable()) {
+                    if (ctx.channel().isWritable() && !dash.isNotificationsOff) {
                         ctx.write(deviceNotInNetwork(PIN_MODE_MSG_ID), ctx.voidPromise());
                     }
                 }
@@ -65,7 +65,9 @@ public class ActivateDashboardLogic {
             ctx.write(ok(message.id), ctx.voidPromise());
         } else {
             log.debug("No device in session.");
-            ctx.write(deviceNotInNetwork(message.id), ctx.voidPromise());
+            if (!dash.isNotificationsOff) {
+                ctx.write(deviceNotInNetwork(message.id), ctx.voidPromise());
+            }
         }
 
         for (Channel appChannel : session.appChannels) {

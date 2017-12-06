@@ -134,7 +134,8 @@ public class HardwareAppShareLogic extends BaseProcessorHandler {
                     }
                 }
 
-                if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], deviceIds)) {
+                if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], deviceIds)
+                        && !dash.isNotificationsOff) {
                     log.debug("No device in session.");
                     ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
                 }
