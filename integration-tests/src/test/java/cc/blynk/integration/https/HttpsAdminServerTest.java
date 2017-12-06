@@ -3,11 +3,14 @@ package cc.blynk.integration.https;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.http.ResponseUserEntity;
 import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestAppClient;
+import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.AppNameUtil;
@@ -37,8 +40,10 @@ import javax.net.ssl.SSLContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cc.blynk.integration.IntegrationBase.DEFAULT_TEST_USER;
 import static cc.blynk.integration.IntegrationBase.b;
 import static cc.blynk.integration.IntegrationBase.initAppAndHardPair;
+import static cc.blynk.integration.IntegrationBase.ok;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
@@ -47,6 +52,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -289,36 +295,65 @@ public class HttpsAdminServerTest extends BaseTest {
     public void testUpdateUser() throws Exception {
         login(admin.email, admin.pass);
 
+        clientPair.appClient.send("deactivate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
         User user;
-        HttpGet getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/dmitriy@blynk.cc-Blynk");
+        HttpGet getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/" + DEFAULT_TEST_USER + "-Blynk");
         try (CloseableHttpResponse response = httpclient.execute(getUserRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String userProfile = consumeText(response);
             assertNotNull(userProfile);
             user = JsonParser.parseUserFromString(userProfile);
-            assertEquals("dmitriy@blynk.cc", user.email);
+            assertEquals(DEFAULT_TEST_USER, user.email);
         }
 
         user.energy = 12333;
 
-        HttpPut changeUserNameRequestCorrect = new HttpPut(httpsAdminServerUrl + "/users/dmitriy@blynk.cc-Blynk");
+        HttpPut changeUserNameRequestCorrect = new HttpPut(httpsAdminServerUrl + "/users/" + DEFAULT_TEST_USER + "-Blynk");
         changeUserNameRequestCorrect.setEntity(new StringEntity(user.toString(), ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(changeUserNameRequestCorrect)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/dmitriy@blynk.cc-Blynk");
+        getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/" + DEFAULT_TEST_USER + "-Blynk");
         try (CloseableHttpResponse response = httpclient.execute(getUserRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String userProfile = consumeText(response);
             assertNotNull(userProfile);
             user = JsonParser.parseUserFromString(userProfile);
-            assertEquals("dmitriy@blynk.cc", user.email);
+            assertEquals(DEFAULT_TEST_USER, user.email);
             assertEquals(12333, user.energy);
         }
 
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+        appClient.send("login " + DEFAULT_TEST_USER + " 1 iOS" + "\0" + "1.10.2");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        appClient.send("activate 1");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
         clientPair.hardwareClient.send("hardware vw 1 112");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 112"))));
+        verify(appClient.responseMock, after(500).never()).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 112"))));
+
+        appClient.reset();
+
+        appClient.send("getDevices 1");
+        String deviceResponse = appClient.getBody();
+
+        Device[] devices = JsonParser.MAPPER.readValue(deviceResponse, Device[].class);
+        assertNotNull(devices);
+        assertEquals(1, devices.length);
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.send("login " + devices[0].token);
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        hardClient2.send("hardware vw 1 112");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1 vw 1 112"))));
     }
 
     @Test
