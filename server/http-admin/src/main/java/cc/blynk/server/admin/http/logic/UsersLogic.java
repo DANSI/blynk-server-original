@@ -180,9 +180,18 @@ public class UsersLogic extends CookiesBaseHttpHandler {
         }
 
         userDao.add(updatedUser);
+
+        for (DashBoard dash : updatedUser.profile.dashBoards) {
+            for (Device device : dash.devices) {
+                tokenManager.updateRegularCache(device.token, updatedUser, dash, device);
+            }
+            if (dash.sharedToken != null) {
+                tokenManager.updateSharedCache(dash.sharedToken, updatedUser, dash.id);
+            }
+        }
+
         updatedUser.lastModifiedTs = System.currentTimeMillis();
         log.debug("Adding new user {}", updatedUser.email);
-
 
         return ok(updatedUser);
     }

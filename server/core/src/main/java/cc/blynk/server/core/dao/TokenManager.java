@@ -71,4 +71,12 @@ public class TokenManager {
         sharedTokenManager.assignToken(user, dash, newToken);
         return newToken;
     }
+
+    public void updateRegularCache(String token, User user, DashBoard dash, Device device) {
+        regularTokenManager.cache.put(token, new TokenValue(user, dash, device));
+    }
+
+    public void updateSharedCache(String token, User user, int dashId) {
+        sharedTokenManager.cache.put(token, new SharedTokenValue(user, dashId));
+    }
 }

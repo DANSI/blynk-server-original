@@ -2,11 +2,14 @@ package cc.blynk.integration.https;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.http.ResponseUserEntity;
+import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.HttpsAPIServer;
+import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;
@@ -34,10 +37,18 @@ import javax.net.ssl.SSLContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cc.blynk.integration.IntegrationBase.b;
+import static cc.blynk.integration.IntegrationBase.initAppAndHardPair;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -48,21 +59,30 @@ import static org.junit.Assert.assertTrue;
 public class HttpsAdminServerTest extends BaseTest {
 
     private static BaseServer httpServer;
+    private BaseServer hardwareServer;
+    private BaseServer appServer;
     private BaseServer httpAdminServer;
     private CloseableHttpClient httpclient;
     private String httpsAdminServerUrl;
     private String httpServerUrl;
     private User admin;
+    private ClientPair clientPair;
+
 
     @After
     public void shutdown() {
         httpAdminServer.close();
         httpServer.close();
+        hardwareServer.close();
+        appServer.close();
+        clientPair.stop();
     }
 
     @Before
     public void init() throws Exception {
         this.httpAdminServer = new HttpsAPIServer(holder).start();
+        hardwareServer = new HardwareServer(holder).start();
+        appServer = new AppServer(holder).start();
 
         httpsAdminServerUrl = String.format("https://localhost:%s/admin", httpsPort);
         httpServerUrl = String.format("http://localhost:%s/", httpPort);
@@ -82,6 +102,8 @@ public class HttpsAdminServerTest extends BaseTest {
         String pass = "admin";
         admin = new User(name, SHA256Util.makeHash(pass, name), AppNameUtil.BLYNK, "local", "127.0.0.1", false, true);
         holder.userDao.add(admin);
+
+        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
     }
 
     @Override
@@ -90,7 +112,7 @@ public class HttpsAdminServerTest extends BaseTest {
     }
 
     @Test
-    public void testGetnOnExistingUser() throws Exception {
+    public void testGetOnExistingUser() throws Exception {
         String testUser = "dima@dima.ua";
         HttpPut request = new HttpPut(httpsAdminServerUrl + "/users/" + "xxx/" + testUser);
         request.setEntity(new StringEntity(new ResponseUserEntity("123").toString(), ContentType.APPLICATION_JSON));
@@ -261,6 +283,42 @@ public class HttpsAdminServerTest extends BaseTest {
             assertEquals("123@blynk.cc", user.email);
             assertEquals(SHA256Util.makeHash("123", user.email), user.pass);
         }
+    }
+
+    @Test
+    public void testUpdateUser() throws Exception {
+        login(admin.email, admin.pass);
+
+        User user;
+        HttpGet getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/dmitriy@blynk.cc-Blynk");
+        try (CloseableHttpResponse response = httpclient.execute(getUserRequest)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String userProfile = consumeText(response);
+            assertNotNull(userProfile);
+            user = JsonParser.parseUserFromString(userProfile);
+            assertEquals("dmitriy@blynk.cc", user.email);
+        }
+
+        user.energy = 12333;
+
+        HttpPut changeUserNameRequestCorrect = new HttpPut(httpsAdminServerUrl + "/users/dmitriy@blynk.cc-Blynk");
+        changeUserNameRequestCorrect.setEntity(new StringEntity(user.toString(), ContentType.APPLICATION_JSON));
+        try (CloseableHttpResponse response = httpclient.execute(changeUserNameRequestCorrect)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
+
+        getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/dmitriy@blynk.cc-Blynk");
+        try (CloseableHttpResponse response = httpclient.execute(getUserRequest)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String userProfile = consumeText(response);
+            assertNotNull(userProfile);
+            user = JsonParser.parseUserFromString(userProfile);
+            assertEquals("dmitriy@blynk.cc", user.email);
+            assertEquals(12333, user.energy);
+        }
+
+        clientPair.hardwareClient.send("hardware vw 1 112");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 112"))));
     }
 
     @Test

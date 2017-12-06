@@ -19,7 +19,7 @@ class RegularTokenManager {
 
     private static final Logger log = LogManager.getLogger(RegularTokenManager.class);
 
-    private final ConcurrentMap<String, TokenValue> cache;
+    protected final ConcurrentMap<String, TokenValue> cache;
 
     RegularTokenManager(Iterable<User> users) {
         this.cache = new ConcurrentHashMap<String, TokenValue>() {
