@@ -1,0 +1,25 @@
+{
+    "dashBoards" :
+        [
+            {
+             "id":1,
+             "name":"My Dashboard",
+             "isActive" : true,
+             "isShared" : true,
+             "createdAt" : 1,
+             "widgets"  : [
+
+             ],
+             "devices" :
+             [
+               {
+                  "id":0,
+                  "boardType":"UNO",
+                  "token":"12345678901234567890123456789012",
+                  "connectionType":"ETHERNET",
+                  "name":"My Device"
+               }
+             ]
+            }
+        ]
+}
