@@ -162,5 +162,36 @@ public class OfflineNotificationTest extends IntegrationBase {
 
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(),
                 eq(new DeviceOfflineMessage(0, b("1-0"))));
+
+        Device device2 = new Device(1, "My Device", "ESP8266");
+        device2.status = Status.OFFLINE;
+
+        clientPair.appClient.send("createDevice 1\0" + device2.toString());
+        String createdDevice = clientPair.appClient.getBody(3);
+        Device device = JsonParser.parseDevice(createdDevice);
+        TestCase.assertNotNull(device);
+        TestCase.assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(3, device.toString())));
+
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody(4);
+
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        TestCase.assertNotNull(devices);
+        assertEquals(2, devices.length);
+
+        assertEquals(1, devices[1].id);
+
+        settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, false);
+        clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+        hardClient2.send("login " + devices[1].token);
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.stop();
+
+        verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(new DeviceOfflineMessage(0, b("1-1"))));
     }
 }
