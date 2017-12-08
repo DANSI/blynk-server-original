@@ -540,9 +540,13 @@ To display the date/time in excel you may use formula:
 Latest Blynk server has super cool feature - automatic Let's Encrypt certificates generation. 
 However, it has few requirements: 
  
-+ Add ```server.host``` property in ```server.properties``` file. For example (IP is not supported, this is the limitation of Let's Encrypt) : 
++ Add ```server.host``` property in ```server.properties``` file. 
+For example : 
  
         server.host=myhost.com
+
+IP is not supported, this is the limitation of Let's Encrypt. Also have in mind that ```myhost.com``` 
+should be resolved by public DNS severs.
         
 + Add ```contact.email``` property in ```server.properties```. For example : 
  
