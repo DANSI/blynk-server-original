@@ -5,8 +5,12 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.DashboardSettings;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
+import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.DeviceOfflineMessage;
@@ -20,6 +24,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
@@ -131,5 +137,30 @@ public class OfflineNotificationTest extends IntegrationBase {
 
         verify(clientPair.appClient.responseMock, timeout(5000).times(1)).channelRead(any(), eq(new DeviceOfflineMessage(0, b("1-0"))));
         verify(clientPair.appClient.responseMock, timeout(5000).times(1)).channelRead(any(), eq(new DeviceOfflineMessage(0, b("1-1"))));
+    }
+
+    @Test
+    public void testTurnOffNotifications() throws Exception{
+        DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, true);
+
+        clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = parseProfile(clientPair.appClient.getBody(2));
+        DashBoard dashBoard = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(settings.name, dashBoard.name);
+        assertEquals(settings.isAppConnectedOn, dashBoard.isAppConnectedOn);
+        assertEquals(settings.isNotificationsOff, dashBoard.isNotificationsOff);
+        assertTrue(dashBoard.isNotificationsOff);
+        assertEquals(settings.isShared, dashBoard.isShared);
+        assertEquals(settings.keepScreenOn, dashBoard.keepScreenOn);
+        assertEquals(settings.theme, dashBoard.theme);
+
+        clientPair.hardwareClient.stop();
+
+        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(),
+                eq(new DeviceOfflineMessage(0, b("1-0"))));
     }
 }
