@@ -34,6 +34,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -337,5 +338,57 @@ public class SetPropertyTest extends IntegrationBase {
         Video videoWidget = (Video) widget;
 
         assertEquals("http://123.com", videoWidget.url);
+    }
+
+    @Test
+    public void testPropertyIsNotRestoredAfterWidgetCreated() throws Exception {
+        clientPair.hardwareClient.send("setProperty 122 label new");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"VIDEO\", \"pinType\":\"VIRTUAL\", \"pin\":122}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("deactivate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
+        verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(setProperty(1111, "1 122 label new")));
+    }
+
+    @Test
+    public void testPropertyIsNotRestoredAfterWidgetUpdated() throws Exception {
+        clientPair.appClient.send("createWidget 1\0{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"VIDEO\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("setProperty 17 url http://123.com");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 17 url http://123.com"))));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = parseProfile(clientPair.appClient.getBody());
+
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        assertNotNull(widget);
+        assertTrue(widget instanceof Video);
+        Video videoWidget = (Video) widget;
+
+        assertEquals("http://123.com", videoWidget.url);
+
+        clientPair.appClient.send("updateWidget 1\0{\"id\":102, \"url\":\"http://updated.com\", \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"VIDEO\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        clientPair.appClient.send("deactivate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(4)));
+        verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(setProperty(1111, "1 17 url http://updated.com")));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = parseProfile(clientPair.appClient.getBody());
+        assertEquals(0, profile.dashBoards[0].pinsStorage.size());
     }
 }

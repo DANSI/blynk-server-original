@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
@@ -313,10 +314,6 @@ public class DashBoard {
         }
     }
 
-    public void cleanPinStorage(Widget widget) {
-        cleanPinStorage(widget, false);
-    }
-
     public void cleanPinStorage(Widget widget, boolean removePropertiesToo) {
         if (widget instanceof OnePinWidget) {
             OnePinWidget onePinWidget = (OnePinWidget) widget;
@@ -343,20 +340,13 @@ public class DashBoard {
     }
 
     private void cleanPropertyStorageForTarget(int widgetDeviceId, PinType pinType, byte pin) {
-        try {
-            Target target = getTagById(widgetDeviceId);
-            if (target == null) {
-                target = getDeviceSelector(widgetDeviceId);
-            }
-            if (target != null) {
-                for (int deviceId : target.getDeviceIds()) {
-                    pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, "label"));
-                    pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, "onLabel"));
-                    pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, "offLabel"));
+        Target target = getTarget(widgetDeviceId);
+        if (target != null) {
+            for (int deviceId : target.getDeviceIds()) {
+                for (WidgetProperty widgetProperty : WidgetProperty.values()) {
+                    pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, widgetProperty.label));
                 }
             }
-        } catch (IllegalCommandException e) {
-            //that's fine. ignore
         }
     }
 
@@ -412,7 +402,7 @@ public class DashBoard {
         this.widgets = updatedDashboard.widgets;
 
         for (Widget widget : widgets) {
-            cleanPinStorage(widget);
+            cleanPinStorage(widget, false);
         }
 
         this.updatedAt = System.currentTimeMillis();
