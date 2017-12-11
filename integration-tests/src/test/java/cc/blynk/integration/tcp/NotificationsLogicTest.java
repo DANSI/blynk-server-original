@@ -404,6 +404,36 @@ public class NotificationsLogicTest extends IntegrationBase {
     }
 
     @Test
+    public void testLoginWithSharedAppAndLogoutFrom() throws Exception {
+        Profile profile = parseProfile(readTestUserProfile());
+        Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
+        notification.notifyWhenOffline = true;
+
+        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = clientPair.appClient.getBody();
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+        appClient.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        appClient.send("addPushToken 1\0uid2\0token2");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        appClient.send("logout uid2");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+
+        clientPair.hardwareClient.stop().await();
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(gcmWrapper, after(500).never()).send(objectArgumentCaptor.capture(), any(), eq("uid2"));
+    }
+
+    @Test
     public void testHardwareDeviceWentOfflineAndPushDelayedWorks() throws Exception {
         Profile profile = parseProfile(readTestUserProfile());
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
