@@ -70,6 +70,13 @@ public final class JsonParser {
             .addMixIn(DashBoard.class, DashboardMixIn.class)
             .writerFor(DashBoard.class);
 
+    public static final ObjectWriter restrictiveProfileWriter = init()
+            .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
+            .addMixIn(Notification.class, NotificationIgnoreMixIn.class)
+            .addMixIn(Device.class, DeviceIgnoreMixIn.class)
+            .addMixIn(DashBoard.class, DashboardMixIn.class)
+            .writerFor(Profile.class);
+
     private static final ObjectWriter restrictiveWidgetWriter = init()
             .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
             .addMixIn(Notification.class, NotificationIgnoreMixIn.class)
@@ -104,6 +111,10 @@ public final class JsonParser {
 
     public static byte[] gzipDashRestrictive(DashBoard dash) {
         return writeJsonAsCompressedBytes(restrictiveDashWriter, dash);
+    }
+
+    public static byte[] gzipProfileRestrictive(Profile profile) {
+        return writeJsonAsCompressedBytes(restrictiveProfileWriter, profile);
     }
 
     public static byte[] gzipProfile(Profile profile) {

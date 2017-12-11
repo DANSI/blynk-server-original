@@ -9,7 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.model.serialization.JsonParser.gzipProfile;
+import static cc.blynk.server.core.model.serialization.JsonParser.gzipProfileRestrictive;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.internal.BlynkByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.BlynkByteBufUtil.serverError;
@@ -32,7 +32,7 @@ public final class LoadSharedProfileGzippedLogic {
         Profile profile = new Profile();
         profile.dashBoards = new DashBoard[] {dash};
 
-        byte[] data = gzipProfile(profile);
+        byte[] data = gzipProfileRestrictive(profile);
         if (ctx.channel().isWritable()) {
             ByteBuf outputMsg;
             if (data.length > 65_535) {

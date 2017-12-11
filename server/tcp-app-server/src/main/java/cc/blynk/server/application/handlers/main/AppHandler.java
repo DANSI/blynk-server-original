@@ -48,7 +48,6 @@ import cc.blynk.server.application.handlers.main.logic.reporting.ExportGraphData
 import cc.blynk.server.application.handlers.main.logic.reporting.GetEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.GetGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.GetShareTokenLogic;
-import cc.blynk.server.application.handlers.main.logic.sharing.GetSharedDashLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.RefreshShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.ShareLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -88,7 +87,6 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DAT
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.GET_SHARED_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
@@ -132,7 +130,6 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final AppMailLogic appMailLogic;
     private final GetShareTokenLogic getShareTokenLogic;
     private final RefreshShareTokenLogic refreshShareTokenLogic;
-    private final GetSharedDashLogic getSharedDashLogic;
     private final CreateDashLogic createDashLogic;
     private final UpdateDashLogic updateDashLogic;
     private final UpdateDashSettingLogic updateDashSettingLogic;
@@ -173,7 +170,6 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.appMailLogic = new AppMailLogic(holder);
         this.getShareTokenLogic = new GetShareTokenLogic(holder.tokenManager);
         this.refreshShareTokenLogic = new RefreshShareTokenLogic(holder.tokenManager, holder.sessionDao);
-        this.getSharedDashLogic = new GetSharedDashLogic(holder.tokenManager);
 
         this.createDashLogic = new CreateDashLogic(holder.timerWorker,
                 holder.tokenManager, holder.limits.dashboardsLimit, holder.limits.profileSizeLimitBytes);
@@ -267,9 +263,6 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case REFRESH_SHARE_TOKEN :
                 refreshShareTokenLogic.messageReceived(ctx, state, msg);
-                break;
-            case GET_SHARED_DASH :
-                getSharedDashLogic.messageReceived(ctx, msg);
                 break;
 
             case EMAIL :

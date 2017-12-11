@@ -23,7 +23,6 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
-import static cc.blynk.server.core.protocol.enums.Command.GET_SHARED_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
@@ -178,9 +177,6 @@ public class CommandStat {
                 break;
             case HARDWARE :
                 this.hardware = val;
-                break;
-            case GET_SHARED_DASH :
-                this.getSharedDash = val;
                 break;
             case GET_SHARE_TOKEN :
                 this.getShareToken = val;

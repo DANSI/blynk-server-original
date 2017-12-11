@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -22,8 +23,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.GreaterThan;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
 import org.junit.Before;
@@ -43,7 +42,6 @@ import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
-import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -111,11 +109,16 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        ClientPair clientPair2 = initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "dima2@mail.ua 1", "user_profile_json_2.txt", properties, 10000);
-        clientPair2.appClient.send("getSharedDash " + token);
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
 
-        String dashboard = clientPair2.appClient.getBody();
-        DashBoard serverDash = JsonParser.parseDashboard(dashboard);
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        appClient2.send("loadProfileGzipped");
+        String serverProfileString = appClient2.getBody(2);
+        Profile serverProfile = JsonParser.parseProfileFromString(serverProfileString);
+        DashBoard serverDash = serverProfile.dashBoards[0];
 
         Profile profile = parseProfile(readTestUserProfile());
         Twitter twitter = profile.dashBoards[0].getWidgetByType(Twitter.class);
@@ -564,10 +567,27 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("loadProfileGzipped");
-        String body = clientPair.appClient.getBody();
+        String parentProfileString = clientPair.appClient.getBody();
+        Profile parentProfile = JsonParser.parseProfileFromString(parentProfileString);
 
         appClient2.send("loadProfileGzipped");
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(new LoadProfileGzippedBinaryMessage(2, compress(body))));
+        String body2 = appClient2.getBody(2);
+
+        Twitter twitter = parentProfile.dashBoards[0].getWidgetByType(Twitter.class);
+        clearPrivateData(twitter);
+        Notification notification = parentProfile.dashBoards[0].getWidgetByType(Notification.class);
+        clearPrivateData(notification);
+        for (Device device : parentProfile.dashBoards[0].devices) {
+            device.token = null;
+            device.hardwareInfo = null;
+            device.deviceOtaInfo = null;
+            device.lastLoggedIP = null;
+            device.disconnectTime = 0;
+            device.status = null;
+        }
+        parentProfile.dashBoards[0].sharedToken = null;
+
+        assertEquals(parentProfile.toString().replace("\"disconnectTime\":0,", ""), body2);
     }
 
     public static byte[] compress(String value) throws IOException {
@@ -589,10 +609,16 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        ClientPair clientPair2 = initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "dima2@mail.ua 1", "user_profile_json_2.txt", properties, 10000);
-        clientPair2.appClient.send("getSharedDash " + token);
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
 
-        String dashboard = clientPair2.appClient.getBody();
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        appClient2.send("loadProfileGzipped");
+        String serverProfileString = appClient2.getBody(2);
+        Profile serverProfile = JsonParser.parseProfileFromString(serverProfileString);
+        DashBoard dashboard = serverProfile.dashBoards[0];
 
         assertNotNull(dashboard);
 
@@ -602,15 +628,20 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertNotNull(refreshedToken);
         assertNotEquals(refreshedToken, token);
 
-        clientPair.appClient.reset();
-        clientPair.appClient.send("getSharedDash " + token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, INVALID_TOKEN)));
+        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient3.start();
+        appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
 
-        clientPair.appClient.reset();
-        clientPair.appClient.send("getSharedDash " + refreshedToken);
+        TestAppClient appClient4 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient4.start();
+        appClient4.send("shareLogin " + "dima@mail.ua " + refreshedToken + " Android 24");
+        verify(appClient4.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        dashboard = clientPair.appClient.getBody();
-        DashBoard serverDash = JsonParser.parseDashboard(dashboard);
+        appClient4.send("loadProfileGzipped");
+        serverProfileString = appClient4.getBody(2);
+        serverProfile = JsonParser.parseProfileFromString(serverProfileString);
+        DashBoard serverDash = serverProfile.dashBoards[0];
 
         assertNotNull(dashboard);
         Profile profile = parseProfile(readTestUserProfile());
@@ -620,8 +651,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         clearPrivateData(notification);
 
         //one field update, cause it is hard to compare.
-        DashBoard temp = JsonParser.parseDashboard(dashboard);
-        profile.dashBoards[0].updatedAt = temp.updatedAt;
+        profile.dashBoards[0].updatedAt = serverDash.updatedAt;
         assertNull(serverDash.sharedToken);
 
         //todo fix

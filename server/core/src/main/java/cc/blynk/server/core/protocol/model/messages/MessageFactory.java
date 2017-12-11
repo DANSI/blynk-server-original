@@ -51,7 +51,6 @@ import cc.blynk.server.core.protocol.model.messages.appllication.UpdateTileTempl
 import cc.blynk.server.core.protocol.model.messages.appllication.UpdateWidget;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.AppSyncMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.GetShareTokenMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.sharing.GetSharedDashMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.RefreshShareTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.SharingMessage;
@@ -103,7 +102,6 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
-import static cc.blynk.server.core.protocol.enums.Command.GET_SHARED_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
@@ -199,8 +197,6 @@ public final class MessageFactory {
                 return new GetShareTokenMessage(messageId, body);
             case REFRESH_SHARE_TOKEN :
                 return new RefreshShareTokenMessage(messageId, body);
-            case GET_SHARED_DASH :
-                return new GetSharedDashMessage(messageId, body);
             case HARDWARE :
                 return new HardwareMessage(messageId, body);
             case HARDWARE_RESEND_FROM_BLUETOOTH :

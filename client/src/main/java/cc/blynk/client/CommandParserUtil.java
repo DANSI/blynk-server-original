@@ -32,7 +32,6 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
-import static cc.blynk.server.core.protocol.enums.Command.GET_SHARED_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
@@ -190,8 +189,6 @@ public final class CommandParserUtil {
                 return SHARE_LOGIN;
             case "getsharetoken" :
                 return GET_SHARE_TOKEN;
-            case "getshareddash" :
-                return GET_SHARED_DASH;
             case "refreshsharetoken" :
                 return REFRESH_SHARE_TOKEN;
 
