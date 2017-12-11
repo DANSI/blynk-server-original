@@ -3,7 +3,7 @@ package cc.blynk.server.application.handlers.sharing;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
-import cc.blynk.server.application.handlers.main.logic.LoadProfileGzippedLogic;
+import cc.blynk.server.application.handlers.main.logic.LoadSharedProfileGzippedLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.DeleteEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.GetEnhancedGraphDataLogic;
@@ -42,7 +42,6 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final GetGraphDataLogic graphData;
     private final GetEnhancedGraphDataLogic enhancedGraphDataLogic;
     private final DeleteEnhancedGraphDataLogic deleteEnhancedGraphDataLogic;
-    private final LoadProfileGzippedLogic loadProfileGzippedLogic;
     private final GlobalStats stats;
 
     public AppShareHandler(Holder holder, AppShareStateHolder state) {
@@ -52,7 +51,6 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.enhancedGraphDataLogic = new GetEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.deleteEnhancedGraphDataLogic =
                 new DeleteEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
-        this.loadProfileGzippedLogic = new LoadProfileGzippedLogic(holder);
         this.state = state;
         this.stats = holder.stats;
     }
@@ -65,7 +63,7 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 hardwareApp.messageReceived(ctx, state, msg);
                 break;
             case LOAD_PROFILE_GZIPPED :
-                loadProfileGzippedLogic.messageReceived(ctx, state, msg);
+                LoadSharedProfileGzippedLogic.messageReceived(ctx, state, msg);
                 break;
             case ADD_PUSH_TOKEN :
                 AddPushLogic.messageReceived(ctx, state, msg);
