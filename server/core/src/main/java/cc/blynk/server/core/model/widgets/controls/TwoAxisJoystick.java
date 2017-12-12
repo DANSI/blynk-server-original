@@ -25,6 +25,8 @@ public class TwoAxisJoystick extends MultiPinWidget implements HardwareSyncWidge
 
     public boolean portraitLocked;
 
+    public int frequency;
+
     @Override
     public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
         if (dataStreams == null || this.deviceId != deviceId) {

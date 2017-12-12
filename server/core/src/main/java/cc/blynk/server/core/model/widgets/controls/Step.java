@@ -18,6 +18,8 @@ public class Step extends OnePinWidget {
 
     public boolean isSendStep;
 
+    public int frequency;
+
     @Override
     public PinMode getModeType() {
         return PinMode.out;
