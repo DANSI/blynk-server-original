@@ -183,7 +183,9 @@ public class UsersLogic extends CookiesBaseHttpHandler {
 
         for (DashBoard dash : updatedUser.profile.dashBoards) {
             for (Device device : dash.devices) {
-                tokenManager.updateRegularCache(device.token, updatedUser, dash, device);
+                if (device.token != null) {
+                    tokenManager.updateRegularCache(device.token, updatedUser, dash, device);
+                }
             }
             if (dash.sharedToken != null) {
                 tokenManager.updateSharedCache(dash.sharedToken, updatedUser, dash.id);
