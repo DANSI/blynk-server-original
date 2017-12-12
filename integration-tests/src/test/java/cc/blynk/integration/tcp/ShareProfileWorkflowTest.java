@@ -590,6 +590,46 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertEquals(parentProfile.toString().replace("\"disconnectTime\":0,", ""), body2);
     }
 
+    @Test
+    public void loadGzippedDashForSharedBoard() throws Exception{
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("loadProfileGzipped");
+        String parentProfileString = clientPair.appClient.getBody();
+        Profile parentProfile = JsonParser.parseProfileFromString(parentProfileString);
+
+        appClient2.send("loadProfileGzipped 1");
+        String body2 = appClient2.getBody(2);
+
+        Twitter twitter = parentProfile.dashBoards[0].getWidgetByType(Twitter.class);
+        clearPrivateData(twitter);
+        Notification notification = parentProfile.dashBoards[0].getWidgetByType(Notification.class);
+        clearPrivateData(notification);
+        for (Device device : parentProfile.dashBoards[0].devices) {
+            device.token = null;
+            device.hardwareInfo = null;
+            device.deviceOtaInfo = null;
+            device.lastLoggedIP = null;
+            device.disconnectTime = 0;
+            device.status = null;
+        }
+        parentProfile.dashBoards[0].sharedToken = null;
+
+        assertEquals(parentProfile.dashBoards[0].toString().replace("\"disconnectTime\":0,", ""), body2);
+    }
+
     public static byte[] compress(String value) throws IOException {
         byte[] stringData = value.getBytes(StandardCharsets.UTF_8);
         ByteArrayOutputStream baos = new ByteArrayOutputStream(stringData.length);
