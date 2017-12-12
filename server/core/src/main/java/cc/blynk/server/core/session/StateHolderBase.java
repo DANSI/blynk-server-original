@@ -24,4 +24,6 @@ public abstract class StateHolderBase {
 
     public abstract boolean contains(String sharedToken);
 
+    public abstract boolean isSameDash(int inDashId);
+
 }

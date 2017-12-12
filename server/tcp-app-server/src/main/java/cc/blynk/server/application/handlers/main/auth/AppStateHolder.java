@@ -23,4 +23,9 @@ public class AppStateHolder extends StateHolderBase {
     public boolean contains(String sharedToken) {
         return true;
     }
+
+    @Override
+    public boolean isSameDash(int inDashId) {
+        return true;
+    }
 }

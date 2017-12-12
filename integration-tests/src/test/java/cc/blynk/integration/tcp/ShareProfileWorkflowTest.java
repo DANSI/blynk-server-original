@@ -52,6 +52,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -744,6 +745,36 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         appClient2.send("logout uid2");
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+    }
+
+    @Test
+    public void testSharedProjectDoesntReceiveCommandFromOtherProjects() throws Exception {
+        DashBoard dash = new DashBoard();
+        dash.id = 333;
+        dash.name = "AAAa";
+        dash.isShared = true;
+        Device device = new Device();
+        device.id = 0;
+        device.name = "123";
+        dash.devices = new Device[] {device};
+
+        clientPair.appClient.send("createDash " + dash.toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("getShareToken 333");
+        String token = clientPair.appClient.getBody(2);
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("hardware vw 1 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 1"))));
+        verify(appClient2.responseMock, never()).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 1"))));
     }
 
     private static void clearPrivateData(Notification n) {

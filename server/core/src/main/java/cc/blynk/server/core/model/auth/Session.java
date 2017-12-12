@@ -168,17 +168,36 @@ public class Session {
     }
 
     public void sendToApps(short cmd, int msgId, int dashId, int deviceId) {
-        int targetsNum = appChannels.size();
-        if (targetsNum > 0) {
-            send(appChannels, targetsNum, cmd, msgId, "" + dashId + DEVICE_SEPARATOR + deviceId);
+        if (isAppConnected()) {
+            String finalBody = "" + dashId + DEVICE_SEPARATOR + deviceId;
+            sendToApps(cmd, msgId, dashId, finalBody);
         }
     }
 
     public void sendToApps(short cmd, int msgId, int dashId, int deviceId, String body) {
-        int targetsNum = appChannels.size();
-        if (targetsNum > 0) {
-            send(appChannels, targetsNum, cmd, msgId, prependDashIdAndDeviceId(dashId, deviceId, body));
+        if (isAppConnected()) {
+            String finalBody = prependDashIdAndDeviceId(dashId, deviceId, body);
+            sendToApps(cmd, msgId, dashId, finalBody);
         }
+    }
+
+    private void sendToApps(short cmd, int msgId, int dashId, String finalBody) {
+        Set<Channel> targetChannels = filterByDash(dashId);
+
+        int targetsNum = targetChannels.size();
+        if (targetsNum > 0) {
+            send(targetChannels, targetsNum, cmd, msgId, finalBody);
+        }
+    }
+
+    private Set<Channel> filterByDash(int dashId) {
+        Set<Channel> targetChannels = new HashSet<>();
+        for (Channel channel : appChannels) {
+            if (isSameDash(channel, dashId)) {
+                targetChannels.add(channel);
+            }
+        }
+        return targetChannels;
     }
 
     private void send(Set<Channel> targets, int targetsNum, short cmd, int msgId, String body) {

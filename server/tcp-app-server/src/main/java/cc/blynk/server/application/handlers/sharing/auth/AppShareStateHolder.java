@@ -25,4 +25,9 @@ public final class AppShareStateHolder extends AppStateHolder {
         return sharedToken != null && token.equals(sharedToken);
     }
 
+    @Override
+    public boolean isSameDash(int inDashId) {
+        return this.dashId == inDashId;
+    }
+
 }

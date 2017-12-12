@@ -24,4 +24,9 @@ public final class HardwareStateHolder extends StateHolderBase {
     public boolean contains(String sharedToken) {
         return false;
     }
+
+    @Override
+    public boolean isSameDash(int inDashId) {
+        return dash.id == inDashId;
+    }
 }
