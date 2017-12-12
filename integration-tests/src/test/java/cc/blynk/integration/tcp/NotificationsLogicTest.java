@@ -533,4 +533,21 @@ public class NotificationsLogicTest extends IntegrationBase {
         assertEquals(expectedJson, message.toJson());
     }
 
+    @Test
+    public void testOfflineMessageIsSentToBothApps()  throws Exception  {
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+
+        appClient.send("login " + DEFAULT_TEST_USER +" 1 iOS" + "\0" + "1.10.2");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("deleteWidget 1" + "\0" + "9");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.stop();
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new DeviceOfflineMessage(0, "1-0")));
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new DeviceOfflineMessage(0, "1-0")));
+    }
+
+
 }
