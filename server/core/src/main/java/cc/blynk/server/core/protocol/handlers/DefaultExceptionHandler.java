@@ -69,8 +69,8 @@ public interface DefaultExceptionHandler {
             if (message != null && message.contains("OutOfDirectMemoryError")) {
                 log.error("OutOfDirectMemoryError!!!");
             } else {
-                log.error("Unexpected error! Handler class : {}. Name : {}. Reason : {}",
-                        ctx.handler().getClass(), ctx.name(), message);
+                log.error("Unexpected error! Handler class : {}. Name : {}. Reason : {}. Channel : {}.",
+                        ctx.handler().getClass(), ctx.name(), message, ctx.channel());
                 log.debug(cause);
             }
         }
