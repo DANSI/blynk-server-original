@@ -6,7 +6,7 @@
         sudo apt-get update
         sudo apt-get install oracle-java9-installer
         
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.28.10/server-0.28.10.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.29.0/server-0.29.0.jar"
         
 
 server.properties
