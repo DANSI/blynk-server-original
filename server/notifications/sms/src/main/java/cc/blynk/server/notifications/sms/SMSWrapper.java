@@ -3,7 +3,6 @@ package cc.blynk.server.notifications.sms;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asynchttpclient.AsyncCompletionHandler;
@@ -54,7 +53,7 @@ public class SMSWrapper {
                 .execute(new AsyncCompletionHandler<Response>() {
                     @Override
                     public Response onCompleted(org.asynchttpclient.Response response) throws Exception {
-                        if (response.getStatusCode() == HttpResponseStatus.OK.code()) {
+                        if (response.getStatusCode() == 200) {
                             SmsResponse smsResponse = smsResponseReader.readValue(response.getResponseBody());
                             if (!smsResponse.messages[0].status.equals("0")) {
                                 log.error(smsResponse.messages[0].error);
