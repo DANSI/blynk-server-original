@@ -3,7 +3,7 @@
  * Created by Dmitriy Dumanskiy.
  * Created on 30.09.17.
  */
-module utils {
+module cc.blynk.utils {
     requires log4j.api;
 
     exports cc.blynk.utils;
