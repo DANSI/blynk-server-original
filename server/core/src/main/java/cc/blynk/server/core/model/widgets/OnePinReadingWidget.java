@@ -14,7 +14,7 @@ import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
  */
 public abstract class OnePinReadingWidget extends OnePinWidget implements FrequencyWidget {
 
-    private int frequency;
+    public int frequency;
 
     private transient long lastRequestTS;
 

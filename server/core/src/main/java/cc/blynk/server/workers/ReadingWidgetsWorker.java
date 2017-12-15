@@ -9,6 +9,8 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.internal.StateHolderUtil;
 import cc.blynk.utils.ArrayUtil;
@@ -72,15 +74,23 @@ public class ReadingWidgetsWorker implements Runnable {
                         for (Channel channel : session.hardwareChannels) {
                             HardwareStateHolder stateHolder = StateHolderUtil.getHardState(channel);
                             if (stateHolder != null && stateHolder.dash.id == dashBoard.id) {
+                                int deviceId = stateHolder.device.id;
                                 for (Widget widget : dashBoard.widgets) {
                                     if (widget instanceof FrequencyWidget) {
-                                        FrequencyWidget frequencyWidget = (FrequencyWidget) widget;
-                                        if (channel.isWritable()
-                                                && sameDeviceId(dashBoard, frequencyWidget.getDeviceId(),
-                                                        stateHolder.device.id)
-                                                && frequencyWidget.isTicked(now)) {
-                                            tickedWidgets++;
-                                            frequencyWidget.writeReadingCommand(channel);
+                                        tickedWidgets +=
+                                                process(channel, widget, dashBoard, deviceId, now);
+                                    } else if (widget instanceof DeviceTiles) {
+                                        DeviceTiles deviceTiles = (DeviceTiles) widget;
+                                        if (deviceId == deviceTiles.selectedDeviceId) {
+                                            TileTemplate tileTemplate = deviceTiles.findTemplateByDeviceId(deviceId);
+                                            if (tileTemplate != null) {
+                                                for (Widget tileWidget : tileTemplate.widgets) {
+                                                    if (tileWidget instanceof FrequencyWidget) {
+                                                        tickedWidgets +=
+                                                                process(channel, tileWidget, dashBoard, deviceId, now);
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -93,6 +103,17 @@ public class ReadingWidgetsWorker implements Runnable {
             }
         }
         return tickedWidgets;
+    }
+
+    private int process(Channel channel, Widget widget, DashBoard dashBoard, int deviceId, long now) {
+        FrequencyWidget frequencyWidget = (FrequencyWidget) widget;
+        if (channel.isWritable()
+                && sameDeviceId(dashBoard, frequencyWidget.getDeviceId(), deviceId)
+                && frequencyWidget.isTicked(now)) {
+            frequencyWidget.writeReadingCommand(channel);
+            return 1;
+        }
+        return 0;
     }
 
     private boolean sameDeviceId(DashBoard dash, int targetId, int channelDeviceId) {

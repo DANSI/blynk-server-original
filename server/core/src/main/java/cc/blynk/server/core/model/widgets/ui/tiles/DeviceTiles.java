@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
 
 import java.util.ArrayList;
@@ -28,6 +29,10 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
 
     public volatile DeviceTile[] tiles = EMPTY_DEVICE_TILES;
 
+    //this field is needed only in the realtime when users selects some template for the device
+    //so we know what reading widgets should update their state at that moment
+    public transient int selectedDeviceId;
+
     public int rows;
 
     public int columns;
@@ -42,6 +47,15 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
             }
         }
         tiles = list.toArray(new DeviceTile[list.size()]);
+    }
+
+    public TileTemplate findTemplateByDeviceId(int deviceId) {
+        for (TileTemplate tileTemplate : templates) {
+            if (ArrayUtil.contains(tileTemplate.deviceIds, deviceId)) {
+                return tileTemplate;
+            }
+        }
+        return null;
     }
 
     public void recreateTilesIfNecessary(TileTemplate newTileTemplate, TileTemplate existingTileTemplate) {
