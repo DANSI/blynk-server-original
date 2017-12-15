@@ -27,9 +27,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
-import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -186,16 +183,16 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         String appName = "Blynk";
 
         appClient1.send("getServer");
-        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
+        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(illegalCommand(1)));
 
         appClient1.send("getServer " + email + "\0" + appName);
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(2, "127.0.0.1")));
 
         appClient1.send("register " + email + " " + pass + " " + appName);
-        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(3, OK)));
+        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
         appClient1.send("login " + email + " " + pass + " Android 1.10.4 " + appName);
         //we should wait until login finished. Only after that we can send commands
-        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(4, OK)));
+        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(4)));
 
         appClient1.send("getServer " + email + "\0" + appName);
         verify(appClient1.responseMock, timeout(1000).times(0)).channelRead(any(), eq(new GetServerMessage(5, "127.0.0.1")));
@@ -207,11 +204,14 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         hardClient.start();
 
         hardClient.send("login 123");
-        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, INVALID_TOKEN)));
+        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(invalidToken(1)));
 
         holder.dbManager.assignServerToToken("123", "127.0.0.1", "user", 0, 0);
         hardClient.send("login 123");
-        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, INVALID_TOKEN)));
+        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(invalidToken(2)));
+
+        hardClient.send("login \0");
+        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(invalidToken(3)));
     }
 
     @Test
@@ -336,16 +336,16 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
     private String workflowForUser(TestAppClient appClient, String username, String pass, String appName) throws Exception{
         appClient.send("register " + username + " " + pass + " " + appName);
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         appClient.send("login " + username + " " + pass + " Android 1.10.4 " + appName);
         //we should wait until login finished. Only after that we can send commands
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         DashBoard dash = new DashBoard();
         dash.id = 1;
         dash.name = "test";
         appClient.send("createDash " + dash.toString());
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(3, OK)));
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
         appClient.send("activate 1");
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(4, DEVICE_NOT_IN_NETWORK)));
 

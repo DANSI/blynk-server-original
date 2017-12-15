@@ -15,6 +15,7 @@ import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
 import cc.blynk.utils.IPUtils;
+import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.structure.LRUCache;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -88,8 +89,8 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
-            //token should always be 32 chars. otherwise it is not valid
-            if (token.length() != 32) {
+            //token should always be 32 chars and shouldn't contain invalid nil char
+            if (token.length() != 32 || token.contains(StringUtils.BODY_SEPARATOR_STRING)) {
                 log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
                 ctx.writeAndFlush(invalidToken(message.id), ctx.voidPromise());
             } else {

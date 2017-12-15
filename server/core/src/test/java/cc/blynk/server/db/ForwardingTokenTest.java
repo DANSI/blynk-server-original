@@ -64,6 +64,11 @@ public class ForwardingTokenTest {
     }
 
     @Test
+    public void invalidToken() throws Exception {
+        assertNull(dbManager.forwardingTokenDBDao.selectHostByToken("\0"));
+    }
+
+    @Test
     public void deleteTokens() throws Exception {
         assertTrue(dbManager.forwardingTokenDBDao.insertTokenHost("token1", "host1", "email", 0, 0));
         assertTrue(dbManager.forwardingTokenDBDao.insertTokenHost("token2", "host2", "email", 0, 0));
