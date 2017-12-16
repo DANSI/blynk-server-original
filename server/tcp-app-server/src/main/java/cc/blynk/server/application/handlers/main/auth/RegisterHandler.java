@@ -144,7 +144,8 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         int dashId = app.projectIds[0];
         DashBoard dash = parentUser.profile.getDashByIdOrThrow(dashId);
 
-        DashBoard clonedDash = JsonParser.parseDashboard(dash.toStringRestrictive());
+        //todo ugly, but quick. refactor
+        DashBoard clonedDash = JsonParser.parseDashboard(JsonParser.toJsonRestrictiveDashboard(dash));
 
         clonedDash.id = 1;
         clonedDash.parentId = dash.parentId;

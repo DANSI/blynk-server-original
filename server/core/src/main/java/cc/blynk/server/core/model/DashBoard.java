@@ -504,7 +504,4 @@ public class DashBoard {
         return JsonParser.toJson(this);
     }
 
-    public String toStringRestrictive() {
-        return JsonParser.toJsonRestrictiveDashboard(this);
-    }
 }
