@@ -67,4 +67,12 @@ public class TileTemplate {
         this.disableWhenOffline = disableWhenOffline;
         this.showDeviceName = showDeviceName;
     }
+
+    public int getPrice() {
+        int sum = 0;
+        for (Widget widget : widgets) {
+            sum += widget.getPrice();
+        }
+        return sum;
+    }
 }

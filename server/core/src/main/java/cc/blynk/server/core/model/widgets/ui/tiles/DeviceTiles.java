@@ -180,10 +180,8 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
     @Override
     public int getPrice() {
         int sum = 4900; //price for DeviceTiles widget itself
-        for (TileTemplate tile : templates) {
-            for (Widget widget : tile.widgets) {
-                sum += widget.getPrice();
-            }
+        for (TileTemplate template : templates) {
+            sum += template.getPrice();
         }
         return sum;
     }
