@@ -3,9 +3,11 @@ package cc.blynk.server.core.model.widgets.ui.tiles;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
-import cc.blynk.server.internal.EmptyArraysUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
 
 /**
  * The Blynk Project.
@@ -16,7 +18,7 @@ public class TileTemplate {
 
     public final long id;
 
-    public final Widget[] widgets;
+    public volatile Widget[] widgets;
 
     public final int[] deviceIds;
 
@@ -53,8 +55,8 @@ public class TileTemplate {
                         @JsonProperty("disableWhenOffline") boolean disableWhenOffline,
                         @JsonProperty("showDeviceName") boolean showDeviceName) {
         this.id = id;
-        this.widgets = widgets;
-        this.deviceIds = deviceIds == null ? EmptyArraysUtil.EMPTY_INTS : deviceIds;
+        this.widgets = widgets == null ? EMPTY_WIDGETS : widgets;
+        this.deviceIds = deviceIds == null ? EMPTY_INTS : deviceIds;
         this.name = name;
         this.mode = mode;
         this.dataStream = dataStream;

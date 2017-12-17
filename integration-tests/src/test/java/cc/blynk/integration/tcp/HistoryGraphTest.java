@@ -967,7 +967,7 @@ public class HistoryGraphTest extends IntegrationBase {
         assertEquals(111D, bb.getDouble(), 0.1);
         assertEquals(System.currentTimeMillis(), bb.getLong(), 2000);
 
-        clientPair.appClient.send("deleteWidget 1" + "\0" + 432);
+        clientPair.appClient.send("deleteWidget 1 432");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");

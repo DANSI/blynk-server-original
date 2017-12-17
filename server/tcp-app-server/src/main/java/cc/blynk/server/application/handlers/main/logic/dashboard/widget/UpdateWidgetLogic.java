@@ -15,11 +15,10 @@ import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.workers.timer.TimerWorker;
+import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Arrays;
 
 import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
@@ -70,14 +69,31 @@ public class UpdateWidgetLogic {
 
         log.debug("Updating widget {}.", widgetString);
 
-        int existingWidgetIndex = dash.getWidgetIndexByIdOrThrow(newWidget.id);
+        Widget prevWidget = null;
+        boolean inDeviceTiles = false;
+        DeviceTiles deviceTiles = null;
+
+        for (Widget widget : dash.widgets) {
+            if (widget.id == newWidget.id) {
+                prevWidget = widget;
+                break;
+            }
+            if (widget instanceof DeviceTiles) {
+                deviceTiles = ((DeviceTiles) widget);
+                prevWidget = deviceTiles.getWidgetById(newWidget.id);
+                inDeviceTiles = true;
+                break;
+            }
+        }
+
+        if (prevWidget == null) {
+            throw new IllegalCommandException("Widget with passed id not found.");
+        }
 
         if (newWidget instanceof Tabs) {
             Tabs newTabs = (Tabs) newWidget;
             DeleteWidgetLogic.deleteTabs(timerWorker, user, state.userKey, dash, newTabs.tabs.length - 1);
         }
-
-        Widget prevWidget = dash.widgets[existingWidgetIndex];
 
         if (prevWidget instanceof Notification && newWidget instanceof Notification) {
             Notification prevNotif = (Notification) prevWidget;
@@ -94,10 +110,13 @@ public class UpdateWidgetLogic {
             newDeviceTiles.templates = prevDeviceTiles.templates;
         }
 
-        Widget[] newArray = Arrays.copyOf(dash.widgets, dash.widgets.length);
-        newArray[existingWidgetIndex] = newWidget;
+        if (inDeviceTiles) {
+            deviceTiles.updateWidget(newWidget);
+        } else {
+            dash.widgets = ArrayUtil.copyAndReplace(
+                    dash.widgets, newWidget, dash.getWidgetIndexByIdOrThrow(newWidget.id));
+        }
 
-        dash.widgets = newArray;
         dash.cleanPinStorage(newWidget, true);
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;

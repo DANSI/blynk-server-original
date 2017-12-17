@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
 
@@ -38,6 +39,13 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
     public int columns;
 
     public SortType sortType;
+
+    public void checkForSameWidgetId(long id) {
+        Widget widget = getWidgetById(id);
+        if (widget != null) {
+            throw new NotAllowedException("Widget with same id already exists.");
+        }
+    }
 
     public void deleteDeviceTilesByTemplateId(long deviceTileId) {
         ArrayList<DeviceTile> list = new ArrayList<>();
@@ -94,6 +102,10 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
         this.tiles = list.toArray(new DeviceTile[list.size()]);
     }
 
+    public TileTemplate getTileTemplateByIdOrThrow(long id) {
+        return templates[getTileTemplateIndexByIdOrThrow(id)];
+    }
+
     public int getTileTemplateIndexByIdOrThrow(long id) {
         for (int i = 0; i < templates.length; i++) {
             if (templates[i].id == id) {
@@ -105,15 +117,38 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
 
     public Widget getWidgetById(long widgetId) {
         for (TileTemplate tileTemplate : templates) {
-            if (tileTemplate.widgets != null) {
-                for (Widget widget : tileTemplate.widgets) {
-                    if (widget.id == widgetId) {
-                        return widget;
-                    }
+            for (Widget widget : tileTemplate.widgets) {
+                if (widget.id == widgetId) {
+                    return widget;
                 }
             }
         }
         return null;
+    }
+
+    public boolean deleteWidget(long removeWidgetId) {
+        for (TileTemplate tileTemplate : templates) {
+            for (int i = 0; i < tileTemplate.widgets.length; i++) {
+                if (tileTemplate.widgets[i].id == removeWidgetId) {
+                    tileTemplate.widgets = ArrayUtil.remove(tileTemplate.widgets, i, Widget.class);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean updateWidget(Widget newWidget) {
+        for (TileTemplate tileTemplate : templates) {
+            for (int i = 0; i < tileTemplate.widgets.length; i++) {
+                if (tileTemplate.widgets[i].id == newWidget.id) {
+                    tileTemplate.widgets = ArrayUtil.copyAndReplace(
+                            tileTemplate.widgets, newWidget, i);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -144,6 +179,12 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
 
     @Override
     public int getPrice() {
-        return 4900;
+        int sum = 4900; //price for DeviceTiles widget itself
+        for (TileTemplate tile : templates) {
+            for (Widget widget : tile.widgets) {
+                sum += widget.getPrice();
+            }
+        }
+        return sum;
     }
 }

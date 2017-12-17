@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Random;
 
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -103,7 +104,8 @@ public abstract class BaseClient {
                 || command == SHARING
                 || command == EXPORT_GRAPH_DATA
                 || command == SET_WIDGET_PROPERTY
-                || command == HARDWARE_SYNC) {
+                || command == HARDWARE_SYNC
+                || command == DELETE_WIDGET) {
             body = body.replaceAll(" ", "\0");
         }
         return produce(msgId, command, body);

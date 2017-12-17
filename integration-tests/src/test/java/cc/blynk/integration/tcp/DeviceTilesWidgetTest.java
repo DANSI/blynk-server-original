@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
 import static cc.blynk.server.core.model.widgets.FrequencyWidget.READING_MSG_ID;
+import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
@@ -905,6 +906,96 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("getenhanceddata 1-0" + b(" 432 DAY"));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, NO_DATA)));
+    }
+
+    @Test
+    public void energyCalculationsAreCorrectWhenAddingRemovingWidgets() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("getEnergy");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "2600")));
+
+        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
+                TileMode.PAGE, null, null, null, 0, TextAlignment.LEFT, false, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+
+        clientPair.appClient.send("createWidget " + b("1 21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+
+        clientPair.appClient.send("getEnergy");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, GET_ENERGY, "2400")));
+
+        clientPair.appClient.send("createWidget " + b("1 21321 1 ") + "{\"id\":101, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(6)));
+
+        clientPair.appClient.send("getEnergy");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, GET_ENERGY, "2200")));
+
+        clientPair.appClient.send("deleteWidget 1 101");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(8)));
+
+        clientPair.appClient.send("getEnergy");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(9, GET_ENERGY, "2400")));
+
+        clientPair.appClient.send("deleteWidget 1 21321");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(10)));
+
+        clientPair.appClient.send("getEnergy");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(11, GET_ENERGY, "7500")));
+    }
+
+    @Test
+    public void updateCommandWorksForWidgetWithinDeviceTiles() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
+                TileMode.PAGE, null, null, null, 0, TextAlignment.LEFT, false, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        clientPair.appClient.send("createWidget " + b("1 21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+
+        clientPair.appClient.send("createWidget " + b("1 21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(4)));
+
+        clientPair.appClient.send("updateWidget 1\0" + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 3\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+
+        clientPair.appClient.send("getWidget 1\0" + widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(6));
+        assertNotNull(deviceTiles);
+        assertEquals(widgetId, deviceTiles.id);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(1, deviceTiles.templates.length);
+        assertEquals("123", deviceTiles.templates[0].name);
+        assertNotNull(deviceTiles.templates[0].widgets[0]);
+        assertEquals("Some Text 3", deviceTiles.templates[0].widgets[0].label);
     }
 
 }

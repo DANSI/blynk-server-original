@@ -362,10 +362,10 @@ public class TimerTest extends IntegrationBase {
         timer.stopTime = curTime + 2;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("deleteWidget 1\0" + 112);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        clientPair.appClient.send("deleteWidget 1 112");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         verify(clientPair.hardwareClient.responseMock, after(2500).never()).channelRead(any(), any());
     }

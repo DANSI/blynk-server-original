@@ -140,13 +140,13 @@ public class MainWorkflowTest extends IntegrationBase {
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false},{\"type\":\"BUTTON\",\"id\":2,\"x\":2,\"y\":2,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"new label\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":3,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
 
-        appClient.send("deleteWidget 1\0" + "3");
+        appClient.send("deleteWidget 1 3");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, ILLEGAL_COMMAND)));
 
-        appClient.send("deleteWidget 1\0" + "1");
+        appClient.send("deleteWidget 1 1");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
-        appClient.send("deleteWidget 1\0" + "2");
+        appClient.send("deleteWidget 1 2");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
         appClient.reset();
@@ -342,7 +342,7 @@ public class MainWorkflowTest extends IntegrationBase {
         profile = parseProfile(clientPair.appClient.getBody());
         assertEquals(19, profile.dashBoards[0].widgets.length);
 
-        clientPair.appClient.send("deleteWidget 1\0" + "100");
+        clientPair.appClient.send("deleteWidget 1 100");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.send("getEnergy");

@@ -485,7 +485,7 @@ public class NotificationsLogicTest extends IntegrationBase {
 
     @Test
     public void testCreateNewNotificationWidget() throws Exception  {
-        clientPair.appClient.send("deleteWidget 1\0" + "9");
+        clientPair.appClient.send("deleteWidget 1 9");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":9, \"x\":1, \"y\":1, \"width\":1, \"height\":1, \"type\":\"NOTIFICATION\", \"notifyWhenOfflineIgnorePeriod\":0, \"priority\":\"high\", \"notifyWhenOffline\":true}");
@@ -541,7 +541,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         appClient.send("login " + DEFAULT_TEST_USER +" 1 iOS" + "\0" + "1.10.2");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("deleteWidget 1" + "\0" + "9");
+        clientPair.appClient.send("deleteWidget 1 9");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.stop();

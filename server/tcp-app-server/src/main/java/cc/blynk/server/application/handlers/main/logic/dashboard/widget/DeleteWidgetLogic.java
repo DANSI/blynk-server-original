@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.internal.ParseUtil;
@@ -52,14 +53,40 @@ public class DeleteWidgetLogic {
 
         log.debug("Removing widget with id {}.", widgetId);
 
-        int existingWidgetIndex = dash.getWidgetIndexByIdOrThrow(widgetId);
-        Widget widgetToDelete = dash.widgets[existingWidgetIndex];
+        Widget widgetToDelete = null;
+        boolean inDeviceTiles = false;
+        DeviceTiles deviceTiles = null;
+
+        for (Widget widget : dash.widgets) {
+            if (widget.id == widgetId) {
+                widgetToDelete = widget;
+                break;
+            }
+            if (widget instanceof DeviceTiles) {
+                deviceTiles = ((DeviceTiles) widget);
+                widgetToDelete = deviceTiles.getWidgetById(widgetId);
+                inDeviceTiles = true;
+                break;
+            }
+        }
+
+        if (widgetToDelete == null) {
+            throw new IllegalCommandException("Widget with passed id not found.");
+        }
+
         if (widgetToDelete instanceof Tabs) {
             deleteTabs(timerWorker, user, state.userKey, dash, 0);
         }
 
-        existingWidgetIndex = dash.getWidgetIndexByIdOrThrow(widgetId);
-        deleteWidget(user, dash, existingWidgetIndex);
+        user.recycleEnergy(widgetToDelete.getPrice());
+        if (inDeviceTiles) {
+            deviceTiles.deleteWidget(widgetId);
+        } else {
+            int index = dash.getWidgetIndexByIdOrThrow(widgetId);
+            dash.widgets = ArrayUtil.remove(dash.widgets, index, Widget.class);
+        }
+
+        dash.updatedAt = System.currentTimeMillis();
 
         if (widgetToDelete instanceof Timer) {
             timerWorker.delete(state.userKey, (Timer) widgetToDelete, dashId);
@@ -92,12 +119,6 @@ public class DeleteWidgetLogic {
 
         user.recycleEnergy(removedWidgetPrice);
         dash.widgets = zeroTabWidgets.toArray(new Widget[zeroTabWidgets.size()]);
-        dash.updatedAt = System.currentTimeMillis();
-    }
-
-    private static void deleteWidget(User user, DashBoard dash, int existingWidgetIndex) {
-        user.recycleEnergy(dash.widgets[existingWidgetIndex].getPrice());
-        dash.widgets = ArrayUtil.remove(dash.widgets, existingWidgetIndex, Widget.class);
         dash.updatedAt = System.currentTimeMillis();
     }
 
