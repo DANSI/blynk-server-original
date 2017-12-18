@@ -73,16 +73,19 @@ public class UpdateWidgetLogic {
         boolean inDeviceTiles = false;
         DeviceTiles deviceTiles = null;
 
+        long widgetId = newWidget.id;
         for (Widget widget : dash.widgets) {
-            if (widget.id == newWidget.id) {
+            if (widget.id == widgetId) {
                 prevWidget = widget;
                 break;
             }
             if (widget instanceof DeviceTiles) {
                 deviceTiles = ((DeviceTiles) widget);
-                prevWidget = deviceTiles.getWidgetById(newWidget.id);
-                inDeviceTiles = true;
-                break;
+                prevWidget = deviceTiles.getWidgetById(widgetId);
+                if (prevWidget != null) {
+                    inDeviceTiles = true;
+                    break;
+                }
             }
         }
 
