@@ -79,7 +79,7 @@ public class CreateWidgetLogic {
             throw new NotAllowedException("Widget has wrong dimensions.");
         }
 
-        log.debug("Creating new widget {}.", widgetString);
+        log.debug("Creating new widget {} for dashId {}.", widgetString, dashId);
 
         for (Widget widget : dash.widgets) {
             if (widget.id == newWidget.id) {

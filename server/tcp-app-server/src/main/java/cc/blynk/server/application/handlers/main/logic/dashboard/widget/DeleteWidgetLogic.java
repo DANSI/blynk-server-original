@@ -51,7 +51,7 @@ public class DeleteWidgetLogic {
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        log.debug("Removing widget with id {}.", widgetId);
+        log.debug("Removing widget with id {} for dashId {}.", widgetId, dashId);
 
         Widget widgetToDelete = null;
         boolean inDeviceTiles = false;
