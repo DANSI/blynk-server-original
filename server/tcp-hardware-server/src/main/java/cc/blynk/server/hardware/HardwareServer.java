@@ -9,9 +9,8 @@ import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 
 /**
  * The Blynk Project.
@@ -35,17 +34,14 @@ public class HardwareServer extends BaseServer {
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                final ChannelPipeline pipeline = ch.pipeline();
-
-                if (hardTimeoutSecs > 0) {
-                    pipeline.addLast("H_ReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
-                }
-                pipeline.addLast("H_ChannelState", hardwareChannelStateHandler)
-                .addLast("H_MessageDecoder", new MessageDecoder(holder.stats))
-                .addLast("H_MessageEncoder", new MessageEncoder(holder.stats))
-                .addLast("H_Login", hardwareLoginHandler)
-                .addLast("H_NotLogged", new HardwareNotLoggedHandler())
-                .addLast("H_AlreadyLogged", alreadyLoggedHandler);
+                ch.pipeline()
+                        .addLast("H_IdleStateHandler", new IdleStateHandler(hardTimeoutSecs, hardTimeoutSecs, 0))
+                        .addLast("H_ChannelState", hardwareChannelStateHandler)
+                        .addLast("H_MessageDecoder", new MessageDecoder(holder.stats))
+                        .addLast("H_MessageEncoder", new MessageEncoder(holder.stats))
+                        .addLast("H_Login", hardwareLoginHandler)
+                        .addLast("H_NotLogged", new HardwareNotLoggedHandler())
+                        .addLast("H_AlreadyLogged", alreadyLoggedHandler);
             }
         };
 

@@ -12,7 +12,7 @@ import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 
 /**
  * Class responsible for handling all Application connections and netty pipeline initialization.
@@ -36,7 +36,8 @@ public class AppServer extends BaseServer {
         final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
         final GetServerHandler getServerHandler = new GetServerHandler(holder);
 
-        log.debug("app.socket.idle.timeout = 600");
+        final int readTimeout = 600;
+        log.debug("app.socket.idle.timeout = {}", readTimeout);
 
         this.channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -44,7 +45,7 @@ public class AppServer extends BaseServer {
                 //600 specifies maximum seconds when application socket could be idle. After which
                 //socket will be closed due to non activity. In seconds.
                 ch.pipeline()
-                        .addLast("AReadTimeout", new ReadTimeoutHandler(600))
+                        .addLast("AReadTimeout", new IdleStateHandler(readTimeout, 0, 0))
                         .addLast("ASSL", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
                         .addLast("AChannelState", appChannelStateHandler)
                         .addLast("AMessageDecoder", new MessageDecoder(holder.stats))

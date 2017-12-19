@@ -6,11 +6,10 @@ import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.mqtt.auth.MqttHardwareLoginHandler;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.mqtt.MqttDecoder;
 import io.netty.handler.codec.mqtt.MqttEncoder;
-import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 
 /**
  * The Blynk Project.
@@ -33,16 +32,13 @@ public class MQTTHardwareServer extends BaseServer {
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ChannelPipeline pipeline = ch.pipeline();
-                //non-sharable handlers
-                if (hardTimeoutSecs > 0) {
-                    pipeline.addLast("MqttReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
-                }
-                pipeline.addLast(hardwareChannelStateHandler)
-                .addLast(new MqttDecoder())
-                .addLast(MqttEncoder.INSTANCE)
-                .addLast(mqttHardwareLoginHandler)
-                .addLast(new HardwareNotLoggedHandler());
+                ch.pipeline()
+                    .addLast("MqttIdleStateHandler", new IdleStateHandler(hardTimeoutSecs, hardTimeoutSecs, 0))
+                    .addLast(hardwareChannelStateHandler)
+                    .addLast(new MqttDecoder())
+                    .addLast(MqttEncoder.INSTANCE)
+                    .addLast(mqttHardwareLoginHandler)
+                    .addLast(new HardwareNotLoggedHandler());
             }
         };
 

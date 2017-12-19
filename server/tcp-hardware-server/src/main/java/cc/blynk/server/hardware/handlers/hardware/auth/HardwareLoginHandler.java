@@ -151,9 +151,4 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         });
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        handleGeneralException(ctx, cause);
-    }
-
 }

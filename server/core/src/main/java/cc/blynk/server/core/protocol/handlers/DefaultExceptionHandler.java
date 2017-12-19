@@ -5,7 +5,6 @@ import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.ssl.NotSslRecordException;
-import io.netty.handler.timeout.ReadTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,10 +40,7 @@ public interface DefaultExceptionHandler {
     }
 
     default void handleUnexpectedException(ChannelHandlerContext ctx, Throwable cause) {
-        if (cause instanceof ReadTimeoutException) {
-            log.trace("Channel was inactive for a long period. Closing...");
-            //channel is already closed here by ReadTimeoutHandler
-        } else if (cause instanceof DecoderException) {
+        if (cause instanceof DecoderException) {
             if (cause.getCause() instanceof UnsupportedCommandException) {
                 log.debug("Input command is invalid. Closing socket. Reason {}. Address {}",
                         cause.getMessage(), ctx.channel().remoteAddress());

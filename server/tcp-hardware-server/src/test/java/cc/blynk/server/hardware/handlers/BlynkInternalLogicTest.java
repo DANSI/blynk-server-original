@@ -13,7 +13,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
-import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -74,7 +74,7 @@ public class BlynkInternalLogicTest {
         BlynkInternalMessage hardwareInfoLogic = new BlynkInternalMessage(1, "ver 0.3.2-beta h-beat 60 buff-in 256 dev ESP8266".replaceAll(" ", "\0"));
         logic.messageReceived(ctx, hardwareStateHolder, hardwareInfoLogic);
 
-        verify(pipeline).replace(eq(ReadTimeoutHandler.class), eq("H_ReadTimeout_Replaced"), any());
+        verify(pipeline).replace(eq(IdleStateHandler.class), eq("H_IdleStateHandler_Replaced"), any());
         verify(ctx).writeAndFlush(any(), any());
     }
 

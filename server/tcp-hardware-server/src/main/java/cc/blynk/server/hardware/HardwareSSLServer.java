@@ -9,9 +9,8 @@ import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 
 /**
  * The Blynk Project.
@@ -36,17 +35,15 @@ public class HardwareSSLServer extends BaseServer {
         this.channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                final ChannelPipeline pipeline = ch.pipeline();
-                if (hardTimeoutSecs > 0) {
-                    pipeline.addLast("HSSLReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
-                }
-                pipeline.addLast("HSSL", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
-                .addLast("HSSLChannelState", hardwareChannelStateHandler)
-                .addLast("HSSLMessageDecoder", new MessageDecoder(holder.stats))
-                .addLast("HSSLMessageEncoder", new MessageEncoder(holder.stats))
-                .addLast("HSSLLogin", hardwareLoginHandler)
-                .addLast("HSSLNotLogged", new HardwareNotLoggedHandler())
-                .addLast("HSSLAlreadyLogged", alreadyLoggedHandler);
+                ch.pipeline()
+                    .addLast("HSSL_ReadTimeout", new IdleStateHandler(hardTimeoutSecs, hardTimeoutSecs, 0))
+                    .addLast("HSSL", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
+                    .addLast("HSSLChannelState", hardwareChannelStateHandler)
+                    .addLast("HSSLMessageDecoder", new MessageDecoder(holder.stats))
+                    .addLast("HSSLMessageEncoder", new MessageEncoder(holder.stats))
+                    .addLast("HSSLLogin", hardwareLoginHandler)
+                    .addLast("HSSLNotLogged", new HardwareNotLoggedHandler())
+                    .addLast("HSSLAlreadyLogged", alreadyLoggedHandler);
             }
         };
     }

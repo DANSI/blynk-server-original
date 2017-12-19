@@ -13,9 +13,8 @@ import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -61,28 +60,22 @@ public class WebSocketsGenericLoginHandler extends SimpleChannelInboundHandler<L
     }
 
     private void initAppPipeline(ChannelHandlerContext ctx) {
-        ChannelPipeline pipeline = ctx.pipeline();
-
-        pipeline.addLast("AChannelState", appChannelStateHandler);
-        pipeline.addLast("AGetServer", getServerHandler);
-        pipeline.addLast("ALogin", appLoginHandler);
-        pipeline.addLast("ANotLogged", userNotLoggedHandler);
-
-        pipeline.remove(this);
+        ctx.pipeline()
+            .addLast("AChannelState", appChannelStateHandler)
+            .addLast("AGetServer", getServerHandler)
+            .addLast("ALogin", appLoginHandler)
+            .addLast("ANotLogged", userNotLoggedHandler)
+            .remove(this);
     }
 
 
     private void initHardwarePipeline(ChannelHandlerContext ctx) {
-        ChannelPipeline pipeline = ctx.pipeline();
-        if (hardTimeoutSecs > 0) {
-            pipeline.addFirst("WSReadTimeout", new ReadTimeoutHandler(hardTimeoutSecs));
-        }
-
-        //hardware handlers
-        pipeline.addLast("WSChannelState", hardwareChannelStateHandler);
-        pipeline.addLast("WSLogin", hardwareLoginHandler);
-        pipeline.addLast("WSNotLogged", new HardwareNotLoggedHandler());
-        pipeline.remove(this);
+        ctx.pipeline()
+            .addFirst("WSIdleStateHandler", new IdleStateHandler(hardTimeoutSecs, hardTimeoutSecs, 0))
+            .addLast("WSChannelState", hardwareChannelStateHandler)
+            .addLast("WSLogin", hardwareLoginHandler)
+            .addLast("WSNotLogged", new HardwareNotLoggedHandler())
+            .remove(this);
     }
 
     @Override
