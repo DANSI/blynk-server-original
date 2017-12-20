@@ -49,12 +49,12 @@ public class SparkPostMailClient implements MailClient {
 
     @Override
     public void sendText(String to, String subj, String body) throws Exception {
-        send(to, subj, body, "text/plain; charset=UTF-8");
+        send(to, subj, body, TEXT_PLAIN_CHARSET_UTF_8);
     }
 
     @Override
     public void sendHtml(String to, String subj, String body) throws Exception {
-        send(to, subj, body, "text/html; charset=UTF-8");
+        send(to, subj, body, TEXT_HTML_CHARSET_UTF_8);
     }
 
     private void send(String to, String subj, String body, String contentType) throws Exception {
@@ -82,7 +82,7 @@ public class SparkPostMailClient implements MailClient {
         Multipart multipart = new MimeMultipart();
 
         MimeBodyPart bodyMessagePart = new MimeBodyPart();
-        bodyMessagePart.setContent(body, "text/html; charset=UTF-8");
+        bodyMessagePart.setContent(body, TEXT_HTML_CHARSET_UTF_8);
         multipart.addBodyPart(bodyMessagePart);
 
         for (QrHolder qrHolder : attachments) {

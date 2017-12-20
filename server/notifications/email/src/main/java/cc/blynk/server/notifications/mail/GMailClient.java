@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.activation.DataHandler;
-import javax.activation.DataSource;
 import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
@@ -51,12 +50,12 @@ public class GMailClient implements MailClient {
 
     @Override
     public void sendText(String to, String subj, String body) throws Exception {
-        send(to, subj, body, "text/plain; charset=UTF-8");
+        send(to, subj, body, TEXT_PLAIN_CHARSET_UTF_8);
     }
 
     @Override
     public void sendHtml(String to, String subj, String body) throws Exception {
-        send(to, subj, body, "text/html; charset=UTF-8");
+        send(to, subj, body, TEXT_HTML_CHARSET_UTF_8);
     }
 
     @Override
@@ -70,7 +69,7 @@ public class GMailClient implements MailClient {
         Multipart multipart = new MimeMultipart();
 
         MimeBodyPart bodyMessagePart = new MimeBodyPart();
-        bodyMessagePart.setContent(body, "text/html; charset=UTF-8");
+        bodyMessagePart.setContent(body, TEXT_HTML_CHARSET_UTF_8);
 
         multipart.addBodyPart(bodyMessagePart);
 
@@ -95,7 +94,7 @@ public class GMailClient implements MailClient {
             .append("\n");
         }
         MimeBodyPart attachmentsPart = new MimeBodyPart();
-        DataSource source = new ByteArrayDataSource(sb.toString(), "text/csv");
+        ByteArrayDataSource source = new ByteArrayDataSource(sb.toString(), "text/csv");
         attachmentsPart.setDataHandler(new DataHandler(source));
         attachmentsPart.setFileName("tokens.csv");
 
@@ -105,7 +104,7 @@ public class GMailClient implements MailClient {
     private void attachQRs(Multipart multipart, QrHolder[] attachmentData) throws Exception {
         for (QrHolder qrHolder : attachmentData) {
             MimeBodyPart attachmentsPart = new MimeBodyPart();
-            DataSource source = new ByteArrayDataSource(qrHolder.data, "image/jpeg");
+            ByteArrayDataSource source = new ByteArrayDataSource(qrHolder.data, "image/jpeg");
             attachmentsPart.setDataHandler(new DataHandler(source));
             attachmentsPart.setFileName(qrHolder.makeQRFilename());
             multipart.addBodyPart(attachmentsPart);
