@@ -4,7 +4,7 @@
  * Created on 29.09.17.
  */
 module cc.blynk.server.notifications.push {
-    requires log4j.api;
+    requires org.apache.logging.log4j;
     requires jackson.annotations;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;

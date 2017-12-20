@@ -199,7 +199,7 @@
         <!-- dependencies -->
         <netty.version>4.1.19.Final</netty.version>
         <netty.boring.ssl.version>2.0.7.Final</netty.boring.ssl.version>
-        <log4j2.version>2.9.1</log4j2.version>
+        <log4j2.version>2.10.0</log4j2.version>
         <jackson-databind.version>2.9.2</jackson-databind.version>
         <disruptor.version>3.3.7</disruptor.version>
         <async-http-client.version>2.1.0-RC3</async-http-client.version>

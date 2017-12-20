@@ -5,7 +5,7 @@
  */
 module cc.blynk.server.notifications.sms {
     requires com.fasterxml.jackson.databind;
-    requires log4j.api;
+    requires org.apache.logging.log4j;
     requires async.http.client;
     requires jackson.annotations;
 
