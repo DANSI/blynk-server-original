@@ -97,7 +97,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
         User user = userDao.getByName(trimmedEmail, appName);
 
         if (user == null) {
-            return badRequest("Sorry, this account is not exists.");
+            return badRequest("Sorry, this account does not exist.");
         }
 
         String token = generateToken();
