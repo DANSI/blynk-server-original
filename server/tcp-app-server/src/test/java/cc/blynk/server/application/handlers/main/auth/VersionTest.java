@@ -1,0 +1,41 @@
+package cc.blynk.server.application.handlers.main.auth;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+/**
+ * The Blynk Project.
+ * Created by Dmitriy Dumanskiy.
+ * Created on 24.12.17.
+ */
+public class VersionTest {
+
+    @Test
+    public void testCorrectVersion() {
+        Version version = new Version("iOS", "1.2.3");
+        assertEquals(OsType.IOS, version.osType);
+        assertEquals(10203, version.versionSingleNumber);
+    }
+
+    @Test
+    public void testTwoVersions() {
+        Version version = new Version("iOS", "1.2.3");
+        Version version2 = new Version("iOS", "1.2.4");
+        assertTrue(version2.largerThan(version));
+    }
+
+    @Test
+    public void wrongValues() {
+        Version version = new Version("iOS", "RC13");
+        assertEquals(OsType.IOS, version.osType);
+        assertEquals(0, version.versionSingleNumber);
+    }
+
+    @Test
+    public void wrongValues2() {
+        assertEquals(OsType.OTHER, Version.UNKNOWN_VERSION.osType);
+        assertEquals(0, Version.UNKNOWN_VERSION.versionSingleNumber);
+    }
+}

@@ -3,8 +3,8 @@ package cc.blynk.server.application.handlers.sharing.auth;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
 import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
-import cc.blynk.server.application.handlers.main.auth.OsType;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
+import cc.blynk.server.application.handlers.main.auth.Version;
 import cc.blynk.server.application.handlers.sharing.AppShareHandler;
 import cc.blynk.server.core.dao.SharedTokenValue;
 import cc.blynk.server.core.model.DashBoard;
@@ -54,22 +54,19 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
             log.error("Wrong income message format.");
             ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
         } else {
-            OsType osType = null;
-            String version = null;
             String uid = null;
-            if (messageParts.length > 3) {
-                osType = OsType.parse(messageParts[2]);
-                version = messageParts[3];
-            }
+            Version version = messageParts.length > 3
+                    ? new Version(messageParts[2], messageParts[3])
+                    : Version.UNKNOWN_VERSION;
             if (messageParts.length == 5) {
               uid = messageParts[4];
             }
-            appLogin(ctx, message.id, messageParts[0], messageParts[1], osType, version, uid);
+            appLogin(ctx, message.id, messageParts[0], messageParts[1], version, uid);
         }
     }
 
     private void appLogin(ChannelHandlerContext ctx, int messageId, String email,
-                          String token, OsType osType, String version, String uid) {
+                          String token, Version version, String uid) {
         String userName = email.toLowerCase();
 
         SharedTokenValue tokenValue = holder.tokenManager.getUserBySharedToken(token);
@@ -93,7 +90,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         }
 
         cleanPipeline(ctx.pipeline());
-        AppShareStateHolder appShareStateHolder = new AppShareStateHolder(user, osType, version, token, dashId);
+        AppShareStateHolder appShareStateHolder = new AppShareStateHolder(user, version, token, dashId);
         ctx.pipeline().addLast("AAppSHareHandler", new AppShareHandler(holder, appShareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionByUser(

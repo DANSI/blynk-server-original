@@ -37,7 +37,7 @@ public final class AddPushLogic {
             throw new NotAllowedException("No notification widget.");
         }
 
-        switch (state.osType) {
+        switch (state.version.osType) {
             case ANDROID :
                 notification.androidTokens.put(uid, token);
                 break;

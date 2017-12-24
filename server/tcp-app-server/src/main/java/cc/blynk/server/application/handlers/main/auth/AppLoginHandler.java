@@ -93,24 +93,26 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
         }
 
         String email = messageParts[0].toLowerCase();
-        OsType osType = messageParts.length > 3 ? OsType.parse(messageParts[2]) : OsType.OTHER;
-        String version = messageParts.length > 3 ? messageParts[3] : null;
+
+        Version version = messageParts.length > 3
+                ? new Version(messageParts[2], messageParts[3])
+                : Version.UNKNOWN_VERSION;
 
         if (messageParts.length == 5) {
             if (AppNameUtil.FACEBOOK.equals(messageParts[4])) {
-                facebookLogin(ctx, message.id, email, messageParts[1], osType, version);
+                facebookLogin(ctx, message.id, email, messageParts[1], version);
             } else {
                 String appName = messageParts[4];
-                blynkLogin(ctx, message.id, email, messageParts[1], osType, version, appName);
+                blynkLogin(ctx, message.id, email, messageParts[1], version, appName);
             }
         } else {
             //todo this is for back compatibility
-            blynkLogin(ctx, message.id, email, messageParts[1], osType, version, AppNameUtil.BLYNK);
+            blynkLogin(ctx, message.id, email, messageParts[1], version, AppNameUtil.BLYNK);
         }
     }
 
     private void facebookLogin(ChannelHandlerContext ctx, int messageId, String email,
-                               String token, OsType osType, String version) {
+                               String token, Version version) {
         asyncHttpClient.prepareGet(URL + token)
                 .execute(new AsyncCompletionHandler<Response>() {
                     @Override
@@ -136,7 +138,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
                                     user = holder.userDao.addFacebookUser(email, AppNameUtil.BLYNK);
                                 }
 
-                                login(ctx, messageId, user, osType, version);
+                                login(ctx, messageId, user, version);
                             }
                         } catch (Exception e) {
                             log.error("Error during facebook response parsing for user {}. Reason : {}",
@@ -157,7 +159,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
     }
 
     private void blynkLogin(ChannelHandlerContext ctx, int msgId, String email, String pass,
-                            OsType osType, String version, String appName) {
+                            Version version, String appName) {
         User user = holder.userDao.getByName(email, appName);
 
         if (user == null) {
@@ -178,14 +180,14 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
             return;
         }
 
-        login(ctx, msgId, user, osType, version);
+        login(ctx, msgId, user, version);
     }
 
-    private void login(ChannelHandlerContext ctx, int messageId, User user, OsType osType, String version) {
+    private void login(ChannelHandlerContext ctx, int messageId, User user, Version version) {
         ChannelPipeline pipeline = ctx.pipeline();
         cleanPipeline(pipeline);
 
-        AppStateHolder appStateHolder = new AppStateHolder(user, osType, version);
+        AppStateHolder appStateHolder = new AppStateHolder(user, version);
         pipeline.addLast("AAppHandler", new AppHandler(holder, appStateHolder));
 
         Channel channel = ctx.channel();
