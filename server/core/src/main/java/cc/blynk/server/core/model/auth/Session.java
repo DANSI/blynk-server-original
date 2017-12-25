@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.auth;
 
-import cc.blynk.server.core.protocol.model.messages.appllication.DeviceOfflineMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
@@ -16,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashSet;
 import java.util.Set;
 
+import static cc.blynk.server.internal.BlynkByteBufUtil.deviceOffline;
 import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.StateHolderUtil.getHardState;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDash;
@@ -154,17 +154,12 @@ public class Session {
     }
 
     public void sendOfflineMessageToApps(int dashId, int deviceId) {
-        if (isAppConnected()) {
+        int targetsNum = appChannels.size();
+        if (targetsNum > 0) {
             log.trace("Sending device offline message.");
 
-            //todo could be optimized. don't forget about retain
-            DeviceOfflineMessage deviceOfflineMessage =
-                    new DeviceOfflineMessage(0, String.valueOf(dashId) + DEVICE_SEPARATOR + deviceId);
-            for (Channel appChannel : appChannels) {
-                if (appChannel.isWritable()) {
-                    appChannel.writeAndFlush(deviceOfflineMessage, appChannel.voidPromise());
-                }
-            }
+            ByteBuf deviceOfflineMessage = deviceOffline(dashId, deviceId);
+            sendMessageToMultipleReceivers(appChannels, targetsNum, deviceOfflineMessage);
         }
     }
 
@@ -201,21 +196,24 @@ public class Session {
         return targetChannels;
     }
 
-    private void send(Set<Channel> targets, int targetsNum, short cmd, int msgId, String body) {
-        ByteBuf msg = makeUTF8StringMessage(cmd, msgId, body);
+    private static void sendMessageToMultipleReceivers(Set<Channel> targets, int targetsNum, ByteBuf msg) {
         if (targetsNum > 1) {
             msg.retain(targetsNum - 1);
         }
 
         for (Channel channel : targets) {
             if (channel.isWritable()) {
-                log.trace("Sending {} to channel {}", body, channel);
                 channel.writeAndFlush(msg, channel.voidPromise());
             } else {
                 msg.release();
             }
             msg.resetReaderIndex();
         }
+    }
+
+    private static void send(Set<Channel> targets, int targetsNum, short cmd, int msgId, String body) {
+        ByteBuf msg = makeUTF8StringMessage(cmd, msgId, body);
+        sendMessageToMultipleReceivers(targets, targetsNum, msg);
     }
 
     public void sendToSharedApps(Channel sendingChannel, String sharedToken, short cmd, int msgId, String body) {

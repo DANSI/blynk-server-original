@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufUtil;
 
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_OFFLINE;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
@@ -17,6 +18,7 @@ import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
 import static cc.blynk.server.core.protocol.enums.Response.USER_ALREADY_REGISTERED;
 import static cc.blynk.server.core.protocol.model.messages.MessageBase.HEADER_LENGTH;
+import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 
 /**
  * Utility class that creates native netty buffers instead of java objects.
@@ -63,6 +65,11 @@ public final class BlynkByteBufUtil {
 
     public static ByteBuf alreadyRegistered(final int msgId) {
         return makeResponse(msgId, USER_ALREADY_REGISTERED);
+    }
+
+    public static ByteBuf deviceOffline(final int dashId, final int deviceId) {
+        return makeASCIIStringMessage(DEVICE_OFFLINE, 0,
+                String.valueOf(dashId) + DEVICE_SEPARATOR + deviceId);
     }
 
     public static ByteBuf serverError(final int msgId) {
