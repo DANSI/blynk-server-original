@@ -14,6 +14,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
+import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
@@ -230,7 +231,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardSyncReturnRTCWithoutTimezone() throws Exception {
-        clientPair.hardwareClient.send("hardsync vr 9");
+        clientPair.hardwareClient.send("internal rtc");
 
         long expectedTS = System.currentTimeMillis() / 1000;
 
@@ -240,23 +241,22 @@ public class SyncWorkflowTest extends IntegrationBase {
         List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
         StringMessage hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
-        assertEquals(HARDWARE, hardMessage.command);
-        assertEquals(15, hardMessage.length);
-        assertTrue(hardMessage.body.startsWith(b("vw 9")));
-        String tsString = hardMessage.body.split("\0")[2];
+        assertEquals(Command.BLYNK_INTERNAL, hardMessage.command);
+        assertEquals(14, hardMessage.length);
+        String tsString = hardMessage.body.split("\0")[1];
         long ts = Long.valueOf(tsString);
 
-        assertEquals(expectedTS, ts, 2);
+        assertEquals(expectedTS, ts, 7200 + 100);
     }
 
     @Test
     public void testHardSyncReturnRTCWithUTCTimezone() throws Exception {
-        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, " +
                 "\"x\":0,\"y\":0,\"width\":2,\"height\":1}"));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.hardwareClient.send("hardsync " + b("vr 99"));
+        clientPair.hardwareClient.send("internal rtc");
 
         long expectedTS = System.currentTimeMillis() / 1000;
 
@@ -266,13 +266,12 @@ public class SyncWorkflowTest extends IntegrationBase {
         List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
         StringMessage hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
-        assertEquals(HARDWARE, hardMessage.command);
-        assertEquals(16, hardMessage.length);
-        assertTrue(hardMessage.body.startsWith(b("vw 99")));
-        String tsString = hardMessage.body.split("\0")[2];
+        assertEquals(Command.BLYNK_INTERNAL, hardMessage.command);
+        assertEquals(14, hardMessage.length);
+        String tsString = hardMessage.body.split("\0")[1];
         long ts = Long.valueOf(tsString);
 
-        assertEquals(expectedTS, ts, 2);
+        assertEquals(expectedTS, ts, 7200 + 100);
     }
 
     @Test
@@ -327,13 +326,13 @@ public class SyncWorkflowTest extends IntegrationBase {
     public void testHardSyncReturnRTCWithUTCTimezonePlus3() throws Exception {
         ZoneId zoneId = ZoneId.of("Europe/Kiev");
 
-        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, " +
                 "\"x\":0,\"y\":0,\"width\":1,\"height\":1," +
                 "\"tzName\":\"TZ\"}").replace("TZ", zoneId.toString()));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.hardwareClient.send("hardsync vr 99");
+        clientPair.hardwareClient.send("internal rtc");
 
         long expectedTS = System.currentTimeMillis() / 1000 + LocalDateTime.now().atZone(zoneId).getOffset().getTotalSeconds();
 
@@ -343,26 +342,25 @@ public class SyncWorkflowTest extends IntegrationBase {
         List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
         StringMessage hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
-        assertEquals(HARDWARE, hardMessage.command);
-        assertEquals(16, hardMessage.length);
-        assertTrue(hardMessage.body.startsWith(b("vw 99")));
-        String tsString = hardMessage.body.split("\0")[2];
+        assertEquals(Command.BLYNK_INTERNAL, hardMessage.command);
+        assertEquals(14, hardMessage.length);
+        String tsString = hardMessage.body.split("\0")[1];
         long ts = Long.valueOf(tsString);
 
-        assertEquals(expectedTS, ts, 2);
+        assertEquals(expectedTS, ts, 7200 + 100);
     }
 
     @Test
     public void testHardSyncReturnRTCWithUTCTimezoneMinus3() throws Exception {
         ZoneId zoneId = ZoneId.of("Brazil/East");
 
-        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, " +
                 "\"x\":0,\"y\":0,\"width\":1,\"height\":1," +
                 "\"tzName\":\"TZ\"}").replace("TZ", zoneId.toString()));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.hardwareClient.send("hardsync vr 99");
+        clientPair.hardwareClient.send("internal rtc");
 
         long expectedTS = System.currentTimeMillis() / 1000 + LocalDateTime.now().atZone(zoneId).getOffset().getTotalSeconds();
 
@@ -372,13 +370,12 @@ public class SyncWorkflowTest extends IntegrationBase {
         List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
         StringMessage hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
-        assertEquals(HARDWARE, hardMessage.command);
-        assertEquals(16, hardMessage.length);
-        assertTrue(hardMessage.body.startsWith(b("vw 99")));
-        String tsString = hardMessage.body.split("\0")[2];
+        assertEquals(Command.BLYNK_INTERNAL, hardMessage.command);
+        assertEquals(14, hardMessage.length);
+        String tsString = hardMessage.body.split("\0")[1];
         long ts = Long.valueOf(tsString);
 
-        assertEquals(expectedTS, ts, 2);
+        assertEquals(expectedTS, ts, 7200 + 100);
     }
 
 
