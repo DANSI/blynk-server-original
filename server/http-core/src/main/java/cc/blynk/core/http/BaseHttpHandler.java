@@ -82,9 +82,10 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter
     private void invokeHandler(ChannelHandlerContext ctx, HttpRequest req,
                                HandlerWrapper handler, Map<String, String> extractedParams) {
         log.debug("{} : {}", req.method().name(), req.uri());
-        URIDecoder uriDecoder = new URIDecoder(req, extractedParams);
-        Object[] params = handler.fetchParams(ctx, uriDecoder);
-        finishHttp(ctx, uriDecoder, handler, params);
+        try (URIDecoder uriDecoder = new URIDecoder(req, extractedParams)) {
+            Object[] params = handler.fetchParams(ctx, uriDecoder);
+            finishHttp(ctx, uriDecoder, handler, params);
+        }
     }
 
     public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder,
