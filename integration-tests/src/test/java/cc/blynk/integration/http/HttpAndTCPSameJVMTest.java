@@ -114,7 +114,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     @Test
     public void testChangeNonWidgetPinValueViaHardwareAndGetViaHTTP() throws Exception {
         clientPair.hardwareClient.send("hardware vw 10 200");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 10 200"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 10 200"))));
 
         reset(clientPair.appClient.responseMock);
 
@@ -144,7 +144,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     @Test
     public void testChangePinValueViaAppAndHardware() throws Exception {
         clientPair.hardwareClient.send("hardware vw 4 200");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 4 200"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 4 200"))));
 
         reset(clientPair.appClient.responseMock);
 
@@ -216,7 +216,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1 vw 100 37"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1-0 vw 100 37"))));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 100 37"))));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
     }
@@ -244,7 +244,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 4 1"))));
+        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 4 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 4 1"))));
 
 
@@ -289,8 +289,8 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7777, HARDWARE, b("vw 4 0"))));
 
         verify(clientPair.appClient.responseMock, timeout(2500).times(3)).channelRead(any(), any());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7777, HARDWARE, b("1 vw 4 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7777, HARDWARE, b("1 vw 4 0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7777, HARDWARE, b("1-0 vw 4 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7777, HARDWARE, b("1-0 vw 4 0"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("getToken 1");
@@ -334,7 +334,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         }
 
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("dw 18 0"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1 dw 18 0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1-0 dw 18 0"))));
     }
 
     @Test
@@ -528,7 +528,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         }
 
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 0 100"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1 vw 0 100"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1-0 vw 0 100"))));
 
         request = new HttpPut(httpServerUrl + token + "/pin/v1");
 
@@ -538,7 +538,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         }
 
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 1 101"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1 vw 1 101"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1-0 vw 1 101"))));
     }
 
     @Test
@@ -554,7 +554,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         }
 
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 31 100"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1 vw 31 100"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1-0 vw 31 100"))));
     }
 
     @Test
@@ -573,7 +573,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         }
 
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 100 100"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1 vw 100 100"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1-0 vw 100 100"))));
     }
 
     @Test

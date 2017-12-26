@@ -848,7 +848,7 @@ public class HistoryGraphTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 88 111"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
@@ -870,7 +870,7 @@ public class HistoryGraphTest extends IntegrationBase {
             clientPair.hardwareClient.send("hardware vw 88 " + i);
         }
 
-        verify(clientPair.appClient.responseMock, timeout(10000)).channelRead(any(), eq(new HardwareMessage(61, b("1 vw 88 60"))));
+        verify(clientPair.appClient.responseMock, timeout(10000)).channelRead(any(), eq(new HardwareMessage(61, b("1-0 vw 88 60"))));
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
@@ -901,7 +901,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         clientPair.hardwareClient.send("hardware vw 88 111");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 88 111"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
 
         EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
         enhancedHistoryGraph.id = 432;
@@ -930,7 +930,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         clientPair.hardwareClient.send("hardware vw 88 111");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 88 111"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
 
         EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
         enhancedHistoryGraph.id = 432;
@@ -949,7 +949,7 @@ public class HistoryGraphTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NO_DATA)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1 vw 88 111"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 88 111"))));
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
@@ -971,7 +971,7 @@ public class HistoryGraphTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("1 vw 88 111"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("1-0 vw 88 111"))));
 
         clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));

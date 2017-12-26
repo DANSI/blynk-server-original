@@ -353,7 +353,7 @@ public class HttpsAdminServerTest extends BaseTest {
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         hardClient2.send("hardware vw 1 112");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1 vw 1 112"))));
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 vw 1 112"))));
     }
 
     @Test

@@ -77,7 +77,7 @@ public class SetPropertyTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("setProperty 4 label MyNewLabel");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1 4 label MyNewLabel")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 4 label MyNewLabel")));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -115,7 +115,7 @@ public class SetPropertyTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("setProperty 4 label MyNewLabel");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1 4 label MyNewLabel")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 4 label MyNewLabel")));
 
         clientPair.appClient.send("deactivate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
@@ -126,7 +126,7 @@ public class SetPropertyTest extends IntegrationBase {
 
         clientPair.appClient.send("activate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(6)));
-        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(setProperty(1111, "1 4 label MyNewLabel")));
+        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(setProperty(1111, "1-0 4 label MyNewLabel")));
 
     }
 
@@ -139,8 +139,8 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.hardwareClient.send("setProperty 17 offLabel выкл");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 17 onLabel вкл"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(2, b("1 17 offLabel выкл"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1-0 17 onLabel вкл"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(2, b("1-0 17 offLabel выкл"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -163,7 +163,7 @@ public class SetPropertyTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("setProperty 17 isOnPlay true");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 17 isOnPlay true"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1-0 17 isOnPlay true"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -184,7 +184,7 @@ public class SetPropertyTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("setProperty 17 labels label1 label2 label3");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 17 labels label1 label2 label3"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1-0 17 labels label1 label2 label3"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -250,7 +250,7 @@ public class SetPropertyTest extends IntegrationBase {
     public void testSetColorForWidget() throws Exception {
         clientPair.hardwareClient.send("setProperty 4 color #23C48E");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 4 color #23C48E"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1-0 4 color #23C48E"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -267,8 +267,8 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.hardwareClient.send("setProperty 4 max 20");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 4 min 10"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(2, b("1 4 max 20"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1-0 4 min 10"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(2, b("1-0 4 max 20"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -286,8 +286,8 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.hardwareClient.send("setProperty 4 max 20.2");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 4 min 10.1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(2, b("1 4 max 20.2"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1-0 4 min 10.1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(2, b("1-0 4 max 20.2"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -326,7 +326,7 @@ public class SetPropertyTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("setProperty 17 url http://123.com");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 17 url http://123.com"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1-0 17 url http://123.com"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -363,7 +363,7 @@ public class SetPropertyTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("setProperty 17 url http://123.com");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1 17 url http://123.com"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1-0 17 url http://123.com"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");

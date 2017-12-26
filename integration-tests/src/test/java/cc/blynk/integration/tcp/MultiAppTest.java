@@ -99,15 +99,15 @@ public class MultiAppTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-0")));
 
         hardClient1.send("hardware vw 1 100");
-        verify(appClient1.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1 vw 1 100"))));
-        verify(appClient2.responseMock, timeout(500).times(0)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 1 100"))));
+        verify(appClient1.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 1 100"))));
+        verify(appClient2.responseMock, timeout(500).times(0)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 1 100"))));
 
         appClient1.reset();
         appClient2.reset();
 
         hardClient2.send("hardware vw 1 100");
-        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1 vw 1 100"))));
-        verify(appClient1.responseMock, timeout(500).times(0)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 1 100"))));
+        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 1 100"))));
+        verify(appClient1.responseMock, timeout(500).times(0)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 1 100"))));
 
     }
 

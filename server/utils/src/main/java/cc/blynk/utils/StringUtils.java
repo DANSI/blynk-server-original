@@ -123,10 +123,6 @@ public final class StringUtils {
     }
 
     public static String prependDashIdAndDeviceId(int dashId, int deviceId, String body) {
-        //todo this is back compatibility code. remove in future versions
-        if (deviceId == 0) {
-            return "" + dashId + BODY_SEPARATOR + body;
-        }
         return "" + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + body;
     }
 

@@ -86,7 +86,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(111, b("1 4 label My-New-Label"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(111, b("1-0 4 label My-New-Label"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -105,7 +105,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(111, b("1 4 color #000000"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(111, b("1-0 4 color #000000"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -127,7 +127,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(111, b("1 1 onLabel newOnButtonLabel"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(111, b("1-0 1 onLabel newOnButtonLabel"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -150,7 +150,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(111, b("1 1 offLabel newOffButtonLabel"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(111, b("1-0 1 offLabel newOffButtonLabel"))));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");

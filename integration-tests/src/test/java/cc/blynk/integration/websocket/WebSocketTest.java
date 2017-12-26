@@ -95,15 +95,15 @@ public class WebSocketTest extends IntegrationBase {
         webSocketClient.send("login " + token);
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
 
-        clientPair.appClient.send("hardware 1 vw 4 1");
+        clientPair.appClient.send("hardware 1-0 vw 4 1");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 4 1"))));
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 4 1"))));
 
         webSocketClient.send("hardware vw 4 2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1 vw 4 2"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 vw 4 2"))));
 
         clientPair.hardwareClient.send("hardware vw 4 3");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 4 3"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 4 3"))));
 
         clientPair.appClient.reset();
         WebSocketClient webSocketClient2 = new WebSocketClient("localhost", tcpWebSocketPort, HttpAPIServer.WEBSOCKET_PATH, false);
@@ -114,7 +114,7 @@ public class WebSocketTest extends IntegrationBase {
         webSocketClient2.msgId = 1000;
 
         for (int i = 1; i <= 10; i++) {
-            clientPair.appClient.send("hardware 1 vw 4 " + i);
+            clientPair.appClient.send("hardware 1-0 vw 4 " + i);
             verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE, b("vw 4 " + i))));
             verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE, b("vw 4 " + i))));
             verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(i, HARDWARE, b("vw 4 " + i))));

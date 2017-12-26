@@ -106,7 +106,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        verify(clientPair.appClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
     }
 
@@ -134,7 +134,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        verify(clientPair.appClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
 
         clientPair.appClient.reset();
@@ -155,7 +155,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("updateWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        verify(clientPair.appClient.responseMock, after(1500).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
+        verify(clientPair.appClient.responseMock, after(1500).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, after(1500).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
     }
 
@@ -187,8 +187,8 @@ public class TimerTest extends IntegrationBase {
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
-        verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
-        verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 2 2"))));
+        verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 2 2"))));
         verify(clientPair.hardwareClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 2 2"))));
     }
@@ -224,7 +224,7 @@ public class TimerTest extends IntegrationBase {
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Hello", 1).toJson();
         assertEquals(expectedJson, message.toJson());
 
-        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
     }
 
@@ -266,7 +266,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        verify(clientPair.appClient.responseMock, after(700).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
+        verify(clientPair.appClient.responseMock, after(700).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, after(700).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
     }
 

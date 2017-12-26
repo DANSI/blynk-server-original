@@ -107,7 +107,7 @@ public class AppExportTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-0")));
 
         hardClient1.send("hardware vw 1 100");
-        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1 vw 1 100"))));
+        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 1 100"))));
     }
 
     private String workflowForUser(TestAppClient appClient, String email, String pass, String appName) throws Exception{
