@@ -39,7 +39,6 @@ public class UserStatisticsTest {
     }
 
     public static byte[] compress(byte[] data) throws Exception {
-        //todo calculate size
         ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
 
         try (OutputStream out = new DeflaterOutputStream(baos, new Deflater(Deflater.BEST_COMPRESSION))) {

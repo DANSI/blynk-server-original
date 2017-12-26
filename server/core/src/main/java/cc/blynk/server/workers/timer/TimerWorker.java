@@ -246,7 +246,6 @@ public class TimerWorker implements Runnable {
                 NotifyAction notifyAction = (NotifyAction) action;
                 EventorProcessor.push(gcmWrapper, dash, notifyAction.message);
             }
-            //todo other type of actions not supported yet. maybe in future.
         }
     }
 

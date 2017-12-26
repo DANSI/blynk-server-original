@@ -52,6 +52,7 @@ import static cc.blynk.utils.http.MediaType.TEXT_PLAIN;
 public class WebhookProcessor extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(WebhookProcessor.class);
+    private static final String CONTENT_TYPE = "Content-Type";
 
     private final AsyncHttpClient httpclient;
     private final GlobalStats globalStats;
@@ -101,7 +102,7 @@ public class WebhookProcessor extends NotificationBase {
                 if (header.isValid()) {
                     builder.setHeader(header.name, header.value);
                     if (webHook.body != null && !webHook.body.isEmpty()) {
-                        if (header.name.equals("Content-Type")) {
+                        if (CONTENT_TYPE.equals(header.name)) {
                             String newBody = format(webHook.body, triggerValue, true);
                             log.trace("Webhook formatted body : {}", newBody);
                             buildRequestBody(builder, header.value, newBody);
@@ -132,7 +133,7 @@ public class WebhookProcessor extends NotificationBase {
                 if (response.getStatusCode() == 200 || response.getStatusCode() == 302) {
                     webHook.failureCounter = 0;
                     if (response.hasResponseBody()) {
-                        //todo could be optimized
+                        //todo could be optimized with response.getResponseBodyAsByteBuffer()
                         String body = DataStream.makeHardwareBody(webHook.pinType, webHook.pin,
                                 response.getResponseBody(CharsetUtil.UTF_8));
                         log.trace("Sending webhook to hardware. {}", body);
