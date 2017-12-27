@@ -114,8 +114,6 @@ public class OTATest extends BaseTest {
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
                 .build();
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
-        clientPair.hardwareClient.reset();
-        clientPair.appClient.reset();
     }
 
     @Test

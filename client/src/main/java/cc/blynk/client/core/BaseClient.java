@@ -180,6 +180,9 @@ public abstract class BaseClient {
     }
 
     public ChannelFuture stop() {
+        if (nioEventLoopGroup.isTerminated()) {
+            return channel.voidPromise();
+        }
         ChannelFuture channelFuture = channel.close().awaitUninterruptibly();
         nioEventLoopGroup.shutdownGracefully();
         return channelFuture;
