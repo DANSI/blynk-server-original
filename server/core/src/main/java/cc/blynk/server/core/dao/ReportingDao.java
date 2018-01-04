@@ -175,15 +175,16 @@ public class ReportingDao implements Closeable {
 
     public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {
         log.debug("Removing {}{} pin data for dashId {}, deviceId {}.", pinType.pintTypeChar, pin, dashId, deviceId);
-        Path userDataMinuteFile = Paths.get(dataFolder,
-                FileUtils.getUserReportingDir(user.email, user.appName),
+        String userReportingDir = Paths.get(dataFolder,
+                FileUtils.getUserReportingDir(user.email, user.appName)).toString();
+
+        Path userDataMinuteFile = Paths.get(userReportingDir,
                 formatMinute(dashId, deviceId, pinType.pintTypeChar, pin));
-        Path userDataHourlyFile = Paths.get(dataFolder,
-                FileUtils.getUserReportingDir(user.email, user.appName),
+        Path userDataHourlyFile = Paths.get(userReportingDir,
                 formatHour(dashId, deviceId, pinType.pintTypeChar, pin));
-        Path userDataDailyFile = Paths.get(dataFolder,
-                FileUtils.getUserReportingDir(user.email, user.appName),
+        Path userDataDailyFile = Paths.get(userReportingDir,
                 formatDaily(dashId, deviceId, pinType.pintTypeChar, pin));
+
         FileUtils.deleteQuietly(userDataMinuteFile);
         FileUtils.deleteQuietly(userDataHourlyFile);
         FileUtils.deleteQuietly(userDataDailyFile);
