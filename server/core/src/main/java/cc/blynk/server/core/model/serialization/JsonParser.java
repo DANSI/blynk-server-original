@@ -27,7 +27,10 @@ import org.apache.logging.log4j.Logger;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.StringJoiner;
 import java.util.zip.DeflaterOutputStream;
 
@@ -197,6 +200,12 @@ public final class JsonParser {
             log.error("Error reading json object.", e);
         }
         return null;
+    }
+
+    public static User parseUserFromFile(Path path) throws IOException {
+        try (InputStream is = Files.newInputStream(path)) {
+            return userReader.readValue(is);
+        }
     }
 
     public static User parseUserFromFile(File userFile) throws IOException {

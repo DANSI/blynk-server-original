@@ -12,16 +12,16 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -141,38 +141,39 @@ public class FileManager {
     public ConcurrentMap<UserKey, User> deserializeUsers() {
         log.debug("Starting reading user DB.");
 
-        final File[] files = dataDir.toFile().listFiles();
-
+        PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:**" + USER_FILE_EXTENSION);
         ConcurrentMap<UserKey, User> temp;
-        if (files != null) {
-            temp = Arrays.stream(files).parallel()
-                    .filter(file -> file.isFile() && file.getName().endsWith(USER_FILE_EXTENSION))
-                    .flatMap(file -> {
+        try {
+            temp = Files.walk(dataDir, 1).parallel()
+                    .filter(path -> Files.isRegularFile(path) && pathMatcher.matches(path))
+                    .flatMap(path -> {
                         try {
-                            User user = JsonParser.parseUserFromFile(file);
+                            User user = JsonParser.parseUserFromFile(path);
                             makeProfileChanges(user);
 
                             return Stream.of(user);
                         } catch (IOException ioe) {
                             String errorMessage = ioe.getMessage();
-                            log.error("Error parsing file '{}'. Error : {}", file, errorMessage);
+                            log.error("Error parsing file '{}'. Error : {}", path, errorMessage);
                             if (errorMessage != null && errorMessage.contains("end-of-input")) {
-                                return restoreFromBackup(file.getName());
+                                return restoreFromBackup(path.getFileName());
                             }
                         }
                         return Stream.empty();
                     })
                     .collect(Collectors.toConcurrentMap(UserKey::new, identity()));
-        } else {
-            temp = new ConcurrentHashMap<>();
+        } catch (Exception e) {
+            log.error("Error reading user profiles from disk. {}", e.getMessage());
+            throw new RuntimeException(e);
         }
 
         log.debug("Reading user DB finished.");
         return temp;
     }
 
-    private Stream<User> restoreFromBackup(String filename) {
+    private Stream<User> restoreFromBackup(Path restoreFileNamePath) {
         log.info("Trying to recover from backup...");
+        String filename = restoreFileNamePath.toString();
         try {
             File[] files = backupDataDir.toFile().listFiles(
                     (dir, name) -> name.startsWith(filename)
