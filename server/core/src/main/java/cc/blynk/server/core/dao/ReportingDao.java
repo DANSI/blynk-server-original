@@ -174,7 +174,7 @@ public class ReportingDao implements Closeable {
         }
     }
 
-    public static void delete(String userReportingDir, int dashId, int deviceId, PinType pinType, byte pin,
+    private static void delete(String userReportingDir, int dashId, int deviceId, PinType pinType, byte pin,
                               GraphGranularityType reportGranularity) {
         Path userDataFile = Paths.get(userReportingDir,
                 generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, reportGranularity.label));

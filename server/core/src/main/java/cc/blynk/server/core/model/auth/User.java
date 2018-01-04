@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.auth;
 
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.processors.NotificationBase;
@@ -123,6 +124,19 @@ public class User {
             this.emailMessages = 0;
             this.emailSentTs = now;
         }
+    }
+
+    public boolean isUpdated(long lastStart) {
+        return (lastStart <= lastModifiedTs) || isDashUpdated(lastStart);
+    }
+
+    private boolean isDashUpdated(long lastStart) {
+        for (DashBoard dashBoard : profile.dashBoards) {
+            if (lastStart <= dashBoard.updatedAt) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
