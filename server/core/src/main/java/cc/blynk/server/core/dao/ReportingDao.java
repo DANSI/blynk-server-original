@@ -69,25 +69,13 @@ public class ReportingDao implements Closeable {
         this.csvGenerator = new CSVGenerator(this);
     }
 
-    public static String generateFilename(int dashId, int deviceId, char pinType, byte pin,
-                                          GraphGranularityType type) {
-        switch (type) {
-            case MINUTE :
-                return formatMinute(dashId, deviceId, pinType, pin);
-            case HOURLY :
-                return formatHour(dashId, deviceId, pinType, pin);
-            default :
-                return formatDaily(dashId, deviceId, pinType, pin);
-        }
-    }
-
     public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId,
                                             PinType pinType, byte pin, int count,
                                             GraphGranularityType type, int skipCount) {
         Path userDataFile = Paths.get(
                 dataFolder,
                 FileUtils.getUserReportingDir(user.email, user.appName),
-                generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type)
+                generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type.label)
         );
         if (Files.exists(userDataFile)) {
             try {
@@ -173,36 +161,27 @@ public class ReportingDao implements Closeable {
         return getByteBufferFromDisk(user, dashId, deviceId, pinType, pin, count, type, 0);
     }
 
+    public String getUserReportingFolder(User user) {
+        return Paths.get(dataFolder, FileUtils.getUserReportingDir(user.email, user.appName)).toString();
+    }
+
     public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {
         log.debug("Removing {}{} pin data for dashId {}, deviceId {}.", pinType.pintTypeChar, pin, dashId, deviceId);
-        String userReportingDir = Paths.get(dataFolder,
-                FileUtils.getUserReportingDir(user.email, user.appName)).toString();
+        String userReportingDir = getUserReportingFolder(user);
 
-        Path userDataMinuteFile = Paths.get(userReportingDir,
-                formatMinute(dashId, deviceId, pinType.pintTypeChar, pin));
-        Path userDataHourlyFile = Paths.get(userReportingDir,
-                formatHour(dashId, deviceId, pinType.pintTypeChar, pin));
-        Path userDataDailyFile = Paths.get(userReportingDir,
-                formatDaily(dashId, deviceId, pinType.pintTypeChar, pin));
-
-        FileUtils.deleteQuietly(userDataMinuteFile);
-        FileUtils.deleteQuietly(userDataHourlyFile);
-        FileUtils.deleteQuietly(userDataDailyFile);
+        for (GraphGranularityType reportGranularity : GraphGranularityType.values()) {
+            delete(userReportingDir, dashId, deviceId, pinType, pin, reportGranularity);
+        }
     }
 
-    static String formatMinute(int dashId, int deviceId, char pinType, byte pin) {
-        return format("minute", dashId, deviceId, pinType, pin);
+    public static void delete(String userReportingDir, int dashId, int deviceId, PinType pinType, byte pin,
+                              GraphGranularityType reportGranularity) {
+        Path userDataFile = Paths.get(userReportingDir,
+                generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, reportGranularity.label));
+        FileUtils.deleteQuietly(userDataFile);
     }
 
-    static String formatHour(int dashId, int deviceId, char pinType, byte pin) {
-        return format("hourly", dashId, deviceId, pinType, pin);
-    }
-
-    static String formatDaily(int dashId, int deviceId, char pinType, byte pin) {
-        return format("daily", dashId, deviceId, pinType, pin);
-    }
-
-    private static String format(String type, int dashId, int deviceId, char pinType, byte pin) {
+    public static String generateFilename(int dashId, int deviceId, char pinType, byte pin, String type) {
         //todo this is back compatibility code. should be removed in future versions.
         if (deviceId == 0) {
             return "history_" + dashId + "_" + pinType + pin + "_" + type + ".bin";

@@ -1,6 +1,7 @@
 package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -23,13 +24,13 @@ public class ReportingDaoTest {
         byte pin = 2;
 
         assertEquals(String.format(REPORTING_MINUTE_FILE_NAME, dashId, pinType, pin),
-                ReportingDao.formatMinute(dashId, 0, pinType, pin));
+                ReportingDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.MINUTE.label));
 
         assertEquals(String.format(REPORTING_HOURLY_FILE_NAME, dashId, pinType, pin),
-                ReportingDao.formatHour(dashId, 0, pinType, pin));
+                ReportingDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.HOURLY.label));
 
         assertEquals(String.format(REPORTING_DAILY_FILE_NAME, dashId, pinType, pin),
-                ReportingDao.formatDaily(dashId, 0, pinType, pin));
+                ReportingDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.DAILY.label));
 
     }
 
