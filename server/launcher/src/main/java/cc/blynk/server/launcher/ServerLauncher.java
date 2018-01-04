@@ -100,18 +100,16 @@ public final class ServerLauncher {
     }
 
     private static void setGlobalProperties(ServerProperties serverProperties) {
-        Map<String, String> globalProps = new HashMap<String, String>(4) {
-            {
-                put("terminal.strings.pool.size", "25");
-                put("initial.energy", "2000");
-                put("table.rows.pool.size", "100");
-                put("csv.export.data.points.max", "43200");
-            }
-        };
+        Map<String, String> globalProps = new HashMap<>(4);
+        globalProps.put("terminal.strings.pool.size", "25");
+        globalProps.put("initial.energy", "2000");
+        globalProps.put("table.rows.pool.size", "100");
+        globalProps.put("csv.export.data.points.max", "43200");
 
         for (Map.Entry<String, String> entry : globalProps.entrySet()) {
             String name = entry.getKey();
-            System.setProperty(name, serverProperties.getProperty(name, entry.getValue()));
+            String value = serverProperties.getProperty(name, entry.getValue());
+            System.setProperty(name, value);
         }
     }
 
