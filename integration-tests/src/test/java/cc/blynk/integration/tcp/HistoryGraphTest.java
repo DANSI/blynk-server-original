@@ -12,12 +12,17 @@ import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileMode;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
@@ -46,6 +51,7 @@ import java.nio.file.Paths;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.zip.GZIPInputStream;
 
+import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
@@ -1636,16 +1642,13 @@ public class HistoryGraphTest extends IntegrationBase {
         DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
         DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
         DataStream dataStream3 = new DataStream((byte) 10, PinType.DIGITAL);
-        DataStream dataStream4 = new DataStream((byte) 11, PinType.DIGITAL);
         GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
         GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
         GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
-        GraphDataStream graphDataStream4 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream4, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream1,
                 graphDataStream2,
                 graphDataStream3,
-                graphDataStream4
         };
 
         clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
@@ -1663,11 +1666,87 @@ public class HistoryGraphTest extends IntegrationBase {
                 ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
-        //those are not
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
                 ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 9, GraphGranularityType.HOURLY.label));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
+        Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 10, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
+
+        //those are not
+        Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 11, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
+
+        assertTrue(Files.exists(pinReportingDataPath1));
+        assertTrue(Files.exists(pinReportingDataPath2));
+        assertTrue(Files.exists(pinReportingDataPath3));
+        assertTrue(Files.exists(pinReportingDataPath4));
+
+        cleaner.run();
+
+        assertTrue(Files.exists(pinReportingDataPath1));
+        assertTrue(Files.exists(pinReportingDataPath2));
+        assertTrue(Files.exists(pinReportingDataPath3));
+        assertTrue(Files.notExists(pinReportingDataPath4));
+    }
+
+    @Test
+    public void cleanNotUsedPinDataWorksAsExpectedForSuperChartInDeviceTiles() throws Exception {
+        ReportingDataDiskCleaner cleaner = new ReportingDataDiskCleaner(holder.userDao, holder.reportingDao);
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21321;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        int[] deviceIds = new int[] {0};
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
+        DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
+        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream1,
+                graphDataStream2,
+        };
+        TileTemplate tileTemplate = new TileTemplate(1,
+                new Widget[] {
+                        enhancedHistoryGraph
+                },
+                deviceIds, "123", TileMode.PAGE, new DataStream((byte) 1, PinType.VIRTUAL), null, null, 0, TextAlignment.LEFT, false, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + deviceTiles.id + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        String tempDir = holder.props.getProperty("data.folder");
+
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        //this file has corresponding history graph
+        Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
+
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 9, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
+
+        //those are not
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
                 ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 10, GraphGranularityType.HOURLY.label));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
@@ -1685,8 +1764,8 @@ public class HistoryGraphTest extends IntegrationBase {
 
         assertTrue(Files.exists(pinReportingDataPath1));
         assertTrue(Files.exists(pinReportingDataPath2));
-        assertTrue(Files.exists(pinReportingDataPath3));
-        assertTrue(Files.exists(pinReportingDataPath4));
+        assertTrue(Files.notExists(pinReportingDataPath3));
+        assertTrue(Files.notExists(pinReportingDataPath4));
     }
 
 }
