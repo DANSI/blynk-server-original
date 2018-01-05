@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
@@ -38,13 +39,11 @@ public class ReportingDataDiskCleaner implements Runnable {
     private final ReportingDao reportingDao;
 
     private long lastStart;
-    private final Set<String> doNotRemovePaths;
 
     public ReportingDataDiskCleaner(UserDao userDao, ReportingDao reportingDao) {
         this.userDao = userDao;
         this.reportingDao = reportingDao;
         this.lastStart = System.currentTimeMillis();
-        this.doNotRemovePaths = new HashSet<>();
 
     }
 
@@ -64,77 +63,81 @@ public class ReportingDataDiskCleaner implements Runnable {
             log.debug("Removed {} files. Time : {} ms.", result, System.currentTimeMillis() - now);
         } catch (Throwable t) {
             log.error("Error removing unused reporting data.", t);
-        } finally {
-            doNotRemovePaths.clear();
         }
     }
 
     private int process() {
         int removedFilesCounter = 0;
+        Set<String> doNotRemovePaths = new HashSet<>();
+
         for (User user : userDao.getUsers().values()) {
             //we don't want to do a lot of work here,
             //so we check only active profiles that actually write data
             if (user.isUpdated(lastStart)) {
-                for (DashBoard dashBoard : user.profile.dashBoards) {
-                    for (Widget widget : dashBoard.widgets) {
-                        if (widget instanceof DeviceTiles) {
-                            DeviceTiles deviceTiles = (DeviceTiles) widget;
-                            for (TileTemplate tileTemplate : deviceTiles.templates) {
-                                for (Widget tilesWidget : tileTemplate.widgets) {
-                                    add(dashBoard.id, tilesWidget);
+                doNotRemovePaths.clear();
+                try {
+                    for (DashBoard dashBoard : user.profile.dashBoards) {
+                        for (Widget widget : dashBoard.widgets) {
+                            if (widget instanceof DeviceTiles) {
+                                DeviceTiles deviceTiles = (DeviceTiles) widget;
+                                for (TileTemplate tileTemplate : deviceTiles.templates) {
+                                    for (Widget tilesWidget : tileTemplate.widgets) {
+                                        add(doNotRemovePaths, dashBoard, tilesWidget);
+                                    }
                                 }
+                            } else {
+                                add(doNotRemovePaths, dashBoard, widget);
                             }
-                        } else {
-                            add(dashBoard.id, widget);
                         }
                     }
-                }
 
-                Path reportingFolderPath = reportingDao.getUserReportingFolderPath(user);
-                try (DirectoryStream<Path> reportingFolder = Files.newDirectoryStream(reportingFolderPath, "*")) {
-                    for (Path reportingFile : reportingFolder) {
-                        if (!doNotRemovePaths.contains(reportingFile.getFileName().toString())) {
-                            log.debug("Removing {}", reportingFile);
-                            FileUtils.deleteQuietly(reportingFile);
-                            removedFilesCounter++;
+                    Path reportingFolderPath = reportingDao.getUserReportingFolderPath(user);
+                    try (DirectoryStream<Path> reportingFolder = Files.newDirectoryStream(reportingFolderPath, "*")) {
+                        for (Path reportingFile : reportingFolder) {
+                            if (!doNotRemovePaths.contains(reportingFile.getFileName().toString())) {
+                                log.debug("Removing {}", reportingFile);
+                                FileUtils.deleteQuietly(reportingFile);
+                                removedFilesCounter++;
+                            }
                         }
                     }
                 } catch (Exception e) {
-                    log.debug(e);
+                    log.error("Error cleaning reporting record for user {}. {}", user.email, e.getMessage());
                 }
-
             }
         }
         return removedFilesCounter;
     }
 
-    //todo handle case with device selector
-    private void add(int dashId, Widget widget) {
+    private static void add(Set<String> doNotRemovePaths, DashBoard dash, Widget widget) {
         if (widget instanceof HistoryGraph) {
             HistoryGraph historyGraph = (HistoryGraph) widget;
-            add(dashId, historyGraph);
+            add(doNotRemovePaths, dash.id, historyGraph);
         } else if (widget instanceof EnhancedHistoryGraph) {
             EnhancedHistoryGraph enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
-            add(dashId, enhancedHistoryGraph);
+            add(doNotRemovePaths, dash, enhancedHistoryGraph);
         }
     }
 
-    private void add(int dashId, EnhancedHistoryGraph graph) {
+    private static void add(Set<String> doNotRemovePaths, DashBoard dash, EnhancedHistoryGraph graph) {
         for (GraphDataStream graphDataStream : graph.dataStreams) {
             if (graphDataStream != null && graphDataStream.dataStream != null && graphDataStream.dataStream.isValid()) {
                 DataStream dataStream = graphDataStream.dataStream;
-                for (GraphGranularityType type : GraphGranularityType.values()) {
-                    String filename = ReportingDao.generateFilename(dashId,
-                            graphDataStream.targetId,
-                            dataStream.pinType.pintTypeChar, dataStream.pin, type.label);
-                    doNotRemovePaths.add(filename);
+                Target target = dash.getTarget(graphDataStream.targetId);
+                for (int deviceId : target.getAssignedDeviceIds()) {
+                    for (GraphGranularityType type : GraphGranularityType.values()) {
+                        String filename = ReportingDao.generateFilename(dash.id,
+                                deviceId,
+                                dataStream.pinType.pintTypeChar, dataStream.pin, type.label);
+                        doNotRemovePaths.add(filename);
+                    }
                 }
             }
         }
     }
 
     //todo history graph is only for back compatibility and should be removed in future
-    private void add(int dashId, HistoryGraph graph) {
+    private static void add(Set<String> doNotRemovePaths, int dashId, HistoryGraph graph) {
         for (DataStream dataStream : graph.dataStreams) {
             if (dataStream.isValid()) {
                 for (GraphGranularityType type : GraphGranularityType.values()) {
@@ -144,7 +147,6 @@ public class ReportingDataDiskCleaner implements Runnable {
                 }
             }
         }
-
     }
 
 }

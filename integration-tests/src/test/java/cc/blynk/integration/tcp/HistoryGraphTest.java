@@ -1768,4 +1768,109 @@ public class HistoryGraphTest extends IntegrationBase {
         assertTrue(Files.notExists(pinReportingDataPath4));
     }
 
+    @Test
+    public void cleanNotUsedPinDataWorksAsExpectedForSuperChartWithDeviceSelector() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        String createdDevice = clientPair.appClient.getBody();
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+
+        clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        ReportingDataDiskCleaner cleaner = new ReportingDataDiskCleaner(holder.userDao, holder.reportingDao);
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
+        DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
+        DataStream dataStream3 = new DataStream((byte) 10, PinType.DIGITAL);
+        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream1,
+                graphDataStream2,
+                graphDataStream3,
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+
+        String tempDir = holder.props.getProperty("data.folder");
+
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        //this file has corresponding history graph
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
+
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 9, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath20, 1.11D, 1111111);
+
+        Path pinReportingDataPath30 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 10, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath30, 1.11D, 1111111);
+
+        Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
+
+        Path pinReportingDataPath21 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 9, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath21, 1.11D, 1111111);
+
+        Path pinReportingDataPath31 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 10, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath31, 1.11D, 1111111);
+
+        //those are not
+        Path pinReportingDataPath40 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 11, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath40, 1.11D, 1111111);
+
+        Path pinReportingDataPath41 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 11, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath41, 1.11D, 1111111);
+
+        //3 files for device 0
+        assertTrue(Files.exists(pinReportingDataPath10));
+        assertTrue(Files.exists(pinReportingDataPath20));
+        assertTrue(Files.exists(pinReportingDataPath30));
+
+        //3 files for device 1
+        assertTrue(Files.exists(pinReportingDataPath11));
+        assertTrue(Files.exists(pinReportingDataPath21));
+        assertTrue(Files.exists(pinReportingDataPath31));
+
+        assertTrue(Files.exists(pinReportingDataPath40));
+        assertTrue(Files.exists(pinReportingDataPath41));
+
+        cleaner.run();
+
+        //3 files for device 0
+        assertTrue(Files.exists(pinReportingDataPath10));
+        assertTrue(Files.exists(pinReportingDataPath20));
+        assertTrue(Files.exists(pinReportingDataPath30));
+
+        //3 files for device 1
+        assertTrue(Files.exists(pinReportingDataPath11));
+        assertTrue(Files.exists(pinReportingDataPath21));
+        assertTrue(Files.exists(pinReportingDataPath31));
+
+        assertTrue(Files.notExists(pinReportingDataPath40));
+        assertTrue(Files.notExists(pinReportingDataPath41));
+    }
 }

@@ -52,6 +52,11 @@ public class Device implements Target {
     }
 
     @Override
+    public int[] getAssignedDeviceIds() {
+        return new int[] {id};
+    }
+
+    @Override
     public int getDeviceId() {
         return id;
     }

@@ -48,6 +48,11 @@ public class Tag implements Target {
     }
 
     @Override
+    public int[] getAssignedDeviceIds() {
+        return deviceIds;
+    }
+
+    @Override
     public int getDeviceId() {
         return deviceIds[0];
     }
