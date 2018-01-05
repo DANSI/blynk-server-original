@@ -55,6 +55,7 @@ public final class FileUtils {
         try {
             Files.deleteIfExists(path);
         } catch (Exception ignored) {
+            log.trace("Error during '{}' folder removal.", path);
             //ignore
         }
     }

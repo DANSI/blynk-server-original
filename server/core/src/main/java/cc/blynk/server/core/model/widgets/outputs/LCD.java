@@ -108,12 +108,11 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
             return;
         }
         for (DataStream dataStream : dataStreams) {
-            if (dataStream.isNotValid()) {
-                continue;
+            if (dataStream.isValid()) {
+                ByteBuf msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID,
+                        DataStream.makeReadingHardwareBody(dataStream.pinType.pintTypeChar, dataStream.pin));
+                channel.write(msg, channel.voidPromise());
             }
-            ByteBuf msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID,
-                    DataStream.makeReadingHardwareBody(dataStream.pinType.pintTypeChar, dataStream.pin));
-            channel.write(msg, channel.voidPromise());
         }
     }
 

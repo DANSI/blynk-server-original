@@ -161,8 +161,12 @@ public class ReportingDao implements Closeable {
         return getByteBufferFromDisk(user, dashId, deviceId, pinType, pin, count, type, 0);
     }
 
+    public Path getUserReportingFolderPath(User user) {
+        return Paths.get(dataFolder, FileUtils.getUserReportingDir(user.email, user.appName));
+    }
+
     public String getUserReportingFolder(User user) {
-        return Paths.get(dataFolder, FileUtils.getUserReportingDir(user.email, user.appName)).toString();
+        return getUserReportingFolderPath(user).toString();
     }
 
     public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {

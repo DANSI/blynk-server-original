@@ -24,6 +24,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateTag;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.workers.ReportingDataDiskCleaner;
 import cc.blynk.utils.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -52,6 +53,7 @@ import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.contains;
 import static org.mockito.Mockito.eq;
@@ -90,7 +92,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testGetGraphDataFor1Pin() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -146,7 +148,7 @@ public class HistoryGraphTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -202,7 +204,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -270,7 +272,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -340,7 +342,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -410,7 +412,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -480,7 +482,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -550,7 +552,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -628,7 +630,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -684,7 +686,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testGetGraphDataForEnhancedGraphWithEmptyDataStream() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -716,7 +718,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testGetGraphDataForEnhancedGraph() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -763,7 +765,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testGetGraphDataForEnhancedGraphFor2Streams() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -814,7 +816,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testGetGraphDataForEnhancedGraphWithWrongDataStream() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -847,7 +849,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testGetLIVEGraphDataForEnhancedGraph() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -918,7 +920,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testNoLiveDataWhenNoGraph() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -947,7 +949,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testNoLiveDataWhenNoGraph2() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -1021,7 +1023,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testGetLIVEGraphDataForEnhancedGraphWithPaging() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -1132,7 +1134,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testPagingWorksForGetEnhancedHistoryDataPartialData() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -1184,7 +1186,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testPagingWorksForGetEnhancedHistoryDataFullData() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -1238,7 +1240,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testPagingWorksForGetEnhancedHistoryDataFullDataAndSecondPage() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -1277,7 +1279,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testPagingWorksForGetEnhancedHistoryDataWhenNoData() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
@@ -1576,6 +1578,115 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("export 1-200000 14");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
+    }
+
+    @Test
+    public void cleanNotUsedPinDataWorksAsExpected() throws Exception {
+        ReportingDataDiskCleaner cleaner = new ReportingDataDiskCleaner(holder.userDao, holder.reportingDao);
+        String tempDir = holder.props.getProperty("data.folder");
+
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        //this file has corresponding history graph
+        Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 7, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
+
+        //those are not
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 100, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
+
+        Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 101, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
+
+        Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 102, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
+
+        assertTrue(Files.exists(pinReportingDataPath1));
+        assertTrue(Files.exists(pinReportingDataPath2));
+        assertTrue(Files.exists(pinReportingDataPath3));
+        assertTrue(Files.exists(pinReportingDataPath4));
+
+        //creating widget just to make user profile "updated"
+        clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        cleaner.run();
+
+        assertTrue(Files.exists(pinReportingDataPath1));
+        assertTrue(Files.notExists(pinReportingDataPath2));
+        assertTrue(Files.notExists(pinReportingDataPath3));
+        assertTrue(Files.notExists(pinReportingDataPath4));
+    }
+
+    @Test
+    public void cleanNotUsedPinDataWorksAsExpectedForSuperChart() throws Exception {
+        ReportingDataDiskCleaner cleaner = new ReportingDataDiskCleaner(holder.userDao, holder.reportingDao);
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
+        DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
+        DataStream dataStream3 = new DataStream((byte) 10, PinType.DIGITAL);
+        DataStream dataStream4 = new DataStream((byte) 11, PinType.DIGITAL);
+        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream4 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream4, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream1,
+                graphDataStream2,
+                graphDataStream3,
+                graphDataStream4
+        };
+
+        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        String tempDir = holder.props.getProperty("data.folder");
+
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        //this file has corresponding history graph
+        Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
+
+        //those are not
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 9, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
+
+        Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 10, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
+
+        Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 11, GraphGranularityType.HOURLY.label));
+        FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
+
+        assertTrue(Files.exists(pinReportingDataPath1));
+        assertTrue(Files.exists(pinReportingDataPath2));
+        assertTrue(Files.exists(pinReportingDataPath3));
+        assertTrue(Files.exists(pinReportingDataPath4));
+
+        cleaner.run();
+
+        assertTrue(Files.exists(pinReportingDataPath1));
+        assertTrue(Files.exists(pinReportingDataPath2));
+        assertTrue(Files.exists(pinReportingDataPath3));
+        assertTrue(Files.exists(pinReportingDataPath4));
     }
 
 }

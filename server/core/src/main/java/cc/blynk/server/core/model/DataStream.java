@@ -88,12 +88,12 @@ public class DataStream {
         return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
-    public boolean isNotValid() {
-        return pin == NO_PIN || pinType == null;
+    public boolean isValid() {
+        return pin != NO_PIN && pinType != null;
     }
 
     public boolean notEmpty() {
-        return value != null && !isNotValid();
+        return value != null && isValid();
     }
 
     @Override
