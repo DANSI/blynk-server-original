@@ -79,7 +79,6 @@ public class GetEnhancedGraphDataLogic {
             }
         }
 
-
         if (!(widget instanceof EnhancedHistoryGraph)) {
             throw new IllegalCommandException("Passed wrong widget id.");
         }

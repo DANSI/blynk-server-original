@@ -23,6 +23,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Daily job used to clean reporting data that is not used by the history graphs
+ * but stored anyway on the disk.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 04.01.18.
@@ -48,18 +51,17 @@ public class ReportingDataDiskCleaner implements Runnable {
     @Override
     public void run() {
         try {
-            log.info("Starting removing unused reporting data...");
+            log.info("Start removing unused reporting data...");
 
             long now = System.currentTimeMillis();
             //todo
             //actually, it is better to do not save data for such pins
             //but fow now this approach is simpler and quicker
             int result = process();
-            long after = System.currentTimeMillis();
 
             lastStart = now;
 
-            log.debug("Removed {} files. Time : {} ms.", result, after - now);
+            log.debug("Removed {} files. Time : {} ms.", result, System.currentTimeMillis() - now);
         } catch (Throwable t) {
             log.error("Error removing unused reporting data.", t);
         } finally {
@@ -70,6 +72,8 @@ public class ReportingDataDiskCleaner implements Runnable {
     private int process() {
         int removedFilesCounter = 0;
         for (User user : userDao.getUsers().values()) {
+            //we don't want to do a lot of work here,
+            //so we check only active profiles that actually write data
             if (user.isUpdated(lastStart)) {
                 for (DashBoard dashBoard : user.profile.dashBoards) {
                     for (Widget widget : dashBoard.widgets) {
@@ -129,6 +133,7 @@ public class ReportingDataDiskCleaner implements Runnable {
         }
     }
 
+    //todo history graph is only for back compatibility and should be removed in future
     private void add(int dashId, HistoryGraph graph) {
         for (DataStream dataStream : graph.dataStreams) {
             if (dataStream.isValid()) {

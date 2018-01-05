@@ -27,7 +27,7 @@ public enum GraphGranularityType {
                 return graphGranularityType;
             }
         }
-        return null;
+        return MINUTE;
     }
 
 }
