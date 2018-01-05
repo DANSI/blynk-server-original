@@ -14,27 +14,29 @@ public final class Version {
 
     private static final Logger log = LogManager.getLogger(Version.class);
 
-    public static final Version UNKNOWN_VERSION = new Version("", null);
+    public static final Version UNKNOWN_VERSION = new Version(OsType.OTHER, 0);
 
     public final OsType osType;
     public final int versionSingleNumber;
 
+    public Version(OsType osType, int version) {
+        this.osType = osType;
+        this.versionSingleNumber = version;
+    }
+
     public Version(String osString, String versionString) {
-        this.osType = OsType.parse(osString);
-        this.versionSingleNumber = Version.parseToSingleInt(versionString);
+        this(OsType.parse(osString), parseToSingleInt(versionString));
     }
 
     /**
      * Expecting only strings like "1.2.2"
      */
     private static int parseToSingleInt(String version) {
-        if (version != null) {
+        try {
             String[] parts = split3('.', version);
-            try {
-                return parse(parts);
-            } catch (Exception e) {
-                log.warn("Error parsing app versionSingleNumber {}. Reason : {}.", version, e.getMessage());
-            }
+            return parse(parts);
+        } catch (Exception e) {
+            log.warn("Error parsing app versionSingleNumber {}. Reason : {}.", version, e.getMessage());
         }
         return 0;
     }

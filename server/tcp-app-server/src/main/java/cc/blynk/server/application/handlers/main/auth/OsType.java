@@ -9,7 +9,7 @@ public enum OsType {
 
     ANDROID,
     IOS,
-    //3d party clients
+    //3d party clients or unknown clients
     OTHER;
 
     public static OsType parse(String type) {
