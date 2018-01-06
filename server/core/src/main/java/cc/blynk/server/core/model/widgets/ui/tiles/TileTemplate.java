@@ -26,6 +26,8 @@ public class TileTemplate {
 
     public final TileMode mode;
 
+    public final String boardType;
+
     @JsonProperty("pin")
     public final DataStream dataStream;
 
@@ -47,6 +49,7 @@ public class TileTemplate {
                         @JsonProperty("deviceIds") int[] deviceIds,
                         @JsonProperty("name") String name,
                         @JsonProperty("mode") TileMode mode,
+                        @JsonProperty("boardType") String boardType,
                         @JsonProperty("pin") DataStream dataStream,
                         @JsonProperty("valueName") String valueName,
                         @JsonProperty("valueSuffix") String valueSuffix,
@@ -59,6 +62,7 @@ public class TileTemplate {
         this.deviceIds = deviceIds == null ? EMPTY_INTS : deviceIds;
         this.name = name;
         this.mode = mode;
+        this.boardType = boardType;
         this.dataStream = dataStream;
         this.valueName = valueName;
         this.valueSuffix = valueSuffix;
