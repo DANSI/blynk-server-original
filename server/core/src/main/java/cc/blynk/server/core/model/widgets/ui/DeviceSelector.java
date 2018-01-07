@@ -24,6 +24,11 @@ public class DeviceSelector extends NoPinWidget implements Target {
     }
 
     @Override
+    public boolean contains(int deviceId) {
+        return value == deviceId;
+    }
+
+    @Override
     public int[] getAssignedDeviceIds() {
         return deviceIds;
     }

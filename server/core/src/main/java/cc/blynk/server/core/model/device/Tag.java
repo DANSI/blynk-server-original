@@ -3,6 +3,7 @@ package cc.blynk.server.core.model.device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.internal.EmptyArraysUtil;
+import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -45,6 +46,11 @@ public class Tag implements Target {
     @Override
     public int[] getDeviceIds() {
         return deviceIds;
+    }
+
+    @Override
+    public boolean contains(int deviceId) {
+        return ArrayUtil.contains(deviceIds, deviceId);
     }
 
     @Override

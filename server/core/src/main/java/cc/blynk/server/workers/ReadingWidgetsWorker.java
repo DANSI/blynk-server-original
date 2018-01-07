@@ -13,7 +13,6 @@ import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.internal.StateHolderUtil;
-import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -118,7 +117,7 @@ public class ReadingWidgetsWorker implements Runnable {
 
     private boolean sameDeviceId(DashBoard dash, int targetId, int channelDeviceId) {
         Target target = dash.getTarget(targetId);
-        return target != null && ArrayUtil.contains(target.getDeviceIds(), channelDeviceId);
+        return target != null && target.contains(channelDeviceId);
     }
 
 }
