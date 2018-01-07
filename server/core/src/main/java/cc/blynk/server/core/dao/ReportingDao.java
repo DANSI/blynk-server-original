@@ -112,8 +112,9 @@ public class ReportingDao implements Closeable {
         return toByteBuf(data);
     }
 
-    private void addBufferToResult(TreeMap<Long, Function> data, AggregationFunctionType functionType,
-                                   ByteBuffer localByteBuf) {
+    private static void addBufferToResult(TreeMap<Long, Function> data,
+                                          AggregationFunctionType functionType,
+                                          ByteBuffer localByteBuf) {
         if (localByteBuf != null) {
             ((Buffer) localByteBuf).flip();
             while (localByteBuf.hasRemaining()) {
@@ -129,7 +130,7 @@ public class ReportingDao implements Closeable {
         }
     }
 
-    private ByteBuffer toByteBuf(TreeMap<Long, Function> data) {
+    private static ByteBuffer toByteBuf(TreeMap<Long, Function> data) {
         ByteBuffer result = ByteBuffer.allocate(data.size() * SIZE_OF_REPORT_ENTRY);
         for (Map.Entry<Long, Function> entry : data.entrySet()) {
             result.putDouble(entry.getValue().getResult())
@@ -156,22 +157,13 @@ public class ReportingDao implements Closeable {
         }
     }
 
-    ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId, PinType pinType,
-                                     byte pin, int count, GraphGranularityType type) {
-        return getByteBufferFromDisk(user, dashId, deviceId, pinType, pin, count, type, 0);
-    }
-
     public Path getUserReportingFolderPath(User user) {
         return Paths.get(dataFolder, FileUtils.getUserReportingDir(user.email, user.appName));
     }
 
-    public String getUserReportingFolder(User user) {
-        return getUserReportingFolderPath(user).toString();
-    }
-
     public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {
         log.debug("Removing {}{} pin data for dashId {}, deviceId {}.", pinType.pintTypeChar, pin, dashId, deviceId);
-        String userReportingDir = getUserReportingFolder(user);
+        String userReportingDir = getUserReportingFolderPath(user).toString();
 
         for (GraphGranularityType reportGranularity : GraphGranularityType.values()) {
             delete(userReportingDir, dashId, deviceId, pinType, pin, reportGranularity);

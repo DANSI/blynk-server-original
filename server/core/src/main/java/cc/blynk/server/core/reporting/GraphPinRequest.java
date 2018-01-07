@@ -10,6 +10,7 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import java.util.Arrays;
 
 import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.LIVE;
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
 
 /**
  * The Blynk Project.
@@ -30,7 +31,7 @@ public class GraphPinRequest {
 
     public final byte pin;
 
-    public final GraphPeriod graphPeriod;
+    private final GraphPeriod graphPeriod;
 
     public final AggregationFunctionType functionType;
 
@@ -51,7 +52,7 @@ public class GraphPinRequest {
             //not used for old graphs, so setting any value.
             this.graphPeriod = GraphPeriod.ALL;
             this.functionType = null;
-            this.deviceIds = null;
+            this.deviceIds = EMPTY_INTS;
             this.isTag = false;
             /////////////////////////////////////
 
@@ -67,7 +68,7 @@ public class GraphPinRequest {
                            GraphPeriod graphPeriod, int skipCount, AggregationFunctionType function) {
         this.dashId = dashId;
         this.deviceId = -1;
-        this.deviceIds = deviceIds;
+        this.deviceIds = deviceIds == null ? EMPTY_INTS : deviceIds;
         this.isTag = true;
         if (dataStream == null) {
             this.pinType = PinType.VIRTUAL;
@@ -87,7 +88,7 @@ public class GraphPinRequest {
                            GraphPeriod graphPeriod, int skipCount, AggregationFunctionType function) {
         this.dashId = dashId;
         this.deviceId = deviceId;
-        this.deviceIds = null;
+        this.deviceIds = EMPTY_INTS;
         this.isTag = false;
         if (dataStream == null) {
             this.pinType = PinType.VIRTUAL;
@@ -108,7 +109,7 @@ public class GraphPinRequest {
     }
 
     public boolean isValid() {
-        return deviceId != -1 || (deviceIds != null && deviceIds.length > 0);
+        return deviceId != -1 || deviceIds.length > 0;
     }
 
     @Override

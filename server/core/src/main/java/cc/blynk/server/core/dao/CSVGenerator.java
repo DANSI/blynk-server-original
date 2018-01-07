@@ -67,7 +67,7 @@ public class CSVGenerator {
             int emptyDataCounter = 0;
             for (int deviceId : deviceIds) {
                 ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(user, dashId, deviceId,
-                        pinType, pin, FETCH_COUNT, GraphGranularityType.MINUTE);
+                        pinType, pin, FETCH_COUNT, GraphGranularityType.MINUTE, 0);
                 if (onePinData != null) {
                     //casting is necessary here
                     //super strange fix for https://jira.mongodb.org/browse/JAVA-2559
