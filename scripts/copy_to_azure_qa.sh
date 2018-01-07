@@ -1,3 +1,3 @@
 #!/bin/sh
 
-scp ../server/launcher/target/server-0.29.4-SNAPSHOT-java9.jar azureuser@blynk-qa.cloudapp.net:/home/azureuser
+scp ../server/launcher/target/server-0.29.5-SNAPSHOT-java9.jar azureuser@blynk-qa.cloudapp.net:/home/azureuser
