@@ -54,9 +54,8 @@ public class Terminal extends OnePinWidget {
         if (isNotValid() || lastCommands.size() == 0) {
             return null;
         }
-        return pwmMode
-                ? makeHardwareBody(PinType.ANALOG, pin, lastCommands.getLast())
-                : makeHardwareBody(pinType, pin, lastCommands.getLast());
+        //terminal supports only virtual pins
+        return makeHardwareBody(pinType, pin, lastCommands.getLast());
     }
 
     @Override
