@@ -73,7 +73,7 @@ public class AppWebSocketTest extends IntegrationBase {
         WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, "/websockets", false);
         webSocketClient.start();
         webSocketClient.send("login " + DEFAULT_TEST_USER + " 1");
-        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         webSocketClient.send("ping");
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
     }

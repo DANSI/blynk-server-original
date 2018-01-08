@@ -20,6 +20,7 @@ import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.AppIsOutdatedNotification;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
@@ -1291,5 +1292,29 @@ public class MainWorkflowTest extends IntegrationBase {
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 18, PinType.DIGITAL);
         assertNotNull(widget);
         assertEquals("1", ((Button) widget).value);
+    }
+
+    @Test
+    public void testOutdatedAppNotificationAlertWorks() throws Exception {
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+        appClient.send("login dima@mail.ua 1 Android" + "\0" + "1.1.1");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(
+                new AppIsOutdatedNotification(1,
+                        "Your app is outdated. Please update to the latest app version. " +
+                                "Ignoring this notice may affect your projects.")));
+    }
+
+    @Test
+    public void testOutdatedAppNotificationNotTriggered() throws Exception {
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+        appClient.send("login dima@mail.ua 1 Android" + "\0" + "1.1.2");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(appClient.responseMock, never()).channelRead(any(), eq(
+                new AppIsOutdatedNotification(1,
+                        "Your app is outdated. Please update to the latest app version. " +
+                                "Ignoring this notice may affect your projects.")));
     }
 }

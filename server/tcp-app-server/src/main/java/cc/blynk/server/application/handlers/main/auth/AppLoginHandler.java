@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
@@ -29,10 +28,13 @@ import org.asynchttpclient.netty.handler.WebSocketHandler;
 
 import java.util.NoSuchElementException;
 
+import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
+import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Response.FACEBOOK_USER_LOGIN_WITH_PASS;
 import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
 import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_REGISTERED;
 import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
 import static cc.blynk.server.internal.BlynkByteBufUtil.makeResponse;
 import static cc.blynk.server.internal.BlynkByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
@@ -216,9 +218,18 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
         for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.isAppConnectedOn && dashBoard.isActive) {
                 log.trace("{}-{}. Sending App Connected event to hardware.", user.email, user.appName);
-                session.sendMessageToHardware(dashBoard.id, Command.BLYNK_INTERNAL, 7777, "acon");
+                session.sendMessageToHardware(dashBoard.id, BLYNK_INTERNAL, 7777, "acon");
             }
         }
+
+        if (version.isOutdated()) {
+            channel.writeAndFlush(
+                    makeASCIIStringMessage(OUTDATED_APP_NOTIFICATION, msgId,
+                            "Your app is outdated. Please update to the latest app version. "
+                                    + "Ignoring this notice may affect your projects."),
+                    channel.voidPromise());
+        }
+
         log.info("{} {}-app joined. Version : {}", user.email, user.appName, version);
     }
 

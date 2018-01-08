@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import static cc.blynk.server.core.model.widgets.FrequencyWidget.READING_MSG_ID;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.after;
@@ -138,7 +137,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.send("login " + device2.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
 
@@ -170,7 +169,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.send("login " + device2.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"width\":1, \"value\":2, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
@@ -209,7 +208,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.send("login " + device2.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
 
@@ -266,7 +265,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.send("login " + device2.token);
-        verify(hardClient2.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
 

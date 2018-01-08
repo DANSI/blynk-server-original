@@ -282,7 +282,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         timer.stopTime = curTime + 1;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7777, HARDWARE, b("vw 4 1"))));
@@ -460,7 +460,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.send("login " + devices[1].token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.stop();
 
@@ -499,7 +499,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("deactivate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v31");
 

@@ -11,7 +11,6 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.FileUtils;
@@ -47,7 +46,6 @@ import static cc.blynk.integration.IntegrationBase.b;
 import static cc.blynk.integration.IntegrationBase.initAppAndHardPair;
 import static cc.blynk.integration.IntegrationBase.ok;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -600,7 +598,7 @@ public class OTATest extends BaseTest {
         TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
         newHardwareClient.start();
         newHardwareClient.send("login " + token);
-        verify(newHardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(newHardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         newHardwareClient.reset();
 
         newHardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
@@ -644,7 +642,7 @@ public class OTATest extends BaseTest {
         TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
         newHardwareClient.start();
         newHardwareClient.send("login " + token);
-        verify(newHardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(newHardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         newHardwareClient.reset();
 
         newHardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
@@ -688,7 +686,7 @@ public class OTATest extends BaseTest {
         TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
         newHardwareClient.start();
         newHardwareClient.send("login " + token);
-        verify(newHardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(newHardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         newHardwareClient.reset();
 
         newHardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));

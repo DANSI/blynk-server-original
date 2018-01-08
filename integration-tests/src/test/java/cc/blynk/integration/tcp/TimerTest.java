@@ -287,7 +287,7 @@ public class TimerTest extends IntegrationBase {
         timer.startTime = curTime + 1;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(1500).times(1)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
@@ -310,7 +310,7 @@ public class TimerTest extends IntegrationBase {
         timer.stopTime = curTime + 1;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(1500).times(1)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
@@ -335,7 +335,7 @@ public class TimerTest extends IntegrationBase {
         timer.stopTime = curTime + 2;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
@@ -387,7 +387,7 @@ public class TimerTest extends IntegrationBase {
         timer.startTime = curTime + 1;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         timer.id = 113;
         timer.startValue = b("2");
@@ -419,7 +419,7 @@ public class TimerTest extends IntegrationBase {
         timer.stopTime = curTime + 1;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
@@ -445,13 +445,13 @@ public class TimerTest extends IntegrationBase {
         timer.stopTime = curTime + 2;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         timer.startValue = b("dw 5 11");
         timer.stopValue = b("dw 5 10");
 
         clientPair.appClient.send("updateWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 11"))));
@@ -477,7 +477,7 @@ public class TimerTest extends IntegrationBase {
         timer.stopTime = curTime + 2;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("deleteDash 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
@@ -495,7 +495,7 @@ public class TimerTest extends IntegrationBase {
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         clientPair.appClient.send("deactivate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         Timer timer = new Timer();
         timer.id = 1;
@@ -529,7 +529,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("getToken 2");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
         hardClient2.send("login " + clientPair.appClient.getBody());
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         hardClient2.reset();
 
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
@@ -545,7 +545,7 @@ public class TimerTest extends IntegrationBase {
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         clientPair.appClient.send("deactivate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         Timer timer = new Timer();
         timer.id = 1;
@@ -592,7 +592,7 @@ public class TimerTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.send("login " + device.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
         //creating new tag

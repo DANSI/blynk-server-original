@@ -107,6 +107,7 @@ public final class Command {
     public static final short DELETE_TILE_TEMPLATE = 69;
     public static final short GET_WIDGET = 70;
     public static final short DEVICE_OFFLINE = 71;
+    public static final short OUTDATED_APP_NOTIFICATION = 72;
 
     //http codes. Used only for stats
     public static final short HTTP_IS_HARDWARE_CONNECTED = 82;
@@ -203,6 +204,7 @@ public final class Command {
                 put(GET_PROJECT_BY_CLONE_CODE, "GetProjectByCloneCode");
 
                 put(DEVICE_OFFLINE, "deviceOffline");
+                put(OUTDATED_APP_NOTIFICATION, "outdatedAppNotification");
 
                 put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
                 put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");

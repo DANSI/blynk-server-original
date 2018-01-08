@@ -4,6 +4,7 @@ import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
 import cc.blynk.server.core.protocol.model.messages.appllication.ActivateDashboardMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.AddEnergy;
 import cc.blynk.server.core.protocol.model.messages.appllication.AddPushToken;
+import cc.blynk.server.core.protocol.model.messages.appllication.AppIsOutdatedNotification;
 import cc.blynk.server.core.protocol.model.messages.appllication.AssignTokenMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateAppMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDashMessage;
@@ -113,6 +114,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
+import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
@@ -287,6 +289,8 @@ public final class MessageFactory {
                 return new GetProjectByCloneCodeStringMessage(messageId, body);
             case DEVICE_OFFLINE :
                 return new DeviceOfflineMessage(messageId, body);
+            case OUTDATED_APP_NOTIFICATION :
+                return new AppIsOutdatedNotification(messageId, body);
 
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);
         }

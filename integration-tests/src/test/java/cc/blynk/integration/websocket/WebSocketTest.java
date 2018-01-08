@@ -68,7 +68,7 @@ public class WebSocketTest extends IntegrationBase {
         WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, "/websockets", false);
         webSocketClient.start();
         webSocketClient.send("login 4ae3851817194e2596cf1b7103603ef8");
-        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         webSocketClient.send("ping");
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
     }
@@ -78,7 +78,7 @@ public class WebSocketTest extends IntegrationBase {
         WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, HttpAPIServer.WEBSOCKET_PATH, false);
         webSocketClient.start();
         webSocketClient.send("login 4ae3851817194e2596cf1b7103603ef8");
-        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         webSocketClient.send("ping");
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
     }
@@ -93,7 +93,7 @@ public class WebSocketTest extends IntegrationBase {
         WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, HttpAPIServer.WEBSOCKET_PATH, false);
         webSocketClient.start();
         webSocketClient.send("login " + token);
-        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("hardware 1-0 vw 4 1");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 4 1"))));
@@ -109,7 +109,7 @@ public class WebSocketTest extends IntegrationBase {
         WebSocketClient webSocketClient2 = new WebSocketClient("localhost", tcpWebSocketPort, HttpAPIServer.WEBSOCKET_PATH, false);
         webSocketClient2.start();
         webSocketClient2.send("login " + token);
-        verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in"))));
         webSocketClient2.msgId = 1000;
 

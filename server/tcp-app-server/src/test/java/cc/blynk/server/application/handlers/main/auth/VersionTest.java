@@ -44,6 +44,9 @@ public class VersionTest {
         Version version = new Version("iOS", "1.2.4");
         assertEquals("iOS-10204", version.toString());
 
+        version = new Version("iOS", "1.1.1");
+        assertEquals("iOS-10101", version.toString());
+
         version = Version.UNKNOWN_VERSION;
         assertEquals("unknown-0", version.toString());
     }

@@ -80,7 +80,7 @@ public class BlynkInternalTest extends IntegrationBase {
         clientPair.appClient.send("getToken 1");
         String token2 = clientPair.appClient.getBody();
         hardClient2.send("login " + token2);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         hardClient2.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100"));
 
@@ -105,13 +105,13 @@ public class BlynkInternalTest extends IntegrationBase {
     @Test
     public void appConnectedEvent() throws Exception {
         clientPair.appClient.send("updateDash {\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
 
         appClient.send("login " + DEFAULT_TEST_USER + " 1 Android 1.13.3");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, "acon")));
     }
@@ -119,7 +119,7 @@ public class BlynkInternalTest extends IntegrationBase {
     @Test
     public void appDisconnectedEvent() throws Exception {
         clientPair.appClient.send("updateDash {\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.stop().await();
 

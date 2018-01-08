@@ -98,7 +98,7 @@ public class TagCommandsTest extends IntegrationBase {
         tag0 = new Tag(100_000, "TagUPDATED");
 
         clientPair.appClient.send("updateTag 1\0" + tag0.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.reset();
 
@@ -191,7 +191,7 @@ public class TagCommandsTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.send("login " + device.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
         //creating new tag

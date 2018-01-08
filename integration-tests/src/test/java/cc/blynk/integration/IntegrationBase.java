@@ -183,7 +183,7 @@ public abstract class IntegrationBase extends BaseTest {
         String token = getGetTokenMessage(arguments).body;
 
         hardClient.send("login " + token);
-        verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
         verify(appClient.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareConnectedMessage(1, "" + dashId + "-0")));
 
         appClient.reset();

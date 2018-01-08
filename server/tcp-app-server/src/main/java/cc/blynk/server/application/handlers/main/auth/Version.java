@@ -51,6 +51,17 @@ public final class Version {
         return this.versionSingleNumber > version.versionSingleNumber;
     }
 
+    //this method should be changed to notify users that they use outdated app.
+    //done mostly for some changes that cannot be used on old apps.
+    //not used right now.
+    boolean isOutdated() {
+        //hardcoded value for tests
+        if (versionSingleNumber == 10101) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return osType.label + "-" + versionSingleNumber;

@@ -70,7 +70,7 @@ public class FacebookLoginTest extends IntegrationBase {
         TestAppClient appClient = new TestAppClient(host, tcpAppPort, properties);
         appClient.start();
         appClient.send("login " + email + "\0" + facebookAuthToken + "\0" + "Android" + "\0" + "1.10.4" + "\0" + "facebook");
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
         String expected = readTestUserProfile();
 
@@ -119,7 +119,7 @@ public class FacebookLoginTest extends IntegrationBase {
         int dashId = profile.dashBoards[0].id;
 
         appClient.send("login " + user + "\0" + facebookAuthToken + "\0" + "Android" + "\0" + "1.10.4" + "\0" + "facebook");
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         appClient.send("addEnergy " + 10000 + "\0" + "123456");
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
@@ -135,7 +135,7 @@ public class FacebookLoginTest extends IntegrationBase {
         String token = getGetTokenMessage(arguments).body;
 
         hardClient.send("login " + token);
-        verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
         verify(appClient.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareConnectedMessage(1, String.valueOf(dashId))));
 
         appClient.reset();

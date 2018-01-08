@@ -72,7 +72,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
     public void testDeleteGraphCommandWorks() throws Exception {
         clientPair.appClient.send("getgraphdata 1-0 d 8 del");
 
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.send("login " + devices[1].token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         device1.status = Status.ONLINE;
 
         clientPair.appClient.send("hardware 1 vw 100 100");
@@ -136,7 +136,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.send("login " + device.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         hardClient2.stop().await();
 
@@ -170,7 +170,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.send("login " + devices[1].token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-1")));
 
         clientPair.hardwareClient.send("hardware vw 100 101");
@@ -183,7 +183,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
     @Test
     public void testSendDeviceSpecificPMMessage() throws Exception {
         clientPair.appClient.send("createWidget 1\0{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":1}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         Device device1 = new Device(1, "My Device", "ESP8266");
 
@@ -198,7 +198,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         hardClient.start();
 
         hardClient.send("login " + device.token);
-        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-1")));
 
         String expectedBody = "pm 1 out";
@@ -210,7 +210,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
     @Test
     public void testSendPMOnActivateForMultiDevices() throws Exception {
         clientPair.appClient.send("createWidget 1\0{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         Device device1 = new Device(1, "My Device", "ESP8266");
 
@@ -225,7 +225,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         hardClient.start();
 
         hardClient.send("login " + device.token);
-        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-1")));
 
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 33 out"))));
@@ -295,7 +295,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.send("login " + device.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.reset();
 
@@ -316,7 +316,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
     @Test
     public void testActivateAndGetSyncForMultiDevices() throws Exception {
         clientPair.appClient.send("createWidget 1\0{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33, \"value\":1}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         Device device1 = new Device(1, "My Device", "ESP8266");
 
@@ -363,7 +363,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.send("login " + device.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         device0.status = Status.ONLINE;
         device1.status = Status.ONLINE;
@@ -454,7 +454,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.send("login " + devices[0].token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.reset();
 
@@ -484,7 +484,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.send("login " + device.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("deleteDash 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
@@ -508,7 +508,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.send("login " + device.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-1")));
 
         clientPair.appClient.send("deleteDevice 1\0" + "1");
