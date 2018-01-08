@@ -17,7 +17,7 @@ public final class Version {
     public static final Version UNKNOWN_VERSION = new Version(OsType.OTHER, 0);
 
     public final OsType osType;
-    public final int versionSingleNumber;
+    final int versionSingleNumber;
 
     public Version(OsType osType, int version) {
         this.osType = osType;
@@ -36,7 +36,7 @@ public final class Version {
             String[] parts = split3('.', version);
             return parse(parts);
         } catch (Exception e) {
-            log.warn("Error parsing app versionSingleNumber {}. Reason : {}.", version, e.getMessage());
+            log.debug("Error parsing app versionSingleNumber {}. Reason : {}.", version, e.getMessage());
         }
         return 0;
     }
@@ -47,7 +47,12 @@ public final class Version {
                 + Integer.parseInt(parts[2]);
     }
 
-    public boolean largerThan(Version version) {
+    boolean largerThan(Version version) {
         return this.versionSingleNumber > version.versionSingleNumber;
+    }
+
+    @Override
+    public String toString() {
+        return osType.label + "-" + versionSingleNumber;
     }
 }

@@ -201,13 +201,13 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
         if (session.initialEventLoop != channel.eventLoop()) {
             log.debug("Re registering app channel. {}", ctx.channel());
             reRegisterChannel(ctx, session, channelFuture ->
-                    completeLogin(channelFuture.channel(), session, user, messageId));
+                    completeLogin(channelFuture.channel(), session, user, messageId, version));
         } else {
-            completeLogin(channel, session, user, messageId);
+            completeLogin(channel, session, user, messageId, version);
         }
     }
 
-    private void completeLogin(Channel channel, Session session, User user, int msgId) {
+    private void completeLogin(Channel channel, Session session, User user, int msgId, Version version) {
         user.lastLoggedIP = IPUtils.getIp(channel.remoteAddress());
         user.lastLoggedAt = System.currentTimeMillis();
 
@@ -219,7 +219,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
                 session.sendMessageToHardware(dashBoard.id, Command.BLYNK_INTERNAL, 7777, "acon");
             }
         }
-        log.info("{} {}-app joined.", user.email, user.appName);
+        log.info("{} {}-app joined. Version : {}", user.email, user.appName, version);
     }
 
     @Override

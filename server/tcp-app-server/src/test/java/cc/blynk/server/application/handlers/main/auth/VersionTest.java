@@ -38,4 +38,13 @@ public class VersionTest {
         assertEquals(OsType.OTHER, Version.UNKNOWN_VERSION.osType);
         assertEquals(0, Version.UNKNOWN_VERSION.versionSingleNumber);
     }
+
+    @Test
+    public void testToString() {
+        Version version = new Version("iOS", "1.2.4");
+        assertEquals("iOS-10204", version.toString());
+
+        version = Version.UNKNOWN_VERSION;
+        assertEquals("unknown-0", version.toString());
+    }
 }
