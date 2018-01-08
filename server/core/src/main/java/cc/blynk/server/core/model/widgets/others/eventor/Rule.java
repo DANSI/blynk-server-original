@@ -52,8 +52,8 @@ public class Rule {
         return isActive && triggerTime != null && actions != null && actions.length > 0 && actions[0].isValid();
     }
 
-    public boolean isValid(double value) {
-        return condition.isValid(value);
+    public boolean matchesCondition(String inValue, double parsedInValueToDouble) {
+        return condition.matches(inValue, parsedInValueToDouble);
     }
 
 }

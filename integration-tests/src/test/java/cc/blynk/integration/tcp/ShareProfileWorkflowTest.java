@@ -22,7 +22,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.Rule;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.GreaterThan;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.GreaterThan;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
 import org.junit.Before;

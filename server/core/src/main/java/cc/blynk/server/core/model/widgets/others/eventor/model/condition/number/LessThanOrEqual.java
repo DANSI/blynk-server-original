@@ -1,5 +1,6 @@
-package cc.blynk.server.core.model.widgets.others.eventor.model.condition;
+package cc.blynk.server.core.model.widgets.others.eventor.model.condition.number;
 
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.BaseCondition;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -18,7 +19,7 @@ public class LessThanOrEqual extends BaseCondition {
     }
 
     @Override
-    public boolean isValid(double in) {
+    public boolean matches(String inString, double in) {
         return in <= value;
     }
 

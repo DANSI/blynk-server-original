@@ -64,13 +64,10 @@ public class EventorProcessor {
         }
 
         double valueParsed = NumberUtil.parseDouble(triggerValue);
-        if (valueParsed == NumberUtil.NO_RESULT) {
-            return;
-        }
 
         for (Rule rule : eventor.rules) {
             if (rule.isReady(pin, type)) {
-                if (rule.isValid(valueParsed)) {
+                if (rule.matchesCondition(triggerValue, valueParsed)) {
                     if (!rule.isProcessed) {
                         for (BaseAction action : rule.actions) {
                             if (action.isValid()) {

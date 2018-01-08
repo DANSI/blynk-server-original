@@ -19,14 +19,16 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.notificati
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.TwitAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.BaseCondition;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.Between;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.Equal;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.GreaterThan;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.GreaterThanOrEqual;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.LessThan;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.LessThanOrEqual;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.NotBetween;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.NotEqual;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.Between;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.Equal;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.GreaterThan;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.GreaterThanOrEqual;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.LessThan;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.LessThanOrEqual;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.NotBetween;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.NotEqual;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.string.StringEqual;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.string.StringNotEqual;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
@@ -48,6 +50,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -614,5 +617,60 @@ public class EventorTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, after(300).never()).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 2 123"))));
     }
 
+    @Test
+    public void testStringEqualsRule() throws Exception {
+        DataStream triggerStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(new DataStream((byte) 2, PinType.VIRTUAL),
+                "123", SetPinActionType.CUSTOM);
 
+        Eventor eventor = new Eventor(new Rule[] {
+                new Rule(triggerStream, null, new StringEqual("abc"), new BaseAction[] {setPinAction}, true)
+        });
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("hardware vw 1 abc");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 abc"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 2 123"))));
+    }
+
+    @Test
+    public void testStringNotEqualsRule() throws Exception {
+        DataStream triggerStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(new DataStream((byte) 2, PinType.VIRTUAL),
+                "123", SetPinActionType.CUSTOM);
+
+        Eventor eventor = new Eventor(new Rule[] {
+                new Rule(triggerStream, null, new StringNotEqual("abc"), new BaseAction[] {setPinAction}, true)
+        });
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("hardware vw 1 ABC");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 ABC"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 2 123"))));
+    }
+
+    @Test
+    public void testStringEqualsRuleWrongTrigger() throws Exception {
+        DataStream triggerStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(new DataStream((byte) 2, PinType.VIRTUAL),
+                "123", SetPinActionType.CUSTOM);
+
+        Eventor eventor = new Eventor(new Rule[] {
+                new Rule(triggerStream, null, new StringEqual("abc"), new BaseAction[] {setPinAction}, true)
+        });
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.hardwareClient.send("hardware vw 1 ABC");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 ABC"))));
+        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
+        verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 2 123"))));
+    }
 }
