@@ -92,12 +92,15 @@ public class ReportingDataDiskCleanerWorker implements Runnable {
                     }
 
                     Path reportingFolderPath = reportingDao.getUserReportingFolderPath(user);
-                    try (DirectoryStream<Path> reportingFolder = Files.newDirectoryStream(reportingFolderPath, "*")) {
-                        for (Path reportingFile : reportingFolder) {
-                            if (!doNotRemovePaths.contains(reportingFile.getFileName().toString())) {
-                                log.debug("Removing {}", reportingFile);
-                                FileUtils.deleteQuietly(reportingFile);
-                                removedFilesCounter++;
+                    if (Files.exists(reportingFolderPath)) {
+                        try (DirectoryStream<Path> reportingFolder =
+                                     Files.newDirectoryStream(reportingFolderPath, "*")) {
+                            for (Path reportingFile : reportingFolder) {
+                                if (!doNotRemovePaths.contains(reportingFile.getFileName().toString())) {
+                                    log.trace("Removing {}", reportingFile);
+                                    FileUtils.deleteQuietly(reportingFile);
+                                    removedFilesCounter++;
+                                }
                             }
                         }
                     }
