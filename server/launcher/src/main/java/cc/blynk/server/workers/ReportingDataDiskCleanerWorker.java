@@ -31,16 +31,16 @@ import java.util.Set;
  * Created by Dmitriy Dumanskiy.
  * Created on 04.01.18.
  */
-public class ReportingDataDiskCleaner implements Runnable {
+public class ReportingDataDiskCleanerWorker implements Runnable {
 
-    private static final Logger log = LogManager.getLogger(ReportingDataDiskCleaner.class);
+    private static final Logger log = LogManager.getLogger(ReportingDataDiskCleanerWorker.class);
 
     private final UserDao userDao;
     private final ReportingDao reportingDao;
 
     private long lastStart;
 
-    public ReportingDataDiskCleaner(UserDao userDao, ReportingDao reportingDao) {
+    public ReportingDataDiskCleanerWorker(UserDao userDao, ReportingDao reportingDao) {
         this.userDao = userDao;
         this.reportingDao = reportingDao;
         this.lastStart = System.currentTimeMillis();

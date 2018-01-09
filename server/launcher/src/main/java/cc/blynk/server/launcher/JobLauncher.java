@@ -6,7 +6,7 @@ import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.internal.ReportingUtil;
 import cc.blynk.server.workers.CertificateRenewalWorker;
 import cc.blynk.server.workers.ProfileSaverWorker;
-import cc.blynk.server.workers.ReportingDataDiskCleaner;
+import cc.blynk.server.workers.ReportingDataDiskCleanerWorker;
 import cc.blynk.server.workers.ReportingWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
 import cc.blynk.server.workers.StatsWorker;
@@ -67,8 +67,8 @@ final class JobLauncher {
         }
         scheduler.scheduleAtFixedRate(LRUCache.LOGIN_TOKENS_CACHE::clear, 1, 1, HOURS);
 
-        ReportingDataDiskCleaner reportingDataDiskCleaner =
-                new ReportingDataDiskCleaner(holder.userDao, holder.reportingDao);
+        ReportingDataDiskCleanerWorker reportingDataDiskCleaner =
+                new ReportingDataDiskCleanerWorker(holder.userDao, holder.reportingDao);
         scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 0, 1, DAYS);
 
         //millis we need to wait to start scheduler at the beginning of a second.
