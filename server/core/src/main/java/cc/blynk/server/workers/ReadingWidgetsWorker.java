@@ -44,7 +44,7 @@ public class ReadingWidgetsWorker implements Runnable {
     public void run() {
         long now = System.currentTimeMillis();
         try {
-            tickedWidgets += process(now);
+            process(now);
             totalTime += System.currentTimeMillis() - now;
         } catch (Exception e) {
             log.error("Error processing reading widgets. ", e);
@@ -60,8 +60,7 @@ public class ReadingWidgetsWorker implements Runnable {
         }
     }
 
-    private int process(long now) {
-        int tickedWidgets = 0;
+    private void process(long now) {
         for (Map.Entry<UserKey, Session> entry : sessionDao.userSession.entrySet()) {
             Session session = entry.getValue();
             //for now checking widgets for active app only
@@ -76,8 +75,7 @@ public class ReadingWidgetsWorker implements Runnable {
                                 int deviceId = stateHolder.device.id;
                                 for (Widget widget : dashBoard.widgets) {
                                     if (widget instanceof FrequencyWidget) {
-                                        tickedWidgets +=
-                                                process(channel, widget, dashBoard, deviceId, now);
+                                        process(channel, widget, dashBoard, deviceId, now);
                                     } else if (widget instanceof DeviceTiles) {
                                         DeviceTiles deviceTiles = (DeviceTiles) widget;
                                         if (deviceId == deviceTiles.selectedDeviceId) {
@@ -85,8 +83,7 @@ public class ReadingWidgetsWorker implements Runnable {
                                             if (tileTemplate != null) {
                                                 for (Widget tileWidget : tileTemplate.widgets) {
                                                     if (tileWidget instanceof FrequencyWidget) {
-                                                        tickedWidgets +=
-                                                                process(channel, tileWidget, dashBoard, deviceId, now);
+                                                        process(channel, tileWidget, dashBoard, deviceId, now);
                                                     }
                                                 }
                                             }
@@ -101,18 +98,16 @@ public class ReadingWidgetsWorker implements Runnable {
                 }
             }
         }
-        return tickedWidgets;
     }
 
-    private int process(Channel channel, Widget widget, DashBoard dashBoard, int deviceId, long now) {
+    private void process(Channel channel, Widget widget, DashBoard dashBoard, int deviceId, long now) {
         FrequencyWidget frequencyWidget = (FrequencyWidget) widget;
         if (channel.isWritable()
                 && sameDeviceId(dashBoard, frequencyWidget.getDeviceId(), deviceId)
                 && frequencyWidget.isTicked(now)) {
             frequencyWidget.writeReadingCommand(channel);
-            return 1;
+            tickedWidgets++;
         }
-        return 0;
     }
 
     private boolean sameDeviceId(DashBoard dash, int targetId, int channelDeviceId) {
