@@ -55,10 +55,9 @@ public class AverageAggregatorProcessor implements Closeable {
     private static void aggregate(Map<AggregationKey, AggregationValue> map, AggregationKey key, double value) {
         AggregationValue aggregationValue = map.get(key);
         if (aggregationValue == null) {
-            final AggregationValue aggregationValueTmp = new AggregationValue();
-            aggregationValue = map.putIfAbsent(key, aggregationValueTmp);
+            aggregationValue = map.putIfAbsent(key, new AggregationValue(value));
             if (aggregationValue == null) {
-                aggregationValue = aggregationValueTmp;
+                return;
             }
         }
 
