@@ -3,6 +3,8 @@ package cc.blynk.server.core.model.widgets.ui;
 import cc.blynk.server.core.model.widgets.NoPinWidget;
 import cc.blynk.server.core.model.widgets.Target;
 
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -15,8 +17,7 @@ public class DeviceSelector extends NoPinWidget implements Target {
     //this is selected deviceId in widget
     public volatile int value = 0;
 
-    //this is only for UI. to show only those devices in picker.
-    public int[] deviceIds;
+    public int[] deviceIds = EMPTY_INTS;
 
     @Override
     public int[] getDeviceIds() {
