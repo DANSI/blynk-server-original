@@ -67,9 +67,10 @@ final class JobLauncher {
         }
         scheduler.scheduleAtFixedRate(LRUCache.LOGIN_TOKENS_CACHE::clear, 1, 1, HOURS);
 
+        //running once every 3 day
         ReportingDataDiskCleanerWorker reportingDataDiskCleaner =
                 new ReportingDataDiskCleanerWorker(holder.userDao, holder.reportingDao);
-        scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 0, 1, DAYS);
+        scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 0, 3, DAYS);
 
         //millis we need to wait to start scheduler at the beginning of a second.
         startDelay = 1000 - (System.currentTimeMillis() % 1000);
