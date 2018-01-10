@@ -35,4 +35,10 @@ public class DeviceTile {
         }
         return false;
     }
+
+    public void erase() {
+        if (dataStream != null) {
+            dataStream.value = null;
+        }
+    }
 }

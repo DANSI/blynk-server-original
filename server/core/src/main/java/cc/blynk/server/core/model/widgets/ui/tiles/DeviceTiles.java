@@ -185,4 +185,18 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
         }
         return sum;
     }
+
+    @Override
+    public void erase() {
+        if (tiles != null) {
+            for (DeviceTile deviceTile : tiles) {
+                deviceTile.erase();
+            }
+        }
+        if (templates != null) {
+            for (TileTemplate tileTemplate : templates) {
+                tileTemplate.erase();
+            }
+        }
+    }
 }

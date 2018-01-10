@@ -62,4 +62,8 @@ public class EnhancedHistoryGraph extends Widget {
     public int getPrice() {
         return 900;
     }
+
+    @Override
+    public void erase() {
+    }
 }

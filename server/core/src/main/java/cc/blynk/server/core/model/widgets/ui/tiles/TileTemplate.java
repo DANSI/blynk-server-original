@@ -79,4 +79,13 @@ public class TileTemplate {
         }
         return sum;
     }
+
+    public void erase() {
+        if (dataStream != null) {
+            dataStream.value = null;
+        }
+        for (Widget widget : widgets) {
+            widget.erase();
+        }
+    }
 }
