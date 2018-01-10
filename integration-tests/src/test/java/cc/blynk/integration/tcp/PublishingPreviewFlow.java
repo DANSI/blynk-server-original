@@ -3,6 +3,7 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
+import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
@@ -11,14 +12,20 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.widgets.OnePinWidget;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.notifications.mail.QrHolder;
+import cc.blynk.utils.AppNameUtil;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
 import org.junit.After;
@@ -37,6 +44,7 @@ import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.timeout;
@@ -449,7 +457,109 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertNotNull(response);
     }
 
+    @Test
+    public void testExportedAppFlowWithOneDynamicTest() throws Exception {
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"DYNAMIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
 
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+
+        appClient2.send("register test@blynk.cc a " + app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+
+        appClient2.send("login test@blynk.cc a Android 1.10.4 " + app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+
+        appClient2.send("loadProfileGzipped 1");
+        DashBoard dashBoard = JsonParser.parseDashboard(appClient2.getBody(3));
+        assertNotNull(dashBoard);
+
+        Device device = dashBoard.devices[0];
+        assertNotNull(device);
+        assertNotNull(device.token);
+
+        TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
+        hardClient1.start();
+
+        hardClient1.send("login " + device.token);
+        verify(hardClient1.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
+        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-0")));
+
+        hardClient1.send("hardware vw 1 100");
+        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 1 100"))));
+    }
+
+    @Test
+    public void testFullDynamicAppFlow() throws Exception {
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"DYNAMIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        assertNotNull(app);
+        assertNotNull(app.id);
+
+        clientPair.hardwareClient.send("hardware dw 1 abc");
+        clientPair.hardwareClient.send("hardware vw 77 123");
+
+        clientPair.appClient.send("loadProfileGzipped 1");
+        DashBoard dashBoard = JsonParser.parseDashboard(clientPair.appClient.getBody(4));
+        assertNotNull(dashBoard);
+        assertNotNull(dashBoard.pinsStorage);
+        assertEquals(1, dashBoard.pinsStorage.size());
+        Widget w = dashBoard.findWidgetByPin(0, (byte) 1, PinType.DIGITAL);
+        assertNotNull(w);
+        assertEquals("abc", ((OnePinWidget) w).value);
+
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("getDevices 1");
+        String response = clientPair.appClient.getBody();
+
+        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        assertEquals(1, devices.length);
+
+        clientPair.appClient.send("emailQr 1\0" + app.id);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        QrHolder[] qrHolders = makeQRs(devices, 1, false);
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+
+        appClient2.send("register test@blynk.cc a " + app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+
+        appClient2.send("login test@blynk.cc a Android 1.10.4 " + app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+
+        appClient2.send("loadProfileGzipped " + qrHolders[0].token + "\0" + 1 + "\0" + DEFAULT_TEST_USER + "\0" + AppNameUtil.BLYNK);
+        dashBoard = JsonParser.parseDashboard(appClient2.getBody(3));
+        assertNotNull(dashBoard);
+        assertNotNull(dashBoard.pinsStorage);
+        assertTrue(dashBoard.pinsStorage.isEmpty());
+        w = dashBoard.findWidgetByPin(0, (byte) 1, PinType.DIGITAL);
+        assertNotNull(w);
+        assertNull(((OnePinWidget) w).value);
+
+        Device device = dashBoard.devices[0];
+        assertNotNull(device);
+        assertNull(device.token);
+
+        appClient2.reset();
+        appClient2.send("getToken 1-" + device.id);
+        String token = appClient2.getBody();
+
+        TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
+        hardClient1.start();
+
+        hardClient1.send("login " + token);
+        verify(hardClient1.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
+        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-0")));
+
+        hardClient1.send("hardware vw 1 100");
+        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 1 100"))));
+    }
 
     private QrHolder[] makeQRs(Device[] devices, int dashId, boolean onlyFirst) throws Exception {
         QrHolder[] qrHolders;

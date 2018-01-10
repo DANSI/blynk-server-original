@@ -7,6 +7,7 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
@@ -63,14 +64,20 @@ public class LoadProfileGzippedLogic {
             String token = parts[0];
             int dashId = ParseUtil.parseInt(parts[1]);
             String publishingEmail = parts[2];
+            //this is for simplification of testing.
+            String appName = parts.length == 4 ? parts[3] : state.userKey.appName;
 
             blockingIOProcessor.executeDB(() -> {
                 try {
                     FlashedToken flashedToken = dbManager.selectFlashedToken(token);
                     if (flashedToken != null) {
-                        User publishingUser = userDao.getByName(publishingEmail, state.userKey.appName);
+                        User publishingUser = userDao.getByName(publishingEmail, appName);
                         DashBoard dash = publishingUser.profile.getDashByIdOrThrow(dashId);
-                        write(ctx, gzipDashRestrictive(dash), message.id);
+                        //todo ugly. but ok for now
+                        String copyString = JsonParser.toJsonRestrictiveDashboard(dash);
+                        DashBoard copyDash = JsonParser.parseDashboard(copyString);
+                        copyDash.eraseValues();
+                        write(ctx, gzipDashRestrictive(copyDash), message.id);
                     }
                 } catch (Exception e) {
                     ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
