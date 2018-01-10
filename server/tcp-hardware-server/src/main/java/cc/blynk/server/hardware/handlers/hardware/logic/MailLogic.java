@@ -84,14 +84,18 @@ public class MailLogic extends NotificationBase {
         }
 
         log.trace("Sending Mail for user {}, with message : '{}'.", user.email, message.body);
-        mail(ctx.channel(), user.email, to, subj, body, message.id);
+        mail(ctx.channel(), user.email, to, subj, body, message.id, mail.isText());
         user.emailMessages++;
     }
 
-    private void mail(Channel channel, String email, String to, String subj, String body, int msgId) {
+    private void mail(Channel channel, String email, String to, String subj, String body, int msgId, boolean isText) {
         blockingIOProcessor.execute(() -> {
             try {
-                mailWrapper.sendHtml(to, subj, body);
+                if (isText) {
+                    mailWrapper.sendText(to, subj, body);
+                } else {
+                    mailWrapper.sendHtml(to, subj, body);
+                }
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending email from hardware. From user {}, to : {}. Reason : {}",
