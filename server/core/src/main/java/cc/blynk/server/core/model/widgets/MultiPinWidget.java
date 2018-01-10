@@ -107,4 +107,14 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
         return sj.toString();
     }
 
+    @Override
+    public void erase() {
+        if (dataStreams != null) {
+            for (DataStream dataStream : this.dataStreams) {
+                if (dataStream != null) {
+                    dataStream.value = null;
+                }
+            }
+        }
+    }
 }

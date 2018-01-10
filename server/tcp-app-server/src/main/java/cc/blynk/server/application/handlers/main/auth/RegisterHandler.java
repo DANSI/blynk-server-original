@@ -22,7 +22,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -152,7 +151,6 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         clonedDash.createdAt = System.currentTimeMillis();
         clonedDash.updatedAt = clonedDash.createdAt;
         clonedDash.isActive = true;
-        clonedDash.pinsStorage = Collections.emptyMap();
         clonedDash.eraseValues();
 
         clonedDash.addTimers(timerWorker, new UserKey(newUser));

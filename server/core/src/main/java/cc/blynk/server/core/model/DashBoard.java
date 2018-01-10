@@ -279,17 +279,9 @@ public class DashBoard {
     }
 
     public void eraseValues() {
+        this.pinsStorage = Collections.emptyMap();
         for (Widget widget : widgets) {
-            if (widget instanceof OnePinWidget) {
-                ((OnePinWidget) widget).value = null;
-            }
-            if (widget instanceof MultiPinWidget) {
-                for (DataStream dataStream : ((MultiPinWidget) widget).dataStreams) {
-                    if (dataStream != null) {
-                        dataStream.value = null;
-                    }
-                }
-            }
+            widget.erase();
         }
     }
 

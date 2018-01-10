@@ -131,4 +131,9 @@ public class Table extends OnePinWidget {
         return 800;
     }
 
+    @Override
+    public void erase() {
+        super.erase();
+        rows.clear();
+    }
 }

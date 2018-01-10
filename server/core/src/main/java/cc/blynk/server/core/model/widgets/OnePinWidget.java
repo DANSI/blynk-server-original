@@ -130,4 +130,8 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
         }
     }
 
+    @Override
+    public void erase() {
+        this.value = null;
+    }
 }
