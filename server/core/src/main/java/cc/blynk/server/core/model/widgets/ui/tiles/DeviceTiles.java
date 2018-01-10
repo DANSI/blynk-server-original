@@ -188,11 +188,9 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
 
     @Override
     public void erase() {
-        if (tiles != null) {
-            for (DeviceTile deviceTile : tiles) {
-                deviceTile.erase();
-            }
-        }
+        //for export apps tiles are fully removed
+        //tiles will be created during provisioning.
+        tiles = EMPTY_DEVICE_TILES;
         if (templates != null) {
             for (TileTemplate tileTemplate : templates) {
                 tileTemplate.erase();
