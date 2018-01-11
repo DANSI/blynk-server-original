@@ -13,13 +13,9 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
-import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -91,19 +87,8 @@ public class ReportingDataDiskCleanerWorker implements Runnable {
                         }
                     }
 
-                    Path reportingFolderPath = reportingDao.getUserReportingFolderPath(user);
-                    if (Files.exists(reportingFolderPath)) {
-                        try (DirectoryStream<Path> reportingFolder =
-                                     Files.newDirectoryStream(reportingFolderPath, "*")) {
-                            for (Path reportingFile : reportingFolder) {
-                                if (!doNotRemovePaths.contains(reportingFile.getFileName().toString())) {
-                                    log.trace("Removing {}", reportingFile);
-                                    FileUtils.deleteQuietly(reportingFile);
-                                    removedFilesCounter++;
-                                }
-                            }
-                        }
-                    }
+                    removedFilesCounter += reportingDao.delete(user,
+                            reportingFile -> !doNotRemovePaths.contains(reportingFile.getFileName().toString()));
                 } catch (Exception e) {
                     log.error("Error cleaning reporting record for user {}. {}", user.email, e.getMessage());
                 }

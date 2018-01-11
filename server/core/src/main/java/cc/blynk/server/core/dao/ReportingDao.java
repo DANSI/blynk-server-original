@@ -21,11 +21,13 @@ import org.apache.logging.log4j.Logger;
 import java.io.Closeable;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Function;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_BYTES;
 import static cc.blynk.utils.FileUtils.SIZE_OF_REPORT_ENTRY;
@@ -48,6 +50,8 @@ public class ReportingDao implements Closeable {
     public final String dataFolder;
 
     private final boolean enableRawDbDataStore;
+
+    private static final Function<Path, Boolean> NO_FILTER = s -> true;
 
     //for test only
     public ReportingDao(String reportingFolder, AverageAggregatorProcessor averageAggregator,
@@ -134,7 +138,7 @@ public class ReportingDao implements Closeable {
         ByteBuffer result = ByteBuffer.allocate(data.size() * SIZE_OF_REPORT_ENTRY);
         for (Map.Entry<Long, GraphFunction> entry : data.entrySet()) {
             result.putDouble(entry.getValue().getResult())
-                  .putLong(entry.getKey());
+                    .putLong(entry.getKey());
         }
         return result;
     }
@@ -157,8 +161,35 @@ public class ReportingDao implements Closeable {
         }
     }
 
-    public Path getUserReportingFolderPath(User user) {
+    private Path getUserReportingFolderPath(User user) {
         return Paths.get(dataFolder, FileUtils.getUserReportingDir(user.email, user.appName));
+    }
+
+    public int delete(User user) {
+        return delete(user, NO_FILTER);
+    }
+
+    public int delete(User user, Function<Path, Boolean> filter) {
+        log.debug("Removing all reporting data for {}", user.email);
+        Path reportingFolderPath = getUserReportingFolderPath(user);
+
+        int removedFilesCounter = 0;
+        try {
+            if (Files.exists(reportingFolderPath)) {
+                try (DirectoryStream<Path> reportingFolder = Files.newDirectoryStream(reportingFolderPath, "*")) {
+                    for (Path reportingFile : reportingFolder) {
+                        if (filter.apply(reportingFile)) {
+                            log.trace("Removing {}", reportingFile);
+                            FileUtils.deleteQuietly(reportingFile);
+                            removedFilesCounter++;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error removing file : {}.", reportingFolderPath);
+        }
+        return removedFilesCounter;
     }
 
     public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {
@@ -171,7 +202,7 @@ public class ReportingDao implements Closeable {
     }
 
     private static void delete(String userReportingDir, int dashId, int deviceId, PinType pinType, byte pin,
-                              GraphGranularityType reportGranularity) {
+                               GraphGranularityType reportGranularity) {
         Path userDataFile = Paths.get(userReportingDir,
                 generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, reportGranularity.label));
         FileUtils.deleteQuietly(userDataFile);
