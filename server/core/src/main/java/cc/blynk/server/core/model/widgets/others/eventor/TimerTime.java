@@ -2,13 +2,16 @@ package cc.blynk.server.core.model.widgets.others.eventor;
 
 import cc.blynk.server.core.model.widgets.others.rtc.StringToZoneId;
 import cc.blynk.server.core.model.widgets.others.rtc.ZoneIdToString;
+import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.DateTimeUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 
 /**
@@ -39,6 +42,16 @@ public class TimerTime {
         this.days = days;
         this.time = time;
         this.tzName = tzName;
+    }
+
+    public boolean isTickTime(int curSeconds, ZonedDateTime currentDateTime) {
+        return time == curSeconds && isTickTime(currentDateTime);
+    }
+
+    private boolean isTickTime(ZonedDateTime currentDateTime) {
+        LocalDate userDate = currentDateTime.withZoneSameInstant(tzName).toLocalDate();
+        int dayOfWeek = userDate.getDayOfWeek().getValue();
+        return ArrayUtil.contains(days, dayOfWeek);
     }
 
     //this is special constructor for Timer back compatibility.

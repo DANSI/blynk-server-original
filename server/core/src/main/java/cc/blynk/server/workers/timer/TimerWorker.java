@@ -17,12 +17,10 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActi
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.DateTimeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Map;
@@ -167,13 +165,14 @@ public class TimerWorker implements Runnable {
     }
 
     private int actuallySendTimers;
+    private int activeTimers;
 
     @Override
     public void run() {
         log.trace("Starting timer...");
 
-        final ZonedDateTime currentDateTime = ZonedDateTime.now(DateTimeUtils.UTC);
-        final int curSeconds = currentDateTime.toLocalTime().toSecondOfDay();
+        ZonedDateTime currentDateTime = ZonedDateTime.now(DateTimeUtils.UTC);
+        int curSeconds = currentDateTime.toLocalTime().toSecondOfDay();
 
         ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors = timerExecutors[hash(curSeconds)];
 
@@ -182,11 +181,12 @@ public class TimerWorker implements Runnable {
             return;
         }
 
-        final long now = System.currentTimeMillis();
-        int activeTimers = 0;
+        long now = System.currentTimeMillis();
 
         try {
-            activeTimers = send(tickedExecutors, currentDateTime, curSeconds, now);
+            this.activeTimers = 0;
+            this.actuallySendTimers = 0;
+            send(tickedExecutors, currentDateTime, curSeconds, now);
         } catch (Exception e) {
             log.error("Error running timers. ", e);
         }
@@ -197,15 +197,12 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    private int send(ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors,
+    private void send(ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors,
                      ZonedDateTime currentDateTime, int curSeconds, long now) {
-        int activeTimers = 0;
-        actuallySendTimers = 0;
-
         for (Map.Entry<TimerKey, BaseAction[]> entry : tickedExecutors.entrySet()) {
-            final TimerKey key = entry.getKey();
-            final BaseAction[] actions = entry.getValue();
-            if (key.time.time == curSeconds && isTime(key.time, currentDateTime)) {
+            TimerKey key = entry.getKey();
+            BaseAction[] actions = entry.getValue();
+            if (key.time.isTickTime(curSeconds, currentDateTime)) {
                 User user = userDao.users.get(key.userKey);
                 if (user != null) {
                     DashBoard dash = user.profile.getDashById(key.dashId);
@@ -216,8 +213,6 @@ public class TimerWorker implements Runnable {
                 }
             }
         }
-
-        return activeTimers;
     }
 
     private void process(DashBoard dash, TimerKey key, BaseAction[] actions, long now) {
@@ -247,12 +242,6 @@ public class TimerWorker implements Runnable {
                 EventorProcessor.push(gcmWrapper, dash, notifyAction.message);
             }
         }
-    }
-
-    private boolean isTime(TimerTime timerTime, ZonedDateTime currentDateTime) {
-        LocalDateTime userDateTime = currentDateTime.withZoneSameInstant(timerTime.tzName).toLocalDateTime();
-        final int dayOfWeek = userDateTime.getDayOfWeek().ordinal() + 1;
-        return ArrayUtil.contains(timerTime.days, dayOfWeek);
     }
 
     private void triggerTimer(SessionDao sessionDao, UserKey userKey, String value, int dashId, int[] deviceIds) {
