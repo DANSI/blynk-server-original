@@ -9,11 +9,11 @@ import static org.junit.Assert.assertEquals;
  * Created by Dmitriy Dumanskiy.
  * Created on 22.07.17.
  */
-public class MedianFunctionTest {
+public class MedianGraphFunctionTest {
 
     @Test
     public void testMedianFunction() {
-        MedianFunction medianFunction = new MedianFunction();
+        MedianGraphFunction medianFunction = new MedianGraphFunction();
         medianFunction.apply(0);
         assertEquals(0, medianFunction.getResult(), 0.0001);
 
@@ -29,7 +29,7 @@ public class MedianFunctionTest {
 
     @Test
     public void testMedianFunction2() {
-        MedianFunction medianFunction = new MedianFunction();
+        MedianGraphFunction medianFunction = new MedianGraphFunction();
         medianFunction.apply(0);
         medianFunction.apply(0);
         medianFunction.apply(0);

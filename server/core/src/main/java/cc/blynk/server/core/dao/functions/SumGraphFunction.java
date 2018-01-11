@@ -5,25 +5,22 @@ package cc.blynk.server.core.dao.functions;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.07.17.
  */
-public class AverageFunction implements Function {
+public class SumGraphFunction implements GraphFunction {
 
-    private int count;
     private double sum;
 
-    public AverageFunction() {
-        this.count = 0;
+    public SumGraphFunction() {
         this.sum = 0;
     }
 
     @Override
     public void apply(double newValue) {
-        this.count++;
         this.sum += newValue;
     }
 
     @Override
     public double getResult() {
-        return sum / count;
+        return sum;
     }
 
 }

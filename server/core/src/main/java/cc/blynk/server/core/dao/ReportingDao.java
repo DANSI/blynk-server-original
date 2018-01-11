@@ -1,6 +1,6 @@
 package cc.blynk.server.core.dao;
 
-import cc.blynk.server.core.dao.functions.Function;
+import cc.blynk.server.core.dao.functions.GraphFunction;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
@@ -98,7 +98,7 @@ public class ReportingDao implements Closeable {
     }
 
     private ByteBuffer getDataForTag(User user, GraphPinRequest graphPinRequest) {
-        TreeMap<Long, Function> data = new TreeMap<>();
+        TreeMap<Long, GraphFunction> data = new TreeMap<>();
         for (int deviceId : graphPinRequest.deviceIds) {
             ByteBuffer localByteBuf = getByteBufferFromDisk(user,
                     graphPinRequest.dashId, deviceId,
@@ -112,7 +112,7 @@ public class ReportingDao implements Closeable {
         return toByteBuf(data);
     }
 
-    private static void addBufferToResult(TreeMap<Long, Function> data,
+    private static void addBufferToResult(TreeMap<Long, GraphFunction> data,
                                           AggregationFunctionType functionType,
                                           ByteBuffer localByteBuf) {
         if (localByteBuf != null) {
@@ -120,19 +120,19 @@ public class ReportingDao implements Closeable {
             while (localByteBuf.hasRemaining()) {
                 double newVal = localByteBuf.getDouble();
                 Long ts = localByteBuf.getLong();
-                Function functionObj = data.get(ts);
-                if (functionObj == null) {
-                    functionObj = functionType.produce();
-                    data.put(ts, functionObj);
+                GraphFunction graphFunctionObj = data.get(ts);
+                if (graphFunctionObj == null) {
+                    graphFunctionObj = functionType.produce();
+                    data.put(ts, graphFunctionObj);
                 }
-                functionObj.apply(newVal);
+                graphFunctionObj.apply(newVal);
             }
         }
     }
 
-    private static ByteBuffer toByteBuf(TreeMap<Long, Function> data) {
+    private static ByteBuffer toByteBuf(TreeMap<Long, GraphFunction> data) {
         ByteBuffer result = ByteBuffer.allocate(data.size() * SIZE_OF_REPORT_ENTRY);
-        for (Map.Entry<Long, Function> entry : data.entrySet()) {
+        for (Map.Entry<Long, GraphFunction> entry : data.entrySet()) {
             result.putDouble(entry.getValue().getResult())
                   .putLong(entry.getKey());
         }
