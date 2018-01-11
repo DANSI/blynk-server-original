@@ -52,7 +52,7 @@ public class ReadingWidgetsWorker implements Runnable {
 
         counter++;
         if (counter == 60) {
-            log.info("Ticked widgets for 1 minute : {}. Per second : {}, total time : {}",
+            log.info("Ticked widgets for 1 minute : {}. Per second : {}, total time : {} ms",
                     tickedWidgets, tickedWidgets / 60, totalTime);
             tickedWidgets = 0;
             counter = 0;
@@ -67,33 +67,35 @@ public class ReadingWidgetsWorker implements Runnable {
             if (session.isAppConnected() && session.isHardwareConnected()) {
                 UserKey userKey = entry.getKey();
                 User user = userDao.users.get(userKey);
-                for (DashBoard dashBoard : user.profile.dashBoards) {
-                    if (dashBoard.isActive) {
-                        for (Channel channel : session.hardwareChannels) {
-                            HardwareStateHolder stateHolder = StateHolderUtil.getHardState(channel);
-                            if (stateHolder != null && stateHolder.dash.id == dashBoard.id) {
-                                int deviceId = stateHolder.device.id;
-                                for (Widget widget : dashBoard.widgets) {
-                                    if (widget instanceof FrequencyWidget) {
-                                        process(channel, widget, dashBoard, deviceId, now);
-                                    } else if (widget instanceof DeviceTiles) {
-                                        DeviceTiles deviceTiles = (DeviceTiles) widget;
-                                        if (deviceId == deviceTiles.selectedDeviceId) {
-                                            TileTemplate tileTemplate = deviceTiles.findTemplateByDeviceId(deviceId);
-                                            if (tileTemplate != null) {
-                                                for (Widget tileWidget : tileTemplate.widgets) {
-                                                    if (tileWidget instanceof FrequencyWidget) {
-                                                        process(channel, tileWidget, dashBoard, deviceId, now);
+                if (user != null) {
+                    for (DashBoard dashBoard : user.profile.dashBoards) {
+                        if (dashBoard.isActive) {
+                            for (Channel channel : session.hardwareChannels) {
+                                HardwareStateHolder stateHolder = StateHolderUtil.getHardState(channel);
+                                if (stateHolder != null && stateHolder.dash.id == dashBoard.id) {
+                                    int deviceId = stateHolder.device.id;
+                                    for (Widget widget : dashBoard.widgets) {
+                                        if (widget instanceof FrequencyWidget) {
+                                            process(channel, widget, dashBoard, deviceId, now);
+                                        } else if (widget instanceof DeviceTiles) {
+                                            DeviceTiles deviceTiles = (DeviceTiles) widget;
+                                            if (deviceId == deviceTiles.selectedDeviceId) {
+                                                TileTemplate tileTemplate =
+                                                        deviceTiles.findTemplateByDeviceId(deviceId);
+                                                if (tileTemplate != null) {
+                                                    for (Widget tileWidget : tileTemplate.widgets) {
+                                                        if (tileWidget instanceof FrequencyWidget) {
+                                                            process(channel, tileWidget, dashBoard, deviceId, now);
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
                                     }
+                                    channel.flush();
                                 }
-                                channel.flush();
                             }
                         }
-
                     }
                 }
             }
