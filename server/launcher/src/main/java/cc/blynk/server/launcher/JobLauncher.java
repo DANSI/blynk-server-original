@@ -7,6 +7,7 @@ import cc.blynk.server.internal.ReportingUtil;
 import cc.blynk.server.workers.CertificateRenewalWorker;
 import cc.blynk.server.workers.HistoryGraphUnusedPinDataCleanerWorker;
 import cc.blynk.server.workers.ProfileSaverWorker;
+import cc.blynk.server.workers.ReportingTruncateWorker;
 import cc.blynk.server.workers.ReportingWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
 import cc.blynk.server.workers.StatsWorker;
@@ -16,7 +17,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -70,7 +70,12 @@ final class JobLauncher {
         //running once every 3 day
         HistoryGraphUnusedPinDataCleanerWorker reportingDataDiskCleaner =
                 new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDao);
-        scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 0, 3, DAYS);
+        //once every 3 days
+        scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 72, 72, HOURS);
+
+        ReportingTruncateWorker reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDao);
+        //once every week
+        scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 1, 144, HOURS);
 
         //millis we need to wait to start scheduler at the beginning of a second.
         startDelay = 1000 - (System.currentTimeMillis() % 1000);
