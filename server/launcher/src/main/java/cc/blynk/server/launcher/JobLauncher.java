@@ -75,7 +75,7 @@ final class JobLauncher {
 
         ReportingTruncateWorker reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDao);
         //once every week
-        scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 1, 144, HOURS);
+        scheduler.scheduleAtFixedRate(reportingTruncateWorker, 1, 144, HOURS);
 
         //millis we need to wait to start scheduler at the beginning of a second.
         startDelay = 1000 - (System.currentTimeMillis() % 1000);
