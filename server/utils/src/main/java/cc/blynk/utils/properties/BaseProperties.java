@@ -1,5 +1,6 @@
 package cc.blynk.utils.properties;
 
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.IPUtils;
 
 import java.io.File;
@@ -152,4 +153,7 @@ public abstract class BaseProperties extends Properties {
         return val.toLowerCase().split(",");
     }
 
+    public String getProductName() {
+        return getProperty("product.name", AppNameUtil.BLYNK);
+    }
 }

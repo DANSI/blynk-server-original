@@ -22,14 +22,13 @@ import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileLoaderUtil;
+import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.UUID;
 
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.noResponse;
@@ -52,6 +51,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
     private final UserDao userDao;
     private final TokensPool tokensPool;
     private final String emailBody;
+    private final String emailSubj;
     private final MailWrapper mailWrapper;
     private final String resetPassUrl;
     private final String pageContent;
@@ -65,7 +65,11 @@ public class ResetPasswordLogic extends BaseHttpHandler {
         super(holder, "");
         this.userDao = holder.userDao;
         this.tokensPool = new TokensPool(60 * 60 * 1000);
-        this.emailBody = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "reset-email.html");
+        String productName = holder.props.getProductName();
+        this.emailSubj = "Password reset request for the " + productName + " app.";
+        this.emailBody = FileLoaderUtil
+                .readFileAsString(RESET_PASS_STATIC_PATH + "reset-email.html")
+                .replace("{PRODUCT_NAME}", productName);
         this.mailWrapper = holder.mailWrapper;
 
         String host = holder.props.getServerHost();
@@ -77,7 +81,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
     }
 
     private static String generateToken() {
-        return (UUID.randomUUID().toString() + UUID.randomUUID().toString()).replace("-", "");
+        return TokenGeneratorUtil.generateNewToken() + TokenGeneratorUtil.generateNewToken();
     }
 
     @POST
@@ -91,7 +95,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
             return badRequest(email + " email has not valid format.");
         }
 
-        final String trimmedEmail = email.trim().toLowerCase();
+        String trimmedEmail = email.trim().toLowerCase();
         appName = (appName == null ? AppNameUtil.BLYNK : appName);
 
         User user = userDao.getByName(trimmedEmail, appName);
@@ -111,7 +115,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
         blockingIOProcessor.execute(() -> {
             Response response;
             try {
-                mailWrapper.sendHtml(trimmedEmail, "Password reset request for Blynk app.", message);
+                mailWrapper.sendHtml(trimmedEmail, emailSubj, message);
                 log.info("{} mail sent.", trimmedEmail);
                 response = ok("Email was sent.");
             } catch (Exception e) {
