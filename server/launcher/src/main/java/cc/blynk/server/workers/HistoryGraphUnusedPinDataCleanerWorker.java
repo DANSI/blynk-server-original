@@ -52,7 +52,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
             //todo
             //actually, it is better to do not save data for such pins
             //but fow now this approach is simpler and quicker
-            int result = process();
+            int result = removeUnsedInHistoryGraphData();
 
             lastStart = now;
 
@@ -62,7 +62,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         }
     }
 
-    private int process() {
+    private int removeUnsedInHistoryGraphData() {
         int removedFilesCounter = 0;
         Set<String> doNotRemovePaths = new HashSet<>();
 
