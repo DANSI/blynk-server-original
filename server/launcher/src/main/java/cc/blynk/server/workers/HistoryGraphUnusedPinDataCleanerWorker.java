@@ -27,16 +27,16 @@ import java.util.Set;
  * Created by Dmitriy Dumanskiy.
  * Created on 04.01.18.
  */
-public class ReportingDataDiskCleanerWorker implements Runnable {
+public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
 
-    private static final Logger log = LogManager.getLogger(ReportingDataDiskCleanerWorker.class);
+    private static final Logger log = LogManager.getLogger(HistoryGraphUnusedPinDataCleanerWorker.class);
 
     private final UserDao userDao;
     private final ReportingDao reportingDao;
 
     private long lastStart;
 
-    public ReportingDataDiskCleanerWorker(UserDao userDao, ReportingDao reportingDao) {
+    public HistoryGraphUnusedPinDataCleanerWorker(UserDao userDao, ReportingDao reportingDao) {
         this.userDao = userDao;
         this.reportingDao = reportingDao;
         this.lastStart = System.currentTimeMillis();
@@ -56,7 +56,7 @@ public class ReportingDataDiskCleanerWorker implements Runnable {
 
             lastStart = now;
 
-            log.debug("Removed {} files. Time : {} ms.", result, System.currentTimeMillis() - now);
+            log.info("Removed {} files. Time : {} ms.", result, System.currentTimeMillis() - now);
         } catch (Throwable t) {
             log.error("Error removing unused reporting data.", t);
         }

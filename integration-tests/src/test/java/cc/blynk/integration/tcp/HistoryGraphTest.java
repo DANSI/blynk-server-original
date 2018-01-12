@@ -29,7 +29,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateTag;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.server.workers.ReportingDataDiskCleanerWorker;
+import cc.blynk.server.workers.HistoryGraphUnusedPinDataCleanerWorker;
 import cc.blynk.utils.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -1588,7 +1588,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
     @Test
     public void cleanNotUsedPinDataWorksAsExpected() throws Exception {
-        ReportingDataDiskCleanerWorker cleaner = new ReportingDataDiskCleanerWorker(holder.userDao, holder.reportingDao);
+        HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDao);
         String tempDir = holder.props.getProperty("data.folder");
 
         Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
@@ -1633,7 +1633,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
     @Test
     public void cleanNotUsedPinDataWorksAsExpectedForSuperChart() throws Exception {
-        ReportingDataDiskCleanerWorker cleaner = new ReportingDataDiskCleanerWorker(holder.userDao, holder.reportingDao);
+        HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDao);
 
         EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
         enhancedHistoryGraph.id = 432;
@@ -1694,7 +1694,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
     @Test
     public void cleanNotUsedPinDataWorksAsExpectedForSuperChartInDeviceTiles() throws Exception {
-        ReportingDataDiskCleanerWorker cleaner = new ReportingDataDiskCleanerWorker(holder.userDao, holder.reportingDao);
+        HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDao);
 
         DeviceTiles deviceTiles = new DeviceTiles();
         deviceTiles.id = 21321;
@@ -1783,7 +1783,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        ReportingDataDiskCleanerWorker cleaner = new ReportingDataDiskCleanerWorker(holder.userDao, holder.reportingDao);
+        HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDao);
 
         EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
         enhancedHistoryGraph.id = 432;
