@@ -5,11 +5,14 @@ import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 
 import static cc.blynk.server.internal.ReportingUtil.REPORTING_RECORD_SIZE;
@@ -56,8 +59,7 @@ public class ReportingTruncateWorker implements Runnable {
         try (DirectoryStream<Path> reportingFolder = Files.newDirectoryStream(reportingFolderPath, "*")) {
             for (Path userReportingDirectory : reportingFolder) {
                 if (Files.isDirectory(userReportingDirectory)) {
-                    try (DirectoryStream<Path> userReportingFolder =
-                                 Files.newDirectoryStream(userReportingDirectory, "*_minute.bin")) {
+                    try (DirectoryStream<Path> userReportingFolder = directoryStream(userReportingDirectory)) {
                         for (Path userReportingFile : userReportingFolder) {
                             long fileSize = Files.size(userReportingFile);
                             if (fileSize > MAX_RECORD_COUNT * REPORTING_RECORD_SIZE) {
@@ -75,5 +77,14 @@ public class ReportingTruncateWorker implements Runnable {
             }
         }
         return truncatedFilesCounter;
+    }
+
+    private static final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*_minute.bin");
+    private static final DirectoryStream.Filter<Path> filter = entry -> matcher.matches(entry.getFileName());
+
+    //utility method to avoid allocation of PathMatcher
+    private DirectoryStream<Path> directoryStream(Path dir) throws IOException {
+        // create a matcher and return a filter that uses it.
+        return dir.getFileSystem().provider().newDirectoryStream(dir, filter);
     }
 }
