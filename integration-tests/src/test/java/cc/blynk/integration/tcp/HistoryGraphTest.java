@@ -29,7 +29,9 @@ import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.core.protocol.model.messages.appllication.CreateTag;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.internal.ReportingUtil;
 import cc.blynk.server.workers.HistoryGraphUnusedPinDataCleanerWorker;
+import cc.blynk.server.workers.ReportingTruncateWorker;
 import cc.blynk.utils.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -1872,5 +1874,109 @@ public class HistoryGraphTest extends IntegrationBase {
 
         assertTrue(Files.notExists(pinReportingDataPath40));
         assertTrue(Files.notExists(pinReportingDataPath41));
+    }
+
+    @Test
+    public void truncateReportingDataWorks() throws Exception {
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDao);
+        String tempDir = holder.props.getProperty("data.folder");
+
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        //this file has corresponding history graph
+        Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 7, GraphGranularityType.MINUTE.label));
+
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 7, GraphGranularityType.MINUTE.label));
+        FileUtils.write(pinReportingDataPath2, 1.11D, 1);
+
+        Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 7, GraphGranularityType.HOURLY.label));
+
+        //write max amount of data for 1 week + 1 point
+        for (int i = 0; i < 7 * 24 * 60 + 1; i++) {
+            FileUtils.write(pinReportingDataPath1, 1.11D, i);
+            FileUtils.write(pinReportingDataPath3, 1.11D, i);
+        }
+
+        assertEquals((7 * 24 * 60 + 1) * ReportingUtil.REPORTING_RECORD_SIZE, Files.size(pinReportingDataPath1));
+        assertEquals(16, Files.size(pinReportingDataPath2));
+        assertEquals((7 * 24 * 60 + 1) * ReportingUtil.REPORTING_RECORD_SIZE, Files.size(pinReportingDataPath3));
+        truncateWorker.run();
+
+        //expecting truncated file here
+        assertEquals(7 * 24 * 60 * ReportingUtil.REPORTING_RECORD_SIZE, Files.size(pinReportingDataPath1));
+        assertEquals(16, Files.size(pinReportingDataPath2));
+        assertEquals((7 * 24 * 60 + 1) * ReportingUtil.REPORTING_RECORD_SIZE, Files.size(pinReportingDataPath3));
+
+        //check truncate is correct
+        ByteBuffer bb = FileUtils.read(pinReportingDataPath1, 7 * 24 * 60);
+        bb.flip();
+
+        for (int i = 1; i < 7 * 24 * 60 + 1; i++) {
+            assertEquals(1.11D, bb.getDouble(), 0.001D);
+            assertEquals(i, bb.getLong());
+        }
+
+        bb = FileUtils.read(pinReportingDataPath3, 7 * 24 * 60 + 1);
+        bb.flip();
+        for (int i = 0; i < 7 * 24 * 60 + 1; i++) {
+            assertEquals(1.11D, bb.getDouble(), 0.001D);
+            assertEquals(i, bb.getLong());
+        }
+    }
+
+    @Test
+    public void doNotTruncateFileWithCorrectSize() throws Exception {
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDao);
+        String tempDir = holder.props.getProperty("data.folder");
+
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        //this file has corresponding history graph
+        Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 7, GraphGranularityType.MINUTE.label));
+
+        //write max amount of data for 1 week + 1 point
+        for (int i = 0; i < 7 * 24 * 60; i++) {
+            FileUtils.write(pinReportingDataPath1, 1.11D, i);
+        }
+
+        assertEquals((7 * 24 * 60) * ReportingUtil.REPORTING_RECORD_SIZE, Files.size(pinReportingDataPath1));
+        truncateWorker.run();
+
+        //expecting truncated file here
+        assertEquals(7 * 24 * 60 * ReportingUtil.REPORTING_RECORD_SIZE, Files.size(pinReportingDataPath1));
+
+        //check no truncate
+        ByteBuffer bb = FileUtils.read(pinReportingDataPath1, 7 * 24 * 60);
+        bb.flip();
+
+        for (int i = 0; i < 7 * 24 * 60; i++) {
+            assertEquals(1.11D, bb.getDouble(), 0.001D);
+            assertEquals(i, bb.getLong());
+        }
+    }
+
+    @Test
+    public void truncateReportingDataDontFailsInEmptyFolder() throws Exception {
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDao);
+        String tempDir = holder.props.getProperty("data.folder");
+
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+
+        truncateWorker.run();
+
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        truncateWorker.run();
     }
 }

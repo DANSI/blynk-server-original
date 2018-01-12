@@ -24,6 +24,8 @@ public final class ReportingUtil {
 
     private final static Logger log = LogManager.getLogger(ReportingUtil.class);
 
+    public final static int REPORTING_RECORD_SIZE = 16;
+
     private ReportingUtil() {
     }
 
