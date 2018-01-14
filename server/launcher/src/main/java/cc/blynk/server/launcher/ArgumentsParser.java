@@ -34,8 +34,8 @@ final class ArgumentsParser {
     static final String RESTORE_OPTION = "restore";
 
     static  {
-        options = new Options();
-        options.addOption(HARDWARE_PORT_OPTION, true, "Hardware server port.")
+        options = new Options()
+               .addOption(HARDWARE_PORT_OPTION, true, "Hardware server port.")
                .addOption(APPLICATION_PORT_OPTION, true, "Application server port.")
                .addOption(WORKER_THREADS_OPTION, true, "Server worker threads.")
                .addOption(DATA_FOLDER_OPTION, true, "Folder where user profiles will be stored.")

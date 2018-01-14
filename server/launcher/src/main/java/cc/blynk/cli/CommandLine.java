@@ -1,7 +1,6 @@
 package cc.blynk.cli;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -17,11 +16,6 @@ import java.util.List;
  * @version $Id: CommandLine.java 1786144 2017-03-09 11:34:57Z britter $
  */
 public class CommandLine {
-
-    /**
-     * the unrecognized options/arguments
-     */
-    private final List<String> args = new LinkedList<>();
 
     /**
      * the processed options
@@ -97,15 +91,6 @@ public class CommandLine {
 
         }
         return null;
-    }
-
-    /**
-     * Add left-over unrecognized option/argument.
-     *
-     * @param arg the unrecognized option/argument.
-     */
-    void addArg(String arg) {
-        args.add(arg);
     }
 
     /**
