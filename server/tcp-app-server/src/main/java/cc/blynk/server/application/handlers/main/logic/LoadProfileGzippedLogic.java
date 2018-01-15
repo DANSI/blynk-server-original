@@ -48,9 +48,10 @@ public class LoadProfileGzippedLogic {
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         //load all
+        String email = state.user.email;
         if (message.length == 0) {
             Profile profile = state.user.profile;
-            write(ctx, gzipProfile(profile), message.id);
+            write(ctx, gzipProfile(profile), message.id, email);
             return;
         }
 
@@ -59,7 +60,7 @@ public class LoadProfileGzippedLogic {
             //load specific by id
             int dashId = ParseUtil.parseInt(message.body);
             DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
-            write(ctx, gzipDash(dash), message.id);
+            write(ctx, gzipDash(dash), message.id, email);
         } else {
             String token = parts[0];
             int dashId = ParseUtil.parseInt(parts[1]);
@@ -77,7 +78,7 @@ public class LoadProfileGzippedLogic {
                         String copyString = JsonParser.toJsonRestrictiveDashboard(dash);
                         DashBoard copyDash = JsonParser.parseDashboard(copyString);
                         copyDash.eraseValues();
-                        write(ctx, gzipDashRestrictive(copyDash), message.id);
+                        write(ctx, gzipDashRestrictive(copyDash), message.id, email);
                     }
                 } catch (Exception e) {
                     ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
@@ -87,14 +88,14 @@ public class LoadProfileGzippedLogic {
         }
     }
 
-    public static void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
+    private static void write(ChannelHandlerContext ctx, byte[] data, int msgId, String email) {
         if (ctx.channel().isWritable()) {
             ByteBuf outputMsg;
             if (data == null) {
                 outputMsg = noData(msgId);
             } else {
                 if (data.length > 65_535) {
-                    log.error("User profile is too big. Size : {}", data.length);
+                    log.error("Profile for user {} is too big. Size : {}", email, data.length);
                     outputMsg = serverError(msgId);
                 } else {
                     outputMsg = makeBinaryMessage(LOAD_PROFILE_GZIPPED, msgId, data);
