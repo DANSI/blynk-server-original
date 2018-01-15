@@ -502,17 +502,17 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
         hardClient2.send("login " + device.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-1")));
+        verify(hardClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-1")));
 
         clientPair.appClient.send("deleteDevice 1\0" + "1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         assertFalse(clientPair.hardwareClient.isClosed());
         assertTrue(hardClient2.isClosed());
