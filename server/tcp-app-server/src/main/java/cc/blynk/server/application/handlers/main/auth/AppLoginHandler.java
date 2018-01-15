@@ -230,7 +230,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
                     channel.voidPromise());
         }
 
-        log.info("{} {}-app joined. Version : {}", user.email, user.appName, version);
+        log.info("{} {}-app ({}) joined.", user.email, user.appName, version);
     }
 
     @Override
