@@ -36,6 +36,14 @@ public class EnhancedHistoryGraph extends Widget {
 
     public boolean allowFullScreen;
 
+    public boolean overrideYAxis;
+
+    public int yAxisMin;
+
+    public int yAxisMax;
+
+    public boolean isPercentMaxMin;
+
     public String goalText;
 
     public GoalLine goalLine;
