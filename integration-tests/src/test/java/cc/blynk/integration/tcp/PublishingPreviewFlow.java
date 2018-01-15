@@ -502,6 +502,11 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.hardwareClient.send("hardware dw 1 abc");
         clientPair.hardwareClient.send("hardware vw 77 123");
 
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(),
+                eq(new HardwareMessage(1, b("1-0 dw 1 abc"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(),
+                eq(new HardwareMessage(2, b("1-0 vw 77 123"))));
+
         clientPair.appClient.send("loadProfileGzipped 1");
         DashBoard dashBoard = JsonParser.parseDashboard(clientPair.appClient.getBody(4));
         assertNotNull(dashBoard);
