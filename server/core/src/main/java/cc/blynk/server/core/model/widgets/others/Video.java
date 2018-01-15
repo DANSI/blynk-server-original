@@ -15,6 +15,8 @@ public class Video extends OnePinWidget {
 
     public String url;
 
+    public boolean forceTCP;
+
     @Override
     public void sendAppSync(Channel appChannel, int dashId, int targetId) {
     }
