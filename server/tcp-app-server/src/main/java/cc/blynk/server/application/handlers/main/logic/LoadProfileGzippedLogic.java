@@ -88,21 +88,22 @@ public class LoadProfileGzippedLogic {
         }
     }
 
-    private static void write(ChannelHandlerContext ctx, byte[] data, int msgId, String email) {
+    public static void write(ChannelHandlerContext ctx, byte[] data, int msgId, String email) {
         if (ctx.channel().isWritable()) {
-            ByteBuf outputMsg;
-            if (data == null) {
-                outputMsg = noData(msgId);
-            } else {
-                if (data.length > 65_535) {
-                    log.error("Profile for user {} is too big. Size : {}", email, data.length);
-                    outputMsg = serverError(msgId);
-                } else {
-                    outputMsg = makeBinaryMessage(LOAD_PROFILE_GZIPPED, msgId, data);
-                }
-            }
+            ByteBuf outputMsg = makeResponse(data, msgId, email);
             ctx.writeAndFlush(outputMsg, ctx.voidPromise());
         }
+    }
+
+    private static ByteBuf makeResponse(byte[] data, int msgId, String email) {
+        if (data == null) {
+            return noData(msgId);
+        }
+        if (data.length > 65_535) {
+            log.error("Profile for user {} is too big. Size : {}", email, data.length);
+            return serverError(msgId);
+        }
+        return makeBinaryMessage(LOAD_PROFILE_GZIPPED, msgId, data);
     }
 
 }

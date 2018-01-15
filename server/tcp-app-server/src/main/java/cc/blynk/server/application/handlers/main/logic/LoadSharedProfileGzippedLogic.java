@@ -6,16 +6,12 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.internal.ParseUtil;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipDashRestrictive;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipProfileRestrictive;
-import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeBinaryMessage;
-import static cc.blynk.server.internal.BlynkByteBufUtil.serverError;
 
 /**
  * The Blynk Project.
@@ -44,20 +40,7 @@ public final class LoadSharedProfileGzippedLogic {
             DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
             data = gzipDashRestrictive(dash);
         }
-        write(ctx, data, message.id, user.email);
-    }
-
-    private static void write(ChannelHandlerContext ctx, byte[] data, int msgId, String email) {
-        if (ctx.channel().isWritable()) {
-            ByteBuf outputMsg;
-            if (data.length > 65_535) {
-                log.error("Shared profile for user {} is too big. Size : {}", email, data.length);
-                outputMsg = serverError(msgId);
-            } else {
-                outputMsg = makeBinaryMessage(LOAD_PROFILE_GZIPPED, msgId, data);
-            }
-            ctx.writeAndFlush(outputMsg, ctx.voidPromise());
-        }
+        LoadProfileGzippedLogic.write(ctx, data, message.id, user.email);
     }
 
 }
