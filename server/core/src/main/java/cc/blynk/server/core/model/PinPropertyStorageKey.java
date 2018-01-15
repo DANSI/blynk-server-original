@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.utils.StringUtils;
 import io.netty.buffer.ByteBuf;
 
@@ -14,16 +15,16 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  */
 public final class PinPropertyStorageKey extends PinStorageKey {
 
-    private final String property;
+    private final WidgetProperty property;
 
-    PinPropertyStorageKey(int deviceId, PinType pinType, byte pin, String property) {
+    PinPropertyStorageKey(int deviceId, PinType pinType, byte pin, WidgetProperty property) {
         super(deviceId, pinType, pin);
         this.property = property;
     }
 
     @Override
     public String makeHardwareBody(String value) {
-        return "" + pin + BODY_SEPARATOR + property + BODY_SEPARATOR + value;
+        return "" + pin + BODY_SEPARATOR + property.label + BODY_SEPARATOR + value;
     }
 
     @Override
@@ -45,7 +46,7 @@ public final class PinPropertyStorageKey extends PinStorageKey {
 
         PinPropertyStorageKey that = (PinPropertyStorageKey) o;
 
-        return property != null ? property.equals(that.property) : that.property == null;
+        return property == that.property;
     }
 
     @Override
@@ -57,6 +58,6 @@ public final class PinPropertyStorageKey extends PinStorageKey {
 
     @Override
     public String toString() {
-        return super.toString() + StringUtils.DEVICE_SEPARATOR + property;
+        return super.toString() + StringUtils.DEVICE_SEPARATOR + property.label;
     }
 }

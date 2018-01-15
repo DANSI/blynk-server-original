@@ -2,6 +2,7 @@ package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import org.junit.Test;
 
@@ -30,7 +31,7 @@ public class DataStreamStorageSerializationTest {
         user.profile.dashBoards[0].pinsStorage = new HashMap<>();
         PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (byte) 0);
         PinStorageKey pinStorageKey2 = new PinStorageKey(0, PinType.DIGITAL, (byte) 1);
-        PinPropertyStorageKey pinStorageKey3 = new PinPropertyStorageKey(0, PinType.VIRTUAL, (byte) 0, "label");
+        PinPropertyStorageKey pinStorageKey3 = new PinPropertyStorageKey(0, PinType.VIRTUAL, (byte) 0, WidgetProperty.LABEL);
         user.profile.dashBoards[0].pinsStorage.put(pinStorageKey, "1");
         user.profile.dashBoards[0].pinsStorage.put(pinStorageKey2, "2");
         user.profile.dashBoards[0].pinsStorage.put(pinStorageKey3, "3");
@@ -53,7 +54,7 @@ public class DataStreamStorageSerializationTest {
 
         PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (byte) 0);
         PinStorageKey pinStorageKey2 = new PinStorageKey(0, PinType.DIGITAL, (byte) 111);
-        PinPropertyStorageKey pinStorageKey3 = new PinPropertyStorageKey(0, PinType.VIRTUAL, (byte) 0, "label");
+        PinPropertyStorageKey pinStorageKey3 = new PinPropertyStorageKey(0, PinType.VIRTUAL, (byte) 0, WidgetProperty.LABEL);
 
         assertEquals("1", user.profile.dashBoards[0].pinsStorage.get(pinStorageKey));
         assertEquals("2", user.profile.dashBoards[0].pinsStorage.get(pinStorageKey2));

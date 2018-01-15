@@ -85,7 +85,7 @@ public class SetWidgetPropertyLogic {
             }
         } else {
             //this is possible case for device selector
-            dash.putPinPropertyStorageValue(deviceId, PinType.VIRTUAL, pin, widgetProperty.label, propertyValue);
+            dash.putPinPropertyStorageValue(deviceId, PinType.VIRTUAL, pin, widgetProperty, propertyValue);
         }
 
         Session session = sessionDao.userSession.get(state.userKey);

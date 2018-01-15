@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.protocol.exceptions.ParseException;
 import cc.blynk.server.internal.ParseUtil;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -30,7 +31,11 @@ public class PinStorageKeyDeserializer extends KeyDeserializer {
             return new PinStorageKey(deviceId, pinType, pin);
         }
         if (split.length == 3) {
-            return new PinPropertyStorageKey(deviceId, pinType, pin, split[2]);
+            WidgetProperty widgetProperty = WidgetProperty.getProperty(split[2]);
+            if (widgetProperty == null) {
+                widgetProperty = WidgetProperty.LABEL;
+            }
+            return new PinPropertyStorageKey(deviceId, pinType, pin, widgetProperty);
         } else {
             return new PinStorageKey(deviceId, pinType, pin);
         }

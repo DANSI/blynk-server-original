@@ -100,7 +100,8 @@ public class DashBoard {
         return name == null ? "" : name;
     }
 
-    public void putPinPropertyStorageValue(int deviceId, PinType type, byte pin, String property, String value) {
+    public void putPinPropertyStorageValue(int deviceId, PinType type, byte pin,
+                                           WidgetProperty property, String value) {
         putPinStorageValue(new PinPropertyStorageKey(deviceId, type, pin, property), value);
     }
 
@@ -336,7 +337,7 @@ public class DashBoard {
         if (target != null) {
             for (int deviceId : target.getDeviceIds()) {
                 for (WidgetProperty widgetProperty : WidgetProperty.values()) {
-                    pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, widgetProperty.label));
+                    pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, widgetProperty));
                 }
             }
         }
