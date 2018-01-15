@@ -112,12 +112,14 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
             if (graphDataStream != null && graphDataStream.dataStream != null && graphDataStream.dataStream.isValid()) {
                 DataStream dataStream = graphDataStream.dataStream;
                 Target target = dash.getTarget(graphDataStream.targetId);
-                for (int deviceId : target.getAssignedDeviceIds()) {
-                    for (GraphGranularityType type : GraphGranularityType.values()) {
-                        String filename = ReportingDao.generateFilename(dash.id,
-                                deviceId,
-                                dataStream.pinType.pintTypeChar, dataStream.pin, type.label);
-                        doNotRemovePaths.add(filename);
+                if (target != null) {
+                    for (int deviceId : target.getAssignedDeviceIds()) {
+                        for (GraphGranularityType type : GraphGranularityType.values()) {
+                            String filename = ReportingDao.generateFilename(dash.id,
+                                    deviceId,
+                                    dataStream.pinType.pintTypeChar, dataStream.pin, type.label);
+                            doNotRemovePaths.add(filename);
+                        }
                     }
                 }
             }

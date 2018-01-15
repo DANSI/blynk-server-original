@@ -227,7 +227,7 @@ public class DashBoard {
     }
 
     private Target getDeviceSelector(long targetId) {
-        Widget widget = getWidgetByIdOrThrow(targetId);
+        Widget widget = getWidgetById(targetId);
         if (widget instanceof DeviceSelector) {
             return (DeviceSelector) widget;
         }
