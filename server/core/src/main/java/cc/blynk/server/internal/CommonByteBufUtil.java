@@ -28,11 +28,11 @@ import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.03.16.
  */
-public final class BlynkByteBufUtil {
+public final class CommonByteBufUtil {
 
     public static final ByteBufAllocator ALLOCATOR = ByteBufAllocator.DEFAULT;
 
-    private BlynkByteBufUtil() {
+    private CommonByteBufUtil() {
     }
 
     public static ByteBuf notificationError(final int msgId) {

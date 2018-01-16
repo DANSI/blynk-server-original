@@ -15,8 +15,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashSet;
 import java.util.Set;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.deviceOffline;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.deviceOffline;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.StateHolderUtil.getHardState;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDash;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDashAndDeviceId;

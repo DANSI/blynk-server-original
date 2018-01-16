@@ -14,8 +14,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.notAllowed;
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * Update faces of related project.

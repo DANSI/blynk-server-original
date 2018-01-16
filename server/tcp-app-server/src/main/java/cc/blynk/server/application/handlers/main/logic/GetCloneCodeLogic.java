@@ -16,8 +16,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
-import static cc.blynk.server.internal.BlynkByteBufUtil.serverError;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
 
 /**
  * The Blynk Project.

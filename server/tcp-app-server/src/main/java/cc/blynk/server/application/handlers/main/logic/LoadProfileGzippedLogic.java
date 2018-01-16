@@ -21,10 +21,10 @@ import static cc.blynk.server.core.model.serialization.JsonParser.gzipDash;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipDashRestrictive;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipProfile;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
-import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeBinaryMessage;
-import static cc.blynk.server.internal.BlynkByteBufUtil.noData;
-import static cc.blynk.server.internal.BlynkByteBufUtil.serverError;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.noData;
+import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
 
 /**
  * The Blynk Project.

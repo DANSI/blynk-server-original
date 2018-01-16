@@ -20,7 +20,7 @@ import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.internal.BlynkByteBufUtil;
+import cc.blynk.server.internal.CommonByteBufUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -66,7 +66,7 @@ public final class WebSocketClient extends BaseClient {
     }
 
     private static WebSocketFrame produceWebSocketFrame(MessageBase msg) {
-        ByteBuf bb = BlynkByteBufUtil.ALLOCATOR.heapBuffer(5 + msg.length);
+        ByteBuf bb = CommonByteBufUtil.ALLOCATOR.heapBuffer(5 + msg.length);
         bb.writeByte(msg.command);
         bb.writeShort(msg.id);
         bb.writeShort(msg.length);

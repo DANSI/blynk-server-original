@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICE_TILES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TEMPLATES;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;

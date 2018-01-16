@@ -15,9 +15,9 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.internal.BlynkByteBufUtil.deviceNotInNetwork;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.AppStateHolderUtil.getAppState;
 
 /**

@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import javax.net.ssl.SSLException;
 import java.io.IOException;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeResponse;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeResponse;
 
 /**
  * The Blynk Project.

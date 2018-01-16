@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
