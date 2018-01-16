@@ -19,6 +19,7 @@ import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
 import static cc.blynk.server.core.protocol.enums.Response.USER_ALREADY_REGISTERED;
 import static cc.blynk.server.core.protocol.model.messages.MessageBase.HEADER_LENGTH;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
+import static io.netty.buffer.ByteBufAllocator.DEFAULT;
 
 /**
  * Utility class that creates native netty buffers instead of java objects.
@@ -30,80 +31,78 @@ import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
  */
 public final class CommonByteBufUtil {
 
-    public static final ByteBufAllocator ALLOCATOR = ByteBufAllocator.DEFAULT;
-
     private CommonByteBufUtil() {
     }
 
-    public static ByteBuf notificationError(final int msgId) {
+    public static ByteBuf notificationError(int msgId) {
         return makeResponse(msgId, NOTIFICATION_ERROR);
     }
 
-    public static ByteBuf deviceNotInNetwork(final int msgId) {
+    public static ByteBuf deviceNotInNetwork(int msgId) {
         return makeResponse(msgId, DEVICE_NOT_IN_NETWORK);
     }
 
-    public static ByteBuf noActiveDash(final int msgId) {
+    public static ByteBuf noActiveDash(int msgId) {
         return makeResponse(msgId, NO_ACTIVE_DASHBOARD);
     }
 
-    public static ByteBuf notAllowed(final int msgId) {
+    public static ByteBuf notAllowed(int msgId) {
         return makeResponse(msgId, NOT_ALLOWED);
     }
 
-    public static ByteBuf illegalCommandBody(final int msgId) {
+    public static ByteBuf illegalCommandBody(int msgId) {
         return makeResponse(msgId, ILLEGAL_COMMAND_BODY);
     }
 
-    public static ByteBuf illegalCommand(final int msgId) {
+    public static ByteBuf illegalCommand(int msgId) {
         return makeResponse(msgId, ILLEGAL_COMMAND);
     }
 
-    public static ByteBuf invalidToken(final int msgId) {
+    public static ByteBuf invalidToken(int msgId) {
         return makeResponse(msgId, INVALID_TOKEN);
     }
 
-    public static ByteBuf alreadyRegistered(final int msgId) {
+    public static ByteBuf alreadyRegistered(int msgId) {
         return makeResponse(msgId, USER_ALREADY_REGISTERED);
     }
 
-    public static ByteBuf deviceOffline(final int dashId, final int deviceId) {
+    public static ByteBuf deviceOffline(int dashId, int deviceId) {
         return makeASCIIStringMessage(DEVICE_OFFLINE, 0,
                 String.valueOf(dashId) + DEVICE_SEPARATOR + deviceId);
     }
 
-    public static ByteBuf serverError(final int msgId) {
+    public static ByteBuf serverError(int msgId) {
         return makeResponse(msgId, SERVER_ERROR);
     }
 
-    public static ByteBuf noData(final int msgId) {
+    public static ByteBuf noData(int msgId) {
         return makeResponse(msgId, NO_DATA);
     }
 
-    public static ByteBuf ok(final int msgId) {
+    public static ByteBuf ok(int msgId) {
         return makeResponse(msgId, OK);
     }
 
-    public static ByteBuf makeResponse(final int msgId, final int responseCode) {
-        return ALLOCATOR.buffer(HEADER_LENGTH)
+    public static ByteBuf makeResponse(int msgId, int responseCode) {
+        return DEFAULT.buffer(HEADER_LENGTH)
                 .writeByte(Command.RESPONSE)
                 .writeShort(msgId)
                 .writeShort(responseCode);
     }
 
-    public static ByteBuf makeUTF8StringMessage(final short cmd, final int msgId, final String data) {
-        final ByteBuf byteBuf = ALLOCATOR.buffer(HEADER_LENGTH + ByteBufUtil.utf8MaxBytes(data))
+    public static ByteBuf makeUTF8StringMessage(short cmd, int msgId, String data) {
+        ByteBuf byteBuf = DEFAULT.buffer(HEADER_LENGTH + ByteBufUtil.utf8MaxBytes(data))
                 .writeByte(cmd)
                 .writeShort(msgId)
                 .writerIndex(HEADER_LENGTH);
 
-        final int bytesWritten = ByteBufUtil.writeUtf8(byteBuf, data);
+        int bytesWritten = ByteBufUtil.writeUtf8(byteBuf, data);
         return byteBuf.setShort(3, bytesWritten);
     }
 
-    public static ByteBuf makeASCIIStringMessage(final short cmd, final int msgId, final String data) {
-        final int dataLength = data.length();
-        final ByteBuf byteBuf = ALLOCATOR.buffer(HEADER_LENGTH + dataLength)
+    public static ByteBuf makeASCIIStringMessage(short cmd, int msgId, String data) {
+        int dataLength = data.length();
+        ByteBuf byteBuf = DEFAULT.buffer(HEADER_LENGTH + dataLength)
                 .writeByte(cmd)
                 .writeShort(msgId)
                 .writeShort(dataLength);
@@ -112,9 +111,9 @@ public final class CommonByteBufUtil {
         return byteBuf;
     }
 
-    public static ByteBuf makeBinaryMessage(final short cmd, final int msgId, final byte[] byteData) {
-        final int dataLength = byteData.length;
-        return ALLOCATOR.buffer(HEADER_LENGTH + dataLength)
+    public static ByteBuf makeBinaryMessage(short cmd, int msgId, byte[] byteData) {
+        int dataLength = byteData.length;
+        return ByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH + dataLength)
                 .writeByte(cmd)
                 .writeShort(msgId)
                 .writeShort(dataLength)
