@@ -7,16 +7,20 @@ import io.netty.buffer.ByteBufUtil;
 
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_OFFLINE;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
+import static cc.blynk.server.core.protocol.enums.Response.FACEBOOK_USER_LOGIN_WITH_PASS;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_ERROR;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
 import static cc.blynk.server.core.protocol.enums.Response.USER_ALREADY_REGISTERED;
+import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
+import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_REGISTERED;
 import static cc.blynk.server.core.protocol.model.messages.MessageBase.HEADER_LENGTH;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static io.netty.buffer.ByteBufAllocator.DEFAULT;
@@ -66,11 +70,6 @@ public final class CommonByteBufUtil {
         return makeResponse(msgId, USER_ALREADY_REGISTERED);
     }
 
-    public static ByteBuf deviceOffline(int dashId, int deviceId) {
-        return makeASCIIStringMessage(DEVICE_OFFLINE, 0,
-                String.valueOf(dashId) + DEVICE_SEPARATOR + deviceId);
-    }
-
     public static ByteBuf serverError(int msgId) {
         return makeResponse(msgId, SERVER_ERROR);
     }
@@ -81,6 +80,27 @@ public final class CommonByteBufUtil {
 
     public static ByteBuf ok(int msgId) {
         return makeResponse(msgId, OK);
+    }
+
+    public static ByteBuf notRegistered(int msgId) {
+        return makeResponse(msgId, USER_NOT_REGISTERED);
+    }
+
+    public static ByteBuf facebookUserLoginWithPass(int msgId) {
+        return makeResponse(msgId, FACEBOOK_USER_LOGIN_WITH_PASS);
+    }
+
+    public static ByteBuf notAuthenticated(int msgId) {
+        return makeResponse(msgId, USER_NOT_AUTHENTICATED);
+    }
+
+    public static ByteBuf notificationNotAuthorized(int msgId) {
+        return makeResponse(msgId, NOTIFICATION_NOT_AUTHORIZED);
+    }
+
+    public static ByteBuf deviceOffline(int dashId, int deviceId) {
+        return makeASCIIStringMessage(DEVICE_OFFLINE, 0,
+                String.valueOf(dashId) + DEVICE_SEPARATOR + deviceId);
     }
 
     public static ByteBuf makeResponse(int msgId, int responseCode) {

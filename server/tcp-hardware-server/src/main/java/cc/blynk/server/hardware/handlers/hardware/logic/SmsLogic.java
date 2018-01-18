@@ -12,9 +12,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
-import static cc.blynk.server.internal.CommonByteBufUtil.makeResponse;
 import static cc.blynk.server.internal.CommonByteBufUtil.notificationError;
+import static cc.blynk.server.internal.CommonByteBufUtil.notificationNotAuthorized;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
@@ -49,7 +48,7 @@ public class SmsLogic extends NotificationBase {
         if (smsWidget == null || !dash.isActive
                 || smsWidget.to == null || smsWidget.to.isEmpty()) {
             log.debug("User has no access phone number provided.");
-            ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_NOT_AUTHORIZED), ctx.voidPromise());
+            ctx.writeAndFlush(notificationNotAuthorized(message.id), ctx.voidPromise());
             return;
         }
 

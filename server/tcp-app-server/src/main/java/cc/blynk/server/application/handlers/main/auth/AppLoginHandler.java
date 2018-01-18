@@ -30,13 +30,12 @@ import java.util.NoSuchElementException;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICATION;
-import static cc.blynk.server.core.protocol.enums.Response.FACEBOOK_USER_LOGIN_WITH_PASS;
-import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
-import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_REGISTERED;
+import static cc.blynk.server.internal.CommonByteBufUtil.facebookUserLoginWithPass;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.makeResponse;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.CommonByteBufUtil.notAuthenticated;
+import static cc.blynk.server.internal.CommonByteBufUtil.notRegistered;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
@@ -166,19 +165,19 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
 
         if (user == null) {
             log.warn("User '{}' not registered. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(makeResponse(msgId, USER_NOT_REGISTERED), ctx.voidPromise());
+            ctx.writeAndFlush(notRegistered(msgId), ctx.voidPromise());
             return;
         }
 
         if (user.pass == null) {
             log.warn("Facebook user '{}' tries to login with pass. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(makeResponse(msgId, FACEBOOK_USER_LOGIN_WITH_PASS), ctx.voidPromise());
+            ctx.writeAndFlush(facebookUserLoginWithPass(msgId), ctx.voidPromise());
             return;
         }
 
         if (!user.pass.equals(pass)) {
             log.warn("User '{}' credentials are wrong. {}", email, ctx.channel().remoteAddress());
-            ctx.writeAndFlush(makeResponse(msgId, USER_NOT_AUTHENTICATED), ctx.voidPromise());
+            ctx.writeAndFlush(notAuthenticated(msgId), ctx.voidPromise());
             return;
         }
 

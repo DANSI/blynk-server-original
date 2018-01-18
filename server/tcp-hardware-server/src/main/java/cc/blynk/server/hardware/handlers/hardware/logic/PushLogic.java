@@ -11,9 +11,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
-import static cc.blynk.server.internal.CommonByteBufUtil.makeResponse;
 import static cc.blynk.server.internal.CommonByteBufUtil.noActiveDash;
+import static cc.blynk.server.internal.CommonByteBufUtil.notificationNotAuthorized;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
@@ -53,7 +52,7 @@ public class PushLogic extends NotificationBase {
 
         if (widget == null || widget.hasNoToken()) {
             log.debug("User has no access token provided for push widget.");
-            ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_NOT_AUTHORIZED), ctx.voidPromise());
+            ctx.writeAndFlush(notificationNotAuthorized(message.id), ctx.voidPromise());
             return;
         }
 
