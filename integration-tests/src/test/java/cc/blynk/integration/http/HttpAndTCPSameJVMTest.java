@@ -25,7 +25,6 @@ import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.DateTimeUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -445,7 +444,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(2, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
 
         clientPair.appClient.reset();
 

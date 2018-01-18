@@ -9,9 +9,6 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateTag;
-import cc.blynk.server.core.protocol.model.messages.appllication.sharing.AppSyncMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
@@ -67,7 +64,7 @@ public class TagCommandsTest extends IntegrationBase {
         Tag tag = JsonParser.parseTag(createdTag);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(1, tag.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
 
         clientPair.appClient.reset();
 
@@ -91,7 +88,7 @@ public class TagCommandsTest extends IntegrationBase {
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
         assertEquals("Tag1", tag.name);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(1, tag.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
 
         clientPair.appClient.reset();
 
@@ -129,7 +126,7 @@ public class TagCommandsTest extends IntegrationBase {
         Tag tag = JsonParser.parseTag(createdTag);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(1, tag.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
 
         clientPair.appClient.reset();
 
@@ -148,7 +145,7 @@ public class TagCommandsTest extends IntegrationBase {
         String createdTag = clientPair.appClient.getBody();
         Tag tag = JsonParser.parseTag(createdTag);
         assertNotNull(tag);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(1, tag0.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag0.toString())));
 
         clientPair.appClient.reset();
 
@@ -185,7 +182,7 @@ public class TagCommandsTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -204,7 +201,7 @@ public class TagCommandsTest extends IntegrationBase {
         Tag tag = JsonParser.parseTag(createdTag);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(1, tag.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":100000, \"x\":0, \"y\":0, \"label\":\"Button\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
@@ -227,19 +224,19 @@ public class TagCommandsTest extends IntegrationBase {
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 dw 1 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 dw 2 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 aw 3 0"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 dw 5 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 vw 4 244"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 aw 7 3"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 aw 30 3"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 vw 0 89.888037459418"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 vw 1 -58.74774244674501"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 vw 13 60 143 158"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 vw 88 100"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 vw 88 100"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-100000 vw 88 100"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 2 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 3 0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 5 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 4 244"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 7 3"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 30 3"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 0 89.888037459418"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 1 -58.74774244674501"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 13 60 143 158"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 88 100"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 88 100"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-100000 vw 88 100"))));
 
     }
 

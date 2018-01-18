@@ -12,7 +12,7 @@ import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
 public class RegisterMessage extends StringMessage {
 
     public RegisterMessage(int messageId, String body) {
-        super(messageId, REGISTER, body.length(), body);
+        super(messageId, REGISTER, body);
     }
 
     @Override

@@ -12,9 +12,6 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
-import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
-import cc.blynk.server.core.protocol.model.messages.hardware.ConnectRedirectMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.AppNameUtil;
@@ -102,7 +99,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         String appName = AppNameUtil.BLYNK;
 
         appClient1.send("getServer " + email + "\0" + appName);
-        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "127.0.0.1")));
+        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(getServer(1, "127.0.0.1")));
 
         appClient1.reset();
 
@@ -122,7 +119,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         String username2 = "test2_new@gmail.com";
 
         appClient2.send("getServer " + username2 + "\0" + appName);
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "localhost2")));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(getServer(1, "localhost2")));
 
         appClient2.reset();
 
@@ -140,7 +137,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         appClient1.start();
         workflowForUser(appClient1, "123@gmail.com", "a", AppNameUtil.BLYNK);
         appClient1.send("getServer " + "123@gmail.com" + "\0" + AppNameUtil.BLYNK);
-        verify(appClient1.responseMock, after(500).never()).channelRead(any(), eq(new GetServerMessage(1, "127.0.0.1")));
+        verify(appClient1.responseMock, after(500).never()).channelRead(any(), eq(getServer(1, "127.0.0.1")));
     }
 
     @Test
@@ -153,7 +150,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         String appName = AppNameUtil.BLYNK;
 
         appClient1.send("getServer " + email + "\0" + appName);
-        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "127.0.0.1")));
+        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(getServer(1, "127.0.0.1")));
 
         appClient1.reset();
 
@@ -170,7 +167,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         appClient2.start();
 
         appClient2.send("getServer " + email + "\0" + appName);
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "127.0.0.1")));
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(getServer(1, "127.0.0.1")));
     }
 
     @Test
@@ -186,7 +183,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(illegalCommand(1)));
 
         appClient1.send("getServer " + email + "\0" + appName);
-        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(2, "127.0.0.1")));
+        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(getServer(2, "127.0.0.1")));
 
         appClient1.send("register " + email + " " + pass + " " + appName);
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
@@ -195,7 +192,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(4)));
 
         appClient1.send("getServer " + email + "\0" + appName);
-        verify(appClient1.responseMock, timeout(1000).times(0)).channelRead(any(), eq(new GetServerMessage(5, "127.0.0.1")));
+        verify(appClient1.responseMock, timeout(1000).times(0)).channelRead(any(), eq(getServer(5, "127.0.0.1")));
     }
 
     @Test
@@ -224,7 +221,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, after(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, after(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         assertEquals("127.0.0.1", holder.dbManager.forwardingTokenDBDao.selectHostByToken(device.token));
     }
@@ -239,7 +236,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, after(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, after(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         assertEquals("127.0.0.1", holder.dbManager.forwardingTokenDBDao.selectHostByToken(device.token));
 
@@ -261,7 +258,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
         hardClient.send("login " + token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
-                new ConnectRedirectMessage(1, b("test_host " + tcpHardPort))));
+                connectRedirect(1, "test_host " + tcpHardPort)));
     }
 
     @Test
@@ -290,13 +287,13 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
         hardClient.send("login " + token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
-                new ConnectRedirectMessage(1, b("test_host " + tcpHardPort))));
+                connectRedirect(1, "test_host " + tcpHardPort)));
 
         holder.dbManager.executeSQL("DELETE FROM forwarding_tokens");
 
         hardClient.send("login " + token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
-                new ConnectRedirectMessage(2, b("test_host " + tcpHardPort))));
+                connectRedirect(2, "test_host " + tcpHardPort)));
     }
 
     @Test
@@ -311,13 +308,13 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
         hardClient.send("login " + token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
-                new ConnectRedirectMessage(1, b("test_host " + tcpHardPort))));
+                connectRedirect(1, "test_host " + tcpHardPort)));
 
         holder.dbManager.executeSQL("DELETE FROM forwarding_tokens");
 
         hardClient.send("login " + token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
-                new ConnectRedirectMessage(2, b("test_host " + tcpHardPort))));
+                connectRedirect(2, "test_host " + tcpHardPort)));
 
         LRUCache.LOGIN_TOKENS_CACHE.clear();
 
@@ -331,7 +328,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
         hardClient.send("login " + token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
-                new ConnectRedirectMessage(4, b("test_host_2 " + tcpHardPort))));
+                connectRedirect(4, "test_host_2 " + tcpHardPort)));
     }
 
     private String workflowForUser(TestAppClient appClient, String username, String pass, String appName) throws Exception{

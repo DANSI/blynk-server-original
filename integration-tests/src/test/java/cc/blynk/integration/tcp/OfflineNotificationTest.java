@@ -12,8 +12,6 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
-import cc.blynk.server.core.protocol.model.messages.appllication.DeviceOfflineMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import junit.framework.TestCase;
 import org.junit.After;
@@ -70,7 +68,7 @@ public class OfflineNotificationTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody(2);
@@ -92,15 +90,15 @@ public class OfflineNotificationTest extends IntegrationBase {
         clientPair.hardwareClient.stop();
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(),
-                eq(new DeviceOfflineMessage(0, b("1-0"))));
+                eq(deviceOffline(0, b("1-0"))));
         verify(clientPair.appClient.responseMock, never()).channelRead(any(),
-                eq(new DeviceOfflineMessage(0, b("1-1"))));
+                eq(deviceOffline(0, b("1-1"))));
 
         clientPair.appClient.reset();
         hardClient2.stop();
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new DeviceOfflineMessage(0, b("1-1"))));
-        verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(new DeviceOfflineMessage(0, b("1-0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(deviceOffline(0, b("1-1"))));
+        verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(deviceOffline(0, b("1-0"))));
     }
 
     @Test
@@ -113,7 +111,7 @@ public class OfflineNotificationTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         TestCase.assertNotNull(device);
         TestCase.assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody(2);
@@ -135,8 +133,8 @@ public class OfflineNotificationTest extends IntegrationBase {
         clientPair.hardwareClient.stop();
         hardClient2.stop();
 
-        verify(clientPair.appClient.responseMock, timeout(5000).times(1)).channelRead(any(), eq(new DeviceOfflineMessage(0, b("1-0"))));
-        verify(clientPair.appClient.responseMock, timeout(5000).times(1)).channelRead(any(), eq(new DeviceOfflineMessage(0, b("1-1"))));
+        verify(clientPair.appClient.responseMock, timeout(5000).times(1)).channelRead(any(), eq(deviceOffline(0, b("1-0"))));
+        verify(clientPair.appClient.responseMock, timeout(5000).times(1)).channelRead(any(), eq(deviceOffline(0, b("1-1"))));
     }
 
     @Test
@@ -161,7 +159,7 @@ public class OfflineNotificationTest extends IntegrationBase {
         clientPair.hardwareClient.stop();
 
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(),
-                eq(new DeviceOfflineMessage(0, b("1-0"))));
+                eq(deviceOffline(0, b("1-0"))));
 
         Device device2 = new Device(1, "My Device", "ESP8266");
         device2.status = Status.OFFLINE;
@@ -171,7 +169,7 @@ public class OfflineNotificationTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         TestCase.assertNotNull(device);
         TestCase.assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(3, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(3, device.toString())));
 
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody(4);
@@ -192,6 +190,6 @@ public class OfflineNotificationTest extends IntegrationBase {
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         hardClient2.stop();
 
-        verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(new DeviceOfflineMessage(0, b("1-1"))));
+        verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(deviceOffline(0, b("1-1"))));
     }
 }

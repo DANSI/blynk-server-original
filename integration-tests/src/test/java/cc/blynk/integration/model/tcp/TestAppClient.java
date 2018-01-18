@@ -7,9 +7,6 @@ import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.GetProjectByCloneCodeBinaryMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.GetProjectByTokenBinaryMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelInitializer;
@@ -22,6 +19,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
+import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -61,11 +61,9 @@ public class TestAppClient extends AppClient {
         MessageBase messageBase = arguments.get(expectedMessageOrder - 1);
         if (messageBase instanceof StringMessage) {
             return ((StringMessage) messageBase).body;
-        } else if (messageBase instanceof LoadProfileGzippedBinaryMessage) {
-            return new String(BaseTest.decompress(messageBase.getBytes()));
-        } else if (messageBase instanceof GetProjectByTokenBinaryMessage) {
-            return new String(BaseTest.decompress(messageBase.getBytes()));
-        } else if (messageBase instanceof GetProjectByCloneCodeBinaryMessage) {
+        } else if (messageBase.command == LOAD_PROFILE_GZIPPED
+                || messageBase.command == GET_PROJECT_BY_TOKEN
+                || messageBase.command == GET_PROJECT_BY_CLONE_CODE) {
             return new String(BaseTest.decompress(messageBase.getBytes()));
         }
 

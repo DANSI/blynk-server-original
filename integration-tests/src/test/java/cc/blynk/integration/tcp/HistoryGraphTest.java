@@ -25,8 +25,6 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileMode;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateTag;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.internal.ReportingUtil;
@@ -198,7 +196,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
@@ -207,7 +205,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Tag tag = JsonParser.parseTag(createdTag);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(2, tag.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(2, tag)));
 
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -266,7 +264,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device)));
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
@@ -275,7 +273,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Tag tag = JsonParser.parseTag(createdTag);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(2, tag.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(2, tag)));
 
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -336,7 +334,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
@@ -345,7 +343,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Tag tag = JsonParser.parseTag(createdTag);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(2, tag.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(2, tag)));
 
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -406,7 +404,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
@@ -415,7 +413,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Tag tag = JsonParser.parseTag(createdTag);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(2, tag.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(2, tag)));
 
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -476,7 +474,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
@@ -485,7 +483,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Tag tag = JsonParser.parseTag(createdTag);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(2, tag.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(2, tag)));
 
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -546,7 +544,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
@@ -555,7 +553,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Tag tag = JsonParser.parseTag(createdTag);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(2, tag.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(2, tag)));
 
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -617,14 +615,14 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("createDevice 1\0" + device2.toString());
         createdDevice = clientPair.appClient.getBody(2);
         device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(2, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0, 1, 2});
 
@@ -633,7 +631,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Tag tag = JsonParser.parseTag(createdTag);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(3, tag.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(3, tag)));
 
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -1413,7 +1411,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
@@ -1491,7 +1489,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
@@ -1577,7 +1575,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
@@ -1780,7 +1778,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));

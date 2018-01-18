@@ -12,7 +12,7 @@ import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 public class LoginMessage extends StringMessage {
 
     public LoginMessage(int messageId, String body) {
-        super(messageId, LOGIN, body.length(), body);
+        super(messageId, LOGIN, body);
     }
 
     @Override

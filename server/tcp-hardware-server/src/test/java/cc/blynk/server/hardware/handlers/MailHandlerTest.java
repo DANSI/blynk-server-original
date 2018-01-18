@@ -10,7 +10,7 @@ import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.MessageFactory;
-import cc.blynk.server.core.protocol.model.messages.hardware.MailMessage;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.logic.MailLogic;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -55,7 +55,7 @@ public class MailHandlerTest {
 
     @Test(expected = NotAllowedException.class)
 	public void testNoEmailWidget() throws InterruptedException {
-		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body");
+        StringMessage mailMessage = (StringMessage) MessageFactory.produce(1, Command.EMAIL, "body");
 
         user.profile = profile;
         when(profile.getDashByIdOrThrow(1)).thenReturn(dashBoard);
@@ -67,7 +67,7 @@ public class MailHandlerTest {
 
     @Test(expected = IllegalCommandException.class)
 	public void testNoToBody() throws InterruptedException {
-		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "".replaceAll(" ", "\0"));
+        StringMessage mailMessage = (StringMessage) MessageFactory.produce(1, Command.EMAIL, "".replaceAll(" ", "\0"));
 
         user.profile = profile;
         when(profile.getDashByIdOrThrow(1)).thenReturn(dashBoard);
@@ -81,7 +81,7 @@ public class MailHandlerTest {
 
     @Test(expected = IllegalCommandException.class)
 	public void testNoBody() throws InterruptedException {
-		MailMessage mailMessage = (MailMessage) MessageFactory.produce(1, Command.EMAIL, "body".replaceAll(" ", "\0"));
+        StringMessage mailMessage = (StringMessage) MessageFactory.produce(1, Command.EMAIL, "body".replaceAll(" ", "\0"));
 
         user.profile = profile;
         when(profile.getDashByIdOrThrow(1)).thenReturn(dashBoard);

@@ -10,7 +10,6 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
 import org.junit.Before;
@@ -113,7 +112,7 @@ public class BlynkInternalTest extends IntegrationBase {
         appClient.send("login " + DEFAULT_TEST_USER + " 1 Android 1.13.3");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, "acon")));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "acon")));
     }
 
     @Test
@@ -123,7 +122,7 @@ public class BlynkInternalTest extends IntegrationBase {
 
         clientPair.appClient.stop().await();
 
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, "adis")));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "adis")));
     }
 
 }

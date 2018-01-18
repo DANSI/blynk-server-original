@@ -21,8 +21,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActi
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateTag;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
@@ -586,7 +584,7 @@ public class TimerTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -605,7 +603,7 @@ public class TimerTest extends IntegrationBase {
         Tag tag = JsonParser.parseTag(createdTag);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(1, tag.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
 
 
 

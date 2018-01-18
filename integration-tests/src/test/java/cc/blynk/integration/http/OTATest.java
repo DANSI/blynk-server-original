@@ -11,7 +11,6 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.SHA256Util;
@@ -44,6 +43,7 @@ import java.util.Base64;
 
 import static cc.blynk.integration.IntegrationBase.b;
 import static cc.blynk.integration.IntegrationBase.initAppAndHardPair;
+import static cc.blynk.integration.IntegrationBase.internal;
 import static cc.blynk.integration.IntegrationBase.ok;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
@@ -186,7 +186,7 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         HttpGet index = new HttpGet("http://localhost:" + httpPort + path);
 
@@ -310,7 +310,7 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody(2);
@@ -365,7 +365,7 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody(2);
@@ -437,7 +437,7 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         HttpGet index = new HttpGet("http://localhost:" + httpPort + path);
 
@@ -471,11 +471,11 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 123"));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
         clientPair.hardwareClient.reset();
 
         clientPair.appClient.send("getDevices 1");
@@ -493,7 +493,7 @@ public class OTATest extends BaseTest {
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build ") + "Aug 14 2017 20:31:49");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
     }
 
@@ -534,7 +534,7 @@ public class OTATest extends BaseTest {
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
     }
 
     @Test
@@ -590,7 +590,7 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
@@ -603,7 +603,7 @@ public class OTATest extends BaseTest {
 
         newHardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         verify(newHardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(newHardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(newHardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
     }
 
     @Test
@@ -634,7 +634,7 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
@@ -647,7 +647,7 @@ public class OTATest extends BaseTest {
 
         newHardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         verify(newHardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
     }
 
     @Test
@@ -678,7 +678,7 @@ public class OTATest extends BaseTest {
         }
 
         String responseUrl = "http://127.0.0.1:18080" + path;
-        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
@@ -691,7 +691,7 @@ public class OTATest extends BaseTest {
 
         newHardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         verify(newHardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(newHardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new BlynkInternalMessage(7777, b("ota " + responseUrl))));
+        verify(newHardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
     }
 
 }

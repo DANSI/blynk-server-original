@@ -15,10 +15,6 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
-import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.sharing.AppSyncMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.FileUtils;
@@ -94,7 +90,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.send("createWidget 1\0{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
@@ -139,7 +135,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
         verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new HardwareMessage(5, b("vu 200000 0"))));
         verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(5, b("vu 200000 0"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(1111, b("1-0 vw 88 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(1111, b("1-0 vw 88 1"))));
 
         clientPair.appClient.send("hardware 1-200000 vw 88 0");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(6, b("vw 88 0"))));
@@ -158,7 +154,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.send("createWidget 1\0{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
@@ -189,7 +185,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         hardClient2.send("login " + devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         device1.status = Status.ONLINE;
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-1")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
 
 
         //login with shared app
@@ -201,7 +197,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         appClient2.send("hardware 1-200000 vw 88 1");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("vw 88 1"))));
         verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(2, b("vw 88 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(2, b("1-200000 vw 88 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(2, b("1-200000 vw 88 1"))));
 
         clientPair.hardwareClient.send("hardware vw 88 value_from_device_0");
         hardClient2.send("hardware vw 88 value_from_device_1");
@@ -217,26 +213,26 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
         verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new HardwareMessage(3, b("vu 200000 1"))));
         verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(3, b("vu 200000 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(3, b("1 vu 200000 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-1 vw 88 value_from_device_1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(3, b("1 vu 200000 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-1 vw 88 value_from_device_1"))));
 
         appClient2.send("hardware 1-200000 vw 88 2");
         verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new HardwareMessage(4, b("vw 88 2"))));
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(4, b("vw 88 2"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(4, b("1-200000 vw 88 2"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(4, b("1-200000 vw 88 2"))));
 
         //change device back
         appClient2.send("hardware 1 vu 200000 0");
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
         verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new HardwareMessage(5, b("vu 200000 0"))));
         verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(5, b("vu 200000 0"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(5, b("1 vu 200000 0"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 vw 88 value_from_device_0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(5, b("1 vu 200000 0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 88 value_from_device_0"))));
 
         appClient2.send("hardware 1-200000 vw 88 0");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(6, b("vw 88 0"))));
         verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(6, b("vw 88 0"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(6, b("1-200000 vw 88 0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(6, b("1-200000 vw 88 0"))));
     }
 
     @Test
@@ -251,7 +247,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.send("createWidget 1\0{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Button\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
@@ -343,7 +339,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.send("createWidget 1\0{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Button\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
@@ -365,7 +361,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         assertEqualDevice(device1, devices[1]);
 
         clientPair.hardwareClient.send("setProperty 89 label 123");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1-0 89 label 123"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 89 label 123")));
     }
 
     @Test
@@ -376,8 +372,8 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 89 1"))));
 
         clientPair.appClient.send("activate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1111, b("1-0 89 label 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(1111, b("1-0 vw 89 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1111, "1-0 89 label 123")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(1111, b("1-0 vw 89 1"))));
     }
 
     @Test
@@ -392,7 +388,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.send("createWidget 1\0{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Button\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
@@ -412,21 +408,21 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         assertEqualDevice(device1, devices[1]);
 
         clientPair.hardwareClient.send("setProperty 88 label 123");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1, b("1-0 88 label 123"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 88 label 123")));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
         hardClient2.send("login " + devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-1")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
 
         hardClient2.send("setProperty 88 label 124");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(2, b("1-1 88 label 124"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(2, "1-1 88 label 124")));
 
         clientPair.appClient.send("hardware 1 vu 200000 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(1111, b("1-1 88 label 124"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1111, "1-1 88 label 124")));
     }
 
     @Test
@@ -441,7 +437,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.send("createWidget 1\0{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Button\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
@@ -467,7 +463,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
 
         hardClient2.send("login " + devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-1")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
         device1.status = Status.ONLINE;
 
         clientPair.hardwareClient.send("hardware vw 89 value_from_device_0");
@@ -487,7 +483,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(3, b("vu 200000 1"))));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-1 vw 89 value_from_device_1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-1 vw 89 value_from_device_1"))));
 
         //switch device back, expecting syncs and OK
         clientPair.appClient.send("hardware 1 vu 200000 0");
@@ -495,8 +491,8 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new HardwareMessage(4, b("vu 200000 0"))));
         verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(4, b("vu 200000 0"))));
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 vw 89 value_from_device_0"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 vw 88 100"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 89 value_from_device_0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 88 100"))));
     }
 
     @Test
@@ -511,7 +507,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.send(("createWidget 1\0{\"type\":\"TIME_INPUT\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
@@ -537,7 +533,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
 
         hardClient2.send("login " + devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-1")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
         device1.status = Status.ONLINE;
 
         clientPair.appClient.send("hardware 1 vw " + b("99 82800 82860 Europe/Kiev 1"));
@@ -556,17 +552,17 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(4, b("vu 200000 0"))));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 dw 1 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 dw 2 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 aw 3 0"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 dw 5 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 vw 4 244"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 aw 7 3"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 aw 30 3"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 vw 0 89.888037459418"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 vw 1 -58.74774244674501"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 vw 13 60 143 158"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 vw 99 82800 82860 Europe/Kiev 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 2 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 3 0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 5 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 4 244"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 7 3"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 30 3"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 0 89.888037459418"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 1 -58.74774244674501"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 13 60 143 158"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 99 82800 82860 Europe/Kiev 1"))));
     }
 
     @Test
@@ -581,7 +577,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.send("createWidget 1\0{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Button\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
@@ -594,8 +590,8 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("appsync 1");
         verify(clientPair.appClient.responseMock, timeout(1000).times(15)).channelRead(any(), any());
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
-        verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(new AppSyncMessage(b("1-200000 vw 88 100"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new AppSyncMessage(b("1-0 vw 88 100"))));
+        verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(appSync(b("1-200000 vw 88 100"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 88 100"))));
     }
 
     @Test
@@ -610,7 +606,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.send("createWidget 1\0{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Button\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");

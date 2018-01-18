@@ -3,7 +3,6 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.protocol.model.messages.hardware.BridgeMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
@@ -13,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 
+import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
@@ -86,7 +86,7 @@ public class BridgeLogic {
             if (session.hardwareChannels.size() > 1) {
                 boolean messageWasSent = false;
                 final String body = message.body.substring(message.body.indexOf(StringUtils.BODY_SEPARATOR_STRING) + 1);
-                BridgeMessage bridgeMessage = new BridgeMessage(message.id, body);
+                StringMessage bridgeMessage = new StringMessage(message.id, BRIDGE, body);
                 for (Channel channel : session.hardwareChannels) {
                     if (channel != ctx.channel() && channel.isWritable()) {
                         HardwareStateHolder hardwareState = getHardState(channel);

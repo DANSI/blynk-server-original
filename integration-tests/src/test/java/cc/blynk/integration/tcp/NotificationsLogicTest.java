@@ -10,9 +10,6 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
-import cc.blynk.server.core.protocol.model.messages.appllication.DeviceOfflineMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
@@ -166,7 +163,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.stop();
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new DeviceOfflineMessage(0, "1-0")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(deviceOffline(0, "1-0")));
     }
 
     @Test
@@ -187,7 +184,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         newHardClient.stop();
-        verify(clientPair.appClient.responseMock, timeout(1500)).channelRead(any(), eq(new DeviceOfflineMessage(0, "1-0")));
+        verify(clientPair.appClient.responseMock, timeout(1500)).channelRead(any(), eq(deviceOffline(0, "1-0")));
     }
 
     @Test
@@ -206,7 +203,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("getToken 1-1");
         String token = clientPair.appClient.getBody(2);
@@ -215,10 +212,10 @@ public class NotificationsLogicTest extends IntegrationBase {
         newHardClient.start();
         newHardClient.send("login " + token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-1")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
 
         newHardClient.stop();
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new DeviceOfflineMessage(0, "1-1")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(deviceOffline(0, "1-1")));
     }
 
     @Test
@@ -545,8 +542,8 @@ public class NotificationsLogicTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.stop();
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new DeviceOfflineMessage(0, "1-0")));
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new DeviceOfflineMessage(0, "1-0")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(deviceOffline(0, "1-0")));
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(deviceOffline(0, "1-0")));
     }
 
 

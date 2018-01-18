@@ -9,7 +9,6 @@ import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.asynchttpclient.AsyncHttpClient;
@@ -93,10 +92,10 @@ public class MultiAppTest extends IntegrationBase {
 
         hardClient1.send("login " + token1);
         verify(hardClient1.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
-        verify(appClient1.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-0")));
+        verify(appClient1.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "1-0")));
         hardClient2.send("login " + token2);
         verify(hardClient2.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
-        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareConnectedMessage(1, "1-0")));
+        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "1-0")));
 
         hardClient1.send("hardware vw 1 100");
         verify(appClient1.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 1 100"))));

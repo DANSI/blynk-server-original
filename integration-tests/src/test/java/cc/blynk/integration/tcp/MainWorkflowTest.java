@@ -20,9 +20,6 @@ import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.AppIsOutdatedNotification;
-import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.StringUtils;
@@ -1136,12 +1133,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getToken 2");
 
         //getting token for second GetTokenMessage
-        ArgumentCaptor<GetTokenMessage> objectArgumentCaptor = ArgumentCaptor.forClass(GetTokenMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(2000).times(1)).channelRead(any(), objectArgumentCaptor.capture());
-        List<GetTokenMessage> arguments = objectArgumentCaptor.getAllValues();
-        GetTokenMessage getTokenMessage = arguments.get(0);
-        String token = getTokenMessage.body;
-
+        String token = clientPair.appClient.getBody();
         clientPair.appClient.reset();
 
         //connecting separate hardware to non active dashboard
@@ -1156,7 +1148,7 @@ public class MainWorkflowTest extends IntegrationBase {
         nonActiveDashHardClient.send("hardware aw 1 1");
         //verify(nonActiveDashHardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, NO_ACTIVE_DASHBOARD)));
         verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), any());
-        verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), eq(new HardwareConnectedMessage(1, "2-0")));
+        verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), eq(hardwareConnected(1, "2-0")));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.hardwareClient.responseMock, after(1000).never()).channelRead(any(), any());
@@ -1301,7 +1293,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.send("login dima@mail.ua 1 Android" + "\0" + "1.1.1");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(
-                new AppIsOutdatedNotification(1,
+                appIsOutdated(1,
                         "Your app is outdated. Please update to the latest app version. " +
                                 "Ignoring this notice may affect your projects.")));
     }
@@ -1313,7 +1305,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.send("login dima@mail.ua 1 Android" + "\0" + "1.1.2");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(appClient.responseMock, never()).channelRead(any(), eq(
-                new AppIsOutdatedNotification(1,
+                appIsOutdated(1,
                         "Your app is outdated. Please update to the latest app version. " +
                                 "Ignoring this notice may affect your projects.")));
     }

@@ -7,16 +7,16 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
-import cc.blynk.server.core.protocol.model.messages.appllication.GetTokenMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -26,6 +26,16 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
+import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
+import static cc.blynk.server.core.protocol.enums.Command.DEVICE_OFFLINE;
+import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICATION;
+import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
@@ -69,10 +79,10 @@ public abstract class IntegrationBase extends BaseTest {
         return readTestUserProfile(null);
     }
 
-    protected static GetTokenMessage getGetTokenMessage(List<Object> arguments) {
+    protected static StringMessage getGetTokenMessage(List<Object> arguments) {
         for (Object obj : arguments) {
-            if (obj instanceof GetTokenMessage) {
-                return (GetTokenMessage) obj;
+            if (((MessageBase)obj).command == GET_TOKEN) {
+                return (StringMessage) obj;
             }
         }
         throw new RuntimeException("Get token message wasn't retrieved.");
@@ -100,12 +110,56 @@ public abstract class IntegrationBase extends BaseTest {
         return new ResponseMessage(msgId, OK);
     }
 
-    public static SetWidgetPropertyMessage setProperty(int msgId, String body) {
-        return new SetWidgetPropertyMessage(msgId, b(body));
+    public static StringMessage internal(int msgId, String body) {
+        return new StringMessage(msgId, BLYNK_INTERNAL, b(body));
+    }
+
+    public static StringMessage hardwareConnected(int msgId, String body) {
+        return new StringMessage(msgId, HARDWARE_CONNECTED, body);
+    }
+
+    public static GetServerMessage getServer(int msgId, String body) {
+        return new GetServerMessage(msgId, body);
+    }
+
+    public static StringMessage deviceOffline(int msgId, String body) {
+        return new StringMessage(msgId, DEVICE_OFFLINE, body);
+    }
+
+    public static StringMessage createTag(int msgId, Tag tag) {
+        return createTag(msgId, tag.toString());
+    }
+
+    public static StringMessage createTag(int msgId, String body) {
+        return new StringMessage(msgId, CREATE_TAG, body);
+    }
+
+    public static StringMessage appIsOutdated(int msgId, String body) {
+        return new StringMessage(msgId, OUTDATED_APP_NOTIFICATION, body);
+    }
+
+    public static StringMessage appSync(int msgId, String body) {
+        return new StringMessage(msgId, APP_SYNC, body);
+    }
+
+    public static StringMessage appSync(String body) {
+        return appSync(AppSyncWidget.SYNC_DEFAULT_MESSAGE_ID, body);
+    }
+
+    public static StringMessage setProperty(int msgId, String body) {
+        return new StringMessage(msgId, SET_WIDGET_PROPERTY, b(body));
+    }
+
+    public static StringMessage createDevice(int msgId, String body) {
+        return new StringMessage(msgId, CREATE_DEVICE, body);
     }
 
     public static StringMessage createDevice(int msgId, Device device) {
-        return new CreateDevice(msgId, device.toString());
+        return createDevice(msgId, device.toString());
+    }
+
+    public static StringMessage connectRedirect(int msgId, String body) {
+        return new StringMessage(msgId, CONNECT_REDIRECT, b(body));
     }
 
     public static ResponseMessage serverError(int msgId) {
@@ -184,7 +238,7 @@ public abstract class IntegrationBase extends BaseTest {
 
         hardClient.send("login " + token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
-        verify(appClient.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareConnectedMessage(1, "" + dashId + "-0")));
+        verify(appClient.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "" + dashId + "-0")));
 
         appClient.reset();
         hardClient.reset();

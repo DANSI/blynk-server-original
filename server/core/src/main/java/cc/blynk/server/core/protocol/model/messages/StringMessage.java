@@ -7,12 +7,12 @@ import java.nio.charset.StandardCharsets;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public abstract class StringMessage extends MessageBase {
+public class StringMessage extends MessageBase {
 
     public final String body;
 
-    public StringMessage(int messageId, short command, int length, String body) {
-        super(messageId, command, length);
+    public StringMessage(int messageId, short command, String body) {
+        super(messageId, command, body.length());
         this.body = body;
     }
 

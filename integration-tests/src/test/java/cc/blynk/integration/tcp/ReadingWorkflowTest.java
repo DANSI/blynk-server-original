@@ -8,7 +8,6 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
 import org.junit.Before;
@@ -131,7 +130,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         device2 = JsonParser.parseDevice(createdDevice);
         assertNotNull(device2);
         assertNotNull(device2.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device2.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device2.toString())));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -163,7 +162,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         device2 = JsonParser.parseDevice(createdDevice);
         assertNotNull(device2);
         assertNotNull(device2.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device2.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device2.toString())));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -202,7 +201,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         device2 = JsonParser.parseDevice(createdDevice);
         assertNotNull(device2);
         assertNotNull(device2.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device2.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device2.toString())));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -259,7 +258,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         device2 = JsonParser.parseDevice(createdDevice);
         assertNotNull(device2);
         assertNotNull(device2.token);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new CreateDevice(1, device2.toString())));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createDevice(1, device2.toString())));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();

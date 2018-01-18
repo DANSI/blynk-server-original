@@ -5,7 +5,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.protocol.model.messages.hardware.BlynkInternalMessage;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.logic.BlynkInternalLogic;
 import cc.blynk.utils.properties.ServerProperties;
@@ -21,6 +21,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
+import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.eq;
@@ -71,7 +72,9 @@ public class BlynkInternalLogicTest {
         Device device = new Device();
         HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(user, dashBoard, device);
 
-        BlynkInternalMessage hardwareInfoLogic = new BlynkInternalMessage(1, "ver 0.3.2-beta h-beat 60 buff-in 256 dev ESP8266".replaceAll(" ", "\0"));
+        StringMessage hardwareInfoLogic =
+                new StringMessage(1, BLYNK_INTERNAL,
+                        "ver 0.3.2-beta h-beat 60 buff-in 256 dev ESP8266".replaceAll(" ", "\0"));
         logic.messageReceived(ctx, hardwareStateHolder, hardwareInfoLogic);
 
         verify(pipeline).replace(eq(IdleStateHandler.class), eq("H_IdleStateHandler_Replaced"), any());

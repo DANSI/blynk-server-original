@@ -12,7 +12,6 @@ import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareConnectedMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import io.netty.channel.ChannelFuture;
 import org.junit.After;
@@ -136,7 +135,7 @@ public class FacebookLoginTest extends IntegrationBase {
 
         hardClient.send("login " + token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
-        verify(appClient.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareConnectedMessage(1, String.valueOf(dashId))));
+        verify(appClient.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, String.valueOf(dashId))));
 
         appClient.reset();
         hardClient.reset();

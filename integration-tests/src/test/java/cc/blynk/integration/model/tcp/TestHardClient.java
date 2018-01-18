@@ -7,7 +7,6 @@ import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -18,6 +17,7 @@ import org.mockito.Mockito;
 import java.util.List;
 import java.util.Random;
 
+import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -56,7 +56,7 @@ public class TestHardClient extends BaseClient {
         MessageBase messageBase = arguments.get(expectedMessageOrder - 1);
         if (messageBase instanceof StringMessage) {
             return ((StringMessage) messageBase).body;
-        } else if (messageBase instanceof LoadProfileGzippedBinaryMessage) {
+        } else if (messageBase.command == LOAD_PROFILE_GZIPPED) {
             return new String(BaseTest.decompress(messageBase.getBytes()));
         }
 

@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Button;
-import cc.blynk.server.core.protocol.model.messages.appllication.SetWidgetPropertyMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
@@ -86,7 +85,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(111, b("1-0 4 label My-New-Label"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(111, "1-0 4 label My-New-Label")));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -105,7 +104,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(111, b("1-0 4 color #000000"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(111, "1-0 4 color #000000")));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -127,7 +126,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(111, b("1-0 1 onLabel newOnButtonLabel"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(111, "1-0 1 onLabel newOnButtonLabel")));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -150,7 +149,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new SetWidgetPropertyMessage(111, b("1-0 1 offLabel newOffButtonLabel"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(111, "1-0 1 offLabel newOffButtonLabel")));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
