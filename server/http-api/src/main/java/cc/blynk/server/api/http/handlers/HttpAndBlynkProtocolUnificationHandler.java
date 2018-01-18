@@ -13,7 +13,6 @@ import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
-import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -117,7 +116,8 @@ public class HttpAndBlynkProtocolUnificationHandler extends ByteToMessageDecoder
                 .addLast("AReadTimeout", new IdleStateHandler(600, 0, 0))
                 .addLast("AChannelState", appChannelStateHandler)
                 .addLast("AMessageDecoder", new MessageDecoder(holder.stats))
-                .addLast("AMessageEncoder", new MessageEncoder(holder.stats))
+                //this encoder is no longer used as we form messages right on write()
+                //.addLast("AMessageEncoder", new MessageEncoder(holder.stats))
                 .addLast("AGetServer", getServerHandler)
                 .addLast("ARegister", registerHandler)
                 .addLast("ALogin", appLoginHandler)
