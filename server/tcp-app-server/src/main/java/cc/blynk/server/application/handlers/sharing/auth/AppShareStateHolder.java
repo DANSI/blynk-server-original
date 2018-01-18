@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.sharing.auth;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.application.handlers.main.auth.Version;
+import cc.blynk.server.core.dao.SharedTokenManager;
 import cc.blynk.server.core.model.auth.User;
 
 /**
@@ -22,7 +23,7 @@ public final class AppShareStateHolder extends AppStateHolder {
 
     @Override
     public boolean contains(String sharedToken) {
-        return sharedToken != null && token.equals(sharedToken);
+        return sharedToken != null && (token.equals(sharedToken) || SharedTokenManager.ALL.equals(sharedToken));
     }
 
     @Override

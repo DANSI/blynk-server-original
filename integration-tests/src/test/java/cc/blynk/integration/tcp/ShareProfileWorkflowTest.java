@@ -606,6 +606,32 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testDeactivateOnLogout() throws Exception {
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient3.start();
+        appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("deactivate");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "")));
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "")));
+    }
+
+    @Test
     public void loadGzippedProfileForSharedBoard() throws Exception{
         clientPair.appClient.send("getShareToken 1");
 

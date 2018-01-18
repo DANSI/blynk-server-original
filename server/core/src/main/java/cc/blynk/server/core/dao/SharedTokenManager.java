@@ -13,9 +13,11 @@ import java.util.concurrent.ConcurrentMap;
  * Created by Dmitriy Dumanskiy.
  * Created on 22.09.15.
  */
-class SharedTokenManager {
+public class SharedTokenManager {
 
     private static final Logger log = LogManager.getLogger(SharedTokenManager.class);
+
+    public static final String ALL = "*";
 
     protected final ConcurrentMap<String, SharedTokenValue> cache;
 
