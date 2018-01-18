@@ -1,21 +1,18 @@
 package cc.blynk.server.api.http;
 
-import cc.blynk.core.http.handlers.OTAHandler;
-import cc.blynk.core.http.handlers.StaticFile;
-import cc.blynk.core.http.handlers.StaticFileEdsWith;
-import cc.blynk.core.http.handlers.StaticFileHandler;
-import cc.blynk.core.http.handlers.UrlReWriterHandler;
 import cc.blynk.server.Holder;
+import cc.blynk.server.api.http.handlers.HttpAndBlynkProtocolUnificationHandler;
 import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
+import cc.blynk.server.application.handlers.main.AppChannelStateHandler;
+import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
+import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
+import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
+import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.dao.CSVGenerator;
+import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.http.HttpServerKeepAliveHandler;
-import io.netty.handler.stream.ChunkedWriteHandler;
 
 /**
  * The Blynk Project.
@@ -30,6 +27,13 @@ public class HttpsAPIServer extends BaseServer {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 
+        final AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
+        final RegisterHandler registerHandler = new RegisterHandler(holder);
+        final AppLoginHandler appLoginHandler = new AppLoginHandler(holder);
+        final AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder);
+        final UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
+        final GetServerHandler getServerHandler = new GetServerHandler(holder);
+
         final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
                 new HttpAndWebSocketUnificatorHandler(holder, port);
         final LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
@@ -39,17 +43,16 @@ public class HttpsAPIServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline()
                 .addLast("HttpsSslContext", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
-                .addLast("HttpsServerCodec", new HttpServerCodec())
-                .addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler())
-                .addLast("HttpsObjectAggregator", new HttpObjectAggregator(holder.limits.webRequestMaxSize, true))
-                .addLast(letsEncryptHandler)
-                .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
-                .addLast("HttpUrlMapper", new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
-                .addLast("HttpStaticFile", new StaticFileHandler(holder.props, new StaticFile("/static"),
-                                           new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
-                .addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler)
-                .addLast(new OTAHandler(holder,
-                        httpAndWebSocketUnificatorHandler.rootPath + "/ota/start", "/static/ota"));
+                .addLast("HttpAndBlynkProtocolUnificator", new HttpAndBlynkProtocolUnificationHandler(
+                        holder,
+                        appChannelStateHandler,
+                        registerHandler,
+                        appLoginHandler,
+                        appShareLoginHandler,
+                        userNotLoggedHandler,
+                        getServerHandler,
+                        httpAndWebSocketUnificatorHandler,
+                        letsEncryptHandler));
             }
         };
     }
