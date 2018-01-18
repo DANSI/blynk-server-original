@@ -8,11 +8,9 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.StringUtils;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
-import static cc.blynk.utils.AppStateHolderUtil.getAppState;
 
 /**
  * The Blynk Project.
@@ -46,12 +44,7 @@ public class ShareLogic {
         }
 
         Session session = sessionDao.userSession.get(state.userKey);
-        for (Channel appChannel : session.appChannels) {
-            if (appChannel != ctx.channel() && getAppState(appChannel) != null && appChannel.isWritable()) {
-                appChannel.writeAndFlush(message, appChannel.voidPromise());
-            }
-        }
-
+        session.sendToSharedApps(ctx.channel(), dash.sharedToken, message.command, message.id, message.body);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 }
