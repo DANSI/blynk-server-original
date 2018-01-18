@@ -30,10 +30,8 @@ public class HttpsAPIServer extends BaseServer {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 
-        String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
-
         final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
-                new HttpAndWebSocketUnificatorHandler(holder, port, adminRootPath);
+                new HttpAndWebSocketUnificatorHandler(holder, port);
         final LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
@@ -50,7 +48,8 @@ public class HttpsAPIServer extends BaseServer {
                 .addLast("HttpStaticFile", new StaticFileHandler(holder.props, new StaticFile("/static"),
                                            new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
                 .addLast("HttpsWebSocketUnificator", httpAndWebSocketUnificatorHandler)
-                .addLast(new OTAHandler(holder, adminRootPath + "/ota/start", "/static/ota"));
+                .addLast(new OTAHandler(holder,
+                        httpAndWebSocketUnificatorHandler.rootPath + "/ota/start", "/static/ota"));
             }
         };
     }

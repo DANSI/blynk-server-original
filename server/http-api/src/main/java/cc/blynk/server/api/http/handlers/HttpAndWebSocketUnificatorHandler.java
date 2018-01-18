@@ -56,7 +56,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     private final GlobalStats stats;
 
     private final WebSocketsGenericLoginHandler genericLoginHandler;
-    private final String rootPath;
+    public final String rootPath;
     private final IpFilterHandler ipFilterHandler;
     private final AuthCookieHandler authCookieHandler;
 
@@ -74,11 +74,11 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
 
     private final ServerProperties props;
 
-    public HttpAndWebSocketUnificatorHandler(Holder holder, int port, String rootPath) {
+    public HttpAndWebSocketUnificatorHandler(Holder holder, int port) {
         this.region = holder.region;
         this.stats = holder.stats;
         this.genericLoginHandler = new WebSocketsGenericLoginHandler(holder, port);
-        this.rootPath = rootPath;
+        this.rootPath = holder.props.getAdminRootPath();
         this.props = holder.props;
         this.ipFilterHandler = new IpFilterHandler(
                 holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips"));

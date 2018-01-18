@@ -30,10 +30,8 @@ public class HttpAPIServer extends BaseServer {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
 
-        String adminRootPath = holder.props.getProperty("admin.rootPath", "/admin");
-
         final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
-                new HttpAndWebSocketUnificatorHandler(holder, port, adminRootPath);
+                new HttpAndWebSocketUnificatorHandler(holder, port);
         final LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
