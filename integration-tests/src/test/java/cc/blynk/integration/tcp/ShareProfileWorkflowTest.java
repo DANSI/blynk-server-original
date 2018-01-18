@@ -396,6 +396,33 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void checkSharingMessageWasReceivedMultipleRecievers() throws Exception {
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient3.start();
+        appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("sharing 1 off");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, b("1 off"))));
+        verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, b("1 off"))));
+    }
+
+    @Test
     public void checkSharingMessageWasReceivedAlsoForNonSharedApp() throws Exception {
         clientPair.appClient.send("getShareToken 1");
 
