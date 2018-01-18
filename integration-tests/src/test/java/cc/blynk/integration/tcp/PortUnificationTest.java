@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class NewProtocolChangeTest extends IntegrationBase {
+public class PortUnificationTest extends IntegrationBase {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;
