@@ -2,16 +2,16 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.Redeem;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
+import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * Handler responsible for handling redeem logic. Unlocks premium content for predefined tokens.
@@ -40,22 +40,22 @@ public class RedeemLogic {
                 ctx.writeAndFlush(verifyToken(message, redeemToken, user), ctx.voidPromise()));
     }
 
-    private ResponseMessage verifyToken(StringMessage message, String redeemToken, User user) {
+    private ByteBuf verifyToken(StringMessage message, String redeemToken, User user) {
         try {
             Redeem redeem = dbManager.selectRedeemByToken(redeemToken);
             if (redeem != null) {
                 if (redeem.isRedeemed && redeem.email.equals(user.email)) {
-                    return new ResponseMessage(message.id, OK);
+                    return ok(message.id);
                 } else if (!redeem.isRedeemed && dbManager.updateRedeem(user.email, redeemToken)) {
                     unlockContent(user, redeem.reward);
-                    return new ResponseMessage(message.id, OK);
+                    return ok(message.id);
                 }
             }
         } catch (Exception e) {
             log.debug("Error redeeming token.", e);
         }
 
-        return new ResponseMessage(message.id, NOT_ALLOWED);
+        return notAllowed(message.id);
     }
 
     private void unlockContent(User user, int reward) {
