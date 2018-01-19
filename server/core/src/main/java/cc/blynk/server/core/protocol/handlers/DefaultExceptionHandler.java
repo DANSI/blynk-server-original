@@ -45,7 +45,7 @@ public interface DefaultExceptionHandler {
                 log.debug("Input command is invalid. Closing socket. Reason {}. Address {}",
                         cause.getMessage(), ctx.channel().remoteAddress());
             } else if (cause.getCause() instanceof SSLException) {
-                log.debug("Unsecured connection attempt. Channel : {}. Reason : {}",
+                log.debug("Unsecured connection attempt or not supported protocol. Channel : {}. Reason : {}",
                         ctx.channel().remoteAddress(), cause.getMessage());
             } else {
                 log.error("DecoderException.", cause);

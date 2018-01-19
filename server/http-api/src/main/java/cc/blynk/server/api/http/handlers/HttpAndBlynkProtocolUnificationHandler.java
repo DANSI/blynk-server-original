@@ -12,6 +12,7 @@ import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.core.dao.CSVGenerator;
+import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
@@ -34,7 +35,7 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 18.01.18.
  */
-public class HttpAndBlynkProtocolUnificationHandler extends ByteToMessageDecoder {
+public class HttpAndBlynkProtocolUnificationHandler extends ByteToMessageDecoder implements DefaultExceptionHandler {
 
     private static final Logger log = LogManager.getLogger(HttpAndBlynkProtocolUnificationHandler.class);
 
@@ -138,4 +139,8 @@ public class HttpAndBlynkProtocolUnificationHandler extends ByteToMessageDecoder
             magic1 == 'C' && magic2 == 'O';   // CONNECT
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        handleUnexpectedException(ctx, cause);
+    }
 }
