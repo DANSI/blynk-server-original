@@ -71,10 +71,15 @@ final class ArgumentsParser {
             ParseUtil.parseInt(hardPort);
             properties.put("hardware.default.port", hardPort);
         }
+
+        //todo remove
+        //deprecated. should be removed in future versions
+        //just for back compatibility for now
         if (appPort != null) {
             ParseUtil.parseInt(appPort);
             properties.put("app.ssl.port", appPort);
         }
+
         if (workerThreadsString != null) {
             ParseUtil.parseInt(workerThreadsString);
             properties.put("server.worker.threads", workerThreadsString);

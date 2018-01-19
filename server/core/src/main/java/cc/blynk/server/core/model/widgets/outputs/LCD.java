@@ -6,9 +6,9 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.structure.LimitedArrayDeque;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
@@ -109,7 +109,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
         }
         for (DataStream dataStream : dataStreams) {
             if (dataStream.isValid()) {
-                ByteBuf msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID,
+                StringMessage msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID,
                         DataStream.makeReadingHardwareBody(dataStream.pinType.pintTypeChar, dataStream.pin));
                 channel.write(msg, channel.voidPromise());
             }

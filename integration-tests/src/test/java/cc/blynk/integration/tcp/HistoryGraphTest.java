@@ -3,7 +3,7 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.application.AppServer;
+import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DataStream;
@@ -82,7 +82,7 @@ public class HistoryGraphTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
+        this.appServer = new HttpsAPIServer(holder).start();
 
         this.clientPair = initAppAndHardPair();
     }

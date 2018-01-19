@@ -5,7 +5,7 @@ import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.application.AppServer;
+import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.properties.ServerProperties;
@@ -43,7 +43,7 @@ public class SimplePerformanceTest extends IntegrationBase {
     public void init() throws Exception {
         this.sharedNioEventLoopGroup = new NioEventLoopGroup();
         this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
+        this.appServer = new HttpsAPIServer(holder).start();
     }
 
 

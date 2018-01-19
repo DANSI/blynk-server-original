@@ -1,7 +1,7 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.server.api.http.HttpAPIServer;
+import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.utils.AppNameUtil;
 import org.apache.http.NameValuePair;
@@ -51,7 +51,7 @@ public class HttpResetPassTest extends BaseTest {
         // Allow TLSv1 protocol only
         this.httpclient = HttpClients.createDefault();
 
-        httpServer = new HttpAPIServer(holder).start();
+        httpServer = new AppAndHttpsServer(holder).start();
     }
 
     @Override

@@ -5,7 +5,7 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.AppServer;
+import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
@@ -59,16 +59,16 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
     public void init() throws Exception {
         holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
         hardwareServer1 = new HardwareServer(holder).start();
-        appServer1 = new AppServer(holder).start();
+        appServer1 = new HttpsAPIServer(holder).start();
 
         properties2 = new ServerProperties("server2.properties");
         properties2.setProperty("data.folder", getDataFolder());
 
         this.holder2 = new Holder(properties2, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
         hardwareServer2 = new HardwareServer(holder2).start();
-        appServer2 = new AppServer(holder2).start();
+        appServer2 = new HttpsAPIServer(holder2).start();
         plainHardPort2 = properties2.getIntProperty("hardware.default.port");
-        tcpAppPort2 = properties2.getIntProperty("app.ssl.port");
+        tcpAppPort2 = properties2.getIntProperty("https.port");
 
         holder.dbManager.executeSQL("DELETE FROM users");
         holder.dbManager.executeSQL("DELETE FROM forwarding_tokens");

@@ -6,11 +6,11 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.utils.AppNameUtil;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,7 +67,7 @@ public class GetProjectByTokenLogic {
 
     public static void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
         if (ctx.channel().isWritable()) {
-            ByteBuf outputMsg = makeBinaryMessage(GET_PROJECT_BY_TOKEN, msgId, data);
+            BinaryMessage outputMsg = makeBinaryMessage(GET_PROJECT_BY_TOKEN, msgId, data);
             ctx.writeAndFlush(outputMsg, ctx.voidPromise());
         }
     }

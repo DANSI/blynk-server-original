@@ -6,11 +6,11 @@ import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,7 +48,7 @@ public class GetCloneCodeLogic {
         String json = JsonParser.toJsonRestrictiveDashboard(dash);
 
         blockingIOProcessor.executeDB(() -> {
-            ByteBuf result;
+            MessageBase result;
             try {
                 boolean insertStatus = dbManager.insertClonedProject(token, json);
                 if (insertStatus || fileManager.writeCloneProjectToDisk(token, json)) {

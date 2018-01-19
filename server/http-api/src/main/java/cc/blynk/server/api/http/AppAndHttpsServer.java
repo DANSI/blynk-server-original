@@ -21,12 +21,12 @@ import io.netty.handler.stream.ChunkedWriteHandler;
  * Created by Dmitriy Dumanskiy.
  * Created on 1/12/2015.
  */
-public class HttpAPIServer extends BaseServer {
+public class AppAndHttpsServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
     public static final String WEBSOCKET_PATH = "/websocket";
 
-    public HttpAPIServer(Holder holder) {
+    public AppAndHttpsServer(Holder holder) {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
 

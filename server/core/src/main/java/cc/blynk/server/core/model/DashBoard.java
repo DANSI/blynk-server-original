@@ -19,10 +19,10 @@ import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.workers.timer.TimerWorker;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
 import java.util.ArrayList;
@@ -358,7 +358,7 @@ public class DashBoard {
         for (Map.Entry<PinStorageKey, String> entry : pinsStorage.entrySet()) {
             PinStorageKey key = entry.getKey();
             if ((targetId == ANY_TARGET || targetId == key.deviceId) && appChannel.isWritable()) {
-                ByteBuf byteBuf = key.makeByteBuf(dashId, entry.getValue());
+                StringMessage byteBuf = key.toStringMessage(dashId, entry.getValue());
                 appChannel.write(byteBuf, appChannel.voidPromise());
             }
         }

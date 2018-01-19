@@ -2,7 +2,7 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.application.AppServer;
+import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
@@ -43,7 +43,7 @@ public class TableCommandsTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         hardwareServer = new HardwareServer(holder).start();
-        appServer = new AppServer(holder).start();
+        appServer = new HttpsAPIServer(holder).start();
 
         if (clientPair == null) {
             clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);

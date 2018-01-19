@@ -2,10 +2,10 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.Redeem;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +40,7 @@ public class RedeemLogic {
                 ctx.writeAndFlush(verifyToken(message, redeemToken, user), ctx.voidPromise()));
     }
 
-    private ByteBuf verifyToken(StringMessage message, String redeemToken, User user) {
+    private MessageBase verifyToken(StringMessage message, String redeemToken, User user) {
         try {
             Redeem redeem = dbManager.selectRedeemByToken(redeemToken);
             if (redeem != null) {

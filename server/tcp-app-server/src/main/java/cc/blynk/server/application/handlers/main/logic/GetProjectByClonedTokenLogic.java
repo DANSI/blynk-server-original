@@ -3,10 +3,10 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.ByteUtils;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +39,7 @@ public class GetProjectByClonedTokenLogic {
         String token = message.body;
 
         blockingIOProcessor.executeDB(() -> {
-            ByteBuf result;
+            MessageBase result;
             try {
                 String json = dbManager.selectClonedProject(token);
                 //no cloned project in DB, checking local storage on disk

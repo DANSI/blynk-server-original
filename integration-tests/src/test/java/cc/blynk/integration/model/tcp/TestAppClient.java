@@ -1,10 +1,10 @@
 package cc.blynk.integration.model.tcp;
 
 import cc.blynk.client.core.AppClient;
-import cc.blynk.client.handlers.decoders.ClientMessageDecoder;
+import cc.blynk.client.handlers.decoders.AppClientMessageDecoder;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.SimpleClientHandler;
-import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
+import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -77,8 +77,8 @@ public class TestAppClient extends AppClient {
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(
                         sslCtx.newHandler(ch.alloc(), host, port),
-                        new ClientMessageDecoder(),
-                        new MessageEncoder(new GlobalStats()),
+                        new AppClientMessageDecoder(),
+                        new AppMessageEncoder(new GlobalStats()),
                         responseMock
                 );
             }

@@ -1,9 +1,10 @@
 package cc.blynk.server.internal;
 
-import cc.blynk.server.core.protocol.enums.Command;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufUtil;
+import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+
+import java.nio.charset.StandardCharsets;
 
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_OFFLINE;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
@@ -21,9 +22,7 @@ import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
 import static cc.blynk.server.core.protocol.enums.Response.USER_ALREADY_REGISTERED;
 import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
 import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_REGISTERED;
-import static cc.blynk.server.core.protocol.model.messages.MessageBase.HEADER_LENGTH;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
-import static io.netty.buffer.ByteBufAllocator.DEFAULT;
 
 /**
  * Utility class that creates native netty buffers instead of java objects.
@@ -38,106 +37,85 @@ public final class CommonByteBufUtil {
     private CommonByteBufUtil() {
     }
 
-    public static ByteBuf notificationError(int msgId) {
+    public static ResponseMessage notificationError(int msgId) {
         return makeResponse(msgId, NOTIFICATION_ERROR);
     }
 
-    public static ByteBuf deviceNotInNetwork(int msgId) {
+    public static ResponseMessage deviceNotInNetwork(int msgId) {
         return makeResponse(msgId, DEVICE_NOT_IN_NETWORK);
     }
 
-    public static ByteBuf noActiveDash(int msgId) {
+    public static ResponseMessage noActiveDash(int msgId) {
         return makeResponse(msgId, NO_ACTIVE_DASHBOARD);
     }
 
-    public static ByteBuf notAllowed(int msgId) {
+    public static ResponseMessage notAllowed(int msgId) {
         return makeResponse(msgId, NOT_ALLOWED);
     }
 
-    public static ByteBuf illegalCommandBody(int msgId) {
+    public static ResponseMessage illegalCommandBody(int msgId) {
         return makeResponse(msgId, ILLEGAL_COMMAND_BODY);
     }
 
-    public static ByteBuf illegalCommand(int msgId) {
+    public static ResponseMessage illegalCommand(int msgId) {
         return makeResponse(msgId, ILLEGAL_COMMAND);
     }
 
-    public static ByteBuf invalidToken(int msgId) {
+    public static ResponseMessage invalidToken(int msgId) {
         return makeResponse(msgId, INVALID_TOKEN);
     }
 
-    public static ByteBuf alreadyRegistered(int msgId) {
+    public static ResponseMessage alreadyRegistered(int msgId) {
         return makeResponse(msgId, USER_ALREADY_REGISTERED);
     }
 
-    public static ByteBuf serverError(int msgId) {
+    public static ResponseMessage serverError(int msgId) {
         return makeResponse(msgId, SERVER_ERROR);
     }
 
-    public static ByteBuf noData(int msgId) {
+    public static ResponseMessage noData(int msgId) {
         return makeResponse(msgId, NO_DATA);
     }
 
-    public static ByteBuf ok(int msgId) {
+    public static ResponseMessage ok(int msgId) {
         return makeResponse(msgId, OK);
     }
 
-    public static ByteBuf notRegistered(int msgId) {
+    public static ResponseMessage notRegistered(int msgId) {
         return makeResponse(msgId, USER_NOT_REGISTERED);
     }
 
-    public static ByteBuf facebookUserLoginWithPass(int msgId) {
+    public static ResponseMessage facebookUserLoginWithPass(int msgId) {
         return makeResponse(msgId, FACEBOOK_USER_LOGIN_WITH_PASS);
     }
 
-    public static ByteBuf notAuthenticated(int msgId) {
+    public static ResponseMessage notAuthenticated(int msgId) {
         return makeResponse(msgId, USER_NOT_AUTHENTICATED);
     }
 
-    public static ByteBuf notificationNotAuthorized(int msgId) {
+    public static ResponseMessage notificationNotAuthorized(int msgId) {
         return makeResponse(msgId, NOTIFICATION_NOT_AUTHORIZED);
     }
 
-    public static ByteBuf deviceOffline(int dashId, int deviceId) {
+    public static ResponseMessage makeResponse(int msgId, int responseCode) {
+        return new ResponseMessage(msgId, responseCode);
+    }
+
+    public static StringMessage deviceOffline(int dashId, int deviceId) {
         return makeASCIIStringMessage(DEVICE_OFFLINE, 0,
                 String.valueOf(dashId) + DEVICE_SEPARATOR + deviceId);
     }
 
-    public static ByteBuf makeResponse(int msgId, int responseCode) {
-        return DEFAULT.buffer(HEADER_LENGTH)
-                .writeByte(Command.RESPONSE)
-                .writeShort(msgId)
-                .writeShort(responseCode);
+    public static StringMessage makeUTF8StringMessage(short cmd, int msgId, String data) {
+        return new StringMessage(msgId, cmd, data);
     }
 
-    public static ByteBuf makeUTF8StringMessage(short cmd, int msgId, String data) {
-        ByteBuf byteBuf = DEFAULT.buffer(HEADER_LENGTH + ByteBufUtil.utf8MaxBytes(data))
-                .writeByte(cmd)
-                .writeShort(msgId)
-                .writerIndex(HEADER_LENGTH);
-
-        int bytesWritten = ByteBufUtil.writeUtf8(byteBuf, data);
-        return byteBuf.setShort(3, bytesWritten);
+    public static StringMessage makeASCIIStringMessage(short cmd, int msgId, String data) {
+        return new StringMessage(msgId, cmd, data, StandardCharsets.US_ASCII);
     }
 
-    public static ByteBuf makeASCIIStringMessage(short cmd, int msgId, String data) {
-        int dataLength = data.length();
-        ByteBuf byteBuf = DEFAULT.buffer(HEADER_LENGTH + dataLength)
-                .writeByte(cmd)
-                .writeShort(msgId)
-                .writeShort(dataLength);
-
-        ByteBufUtil.writeAscii(byteBuf, data);
-        return byteBuf;
-    }
-
-    public static ByteBuf makeBinaryMessage(short cmd, int msgId, byte[] byteData) {
-        int dataLength = byteData.length;
-        return ByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH + dataLength)
-                .writeByte(cmd)
-                .writeShort(msgId)
-                .writeShort(dataLength)
-                .writeBytes(byteData);
+    public static BinaryMessage makeBinaryMessage(short cmd, int msgId, byte[] byteData) {
+        return new BinaryMessage(msgId, cmd, byteData);
     }
 
 }

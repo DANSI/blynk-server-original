@@ -5,7 +5,7 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.AppServer;
+import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
@@ -68,7 +68,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertNotNull(holder.dbManager.getConnection());
 
         this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
+        this.appServer = new HttpsAPIServer(holder).start();
 
         this.clientPair = initAppAndHardPair();
         holder.dbManager.executeSQL("DELETE FROM flashed_tokens");

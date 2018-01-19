@@ -1,8 +1,8 @@
 package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
-import io.netty.buffer.ByteBuf;
 
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.SYNC_DEFAULT_MESSAGE_ID;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
@@ -32,11 +32,11 @@ public class PinStorageKey {
         return DataStream.makeHardwareBody(pinTypeChar, pin, value);
     }
 
-    public ByteBuf makeByteBuf(int dashId, String value) {
-        return makeByteBuf(dashId, value, APP_SYNC);
+    public StringMessage toStringMessage(int dashId, String value) {
+        return toStringMessage(dashId, value, APP_SYNC);
     }
 
-    ByteBuf makeByteBuf(int dashId, String value, short cmdType) {
+    StringMessage toStringMessage(int dashId, String value, short cmdType) {
         String body = prependDashIdAndDeviceId(dashId, deviceId, makeHardwareBody(value));
         return makeUTF8StringMessage(cmdType, SYNC_DEFAULT_MESSAGE_ID, body);
     }

@@ -5,7 +5,7 @@ import cc.blynk.integration.model.http.ResponseUserEntity;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.api.http.HttpAPIServer;
+import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
@@ -102,7 +102,7 @@ public class HttpsAdminServerTest extends BaseTest {
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
                 .build();
 
-        httpServer = new HttpAPIServer(holder).start();
+        httpServer = new AppAndHttpsServer(holder).start();
 
         String name = "admin@blynk.cc";
         String pass = "admin";

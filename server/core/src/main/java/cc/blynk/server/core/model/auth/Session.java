@@ -1,10 +1,10 @@
 package cc.blynk.server.core.model.auth;
 
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.utils.ArrayUtil;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoop;
@@ -126,7 +126,7 @@ public class Session {
             return true; // -> no active hardware
         }
 
-        send(targetChannels, channelsNum, cmd, msgId, body);
+        send(targetChannels, cmd, msgId, body);
 
         return false; // -> there is active hardware
     }
@@ -158,8 +158,8 @@ public class Session {
         if (targetsNum > 0) {
             log.trace("Sending device offline message.");
 
-            ByteBuf deviceOfflineMessage = deviceOffline(dashId, deviceId);
-            sendMessageToMultipleReceivers(appChannels, targetsNum, deviceOfflineMessage);
+            StringMessage deviceOfflineMessage = deviceOffline(dashId, deviceId);
+            sendMessageToMultipleReceivers(appChannels, deviceOfflineMessage);
         }
     }
 
@@ -182,7 +182,7 @@ public class Session {
 
         int targetsNum = targetChannels.size();
         if (targetsNum > 0) {
-            send(targetChannels, targetsNum, cmd, msgId, finalBody);
+            send(targetChannels, cmd, msgId, finalBody);
         }
     }
 
@@ -196,24 +196,17 @@ public class Session {
         return targetChannels;
     }
 
-    private static void sendMessageToMultipleReceivers(Set<Channel> targets, int targetsNum, ByteBuf msg) {
-        if (targetsNum > 1) {
-            msg.retain(targetsNum - 1);
-        }
-
+    private static void sendMessageToMultipleReceivers(Set<Channel> targets, StringMessage msg) {
         for (Channel channel : targets) {
             if (channel.isWritable()) {
                 channel.writeAndFlush(msg, channel.voidPromise());
-            } else {
-                msg.release();
             }
-            msg.resetReaderIndex();
         }
     }
 
-    private static void send(Set<Channel> targets, int targetsNum, short cmd, int msgId, String body) {
-        ByteBuf msg = makeUTF8StringMessage(cmd, msgId, body);
-        sendMessageToMultipleReceivers(targets, targetsNum, msg);
+    private static void send(Set<Channel> targets, short cmd, int msgId, String body) {
+        StringMessage msg = makeUTF8StringMessage(cmd, msgId, body);
+        sendMessageToMultipleReceivers(targets, msg);
     }
 
     public void sendToSharedApps(Channel sendingChannel, String sharedToken, short cmd, int msgId, String body) {
@@ -226,7 +219,7 @@ public class Session {
 
         int channelsNum = targetChannels.size();
         if (channelsNum > 0) {
-            send(targetChannels, channelsNum, cmd, msgId, body);
+            send(targetChannels, cmd, msgId, body);
         }
     }
 

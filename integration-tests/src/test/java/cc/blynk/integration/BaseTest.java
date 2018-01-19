@@ -124,7 +124,8 @@ public abstract class BaseTest {
     public static void initProps() {
         properties = new ServerProperties(Collections.emptyMap());
 
-        tcpAppPort = properties.getIntProperty("app.ssl.port");
+        //https.port is correct. new protocol is handled in https port
+        tcpAppPort = properties.getIntProperty("https.port");
         tcpHardPort = properties.getIntProperty("hardware.default.port");
 
         httpPort = properties.getIntProperty("http.port");

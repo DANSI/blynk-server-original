@@ -8,6 +8,7 @@ import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
+import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -20,6 +21,10 @@ import io.netty.handler.timeout.IdleStateHandler;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
+@Deprecated
+//todo remove in future releases
+//Leaving it only for back compatibility
+//should be no longer used
 public class AppServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
@@ -48,8 +53,7 @@ public class AppServer extends BaseServer {
                         .addLast("ASSL", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
                         .addLast("AChannelState", appChannelStateHandler)
                         .addLast("AMessageDecoder", new MessageDecoder(holder.stats))
-                        //this encoder is no longer used as we form messages right on write()
-                        //.addLast("AMessageEncoder", new MessageEncoder(holder.stats))
+                        .addLast("AMessageEncoder", new MessageEncoder(holder.stats))
                         .addLast("AGetServer", getServerHandler)
                         .addLast("ARegister", registerHandler)
                         .addLast("ALogin", appLoginHandler)
