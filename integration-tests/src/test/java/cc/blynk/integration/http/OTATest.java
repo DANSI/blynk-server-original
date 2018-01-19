@@ -4,8 +4,8 @@ import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.https.HttpsAdminServerTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.api.http.HttpAPIServer;
-import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.auth.User;
@@ -90,7 +90,7 @@ public class OTATest extends BaseTest {
     @Before
     public void init() throws Exception {
         httpServer = new HttpAPIServer(holder).start();
-        httpsServer = new HttpsAPIServer(holder).start();
+        httpsServer = new AppAndHttpsServer(holder).start();
         hardwareServer = new HardwareServer(holder).start();
         appServer = new AppServer(holder).start();
         httpsAdminServerUrl = String.format("https://localhost:%s/admin", httpsPort);

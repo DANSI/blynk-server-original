@@ -2,7 +2,7 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.TestAppClient;
-import cc.blynk.server.api.http.HttpsAPIServer;
+import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.hardware.HardwareServer;
@@ -32,7 +32,7 @@ public class PortUnificationTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        this.httpAdminServer = new HttpsAPIServer(holder).start();
+        this.httpAdminServer = new AppAndHttpsServer(holder).start();
         this.hardwareServer = new HardwareServer(holder).start();
         this.appServer = new AppServer(holder).start();
     }

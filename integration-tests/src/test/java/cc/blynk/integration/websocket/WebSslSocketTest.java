@@ -2,8 +2,8 @@ package cc.blynk.integration.websocket;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.websocket.WebSocketClient;
+import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.api.http.HttpAPIServer;
-import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import org.junit.AfterClass;
@@ -37,7 +37,7 @@ public class WebSslSocketTest extends BaseTest {
     @Before
     public void init() throws Exception {
         if (webSocketServer == null) {
-            webSocketServer = new HttpsAPIServer(holder).start();
+            webSocketServer = new AppAndHttpsServer(holder).start();
         }
     }
 

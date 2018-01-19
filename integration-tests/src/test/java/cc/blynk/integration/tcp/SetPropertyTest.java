@@ -2,7 +2,7 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.api.http.HttpsAPIServer;
+import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Tag;
@@ -53,7 +53,7 @@ public class SetPropertyTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new HttpsAPIServer(holder).start();
+        this.appServer = new AppAndHttpsServer(holder).start();
         this.clientPair = initAppAndHardPair("user_profile_json.txt");
     }
 

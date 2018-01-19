@@ -4,7 +4,7 @@ import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.HttpsAPIServer;
+import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
@@ -46,7 +46,7 @@ public class AssignTokenTest extends IntegrationBase {
     public void init() throws Exception {
         Holder holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
         hardwareServer = new HardwareServer(holder).start();
-        appServer = new HttpsAPIServer(holder).start();
+        appServer = new AppAndHttpsServer(holder).start();
         dbManager = holder.dbManager;
 
         this.clientPair = initAppAndHardPair();

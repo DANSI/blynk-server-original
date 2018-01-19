@@ -3,8 +3,8 @@ package cc.blynk.integration.websocket;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.websocket.WebSocketClient;
+import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.api.http.HttpAPIServer;
-import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
@@ -53,7 +53,7 @@ public class WebSocketTest extends IntegrationBase {
     public void init() throws Exception {
         tcpWebSocketPort = httpPort;
         webSocketServer = new HttpAPIServer(holder).start();
-        appServer = new HttpsAPIServer(holder).start();
+        appServer = new AppAndHttpsServer(holder).start();
         hardwareServer = new HardwareServer(holder).start();
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
     }

@@ -5,7 +5,7 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.HttpsAPIServer;
+import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
@@ -59,14 +59,14 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
     public void init() throws Exception {
         holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
         hardwareServer1 = new HardwareServer(holder).start();
-        appServer1 = new HttpsAPIServer(holder).start();
+        appServer1 = new AppAndHttpsServer(holder).start();
 
         properties2 = new ServerProperties("server2.properties");
         properties2.setProperty("data.folder", getDataFolder());
 
         this.holder2 = new Holder(properties2, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
         hardwareServer2 = new HardwareServer(holder2).start();
-        appServer2 = new HttpsAPIServer(holder2).start();
+        appServer2 = new AppAndHttpsServer(holder2).start();
         plainHardPort2 = properties2.getIntProperty("hardware.default.port");
         tcpAppPort2 = properties2.getIntProperty("https.port");
 

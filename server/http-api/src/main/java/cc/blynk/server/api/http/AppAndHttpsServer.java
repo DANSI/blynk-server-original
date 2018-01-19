@@ -19,11 +19,11 @@ import io.netty.channel.socket.SocketChannel;
  * Created by Dmitriy Dumanskiy.
  * Created on 1/12/2015.
  */
-public class HttpsAPIServer extends BaseServer {
+public class AppAndHttpsServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public HttpsAPIServer(Holder holder) {
+    public AppAndHttpsServer(Holder holder) {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 

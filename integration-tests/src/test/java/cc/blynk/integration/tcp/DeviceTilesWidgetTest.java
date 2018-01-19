@@ -3,7 +3,7 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.api.http.HttpsAPIServer;
+import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
@@ -66,7 +66,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         hardwareServer = new HardwareServer(holder).start();
-        appServer = new HttpsAPIServer(holder).start();
+        appServer = new AppAndHttpsServer(holder).start();
 
         if (clientPair == null) {
             clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
