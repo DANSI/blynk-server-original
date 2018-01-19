@@ -21,6 +21,7 @@ import static cc.blynk.server.core.model.serialization.JsonParser.gzipDash;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipDashRestrictive;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipProfile;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.PROTOCOL_MAX_LENGTH;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.noData;
@@ -99,7 +100,7 @@ public class LoadProfileGzippedLogic {
         if (data == null) {
             return noData(msgId);
         }
-        if (data.length > 65_535) {
+        if (data.length > PROTOCOL_MAX_LENGTH) {
             log.error("Profile for user {} is too big. Size : {}", email, data.length);
             return serverError(msgId);
         }

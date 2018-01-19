@@ -11,6 +11,8 @@ import java.util.Map;
  */
 public final class Command {
 
+    public static final int PROTOCOL_MAX_LENGTH = Short.MAX_VALUE * 2;
+
     public static final short RESPONSE = 0;
 
     //app commands

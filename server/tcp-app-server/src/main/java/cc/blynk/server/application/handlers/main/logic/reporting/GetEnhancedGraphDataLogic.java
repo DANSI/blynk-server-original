@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.PROTOCOL_MAX_LENGTH;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.noData;
 import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
@@ -122,7 +123,7 @@ public class GetEnhancedGraphDataLogic {
                 byte[][] data = reportingDao.getReportingData(user, requestedPins);
                 byte[] compressed = compress(requestedPins[0].dashId, data);
 
-                if (compressed.length > Short.MAX_VALUE * 2) {
+                if (compressed.length > PROTOCOL_MAX_LENGTH) {
                     log.error("Data set for history graph is too large {}, for {}.", compressed.length, user.email);
                     channel.writeAndFlush(serverError(msgId), channel.voidPromise());
                 } else {
