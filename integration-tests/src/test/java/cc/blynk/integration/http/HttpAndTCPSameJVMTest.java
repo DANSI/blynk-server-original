@@ -4,7 +4,7 @@ import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.tcp.EventorTest;
-import cc.blynk.server.api.http.AppAndHttpsServer;
+import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DataStream;
@@ -89,7 +89,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        httpServer = new AppAndHttpsServer(holder).start();
+        httpServer = new HttpAPIServer(holder).start();
         hardwareServer = new HardwareServer(holder).start();
         appServer = new HttpsAPIServer(holder).start();
         httpServerUrl = String.format("http://localhost:%s/", httpPort);

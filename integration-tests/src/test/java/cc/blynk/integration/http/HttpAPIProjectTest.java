@@ -1,7 +1,7 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.server.api.http.AppAndHttpsServer;
+import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.model.DashBoard;
@@ -45,7 +45,7 @@ public class HttpAPIProjectTest extends BaseTest {
     @Before
     public void init() throws Exception {
         if (httpServer == null) {
-            httpServer = new AppAndHttpsServer(holder).start();
+            httpServer = new HttpAPIServer(holder).start();
             httpsServerUrl = String.format("http://localhost:%s/", httpPort);
             httpclient = HttpClients.createDefault();
         }

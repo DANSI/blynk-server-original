@@ -2,7 +2,7 @@ package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.AppAndHttpsServer;
+import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
@@ -53,7 +53,7 @@ public class HttpAPIMetricsTest extends BaseTest {
                 new GCMProperties(Collections.emptyMap()),
                 false
         );
-        httpServer = new AppAndHttpsServer(localHolder).start();
+        httpServer = new HttpAPIServer(localHolder).start();
         httpsServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()

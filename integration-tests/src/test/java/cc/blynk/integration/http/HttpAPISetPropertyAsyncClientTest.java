@@ -2,7 +2,7 @@ package cc.blynk.integration.http;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.api.http.AppAndHttpsServer;
+import cc.blynk.server.api.http.HttpAPIServer;
 import cc.blynk.server.api.http.HttpsAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
@@ -57,7 +57,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
     @BeforeClass
     public static void init() throws Exception {
-        httpServer = new AppAndHttpsServer(staticHolder).start();
+        httpServer = new HttpAPIServer(staticHolder).start();
         httpsServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()
