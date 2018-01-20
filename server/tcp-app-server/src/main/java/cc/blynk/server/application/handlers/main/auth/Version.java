@@ -47,8 +47,8 @@ public final class Version {
                 + Integer.parseInt(parts[2]);
     }
 
-    boolean largerThan(Version version) {
-        return this.versionSingleNumber > version.versionSingleNumber;
+    boolean largerOrEqualThan(int version) {
+        return this.versionSingleNumber >= version;
     }
 
     //this method should be changed to notify users that they use outdated app.

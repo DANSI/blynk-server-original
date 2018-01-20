@@ -50,9 +50,10 @@ public class LoadProfileGzippedLogic {
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         //load all
         String email = state.user.email;
+        boolean isNewProtocol = state.isNewProtocol();
         if (message.length == 0) {
             Profile profile = state.user.profile;
-            write(ctx, gzipProfile(profile), message.id, email);
+            write(ctx, gzipProfile(profile), message.id, email, isNewProtocol);
             return;
         }
 
@@ -61,7 +62,7 @@ public class LoadProfileGzippedLogic {
             //load specific by id
             int dashId = ParseUtil.parseInt(message.body);
             DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
-            write(ctx, gzipDash(dash), message.id, email);
+            write(ctx, gzipDash(dash), message.id, email, isNewProtocol);
         } else {
             String token = parts[0];
             int dashId = ParseUtil.parseInt(parts[1]);
@@ -79,7 +80,7 @@ public class LoadProfileGzippedLogic {
                         String copyString = JsonParser.toJsonRestrictiveDashboard(dash);
                         DashBoard copyDash = JsonParser.parseDashboard(copyString);
                         copyDash.eraseValues();
-                        write(ctx, gzipDashRestrictive(copyDash), message.id, email);
+                        write(ctx, gzipDashRestrictive(copyDash), message.id, email, isNewProtocol);
                     }
                 } catch (Exception e) {
                     ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
@@ -89,18 +90,18 @@ public class LoadProfileGzippedLogic {
         }
     }
 
-    public static void write(ChannelHandlerContext ctx, byte[] data, int msgId, String email) {
+    public static void write(ChannelHandlerContext ctx, byte[] data, int msgId, String email, boolean isNewProtocol) {
         if (ctx.channel().isWritable()) {
-            MessageBase outputMsg = makeResponse(data, msgId, email);
+            MessageBase outputMsg = makeResponse(data, msgId, email, isNewProtocol);
             ctx.writeAndFlush(outputMsg, ctx.voidPromise());
         }
     }
 
-    private static MessageBase makeResponse(byte[] data, int msgId, String email) {
+    private static MessageBase makeResponse(byte[] data, int msgId, String email, boolean isNewProtocol) {
         if (data == null) {
             return noData(msgId);
         }
-        if (data.length > PROTOCOL_MAX_LENGTH) {
+        if (!isNewProtocol && data.length > PROTOCOL_MAX_LENGTH) {
             log.error("Profile for user {} is too big. Size : {}", email, data.length);
             return serverError(msgId);
         }

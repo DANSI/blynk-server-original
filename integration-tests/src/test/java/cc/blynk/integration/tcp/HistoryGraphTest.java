@@ -3,6 +3,7 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.ReportingDao;
@@ -178,6 +179,71 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 THREE_MONTHS"));
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(serverError(1)));
+    }
+
+    @Test
+    public void testTooManyDataForGraphWorkWithNewProtocol() throws Exception {
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+        appClient.send("login " + DEFAULT_TEST_USER + " 1 Android" + "\0" + "2.18.0");
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        String tempDir = holder.props.getProperty("data.folder");
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
+        DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
+        DataStream dataStream3 = new DataStream((byte) 10, PinType.DIGITAL);
+        DataStream dataStream4 = new DataStream((byte) 11, PinType.DIGITAL);
+        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream4 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream4, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream1,
+                graphDataStream2,
+                graphDataStream3,
+                graphDataStream4
+        };
+
+        appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.reset();
+
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 9, GraphGranularityType.HOURLY.label));
+        Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 10, GraphGranularityType.HOURLY.label));
+        Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 11, GraphGranularityType.HOURLY.label));
+
+        for (int i = 0; i < GraphPeriod.THREE_MONTHS.numberOfPoints; i++) {
+            long now = System.currentTimeMillis();
+            FileUtils.write(pinReportingDataPath1, ThreadLocalRandom.current().nextDouble(), now);
+            FileUtils.write(pinReportingDataPath2, ThreadLocalRandom.current().nextDouble(), now);
+            FileUtils.write(pinReportingDataPath3, ThreadLocalRandom.current().nextDouble(), now);
+            FileUtils.write(pinReportingDataPath4, ThreadLocalRandom.current().nextDouble(), now);
+        }
+
+        appClient.reset();
+        appClient.send("getenhanceddata 1" + b(" 432 THREE_MONTHS"));
+        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+
+        assertNotNull(graphDataResponse);
+        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
+        assertNotNull(decompressedGraphData);
     }
 
     @Test

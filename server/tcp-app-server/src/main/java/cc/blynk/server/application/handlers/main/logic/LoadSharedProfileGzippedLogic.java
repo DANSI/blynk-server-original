@@ -40,7 +40,7 @@ public final class LoadSharedProfileGzippedLogic {
             DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
             data = gzipDashRestrictive(dash);
         }
-        LoadProfileGzippedLogic.write(ctx, data, message.id, user.email);
+        LoadProfileGzippedLogic.write(ctx, data, message.id, user.email, state.isNewProtocol());
     }
 
 }

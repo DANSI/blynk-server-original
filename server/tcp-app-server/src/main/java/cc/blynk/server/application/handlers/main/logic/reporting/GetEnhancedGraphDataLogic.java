@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.reporting;
 
+import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -47,7 +48,7 @@ public class GetEnhancedGraphDataLogic {
         this.blockingIOProcessor = blockingIOProcessor;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 3) {
@@ -69,7 +70,7 @@ public class GetEnhancedGraphDataLogic {
         }
         int skipCount = graphPeriod.numberOfPoints * page;
 
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
         Widget widget = dash.getWidgetById(widgetId);
 
         //special case for device tiles widget.
@@ -114,16 +115,17 @@ public class GetEnhancedGraphDataLogic {
             i++;
         }
 
-        readGraphData(ctx.channel(), user, requestedPins, message.id);
+        readGraphData(ctx.channel(), state.user, state.isNewProtocol(), requestedPins, message.id);
     }
 
-    private void readGraphData(Channel channel, User user, GraphPinRequest[] requestedPins, int msgId) {
+    private void readGraphData(Channel channel, User user, boolean isNewProtocol,
+                               GraphPinRequest[] requestedPins, int msgId) {
         blockingIOProcessor.executeHistory(() -> {
             try {
                 byte[][] data = reportingDao.getReportingData(user, requestedPins);
                 byte[] compressed = compress(requestedPins[0].dashId, data);
 
-                if (compressed.length > PROTOCOL_MAX_LENGTH) {
+                if (!isNewProtocol && compressed.length > PROTOCOL_MAX_LENGTH) {
                     log.error("Data set for history graph is too large {}, for {}.", compressed.length, user.email);
                     channel.writeAndFlush(serverError(msgId), channel.voidPromise());
                 } else {

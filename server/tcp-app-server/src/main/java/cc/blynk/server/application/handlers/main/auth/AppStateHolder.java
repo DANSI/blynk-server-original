@@ -26,4 +26,10 @@ public class AppStateHolder extends StateHolderBase {
     public boolean isSameDash(int inDashId) {
         return true;
     }
+
+    public boolean isNewProtocol() {
+        //21800 is app version were we did protocol fix
+        //we can send larger header
+        return version.largerOrEqualThan(21800);
+    }
 }

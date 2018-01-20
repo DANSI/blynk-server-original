@@ -3,7 +3,6 @@ package cc.blynk.server.application.handlers.main.auth;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * The Blynk Project.
@@ -17,13 +16,6 @@ public class VersionTest {
         Version version = new Version("iOS", "1.2.3");
         assertEquals(OsType.IOS, version.osType);
         assertEquals(10203, version.versionSingleNumber);
-    }
-
-    @Test
-    public void testTwoVersions() {
-        Version version = new Version("iOS", "1.2.3");
-        Version version2 = new Version("iOS", "1.2.4");
-        assertTrue(version2.largerThan(version));
     }
 
     @Test

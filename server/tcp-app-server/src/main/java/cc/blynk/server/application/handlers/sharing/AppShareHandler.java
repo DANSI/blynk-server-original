@@ -72,7 +72,7 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 graphData.messageReceived(ctx, state.user, msg);
                 break;
             case GET_ENHANCED_GRAPH_DATA :
-                enhancedGraphDataLogic.messageReceived(ctx, state.user, msg);
+                enhancedGraphDataLogic.messageReceived(ctx, state, msg);
                 break;
             case DELETE_ENHANCED_GRAPH_DATA :
                 deleteEnhancedGraphDataLogic.messageReceived(ctx, state.user, msg);
