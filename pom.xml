@@ -19,7 +19,7 @@
 
     <groupId>cc.blynk</groupId>
     <artifactId>blynk</artifactId>
-    <version>0.29.8-SNAPSHOT</version>
+    <version>0.30.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <scm>
