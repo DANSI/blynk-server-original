@@ -13,7 +13,7 @@ import cc.blynk.server.admin.http.logic.HardwareStatsLogic;
 import cc.blynk.server.admin.http.logic.OTALogic;
 import cc.blynk.server.admin.http.logic.StatsLogic;
 import cc.blynk.server.admin.http.logic.UsersLogic;
-import cc.blynk.server.api.http.HttpAPIServer;
+import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
 import cc.blynk.server.api.http.logic.business.AdminAuthHandler;
@@ -120,8 +120,8 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
             return;
         } else if (uri.startsWith(rootPath)) {
             initAdminPipeline(ctx);
-        } else if (req.uri().startsWith(HttpAPIServer.WEBSOCKET_PATH)) {
-            initWebSocketPipeline(ctx, HttpAPIServer.WEBSOCKET_PATH);
+        } else if (req.uri().startsWith(HardwareAndHttpAPIServer.WEBSOCKET_PATH)) {
+            initWebSocketPipeline(ctx, HardwareAndHttpAPIServer.WEBSOCKET_PATH);
         } else {
             initHttpPipeline(ctx);
         }

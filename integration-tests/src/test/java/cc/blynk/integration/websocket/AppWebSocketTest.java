@@ -5,7 +5,7 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.websocket.WebSocketClient;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.AppAndHttpsServer;
-import cc.blynk.server.api.http.HttpAPIServer;
+import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
@@ -62,7 +62,7 @@ public class AppWebSocketTest extends IntegrationBase {
                 false
         );
         tcpWebSocketPort = httpPort;
-        webSocketServer = new HttpAPIServer(localHolder).start();
+        webSocketServer = new HardwareAndHttpAPIServer(localHolder).start();
         appServer = new AppAndHttpsServer(localHolder).start();
         hardwareServer = new HardwareServer(localHolder).start();
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);

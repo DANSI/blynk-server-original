@@ -2,7 +2,7 @@ package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.HttpAPIServer;
+import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BaseServer;
@@ -52,7 +52,7 @@ public class HttpAPIPinsTest extends BaseTest {
                 new GCMProperties(Collections.emptyMap()),
                 false
         );
-        httpServer = new HttpAPIServer(localHolder).start();
+        httpServer = new HardwareAndHttpAPIServer(localHolder).start();
         httpsServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = HttpClients.createDefault();
     }

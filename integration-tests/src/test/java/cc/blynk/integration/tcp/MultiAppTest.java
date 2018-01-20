@@ -5,7 +5,7 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.api.http.AppAndHttpsServer;
-import cc.blynk.server.api.http.HttpAPIServer;
+import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -46,7 +46,7 @@ public class MultiAppTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        httpServer = new HttpAPIServer(holder).start();
+        httpServer = new HardwareAndHttpAPIServer(holder).start();
         hardwareServer = new HardwareServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
         httpServerUrl = String.format("http://localhost:%s/", httpPort);

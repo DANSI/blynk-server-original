@@ -3,7 +3,7 @@ package cc.blynk.integration.http;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.api.http.AppAndHttpsServer;
-import cc.blynk.server.api.http.HttpAPIServer;
+import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
@@ -57,7 +57,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
     @BeforeClass
     public static void init() throws Exception {
-        httpServer = new HttpAPIServer(staticHolder).start();
+        httpServer = new HardwareAndHttpAPIServer(staticHolder).start();
         httpsServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()
