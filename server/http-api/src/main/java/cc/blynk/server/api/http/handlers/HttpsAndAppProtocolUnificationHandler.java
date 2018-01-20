@@ -36,9 +36,9 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 18.01.18.
  */
-public class HttpAndAppProtocolUnificationHandler extends ByteToMessageDecoder implements DefaultExceptionHandler {
+public class HttpsAndAppProtocolUnificationHandler extends ByteToMessageDecoder implements DefaultExceptionHandler {
 
-    private static final Logger log = LogManager.getLogger(HttpAndAppProtocolUnificationHandler.class);
+    private static final Logger log = LogManager.getLogger(HttpsAndAppProtocolUnificationHandler.class);
 
     private final Holder holder;
     private final AppChannelStateHandler appChannelStateHandler;
@@ -51,15 +51,15 @@ public class HttpAndAppProtocolUnificationHandler extends ByteToMessageDecoder i
     private final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler;
     private final LetsEncryptHandler letsEncryptHandler;
 
-    public HttpAndAppProtocolUnificationHandler(Holder holder,
-                                                AppChannelStateHandler appChannelStateHandler,
-                                                RegisterHandler registerHandler,
-                                                AppLoginHandler appLoginHandler,
-                                                AppShareLoginHandler appShareLoginHandler,
-                                                UserNotLoggedHandler userNotLoggedHandler,
-                                                GetServerHandler getServerHandler,
-                                                HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler,
-                                                LetsEncryptHandler letsEncryptHandler) {
+    public HttpsAndAppProtocolUnificationHandler(Holder holder,
+                                                 AppChannelStateHandler appChannelStateHandler,
+                                                 RegisterHandler registerHandler,
+                                                 AppLoginHandler appLoginHandler,
+                                                 AppShareLoginHandler appShareLoginHandler,
+                                                 UserNotLoggedHandler userNotLoggedHandler,
+                                                 GetServerHandler getServerHandler,
+                                                 HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler,
+                                                 LetsEncryptHandler letsEncryptHandler) {
         this.holder = holder;
         this.appChannelStateHandler = appChannelStateHandler;
         this.registerHandler = registerHandler;

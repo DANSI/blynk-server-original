@@ -1,8 +1,8 @@
 package cc.blynk.server.api.http;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.handlers.HttpAndAppProtocolUnificationHandler;
 import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
+import cc.blynk.server.api.http.handlers.HttpsAndAppProtocolUnificationHandler;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.application.handlers.main.AppChannelStateHandler;
 import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
@@ -43,7 +43,7 @@ public class AppAndHttpsServer extends BaseServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline()
                 .addLast("HttpsSslContext", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
-                .addLast("HttpAndBlynkProtocolUnificator", new HttpAndAppProtocolUnificationHandler(
+                .addLast("HttpAndBlynkProtocolUnificator", new HttpsAndAppProtocolUnificationHandler(
                         holder,
                         appChannelStateHandler,
                         registerHandler,
