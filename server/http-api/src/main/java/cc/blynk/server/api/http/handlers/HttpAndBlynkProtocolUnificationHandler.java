@@ -16,6 +16,7 @@ import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.utils.HttpUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -89,7 +90,7 @@ public class HttpAndBlynkProtocolUnificationHandler extends ByteToMessageDecoder
     }
 
     private ChannelPipeline buildPipeline(ChannelPipeline pipeline, short magic1, short magic2) {
-        if (isHttp(magic1, magic2)) {
+        if (HttpUtil.isHttp(magic1, magic2)) {
             return buildHTTPipeline(pipeline);
         }
         return buildBlynkPipeline(pipeline);
@@ -124,19 +125,6 @@ public class HttpAndBlynkProtocolUnificationHandler extends ByteToMessageDecoder
                 .addLast("ALogin", appLoginHandler)
                 .addLast("AShareLogin", appShareLoginHandler)
                 .addLast("ANotLogged", userNotLoggedHandler);
-    }
-
-    private static boolean isHttp(short magic1, short magic2) {
-        return
-            magic1 == 'G' && magic2 == 'E' || // GET
-            magic1 == 'P' && magic2 == 'O' || // POST
-            magic1 == 'P' && magic2 == 'U' || // PUT
-            magic1 == 'H' && magic2 == 'E' || // HEAD
-            magic1 == 'O' && magic2 == 'P' || // OPTIONS
-            magic1 == 'P' && magic2 == 'A' || // PATCH
-            magic1 == 'D' && magic2 == 'E' || // DELETE
-            magic1 == 'T' && magic2 == 'R' || // TRACE
-            magic1 == 'C' && magic2 == 'O';   // CONNECT
     }
 
     @Override
