@@ -136,21 +136,17 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
     }
 
     @Test
-    public void getEmptyTerminalValue() throws Exception {
+    public void testPutAndGetTerminalValue() throws Exception {
         Future<Response> f= httpclient.prepareGet(httpsServerUrl + "7b0a3a61322e41a5b50589cf52d775d1/get/v17").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
         List<String> values = consumeJsonPinValues(response.getResponseBody());
         assertEquals(0, values.size());
-    }
 
-
-    @Test
-    public void testPutAndGetTerminalValue() throws Exception {
-        Future<Response> f = httpclient.prepareGet(httpsServerUrl
+        f = httpclient.prepareGet(httpsServerUrl
                 + "7b0a3a61322e41a5b50589cf52d775d1/update/v17?value=10").execute();
-        Response response = f.get();
+        response = f.get();
         assertEquals(200, response.getStatusCode());
 
         f = httpclient.prepareGet(httpsServerUrl
@@ -162,7 +158,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         response = f.get();
 
         assertEquals(200, response.getStatusCode());
-        List<String> values = consumeJsonPinValues(response.getResponseBody());
+        values = consumeJsonPinValues(response.getResponseBody());
         assertEquals(2, values.size());
         assertEquals("10", values.get(0));
         assertEquals("11", values.get(1));
