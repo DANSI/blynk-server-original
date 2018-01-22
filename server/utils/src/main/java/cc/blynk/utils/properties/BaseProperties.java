@@ -157,6 +157,10 @@ public abstract class BaseProperties extends Properties {
         return val.toLowerCase().split(",");
     }
 
+    public boolean getAllowWithoutActiveApp() {
+        return getBoolProperty("allow.reading.widget.without.active.app");
+    }
+
     public String getProductName() {
         return getProperty("product.name", AppNameUtil.BLYNK);
     }

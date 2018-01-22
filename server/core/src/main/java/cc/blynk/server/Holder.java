@@ -132,7 +132,7 @@ public class Holder implements Closeable {
         this.eventorProcessor = new EventorProcessor(
                 gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
-        this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
+        this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
         this.limits = new Limits(props);
 
         this.csvDownloadUrl = FileUtils.csvDownloadUrl(host, props.getProperty("http.port"));
@@ -187,7 +187,7 @@ public class Holder implements Closeable {
         );
 
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
-        this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao);
+        this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
         this.limits = new Limits(props);
 
         this.csvDownloadUrl = FileUtils.csvDownloadUrl(host, props.getProperty("http.port"));

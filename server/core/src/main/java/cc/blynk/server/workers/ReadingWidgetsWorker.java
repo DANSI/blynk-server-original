@@ -30,21 +30,23 @@ public class ReadingWidgetsWorker implements Runnable {
 
     private final SessionDao sessionDao;
     private final UserDao userDao;
+    private final boolean allowRunWithoutApp;
 
     private int tickedWidgets = 0;
     private int counter = 0;
     private long totalTime = 0;
 
-    public ReadingWidgetsWorker(SessionDao sessionDao, UserDao userDao) {
+    public ReadingWidgetsWorker(SessionDao sessionDao, UserDao userDao, boolean allowRunWithoutApp) {
         this.sessionDao = sessionDao;
         this.userDao = userDao;
+        this.allowRunWithoutApp = allowRunWithoutApp;
     }
 
     @Override
     public void run() {
         long now = System.currentTimeMillis();
         try {
-            process(now);
+            process(now, allowRunWithoutApp);
             totalTime += System.currentTimeMillis() - now;
         } catch (Exception e) {
             log.error("Error processing reading widgets. ", e);
@@ -60,11 +62,11 @@ public class ReadingWidgetsWorker implements Runnable {
         }
     }
 
-    private void process(long now) {
+    private void process(long now, boolean allowRunWithoutApp) {
         for (Map.Entry<UserKey, Session> entry : sessionDao.userSession.entrySet()) {
             Session session = entry.getValue();
             //for now checking widgets for active app only
-            if (session.isAppConnected() && session.isHardwareConnected()) {
+            if ((allowRunWithoutApp || session.isAppConnected()) && session.isHardwareConnected()) {
                 UserKey userKey = entry.getKey();
                 User user = userDao.users.get(userKey);
                 if (user != null) {
