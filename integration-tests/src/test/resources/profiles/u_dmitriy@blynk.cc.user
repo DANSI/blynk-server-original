@@ -657,6 +657,8 @@
                   "x":0,
                   "y":5,
                   "color":-1,
+                  "pinType":"VIRTUAL",
+                  "pin":17,
                   "width":8,
                   "height":3,
                   "pwmMode":false,

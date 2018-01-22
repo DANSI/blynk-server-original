@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets.controls;
 
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.structure.LimitedArrayDeque;
@@ -56,6 +57,11 @@ public class Terminal extends OnePinWidget {
         }
         //terminal supports only virtual pins
         return makeHardwareBody(pinType, pin, lastCommands.getLast());
+    }
+
+    @Override
+    public String getJsonValue() {
+        return JsonParser.toJson(lastCommands);
     }
 
     @Override

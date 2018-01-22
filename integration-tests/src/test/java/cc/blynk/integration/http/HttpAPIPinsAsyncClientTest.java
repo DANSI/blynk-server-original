@@ -136,6 +136,39 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
     }
 
     @Test
+    public void getEmptyTerminalValue() throws Exception {
+        Future<Response> f= httpclient.prepareGet(httpsServerUrl + "7b0a3a61322e41a5b50589cf52d775d1/get/v17").execute();
+        Response response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        List<String> values = consumeJsonPinValues(response.getResponseBody());
+        assertEquals(0, values.size());
+    }
+
+
+    @Test
+    public void testPutAndGetTerminalValue() throws Exception {
+        Future<Response> f = httpclient.prepareGet(httpsServerUrl
+                + "7b0a3a61322e41a5b50589cf52d775d1/update/v17?value=10").execute();
+        Response response = f.get();
+        assertEquals(200, response.getStatusCode());
+
+        f = httpclient.prepareGet(httpsServerUrl
+                + "7b0a3a61322e41a5b50589cf52d775d1/update/v17?value=11").execute();
+        response = f.get();
+        assertEquals(200, response.getStatusCode());
+
+        f = httpclient.prepareGet(httpsServerUrl + "7b0a3a61322e41a5b50589cf52d775d1/get/v17").execute();
+        response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        List<String> values = consumeJsonPinValues(response.getResponseBody());
+        assertEquals(2, values.size());
+        assertEquals("10", values.get(0));
+        assertEquals("11", values.get(1));
+    }
+
+    @Test
     public void testPutViaGetRequestMultipleValue() throws Exception {
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v11?value=10&value=11").execute();
         Response response = f.get();
