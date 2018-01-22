@@ -187,8 +187,10 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
     }
 
     @Override
-    public void updateValue(Widget widget) {
-
+    public void updateValue(Widget oldWidget) {
+        if (oldWidget instanceof  DeviceTiles) {
+            this.tiles = ((DeviceTiles) oldWidget).tiles;
+        }
     }
 
     @Override

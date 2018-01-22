@@ -18,6 +18,10 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
+import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileMode;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.db.model.FlashedToken;
@@ -38,6 +42,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -263,6 +268,121 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, dashBoard.id);
         assertEquals(1, dashBoard.parentId);
         assertEquals(16, dashBoard.widgets.length);
+    }
+
+    @Test
+    public void testUpdateFaceDoesntEraseExistingDeviceTiles() throws Exception {
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 10;
+        dashBoard.parentId = 1;
+        dashBoard.isPreview = true;
+        dashBoard.name = "Face Edit Test";
+
+        clientPair.appClient.send("createDash " + dashBoard.toString());
+
+        Device device0 = new Device(0, "My Dashboard", "UNO");
+        device0.status = Status.ONLINE;
+
+        clientPair.appClient.send("createDevice 10\0" + device0.toString());
+        String createdDevice = clientPair.appClient.getBody(2);
+        Device device = JsonParser.parseDevice(createdDevice);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
+
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[10]}");
+        App app = JsonParser.parseApp(clientPair.appClient.getBody(3));
+        assertNotNull(app);
+        assertNotNull(app.id);
+
+
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        //creating manually widget for child project
+        clientPair.appClient.send("createWidget 10\0" + MAPPER.writeValueAsString(deviceTiles));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+
+        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
+                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false);
+
+        clientPair.appClient.send("createTemplate " + b("10 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+
+        //creating manually widget for parent project
+        clientPair.appClient.send("addEnergy " + "10000" + "\0" + "1370-3990-1414-55681");
+
+        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(7)));
+
+        tileTemplate = new TileTemplate(1, null, null, "123",
+                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(8)));
+
+
+        clientPair.appClient.send("emailQr 10\0" + app.id);
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(9)));
+
+        QrHolder[] qrHolders = makeQRs(new Device[] {device}, 10, false);
+        StringBuilder sb = new StringBuilder();
+        qrHolders[0].attach(sb);
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.staticMailBody.replace("{project_name}", "Face Edit Test").replace("{device_section}", sb.toString())), eq(qrHolders));
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+
+        appClient2.send("register test@blynk.cc a " + app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+
+        appClient2.send("login test@blynk.cc a Android 1.10.4 " + app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+
+        appClient2.send("loadProfileGzipped");
+        Profile profile = parseProfile(appClient2.getBody(3));
+        assertEquals(1, profile.dashBoards.length);
+        dashBoard = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(1, dashBoard.id);
+        assertEquals(1, dashBoard.parentId);
+        assertEquals(1, dashBoard.widgets.length);
+        assertTrue(dashBoard.widgets[0] instanceof DeviceTiles);
+
+        tileTemplate = new TileTemplate(1, null, new int[] {0}, "123",
+                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false);
+        appClient2.send("updateTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+
+
+        clientPair.appClient.send("updateFace 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(10)));
+
+        appClient2.send("loadProfileGzipped");
+        profile = parseProfile(appClient2.getBody(5));
+        assertEquals(1, profile.dashBoards.length);
+        dashBoard = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(1, dashBoard.id);
+        assertEquals(1, dashBoard.parentId);
+        assertEquals(17, dashBoard.widgets.length);
+        deviceTiles = (DeviceTiles) dashBoard.getWidgetById(widgetId);
+        assertNotNull(deviceTiles);
+        assertNotNull(deviceTiles.tiles);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(1, deviceTiles.tiles.length);
+        assertEquals(0, deviceTiles.tiles[0].deviceId);
+        assertEquals(1, deviceTiles.tiles[0].templateId);
+        assertEquals(1, deviceTiles.templates.length);
     }
 
     @Test

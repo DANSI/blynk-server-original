@@ -162,7 +162,7 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public abstract int getPrice();
 
-    public abstract void updateValue(Widget widget);
+    public abstract void updateValue(Widget oldWidget);
 
     public abstract void erase();
 
