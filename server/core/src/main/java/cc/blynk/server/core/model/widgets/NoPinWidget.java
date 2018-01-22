@@ -19,4 +19,8 @@ public abstract class NoPinWidget extends Widget {
     @Override
     public void erase() {
     }
+
+    @Override
+    public void updateValue(Widget widget) {
+    }
 }

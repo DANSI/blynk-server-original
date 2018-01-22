@@ -131,6 +131,17 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     }
 
     @Override
+    public void updateValue(Widget oldWidget) {
+        if (oldWidget instanceof OnePinWidget) {
+            OnePinWidget onePinWidget = (OnePinWidget) oldWidget;
+            if (onePinWidget.value != null) {
+                updateIfSame(onePinWidget.deviceId,
+                        onePinWidget.pin, onePinWidget.pinType, onePinWidget.value);
+            }
+        }
+    }
+
+    @Override
     public void erase() {
         this.value = null;
     }

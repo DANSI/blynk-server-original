@@ -162,6 +162,8 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public abstract int getPrice();
 
+    public abstract void updateValue(Widget widget);
+
     public abstract void erase();
 
     protected void append(StringBuilder sb, byte pin, PinType pinType) {

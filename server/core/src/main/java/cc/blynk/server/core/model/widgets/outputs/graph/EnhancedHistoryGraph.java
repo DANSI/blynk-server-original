@@ -72,6 +72,10 @@ public class EnhancedHistoryGraph extends Widget {
     }
 
     @Override
+    public void updateValue(Widget widget) {
+    }
+
+    @Override
     public void erase() {
     }
 }

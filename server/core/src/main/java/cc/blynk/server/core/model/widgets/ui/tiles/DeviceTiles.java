@@ -187,6 +187,11 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
     }
 
     @Override
+    public void updateValue(Widget widget) {
+
+    }
+
+    @Override
     public void erase() {
         //for export apps tiles are fully removed
         //tiles will be created during provisioning.
