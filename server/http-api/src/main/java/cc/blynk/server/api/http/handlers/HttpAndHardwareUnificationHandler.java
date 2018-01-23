@@ -62,21 +62,20 @@ public class HttpAndHardwareUnificationHandler extends ByteToMessageDecoder impl
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        // Will use the first 2 bytes to detect a protocol.
-        if (in.readableBytes() < 2) {
+        // Will use the first 4 bytes to detect a protocol.
+        if (in.readableBytes() < 4) {
             return;
         }
 
         int readerIndex = in.readerIndex();
-        short magic1 = in.getUnsignedByte(readerIndex);
-        short magic2 = in.getUnsignedByte(readerIndex + 1);
+        long magic = in.getUnsignedInt(readerIndex);
 
         ChannelPipeline pipeline = ctx.pipeline();
-        buildPipeline(pipeline, magic1, magic2).remove(this);
+        buildPipeline(pipeline, magic).remove(this);
     }
 
-    private ChannelPipeline buildPipeline(ChannelPipeline pipeline, short magic1, short magic2) {
-        if (HttpUtil.isHttp(magic1, magic2)) {
+    private ChannelPipeline buildPipeline(ChannelPipeline pipeline, long magic) {
+        if (HttpUtil.isHttp(magic)) {
             return buildHTTPipeline(pipeline);
         }
         return buildBlynkPipeline(pipeline);

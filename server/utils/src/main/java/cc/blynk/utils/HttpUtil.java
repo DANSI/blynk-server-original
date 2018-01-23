@@ -10,16 +10,19 @@ public final class HttpUtil {
     private HttpUtil() {
     }
 
-    public static boolean isHttp(short magic1, short magic2) {
+    /**
+     * See HttpSignatureTest for more details
+     */
+    public static boolean isHttp(long httpHeader4Bytes) {
         return
-                magic1 == 'G' && magic2 == 'E' || // GET
-                magic1 == 'P' && magic2 == 'O' || // POST
-                magic1 == 'P' && magic2 == 'U' || // PUT
-                magic1 == 'H' && magic2 == 'E' || // HEAD
-                magic1 == 'O' && magic2 == 'P' || // OPTIONS
-                magic1 == 'P' && magic2 == 'A' || // PATCH
-                magic1 == 'D' && magic2 == 'E' || // DELETE
-                magic1 == 'T' && magic2 == 'R' || // TRACE
-                magic1 == 'C' && magic2 == 'O';   // CONNECT
+                httpHeader4Bytes == 1195725856L || // 'GET '
+                httpHeader4Bytes == 1347375956L || // 'POST'
+                httpHeader4Bytes == 1347769376L || // 'PUT '
+                httpHeader4Bytes == 1212498244L || // 'HEAD'
+                httpHeader4Bytes == 1330664521L || // 'OPTI'
+                httpHeader4Bytes == 1346458691L || // 'PATC'
+                httpHeader4Bytes == 1145392197L || // 'DELE'
+                httpHeader4Bytes == 1414676803L || // 'TRAC'
+                httpHeader4Bytes == 1129270862L;   // 'CONN'
     }
 }
