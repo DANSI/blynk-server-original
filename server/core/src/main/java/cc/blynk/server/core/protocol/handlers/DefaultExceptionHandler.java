@@ -41,10 +41,11 @@ public interface DefaultExceptionHandler {
 
     default void handleUnexpectedException(ChannelHandlerContext ctx, Throwable cause) {
         if (cause instanceof DecoderException) {
-            if (cause.getCause() instanceof UnsupportedCommandException) {
+            Throwable t = cause.getCause();
+            if (t instanceof UnsupportedCommandException) {
                 log.debug("Input command is invalid. Closing socket. Reason {}. Address {}",
                         cause.getMessage(), ctx.channel().remoteAddress());
-            } else if (cause.getCause() instanceof SSLException) {
+            } else if (t instanceof SSLException) {
                 log.debug("Unsecured connection attempt or not supported protocol. Channel : {}. Reason : {}",
                         ctx.channel().remoteAddress(), cause.getMessage());
             } else {
