@@ -1,5 +1,6 @@
 package cc.blynk.server.notifications.push;
 
+import cc.blynk.utils.AppNameUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +37,10 @@ public class GCMWrapper {
         this.apiKey = "key=" + props.getProperty("gcm.api.key");
         this.httpclient = httpclient;
         this.gcmURI = props.getProperty("gcm.server");
-        this.title = props.getProperty("notification.title", "Blynk Notification");
+
+        String productName = props.getProperty("product.name", AppNameUtil.BLYNK);
+        String title = props.getProperty("notification.title", "Blynk Notification");
+        this.title = title.replace(AppNameUtil.PRODUCT_NAME, productName);
     }
 
     private static void processError(String errorMessage, Map<String, String> tokens, String uid) {

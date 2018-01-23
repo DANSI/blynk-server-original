@@ -10,6 +10,7 @@ module cc.blynk.server.notifications.push {
     requires com.fasterxml.jackson.databind;
     requires io.netty.codec.http;
     requires async.http.client;
+    requires cc.blynk.utils;
 
     exports cc.blynk.server.notifications.push;
     exports cc.blynk.server.notifications.push.android;

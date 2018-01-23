@@ -10,6 +10,11 @@
     <artifactId>push</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>cc.blynk.utils</groupId>
+            <artifactId>utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

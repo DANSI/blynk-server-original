@@ -69,7 +69,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
         this.emailSubj = "Password reset request for the " + productName + " app.";
         this.emailBody = FileLoaderUtil
                 .readFileAsString(RESET_PASS_STATIC_PATH + "reset-email.html")
-                .replace("{PRODUCT_NAME}", productName);
+                .replace(AppNameUtil.PRODUCT_NAME, productName);
         this.mailWrapper = holder.mailWrapper;
 
         String host = holder.props.getServerHost();
