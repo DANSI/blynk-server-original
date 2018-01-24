@@ -354,40 +354,6 @@ public class Option implements Cloneable {
     }
 
     /**
-     * Dump state, suitable for debugging.
-     *
-     * @return Stringified form of this object
-     */
-    @Override
-    public String toString() {
-        StringBuilder buf = new StringBuilder().append("[ option: ");
-
-        buf.append(opt);
-
-        if (longOpt != null) {
-            buf.append(" ").append(longOpt);
-        }
-
-        buf.append(" ");
-
-        if (hasArgs()) {
-            buf.append("[ARG...]");
-        } else if (hasArg()) {
-            buf.append(" [ARG]");
-        }
-
-        buf.append(" :: ").append(description);
-
-        if (type != null) {
-            buf.append(" :: ").append(type);
-        }
-
-        buf.append(" ]");
-
-        return buf.toString();
-    }
-
-    /**
      * Returns whether this Option has any values.
      *
      * @return whether this Option has any values.

@@ -215,21 +215,4 @@ public class Options {
         return optionGroups.get(opt.getKey());
     }
 
-    /**
-     * Dump state, suitable for debugging.
-     *
-     * @return Stringified form of this object
-     */
-    @Override
-    public String toString() {
-        StringBuilder buf = new StringBuilder();
-
-        buf.append("[ Options: [ short ");
-        buf.append(shortOpts.toString());
-        buf.append(" ] [ long ");
-        buf.append(longOpts);
-        buf.append(" ]");
-
-        return buf.toString();
-    }
 }
