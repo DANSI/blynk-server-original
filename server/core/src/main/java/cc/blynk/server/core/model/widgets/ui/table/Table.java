@@ -21,7 +21,7 @@ public class Table extends OnePinWidget {
     public Column[] columns;
 
     @JsonSerialize(using = TableRowsSerializator.class)
-    public TableLimitedQueue<Row> rows = new TableLimitedQueue<>();
+    public final TableLimitedQueue<Row> rows = new TableLimitedQueue<>();
 
     public int currentRowIndex;
 

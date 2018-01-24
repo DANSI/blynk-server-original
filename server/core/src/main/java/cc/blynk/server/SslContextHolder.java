@@ -80,7 +80,7 @@ public class SslContextHolder {
             log.info("Using native openSSL provider.");
         }
         SslProvider sslProvider = fetchSslProvider();
-        this.sslCtx = initSslContext(certPath, keyPath, keyPass, sslProvider, true);
+        this.sslCtx = initSslContext(certPath, keyPath, keyPass, sslProvider);
     }
 
     static boolean isOpenSslAvailable() {
@@ -92,7 +92,7 @@ public class SslContextHolder {
         String keyPath = AcmeClient.DOMAIN_KEY_FILE.getAbsolutePath();
 
         SslProvider sslProvider = fetchSslProvider();
-        this.sslCtx = initSslContext(certPath, keyPath, null, sslProvider, true);
+        this.sslCtx = initSslContext(certPath, keyPath, null, sslProvider);
     }
 
     public void generateInitialCertificates(ServerProperties props) {
@@ -112,19 +112,17 @@ public class SslContextHolder {
     }
 
     private static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
-                                            SslProvider sslProvider, boolean printWarn) {
+                                            SslProvider sslProvider) {
         try {
             File serverCert = new File(serverCertPath);
             File serverKey = new File(serverKeyPath);
 
 
             if (!serverCert.exists() || !serverKey.exists()) {
-                if (printWarn) {
-                    log.warn("ATTENTION. Server certificate paths (cert : '{}', key : '{}') not valid."
-                                    + " Using embedded server certs and one way ssl. This is not secure."
-                                    + " Please replace it with your own certs.",
-                            serverCert.getAbsolutePath(), serverKey.getAbsolutePath());
-                }
+                log.warn("ATTENTION. Server certificate paths (cert : '{}', key : '{}') not valid."
+                                + " Using embedded server certs and one way ssl. This is not secure."
+                                + " Please replace it with your own certs.",
+                        serverCert.getAbsolutePath(), serverKey.getAbsolutePath());
 
                 return build(sslProvider);
             }

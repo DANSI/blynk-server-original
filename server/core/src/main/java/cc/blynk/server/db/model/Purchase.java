@@ -9,13 +9,13 @@ import java.util.Date;
  */
 public class Purchase {
 
-    public String email;
+    public final String email;
 
-    public int reward;
+    public final int reward;
 
-    public String transactionId;
+    public final String transactionId;
 
-    public double price;
+    public final double price;
 
     public Date date;
 

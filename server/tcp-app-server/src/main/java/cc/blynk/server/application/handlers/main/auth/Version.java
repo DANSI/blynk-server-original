@@ -56,10 +56,7 @@ public final class Version {
     //not used right now.
     boolean isOutdated() {
         //hardcoded value for tests
-        if (versionSingleNumber == 10101) {
-            return true;
-        }
-        return false;
+        return versionSingleNumber == 10101;
     }
 
     @Override
