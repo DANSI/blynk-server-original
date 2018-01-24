@@ -11,6 +11,7 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -47,7 +48,7 @@ public class GetGraphDataLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         //warn: split may be optimized
         //todo remove space after app migration
-        String[] messageParts = message.body.split(" |\0");
+        String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 3) {
             throw new IllegalCommandException("Wrong income message format.");

@@ -13,6 +13,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.internal.ParseUtil;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,7 +58,7 @@ public class LoadProfileGzippedLogic {
             return;
         }
 
-        String[] parts = message.body.split(" |\0");
+        String[] parts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
         if (parts.length == 1) {
             //load specific by id
             int dashId = ParseUtil.parseInt(message.body);
