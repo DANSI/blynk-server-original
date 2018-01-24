@@ -1,7 +1,6 @@
 package cc.blynk.client.core;
 
 import cc.blynk.client.CommandParserUtil;
-import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.properties.ServerProperties;
@@ -27,12 +26,15 @@ import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
+import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 
@@ -94,10 +96,11 @@ public abstract class BaseClient {
                         + (userPass.length == 3 ? "\0" + userPass[2].replaceAll(" ", "\0") : "");
             }
         }
-        if (command == Command.SHARE_LOGIN || command == Command.GET_GRAPH_DATA) {
-            body = body.replaceAll(" ", "\0");
-        }
+
         if (command == HARDWARE
+                || command == SHARE_LOGIN
+                || command == GET_GRAPH_DATA
+                || command == LOAD_PROFILE_GZIPPED
                 || command == HARDWARE_RESEND_FROM_BLUETOOTH
                 || command == BRIDGE
                 || command == EMAIL
@@ -106,7 +109,7 @@ public abstract class BaseClient {
                 || command == SET_WIDGET_PROPERTY
                 || command == HARDWARE_SYNC
                 || command == DELETE_WIDGET) {
-            body = body.replaceAll(" ", "\0");
+            body = body.replace(" ", "\0");
         }
         return produce(msgId, command, body);
     }
