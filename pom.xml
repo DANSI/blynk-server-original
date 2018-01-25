@@ -203,7 +203,6 @@
         <jackson-databind.version>2.9.2</jackson-databind.version>
         <disruptor.version>3.3.7</disruptor.version>
         <async-http-client.version>2.1.0-RC3</async-http-client.version>
-        <twitter4j-core.version>4.0.2</twitter4j-core.version>
         <postgresql.version>42.1.4</postgresql.version>
         <HikariCP.version>2.7.3</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>

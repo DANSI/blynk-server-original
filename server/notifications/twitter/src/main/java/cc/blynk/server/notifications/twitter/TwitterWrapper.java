@@ -1,9 +1,12 @@
 package cc.blynk.server.notifications.twitter;
 
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.auth.AccessToken;
+import cc.blynk.utils.properties.TwitterProperties;
+import org.asynchttpclient.AsyncCompletionHandler;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.Response;
+import org.asynchttpclient.oauth.ConsumerKey;
+import org.asynchttpclient.oauth.OAuthSignatureCalculator;
+import org.asynchttpclient.oauth.RequestToken;
 
 /**
  * The Blynk Project.
@@ -12,14 +15,24 @@ import twitter4j.auth.AccessToken;
  */
 public class TwitterWrapper {
 
-    // The factory instance is re-usable and thread safe.
-    private final TwitterFactory factory = new TwitterFactory();
+    private static final String TWITTER_UPDATE_STATUS_URL = "https://api.twitter.com/1.1/statuses/update.json";
+    private final ConsumerKey consumerKey;
+    private final AsyncHttpClient asyncHttpClient;
 
-    public void send(String token, String secret, String message) throws TwitterException {
-        AccessToken accessToken = new AccessToken(token, secret);
-        Twitter twitter = factory.getInstance();
-        twitter.setOAuthAccessToken(accessToken);
-        twitter.updateStatus(message);
+    public TwitterWrapper(TwitterProperties twitterProperties, AsyncHttpClient asyncHttpClient) {
+        this.consumerKey = new ConsumerKey(
+                twitterProperties.getConsumerKey(),
+                twitterProperties.getConsumerSecret()
+        );
+        this.asyncHttpClient = asyncHttpClient;
     }
 
+    public void send(String token, String secret, String message,
+                     AsyncCompletionHandler<Response> handler) {
+        asyncHttpClient
+                .preparePost(TWITTER_UPDATE_STATUS_URL)
+                .addQueryParam("status", message)
+                .setSignatureCalculator(new OAuthSignatureCalculator(consumerKey, new RequestToken(token, secret)))
+                .execute(handler);
+    }
 }

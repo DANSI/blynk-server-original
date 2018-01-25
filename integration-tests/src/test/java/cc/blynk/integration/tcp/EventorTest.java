@@ -393,7 +393,7 @@ public class EventorTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 1 37");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 37"))));
 
-        verify(twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("Yo!!!!!"));
+        verify(twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("Yo!!!!!"), any());
     }
 
     @Test

@@ -30,6 +30,7 @@ import static cc.blynk.utils.FileLoaderUtil.TOKEN_MAIL_BODY;
 import static cc.blynk.utils.properties.GCMProperties.GCM_PROPERTIES_FILENAME;
 import static cc.blynk.utils.properties.MailProperties.MAIL_PROPERTIES_FILENAME;
 import static cc.blynk.utils.properties.ServerProperties.SERVER_PROPERTIES_FILENAME;
+import static cc.blynk.utils.properties.TwitterProperties.TWITTER_PROPERTIES_FILENAME;
 
 /**
  * The Blynk Project.
@@ -62,7 +63,7 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
         configs.add(new Config(MAIL_PROPERTIES_FILENAME));
         configs.add(new Config(GCM_PROPERTIES_FILENAME));
         configs.add(new Config(DB_PROPERTIES_FILENAME));
-        configs.add(new Config("twitter4j.properties"));
+        configs.add(new Config(TWITTER_PROPERTIES_FILENAME));
         configs.add(new Config(TOKEN_MAIL_BODY));
 
         return appendTotalCountHeader(

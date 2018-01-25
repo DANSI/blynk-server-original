@@ -12,11 +12,11 @@ import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
 import cc.blynk.utils.SHA256Util;
-import cc.blynk.utils.properties.BaseProperties;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.ServerProperties;
 import cc.blynk.utils.properties.SmsProperties;
+import cc.blynk.utils.properties.TwitterProperties;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import sun.misc.Unsafe;
 
@@ -89,14 +89,15 @@ public final class ServerLauncher {
         //required to avoid dependencies within model to server.properties
         setGlobalProperties(serverProperties);
 
-        BaseProperties mailProperties = new MailProperties(cmdProperties);
-        BaseProperties smsProperties = new SmsProperties(cmdProperties);
-        BaseProperties gcmProperties = new GCMProperties(cmdProperties);
+        MailProperties mailProperties = new MailProperties(cmdProperties);
+        SmsProperties smsProperties = new SmsProperties(cmdProperties);
+        GCMProperties gcmProperties = new GCMProperties(cmdProperties);
+        TwitterProperties twitterProperties = new TwitterProperties(cmdProperties);
 
         Security.addProvider(new BouncyCastleProvider());
 
         boolean restore = Boolean.parseBoolean(cmdProperties.get(ArgumentsParser.RESTORE_OPTION));
-        start(serverProperties, mailProperties, smsProperties, gcmProperties, restore);
+        start(serverProperties, mailProperties, smsProperties, gcmProperties, twitterProperties, restore);
     }
 
     private static void setGlobalProperties(ServerProperties serverProperties) {
@@ -113,10 +114,13 @@ public final class ServerLauncher {
         }
     }
 
-    private static void start(ServerProperties serverProperties, BaseProperties mailProperties,
-                              BaseProperties smsProperties, BaseProperties gcmProperties,
+    private static void start(ServerProperties serverProperties, MailProperties mailProperties,
+                              SmsProperties smsProperties, GCMProperties gcmProperties,
+                              TwitterProperties twitterProperties,
                               boolean restore) {
-        Holder holder = new Holder(serverProperties, mailProperties, smsProperties, gcmProperties, restore);
+        Holder holder = new Holder(serverProperties,
+                mailProperties, smsProperties, gcmProperties, twitterProperties,
+                restore);
 
         BaseServer[] servers = new BaseServer[] {
                 new HardwareServer(holder),

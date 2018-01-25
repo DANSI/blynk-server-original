@@ -1,6 +1,5 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
-import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.processors.NotificationBase;
@@ -10,8 +9,11 @@ import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.asynchttpclient.AsyncCompletionHandler;
+import org.asynchttpclient.Response;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.notificationError;
 import static cc.blynk.server.internal.CommonByteBufUtil.notificationNotAuthorized;
@@ -29,13 +31,10 @@ public class TwitLogic extends NotificationBase {
 
     private static final Logger log = LogManager.getLogger(TwitLogic.class);
 
-    private final BlockingIOProcessor blockingIOProcessor;
     private final TwitterWrapper twitterWrapper;
 
-    public TwitLogic(BlockingIOProcessor blockingIOProcessor, TwitterWrapper twitterWrapper,
-                     long notificationQuotaLimit) {
+    public TwitLogic(TwitterWrapper twitterWrapper, long notificationQuotaLimit) {
         super(notificationQuotaLimit);
-        this.blockingIOProcessor = blockingIOProcessor;
         this.twitterWrapper = twitterWrapper;
     }
 
@@ -62,15 +61,23 @@ public class TwitLogic extends NotificationBase {
     }
 
     private void twit(Channel channel, String email, String token, String secret, String body, int msgId) {
-        blockingIOProcessor.execute(() -> {
-            try {
-                twitterWrapper.send(token, secret, body);
-                channel.writeAndFlush(ok(msgId), channel.voidPromise());
-            } catch (Exception e) {
-                logError(e.getMessage(), email);
-                channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
-            }
-        });
+        twitterWrapper.send(token, secret, body,
+                new AsyncCompletionHandler<Response>() {
+                    @Override
+                    public Response onCompleted(Response response) throws Exception {
+                        if (response.getStatusCode() == HttpResponseStatus.OK.code()) {
+                            channel.writeAndFlush(ok(msgId), channel.voidPromise());
+                        }
+                        return response;
+                    }
+
+                    @Override
+                    public void onThrowable(Throwable t) {
+                        logError(t.getMessage(), email);
+                        channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                    }
+                }
+        );
     }
 
     private static void logError(String errorMessage, String email) {

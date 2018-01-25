@@ -22,8 +22,11 @@ import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.validators.BlynkEmailValidator;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.asynchttpclient.AsyncCompletionHandler;
+import org.asynchttpclient.Response;
 
 import static cc.blynk.server.core.protocol.enums.Command.EVENTOR;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -145,16 +148,22 @@ public class EventorProcessor {
             return;
         }
 
-        blockingIOProcessor.execute(() -> {
-            try {
-                twitterWrapper.send(twitterWidget.token, twitterWidget.secret, body);
-            } catch (Exception e) {
-                String errorMessage = e.getMessage();
-                if (errorMessage != null && errorMessage.contains("Eventor. Status is a duplicate")) {
-                    log.warn("Error sending twit. Reason : {}", e.getMessage());
+        twitterWrapper.send(twitterWidget.token, twitterWidget.secret, body,
+                new AsyncCompletionHandler<Response>() {
+                    @Override
+                    public Response onCompleted(Response response) throws Exception {
+                        if (response.getStatusCode() != HttpResponseStatus.OK.code()) {
+                            log.debug("Error sending twit from eventor. Reason : {}.", response.getResponseBody());
+                        }
+                        return response;
+                    }
+
+                    @Override
+                    public void onThrowable(Throwable t) {
+                        log.debug("Error sending twit from eventor.", t);
+                    }
                 }
-            }
-        });
+        );
     }
 
     public static void push(GCMWrapper gcmWrapper, DashBoard dash, String body) {

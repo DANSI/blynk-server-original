@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.SmsProperties;
+import cc.blynk.utils.properties.TwitterProperties;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -50,6 +51,7 @@ public class HttpAPIPinsTest extends BaseTest {
                 new MailProperties(Collections.emptyMap()),
                 new SmsProperties(Collections.emptyMap()),
                 new GCMProperties(Collections.emptyMap()),
+                new TwitterProperties(Collections.emptyMap()),
                 false
         );
         httpServer = new HardwareAndHttpAPIServer(localHolder).start();

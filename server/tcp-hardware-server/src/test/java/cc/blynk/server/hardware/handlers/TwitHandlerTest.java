@@ -83,7 +83,7 @@ public class TwitHandlerTest {
 	public void testTweetMessageWithEmptyBody() {
 		StringMessage twitMessage = (StringMessage) MessageFactory.produce(1, Command.TWEET, "");
         state.user.profile = profile;
-		TwitLogic tweetHandler = new TwitLogic(blockingIOProcessor, twitterWrapper, 60);
+		TwitLogic tweetHandler = new TwitLogic(twitterWrapper, 60);
 		tweetHandler.messageReceived(ctx, state, twitMessage);
 	}
 
@@ -92,14 +92,14 @@ public class TwitHandlerTest {
 		final String longBody = RandomStringUtils.random(150);
 		StringMessage twitMessage = (StringMessage) MessageFactory.produce(1, Command.TWEET, longBody);
         state.user.profile = profile;
-		TwitLogic tweetHandler = new TwitLogic(blockingIOProcessor, twitterWrapper, 60);
+		TwitLogic tweetHandler = new TwitLogic(twitterWrapper, 60);
 		tweetHandler.messageReceived(ctx, state, twitMessage);
 	}
 
 	@Test(expected = QuotaLimitException.class)
 	public void testSendQuotaLimitationException() throws InterruptedException {
 		StringMessage twitMessage = (StringMessage) MessageFactory.produce(1, Command.TWEET, "this is a test tweet");
-		TwitLogic tweetHandler = spy(new TwitLogic(blockingIOProcessor, twitterWrapper, 60));
+		TwitLogic tweetHandler = spy(new TwitLogic(twitterWrapper, 60));
         state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = "token";
@@ -118,7 +118,7 @@ public class TwitHandlerTest {
 		ServerProperties props = new ServerProperties(Collections.emptyMap());
 		props.setProperty("notifications.frequency.user.quota.limit", "1");
 		final long defaultQuotaTime = props.getLongProperty("notifications.frequency.user.quota.limit") * 1000;
-		TwitLogic tweetHandler = spy(new TwitLogic(blockingIOProcessor, twitterWrapper, 60));
+		TwitLogic tweetHandler = spy(new TwitLogic(twitterWrapper, 60));
 		state.user.profile = profile;
 		Twitter twitter = new Twitter();
 		twitter.token = "token";

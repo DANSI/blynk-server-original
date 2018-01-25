@@ -799,7 +799,7 @@ public class MainWorkflowTest extends IntegrationBase {
         reset(blockingIOProcessor);
 
         clientPair.hardwareClient.send("tweet yo");
-        verify(twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("yo"));
+        verify(twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("yo"), any());
 
         clientPair.hardwareClient.send("tweet yo");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, QUOTA_LIMIT)));

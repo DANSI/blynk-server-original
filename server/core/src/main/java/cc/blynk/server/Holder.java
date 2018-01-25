@@ -18,8 +18,11 @@ import cc.blynk.server.transport.TransportTypeHolder;
 import cc.blynk.server.workers.ReadingWidgetsWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.FileUtils;
-import cc.blynk.utils.properties.BaseProperties;
+import cc.blynk.utils.properties.GCMProperties;
+import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.ServerProperties;
+import cc.blynk.utils.properties.SmsProperties;
+import cc.blynk.utils.properties.TwitterProperties;
 import io.netty.channel.epoll.Epoll;
 import io.netty.util.internal.SystemPropertyUtil;
 import org.asynchttpclient.DefaultAsyncHttpClient;
@@ -77,8 +80,9 @@ public class Holder implements Closeable {
 
     public final SslContextHolder sslContextHolder;
 
-    public Holder(ServerProperties serverProperties, BaseProperties mailProperties,
-                  BaseProperties smsProperties, BaseProperties gcmProperties, boolean restore) {
+    public Holder(ServerProperties serverProperties, MailProperties mailProperties,
+                  SmsProperties smsProperties, GCMProperties gcmProperties, TwitterProperties twitterProperties,
+                  boolean restore) {
         disableNettyLeakDetector();
         this.props = serverProperties;
 
@@ -122,7 +126,7 @@ public class Holder implements Closeable {
                 .build()
         );
 
-        this.twitterWrapper = new TwitterWrapper();
+        this.twitterWrapper = new TwitterWrapper(twitterProperties, asyncHttpClient);
         this.mailWrapper = new MailWrapper(mailProperties);
         this.gcmWrapper = new GCMWrapper(gcmProperties, asyncHttpClient);
         this.smsWrapper = new SMSWrapper(smsProperties, asyncHttpClient);
@@ -144,7 +148,9 @@ public class Holder implements Closeable {
 
     //for tests only
     public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper,
-                  MailWrapper mailWrapper, GCMWrapper gcmWrapper, SMSWrapper smsWrapper, String dbFileName) {
+                  MailWrapper mailWrapper,
+                  GCMWrapper gcmWrapper, SMSWrapper smsWrapper,
+                  String dbFileName) {
         disableNettyLeakDetector();
         this.props = serverProperties;
 

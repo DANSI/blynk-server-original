@@ -12,6 +12,7 @@ import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.SmsProperties;
+import cc.blynk.utils.properties.TwitterProperties;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -59,6 +60,7 @@ public class AppWebSocketTest extends IntegrationBase {
                 new MailProperties(Collections.emptyMap()),
                 new SmsProperties(Collections.emptyMap()),
                 new GCMProperties(Collections.emptyMap()),
+                new TwitterProperties(Collections.emptyMap()),
                 false
         );
         tcpWebSocketPort = httpPort;
