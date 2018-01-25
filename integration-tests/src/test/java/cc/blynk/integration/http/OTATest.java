@@ -6,7 +6,6 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
-import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -69,7 +68,6 @@ public class OTATest extends BaseTest {
     private BaseServer httpServer;
     private BaseServer httpsServer;
     private BaseServer hardwareServer;
-    private BaseServer appServer;
 
     private CloseableHttpClient httpclient;
     private String httpsAdminServerUrl;
@@ -83,7 +81,6 @@ public class OTATest extends BaseTest {
         httpServer.close();
         httpsServer.close();
         hardwareServer.close();
-        appServer.close();
         clientPair.stop();
     }
 
@@ -92,7 +89,6 @@ public class OTATest extends BaseTest {
         httpServer = new HardwareAndHttpAPIServer(holder).start();
         httpsServer = new AppAndHttpsServer(holder).start();
         hardwareServer = new HardwareServer(holder).start();
-        appServer = new AppServer(holder).start();
         httpsAdminServerUrl = String.format("https://localhost:%s/admin", httpsPort);
 
         String pass = "admin";

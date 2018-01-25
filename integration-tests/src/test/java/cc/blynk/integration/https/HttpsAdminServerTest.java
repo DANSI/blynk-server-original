@@ -7,7 +7,6 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
-import cc.blynk.server.application.AppServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -66,7 +65,6 @@ public class HttpsAdminServerTest extends BaseTest {
 
     private static BaseServer httpServer;
     private BaseServer hardwareServer;
-    private BaseServer appServer;
     private BaseServer httpAdminServer;
     private CloseableHttpClient httpclient;
     private String httpsAdminServerUrl;
@@ -80,7 +78,6 @@ public class HttpsAdminServerTest extends BaseTest {
         httpAdminServer.close();
         httpServer.close();
         hardwareServer.close();
-        appServer.close();
         clientPair.stop();
     }
 
@@ -88,7 +85,6 @@ public class HttpsAdminServerTest extends BaseTest {
     public void init() throws Exception {
         this.httpAdminServer = new AppAndHttpsServer(holder).start();
         hardwareServer = new HardwareServer(holder).start();
-        appServer = new AppServer(holder).start();
 
         httpsAdminServerUrl = String.format("https://localhost:%s/admin", httpsPort);
         httpServerUrl = String.format("http://localhost:%s/", httpPort);
