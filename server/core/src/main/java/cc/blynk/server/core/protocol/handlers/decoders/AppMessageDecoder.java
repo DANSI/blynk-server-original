@@ -1,12 +1,14 @@
 package cc.blynk.server.core.protocol.handlers.decoders;
 
 import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.DecoderException;
 import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +30,8 @@ public class AppMessageDecoder extends ByteToMessageDecoder {
 
     private final GlobalStats stats;
     public static final int PROTOCOL_APP_HEADER_SIZE = 7;
+    private static final DecoderException decoderException =
+            new DecoderException(new UnsupportedCommandException("Length field is wrong.", 1));
 
     public AppMessageDecoder(GlobalStats stats) {
         this.stats = stats;
@@ -56,6 +60,8 @@ public class AppMessageDecoder extends ByteToMessageDecoder {
                 return;
             }
 
+            validateLength(codeOrLength);
+
             message = produce(messageId, command, (String) in.readCharSequence(codeOrLength, CharsetUtil.UTF_8));
         }
 
@@ -64,6 +70,12 @@ public class AppMessageDecoder extends ByteToMessageDecoder {
         stats.mark(command);
 
         out.add(message);
+    }
+
+    private static void validateLength(int length) {
+        if (length < 0 || length > 10_000_000) {
+            throw decoderException;
+        }
     }
 
 }
