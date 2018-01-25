@@ -3,6 +3,7 @@ package cc.blynk.server.notifications.push;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
+import cc.blynk.utils.properties.GCMProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.netty.channel.epoll.Epoll;
 import org.asynchttpclient.AsyncHttpClient;
@@ -13,8 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -35,7 +34,7 @@ public class GCMWrapperTest {
         );
 
     @Mock
-    private Properties props;
+    private GCMProperties props;
 
     @Test
     @Ignore

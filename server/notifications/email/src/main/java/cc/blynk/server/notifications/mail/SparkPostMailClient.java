@@ -1,5 +1,6 @@
 package cc.blynk.server.notifications.mail;
 
+import cc.blynk.utils.properties.MailProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,7 +15,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-import java.util.Properties;
 
 /**
  * The Blynk Project.
@@ -31,13 +31,13 @@ public class SparkPostMailClient implements MailClient {
     private final String username;
     private final String password;
 
-    SparkPostMailClient(Properties mailProperties) {
-        this.username = mailProperties.getProperty("mail.smtp.username");
-        this.password = mailProperties.getProperty("mail.smtp.password");
-        this.host = mailProperties.getProperty("mail.smtp.host");
+    SparkPostMailClient(MailProperties mailProperties) {
+        this.username = mailProperties.getSMTPUsername();
+        this.password = mailProperties.getSMTPPassword();
+        this.host = mailProperties.getSMTPHost();
 
         log.info("Initializing SparkPost smtp mail transport. Username : {}. SMTP host : {}:{}",
-                username, host, mailProperties.getProperty("mail.smtp.port"));
+                username, host, mailProperties.getSMTPort());
 
         this.session = Session.getInstance(mailProperties);
         try {

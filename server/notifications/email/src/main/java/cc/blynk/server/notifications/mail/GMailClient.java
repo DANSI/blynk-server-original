@@ -1,5 +1,6 @@
 package cc.blynk.server.notifications.mail;
 
+import cc.blynk.utils.properties.MailProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +16,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-import java.util.Properties;
 
 /**
  * The Blynk Project.
@@ -29,12 +29,12 @@ public class GMailClient implements MailClient {
     private final Session session;
     private final InternetAddress from;
 
-    GMailClient(Properties mailProperties) {
-        final String username = mailProperties.getProperty("mail.smtp.username");
-        final String password = mailProperties.getProperty("mail.smtp.password");
+    GMailClient(MailProperties mailProperties) {
+        String username = mailProperties.getSMTPUsername();
+        String password = mailProperties.getSMTPPassword();
 
         log.info("Initializing gmail smtp mail transport. Username : {}. SMTP host : {}:{}",
-                username, mailProperties.getProperty("mail.smtp.host"), mailProperties.getProperty("mail.smtp.port"));
+                username, mailProperties.getSMTPHost(), mailProperties.getSMTPort());
 
         this.session = Session.getInstance(mailProperties, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {

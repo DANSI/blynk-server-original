@@ -141,8 +141,7 @@ public class Holder implements Closeable {
 
         this.csvDownloadUrl = FileUtils.csvDownloadUrl(host, props.getProperty("http.port"));
 
-        String contactEmail = serverProperties.getProperty("contact.email",
-                mailProperties.getProperty("mail.smtp.username"));
+        String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
     }
 

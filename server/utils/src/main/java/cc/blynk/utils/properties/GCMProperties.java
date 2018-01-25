@@ -14,4 +14,16 @@ public class GCMProperties extends BaseProperties {
     public GCMProperties(Map<String, String> cmdProperties) {
         super(cmdProperties, GCM_PROPERTIES_FILENAME);
     }
+
+    public String getNotificationTitle() {
+        return getProperty("notification.title", "Blynk Notification");
+    }
+
+    public String getGCMApiKey() {
+        return getProperty("gcm.api.key");
+    }
+
+    public String getGCMServer() {
+        return getProperty("gcm.server");
+    }
 }

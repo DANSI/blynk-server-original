@@ -1,6 +1,7 @@
 package cc.blynk.server.notifications.push;
 
 import cc.blynk.utils.AppNameUtil;
+import cc.blynk.utils.properties.GCMProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +15,6 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.Response;
 
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * The Blynk Project.
@@ -33,13 +33,13 @@ public class GCMWrapper {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .readerFor(GCMResponseMessage.class);
 
-    public GCMWrapper(Properties props, AsyncHttpClient httpclient) {
-        this.apiKey = "key=" + props.getProperty("gcm.api.key");
+    public GCMWrapper(GCMProperties props, AsyncHttpClient httpclient) {
+        this.apiKey = "key=" + props.getGCMApiKey();
         this.httpclient = httpclient;
-        this.gcmURI = props.getProperty("gcm.server");
+        this.gcmURI = props.getGCMServer();
 
-        String productName = props.getProperty("product.name", AppNameUtil.BLYNK);
-        String title = props.getProperty("notification.title", "Blynk Notification");
+        String productName = props.getProductName();
+        String title = props.getNotificationTitle();
         this.title = title.replace(AppNameUtil.PRODUCT_NAME, productName);
     }
 

@@ -14,4 +14,20 @@ public class MailProperties extends BaseProperties {
     public MailProperties(Map<String, String> cmdProperties) {
         super(cmdProperties, MAIL_PROPERTIES_FILENAME);
     }
+
+    public String getSMTPUsername() {
+        return getProperty("mail.smtp.username");
+    }
+
+    public String getSMTPPassword() {
+        return getProperty("mail.smtp.password");
+    }
+
+    public String getSMTPHost() {
+        return getProperty("mail.smtp.host");
+    }
+
+    public String getSMTPort() {
+        return getProperty("mail.smtp.port");
+    }
 }

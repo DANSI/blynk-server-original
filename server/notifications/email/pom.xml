@@ -48,6 +48,12 @@
             <version>${qrgen.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>cc.blynk.utils</groupId>
+            <artifactId>utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>
