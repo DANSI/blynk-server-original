@@ -1,5 +1,6 @@
 package cc.blynk.server.notifications.mail;
 
+import cc.blynk.utils.properties.MailProperties;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
 import org.asynchttpclient.DefaultAsyncHttpClient;
@@ -8,7 +9,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.InputStream;
-import java.util.Properties;
+import java.util.Collections;
 
 /**
  * The Blynk Project.
@@ -56,7 +57,7 @@ public class MailWrapperTest {
                 new QrHolder(1, 1, "My device2", "12345678902", QRCode.from("21321321").to(ImageType.JPG).stream().toByteArray())
         };
 
-        Properties properties = new Properties();
+        MailProperties properties = new MailProperties(Collections.emptyMap());
         try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
             if (classPath != null) {
                 properties.load(classPath);
@@ -70,7 +71,7 @@ public class MailWrapperTest {
     @Test
     @Ignore
     public void sendMailWithAttachments() throws Exception {
-        Properties properties = new Properties();
+        MailProperties properties = new MailProperties(Collections.emptyMap());
         try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
             if (classPath != null) {
                 properties.load(classPath);
@@ -88,7 +89,7 @@ public class MailWrapperTest {
     @Test
     @Ignore
     public void sendMail() throws Exception {
-        Properties properties = new Properties();
+        MailProperties properties = new MailProperties(Collections.emptyMap());
         try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
             if (classPath != null) {
                 properties.load(classPath);
@@ -103,7 +104,7 @@ public class MailWrapperTest {
     @Test
     @Ignore
     public void sendMail2() throws Exception {
-        Properties properties = new Properties();
+        MailProperties properties = new MailProperties(Collections.emptyMap());
         try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
             if (classPath != null) {
                 properties.load(classPath);
@@ -119,7 +120,7 @@ public class MailWrapperTest {
     @Test
     @Ignore
     public void sendMailWithHttpProvider() throws Exception {
-        Properties properties = new Properties();
+        MailProperties properties = new MailProperties(Collections.emptyMap());
         try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
             if (classPath != null) {
                 properties.load(classPath);

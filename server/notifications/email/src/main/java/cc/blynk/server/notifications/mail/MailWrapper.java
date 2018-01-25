@@ -1,6 +1,6 @@
 package cc.blynk.server.notifications.mail;
 
-import java.util.Properties;
+import cc.blynk.utils.properties.MailProperties;
 
 /**
  * The Blynk Project.
@@ -11,7 +11,7 @@ public class MailWrapper {
 
     private final MailClient client;
 
-    public MailWrapper(Properties mailProperties) {
+    public MailWrapper(MailProperties mailProperties) {
         String host = mailProperties.getProperty("mail.smtp.host");
         if (host != null && host.contains("sparkpostmail")) {
             client = new SparkPostMailClient(mailProperties);
