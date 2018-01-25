@@ -155,7 +155,9 @@ public class FileManager {
                         } catch (IOException ioe) {
                             String errorMessage = ioe.getMessage();
                             log.error("Error parsing file '{}'. Error : {}", path, errorMessage);
-                            if (errorMessage != null && errorMessage.contains("end-of-input")) {
+                            if (errorMessage != null
+                                    && (errorMessage.contains("end-of-input")
+                                    || errorMessage.contains("Illegal character"))) {
                                 return restoreFromBackup(path.getFileName());
                             }
                         }
