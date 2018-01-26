@@ -403,13 +403,13 @@ public class SyncWorkflowTest extends IntegrationBase {
         User user = holder.userDao.users.get(new UserKey("dima@mail.ua", "Blynk"));
         Widget widget = user.profile.dashBoards[0].findWidgetByPin(0, (byte) 5, PinType.DIGITAL);
         Timer timer = (Timer) widget;
-        timer.value = b("dw 5 100500");
+        timer.value = "100500";
 
         clientPair.hardwareClient.send("hardsync dr 5");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 5 100500"))));
 
         Thread thread = new Thread(() -> {
-            timer.value = b("dw 5 200300");
+            timer.value = "200300";
         });
 
         thread.start();

@@ -279,7 +279,7 @@ public class TimerTest extends IntegrationBase {
         timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = b("dw 5 1");
+        timer.startValue = "1";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -302,7 +302,7 @@ public class TimerTest extends IntegrationBase {
         timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.stopValue = b("dw 5 0");
+        timer.stopValue = "0";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.stopTime = curTime + 1;
@@ -325,8 +325,8 @@ public class TimerTest extends IntegrationBase {
         timer.pin = 5;
         timer.width = 2;
         timer.height = 1;
-        timer.startValue = b("dw 5 1");
-        timer.stopValue = b("dw 5 0");
+        timer.startValue = "1";
+        timer.stopValue = "0";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -352,8 +352,8 @@ public class TimerTest extends IntegrationBase {
         timer.pin = 5;
         timer.width = 2;
         timer.height = 1;
-        timer.startValue = b("dw 5 1");
-        timer.stopValue = b("dw 5 0");
+        timer.startValue = "1";
+        timer.stopValue = "0";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -377,7 +377,7 @@ public class TimerTest extends IntegrationBase {
         timer.y = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = b("1");
+        timer.startValue = "1";
         timer.width = 2;
         timer.height = 1;
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
@@ -388,10 +388,10 @@ public class TimerTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         timer.id = 113;
-        timer.startValue = b("2");
+        timer.startValue = "2";
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
@@ -409,8 +409,8 @@ public class TimerTest extends IntegrationBase {
         timer.pin = 5;
         timer.width = 2;
         timer.height = 1;
-        timer.startValue = b("dw 5 0");
-        timer.stopValue = b("dw 5 1");
+        timer.startValue = "0";
+        timer.stopValue = "1";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -435,8 +435,8 @@ public class TimerTest extends IntegrationBase {
         timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = b("dw 5 1");
-        timer.stopValue = b("dw 5 0");
+        timer.startValue = "1";
+        timer.stopValue = "0";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -445,8 +445,8 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        timer.startValue = b("dw 5 11");
-        timer.stopValue = b("dw 5 10");
+        timer.startValue = "11";
+        timer.stopValue = "10";
 
         clientPair.appClient.send("updateWidget 1\0" + JsonParser.toJson(timer));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -467,8 +467,8 @@ public class TimerTest extends IntegrationBase {
         timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = b("dw 5 1");
-        timer.stopValue = b("dw 5 0");
+        timer.startValue = "1";
+        timer.stopValue = "0";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -478,7 +478,7 @@ public class TimerTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("deleteDash 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         verify(clientPair.hardwareClient.responseMock, after(2500).times(0)).channelRead(any(), any());
     }
@@ -501,8 +501,8 @@ public class TimerTest extends IntegrationBase {
         timer.y = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = b("dw 5 1");
-        timer.stopValue = b("dw 5 0");
+        timer.startValue = "1";
+        timer.stopValue = "0";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
@@ -514,11 +514,11 @@ public class TimerTest extends IntegrationBase {
         dashBoard.widgets = new Widget[] {timer};
 
         clientPair.appClient.send("updateDash " + dashBoard.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         dashBoard.id = 2;
         clientPair.appClient.send("createDash " + dashBoard.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         clientPair.appClient.send("activate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
@@ -564,10 +564,10 @@ public class TimerTest extends IntegrationBase {
         dashBoard.widgets = new Widget[] {timer};
 
         clientPair.appClient.send("updateDash " + dashBoard.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.send("activate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
         clientPair.hardwareClient.reset();
@@ -605,8 +605,6 @@ public class TimerTest extends IntegrationBase {
         assertEquals(100_000, tag.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
 
-
-
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
@@ -616,7 +614,7 @@ public class TimerTest extends IntegrationBase {
         timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = b("dw 5 1");
+        timer.startValue = "1";
         timer.deviceId = 100_000;
 
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
@@ -624,11 +622,52 @@ public class TimerTest extends IntegrationBase {
         timer.startTime = curTime + 1;
 
         clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
         verify(hardClient2.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
     }
 
+    @Test
+    public void testTimerWidgetTriggeredAndSyncWorks() throws Exception {
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
+        clientPair.appClient.send("deactivate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        Timer timer = new Timer();
+        timer.id = 1;
+        timer.x = 1;
+        timer.y = 1;
+        timer.pinType = PinType.VIRTUAL;
+        timer.pin = 5;
+        timer.startValue = "1";
+        timer.stopValue = "0";
+        LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
+        int curTime = localDateTime.toSecondOfDay();
+        timer.startTime = curTime + 1;
+        timer.stopTime = curTime + 2;
+
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 1;
+        dashBoard.name = "Test";
+        dashBoard.widgets = new Widget[] {timer};
+
+        clientPair.appClient.send("updateDash " + dashBoard.toString());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("vw 5 1"))));
+        clientPair.hardwareClient.reset();
+        clientPair.hardwareClient.send("hardSync vr 5");
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 5 1"))));
+
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("vw 5 0"))));
+
+        clientPair.hardwareClient.send("hardSync vr 5");
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 5 0"))));
+
+    }
 }

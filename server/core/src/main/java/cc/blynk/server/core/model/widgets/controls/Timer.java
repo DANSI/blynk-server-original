@@ -2,10 +2,6 @@ package cc.blynk.server.core.model.widgets.controls;
 
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
-import io.netty.channel.ChannelHandlerContext;
-
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.
@@ -36,21 +32,6 @@ public class Timer extends OnePinWidget {
 
     private static boolean isValidValue(String value) {
         return value != null && !value.isEmpty();
-    }
-
-    @Override
-    public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
-        if (value != null && this.deviceId == deviceId) {
-            ctx.write(makeUTF8StringMessage(HARDWARE, msgId, value), ctx.voidPromise());
-        }
-    }
-
-    @Override
-    public String makeHardwareBody() {
-        if (isNotValid() || value == null) {
-            return null;
-        }
-        return value;
     }
 
     @Override
