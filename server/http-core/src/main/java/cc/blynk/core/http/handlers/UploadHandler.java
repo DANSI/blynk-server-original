@@ -160,7 +160,6 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
                                 StandardCopyOption.REPLACE_EXISTING);
                         pathTo =  uploadFolder + finalName;
                     }
-                    data.release();
                 }
             }
         } catch (EndOfDataDecoderException endOfData) {
