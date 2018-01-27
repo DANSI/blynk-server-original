@@ -273,9 +273,9 @@ For example:
 
 Available server options:
 
-+ Application mutual ssl/tls port
-
-        app.ssl.port=8443
++ Blynk app, https, web sockets, admin port
+        
+        https.port=9443
         
         
 + Hardware plain tcp/ip port
@@ -295,11 +295,6 @@ Available server options:
         server.ssl.cert=./server_embedded.crt
         server.ssl.key=./server_embedded.pem
         server.ssl.key.pass=pupkin123
-                
-        
-+ Https, web sockets, admin port
-        
-        https.port=9443
         
         
 + Http and web sockets port

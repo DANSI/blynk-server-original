@@ -31,7 +31,7 @@ public class AppServer extends BaseServer {
 
     public AppServer(Holder holder) {
         super(holder.props.getProperty("listen.address"),
-                holder.props.getIntProperty("app.ssl.port"), holder.transportTypeHolder);
+                holder.props.getIntProperty("app.ssl.port", 8443), holder.transportTypeHolder);
 
         final AppChannelStateHandler appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
         final RegisterHandler registerHandler = new RegisterHandler(holder);

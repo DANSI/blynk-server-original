@@ -112,7 +112,7 @@ public abstract class BaseProperties extends Properties {
         if (prop == null || prop.isEmpty()) {
             return defaultValue;
         }
-        return Integer.parseInt(getProperty(propertyName));
+        return Integer.parseInt(prop);
     }
 
     public boolean isRawDBEnabled() {
