@@ -43,6 +43,8 @@ public class TileTemplate {
 
     public final boolean showDeviceName;
 
+    public final String templateId;
+
     @JsonCreator
     public TileTemplate(@JsonProperty("id") long id,
                         @JsonProperty("widgets") Widget[] widgets,
@@ -56,7 +58,8 @@ public class TileTemplate {
                         @JsonProperty("color") int color,
                         @JsonProperty("alignment") TextAlignment alignment,
                         @JsonProperty("disableWhenOffline") boolean disableWhenOffline,
-                        @JsonProperty("showDeviceName") boolean showDeviceName) {
+                        @JsonProperty("showDeviceName") boolean showDeviceName,
+                        @JsonProperty("templateId") String templateId) {
         this.id = id;
         this.widgets = widgets == null ? EMPTY_WIDGETS : widgets;
         this.deviceIds = deviceIds == null ? EMPTY_INTS : deviceIds;
@@ -70,6 +73,7 @@ public class TileTemplate {
         this.alignment = alignment;
         this.disableWhenOffline = disableWhenOffline;
         this.showDeviceName = showDeviceName;
+        this.templateId = templateId;
     }
 
     public int getPrice() {
