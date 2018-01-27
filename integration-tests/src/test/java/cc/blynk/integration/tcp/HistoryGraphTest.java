@@ -1790,7 +1790,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 new Widget[] {
                         enhancedHistoryGraph
                 },
-                deviceIds, "123", TileMode.PAGE, "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL), null, null, 0, TextAlignment.LEFT, false, false);
+                deviceIds, "123", TileMode.PAGE, "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL), null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + deviceTiles.id + " ")
                 + MAPPER.writeValueAsString(tileTemplate));

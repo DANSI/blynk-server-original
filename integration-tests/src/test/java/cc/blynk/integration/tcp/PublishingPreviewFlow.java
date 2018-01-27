@@ -310,7 +310,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false);
+                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("createTemplate " + b("10 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -323,7 +323,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(7)));
 
         tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false);
+                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -358,7 +358,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertTrue(dashBoard.widgets[0] instanceof DeviceTiles);
 
         tileTemplate = new TileTemplate(1, null, new int[] {0}, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false);
+                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
         appClient2.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
