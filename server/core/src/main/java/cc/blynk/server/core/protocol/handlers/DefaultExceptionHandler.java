@@ -68,7 +68,12 @@ public interface DefaultExceptionHandler {
             } else {
                 log.error("Unexpected error! Handler class : {}. Name : {}. Reason : {}. Channel : {}.",
                         ctx.handler().getClass(), ctx.name(), message, ctx.channel());
-                log.debug(cause);
+                //additional logging for rare NPE.
+                if (message == null) {
+                    log.error(cause);
+                } else {
+                    log.debug(cause);
+                }
             }
         }
 
