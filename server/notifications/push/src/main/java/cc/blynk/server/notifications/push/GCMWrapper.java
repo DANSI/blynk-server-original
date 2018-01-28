@@ -89,7 +89,6 @@ public class GCMWrapper {
                             return response;
                         }
 
-                        processError(response.getResponseBody(), tokens, uid);
                         return response;
                     }
 
