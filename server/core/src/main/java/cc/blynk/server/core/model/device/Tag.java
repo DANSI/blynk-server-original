@@ -50,7 +50,7 @@ public class Tag implements Target {
     }
 
     @Override
-    public boolean contains(int deviceId) {
+    public boolean isSelected(int deviceId) {
         return ArrayUtil.contains(deviceIds, deviceId);
     }
 

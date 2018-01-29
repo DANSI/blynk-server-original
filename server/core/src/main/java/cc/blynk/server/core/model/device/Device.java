@@ -52,7 +52,7 @@ public class Device implements Target {
     }
 
     @Override
-    public boolean contains(int deviceId) {
+    public boolean isSelected(int deviceId) {
         return id == deviceId;
     }
 

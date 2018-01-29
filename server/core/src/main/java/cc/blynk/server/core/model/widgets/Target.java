@@ -10,7 +10,7 @@ public interface Target {
     //device ids that target should operate with
     int[] getDeviceIds();
 
-    boolean contains(int deviceId);
+    boolean isSelected(int deviceId);
 
     int[] getAssignedDeviceIds();
 

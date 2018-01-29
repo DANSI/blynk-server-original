@@ -116,7 +116,7 @@ public class ReadingWidgetsWorker implements Runnable {
 
     private boolean sameDeviceId(DashBoard dash, int targetId, int channelDeviceId) {
         Target target = dash.getTarget(targetId);
-        return target != null && target.contains(channelDeviceId);
+        return target != null && target.isSelected(channelDeviceId);
     }
 
 }
