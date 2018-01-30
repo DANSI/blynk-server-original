@@ -40,7 +40,7 @@ public class TwitLogic extends NotificationBase {
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         if (Twitter.isWrongBody(message.body)) {
-            throw new NotificationBodyInvalidException();
+            throw new NotificationBodyInvalidException(message.id);
         }
 
         DashBoard dash = state.dash;

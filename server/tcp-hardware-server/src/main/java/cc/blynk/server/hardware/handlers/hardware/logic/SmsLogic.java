@@ -39,7 +39,7 @@ public class SmsLogic extends NotificationBase {
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         if (message.body == null || message.body.isEmpty() || message.body.length() > MAX_SMS_BODY_SIZE) {
-            throw new NotificationBodyInvalidException();
+            throw new NotificationBodyInvalidException(message.id);
         }
 
         DashBoard dash = state.dash;

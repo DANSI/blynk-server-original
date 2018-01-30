@@ -37,7 +37,7 @@ public class PushLogic extends NotificationBase {
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         if (Notification.isWrongBody(message.body)) {
-            throw new NotificationBodyInvalidException();
+            throw new NotificationBodyInvalidException(message.id);
         }
 
         DashBoard dash = state.dash;
