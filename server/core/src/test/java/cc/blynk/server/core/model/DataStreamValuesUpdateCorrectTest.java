@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.RGB;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.commons.lang3.ArrayUtils;
@@ -90,7 +89,7 @@ public class DataStreamValuesUpdateCorrectTest {
 
     public static void update(DashBoard dash, int deviceId, String[] splitted) {
         final PinType type = PinType.getPinType(splitted[0].charAt(0));
-        final byte pin = ParseUtil.parseByte(splitted[1]);
+        final byte pin = Byte.parseByte(splitted[1]);
         dash.update(deviceId, pin, type, splitted[2], System.currentTimeMillis());
     }
 

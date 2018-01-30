@@ -1,6 +1,5 @@
 package cc.blynk.server.admin.http.handlers;
 
-import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.ipfilter.AbstractRemoteAddressFilter;
@@ -34,7 +33,7 @@ public class IpFilterHandler extends AbstractRemoteAddressFilter<InetSocketAddre
             if (allowedIP.contains("/")) {
                 String[] split = allowedIP.split("/");
                 String ip = split[0];
-                int cidr = ParseUtil.parseInt(split[1]);
+                int cidr = Integer.parseInt(split[1]);
                 this.rules.add(new IpSubnetFilterRule(ip, cidr, IpFilterRuleType.ACCEPT));
             } else {
                 this.allowedIPs.add(allowedIP);

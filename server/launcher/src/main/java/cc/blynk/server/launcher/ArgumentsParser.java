@@ -4,7 +4,6 @@ import cc.blynk.cli.CommandLine;
 import cc.blynk.cli.DefaultParser;
 import cc.blynk.cli.Options;
 import cc.blynk.cli.ParseException;
-import cc.blynk.server.internal.ParseUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,6 +52,7 @@ final class ArgumentsParser {
      *
      * @param args - command line arguments
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     static Map<String, String> parse(String[] args) throws ParseException {
         CommandLine cmd = new DefaultParser().parse(options, args);
 
@@ -68,7 +68,7 @@ final class ArgumentsParser {
         Map<String, String> properties = new HashMap<>();
 
         if (hardPort != null) {
-            ParseUtil.parseInt(hardPort);
+            Integer.parseInt(hardPort);
             properties.put("hardware.default.port", hardPort);
         }
 
@@ -76,12 +76,12 @@ final class ArgumentsParser {
         //deprecated. should be removed in future versions
         //just for back compatibility for now
         if (appPort != null) {
-            ParseUtil.parseInt(appPort);
+            Integer.parseInt(appPort);
             properties.put("app.ssl.port", appPort);
         }
 
         if (workerThreadsString != null) {
-            ParseUtil.parseInt(workerThreadsString);
+            Integer.parseInt(workerThreadsString);
             properties.put("server.worker.threads", workerThreadsString);
         }
         if (dataFolder != null) {

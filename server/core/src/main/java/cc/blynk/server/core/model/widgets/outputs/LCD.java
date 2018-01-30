@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.structure.LimitedArrayDeque;
 import io.netty.channel.Channel;
 
@@ -34,7 +33,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
 
     private transient long lastRequestTS;
 
-    private static final int POOL_SIZE = ParseUtil.parseInt(System.getProperty("lcd.strings.pool.size", "6"));
+    private static final int POOL_SIZE = Integer.parseInt(System.getProperty("lcd.strings.pool.size", "6"));
     private transient final LimitedArrayDeque<String> lastCommands = new LimitedArrayDeque<>(POOL_SIZE);
 
     private static void sendSyncOnActivate(DataStream dataStream, int dashId, int deviceId, Channel appChannel) {
