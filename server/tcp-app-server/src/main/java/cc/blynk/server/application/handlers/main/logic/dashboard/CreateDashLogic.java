@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
@@ -81,7 +82,11 @@ public class CreateDashLogic {
             newDash.createdAt = System.currentTimeMillis();
         }
 
-        user.subtractEnergy(newDash.energySum());
+        int price = newDash.energySum();
+        if (user.notEnoughEnergy(price)) {
+            throw new EnergyLimitException("Not enough energy.", message.id);
+        }
+        user.subtractEnergy(price);
         user.profile.dashBoards = ArrayUtil.add(user.profile.dashBoards, newDash, DashBoard.class);
 
         if (newDash.devices == null) {

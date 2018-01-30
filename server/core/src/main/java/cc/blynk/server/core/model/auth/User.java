@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.processors.NotificationBase;
-import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.AppNameUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -92,13 +91,13 @@ public class User {
         return email + "-" + appName;
     }
 
+    public boolean notEnoughEnergy(int price) {
+        return price > energy && AppNameUtil.BLYNK.equals(appName);
+    }
+
     public void subtractEnergy(int price) {
-        if (AppNameUtil.BLYNK.equals(appName) && price > energy) {
-            throw new EnergyLimitException("Not enough energy.");
-        }
         //non-atomic. we are fine with that
         this.energy -= price;
-        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     public void recycleEnergy(int price) {

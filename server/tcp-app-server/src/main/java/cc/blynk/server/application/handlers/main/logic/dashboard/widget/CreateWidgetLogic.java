@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -90,7 +91,11 @@ public class CreateWidgetLogic {
             }
         }
 
-        user.subtractEnergy(newWidget.getPrice());
+        int price = newWidget.getPrice();
+        if (user.notEnoughEnergy(price)) {
+            throw new EnergyLimitException("Not enough energy.", message.id);
+        }
+        user.subtractEnergy(price);
 
         //widget could be added to project or to other widget like DeviceTiles
         if (widgetAddToId == -1) {
@@ -103,7 +108,9 @@ public class CreateWidgetLogic {
         }
 
         dash.cleanPinStorage(newWidget, true);
-        dash.updatedAt = user.lastModifiedTs;
+        long now = System.currentTimeMillis();
+        user.lastModifiedTs = now;
+        dash.updatedAt = now;
 
         if (newWidget instanceof Timer) {
             timerWorker.add(state.userKey, (Timer) newWidget, dashId);
