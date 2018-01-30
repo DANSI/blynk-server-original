@@ -71,7 +71,7 @@ public class AddEnergyLogic {
             user.addEnergy(energyAmountToAdd);
             response = ok(message.id);
         } else {
-            log.warn("Purchase with invalid transaction id '{}'. {}.", bodyParts[1], user.email);
+            log.warn("Purchase with invalid transaction id '{}'. {}.", message.body, user.email);
             response = notAllowed(message.id);
         }
         ctx.writeAndFlush(response, ctx.voidPromise());
