@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.widgets.others.webhook.Header;
 import cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.enums.Command;
-import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.StringUtils;
 import io.netty.util.CharsetUtil;
@@ -80,12 +79,8 @@ public class WebhookProcessor extends NotificationBase {
             return;
         }
 
-        try {
-            checkIfNotificationQuotaLimitIsNotReached(now);
-        } catch (QuotaLimitException qle) {
-            log.debug("Webhook quota limit reached. Ignoring hook.");
-            return;
-        }
+        checkIfNotificationQuotaLimitIsNotReached(now);
+
         process(session, dash.id, deviceId, widget, triggerValue);
     }
 
