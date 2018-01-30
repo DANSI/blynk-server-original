@@ -40,26 +40,28 @@ public class CreateAppLogic {
         }
 
         if (appString.length() > maxWidgetSize) {
-            throw new NotAllowedException("App is larger then limit.");
+            throw new NotAllowedException("App is larger then limit.", message.id);
         }
 
         App newApp = JsonParser.parseApp(appString);
 
         newApp.id = AppNameUtil.BLYNK.toLowerCase() + StringUtils.randomString(8);
 
-        newApp.validate();
+        if (newApp.isNotValid()) {
+            throw new NotAllowedException("App is not valid.", message.id);
+        }
 
         log.debug("Creating new app {}.", newApp);
 
         User user = state.user;
 
         if (user.profile.apps.length > 25) {
-            throw new NotAllowedException("App with same id already exists.");
+            throw new NotAllowedException("App with same id already exists.", message.id);
         }
 
         for (App app : user.profile.apps) {
             if (app.id.equals(newApp.id)) {
-                throw new NotAllowedException("App with same id already exists.");
+                throw new NotAllowedException("App with same id already exists.", message.id);
             }
         }
 

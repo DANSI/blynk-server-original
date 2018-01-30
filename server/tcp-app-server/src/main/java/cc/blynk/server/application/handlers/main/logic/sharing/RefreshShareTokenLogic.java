@@ -41,7 +41,7 @@ public class RefreshShareTokenLogic {
         try {
             dashId = Integer.parseInt(dashBoardIdString);
         } catch (NumberFormatException ex) {
-            throw new NotAllowedException("Dash board id not valid. Id : " + dashBoardIdString);
+            throw new NotAllowedException("Dash board id not valid. Id : " + dashBoardIdString, message.id);
         }
 
         User user = state.user;

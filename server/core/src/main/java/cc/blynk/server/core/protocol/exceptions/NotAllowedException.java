@@ -9,8 +9,8 @@ import cc.blynk.server.core.protocol.enums.Response;
  */
 public class NotAllowedException extends BaseServerException {
 
-    public NotAllowedException(String message) {
-        super(message, Response.NOT_ALLOWED);
+    public NotAllowedException(String message, int msgId) {
+        super(message, msgId, Response.NOT_ALLOWED);
     }
 
 }

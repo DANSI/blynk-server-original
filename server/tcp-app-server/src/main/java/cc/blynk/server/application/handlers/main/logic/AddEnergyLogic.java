@@ -65,7 +65,7 @@ public class AddEnergyLogic {
             user.addEnergy(energyAmountToAdd);
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
-            throw new NotAllowedException("Purchase with invalid transaction id. User " + user.email);
+            throw new NotAllowedException("Purchase with invalid transaction id. User " + user.email, message.id);
         }
     }
 

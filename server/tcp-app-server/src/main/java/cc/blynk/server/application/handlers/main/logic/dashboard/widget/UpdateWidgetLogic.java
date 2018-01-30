@@ -55,7 +55,7 @@ public class UpdateWidgetLogic {
         }
 
         if (widgetString.length() > maxWidgetSize) {
-            throw new NotAllowedException("Widget is larger then limit.");
+            throw new NotAllowedException("Widget is larger then limit.", message.id);
         }
 
         User user = state.user;
@@ -64,7 +64,7 @@ public class UpdateWidgetLogic {
         Widget newWidget = JsonParser.parseWidget(widgetString);
 
         if (newWidget.width < 1 || newWidget.height < 1) {
-            throw new NotAllowedException("Widget has wrong dimensions.");
+            throw new NotAllowedException("Widget has wrong dimensions.", message.id);
         }
 
         log.debug("Updating widget {}.", widgetString);

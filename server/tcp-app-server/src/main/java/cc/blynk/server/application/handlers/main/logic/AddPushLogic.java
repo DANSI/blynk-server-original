@@ -34,7 +34,7 @@ public final class AddPushLogic {
         Notification notification = dash.getWidgetByType(Notification.class);
 
         if (notification == null) {
-            throw new NotAllowedException("No notification widget.");
+            throw new NotAllowedException("No notification widget.", message.id);
         }
 
         switch (state.version.osType) {

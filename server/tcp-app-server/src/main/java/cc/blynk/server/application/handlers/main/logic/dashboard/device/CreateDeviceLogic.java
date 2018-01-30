@@ -54,7 +54,7 @@ public class CreateDeviceLogic {
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         if (dash.devices.length > deviceLimit) {
-            throw new NotAllowedException("Device limit is reached.");
+            throw new NotAllowedException("Device limit is reached.", message.id);
         }
 
         Device newDevice = JsonParser.parseDevice(deviceString);
@@ -67,7 +67,7 @@ public class CreateDeviceLogic {
 
         for (Device device : dash.devices) {
             if (device.id == newDevice.id) {
-                throw new NotAllowedException("Device with same id already exists.");
+                throw new NotAllowedException("Device with same id already exists.", message.id);
             }
         }
 

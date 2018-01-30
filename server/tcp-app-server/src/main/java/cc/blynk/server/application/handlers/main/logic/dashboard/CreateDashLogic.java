@@ -59,7 +59,7 @@ public class CreateDashLogic {
         }
 
         if (dashString.length() > dashMaxSize) {
-            throw new NotAllowedException("User dashboard is larger then limit.");
+            throw new NotAllowedException("User dashboard is larger then limit.", message.id);
         }
 
         log.debug("Trying to parse user newDash : {}", dashString);
@@ -69,12 +69,12 @@ public class CreateDashLogic {
 
         User user = state.user;
         if (user.profile.dashBoards.length >= dashMaxLimit) {
-            throw new QuotaLimitException("Dashboards limit reached.");
+            throw new QuotaLimitException("Dashboards limit reached.", message.id);
         }
 
         for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.id == newDash.id) {
-                throw new NotAllowedException("Dashboard already exists.");
+                throw new NotAllowedException("Dashboard already exists.", message.id);
             }
         }
 

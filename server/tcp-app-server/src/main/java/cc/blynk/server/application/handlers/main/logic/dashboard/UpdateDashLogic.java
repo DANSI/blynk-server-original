@@ -41,7 +41,7 @@ public class UpdateDashLogic {
         }
 
         if (dashString.length() > dashMaxSize) {
-            throw new NotAllowedException("User dashboard is larger then limit.");
+            throw new NotAllowedException("User dashboard is larger then limit.", message.id);
         }
 
         log.debug("Trying to parse user dash : {}", dashString);

@@ -47,7 +47,7 @@ public class UpdateDashSettingLogic {
         }
 
         if (dashSettingsString.length() > settingsSizeLimit) {
-            throw new NotAllowedException("User dashboard setting message is larger then limit.");
+            throw new NotAllowedException("User dashboard setting message is larger then limit.", message.id);
         }
 
         log.debug("Trying to parse project settings : {}", dashSettingsString);

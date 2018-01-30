@@ -68,7 +68,7 @@ public class CreateWidgetLogic {
         }
 
         if (widgetString.length() > maxWidgetSize) {
-            throw new NotAllowedException("Widget is larger then limit.");
+            throw new NotAllowedException("Widget is larger then limit.", message.id);
         }
 
         User user = state.user;
@@ -77,17 +77,20 @@ public class CreateWidgetLogic {
         Widget newWidget = JsonParser.parseWidget(widgetString);
 
         if (newWidget.width < 1 || newWidget.height < 1) {
-            throw new NotAllowedException("Widget has wrong dimensions.");
+            throw new NotAllowedException("Widget has wrong dimensions.", message.id);
         }
 
         log.debug("Creating new widget {} for dashId {}.", widgetString, dashId);
 
         for (Widget widget : dash.widgets) {
             if (widget.id == newWidget.id) {
-                throw new NotAllowedException("Widget with same id already exists.");
+                throw new NotAllowedException("Widget with same id already exists.", message.id);
             }
             if (widget instanceof DeviceTiles) {
-                ((DeviceTiles) widget).checkForSameWidgetId(newWidget.id);
+                Widget widgetInTiles = ((DeviceTiles) widget).getWidgetById(newWidget.id);
+                if (widgetInTiles != null) {
+                    throw new NotAllowedException("Widget with same id already exists.", message.id);
+                }
             }
         }
 

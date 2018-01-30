@@ -33,7 +33,7 @@ public final class DeleteAppLogic {
         int existingAppIndex = user.profile.getAppIndexById(id);
 
         if (existingAppIndex == -1) {
-            throw new NotAllowedException("App with passed is not exists.");
+            throw new NotAllowedException("App with passed is not exists.", message.id);
         }
 
         for (int projectId : user.profile.apps[existingAppIndex].projectIds) {

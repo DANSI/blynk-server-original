@@ -3,7 +3,6 @@ package cc.blynk.server.core.model.auth;
 import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -59,11 +58,9 @@ public class App {
         this.projectIds = newApp.projectIds;
     }
 
-    public void validate() {
-        if (theme == null || provisionType == null || name == null
-                || name.isEmpty() || projectIds == null) {
-            throw new NotAllowedException("App is not valid.");
-        }
+    public boolean isNotValid() {
+        return theme == null || provisionType == null || name == null
+                || name.isEmpty() || projectIds == null;
     }
 
     @Override

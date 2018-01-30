@@ -59,7 +59,7 @@ public final class CreateTileTemplateLogic {
         TileTemplate newTileTemplate = JsonParser.parseTileTemplate(tileTemplateString);
         for (TileTemplate tileTemplate : deviceTiles.templates) {
             if (tileTemplate.id == newTileTemplate.id) {
-                throw new NotAllowedException("tile template with same id already exists.");
+                throw new NotAllowedException("tile template with same id already exists.", message.id);
             }
         }
 

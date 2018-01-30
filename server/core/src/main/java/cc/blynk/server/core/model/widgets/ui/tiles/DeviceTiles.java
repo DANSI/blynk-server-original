@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
 
@@ -39,13 +38,6 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
     public int columns;
 
     public SortType sortType;
-
-    public void checkForSameWidgetId(long id) {
-        Widget widget = getWidgetById(id);
-        if (widget != null) {
-            throw new NotAllowedException("Widget with same id already exists.");
-        }
-    }
 
     public void deleteDeviceTilesByTemplateId(long deviceTileId) {
         ArrayList<DeviceTile> list = new ArrayList<>();
