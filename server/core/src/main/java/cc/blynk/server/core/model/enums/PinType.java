@@ -38,18 +38,6 @@ public enum PinType {
     }
 
     public static String getPinTypeString(char pinTypeChar) {
-        switch (pinTypeChar) {
-            case 'a' :
-            case 'A' :
-                return ANALOG.pinTypeString;
-            case 'v' :
-            case 'V' :
-                return VIRTUAL.pinTypeString;
-            case 'd' :
-            case 'D' :
-                return DIGITAL.pinTypeString;
-            default:
-                throw new IllegalCommandBodyException("Invalid pin type.");
-        }
+        return getPinType(pinTypeChar).pinTypeString;
     }
 }
